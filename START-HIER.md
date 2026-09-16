@@ -9,7 +9,7 @@ Dieses Projekt kann mit beliebigen Entwicklungswerkzeugen und KI-Systemen fortge
 3. Die dort verlinkte aktuelle Übergabe.
 4. [Anforderungen und Entscheidungen](docs/ANFORDERUNGEN.md)
 5. [Architektur](docs/ARCHITEKTUR.md) und [Roadmap](docs/ROADMAP.md)
-6. [Gesamtentwurf](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md): Status der vorgeschlagenen Ergänzungen E01–E10 prüfen; nicht mit bereits bestätigten Anforderungen verwechseln.
+6. [Bestätigter Gesamtentwurf](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md) einschließlich E01–E10 und [aktueller Umsetzungsplan](docs/superpowers/plans/2026-09-16-google-drive-probe.md).
 
 ## Vor dem Arbeiten
 

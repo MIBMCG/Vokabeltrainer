@@ -2,6 +2,8 @@
 
 Stand: 16.09.2026. **Vorbereitende Anleitung. Für dieses Projekt wurde noch kein Google-Cloud-Projekt, OAuth-Client oder Drive-Datensatz eingerichtet.** Die genauen Einstellungsnamen können sich ändern; maßgeblich sind die verlinkten offiziellen Anleitungen.
 
+Der Gesamtentwurf ist bestätigt. Konkrete Start-/Registrierungsschritte und der Prüfablauf des ersten Entwicklungspakets stehen in [GOOGLE-DRIVE-PROBE.md](GOOGLE-DRIVE-PROBE.md). Entwicklungsursprung der Probe: `http://localhost:4173`. Eine tatsächliche Registrierung ist damit nicht behauptet.
+
 ## Ziel und Voraussetzungen
 
 - Ein gemeinsames Google-Konto wird durch die Eltern auf beiden Geräten für den Trainer verbunden.

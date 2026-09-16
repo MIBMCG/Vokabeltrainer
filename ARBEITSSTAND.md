@@ -2,64 +2,46 @@
 
 Stand: **16.09.2026**
 
-## Ergebnis dieses Arbeitspakets
+## Bestätigt und beauftragt
 
-Die Einzelfragen Q1–Q14 sind beantwortet. README, AGENTS.md, Anforderungen, technischer Entwurf, Google-Einrichtung, Roadmap, Abnahmeplan und portable Übergabe sind vorhanden. Der [Gesamtentwurf](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md) liegt zur Prüfung vor; seine Ergänzungen E01–E10 sind noch nicht bestätigt. Eine App wurde noch nicht implementiert.
+Der Nutzer hat den [Gesamtentwurf](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md) einschließlich E01–E10 mit Option A angenommen. Die Einzelfragen Q1–Q14 sind abgeschlossen; die [Anforderungen R01–R33](docs/ANFORDERUNGEN.md) bleiben verbindlich. Entwicklung und portable Projektdokumentation einschließlich GitHub-Übertragung sind beauftragt.
 
-Repository: [MIBMCG/Vokabeltrainer](https://github.com/MIBMCG/Vokabeltrainer)
+Ziel: Deutsch-Englisch-Vokabeltrainer für 10–13-Jährige, Klassen 4–7, mit Schwerpunkt iPhone/iPad. Gemeinsames Google Drive mit durch Erwachsene eingerichtetem Google-Zugang, getrennte Lernprofile, kein zusätzliches kostenpflichtiges Cloudabo. Drei Lernmodi, adaptive Wiederholung, Erwachsenenansicht und Inselreise gehören zur späteren ersten Trainerversion.
 
-Arbeitsbranch für den Projektstart: `main`. Den aktuellen Commit mit `git log -1 --oneline` feststellen; den aktuellen Remote-Stand bei Wiederaufnahme prüfen.
+## Aktuelles Entwicklungspaket
 
-Aktuelle Übergabe: [2026-09-16-anforderungsklaerung.md](docs/handoffs/2026-09-16-anforderungsklaerung.md)
+Der [Plan der Google-Drive-Probe](docs/superpowers/plans/2026-09-16-google-drive-probe.md) beschreibt die begrenzte technische Probe vor umfangreicher Lernoberfläche. Sie nutzt ausschließlich synthetische Antworten und einen gekennzeichneten Drive-Testbestand. Der eigentliche Trainer ist noch nicht implementiert.
 
-Das erste Dokumentationspaket wurde als Commit `a646763` auf `main` veröffentlicht und gegen GitHub geprüft. Die laufende Anforderungsklärung ergänzt diesen Ausgangsstand; lokale Änderungen und weitere Commits bei Wiederaufnahme prüfen.
+Die Anmeldeschicht und der Drive-Dateiadapter sind in `7a5a108` implementiert, die Reviewkorrektur zur begrenzten Pagination in `1745d66`. `npm test` besteht **34 Prüfungen** gegen kontrollierte HTTP-/GIS-Antworten; [Bericht](docs/reports/2026-09-16-drive-adapter.md). Die unabhängige Taskprüfung ist abgeschlossen; beide Befunde sind behoben. Die kleine mobile Probeoberfläche und deren Browserprüfungen stehen noch aus. Es gibt noch kein `npm start`.
 
-Prüfberichte: [Gesamtentwurf und Anforderungsklärung](docs/reports/2026-09-16-gesamtentwurf.md), [ursprüngliches Dokumentationspaket](docs/reports/2026-09-16-dokumentation.md).
+**Pause für heute auf ausdrücklichen Nutzerwunsch.** Den geprüften Zwischenstand einschließlich Startanleitung und Übergabe nach GitHub übertragen; danach keine weitere Entwicklung oder automatische Fortsetzung. Task 2 wurde vor der ersten Dateiänderung angehalten.
 
-## Festgelegt
+Arbeitszweig: `codex/google-drive-probe`. Getrennte Arbeitskopie im ursprünglichen Checkout unter `.worktrees/drive-probe/`. Ausgangspunkt ist `707d504` auf `main`; aktuelle Commits und Remote frisch prüfen. Die Arbeitskopie erfordert keinen bestimmten Rechnerpfad auf einem anderen System.
 
-- Zielgruppe: 10–13 Jahre, Klassen 4–7.
-- Deutsch anzeigen, Englisch schreiben, ✅/❌ mit Korrektur und „Weiter“.
-- Häufigere Wiederholung falscher Wörter. Nach drei richtigen Antworten pausiert das Wort für den Rest der laufenden Runde.
-- Die Richtigserie gilt je Wort und Kind über mehrere Runden hinweg. Ein Fehler bei diesem Wort setzt dessen Serie auf null; Antworten auf andere Wörter haben darauf keinen Einfluss.
-- Nach der Dreierserie Wiederholung frühestens am nächsten Tag. Bei richtigen Wiederholungen danach Abstände von 3, 7 und 14 Tagen, anschließend jeweils 14 Tage; bei Fehler zurück ins häufigere Üben.
-- Nach einem Fehler zwei andere Aufgaben bearbeiten, dann das Wort erneut abfragen. Endet die Runde vorher, bleibt die Wiederholung vorgemerkt; die gewählte Rundengröße wird nicht verlängert.
-- Fehlt vor dem geplanten Rundenende eine passende Aufgabe, wählt das Kind zwischen Beenden und Fortsetzen mit zusätzlichem Wortschatz außerhalb der bisherigen Auswahl. Aufgabenzahl und Wiederholungspausen bleiben erhalten.
-- Groß-/Kleinschreibung und äußere Leerzeichen beeinflussen die Bewertung nicht; echte Buchstabenfehler bleiben falsch. Die korrekte Schreibweise wird angezeigt.
-- Erwachsene können pro Vokabel mehrere gültige englische Antworten hinterlegen. Jede eingetragene Übersetzung oder britische/amerikanische Schreibvariante zählt richtig.
-- Vokabeln einzeln eingeben oder mehrere Tabellenzeilen mit den Spalten Deutsch und Englisch kopieren/einfügen. Zuordnung zu vorhandenen oder neu angelegten benannten Lektionen. Kein direkter Excel-/CSV-Dateiimport in der ersten Version.
-- Erwachsene ordnen jede Lektion einem oder mehreren Lernprofilen zu. Die drei Übungsmodi und zusätzlicher Wortschatz bei erschöpfter Auswahl nutzen nur die jeweils zugeordneten Lektionen. Lernstände, Punkte und Avatar bleiben pro Kind getrennt.
-- Erwachsenenansicht über „Für Erwachsene“ mit selbst festgelegter vierstelliger PIN öffnen. Die PIN ist eine Hürde gegen versehentliche Änderungen; Einrichtungs- und Wiederherstellungsablauf noch im Detaildesign festlegen.
-- Google Drive als gemeinsamer Speicher, keine zusätzlichen kostenpflichtigen Cloudabos.
-- Erneutes Google-Verbinden bei Bedarf ist grundsätzlich akzeptiert. Mit vorhandenen Vokabeln offline weiterüben, Ergebnisse lokal erhalten und nach erneuter Verbindung automatisch abgleichen. Tatsächliche Dialoghäufigkeit und Bedienbarkeit auf iOS bleiben ungeprüft.
-- Bei widersprüchlichen Änderungen derselben Vokabel bleiben beide Fassungen erhalten; Erwachsene sehen den Unterschied und wählen die richtige Fassung. Übungsergebnisse beider Geräte erhalten und ohne doppelte Wertung zusammenführen.
-- Vollständige JSON-Sicherung im Erwachsenenbereich herunterladen und wiederherstellen: Wortschatz, Lektionen, Zuordnungen, Profile, Lernstände und Belohnungsfortschritt. Vorher den aktuellen Stand automatisch separat sichern, Vorschau und Bestätigung anzeigen; danach ersetzt der gewählte Sicherungsstand den aktiven Bestand einschließlich Google-Abgleich an verbundene Geräte. Der vorherige Stand bleibt zurückholbar. Der technische Ablauf ist im Gesamtentwurf vorgeschlagen.
-- Allgemeine Lizenzentscheidung bewusst zurückgestellt. Für den privaten Einsatz weiterentwickeln; vorerst keine allgemeine Open-Source-Freigabe hinzufügen. Repository-Sichtbarkeit nicht geändert.
-- Ein gemeinsamer Google-Zugang, eingerichtet durch die Eltern, mit getrennten Lernprofilen in der App.
-- Gewünscht: Vokabelverwaltung, Fortschrittsübersicht, die drei genannten Auswahlmodi und Gamification.
-- Gamification der ersten Version: Lernreise/Landkarte, Punkte/Level/Abzeichen und ein einfacher gestaltbarer Avatar mit wenigen Farben und Zubehörteilen bilden ein gemeinsames System. Thema: Insel-Abenteuer mit unterschiedlichen Landschaften wie Wäldern, Stränden und Bergen. Konkrete Grafiken, Umfang der Welt und Schwellenwerte sind noch offen.
-- Punktevergabe: 10 Punkte je richtiger Antwort, auch für später richtig beantwortete Fehlerwörter. Zusätzlich 20 Punkte für eine abgeschlossene Runde. Keine Punktabzüge bei Fehlern.
-- Level-Meilensteine schalten Reiseabschnitte und festgelegte Avatar-Ausstattung automatisch frei. Bereits freigeschaltete Ausstattung bleibt frei auswählbar. Abzeichen für Meilensteine; kein zusätzlicher Münzladen.
-- „Letzte Vokabeln“ = zuletzt hinzugefügte Lektion; „Neue Vokabeln“ = vom ausgewählten Kind noch nie geübte Wörter. Beide Definitionen ausdrücklich bestätigt.
-- Runden: standardmäßig 10 Antworten, wahlweise 20 oder 30; Wiederholungen zählen mit. Fortschrittsbalken, beispielsweise „7 von 10“.
-- Unterbrochene Runden auf dem jeweiligen Gerät speichern und beim nächsten Öffnen Fortsetzen oder eine neue Runde anbieten. Gewertete Antworten und Antwortpunkte bleiben erhalten; kein Abschlussbonus allein für Unterbrechen/Aufgeben. Keine geräteübergreifende Fortsetzung derselben laufenden Runde zugesagt.
-- Plattformübergreifende Web-App mit besonderem Augenmerk auf iOS; PWA, Offlinebetrieb und JSON bilden die besprochene Arbeitsbasis.
-- Testvoraussetzungen: Der Nutzer besitzt kein iPhone/iPad. Sein Freund als künftiger Hauptnutzer besitzt beide. Modelle, Betriebssystemversionen und tatsächliche Testverfügbarkeit sind noch offen; keine Geräteabnahme erfolgt.
+Aktuelle Übergabe: [Pause und Wiedereinstieg](docs/handoffs/2026-09-16-pause.md). Vorgeschichte: [Entwicklungsstart](docs/handoffs/2026-09-16-entwicklungsstart.md).
+Einrichtung und Prüfablauf: [Google-Drive-Probe](docs/GOOGLE-DRIVE-PROBE.md).
 
-## Noch nicht vorhanden
+## Äußere Voraussetzungen und nächste Schritte
 
-- Ausführbarer Trainer, Benutzeroberfläche oder visuelle Vorschau.
-- Endgültiges Produktdesign, freigegebener Implementierungsplan oder festes Datenschema.
-- Google-Cloud-Projekt, OAuth-Client oder echte Synchronisationsprobe für dieses Projekt.
-- Aktiviertes GitHub Pages oder eine laufende Web-App.
-- Produkt-, Browser- oder Geräteprüfungen.
+Die Frage nach einer bereits vorhandenen Google-Cloud-Registrierung und öffentlichen OAuth-Client-ID wurde gestellt. Bisher ist keine Registrierung für dieses Projekt nachgewiesen. Der lokale Entwicklungsursprung wird `http://localhost:4173`; die öffentliche Client-ID wird in der Probe eingegeben. Keine Passwörter oder Client-Secrets erforderlich.
 
-## Nächster sinnvoller Schritt
+Für reale iOS-Prüfungen fehlen Geräte-/Versionsangaben, Testverfügbarkeit und eine abgestimmte HTTPS-Bereitstellung. Der Nutzer besitzt keine Apple-Geräte; sein Freund als künftiger Hauptnutzer besitzt iPhone und iPad. Niemand wird ohne Auftrag kontaktiert.
 
-Den [Gesamtentwurf](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md) mit den konkreten Ergänzungen E01–E10 prüfen lassen. Er beschreibt unter anderem Inselumfang und Levelschwellen, Bonus bei erschöpfter Auswahl, Wortänderungen, PIN-Abläufe sowie Google-Abgleich und Wiederherstellung. Die bisherigen Einzelentscheidungen bleiben erhalten; keine weiteren losen Fragen ohne konkreten neuen Grund anhängen. Nach Abstimmung den Implementierungsplan erstellen und die bereits beauftragte Entwicklung mit der frühen Verbindungsprobe beginnen; keine erneute pauschale Startgenehmigung verlangen.
+Bei ausdrücklicher Wiederaufnahme zuerst `npm test` ausführen, dann Task 2 des Plans beginnen: Modelltests für Deduplizierung, späte Offlineantworten und konkurrierende Rücksetzungen schreiben, erwartetes Fehlschlagen belegen und danach das Modell implementieren. Es folgen IndexedDB, Controller und Probeoberfläche. Anschließend mit echtem Google-Zugriff auf zwei Geräten testen. Vor umfangreicher Lernoberfläche muss insbesondere die Anmeldung in Safari und als Home-Bildschirm-App praktisch nachgewiesen werden.
 
-Vor umfangreicher Umsetzung muss eine frühe technische Probe den Google-Zugang und erneuten Verbindungsaufbau auf echtem iPhone/Safari sowie als Home-Bildschirm-App prüfen. Dafür sind später die nutzerseitige Google-App-Registrierung und Zugang zum Testgerät nötig. Diese Probe ist noch nicht durchgeführt.
+## Noch nicht vorhanden oder nachgewiesen
 
-## Grenzen des Auftrags
+- Vollständiger Trainer mit Lernprofilen, Wortverwaltung, adaptiver Auswahl, Erwachsenen-PIN und Inselreise.
+- Produktfähige Synchronisation einschließlich vollständigem Sicherungsimport und Erwachsenen-Konfliktlösung.
+- Echte Google-Anmeldung oder Zwei-Geräte-Abgleich für dieses Projekt.
+- Reale iPhone-/iPad-Abnahme und festgelegte Mindestversionen.
+- Eingerichtetes Hosting oder veröffentlichte Trainer-URL.
 
-Der Nutzer hat nach dem veröffentlichten Dokumentationspaket die vollständige Klärung der offenen Punkte beauftragt. Nach Abschluss dieser Klärung darf die Entwicklung des abgestimmten Umfangs beginnen. Bis dahin Anforderungen fortlaufend ergänzen. Vorgeschlagene Details nicht als Zustimmung behandeln; keine kostenpflichtigen Dienste oder eigenmächtigen Kontoeinrichtungen/Deployments daraus ableiten.
+Die allgemeine Lizenzentscheidung bleibt bewusst zurückgestellt. Keine öffentliche Freigabe, Repository-Sichtbarkeitsänderung, gebührenpflichtige Einrichtung oder Veröffentlichung einer laufenden App ist durchgeführt.
+
+## Bisherige Berichte
+
+- [Gesamtentwurf und Anforderungsklärung](docs/reports/2026-09-16-gesamtentwurf.md), historischer Stand vor Entwurfsbestätigung.
+- [Ursprüngliches Dokumentationspaket](docs/reports/2026-09-16-dokumentation.md).
+
+Keine erneute pauschale Entwicklungs- oder Entwurfsfreigabe verlangen. Neue Produktabweichungen anhand konkreter Befunde klären; technische Nachweise nicht durch Zustimmung ersetzen.

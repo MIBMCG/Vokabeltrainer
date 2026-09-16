@@ -1,6 +1,6 @@
 # Qualität und Abnahme
 
-Stand: 16.09.2026. **Prüfplan, keine Liste bereits bestandener Produkttests.** Es existiert noch keine ausführbare Anwendung oder Testumgebung.
+Stand: 16.09.2026. **Prüfplan für das Gesamtprodukt.** Die technische Drive-/Anmeldeschicht besitzt inzwischen eine ausführbare Node-Testumgebung mit 34 bestandenen Prüfungen; siehe [Adapterbericht](reports/2026-09-16-drive-adapter.md). Eine vollständige Anwendung, Browserprüfung und echte Google-/Geräteabnahme fehlen weiterhin.
 
 ## Nachweisstufen
 
@@ -55,7 +55,7 @@ Bekannter Stand: Der Nutzer besitzt selbst weder iPhone noch iPad. Sein Freund a
 
 ## Testwerkzeuge
 
-Werkzeuge sind noch nicht festgelegt. Nach ihrer Einführung exakte, ausführbare Befehle in README und Arbeitsstand dokumentieren. Geeignet sind reine Logiktests, Speicher-/Syncintegrationstests und Browserprüfungen; die Auswahl muss zum tatsächlichen Stack passen.
+Die bisherigen Tests laufen mit Node.js ab Version 22.8.0 und dessen eingebautem Testrunner: `npm test`. Externe Google-Antworten werden kontrolliert simuliert; eigener Adapter und eigene Anmeldelogik laufen unverändert. Keine zusätzlichen npm-Pakete erforderlich. Speicher-/Syncintegrationstests und Browserprüfungen werden mit Task 2/3 ergänzt und sind bislang nicht ausgeführt.
 
 Keine Erfolgsaussage aus einer bloßen Codeinspektion ableiten. Keine echten Kinderprofile oder Google-Tokens als Testfixture verwenden. Für Fehler- und Konfliktfälle reproduzierbare synthetische Daten verwenden.
 
