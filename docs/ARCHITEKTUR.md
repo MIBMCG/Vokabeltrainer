@@ -56,7 +56,7 @@ Vorgeschlagene Grundregeln, die vor Umsetzung in ein konkretes Protokoll überf�
 3. Bei geöffneter App mit gültigem Zugriff Änderungen automatisch senden und neue Vokabeln übernehmen.
 4. Fehlgeschlagene Übertragungen mit begrenzten Wiederholungen und Wartezeiten erneut versuchen.
 5. Bereits übertragene Ereignisse anhand stabiler IDs erkennen; erneutes Senden darf keine Zusatzpunkte oder doppelten Versuche erzeugen.
-6. Parallele Änderungen erkennen. Bei Konflikten beide Fassungen erhalten oder nach einer ausdrücklich festgelegten Regel zusammenführen.
+6. Parallele Änderungen erkennen. Bei widersprüchlichen Vokabeländerungen gemäß R29 beide Fassungen erhalten, Unterschiede in der Erwachsenenansicht zeigen und dort die richtige Fassung auswählen lassen. Keine automatische Auswahl nach der Übertragungsreihenfolge. Zustand ungeklärter Vokabeln und Zusammenführung kompatibler Änderungen im Detaildesign festlegen.
 7. Konto-/Datensatzwechsel darf keine ausstehenden Änderungen in ein anderes Konto hochladen.
 8. Cloudlöschungen und beschädigte Dateien nicht als leeren, gültigen Ersatz über lokale Daten schreiben.
 

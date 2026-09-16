@@ -40,7 +40,7 @@ Erwachsene ordnen jede Lektion einem oder mehreren Kindern zu. Alle drei Übungs
 - Google Drive als gemeinsamer Speicher für den automatischen Austausch.
 - Ein gemeinsamer Google-Zugang, den die Eltern auf Eltern- und Schülergerät einrichten.
 - Eigene Lernprofile innerhalb der App mit getrennten Lernständen.
-- Eine Erwachsenenansicht zum Ergänzen und Verwalten von Vokabeln und zum Einsehen des Lernfortschritts.
+- Eine Erwachsenenansicht zum Ergänzen und Verwalten von Vokabeln und zum Einsehen des Lernfortschritts. Sie öffnet sich über „Für Erwachsene“ und eine selbst festgelegte vierstellige PIN als Hürde gegen versehentliche Änderungen.
 - JSON als besprochene Grundlage für strukturierte Daten; das genaue Schema ist noch nicht festgelegt.
 - Keine zusätzlichen kostenpflichtigen Cloudabos. Die vorhandene Google-Drive-Kapazität soll ausreichen.
 - Offline üben und Änderungen später abgleichen als besprochene technische Arbeitsbasis.
@@ -50,6 +50,10 @@ Die vollständige Unterscheidung zwischen Nutzerentscheidungen, Vorschlägen und
 ## Was „automatisch“ bedeutet
 
 Geplant ist ein selbstständiger Datenabgleich bei geöffneter App, vorhandener Internetverbindung und gültigem Google-Zugriff. Eine lokale Datei aus der iOS-Dateien-App auszuwählen ersetzt diese Verbindung nicht.
+
+Erneutes Verbinden mit Google bei Bedarf ist grundsätzlich akzeptiert. Währenddessen soll mit bereits gespeicherten Vokabeln offline weitergeübt werden können; die Ergebnisse werden lokal erhalten und nach erneuter Verbindung automatisch abgeglichen.
+
+Bei widersprüchlichen Änderungen derselben Vokabel bleiben beide Fassungen erhalten. Die Erwachsenenansicht zeigt den Unterschied und lässt die richtige Fassung auswählen. Übungsergebnisse beider Geräte werden ohne doppelte Wertung zusammengeführt.
 
 Bei Googles direkter Browseranbindung laufen Zugriffstokens ab. Eine erneute Nutzeraktion, etwa „Mit Google verbinden“, kann nötig sein. Ein einmaliger Login mit unbegrenzt stillem Abgleich und dauerhafter Synchronisation bei geschlossener iOS-App ist **nicht zugesagt**. Der tatsächliche Komfort muss früh auf einem echten iPhone geprüft werden. Siehe [Google-Drive-Einrichtung](docs/GOOGLE-DRIVE-EINRICHTUNG.md).
 

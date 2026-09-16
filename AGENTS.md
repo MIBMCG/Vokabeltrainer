@@ -49,7 +49,7 @@ Das erste Dokumentationspaket wurde beauftragt und veröffentlicht. Der anschlie
 - Lokales Speichern, ausstehender Upload und bestätigter Cloudabgleich sind unterschiedliche Zustände. Die Oberfläche muss sie wahrheitsgemäß darstellen.
 - Google-Tokens, Passwörter, private Schlüssel, persönliche Backups und echte Lernprofile weder committen noch in Berichte kopieren. Nur synthetische Testdaten verwenden.
 - Öffentliche OAuth-Client-ID und private Zugangsdaten unterscheiden. Ein Client-Secret gehört nicht in Browsercode. Details: [Google-Einrichtung](docs/GOOGLE-DRIVE-EINRICHTUNG.md).
-- Ein gemeinsamer Google-Zugang ersetzt keine serverseitige Rollentrennung. Eine spätere Eltern-PIN wäre eine Bedienhürde, keine zugesagte Sicherheitsgrenze.
+- Ein gemeinsamer Google-Zugang ersetzt keine serverseitige Rollentrennung. Die beschlossene vierstellige PIN für die Erwachsenenansicht (R27) ist eine Bedienhürde, keine zugesagte Sicherheitsgrenze. Keine echte PIN in Dokumentation oder Repository aufnehmen; ihre Einrichtung und Wiederherstellung im Detaildesign berücksichtigen.
 
 ## Prüfung
 

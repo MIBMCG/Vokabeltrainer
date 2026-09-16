@@ -29,6 +29,7 @@ Alle folgenden Produktprüfungen sind **offen**.
 | Vokabeländerung | Bearbeitung eines bereits geübten Wortes erhält eine nachvollziehbare Zuordnung zu bisherigen Ergebnissen | R06/R10, Q11 |
 | Offline | Start nach Erstladung, Üben, Neustart und späterer Abgleich ohne Netzverlust der Antworten | Arbeitsbasis |
 | Zwei Geräte | Gleicher Datensatz, Änderungen in beide Richtungen, parallele Bearbeitung | R12/R14 |
+| Widersprüchliche Vokabeländerungen | Beide Fassungen erhalten, Unterschiede in Erwachsenenansicht anzeigen, Auswahl der richtigen Fassung synchronisieren; Übungsergebnisse dabei erhalten | R29, Q11a |
 | Wiederholter Upload | Netzabbruch nach möglichem Servererfolg; erneuter Upload ohne doppelte Wertung | R10/R12 |
 | Konto/Datensatz | Falsches Konto, Wechsel mit ausstehenden Änderungen, versehentliche Doppelanlage | R12/R14 |
 | Cloudfehler | Anmeldung abgebrochen, Zugriff abgelaufen/entzogen, Datei entfernt/beschädigt, Rate-Limit oder Serverfehler | R12 |
@@ -37,6 +38,8 @@ Alle folgenden Produktprüfungen sind **offen**.
 | Sicherung | Export/Import und Migration, falls in den ersten Umfang aufgenommen, ohne vorhandene Daten still zu verlieren | Q11 |
 
 ## Echte Geräte und Oberfläche
+
+Bekannter Stand: Der Nutzer besitzt selbst weder iPhone noch iPad. Sein Freund als künftiger Hauptnutzer besitzt beide Gerätetypen. Modelle, Betriebssystemversionen und seine Verfügbarkeit für Tests sind noch offen. Die folgenden Prüfungen bleiben vollständig offen; einen Browser-Simulator nicht als Prüfung auf seinen Geräten ausgeben.
 
 - iPhone/Safari und installierte Home-Bildschirm-App separat testen; iPad nach Möglichkeit ebenfalls.
 - Tastatur verdeckt weder Eingabe noch Prüfung/Weiter. Fokus bleibt nachvollziehbar; schnelle Mehrfachbedienung erzeugt keine Doppelantworten.

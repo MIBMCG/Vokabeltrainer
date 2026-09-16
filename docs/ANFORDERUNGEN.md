@@ -17,7 +17,7 @@ Stand: 16.09.2026. Dieses Dokument ist die zentrale Quelle für den Produktumfan
 | R09 | Drei Auswahlmodi | „Alle Vokabeln“: gesamter dem Kind zugeordneter Wortschatz. „Letzte Vokabeln“: zuletzt hinzugefügte Lektion innerhalb der diesem Kind zugeordneten Lektionen. „Neue Vokabeln“: zugeordnete Wörter, die das ausgewählte Kind noch nie geübt hat. Definitionen aus Q1/Q2, Zuordnungsgrenze aus Q7b/R26. |
 | R10 | Fortschritt einsehbar | Übersicht darüber, welche Wörter wie gut und wie oft geübt wurden. |
 | R11 | Ansprechende Gestaltung und Gamification | Bereits die erste Version verbindet Lernreise/Landkarte, Punkte/Level/Abzeichen und einen einfachen gestaltbaren Avatar zu einem gemeinsamen Belohnungssystem. Thema ist ein Insel-Abenteuer mit unterschiedlichen Landschaften, etwa Wäldern, Stränden und Bergen. Modern und passend für 10–13-Jährige gestalten. Der Avatar erhält zunächst eine kleine Auswahl an Farben und Zubehör. Punktevergabe gemäß R23, Freischaltprinzip gemäß R24; konkrete Grafiken, Umfang der Welt und Schwellenwerte sind noch offen. |
-| R12 | Automatischer Cloudaustausch | Google Drive wurde ausdrücklich ausgewählt. Komfortgrenzen des Browserlogins sind zu prüfen. |
+| R12 | Automatischer Cloudaustausch | Google Drive wurde ausdrücklich ausgewählt. Erneutes Verbinden bei Bedarf ist gemäß R28 grundsätzlich akzeptiert; die tatsächliche Häufigkeit und Bedienbarkeit bleiben auf Zielgeräten zu prüfen. |
 | R13 | Keine zusätzlichen kostenpflichtigen Cloudabos | Vorhandenes Google Drive nutzen. Kein stillschweigender Wechsel auf einen weiteren Dienst. |
 | R14 | Gemeinsamer Google-Zugang | Die Eltern richten denselben Zugang auf beiden Geräten ein; eigene Lernprofile trennen die Lernstände der Kinder. |
 | R15 | Privater Gebrauch | Keine öffentliche Schulplattform oder mandantenfähige Klassenverwaltung beauftragt. |
@@ -32,6 +32,9 @@ Stand: 16.09.2026. Dieses Dokument ist die zentrale Quelle für den Produktumfan
 | R24 | Gemeinsamer Fortschritt mit automatischen Freischaltungen | Gesammelte Punkte erhöhen das Level. An festgelegten Level-Meilensteinen werden Reiseabschnitte und bestimmte Avatar-Kleidungsstücke/Zubehör automatisch freigeschaltet. Das Kind kann aus seiner bereits freigeschalteten Ausstattung jederzeit frei wählen. Abzeichen belohnen erreichte Meilensteine. Kein zusätzlicher Münzladen. Konkrete Schwellen und Inhalte im Detaildesign vorschlagen. |
 | R25 | Vokabeleingabe und Lektionen | Erwachsene können einzelne Vokabeln über ein Formular ergänzen oder mehrere Zeilen aus einer Tabelle, beispielsweise Excel, mit den Spalten Deutsch und Englisch kopieren und einfügen. Die Wörter werden einer vorhandenen oder neu angelegten benannten Lektion zugeordnet, etwa „Unit 3“. Direkter Excel-/CSV-Dateiimport gehört nicht zur gewählten ersten Version. |
 | R26 | Lektionen gezielt Lernprofilen zuordnen | Erwachsene ordnen jede Lektion einem oder mehreren Kindern zu. Die drei Auswahlmodi berücksichtigen jeweils nur die dem ausgewählten Kind zugeordneten Lektionen. Eine gemeinsame Lektion muss dafür nicht mehrfach angelegt werden. Lernstände, Punkte und Avatar bleiben pro Kind getrennt. |
+| R27 | Erwachsenenansicht mit PIN | Die Erwachsenenansicht wird über den Menüpunkt „Für Erwachsene“ und eine selbst festgelegte vierstellige PIN geöffnet. Die PIN dient als einfache Hürde gegen versehentliche Änderungen an Vokabeln oder Zuordnungen. Sie ersetzt keine getrennten Google-Konten oder serverseitigen Zugriffsrechte. Einrichtung, Änderung, Vergessen und Verhalten auf mehreren Geräten im Detaildesign klären. |
+| R28 | Erneutes Google-Verbinden und Offlineüben | Eine bei Bedarf nötige erneute Bestätigung über „Mit Google verbinden“ ist grundsätzlich akzeptabel, auch beim erneuten Öffnen oder nach Ablauf des Zugriffs. Mit bereits vorhandenen Vokabeln kann währenddessen offline weitergeübt werden. Ergebnisse lokal erhalten und nach erneuter Verbindung bei geöffneter App und Internet automatisch abgleichen. Diese Zustimmung ersetzt keine Prüfung des tatsächlichen Dialogkomforts auf den Zielgeräten. |
+| R29 | Widersprüchliche Vokabeländerungen gemeinsam klären | Werden dieselben Vokabeln auf zwei Geräten widersprüchlich geändert, bleiben beide Fassungen erhalten. In der Erwachsenenansicht wird der Unterschied angezeigt und die richtige Fassung ausgewählt. Keine automatische inhaltliche Auswahl nach der Übertragungsreihenfolge. Übungsergebnisse beider Geräte bleiben erhalten und werden ohne doppelte Wertung zusammengeführt. |
 
 R03–R11 stammen aus der ursprünglichen Produktbeschreibung. R12–R14 wurden in der anschließenden Technologie-/Kontenabstimmung konkretisiert. R01 und R16 wurden mit dem Dokumentationsauftrag ergänzt. Danach bestätigte der Nutzer die Definitionen in R09, den Ablauf in R17 und die Konkretisierung der Gamification in R11. Die weiteren Entscheidungen sind unten einzeln protokolliert.
 
@@ -46,6 +49,10 @@ Die folgenden Punkte bilden den vorgeschlagenen Gesamtaufbau, auf dessen Grundla
 - GitHub Pages als vorgeschlagener Hostingweg für den Programmcode.
 
 Excel wurde als ursprüngliche Speicheridee genannt. Bestätigt ist inzwischen das Kopieren und Einfügen von Tabellenzeilen gemäß R25. Ein direkter Excel-/CSV-Dateiimport gehört nicht zur gewählten ersten Version; Export ist weiterhin nur eine mögliche Ergänzung. Markdown ist für Projektdokumentation vorgesehen, nicht als Laufzeitdatenbank.
+
+## Bekannte Voraussetzungen für Gerätetests
+
+Der Nutzer selbst besitzt weder iPhone noch iPad. Ein Freund, der den Trainer hauptsächlich verwenden möchte, besitzt beide Gerätetypen. Seine Geräte kommen für spätere Praxistests infrage; Modelle, Betriebssystemversionen, Zugang und zeitliche Verfügbarkeit sind noch nicht geklärt. Daraus folgt weder eine bereits zugesagte Testteilnahme noch eine bestandene Geräteabnahme. Mindestversionen später technisch begründet abstimmen.
 
 ## Vorgeschlagener Lernablauf
 
@@ -81,18 +88,21 @@ Zu R23 noch im Detaildesign klären: Bonus beim vorzeitigen Abschluss wegen ersc
 | Q6d | Automatische Freischaltungen durch Level-Meilensteine: Reiseabschnitte und festgelegte Avatar-Ausstattung; bereits freigeschaltete Ausstattung frei auswählbar. Abzeichen für Meilensteine, kein zusätzlicher Münzladen. | 16.09.2026: Nutzer wählt Option A der Frage zu Freischaltungen. |
 | Q7a | Einzeleingabe plus Kopieren/Einfügen mehrerer Tabellenzeilen mit den Spalten Deutsch und Englisch. Zuordnung zu einer vorhandenen oder neu angelegten benannten Lektion; kein direkter Excel-/CSV-Dateiimport in der ersten Version. | 16.09.2026: Nutzer wählt Option A der Frage zur Vokabeleingabe. |
 | Q7b | Erwachsene ordnen Lektionen einem oder mehreren Kindern zu. „Alle“, „Letzte“ und „Neue“ berücksichtigen jeweils nur die diesem Kind zugeordneten Lektionen. Lernstände, Punkte und Avatar pro Kind getrennt. | 16.09.2026: Nutzer wählt Option A der Frage zur Verfügbarkeit von Lektionen. |
+| Q8 | Erwachsenenansicht über den Menüpunkt „Für Erwachsene“ und eine selbst festgelegte vierstellige PIN öffnen; Hürde gegen versehentliche Änderungen. | 16.09.2026: Nutzer wählt Option A der Frage zum Zugang zur Erwachsenenansicht. |
+| Q9 | Der Nutzer hat keine eigenen Apple-Testgeräte. Sein Freund als künftiger Hauptnutzer besitzt iPhone und iPad. Konkrete Geräteangaben und Testverfügbarkeit bleiben offen. | 16.09.2026: ausdrückliche Nutzerangabe zu den Geräten des Freundes. |
+| Q10 | Erneutes Google-Verbinden bei Bedarf grundsätzlich akzeptabel. Mit vorhandenen Vokabeln offline weiterüben und Änderungen nach erneuter Verbindung automatisch abgleichen. Tatsächliche Dialoghäufigkeit und Bedienbarkeit noch auf Zielgeräten prüfen. | 16.09.2026: Nutzer wählt Option A der Frage zum erneuten Verbinden. |
+| Q11a | Bei widersprüchlichen Vokabeländerungen beide Fassungen aufbewahren und Erwachsene anhand der angezeigten Unterschiede die richtige auswählen lassen. Übungsergebnisse beider Geräte erhalten und ohne doppelte Wertung zusammenführen. | 16.09.2026: Nutzer wählt Option A der Frage zu widersprüchlichen Änderungen. |
 
 ## Offene Entscheidungen
 
 | ID | Frage | Vorschlag zur Besprechung | Vor welchem Paket klären? |
 | --- | --- | --- | --- |
-| Q8 | Wie soll sich die Erwachsenenansicht öffnen lassen? | A: Über einen klaren Menüpunkt und eine von Erwachsenen festgelegte vierstellige PIN als Hürde gegen versehentliche Änderungen (Empfehlung). B: Über denselben Menüpunkt direkt ohne PIN. Noch keine Auswahl. Eine PIN ersetzt keine getrennten Google-Konten oder serverseitigen Zugriffsrechte. | Verwaltung |
-| Q9 | Welche Geräte und iOS-Versionen müssen konkret unterstützt werden? | Echtes iPhone und nach Möglichkeit iPad benennen; Mindestversion aus den Tests ableiten und abstimmen. | Technische Probe |
-| Q10 | Ist die reale Häufigkeit von Google-Verbindungsdialogen akzeptabel? | Auf iOS testen und Verhalten zeigen. Offline weiterüben muss bei fehlender Verbindung möglich bleiben. | Technische Probe |
-| Q11 | Welches endgültige Speicher- und Konfliktmodell? | Stabile IDs, getrennte Inhalte/Ergebnisse, wiederholbare Übertragung ohne Datenverlust. | Datenschema/Sync |
+| Q11b | Soll es zusätzlich zum Drive-Abgleich eine Sicherungsdatei geben? | A: In der Erwachsenenansicht eine vollständige Sicherung als JSON-Datei herunterladen und bei Bedarf wieder einlesen; enthält Vokabeln, Lektionen, Zuordnungen, Lernprofile, Lernstände, Punkte und Avatar-Ausstattung (Empfehlung). B: In der ersten Version nur lokale Speicherung und Google-Drive-Abgleich, ohne gesonderten Sicherungsdatei-Export/-Import. Noch keine Auswahl. Bei A Vorschau und Bestätigung vor der Wiederherstellung vorsehen; genaue Wirkung auf vorhandene Daten und Cloudabgleich im Detaildesign festlegen. | Datensicherung |
 | Q12 | Welche Lizenz soll gelten? | Keine Lizenz eigenmächtig auswählen. | Lizenzierte Weitergabe |
 
 Die Liste wird auf ausdrücklichen Wunsch des Nutzers Frage für Frage mit Optionen und Empfehlung abgearbeitet. Jede Antwort wird sofort festgehalten; neu erkannte Produktfragen werden ergänzt. Technische Detailentscheidungen sollen verständlich begründet werden, ohne den Nutzer unnötig mit Implementierungsdetails zu belasten. Nach vollständiger Klärung den konsolidierten Umfang dokumentieren, einen konkreten Implementierungsplan erstellen und mit der beauftragten Entwicklung beginnen. Reale technische Nachweise bleiben als Prüfaufgaben sichtbar und dürfen nicht durch bloße Zustimmung als bestanden gelten.
+
+Das technische Speicher-/Konfliktmodell aus dem bisherigen Themenblock Q11 bleibt Gegenstand des Detaildesigns: stabile IDs, getrennte Inhalte/Ergebnisse, Reihenfolge paralleler Lernereignisse, Datei-Aufteilung, Wiederholbarkeit von Übertragungen und Erkennen echter Bearbeitungskonflikte. Q11a entscheidet das sichtbare Verhalten bei widersprüchlichen Vokabeländerungen, nicht alle technischen Fragen dieses Blocks.
 
 ## Nicht beauftragt
 

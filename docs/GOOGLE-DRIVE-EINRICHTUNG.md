@@ -38,6 +38,8 @@ Die App-Registrierung und Zuordnung zum Trainerdatensatz sind eine einmalige Ein
 
 Im hier vorgeschlagenen Browser-Tokenmodell wird nach Ablauf des Zugriffstokens ein neuer Zugriff über eine Nutzeraktion angefordert. Ein verständlicher „Mit Google verbinden“-Ablauf ist deshalb Teil des Entwurfs. Währenddessen bleiben Offlineübungen und noch nicht übertragene Ergebnisse erhalten. Wie häufig der Dialog auf den Zielgeräten tatsächlich erscheint, ist ein **offener Akzeptanzpunkt**.
 
+Produktentscheidung Q10 vom 16.09.2026: Der Nutzer akzeptiert dieses erneute Verbinden grundsätzlich, einschließlich einer möglichen erneuten Bestätigung beim Öffnen der App. Mit vorhandenen Vokabeln soll offline weitergeübt und nach erneuter Verbindung automatisch abgeglichen werden. Die reale Dialoghäufigkeit und Bedienbarkeit auf iPhone/iPad sind damit noch nicht nachgewiesen oder abgenommen.
+
 Ein Wechsel des OAuth-Veröffentlichungsstatus auf „Production“ hebt die begrenzte Lebensdauer der Zugriffstokens nicht auf. Googles zusätzlich dokumentierte Sieben-Tage-Regel betrifft Refresh-Tokens bestimmter externer Apps im Teststatus; der vorgeschlagene Browserablauf verwendet kein eigenes serverseitiges Refresh-Token-Lager. Diese Sachverhalte nicht miteinander verwechseln.
 
 Quellen: [Browser-Tokenmodell](https://developers.google.com/identity/oauth2/web/guides/use-token-model), [Refresh-Token-Grenzen](https://developers.google.com/identity/protocols/oauth2).

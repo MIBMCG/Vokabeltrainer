@@ -24,12 +24,17 @@ Ergebnis dieses Arbeitspakets: README, AGENTS.md, Anforderungen, Entwurf, Einric
 - Umfang der Erwachsenenansicht und Wortlistenverwaltung bestimmen.
 - Erledigt: Einzeleingabe und Kopieren/Einfügen mehrerer Tabellenzeilen; Wörter vorhandenen oder neuen benannten Lektionen zuordnen. Kein direkter Excel-/CSV-Dateiimport in der ersten Version.
 - Erledigt: Erwachsene ordnen jede Lektion einem oder mehreren Kindern zu. Übungsmodi berücksichtigen nur die jeweils zugeordneten Lektionen; Lernstände, Punkte und Avatar bleiben pro Kind getrennt.
+- Erledigt: Erwachsenenansicht über „Für Erwachsene“ mit selbst festgelegter vierstelliger PIN öffnen. Einrichtungs- und Wiederherstellungsablauf im Detaildesign festlegen.
+- Erledigt: Erneutes Verbinden mit Google bei Bedarf grundsätzlich akzeptiert; mit vorhandenem Wortschatz offline weiterüben und später automatisch abgleichen. Die reale Bedienbarkeit bleibt nachzuweisen.
+- Erledigt: Bei widersprüchlichen Vokabeländerungen beide Fassungen erhalten und die richtige Fassung in der Erwachsenenansicht auswählen lassen. Übungsergebnisse beider Geräte ohne doppelte Wertung erhalten.
 
-Ergebnis: ein prüfbares Design mit klaren Grenzen der ersten Version. Offene Produktpunkte beginnen bei [Q8](ANFORDERUNGEN.md#offene-entscheidungen). Der Nutzer hat festgelegt, alle offenen Punkte einzeln mit Optionen und Empfehlung zu klären und Antworten fortlaufend zu dokumentieren. Nach vollständiger Klärung ist der Entwicklungsbeginn beauftragt. Eine visuelle Vorschau kann helfen; sie wurde noch nicht erstellt oder ausgewählt.
+Ergebnis: ein prüfbares Design mit klaren Grenzen der ersten Version. Die Gerätefrage Q9 ist als Bestandsaufnahme beantwortet: Der Nutzer hat keine eigenen Apple-Geräte, sein Freund als künftiger Hauptnutzer besitzt iPhone und iPad. Offene Gesprächspunkte beginnen bei [Q11b](ANFORDERUNGEN.md#offene-entscheidungen) zur zusätzlichen Sicherungsdatei. Der Nutzer hat festgelegt, alle offenen Punkte einzeln mit Optionen und Empfehlung zu klären und Antworten fortlaufend zu dokumentieren. Nach vollständiger Klärung ist der Entwicklungsbeginn beauftragt. Eine visuelle Vorschau kann helfen; sie wurde noch nicht erstellt oder ausgewählt.
 
 ## 2. Google Drive auf iOS früh nachweisen
 
 Nach Abstimmung einer eng begrenzten Probe die Anmeldung, den Zugriff auf synthetische Dateien, das Wiederfinden auf zwei Geräten und erneutes Verbinden testen. Safari-Tab und Home-Bildschirm-App separat prüfen.
+
+Für echte Apple-Gerätetests kommen die Geräte des Freundes infrage. Modelle, Betriebssystemversionen und Testverfügbarkeit noch klären; vorhandene Geräte nicht mit zugesagter Testteilnahme verwechseln.
 
 Ergebnis: technischer Prüfbericht und eine konkrete Aussage zum Anmeldekomfort. Wenn die geforderte Bedienung mit der vorgeschlagenen direkten Browseranbindung nicht ausreichend erreichbar ist, die Abweichung mit dem Nutzer klären, bevor umfangreiche Produktarbeit davon abhängig gemacht wird.
 
