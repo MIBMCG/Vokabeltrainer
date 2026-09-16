@@ -1,8 +1,8 @@
 # Vokabeltrainer: Gesamtentwurf für die erste Version
 
-Stand: 16.09.2026. **Zur Prüfung vorgelegt; keine App-Implementierung.**
+Stand: 16.09.2026. **Gesamtentwurf einschließlich E01–E10 vom Nutzer mit Option A bestätigt.** Implementierungs- und Prüfstatus stehen in [ARBEITSSTAND.md](../../../ARBEITSSTAND.md).
 
-Die [Anforderungen R01–R33](../../ANFORDERUNGEN.md) sind im Gespräch bestätigt. Die Einzelfragen Q1–Q14 sind beantwortet. Dieses Dokument führt sie zusammen und konkretisiert noch offene Abläufe. Die mit E01–E10 bezeichneten Ergänzungen sind Vorschläge, bis der Nutzer diesen Entwurf bestätigt oder Änderungen nennt. Die grundsätzliche Entwicklung nach vollständiger Klärung ist bereits beauftragt.
+Die [Anforderungen R01–R33](../../ANFORDERUNGEN.md) sowie die Ergänzungen E01–E10 sind bestätigt. Die Einzelfragen Q1–Q14 sind beantwortet. Die nachfolgenden ursprünglichen Formulierungen „Vorschlag“ und „empfohlen“ beschreiben den am 16.09.2026 insgesamt angenommenen Entwurf. Die Umsetzung einschließlich früher Google-/iOS-Probe ist beauftragt; eine Zustimmung ersetzt keine technische Prüfung.
 
 ## 1. Produkt und Grenzen
 
