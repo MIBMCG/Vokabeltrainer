@@ -1,0 +1,24 @@
+# Lokale Zugangsdaten und persönliche Daten
+.env
+.env.*
+!.env.example
+*.local.json
+credentials*.json
+client_secret*.json
+service-account*.json
+*.pem
+*.key
+/private-data/
+/local-backups/
+
+# Spätere lokale Entwicklungsartefakte
+node_modules/
+coverage/
+test-results/
+playwright-report/
+*.log
+
+# Betriebssystemdateien
+.DS_Store
+Thumbs.db
+Desktop.ini
