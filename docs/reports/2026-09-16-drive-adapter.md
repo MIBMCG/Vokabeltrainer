@@ -117,3 +117,7 @@ Der abschließende vollständige Lauf `npm test` bestand mit 34 von 34 Tests, 0 
 Die unabhängige Nachprüfung hat beide Befunde als behoben und die Taskqualität als freigegeben bewertet. Der koordinierende Agent hat anschließend `npm test` erneut ausgeführt: 34 Tests, 34 bestanden, 0 fehlgeschlagen. Die Dokumentationsprüfung ergab keine Fehler bei UTF-8, Zeilenenden, internen Verweisen, Pflichtdokumenten und den begrenzten Mustersuchen nach Zugangsdaten/Arbeitsplatzpfaden. `git diff --check` war ebenfalls sauber.
 
 Der Nutzer hat nach diesem testbaren Zwischenstand Push und Pause für heute angeordnet. Task 2 ist noch nicht implementiert; keine Browseroberfläche, kein `npm start`, keine echte Google-Verbindung oder iOS-Abnahme vorhanden. Der geplante Browsertest wurde nicht als Produktnachweis ausgeführt. Der vorübergehende Start eines getrennten Headless-Browsers war nur eine Prüfung der lokalen Entwicklungswerkzeuge.
+
+## Portabilität vor dem Push
+
+Die abschließende unabhängige Prüfung fand eine zu niedrige Node-Mindestangabe: `--experimental-test-isolation` wurde laut [offizieller Node-Dokumentation](https://nodejs.org/download/release/v22.8.0/docs/api/cli.html#--experimental-test-isolationmode) mit 22.8.0 eingeführt. Commit `1bbce90` setzt deshalb `engines.node` auf `>=22.8.0`; die aktuellen Startanleitungen nennen dieselbe Mindestversion. Der erneute vollständige Testlauf auf Node.js 22.23.2 bestand mit 34 Tests, 0 Fehlern und Exitcode 0.

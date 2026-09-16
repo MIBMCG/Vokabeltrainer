@@ -6,7 +6,7 @@
 
 **Architecture:** Kleine native JavaScript-Module trennen HTTP/OAuth, unveränderliche Probeereignisse, IndexedDB und Oberfläche. Eine eigene Probe-Kennung verhindert Verwechslung mit späteren Lerndaten. Die Probe ist ein technisches Prüfmittel, kein fertiger Trainer und noch kein vollständiges Produkt-Syncprotokoll.
 
-**Tech Stack:** HTML/CSS/ES-Module; Node.js >=22 mit eingebautem Testrunner und HTTP-Server für Entwicklung; keine Laufzeitpakete aus npm. Browserprüfungen mit Playwright, falls lokal verfügbar, sonst vorhandener Browsersteuerung. Google Identity Services wird im Browser nur bei Verbindungswunsch geladen.
+**Tech Stack:** HTML/CSS/ES-Module; Node.js >=22.8.0 mit eingebautem Testrunner und HTTP-Server für Entwicklung; keine Laufzeitpakete aus npm. Browserprüfungen mit Playwright, falls lokal verfügbar, sonst vorhandener Browsersteuerung. Google Identity Services wird im Browser nur bei Verbindungswunsch geladen.
 
 **Spec:** [Bestätigter Gesamtentwurf](../specs/2026-09-16-vokabeltrainer-design.md), insbesondere E01/E07/E08/E09/E10 und Abschnitte 7–10.
 

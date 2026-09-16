@@ -6,7 +6,7 @@ Geplant ist eine kleine Oberfläche zur technischen Prüfung vor dem eigentliche
 
 ## Lokal starten
 
-Voraussetzung für Entwicklung: Node.js ab Version 22. Im Checkout des Entwicklungszweigs:
+Voraussetzung für Entwicklung: Node.js ab Version 22.8.0. Im Checkout des Entwicklungszweigs:
 
 ```sh
 npm test

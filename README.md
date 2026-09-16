@@ -94,7 +94,7 @@ git status --short --branch
 git log -5 --oneline
 ```
 
-Danach den Entwicklungszweig wählen und mit Node.js ab Version 22 die Tests starten:
+Danach den Entwicklungszweig wählen und mit Node.js ab Version 22.8.0 die Tests starten:
 
 ```sh
 git switch codex/google-drive-probe
