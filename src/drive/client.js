@@ -204,6 +204,7 @@ export function createDriveClient({getToken, fetchImpl = globalThis.fetch} = {})
   async function listFiles(query) {
     assertNonemptyString(query, 'Drive-Suchabfrage');
     const files = [];
+    const seenPageTokens = new Set();
     let pageToken;
     do {
       const url = buildUrl(DRIVE_API_ROOT, 'files', {
@@ -222,6 +223,12 @@ export function createDriveClient({getToken, fetchImpl = globalThis.fetch} = {})
         throw invalid('Drive-Suchergebnis ist unvollständig oder ungültig.');
       }
       files.push(...result.files.map(validateMetadata));
+      if (result.nextPageToken !== undefined) {
+        if (seenPageTokens.has(result.nextPageToken)) {
+          throw invalid('Drive-Suchergebnis enthält einen wiederholten Seitenschlüssel.');
+        }
+        seenPageTokens.add(result.nextPageToken);
+      }
       pageToken = result.nextPageToken;
     } while (pageToken !== undefined);
     return files;

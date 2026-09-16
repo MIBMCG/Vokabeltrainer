@@ -129,6 +129,25 @@ test('rejects incomplete or malformed search pages instead of returning partial 
   await assert.rejects(malformed.listFiles('trashed = false'), expectDriveError('invalid'));
 });
 
+test('rejects a repeated page token before issuing an unbounded follow-up request', async () => {
+  let requestCount = 0;
+  const client = createDriveClient({
+    getToken: () => 'token-a',
+    fetchImpl: async () => {
+      requestCount += 1;
+      if (requestCount > 2) throw new Error('pagination did not stop');
+      return Response.json({
+        files: [],
+        nextPageToken: 'repeated-token',
+        incompleteSearch: false,
+      });
+    },
+  });
+
+  await assert.rejects(client.listFiles('trashed = false'), expectDriveError('invalid'));
+  assert.equal(requestCount, 2);
+});
+
 test('encodes valid IDs and rejects unsafe IDs before making a request', async () => {
   let calls = 0;
   const client = createDriveClient({
@@ -175,7 +194,9 @@ test('creates a folder with the supplied ID and verifies its stored metadata', a
     getToken: () => 'token-a',
     fetchImpl: async (url, init) => {
       requests.push({url: new URL(url), init});
-      return init.method === 'POST' ? Response.json(stored) : Response.json(stored);
+      return init.method === 'POST'
+        ? Response.json({id: 'unverified-post-response'})
+        : Response.json(stored);
     },
   });
 
@@ -194,6 +215,9 @@ test('creates a folder with the supplied ID and verifies its stored metadata', a
     appProperties: {vtProbe: '1'},
   });
   assert.equal(requests[1].url.pathname, '/drive/v3/files/folder-a');
+  assert.equal(requests.filter(({url, init}) => (
+    init.method === 'GET' && url.pathname === '/drive/v3/files/folder-a'
+  )).length, 1);
 });
 
 test('a folder conflict verifies the existing supplied ID without creating a duplicate', async () => {
@@ -256,7 +280,7 @@ test('uploads JSON once with its supplied ID then verifies metadata and logical 
       const parsed = new URL(url);
       requests.push({parsed, init});
       if (parsed.origin === 'https://www.googleapis.com' && parsed.pathname.startsWith('/upload/')) {
-        return Response.json(jsonMetadata());
+        return Response.json({id: 'unverified-upload-response'});
       }
       if (parsed.searchParams.get('alt') === 'media') {
         return Response.json({nested: {a: 1, b: 2}, id: 'evt-a', correct: true});
@@ -281,6 +305,11 @@ test('uploads JSON once with its supplied ID then verifies metadata and logical 
   assert.match(upload.init.body, /"parents":\["folder-a"\]/);
   assert.match(upload.init.body, /"mimeType":"application\/json"/);
   assert.equal(requests.filter(({parsed}) => parsed.pathname.startsWith('/upload/')).length, 1);
+  assert.equal(requests.filter(({parsed, init}) => (
+    init.method === 'GET'
+      && parsed.pathname === '/drive/v3/files/file-a'
+      && !parsed.searchParams.has('alt')
+  )).length, 1);
   assert.equal(requests.filter(({parsed}) => parsed.searchParams.get('alt') === 'media').length, 1);
 });
 
