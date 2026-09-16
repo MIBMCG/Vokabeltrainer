@@ -20,6 +20,7 @@ Alle folgenden Produktprüfungen sind **offen**.
 | --- | --- | --- |
 | Grundablauf | Wort anzeigen, Antwort eingeben, prüfen, Korrektur lesen, bewusst weitergehen | R03–R05 |
 | Mehrfachbedienung | Doppelklick und Enter werten dieselbe Antwort nicht mehrfach | R04/R10 |
+| Unterbrochene Runde | Nach Schließen/Neuladen auf demselben Gerät Fortsetzen oder neue Runde; bereits gewertete Antworten und Antwortpunkte erhalten, keine Doppelwertung und kein Abschlussbonus allein für Unterbrechen/Aufgeben | R32, Q13 |
 | Bewertung | Richtige/falsche Eingabe, leer, Leerzeichen, Großschreibung und erlaubte Varianten gemäß abgestimmter Regel | Q5 |
 | Wiederholung | Fehler werden häufiger eingeplant; drei richtige Antworten verändern die Auswahl wie beschlossen | R07/R08, Q3/Q4 |
 | Kleine Wortlisten | Ein Wort, wenige Wörter, leere Auswahl, alle Wörter bereits beherrscht | R07–R09 |
@@ -35,7 +36,9 @@ Alle folgenden Produktprüfungen sind **offen**.
 | Cloudfehler | Anmeldung abgebrochen, Zugriff abgelaufen/entzogen, Datei entfernt/beschädigt, Rate-Limit oder Serverfehler | R12 |
 | Gamification | Belohnungen nur nach festgelegten Regeln, keine Verdopplung beim erneuten Laden/Sync | R11, Q6 |
 | Updates | Neue App-Version während einer Übung; keine verlorenen Ergebnisse oder gemischten Datenformate | PWA-Entwurf |
-| Sicherung | Export/Import und Migration, falls in den ersten Umfang aufgenommen, ohne vorhandene Daten still zu verlieren | Q11 |
+| Sicherung | Vollständige JSON-Sicherung; Format-/Versionsprüfung, Vorschau und Bestätigung; automatische separate Sicherheitskopie vor Rücksetzung, Übernahme auf verbundenen Geräten und Rückweg zum vorherigen Stand; keine doppelte Wertung | R30/R33, Q11b/Q14 |
+
+Die zusätzlichen Abnahmefälle aus Abschnitt 10 des [Gesamtentwurfs](superpowers/specs/2026-09-16-vokabeltrainer-design.md) sind Bestandteil seines Vorschlags, noch keine bestandenen Tests. Besonders zu prüfen: ausgeschöpfte Aufgabenmenge, Lernrevisionen, parallele Wiederherstellungen und verspätete Offlineereignisse.
 
 ## Echte Geräte und Oberfläche
 
@@ -67,4 +70,4 @@ Für dieses anfängliche Paket sind zu prüfen:
 - Nur beabsichtigte Dateien werden committed; Git-Whitespaceprüfung ist sauber.
 - Nach dem autorisierten Push stimmt der Commit auf `origin/main` mit dem lokalen Commit überein.
 
-Das Ergebnis dieses Dokumentationspakets steht in [Prüfbericht](reports/2026-09-16-dokumentation.md).
+Die Ergebnisse stehen im [ursprünglichen Dokumentationsbericht](reports/2026-09-16-dokumentation.md) und im [Prüfbericht zum Gesamtentwurf](reports/2026-09-16-gesamtentwurf.md).

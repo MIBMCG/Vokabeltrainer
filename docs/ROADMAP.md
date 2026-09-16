@@ -27,22 +27,25 @@ Ergebnis dieses Arbeitspakets: README, AGENTS.md, Anforderungen, Entwurf, Einric
 - Erledigt: Erwachsenenansicht über „Für Erwachsene“ mit selbst festgelegter vierstelliger PIN öffnen. Einrichtungs- und Wiederherstellungsablauf im Detaildesign festlegen.
 - Erledigt: Erneutes Verbinden mit Google bei Bedarf grundsätzlich akzeptiert; mit vorhandenem Wortschatz offline weiterüben und später automatisch abgleichen. Die reale Bedienbarkeit bleibt nachzuweisen.
 - Erledigt: Bei widersprüchlichen Vokabeländerungen beide Fassungen erhalten und die richtige Fassung in der Erwachsenenansicht auswählen lassen. Übungsergebnisse beider Geräte ohne doppelte Wertung erhalten.
+- Erledigt: Vollständige JSON-Sicherung im Erwachsenenbereich herunterladen und wiederherstellen; Vorschau und Bestätigung vor dem Wiederherstellen. Vorher aktuellen Stand automatisch separat sichern, danach aktiven Bestand auf Sicherungsstand zurücksetzen und auch über Google Drive übernehmen; vorherigen Stand zurückholbar erhalten.
+- Erledigt: Allgemeine Lizenzentscheidung bewusst zurückgestellt; private Entwicklung fortsetzen und vorerst keine allgemeine Open-Source-Freigabe hinzufügen.
+- Erledigt: Unterbrochene Runden auf dem jeweiligen Gerät speichern; beim nächsten Öffnen Fortsetzen oder eine neue Runde anbieten. Antworten/Antwortpunkte erhalten, kein Abschlussbonus allein für Unterbrechen/Aufgeben.
 
-Ergebnis: ein prüfbares Design mit klaren Grenzen der ersten Version. Die Gerätefrage Q9 ist als Bestandsaufnahme beantwortet: Der Nutzer hat keine eigenen Apple-Geräte, sein Freund als künftiger Hauptnutzer besitzt iPhone und iPad. Offene Gesprächspunkte beginnen bei [Q11b](ANFORDERUNGEN.md#offene-entscheidungen) zur zusätzlichen Sicherungsdatei. Der Nutzer hat festgelegt, alle offenen Punkte einzeln mit Optionen und Empfehlung zu klären und Antworten fortlaufend zu dokumentieren. Nach vollständiger Klärung ist der Entwicklungsbeginn beauftragt. Eine visuelle Vorschau kann helfen; sie wurde noch nicht erstellt oder ausgewählt.
+Ergebnis: Die Einzelfragen Q1–Q14 sind beantwortet. Der [Gesamtentwurf](superpowers/specs/2026-09-16-vokabeltrainer-design.md) liegt mit den noch nicht bestätigten Ergänzungen E01–E10 zur Prüfung vor. Er konkretisiert die oben genannten Detailregeln und Grenzen der ersten Version. Nach vollständiger Klärung ist der Entwicklungsbeginn beauftragt. Der Nutzer besitzt keine eigenen Apple-Geräte; der Freund als künftiger Hauptnutzer besitzt iPhone und iPad. Modelle und Testverfügbarkeit bleiben zu klären. Eine visuelle Vorschau wurde noch nicht erstellt.
 
-## 2. Google Drive auf iOS früh nachweisen
+## 2. Implementierungsplan erstellen
+
+Nach Abstimmung des Gesamtentwurfs einen ausführbaren Plan mit konkreten Dateien, Schnittstellen, Datenformaten und passenden Tests schreiben. Die frühe Google-/iOS-Probe bildet das erste Entwicklungspaket; ihre Ergebnisse können gezielte Anpassungen erfordern.
+
+Ergebnis: umsetzbarer Plan. Dieses Dokument ersetzt ihn nicht. Falls Superpowers verwendet wird, ist an dieser Stelle der Skill `writing-plans` passend; andere KIs können gleichwertig vorgehen.
+
+## 3. Google Drive auf iOS früh nachweisen
 
 Nach Abstimmung einer eng begrenzten Probe die Anmeldung, den Zugriff auf synthetische Dateien, das Wiederfinden auf zwei Geräten und erneutes Verbinden testen. Safari-Tab und Home-Bildschirm-App separat prüfen.
 
 Für echte Apple-Gerätetests kommen die Geräte des Freundes infrage. Modelle, Betriebssystemversionen und Testverfügbarkeit noch klären; vorhandene Geräte nicht mit zugesagter Testteilnahme verwechseln.
 
 Ergebnis: technischer Prüfbericht und eine konkrete Aussage zum Anmeldekomfort. Wenn die geforderte Bedienung mit der vorgeschlagenen direkten Browseranbindung nicht ausreichend erreichbar ist, die Abweichung mit dem Nutzer klären, bevor umfangreiche Produktarbeit davon abhängig gemacht wird.
-
-## 3. Detaildesign und Implementierungsplan
-
-Mit den Produktentscheidungen und den Ergebnissen der technischen Probe das Datenschema, Syncverfahren, Fehlerverhalten und die Modulgrenzen festlegen. Danach einen ausführbaren Plan mit konkreten Dateien, Schnittstellen und passenden Tests schreiben.
-
-Ergebnis: abgestimmtes Detaildesign und umsetzbarer Plan. Dieses Dokument ersetzt beides nicht. Falls Superpowers verwendet wird, ist an dieser Stelle der Skill `writing-plans` passend; andere KIs können gleichwertig vorgehen.
 
 ## 4. Lokaler Trainer
 

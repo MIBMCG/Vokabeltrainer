@@ -2,6 +2,8 @@
 
 Stand: 16.09.2026. **Entwurf, noch keine Implementierung und kein vollständig freigegebenes Detaildesign.** Die verbindlichen Nutzeranforderungen stehen in [ANFORDERUNGEN.md](ANFORDERUNGEN.md).
 
+Die konkreten Ergänzungsvorschläge E01–E10 sind im [Gesamtentwurf](superpowers/specs/2026-09-16-vokabeltrainer-design.md) zusammengeführt. Er präzisiert diesen Architekturüberblick; sein Status bleibt bis zur Nutzerprüfung „vorgeschlagen“.
+
 ## Aufbau
 
 Vorgesehen ist eine statisch bereitgestellte PWA aus HTML, CSS und JavaScript. Die gleiche Anwendung bietet eine Schüler- und eine Erwachsenenansicht. Die Geräte sprechen Google Drive direkt über dessen API an; ein eigener kostenpflichtiger Server ist nicht vorgesehen.
@@ -29,7 +31,7 @@ Der Programmcode wird getrennt von den persönlichen Lerninhalten bereitgestellt
 | Synchronisation | Lokale und entfernte Änderungen zusammenführen, Wiederholungsversuche steuern | Ein Ereignis mehrfach zählen |
 | PWA/Offlinefunktion | Programmdateien zwischenspeichern und Updates kontrolliert übernehmen | Dauerhafte Hintergrundausführung voraussetzen |
 
-Framework, Buildsystem, Ordnernamen und Bibliotheken sind noch nicht ausgewählt. Die fachlichen Grenzen sollen unabhängig davon erhalten bleiben.
+E01 schlägt JavaScript-Module ohne UI-Framework vor. Build-/Testwerkzeuge, konkrete Versionen und Ordnernamen im anschließenden Implementierungsplan festlegen. Die fachlichen Grenzen bleiben erhalten.
 
 ## Datenmodell als Diskussionsgrundlage
 
@@ -45,7 +47,7 @@ Noch kein JSON-Schema oder Migrationsvertrag ist freigegeben. Für den Entwurf w
 | Fortschrittsansicht | Versuchszahl, richtige/falsche Antworten, letzte Übung, aktuelle Serie und Wiederholungsstatus | Anzeige und Auswahl; möglichst aus Ereignissen ableitbar |
 | Übertragungsstatus | Noch nicht bestätigte Änderungen und letzte erfolgreiche Synchronisation | Offlinebetrieb und verlässliche Rückmeldung |
 
-Die Speicherung des tatsächlich getippten Wortes ist noch nicht erforderlich entschieden. Für Zähler und Wiederholungssteuerung kann das bewertete Ergebnis genügen. Belohnungsdaten erst nach Wahl der Gamification spezifizieren.
+E01/E10 schlagen vor, den getippten Text nur für die lokale Rückmeldung zu speichern; für synchronisierte Zähler und Wiederholungen genügt das bewertete Ergebnis mit Vokabelrevision. Das gemeinsame Belohnungssystem ist mit R11/R23/R24 gewählt; konkrete Schwellen und Inhalte stehen als E04 im Gesamtentwurf.
 
 ## Synchronisation
 
@@ -60,7 +62,7 @@ Vorgeschlagene Grundregeln, die vor Umsetzung in ein konkretes Protokoll überf�
 7. Konto-/Datensatzwechsel darf keine ausstehenden Änderungen in ein anderes Konto hochladen.
 8. Cloudlöschungen und beschädigte Dateien nicht als leeren, gültigen Ersatz über lokale Daten schreiben.
 
-Ein einfaches „Datei laden, lokal ändern, vollständig hochladen“ ist ohne weiteren Schutz bei zwei Geräten nicht ausreichend. Als mögliche Lösung sind unveränderliche Ergebnisdateien pro Sitzung/Gerät oder ein nachgewiesen konfliktfestes Zusammenführungsverfahren zu untersuchen. **Die endgültige Datei-Aufteilung ist offen (Q11).**
+Ein einfaches „Datei laden, lokal ändern, vollständig hochladen“ ist ohne weiteren Schutz bei zwei Geräten nicht ausreichend. E10 schlägt unveränderliche JSON-Ereignispakete mit stabilen Datei-/Ereignis-IDs und getrennten Wiederherstellungsgenerationen vor. Konflikte werden über bekannte Vorversionen erkannt. Der Ablauf ist im Gesamtentwurf beschrieben, aber noch nicht bestätigt oder technisch nachgewiesen.
 
 Zähler lassen sich nicht immer sinnvoll addieren: Auch Serien richtiger Antworten und Reihenfolgen müssen bei parallelem Offlineüben definiert werden. Geräteuhren allein sind kein sicherer Konfliktentscheid.
 
@@ -79,6 +81,8 @@ Google Identity Services liefert in seinem Browser-Tokenmodell kurzlebige Zugrif
 Ohne Verbindung oder gültigen Google-Zugriff sollen bereits gespeicherte Vokabeln weiter nutzbar bleiben. In der Oberfläche sind mindestens die fachlichen Zustände „auf diesem Gerät gespeichert“, „Abgleich ausstehend“, „mit Google verbinden“, „abgeglichen“ und „Abgleich fehlgeschlagen“ zu berücksichtigen; die exakte Formulierung ist noch Teil des UI-Designs.
 
 Ein Service Worker kann Programmdateien für Offlinebetrieb vorhalten. Dafür werden eine geeignete Webbereitstellung und zusätzliche Dateien benötigt. iOS-Hintergrundausführung ist kein verlässlicher Ersatz für den Abgleich bei geöffneter App. Browserdaten können gelöscht werden; lokaler Speicher ist keine unabhängige Sicherung. [MDN: Offlinebetrieb](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Offline_and_background_operation), [WebKit: Speicherverhalten](https://webkit.org/blog/14403/updates-to-storage-policy/)
+
+R30/R33 ergänzen den Abgleich um eine vollständige JSON-Sicherung zum Herunterladen und Wiederherstellen im Erwachsenenbereich. Vor dem Einlesen Datenformat und Version prüfen, eine Vorschau zeigen und die Wiederherstellung bestätigen lassen. Vor der Rücksetzung den aktuellen Stand automatisch separat sichern; danach den Sicherungsstand auch über Google Drive übernehmen. Google-Tokens und Zugangsdaten gehören nicht in die Datei. Abschnitt 9 des Gesamtentwurfs schlägt den Online-Ablauf mit überprüfter Sicherheitskopie sowie den separaten Erhalt verspäteter Offlineänderungen vor; diese technische Konkretisierung ist noch nicht bestätigt.
 
 ## Frühe Machbarkeitsprüfung
 

@@ -2,7 +2,7 @@
 
 Ein geplanter Deutsch-Englisch-Vokabeltrainer für Kinder von **10 bis 13 Jahren, Klasse 4 bis 7**. Er soll auf aktuellen Smartphones, Tablets und Computern funktionieren; **iPhone und iPad haben Vorrang**.
 
-**Stand: 16. September 2026 — Anforderungen und technische Vorbereitung. Es gibt noch keine ausführbare Anwendung.** Dieses Repository enthält die Projektgrundlagen für die Weiterarbeit durch Menschen und unterschiedliche KI-Systeme.
+**Stand: 16. September 2026 — Einzelfragen geklärt, Gesamtentwurf zur Prüfung vorgelegt. Es gibt noch keine ausführbare Anwendung.** Die Antworten Q1–Q14 sind dokumentiert. Der [Gesamtentwurf](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md) verbindet sie mit den noch nicht bestätigten Detailvorschlägen E01–E10. Dieses Repository enthält die Projektgrundlagen für die Weiterarbeit durch Menschen und unterschiedliche KI-Systeme.
 
 ## Geplanter Lernablauf
 
@@ -12,13 +12,15 @@ Ein geplanter Deutsch-Englisch-Vokabeltrainer für Kinder von **10 bis 13 Jahren
 4. Mit „Weiter“ folgt das nächste Wort.
 5. Nach einem Fehler wird das Wort nach zwei anderen Aufgaben erneut abgefragt. Endet die Runde vorher, bleibt die Wiederholung für später vorgemerkt. Nach drei richtigen Antworten hintereinander pausiert ein Wort für den Rest der laufenden Runde.
 
-Die Auswahlmodi sind „Alle Vokabeln“, „Letzte Vokabeln“ (zuletzt hinzugefügte Lektion) und „Neue Vokabeln“ (vom ausgewählten Kind noch nie geübte Wörter). Die erste Version soll eine Lernreise/Landkarte, Punkte/Level/Abzeichen und einen einfachen gestaltbaren Avatar mit wenigen Farben und Zubehörteilen verbinden. Thema ist ein Insel-Abenteuer mit Wäldern, Stränden und Bergen. Die konkreten Grafiken, Schwellenwerte und der Umfang der Inselwelt sind noch offen.
+Die Auswahlmodi sind „Alle Vokabeln“, „Letzte Vokabeln“ (zuletzt hinzugefügte Lektion) und „Neue Vokabeln“ (vom ausgewählten Kind noch nie geübte Wörter). Die erste Version soll eine Lernreise/Landkarte, Punkte/Level/Abzeichen und einen einfachen gestaltbaren Avatar mit wenigen Farben und Zubehörteilen verbinden. Thema ist ein Insel-Abenteuer mit Wäldern, Stränden und Bergen. Drei Inseln, 200 Punkte je Level sowie konkrete Abzeichen und Zubehör sind im Gesamtentwurf vorgeschlagen; diese Werte sind noch nicht bestätigt.
 
 Jede richtige Antwort bringt 10 Punkte, auch bei einer späteren Wiederholung eines zuvor falsch beantworteten Wortes. Eine abgeschlossene Runde bringt zusätzlich 20 Punkte. Fehler führen zu keinem Punktabzug.
 
 Gesammelte Punkte erhöhen das Level. An Level-Meilensteinen werden Reiseabschnitte und Avatar-Ausstattung automatisch freigeschaltet; bereits freigeschaltete Ausstattung bleibt frei auswählbar. Für erreichte Meilensteine gibt es Abzeichen.
 
 Eine Runde umfasst standardmäßig 10 Antworten, wahlweise 20 oder 30. Wiederholungen zählen mit; ein Fortschrittsbalken zeigt den Stand.
+
+Unterbrochene Runden werden auf dem jeweiligen Gerät gespeichert. Beim nächsten Öffnen kann das Kind fortsetzen oder neu beginnen. Bereits gewertete Antworten und Antwortpunkte bleiben erhalten; für das bloße Unterbrechen oder Aufgeben gibt es keinen Abschlussbonus.
 
 Ist vorher keine passende Aufgabe mehr verfügbar, kann das Kind die Runde beenden oder mit zusätzlichem Wortschatz außerhalb der bisherigen Auswahl fortsetzen. Die geplante Aufgabenzahl und Wiederholungspausen bleiben erhalten.
 
@@ -33,6 +35,10 @@ Eltern oder Lehrkräfte können pro Vokabel mehrere gültige Antworten eintragen
 Neue Wörter lassen sich einzeln eingeben oder als Tabellenzeilen mit den Spalten Deutsch und Englisch kopieren und einfügen, beispielsweise aus Excel. Sie werden einer vorhandenen oder neu angelegten Lektion zugeordnet. Ein direkter Excel-/CSV-Dateiimport ist für die erste Version nicht vorgesehen.
 
 Erwachsene ordnen jede Lektion einem oder mehreren Kindern zu. Alle drei Übungsmodi berücksichtigen nur die dem jeweiligen Kind zugeordneten Lektionen. Auch beim Fortsetzen mit zusätzlichem Wortschatz gilt diese Zuordnung. Lernstände, Punkte und Avatar bleiben pro Kind getrennt.
+
+Im Erwachsenenbereich ist eine vollständige Sicherung als JSON-Datei vorgesehen: Wortschatz, Lektionen, Zuordnungen, Profile, Lernstände und Belohnungsfortschritt lassen sich herunterladen und bei Bedarf wiederherstellen. Vor der Wiederherstellung werden eine Vorschau und Bestätigung angezeigt.
+
+Bestätigt ist außerdem: Vor einer Wiederherstellung den aktuellen Stand automatisch separat sichern. Danach ersetzt der ausgewählte Sicherungsstand den aktiven Bestand, auch über Google Drive auf verbundenen Geräten. Der vorherige Stand bleibt zurückholbar. Der Gesamtentwurf schlägt dafür einen Online-Ablauf mit überprüfter Drive-Sicherheitskopie und separatem Erhalt später eintreffender Offlineantworten vor.
 
 ## Vereinbarte Richtung
 
@@ -65,6 +71,7 @@ Bei Googles direkter Browseranbindung laufen Zugriffstokens ab. Eine erneute Nut
 4. [Anforderungen](docs/ANFORDERUNGEN.md): bestätigte Wünsche und offene Produktentscheidungen.
 5. [Architektur](docs/ARCHITEKTUR.md): technischer Entwurf und Grenzen.
 6. [Roadmap](docs/ROADMAP.md): Reihenfolge der nächsten Arbeitspakete.
+7. [Gesamtentwurf zur Prüfung](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md): zusammenhängende Abläufe und konkrete Ergänzungsvorschläge.
 
 Weitere Dokumente:
 
@@ -73,6 +80,7 @@ Weitere Dokumente:
 - [Technische Quellen](docs/QUELLEN.md)
 - [Übergabe vom 16.09.2026](docs/handoffs/2026-09-16-projektstart.md)
 - [Prüfbericht der Dokumentation](docs/reports/2026-09-16-dokumentation.md)
+- [Prüfbericht zum Gesamtentwurf](docs/reports/2026-09-16-gesamtentwurf.md)
 
 ## Repository auf einem neuen System öffnen
 
@@ -95,4 +103,4 @@ Die Google-Drive-Nutzung ist für den erwarteten privaten Umfang innerhalb der d
 
 ## Lizenz
 
-Eine Lizenz wurde noch nicht ausgewählt. Die öffentliche Sichtbarkeit des Repositorys ist keine Entscheidung für eine Open-Source-Lizenz. Vor einer entsprechenden Weitergabe muss die Lizenzfrage geklärt werden.
+Die allgemeine Lizenzentscheidung wurde bewusst zurückgestellt. Das Projekt wird zunächst für den privaten Einsatz weiterentwickelt; vorerst wird keine allgemeine Open-Source-Freigabe hinzugefügt. Eine spätere allgemeine Lizenzfreigabe ist gesondert abzustimmen.

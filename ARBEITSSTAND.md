@@ -4,7 +4,7 @@ Stand: **16.09.2026**
 
 ## Ergebnis dieses Arbeitspakets
 
-Das Projekt ist als Dokumentationsgrundlage angelegt. README, AGENTS.md, Anforderungen, technischer Entwurf, Google-Einrichtung, Roadmap, Abnahmeplan und eine portable Übergabe sind vorhanden.
+Die Einzelfragen Q1–Q14 sind beantwortet. README, AGENTS.md, Anforderungen, technischer Entwurf, Google-Einrichtung, Roadmap, Abnahmeplan und portable Übergabe sind vorhanden. Der [Gesamtentwurf](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md) liegt zur Prüfung vor; seine Ergänzungen E01–E10 sind noch nicht bestätigt. Eine App wurde noch nicht implementiert.
 
 Repository: [MIBMCG/Vokabeltrainer](https://github.com/MIBMCG/Vokabeltrainer)
 
@@ -14,7 +14,7 @@ Aktuelle Übergabe: [2026-09-16-anforderungsklaerung.md](docs/handoffs/2026-09-1
 
 Das erste Dokumentationspaket wurde als Commit `a646763` auf `main` veröffentlicht und gegen GitHub geprüft. Die laufende Anforderungsklärung ergänzt diesen Ausgangsstand; lokale Änderungen und weitere Commits bei Wiederaufnahme prüfen.
 
-Prüfbericht: [2026-09-16-dokumentation.md](docs/reports/2026-09-16-dokumentation.md)
+Prüfberichte: [Gesamtentwurf und Anforderungsklärung](docs/reports/2026-09-16-gesamtentwurf.md), [ursprüngliches Dokumentationspaket](docs/reports/2026-09-16-dokumentation.md).
 
 ## Festgelegt
 
@@ -33,6 +33,8 @@ Prüfbericht: [2026-09-16-dokumentation.md](docs/reports/2026-09-16-dokumentatio
 - Google Drive als gemeinsamer Speicher, keine zusätzlichen kostenpflichtigen Cloudabos.
 - Erneutes Google-Verbinden bei Bedarf ist grundsätzlich akzeptiert. Mit vorhandenen Vokabeln offline weiterüben, Ergebnisse lokal erhalten und nach erneuter Verbindung automatisch abgleichen. Tatsächliche Dialoghäufigkeit und Bedienbarkeit auf iOS bleiben ungeprüft.
 - Bei widersprüchlichen Änderungen derselben Vokabel bleiben beide Fassungen erhalten; Erwachsene sehen den Unterschied und wählen die richtige Fassung. Übungsergebnisse beider Geräte erhalten und ohne doppelte Wertung zusammenführen.
+- Vollständige JSON-Sicherung im Erwachsenenbereich herunterladen und wiederherstellen: Wortschatz, Lektionen, Zuordnungen, Profile, Lernstände und Belohnungsfortschritt. Vorher den aktuellen Stand automatisch separat sichern, Vorschau und Bestätigung anzeigen; danach ersetzt der gewählte Sicherungsstand den aktiven Bestand einschließlich Google-Abgleich an verbundene Geräte. Der vorherige Stand bleibt zurückholbar. Der technische Ablauf ist im Gesamtentwurf vorgeschlagen.
+- Allgemeine Lizenzentscheidung bewusst zurückgestellt. Für den privaten Einsatz weiterentwickeln; vorerst keine allgemeine Open-Source-Freigabe hinzufügen. Repository-Sichtbarkeit nicht geändert.
 - Ein gemeinsamer Google-Zugang, eingerichtet durch die Eltern, mit getrennten Lernprofilen in der App.
 - Gewünscht: Vokabelverwaltung, Fortschrittsübersicht, die drei genannten Auswahlmodi und Gamification.
 - Gamification der ersten Version: Lernreise/Landkarte, Punkte/Level/Abzeichen und ein einfacher gestaltbarer Avatar mit wenigen Farben und Zubehörteilen bilden ein gemeinsames System. Thema: Insel-Abenteuer mit unterschiedlichen Landschaften wie Wäldern, Stränden und Bergen. Konkrete Grafiken, Umfang der Welt und Schwellenwerte sind noch offen.
@@ -40,6 +42,7 @@ Prüfbericht: [2026-09-16-dokumentation.md](docs/reports/2026-09-16-dokumentatio
 - Level-Meilensteine schalten Reiseabschnitte und festgelegte Avatar-Ausstattung automatisch frei. Bereits freigeschaltete Ausstattung bleibt frei auswählbar. Abzeichen für Meilensteine; kein zusätzlicher Münzladen.
 - „Letzte Vokabeln“ = zuletzt hinzugefügte Lektion; „Neue Vokabeln“ = vom ausgewählten Kind noch nie geübte Wörter. Beide Definitionen ausdrücklich bestätigt.
 - Runden: standardmäßig 10 Antworten, wahlweise 20 oder 30; Wiederholungen zählen mit. Fortschrittsbalken, beispielsweise „7 von 10“.
+- Unterbrochene Runden auf dem jeweiligen Gerät speichern und beim nächsten Öffnen Fortsetzen oder eine neue Runde anbieten. Gewertete Antworten und Antwortpunkte bleiben erhalten; kein Abschlussbonus allein für Unterbrechen/Aufgeben. Keine geräteübergreifende Fortsetzung derselben laufenden Runde zugesagt.
 - Plattformübergreifende Web-App mit besonderem Augenmerk auf iOS; PWA, Offlinebetrieb und JSON bilden die besprochene Arbeitsbasis.
 - Testvoraussetzungen: Der Nutzer besitzt kein iPhone/iPad. Sein Freund als künftiger Hauptnutzer besitzt beide. Modelle, Betriebssystemversionen und tatsächliche Testverfügbarkeit sind noch offen; keine Geräteabnahme erfolgt.
 
@@ -53,7 +56,7 @@ Prüfbericht: [2026-09-16-dokumentation.md](docs/reports/2026-09-16-dokumentatio
 
 ## Nächster sinnvoller Schritt
 
-Die Produktabstimmung fortsetzen: als Nächstes [Q11b in den Anforderungen](docs/ANFORDERUNGEN.md#offene-entscheidungen) zur zusätzlichen Sicherungsdatei klären. Empfehlung: vollständige JSON-Sicherung in der Erwachsenenansicht herunterladen und nach Vorschau/Bestätigung wieder einlesen können. Alternative: in der ersten Version nur lokale Speicherung und Drive-Abgleich. Noch keine Auswahl; bei Zustimmung genaue Wiederherstellungswirkung im Detaildesign festlegen. Danach Lizenz und weitere offene Punkte behandeln. Technische Syncdetails, PIN-Abläufe, Spielschwellen, Abschluss-Sonderfälle und Details geänderter Lektionszuordnungen im Detaildesign erhalten. Jeweils eine Frage stellen und Antworten sofort dokumentieren.
+Den [Gesamtentwurf](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md) mit den konkreten Ergänzungen E01–E10 prüfen lassen. Er beschreibt unter anderem Inselumfang und Levelschwellen, Bonus bei erschöpfter Auswahl, Wortänderungen, PIN-Abläufe sowie Google-Abgleich und Wiederherstellung. Die bisherigen Einzelentscheidungen bleiben erhalten; keine weiteren losen Fragen ohne konkreten neuen Grund anhängen. Nach Abstimmung den Implementierungsplan erstellen und die bereits beauftragte Entwicklung mit der frühen Verbindungsprobe beginnen; keine erneute pauschale Startgenehmigung verlangen.
 
 Vor umfangreicher Umsetzung muss eine frühe technische Probe den Google-Zugang und erneuten Verbindungsaufbau auf echtem iPhone/Safari sowie als Home-Bildschirm-App prüfen. Dafür sind später die nutzerseitige Google-App-Registrierung und Zugang zum Testgerät nötig. Diese Probe ist noch nicht durchgeführt.
 

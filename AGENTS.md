@@ -18,6 +18,8 @@ Zum dokumentierten Start am 16.09.2026 existieren nur Dokumentation und Reposito
 
 Das erste Dokumentationspaket wurde beauftragt und veröffentlicht. Der anschließende Nutzerauftrag lautet: alle offenen Punkte Frage für Frage mit Optionen und einer Empfehlung klären, jede Antwort direkt in den Anforderungen festhalten und nach vollständiger Klärung mit der Entwicklung beginnen. Diese bedingte Entwicklungsfreigabe erhalten; keine erneute pauschale Startgenehmigung verlangen, sobald der abgestimmte Umfang vollständig feststeht. Noch offene Produktideen, Cloudkontenänderungen oder die Veröffentlichung einer laufenden App sind damit nicht automatisch freigegeben.
 
+Die Einzelfragen Q1–Q14 sind beantwortet. Der [Gesamtentwurf](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md) liegt zur Prüfung vor; seine Ergänzungen E01–E10 sind noch nicht bestätigt. Keine neue Reihe loser Einzelfragen beginnen und bereits entschiedene Anforderungen nicht erneut abfragen. Nach Abstimmung des konkreten Entwurfs den Implementierungsplan erstellen und mit der beauftragten Entwicklung beginnen. Reale Google-/Geräteprüfungen bleiben gesonderte Nachweise.
+
 ## Feste Leitplanken
 
 - Zielgruppe: 10–13 Jahre, Klasse 4–7.
@@ -27,6 +29,7 @@ Das erste Dokumentationspaket wurde beauftragt und veröffentlicht. Der anschlie
 - Fehler häufiger wiederholen; die Richtigserie je Wort und Kind über Runden hinweg erhalten. Nach drei richtigen Antworten für den Rest der Runde pausieren und später nach den festgelegten Tagesabständen wiederholen (R08/R19 in den Anforderungen).
 - Google Drive; gemeinsamer, von Eltern eingerichteter Google-Zugang auf beiden Geräten; getrennte Lernprofile in der App.
 - Kein zusätzliches kostenpflichtiges Cloudabo, kein stillschweigender Anbieterwechsel.
+- Die allgemeine Lizenzentscheidung ist bewusst zurückgestellt (R31). Vorerst keine allgemeine Open-Source-Lizenz hinzufügen und daraus keine Änderung der Repository-Sichtbarkeit ableiten. Die beauftragte private Entwicklung und portable Weiterarbeit bleiben möglich.
 - Altersgerechte Gestaltung und ein gemeinsames Belohnungssystem aus Lernreise/Landkarte, Punkten/Leveln/Abzeichen und einfachem gestaltbarem Avatar gehören zur ersten Version. Gewähltes Thema: Insel-Abenteuer mit unterschiedlichen Landschaften. Beim Avatar zunächst wenige Farben und Zubehörteile vorsehen. Punktevergabe: 10 je richtiger Antwort, 20 zusätzlich je abgeschlossener Runde, keine Punktabzüge bei Fehlern (R23). Level-Meilensteine schalten Reiseabschnitte und Ausstattung automatisch frei; Abzeichen für Meilensteine, kein zusätzlicher Münzladen (R24). Konkrete Grafiken, Umfang der Welt und Schwellenwerte sind noch offen.
 
 ## Planen und umsetzen
@@ -65,7 +68,7 @@ Das erste Dokumentationspaket wurde beauftragt und veröffentlicht. Der anschlie
 
 - Vor Änderungen `git status --short --branch` prüfen. Keine fremden Änderungen zurücksetzen.
 - Keine Force-Pushes oder destruktiven Bereinigungen ohne ausdrücklichen Auftrag.
-- Veröffentlichungen und Pushes nur im Umfang des aktuellen Auftrags. Für das anfängliche Dokumentationspaket ist der Push nach GitHub ausdrücklich beauftragt.
+- Veröffentlichungen und Pushes nur im Umfang des aktuellen Auftrags. Für die Projektdokumentation einschließlich Anforderungsklärung und Übergaben ist der Push nach GitHub ausdrücklich beauftragt.
 - Git überträgt Programmcode und Dokumentation. Es überträgt keine Browserdaten oder Google-Anmeldesitzungen.
 - Relative Links im Repository, UTF-8 und portable Befehle verwenden. Pfade eines einzelnen Arbeitsplatzes sind keine Voraussetzung für andere Systeme.
 - Bei Netz- oder Sandboxfehlern den zulässigen Zugriffsweg verwenden; nicht globale Sicherheits- oder Proxyregeln verändern.
