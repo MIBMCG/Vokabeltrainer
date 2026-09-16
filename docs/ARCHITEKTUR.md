@@ -1,8 +1,8 @@
 # Technischer Entwurf
 
-Stand: 16.09.2026. **Entwurf, noch keine Implementierung und kein vollständig freigegebenes Detaildesign.** Die verbindlichen Nutzeranforderungen stehen in [ANFORDERUNGEN.md](ANFORDERUNGEN.md).
+Stand: 16.09.2026. **Bestätigte Architekturgrundlage; Implementierungs- und Prüfstatus im Arbeitsstand.** Die verbindlichen Nutzeranforderungen stehen in [ANFORDERUNGEN.md](ANFORDERUNGEN.md).
 
-Die konkreten Ergänzungsvorschläge E01–E10 sind im [Gesamtentwurf](superpowers/specs/2026-09-16-vokabeltrainer-design.md) zusammengeführt. Er präzisiert diesen Architekturüberblick; sein Status bleibt bis zur Nutzerprüfung „vorgeschlagen“.
+Die Ergänzungen E01–E10 sind im [bestätigten Gesamtentwurf](superpowers/specs/2026-09-16-vokabeltrainer-design.md) zusammengeführt. Er präzisiert diesen Architekturüberblick. Erste Umsetzung: [Plan der Google-Drive-Probe](superpowers/plans/2026-09-16-google-drive-probe.md), mit separatem synthetischem Datenformat und ohne fertige Produktfunktionen.
 
 ## Aufbau
 
@@ -62,7 +62,7 @@ Vorgeschlagene Grundregeln, die vor Umsetzung in ein konkretes Protokoll überf�
 7. Konto-/Datensatzwechsel darf keine ausstehenden Änderungen in ein anderes Konto hochladen.
 8. Cloudlöschungen und beschädigte Dateien nicht als leeren, gültigen Ersatz über lokale Daten schreiben.
 
-Ein einfaches „Datei laden, lokal ändern, vollständig hochladen“ ist ohne weiteren Schutz bei zwei Geräten nicht ausreichend. E10 schlägt unveränderliche JSON-Ereignispakete mit stabilen Datei-/Ereignis-IDs und getrennten Wiederherstellungsgenerationen vor. Konflikte werden über bekannte Vorversionen erkannt. Der Ablauf ist im Gesamtentwurf beschrieben, aber noch nicht bestätigt oder technisch nachgewiesen.
+Ein einfaches „Datei laden, lokal ändern, vollständig hochladen“ ist ohne weiteren Schutz bei zwei Geräten nicht ausreichend. E10 schlägt unveränderliche JSON-Ereignispakete mit stabilen Datei-/Ereignis-IDs und getrennten Wiederherstellungsgenerationen vor. Konflikte werden über bekannte Vorversionen erkannt. Der Ablauf ist im Gesamtentwurf beschrieben, bestätigt, aber noch nicht im Produkt technisch nachgewiesen.
 
 Zähler lassen sich nicht immer sinnvoll addieren: Auch Serien richtiger Antworten und Reihenfolgen müssen bei parallelem Offlineüben definiert werden. Geräteuhren allein sind kein sicherer Konfliktentscheid.
 
@@ -82,7 +82,7 @@ Ohne Verbindung oder gültigen Google-Zugriff sollen bereits gespeicherte Vokabe
 
 Ein Service Worker kann Programmdateien für Offlinebetrieb vorhalten. Dafür werden eine geeignete Webbereitstellung und zusätzliche Dateien benötigt. iOS-Hintergrundausführung ist kein verlässlicher Ersatz für den Abgleich bei geöffneter App. Browserdaten können gelöscht werden; lokaler Speicher ist keine unabhängige Sicherung. [MDN: Offlinebetrieb](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Offline_and_background_operation), [WebKit: Speicherverhalten](https://webkit.org/blog/14403/updates-to-storage-policy/)
 
-R30/R33 ergänzen den Abgleich um eine vollständige JSON-Sicherung zum Herunterladen und Wiederherstellen im Erwachsenenbereich. Vor dem Einlesen Datenformat und Version prüfen, eine Vorschau zeigen und die Wiederherstellung bestätigen lassen. Vor der Rücksetzung den aktuellen Stand automatisch separat sichern; danach den Sicherungsstand auch über Google Drive übernehmen. Google-Tokens und Zugangsdaten gehören nicht in die Datei. Abschnitt 9 des Gesamtentwurfs schlägt den Online-Ablauf mit überprüfter Sicherheitskopie sowie den separaten Erhalt verspäteter Offlineänderungen vor; diese technische Konkretisierung ist noch nicht bestätigt.
+R30/R33 ergänzen den Abgleich um eine vollständige JSON-Sicherung zum Herunterladen und Wiederherstellen im Erwachsenenbereich. Vor dem Einlesen Datenformat und Version prüfen, eine Vorschau zeigen und die Wiederherstellung bestätigen lassen. Vor der Rücksetzung den aktuellen Stand automatisch separat sichern; danach den Sicherungsstand auch über Google Drive übernehmen. Google-Tokens und Zugangsdaten gehören nicht in die Datei. Abschnitt 9 des Gesamtentwurfs schlägt den Online-Ablauf mit überprüfter Sicherheitskopie sowie den separaten Erhalt verspäteter Offlineänderungen vor; diese technische Konkretisierung wurde mit E08 bestätigt.
 
 ## Frühe Machbarkeitsprüfung
 

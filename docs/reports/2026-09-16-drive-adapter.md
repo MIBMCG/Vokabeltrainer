@@ -69,7 +69,7 @@ Alle Drive-Client-Methoden sind asynchron. `getToken()` der Sitzung ist synchron
 - `src/drive/auth.js`
 - `tests/drive/client.test.js`
 - `tests/drive/auth.test.js`
-- `.superpowers/sdd/2026-09-16-google-drive-probe/task-1-report.md`
+- Dieser Bericht (aus dem Arbeitsprotokoll übernommen).
 
 Parallel vorhandene Änderungen an Projekt- und Einrichtungsdokumenten stammen nicht aus Task 1 und werden nicht in diesen Commit aufgenommen.
 
@@ -101,3 +101,19 @@ Parallel vorhandene Änderungen an Projekt- und Einrichtungsdokumenten stammen n
 - Es wurde kein echtes Google-Konto verwendet und kein realer Netzwerkaufruf ausgeführt.
 - Die tatsächliche OAuth-/Drive-Interoperabilität und das Verhalten auf iPhone/iPad bleiben Bestandteil der späteren externen Probe.
 - Node.js 22.23.2 benötigt für prozesslose Testisolation noch die Option `--experimental-test-isolation=none`. Das npm-Skript verwendet deshalb diese auf der festgelegten Mindestversion verfügbare Schreibweise; sie umgeht zugleich die bekannte `spawn EPERM`-Beschränkung der Arbeitsumgebung.
+
+## Review-Fixrunde 1
+
+Die Reviewprüfung zeigte, dass `listFiles()` einen identischen `nextPageToken` unbegrenzt erneut anfragen konnte. Der neue Regressionstest begrenzt das HTTP-Double auf zwei Antworten mit demselben Seitenschlüssel. Vor der Korrektur endete der gezielte Lauf mit Exitcode 1: Statt des erwarteten `DriveError('invalid')` erreichte die Implementierung einen dritten Request und wandelte den dort ausgelösten Testschutz in `DriveError('network')` um.
+
+Nach der Korrektur verwaltet `listFiles()` die bereits ausgegebenen Seitenschlüssel pro Aufruf. Ein erneut ausgegebener Schlüssel wird nach der empfangenen Antwort und vor einem weiteren authentifizierten Request als ungültige Drive-Antwort abgewiesen. Der gezielte GREEN-Lauf bestand mit 1 von 1 Test und Exitcode 0.
+
+Die Erfolgspfad-Fixtures für Ordner- und JSON-Anlage liefern beim POST nun absichtlich unvollständige Metadaten. Nur der nachfolgende GET liefert die verifizierbaren Metadaten. Beide Tests zählen und prüfen den GET-Pfad ausdrücklich; damit würde ein späteres Vertrauen auf die POST-Antwort oder das Entfernen der Rückleseprüfung auffallen. Der fokussierte Lauf bestand mit 2 von 2 Tests und Exitcode 0.
+
+Der abschließende vollständige Lauf `npm test` bestand mit 34 von 34 Tests, 0 Fehlern und Exitcode 0. Die Syntaxprüfung von `src/drive/client.js` sowie `git diff --check` für die beiden Fixdateien endeten ebenfalls mit Exitcode 0.
+
+## Pausencheckpoint
+
+Die unabhängige Nachprüfung hat beide Befunde als behoben und die Taskqualität als freigegeben bewertet. Der koordinierende Agent hat anschließend `npm test` erneut ausgeführt: 34 Tests, 34 bestanden, 0 fehlgeschlagen. Die Dokumentationsprüfung ergab keine Fehler bei UTF-8, Zeilenenden, internen Verweisen, Pflichtdokumenten und den begrenzten Mustersuchen nach Zugangsdaten/Arbeitsplatzpfaden. `git diff --check` war ebenfalls sauber.
+
+Der Nutzer hat nach diesem testbaren Zwischenstand Push und Pause für heute angeordnet. Task 2 ist noch nicht implementiert; keine Browseroberfläche, kein `npm start`, keine echte Google-Verbindung oder iOS-Abnahme vorhanden. Der geplante Browsertest wurde nicht als Produktnachweis ausgeführt. Der vorübergehende Start eines getrennten Headless-Browsers war nur eine Prüfung der lokalen Entwicklungswerkzeuge.

@@ -60,7 +60,7 @@ export function createTokenSession({oauth2,clientId,now = Date.now}) {
 }
 ```
 
-- [ ] Write failing Node tests using `node:test` and `node:assert/strict`. Mock only external HTTP/GIS. Catch pagination loss, wrong account identifiers, duplicate files after ambiguous upload, 401/token expiry and malformed responses. Example minimal regression:
+- [x] Write failing Node tests using `node:test` and `node:assert/strict`. Mock only external HTTP/GIS. Catch pagination loss, wrong account identifiers, duplicate files after ambiguous upload, 401/token expiry and malformed responses. Example minimal regression:
 
 ```js
 test('retries the same file after an ambiguous server response', async () => {
@@ -78,10 +78,10 @@ test('retries the same file after an ambiguous server response', async () => {
 });
 ```
 
-- [ ] Run `node --test --test-isolation=none tests/drive/*.test.js`, observe expected missing implementation or assertion failure, record RED evidence.
-- [ ] Implement the contract. Use fixed Google API origins; encode IDs and search queries through URL/URLSearchParams. `about?fields=user(permissionId)` binds accounts without retrieving email. `files.generateIds` preallocates IDs; list every page and reject malformed/incompleteSearch results. GET metadata fields include ID/name/MIME/parents/appProperties/trashed. Restrict input IDs to nonempty URL-safe tokens. Folder creation uses stable supplied ID and verifies metadata after 409. JSON creation uses multipart/related with stable supplied ID and metadata, then reads metadata and content back on success or 409. Verify logical JSON equality independent of key order and reject same ID/different content or mismatched parent/properties. A lost response does not silently generate a new ID; caller persists and retries. No automatic unlimited retries. HTTP errors return safe codes, never full response bodies/tokens.
-- [ ] Implement GIS wrapper with only DRIVE_SCOPE and `include_granted_scopes:false`; validate nonempty web client ID; handle access_denied, missing scope/token/expiry, popup_closed/failed_to_open, double connect and disconnect. Token expiry checked on every getToken with a small margin. Ignore late callbacks after disconnect. Never persist tokens. Browser main loads GIS script separately before exposing the ready connect button.
-- [ ] Run focused tests, then `npm test`. Self-review token storage, response validation and retry semantics. Commit only task files and record results in the task report.
+- [x] Run `node --test --experimental-test-isolation=none tests/drive/*.test.js`, observe expected missing implementation or assertion failure, record RED evidence.
+- [x] Implement the contract. Use fixed Google API origins; encode IDs and search queries through URL/URLSearchParams. `about?fields=user(permissionId)` binds accounts without retrieving email. `files.generateIds` preallocates IDs; list every page and reject malformed/incompleteSearch results. GET metadata fields include ID/name/MIME/parents/appProperties/trashed. Restrict input IDs to nonempty URL-safe tokens. Folder creation uses stable supplied ID and verifies metadata after 409. JSON creation uses multipart/related with stable supplied ID and metadata, then reads metadata and content back on success or 409. Verify logical JSON equality independent of key order and reject same ID/different content or mismatched parent/properties. A lost response does not silently generate a new ID; caller persists and retries. No automatic unlimited retries. HTTP errors return safe codes, never full response bodies/tokens.
+- [x] Implement GIS wrapper with only DRIVE_SCOPE and `include_granted_scopes:false`; validate nonempty web client ID; handle access_denied, missing scope/token/expiry, popup_closed/failed_to_open, double connect and disconnect. Token expiry checked on every getToken with a small margin. Ignore late callbacks after disconnect. Never persist tokens. Browser main loads GIS script separately before exposing the ready connect button.
+- [x] Run focused tests, then `npm test`. Self-review token storage, response validation and retry semantics. Commit only task files and record results in the task report.
 
 ## Task 2: Persistente mobile Probe mit Rücksetztest
 
@@ -105,7 +105,7 @@ export function openProbeStore() {
   // save resolves only after IndexedDB transaction completion.
 }
 export function createProbeController({store,drive,makeId}) {
-  // Return {load(), state(), selectFolder(folder), createFolder(), addAnswer(),
+  // Return {load(), state(), setClientId(clientId), findFolders(), selectFolder(folder), createFolder(), addAnswer(),
   // sync(), repeatLastUpload(), restoreEmpty()}; async except state().
   // state returns safe clone. Persist pending IDs before each network mutation.
 }
@@ -141,6 +141,8 @@ assert.equal(projectProbe([a,r,{...a,id:'late-a'}]).lateAnswers.length, 1);
 - [ ] Commit docs and verified implementation; push under the user's project handoff instruction only after review. Leave main unchanged if branch integration is not explicitly requested. Compare pushed branch SHA with local SHA and report the branch/start steps.
 
 ## Completion boundary
+
+**Pausencheckpoint vom 16.09.2026:** Auf ausdrücklichen Nutzerwunsch nach dem ersten testbaren Zwischenstand pausiert. Task 1 ist in `7a5a108`/`1745d66` abgeschlossen und nach Korrektur beider Reviewbefunde freigegeben (34 Tests). Task 2 ist noch nicht implementiert; Task 3 enthält bislang nur vorbereitete Einrichtungshinweise, keine Browserprüfung. Aktuelle Übernahme: [Pausenübergabe](../../handoffs/2026-09-16-pause.md). Kein weiteres Entwicklungspaket ohne erneute Fortsetzung beginnen.
 
 Local implementation of the probe can be completed without a Google account. Actual Google authorization and Apple-device evidence cannot. Missing registration/device access leaves the probe's external acceptance open and prevents claiming the early feasibility gate has passed. Independent documentation and local checks proceed while the user's setup answer is pending.
 

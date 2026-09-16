@@ -31,11 +31,11 @@ Ergebnis dieses Arbeitspakets: README, AGENTS.md, Anforderungen, Entwurf, Einric
 - Erledigt: Allgemeine Lizenzentscheidung bewusst zurückgestellt; private Entwicklung fortsetzen und vorerst keine allgemeine Open-Source-Freigabe hinzufügen.
 - Erledigt: Unterbrochene Runden auf dem jeweiligen Gerät speichern; beim nächsten Öffnen Fortsetzen oder eine neue Runde anbieten. Antworten/Antwortpunkte erhalten, kein Abschlussbonus allein für Unterbrechen/Aufgeben.
 
-Ergebnis: Die Einzelfragen Q1–Q14 sind beantwortet. Der [Gesamtentwurf](superpowers/specs/2026-09-16-vokabeltrainer-design.md) liegt mit den noch nicht bestätigten Ergänzungen E01–E10 zur Prüfung vor. Er konkretisiert die oben genannten Detailregeln und Grenzen der ersten Version. Nach vollständiger Klärung ist der Entwicklungsbeginn beauftragt. Der Nutzer besitzt keine eigenen Apple-Geräte; der Freund als künftiger Hauptnutzer besitzt iPhone und iPad. Modelle und Testverfügbarkeit bleiben zu klären. Eine visuelle Vorschau wurde noch nicht erstellt.
+Ergebnis: Die Einzelfragen Q1–Q14 und der [Gesamtentwurf](superpowers/specs/2026-09-16-vokabeltrainer-design.md) einschließlich E01–E10 sind bestätigt. Die dort konkretisierten Detailregeln sind verbindlich; die Entwicklung wurde begonnen. Der Nutzer besitzt keine eigenen Apple-Geräte; der Freund als künftiger Hauptnutzer besitzt iPhone und iPad. Modelle und Testverfügbarkeit bleiben zu klären.
 
 ## 2. Implementierungsplan erstellen
 
-Nach Abstimmung des Gesamtentwurfs einen ausführbaren Plan mit konkreten Dateien, Schnittstellen, Datenformaten und passenden Tests schreiben. Die frühe Google-/iOS-Probe bildet das erste Entwicklungspaket; ihre Ergebnisse können gezielte Anpassungen erfordern.
+Der [Plan der Google-Drive-Probe](superpowers/plans/2026-09-16-google-drive-probe.md) beschreibt das erste ausführbare Paket mit Dateien, Schnittstellen, Probeformat und Tests. Seine Ergebnisse können gezielte Anpassungen erfordern. Anschließende Pläne für Lernkern, Erwachsenenbereich und Belohnungen übernehmen den bestätigten Gesamtentwurf; kein erneutes Abfragen bereits gewählter Produktdetails.
 
 Ergebnis: umsetzbarer Plan. Dieses Dokument ersetzt ihn nicht. Falls Superpowers verwendet wird, ist an dieser Stelle der Skill `writing-plans` passend; andere KIs können gleichwertig vorgehen.
 

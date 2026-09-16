@@ -16,7 +16,7 @@ Stand: 16.09.2026. Dieses Dokument ist die zentrale Quelle für den Produktumfan
 | R08 | Drei richtige Antworten in Folge | Die Serie zählt je Wort und Kind über mehrere Runden hinweg. Eine falsche Antwort auf dieses Wort setzt dessen Serie auf null; Antworten auf andere Wörter verändern sie nicht. Nach drei richtigen Antworten pausiert das Wort für den Rest der laufenden Runde. Spätere Wiederholung gemäß R19. |
 | R09 | Drei Auswahlmodi | „Alle Vokabeln“: gesamter dem Kind zugeordneter Wortschatz. „Letzte Vokabeln“: zuletzt hinzugefügte Lektion innerhalb der diesem Kind zugeordneten Lektionen. „Neue Vokabeln“: zugeordnete Wörter, die das ausgewählte Kind noch nie geübt hat. Definitionen aus Q1/Q2, Zuordnungsgrenze aus Q7b/R26. |
 | R10 | Fortschritt einsehbar | Übersicht darüber, welche Wörter wie gut und wie oft geübt wurden. |
-| R11 | Ansprechende Gestaltung und Gamification | Bereits die erste Version verbindet Lernreise/Landkarte, Punkte/Level/Abzeichen und einen einfachen gestaltbaren Avatar zu einem gemeinsamen Belohnungssystem. Thema ist ein Insel-Abenteuer mit unterschiedlichen Landschaften, etwa Wäldern, Stränden und Bergen. Modern und passend für 10–13-Jährige gestalten. Der Avatar erhält zunächst eine kleine Auswahl an Farben und Zubehör. Punktevergabe gemäß R23, Freischaltprinzip gemäß R24; konkrete Grafiken, Umfang der Welt und Schwellenwerte sind noch offen. |
+| R11 | Ansprechende Gestaltung und Gamification | Bereits die erste Version verbindet Lernreise/Landkarte, Punkte/Level/Abzeichen und einen einfachen gestaltbaren Avatar zu einem gemeinsamen Belohnungssystem. Thema ist ein Insel-Abenteuer mit unterschiedlichen Landschaften, etwa Wäldern, Stränden und Bergen. Modern und passend für 10–13-Jährige gestalten. Der Avatar erhält zunächst eine kleine Auswahl an Farben und Zubehör. Punktevergabe gemäß R23, Freischaltprinzip gemäß R24; Umfang und Schwellenwerte gemäß bestätigtem E04; die tatsächlichen Grafiken entstehen bei der Umsetzung. |
 | R12 | Automatischer Cloudaustausch | Google Drive wurde ausdrücklich ausgewählt. Erneutes Verbinden bei Bedarf ist gemäß R28 grundsätzlich akzeptiert; die tatsächliche Häufigkeit und Bedienbarkeit bleiben auf Zielgeräten zu prüfen. |
 | R13 | Keine zusätzlichen kostenpflichtigen Cloudabos | Vorhandenes Google Drive nutzen. Kein stillschweigender Wechsel auf einen weiteren Dienst. |
 | R14 | Gemeinsamer Google-Zugang | Die Eltern richten denselben Zugang auf beiden Geräten ein; eigene Lernprofile trennen die Lernstände der Kinder. |
@@ -44,7 +44,7 @@ R03–R11 stammen aus der ursprünglichen Produktbeschreibung. R12–R14 wurden 
 
 ## Besprochene technische Arbeitsbasis
 
-Die folgenden Punkte bilden den vorgeschlagenen Gesamtaufbau, auf dessen Grundlage Google Drive gewählt wurde. Ein vollständiges Detaildesign ist damit noch nicht freigegeben:
+Die folgenden Punkte bilden den Gesamtaufbau. Das ergänzende Detaildesign E01–E10 wurde am 16.09.2026 ausdrücklich mit Option A angenommen:
 
 - PWA mit HTML, CSS und JavaScript; mehrere überschaubare Dateien statt einer erzwungenen einzelnen HTML-Datei.
 - Lokales Speichern auf dem Gerät, voraussichtlich IndexedDB, und Offlineüben nach erfolgreicher Ersteinrichtung.
@@ -67,11 +67,11 @@ Der Nutzer selbst besitzt weder iPhone noch iPad. Ein Freund, der den Trainer ha
 5. Mit „Weiter“ fortfahren; die Antwort nicht mehrfach werten.
 6. Am Ende eine kurze Zusammenfassung des Übens zeigen.
 
-Die Schritte 1, 3 und 6 ergänzen den bestätigten Kernablauf als Vorschlag. Die reguläre Rundengröße ist mit R18 festgelegt; bei erschöpfter Auswahl gilt R20. Bedienung über Enter und Abschlussansicht sind im Gesamtentwurf als E02/E03 konkret vorgeschlagen, noch nicht bestätigt.
+Die Schritte 1, 3 und 6 ergänzen den bestätigten Kernablauf. Die reguläre Rundengröße ist mit R18 festgelegt; bei erschöpfter Auswahl gilt R20. Bedienung über Enter und Abschlussansicht sind mit E02/E03 im Gesamtentwurf bestätigt.
 
 Aus R18–R20 folgt für das Detaildesign: Zusätzlicher Wortschatz füllt nur die noch übrigen Aufgabenplätze. Auch dort pausierte Wörter bleiben pausiert. Sind insgesamt keine passenden weiteren Aufgaben vorhanden, ist nur der Abschluss möglich; keine Aufgaben oder Erfolge erfinden. Eine leere Auswahl am Start darf nicht als bereits erfolgreich absolvierte Runde erscheinen.
 
-E02 schlägt zu R23 vor: Auch der vorzeitige Abschluss wegen erschöpfter Auswahl gemäß R20 erhält den Bonus, sofern mindestens eine Antwort gewertet wurde. Diese Ergänzung ist noch nicht bestätigt. Unterbrechungen und Aufgeben sind mit R32 geregelt: Antworten und Antwortpunkte bleiben erhalten, kein Abschlussbonus allein dafür. Derselbe Antwortversuch oder Rundenabschluss darf nicht mehrfach belohnt werden; eine leere Auswahl erzeugt keinen Abschlussbonus. Diese Schutzregeln konkretisieren die einmalige Wertung und erlauben keine Abweichung von den bestätigten 10 beziehungsweise 20 Punkten.
+E02 ergänzt R23: Auch der vorzeitige Abschluss wegen erschöpfter Auswahl gemäß R20 erhält den Bonus, sofern mindestens eine Antwort gewertet wurde. Diese Ergänzung ist bestätigt. Unterbrechungen und Aufgeben sind mit R32 geregelt: Antworten und Antwortpunkte bleiben erhalten, kein Abschlussbonus allein dafür. Derselbe Antwortversuch oder Rundenabschluss darf nicht mehrfach belohnt werden; eine leere Auswahl erzeugt keinen Abschlussbonus. Diese Schutzregeln konkretisieren die einmalige Wertung und erlauben keine Abweichung von den bestätigten 10 beziehungsweise 20 Punkten.
 
 ## Geklärte Entscheidungen
 
@@ -101,13 +101,13 @@ E02 schlägt zu R23 vor: Auch der vorzeitige Abschluss wegen erschöpfter Auswah
 | Q13 | Laufende Runde auf demselben Gerät speichern und beim nächsten Öffnen Fortsetzen oder eine neue Runde anbieten. Gewertete Antworten und Antwortpunkte erhalten; kein Abschlussbonus allein für Unterbrechen/Aufgeben. | 16.09.2026: Nutzer wählt Option A der Frage zu unterbrochenen Runden. |
 | Q14 | Aktuellen Stand automatisch separat sichern und danach den aktiven Bestand mit Vorschau/Bestätigung auf den ausgewählten Sicherungsstand zurücksetzen; auch über Google Drive an verbundene Geräte übertragen. | 16.09.2026: Nutzer wählt Option A der Frage zur Wiederherstellung. |
 
-## Offene Entscheidungen
+## Bestätigter Gesamtentwurf und offene Nachweise
 
-Die Einzelfragen Q1–Q14 sind beantwortet. Die daraus entwickelten Detailvorschläge E01–E10 stehen im [Gesamtentwurf](superpowers/specs/2026-09-16-vokabeltrainer-design.md). Diese neuen Konkretisierungen sind noch zur Prüfung vorgelegt, nicht bereits bestätigt. Danach den Implementierungsplan erstellen und den bereits beauftragten Entwicklungsbeginn ausführen. Tatsächliche Google-/Geräteprüfungen bleiben Prüfaufgaben, keine offenen Geschmacksentscheidungen.
+Die Einzelfragen Q1–Q14 sind beantwortet. Der [Gesamtentwurf](superpowers/specs/2026-09-16-vokabeltrainer-design.md) einschließlich E01–E10 wurde am 16.09.2026 durch Nutzerantwort A angenommen. Der [erste Implementierungsplan](superpowers/plans/2026-09-16-google-drive-probe.md) setzt die frühe Google-/iOS-Probe um. Tatsächliche Google-/Geräteprüfungen bleiben Prüfaufgaben.
 
 Die Liste wird auf ausdrücklichen Wunsch des Nutzers Frage für Frage mit Optionen und Empfehlung abgearbeitet. Jede Antwort wird sofort festgehalten; neu erkannte Produktfragen werden ergänzt. Technische Detailentscheidungen sollen verständlich begründet werden, ohne den Nutzer unnötig mit Implementierungsdetails zu belasten. Nach vollständiger Klärung den konsolidierten Umfang dokumentieren, einen konkreten Implementierungsplan erstellen und mit der beauftragten Entwicklung beginnen. Reale technische Nachweise bleiben als Prüfaufgaben sichtbar und dürfen nicht durch bloße Zustimmung als bestanden gelten.
 
-Das technische Speicher-/Konfliktmodell aus dem bisherigen Themenblock Q11 ist im Gesamtentwurf E07/E08/E10 konkret vorgeschlagen: stabile IDs, getrennte Inhalte/Ergebnisse, Reihenfolge paralleler Lernereignisse, Datei-Aufteilung, Wiederholbarkeit von Übertragungen und Erkennen echter Bearbeitungskonflikte. Q11a entscheidet das sichtbare Verhalten bei widersprüchlichen Vokabeländerungen; die technischen Ergänzungen sind damit nicht rückwirkend bestätigt.
+Das technische Speicher-/Konfliktmodell E07/E08/E10 ist mit der Gesamtbestätigung ebenfalls angenommen: stabile IDs, getrennte Inhalte/Ergebnisse, Reihenfolge paralleler Lernereignisse, Datei-Aufteilung, Wiederholbarkeit von Übertragungen und Erkennen echter Bearbeitungskonflikte. Seine praktische Funktionsfähigkeit ist noch nachzuweisen.
 
 ## Nicht beauftragt
 

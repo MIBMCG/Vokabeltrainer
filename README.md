@@ -2,7 +2,7 @@
 
 Ein geplanter Deutsch-Englisch-Vokabeltrainer für Kinder von **10 bis 13 Jahren, Klasse 4 bis 7**. Er soll auf aktuellen Smartphones, Tablets und Computern funktionieren; **iPhone und iPad haben Vorrang**.
 
-**Stand: 16. September 2026 — Einzelfragen geklärt, Gesamtentwurf zur Prüfung vorgelegt. Es gibt noch keine ausführbare Anwendung.** Die Antworten Q1–Q14 sind dokumentiert. Der [Gesamtentwurf](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md) verbindet sie mit den noch nicht bestätigten Detailvorschlägen E01–E10. Dieses Repository enthält die Projektgrundlagen für die Weiterarbeit durch Menschen und unterschiedliche KI-Systeme.
+**Stand: 16. September 2026 — bestätigter Entwurf, erster automatisiert testbarer Zwischenstand, Pause auf Nutzerwunsch.** Die Google-Anmelde- und Übertragungsschicht ist implementiert und mit 34 Tests geprüft. Eine klickbare Oberfläche ist noch nicht vorhanden. Die Antworten Q1–Q14 und der [Gesamtentwurf](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md) einschließlich E01–E10 sind angenommen. Aktuelle Nachweise und Wiedereinstieg stehen in [ARBEITSSTAND.md](ARBEITSSTAND.md).
 
 ## Geplanter Lernablauf
 
@@ -12,7 +12,7 @@ Ein geplanter Deutsch-Englisch-Vokabeltrainer für Kinder von **10 bis 13 Jahren
 4. Mit „Weiter“ folgt das nächste Wort.
 5. Nach einem Fehler wird das Wort nach zwei anderen Aufgaben erneut abgefragt. Endet die Runde vorher, bleibt die Wiederholung für später vorgemerkt. Nach drei richtigen Antworten hintereinander pausiert ein Wort für den Rest der laufenden Runde.
 
-Die Auswahlmodi sind „Alle Vokabeln“, „Letzte Vokabeln“ (zuletzt hinzugefügte Lektion) und „Neue Vokabeln“ (vom ausgewählten Kind noch nie geübte Wörter). Die erste Version soll eine Lernreise/Landkarte, Punkte/Level/Abzeichen und einen einfachen gestaltbaren Avatar mit wenigen Farben und Zubehörteilen verbinden. Thema ist ein Insel-Abenteuer mit Wäldern, Stränden und Bergen. Drei Inseln, 200 Punkte je Level sowie konkrete Abzeichen und Zubehör sind im Gesamtentwurf vorgeschlagen; diese Werte sind noch nicht bestätigt.
+Die Auswahlmodi sind „Alle Vokabeln“, „Letzte Vokabeln“ (zuletzt hinzugefügte Lektion) und „Neue Vokabeln“ (vom ausgewählten Kind noch nie geübte Wörter). Die erste Version soll eine Lernreise/Landkarte, Punkte/Level/Abzeichen und einen einfachen gestaltbaren Avatar mit wenigen Farben und Zubehörteilen verbinden. Thema ist ein Insel-Abenteuer mit Wäldern, Stränden und Bergen. Drei Inseln, 200 Punkte je Level sowie konkrete Abzeichen und Zubehör sind im Gesamtentwurf bestätigt.
 
 Jede richtige Antwort bringt 10 Punkte, auch bei einer späteren Wiederholung eines zuvor falsch beantworteten Wortes. Eine abgeschlossene Runde bringt zusätzlich 20 Punkte. Fehler führen zu keinem Punktabzug.
 
@@ -71,7 +71,8 @@ Bei Googles direkter Browseranbindung laufen Zugriffstokens ab. Eine erneute Nut
 4. [Anforderungen](docs/ANFORDERUNGEN.md): bestätigte Wünsche und offene Produktentscheidungen.
 5. [Architektur](docs/ARCHITEKTUR.md): technischer Entwurf und Grenzen.
 6. [Roadmap](docs/ROADMAP.md): Reihenfolge der nächsten Arbeitspakete.
-7. [Gesamtentwurf zur Prüfung](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md): zusammenhängende Abläufe und konkrete Ergänzungsvorschläge.
+7. [Bestätigter Gesamtentwurf](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md): verbindlicher Umfang und Abläufe.
+8. [Plan der technischen Probe](docs/superpowers/plans/2026-09-16-google-drive-probe.md) und [Einrichtung/Prüfablauf](docs/GOOGLE-DRIVE-PROBE.md).
 
 Weitere Dokumente:
 
@@ -93,7 +94,14 @@ git status --short --branch
 git log -5 --oneline
 ```
 
-Danach mit `START-HIER.md` beginnen. Zum Lesen dieser Dokumentation werden weder Node.js noch Python noch ein KI-Anbieter benötigt. Es gibt noch keine Installations-, Build- oder Testbefehle für die App; insbesondere noch kein `package.json` und kein `npm test`.
+Danach den Entwicklungszweig wählen und mit Node.js ab Version 22 die Tests starten:
+
+```sh
+git switch codex/google-drive-probe
+npm test
+```
+
+Die Tests benötigen weder npm-Zusatzpakete noch ein Google-Konto oder Internetzugriff. Erwartung für diesen Zwischenstand: **34 Tests bestanden**. Geprüft werden echte Adapter-/Anmeldelogik mit simulierten externen Google-Antworten. Ein Build oder Browserstart ist noch nicht vorhanden; `npm start` wird erst mit der Probeoberfläche ergänzt. Anschließend [START-HIER.md](START-HIER.md) und die [Pausenübergabe](docs/handoffs/2026-09-16-pause.md) lesen.
 
 ## Bereitstellung und Kosten
 

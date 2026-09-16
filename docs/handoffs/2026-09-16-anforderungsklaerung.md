@@ -1,5 +1,7 @@
 # Übergabe: laufende Anforderungsklärung
 
+**Historischer Stand:** Die hier noch ausstehende Entwurfsprüfung wurde anschließend durch Nutzerantwort A abgeschlossen. Aktuell gilt die [Übergabe zum Entwicklungsstart](2026-09-16-entwicklungsstart.md). Die Einzelentscheidungen unten bleiben als Gesprächsprotokoll erhalten.
+
 Stand: 16.09.2026. Diese Übergabe ersetzt den nächsten Gesprächsschritt der [ursprünglichen Projektübergabe](2026-09-16-projektstart.md). Die dort beschriebene fehlende App-Implementierung und die offenen technischen Nachweise gelten weiter.
 
 ## Ausgangsstand
