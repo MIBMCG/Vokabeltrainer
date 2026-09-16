@@ -14,11 +14,14 @@ Ergebnis dieses Arbeitspakets: README, AGENTS.md, Anforderungen, Entwurf, Einric
 - Erledigt: Nach drei richtigen Antworten das Wort für den Rest der laufenden Runde pausieren; Wiederholung frühestens am nächsten Tag, nach richtigen Wiederholungen mit Abständen von 3, 7 und danach jeweils 14 Tagen.
 - Erledigt: Nach einem Fehler zwei andere Aufgaben bearbeiten, dann erneut abfragen. Bei vorherigem Rundenende Wiederholungsbedarf vormerken; keine Verlängerung der gewählten Rundengröße.
 - Erledigt: Bei erschöpfter Auswahl entscheidet das Kind zwischen Beenden und Fortsetzen mit zusätzlichem Wortschatz; Aufgabenzahl und Wiederholungspausen bleiben erhalten.
-- Schreibweisenbewertung und zulässige Antwortvarianten festlegen.
-- Ein konkretes Gestaltungskonzept für 10–13-Jährige und die erste Gamification auswählen.
+- Erledigt: Groß-/Kleinschreibung und äußere Leerzeichen ignorieren, echte Buchstabenfehler als falsch werten, korrekte Schreibweise anzeigen.
+- Erledigt: Mehrere von Erwachsenen hinterlegte Übersetzungen/Schreibvarianten je Vokabel zulassen; jede hinterlegte Variante zählt richtig.
+- Erledigt: Lernreise/Landkarte, Punkte/Level/Abzeichen und einfachen gestaltbaren Avatar mit wenigen Farben und Zubehörteilen für die erste Version als gemeinsames System vorsehen.
+- Erledigt: Insel-Abenteuer mit unterschiedlichen Landschaften als Thema wählen; modern und passend für 10–13-Jährige gestalten.
+- Konkrete Grafiken, Umfang der Welt und Belohnungsregeln festlegen.
 - Umfang der Erwachsenenansicht und Wortlistenverwaltung bestimmen.
 
-Ergebnis: ein prüfbares Design mit klaren Grenzen der ersten Version. Offene Produktpunkte beginnen bei [Q5a](ANFORDERUNGEN.md#offene-entscheidungen). Der Nutzer hat festgelegt, alle offenen Punkte einzeln mit Optionen und Empfehlung zu klären und Antworten fortlaufend zu dokumentieren. Nach vollständiger Klärung ist der Entwicklungsbeginn beauftragt. Eine visuelle Vorschau kann helfen; sie wurde noch nicht erstellt oder ausgewählt.
+Ergebnis: ein prüfbares Design mit klaren Grenzen der ersten Version. Offene Produktpunkte beginnen bei [Q6c](ANFORDERUNGEN.md#offene-entscheidungen). Der Nutzer hat festgelegt, alle offenen Punkte einzeln mit Optionen und Empfehlung zu klären und Antworten fortlaufend zu dokumentieren. Nach vollständiger Klärung ist der Entwicklungsbeginn beauftragt. Eine visuelle Vorschau kann helfen; sie wurde noch nicht erstellt oder ausgewählt.
 
 ## 2. Google Drive auf iOS früh nachweisen
 

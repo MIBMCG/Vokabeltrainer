@@ -25,9 +25,12 @@ Prüfbericht: [2026-09-16-dokumentation.md](docs/reports/2026-09-16-dokumentatio
 - Nach der Dreierserie Wiederholung frühestens am nächsten Tag. Bei richtigen Wiederholungen danach Abstände von 3, 7 und 14 Tagen, anschließend jeweils 14 Tage; bei Fehler zurück ins häufigere Üben.
 - Nach einem Fehler zwei andere Aufgaben bearbeiten, dann das Wort erneut abfragen. Endet die Runde vorher, bleibt die Wiederholung vorgemerkt; die gewählte Rundengröße wird nicht verlängert.
 - Fehlt vor dem geplanten Rundenende eine passende Aufgabe, wählt das Kind zwischen Beenden und Fortsetzen mit zusätzlichem Wortschatz außerhalb der bisherigen Auswahl. Aufgabenzahl und Wiederholungspausen bleiben erhalten.
+- Groß-/Kleinschreibung und äußere Leerzeichen beeinflussen die Bewertung nicht; echte Buchstabenfehler bleiben falsch. Die korrekte Schreibweise wird angezeigt.
+- Erwachsene können pro Vokabel mehrere gültige englische Antworten hinterlegen. Jede eingetragene Übersetzung oder britische/amerikanische Schreibvariante zählt richtig.
 - Google Drive als gemeinsamer Speicher, keine zusätzlichen kostenpflichtigen Cloudabos.
 - Ein gemeinsamer Google-Zugang, eingerichtet durch die Eltern, mit getrennten Lernprofilen in der App.
 - Gewünscht: Vokabelverwaltung, Fortschrittsübersicht, die drei genannten Auswahlmodi und Gamification.
+- Gamification der ersten Version: Lernreise/Landkarte, Punkte/Level/Abzeichen und ein einfacher gestaltbarer Avatar mit wenigen Farben und Zubehörteilen bilden ein gemeinsames System. Thema: Insel-Abenteuer mit unterschiedlichen Landschaften wie Wäldern, Stränden und Bergen. Konkrete Grafiken, Umfang der Welt und genaue Belohnungsregeln sind noch offen.
 - „Letzte Vokabeln“ = zuletzt hinzugefügte Lektion; „Neue Vokabeln“ = vom ausgewählten Kind noch nie geübte Wörter. Beide Definitionen ausdrücklich bestätigt.
 - Runden: standardmäßig 10 Antworten, wahlweise 20 oder 30; Wiederholungen zählen mit. Fortschrittsbalken, beispielsweise „7 von 10“.
 - Plattformübergreifende Web-App mit besonderem Augenmerk auf iOS; PWA, Offlinebetrieb und JSON bilden die besprochene Arbeitsbasis.
@@ -42,7 +45,7 @@ Prüfbericht: [2026-09-16-dokumentation.md](docs/reports/2026-09-16-dokumentatio
 
 ## Nächster sinnvoller Schritt
 
-Die Produktabstimmung fortsetzen: als Nächstes [Q5a in den Anforderungen](docs/ANFORDERUNGEN.md#offene-entscheidungen) zur Bewertung von Groß-/Kleinschreibung klären. Danach alternative Übersetzungen und weitere offene Punkte behandeln. Der Nutzer wünscht jeweils eine Frage mit Optionen und Empfehlung; Antworten sofort dokumentieren.
+Die Produktabstimmung fortsetzen: als Nächstes [Q6c in den Anforderungen](docs/ANFORDERUNGEN.md#offene-entscheidungen) zur Punktevergabe klären. Empfehlung: 10 Punkte je richtiger Antwort plus 20 Punkte für eine abgeschlossene Runde. Alternativen: nur richtige Antworten oder nur abgeschlossene Runden belohnen. Noch keine Auswahl. Danach die Verbindung zu Insel-Fortschritt, Leveln, Abzeichen und Avatar-Ausstattung sowie weitere offene Punkte behandeln. Der Nutzer wünscht jeweils eine Frage mit Optionen und Empfehlung; Antworten sofort dokumentieren.
 
 Vor umfangreicher Umsetzung muss eine frühe technische Probe den Google-Zugang und erneuten Verbindungsaufbau auf echtem iPhone/Safari sowie als Home-Bildschirm-App prüfen. Dafür sind später die nutzerseitige Google-App-Registrierung und Zugang zum Testgerät nötig. Diese Probe ist noch nicht durchgeführt.
 

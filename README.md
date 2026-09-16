@@ -12,7 +12,7 @@ Ein geplanter Deutsch-Englisch-Vokabeltrainer für Kinder von **10 bis 13 Jahren
 4. Mit „Weiter“ folgt das nächste Wort.
 5. Nach einem Fehler wird das Wort nach zwei anderen Aufgaben erneut abgefragt. Endet die Runde vorher, bleibt die Wiederholung für später vorgemerkt. Nach drei richtigen Antworten hintereinander pausiert ein Wort für den Rest der laufenden Runde.
 
-Die Auswahlmodi sind „Alle Vokabeln“, „Letzte Vokabeln“ (zuletzt hinzugefügte Lektion) und „Neue Vokabeln“ (vom ausgewählten Kind noch nie geübte Wörter). Gewünscht sind außerdem eine altersgerechte Gestaltung und motivierende Spielelemente; das konkrete Belohnungssystem ist noch offen.
+Die Auswahlmodi sind „Alle Vokabeln“, „Letzte Vokabeln“ (zuletzt hinzugefügte Lektion) und „Neue Vokabeln“ (vom ausgewählten Kind noch nie geübte Wörter). Die erste Version soll eine Lernreise/Landkarte, Punkte/Level/Abzeichen und einen einfachen gestaltbaren Avatar mit wenigen Farben und Zubehörteilen verbinden. Thema ist ein Insel-Abenteuer mit Wäldern, Stränden und Bergen. Die konkreten Grafiken und genauen Belohnungsregeln sind noch offen.
 
 Eine Runde umfasst standardmäßig 10 Antworten, wahlweise 20 oder 30. Wiederholungen zählen mit; ein Fortschrittsbalken zeigt den Stand.
 
@@ -21,6 +21,10 @@ Ist vorher keine passende Aufgabe mehr verfügbar, kann das Kind die Runde beend
 Die Serie richtiger Antworten wird je Wort und Kind über mehrere Runden gespeichert. Ein Fehler bei diesem Wort setzt dessen Serie auf null; Antworten auf andere Wörter verändern sie nicht.
 
 Nach der Dreierserie ist die erste Wiederholung frühestens am nächsten Tag vorgesehen. Bei weiteren richtigen Antworten folgen Abstände von 3, 7 und 14 Tagen, danach jeweils 14 Tage. Bei einem Fehler wird das Wort wieder häufiger geübt.
+
+Bei der Bewertung werden Groß-/Kleinschreibung und äußere Leerzeichen ignoriert. Echte Buchstabenfehler bleiben falsch; die korrekte Schreibweise wird angezeigt.
+
+Eltern oder Lehrkräfte können pro Vokabel mehrere gültige Antworten eintragen. Jede hinterlegte Übersetzung oder Schreibvariante wird akzeptiert.
 
 ## Vereinbarte Richtung
 

@@ -16,7 +16,7 @@ Stand: 16.09.2026. Dieses Dokument ist die zentrale Quelle für den Produktumfan
 | R08 | Drei richtige Antworten in Folge | Die Serie zählt je Wort und Kind über mehrere Runden hinweg. Eine falsche Antwort auf dieses Wort setzt dessen Serie auf null; Antworten auf andere Wörter verändern sie nicht. Nach drei richtigen Antworten pausiert das Wort für den Rest der laufenden Runde. Spätere Wiederholung gemäß R19. |
 | R09 | Drei Auswahlmodi | „Alle Vokabeln“: gesamter verfügbarer Wortschatz. „Letzte Vokabeln“: zuletzt hinzugefügte Lektion. „Neue Vokabeln“: Wörter, die das ausgewählte Kind noch nie geübt hat. Q1/Q2 ausdrücklich bestätigt. |
 | R10 | Fortschritt einsehbar | Übersicht darüber, welche Wörter wie gut und wie oft geübt wurden. |
-| R11 | Ansprechende Gestaltung und Gamification | Art der Belohnungen und visuelles Thema noch nicht ausgewählt. |
+| R11 | Ansprechende Gestaltung und Gamification | Bereits die erste Version verbindet Lernreise/Landkarte, Punkte/Level/Abzeichen und einen einfachen gestaltbaren Avatar zu einem gemeinsamen Belohnungssystem. Thema ist ein Insel-Abenteuer mit unterschiedlichen Landschaften, etwa Wäldern, Stränden und Bergen. Modern und passend für 10–13-Jährige gestalten. Der Avatar erhält zunächst eine kleine Auswahl an Farben und Zubehör. Konkrete Grafiken, Umfang der Welt und Belohnungsregeln sind noch offen. |
 | R12 | Automatischer Cloudaustausch | Google Drive wurde ausdrücklich ausgewählt. Komfortgrenzen des Browserlogins sind zu prüfen. |
 | R13 | Keine zusätzlichen kostenpflichtigen Cloudabos | Vorhandenes Google Drive nutzen. Kein stillschweigender Wechsel auf einen weiteren Dienst. |
 | R14 | Gemeinsamer Google-Zugang | Die Eltern richten denselben Zugang auf beiden Geräten ein; eigene Lernprofile trennen die Lernstände der Kinder. |
@@ -26,8 +26,10 @@ Stand: 16.09.2026. Dieses Dokument ist die zentrale Quelle für den Produktumfan
 | R18 | Runden mit wählbarer Aufgabenzahl | Standardmäßig 10 Antworten, alternativ 20 oder 30. Wiederholungen zählen mit. Ein Fortschrittsbalken zeigt den Stand, beispielsweise „7 von 10“. Kein Zeitlimit als reguläres Rundenende. |
 | R19 | Wiederholung mit wachsenden Abständen | Nach Erreichen der Dreierserie erste Wiederholung frühestens am nächsten Tag. Nach jeweils richtiger Wiederholung folgen Abstände von 3, 7 und 14 Tagen, danach weiterhin jeweils 14 Tage. Eine falsche Antwort führt zurück ins häufigere Üben und setzt gemäß R08 die Richtigserie auf null. |
 | R20 | Wahl bei erschöpfter Aufgabenauswahl | Ist vor dem geplanten Rundenende keine passende Aufgabe mehr verfügbar, entscheidet das Kind zwischen Beenden und Fortsetzen mit zusätzlichem Wortschatz außerhalb der bisherigen Auswahl. Die gewählte Gesamtzahl der Antworten und die Wiederholungspausen bleiben erhalten. |
+| R21 | Bewertung der eingegebenen Schreibweise | Groß-/Kleinschreibung und überflüssige Leerzeichen am Anfang/Ende ignorieren. Echte Buchstabenfehler bleiben falsch. Die korrekte Schreibweise wird auch bei akzeptierter abweichender Großschreibung angezeigt. |
+| R22 | Mehrere gültige Antworten | Eltern/Lehrkräfte können je Vokabel mehrere zulässige englische Antworten hinterlegen, etwa „bicycle“ und „bike“ für „Fahrrad“. Jede hinterlegte Antwort zählt richtig. Auch britische/amerikanische Schreibvarianten können so ausdrücklich zugelassen werden. Die Erwachsenen bestimmen die erlaubten Varianten. |
 
-R03–R11 stammen aus der ursprünglichen Produktbeschreibung. R12–R14 wurden in der anschließenden Technologie-/Kontenabstimmung konkretisiert. R01 und R16 wurden mit dem Dokumentationsauftrag ergänzt. Danach bestätigte der Nutzer die Definitionen in R09 und den Ablauf in R17.
+R03–R11 stammen aus der ursprünglichen Produktbeschreibung. R12–R14 wurden in der anschließenden Technologie-/Kontenabstimmung konkretisiert. R01 und R16 wurden mit dem Dokumentationsauftrag ergänzt. Danach bestätigte der Nutzer die Definitionen in R09, den Ablauf in R17 und die Konkretisierung der Gamification in R11. Die weiteren Entscheidungen sind unten einzeln protokolliert.
 
 ## Besprochene technische Arbeitsbasis
 
@@ -65,14 +67,17 @@ Aus R18–R20 folgt für das Detaildesign: Zusätzlicher Wortschatz füllt nur d
 | Q4b | Nach drei richtigen Antworten für den Rest der Runde pausieren. Erste Wiederholung frühestens am nächsten Tag; nach richtigen Wiederholungen Abstände von 3, 7, 14 Tagen, anschließend jeweils 14 Tage. Bei Fehler zurück ins häufigere Üben. | 16.09.2026: Nutzer wählt Option A der Frage zur späteren Wiederholung. |
 | Q4c | Nach einer falschen Antwort zwei andere Aufgaben bearbeiten, dann das Wort erneut abfragen. Bei vorherigem Rundenende den Wiederholungsbedarf vormerken, ohne die gewählte Rundengröße zu verlängern. | 16.09.2026: Nutzer wählt Option A der Frage zum Fehlerabstand. |
 | Q4d | Bei erschöpfter Auswahl entscheidet das Kind zwischen Beenden und Fortsetzen mit zusätzlichem Wortschatz außerhalb der bisherigen Auswahl. | 16.09.2026: Nutzer wählt Option B der Frage zum vorzeitigen Rundenende. |
+| Q5a | Groß-/Kleinschreibung und äußere Leerzeichen nicht als Fehler werten; echte Buchstabenfehler bleiben falsch. Die korrekte Schreibweise trotzdem anzeigen. | 16.09.2026: Nutzer wählt Option A der Frage zur Groß-/Kleinschreibung. |
+| Q5b | Mehrere von Erwachsenen hinterlegte englische Lösungen pro Vokabel zulassen; jede hinterlegte Übersetzung oder Schreibvariante wird akzeptiert. | 16.09.2026: Nutzer wählt Option A der Frage zu mehreren gültigen Antworten. |
+| Q6a | In der ersten Version Lernreise/Landkarte, Punkte/Level/Abzeichen und einen einfachen gestaltbaren Avatar als gemeinsames Belohnungssystem umsetzen. Für den Avatar zunächst wenige Farben und Zubehörteile vorsehen. | 16.09.2026: Nutzer wählt Option A der konkretisierten Frage zur Kombination aller drei Elemente. |
+| Q6b | Insel-Abenteuer mit unterschiedlichen Landschaften wie Wäldern, Stränden und Bergen als Thema der Lernwelt. Gestaltung modern und passend für 10–13-Jährige. | 16.09.2026: Nutzer wählt Option A der Frage zum Thema der Lernwelt. |
 
 ## Offene Entscheidungen
 
 | ID | Frage | Vorschlag zur Besprechung | Vor welchem Paket klären? |
 | --- | --- | --- | --- |
-| Q5a | Soll Groß-/Kleinschreibung für richtig/falsch zählen? | A: Ignorieren und korrekte Schreibweise trotzdem anzeigen (Empfehlung). B: Mitbewerten. Bei beiden Optionen äußere Leerzeichen ignorieren und echte Buchstabenfehler als falsch werten. Noch nicht bestätigt. | Antwortprüfung |
-| Q5b | Welche alternativen Übersetzungen und Schreibvarianten sind erlaubt? | Mehrere gültige Antworten pro Vokabel durch Erwachsene hinterlegen; Umgang mit britisch/amerikanisch, Wortgruppen und Apostrophvarianten konkretisieren. | Antwortprüfung/Verwaltung |
-| Q6 | Welche Gamification und welche Optik? | Zum Beispiel Sammelobjekte, eine Lernreise oder ein gestaltbarer Avatar. Noch keine Variante gewählt. | UI-/Belohnungsdesign |
+| Q6c | Wofür soll es Punkte geben? | A: 10 Punkte je richtiger Antwort, auch bei einer späteren Wiederholung eines Fehlerwortes, plus 20 Punkte für eine abgeschlossene Runde (Empfehlung). B: Nur 10 Punkte je richtiger Antwort. C: Nur für abgeschlossene Runden, unabhängig von der Fehlerzahl; Höhe dann festlegen. In allen Vorschlägen keine Punktabzüge bei Fehlern. Noch keine Auswahl. | Belohnungsdesign |
+| Q6d | Wie führen Punkte zu Leveln, Insel-Fortschritt, Abzeichen und Avatar-Ausstattung? | Nach Q6c einen einfachen gemeinsamen Fortschritt vorschlagen. Freischaltregeln und Umfang der ersten Inselwelt sind noch offen. | Belohnungsdesign |
 | Q7 | Wie werden Vokabeln organisiert und eingegeben? | Lektionen/Wortlisten, Einzeleingabe; Tabellenimport als mögliche spätere Erweiterung. | Verwaltung |
 | Q8 | Wie wird zur Erwachsenenansicht gewechselt? | Ein klarer Bereich; optional PIN als Bedienhürde. Noch keine PIN beschlossen. | Verwaltung |
 | Q9 | Welche Geräte und iOS-Versionen müssen konkret unterstützt werden? | Echtes iPhone und nach Möglichkeit iPad benennen; Mindestversion aus den Tests ableiten und abstimmen. | Technische Probe |

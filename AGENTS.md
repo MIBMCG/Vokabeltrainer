@@ -27,7 +27,7 @@ Das erste Dokumentationspaket wurde beauftragt und veröffentlicht. Der anschlie
 - Fehler häufiger wiederholen; die Richtigserie je Wort und Kind über Runden hinweg erhalten. Nach drei richtigen Antworten für den Rest der Runde pausieren und später nach den festgelegten Tagesabständen wiederholen (R08/R19 in den Anforderungen).
 - Google Drive; gemeinsamer, von Eltern eingerichteter Google-Zugang auf beiden Geräten; getrennte Lernprofile in der App.
 - Kein zusätzliches kostenpflichtiges Cloudabo, kein stillschweigender Anbieterwechsel.
-- Altersgerechte Gestaltung und Gamification gehören zum gewünschten Produkt. Die konkrete Ausgestaltung ist noch nicht beschlossen.
+- Altersgerechte Gestaltung und ein gemeinsames Belohnungssystem aus Lernreise/Landkarte, Punkten/Leveln/Abzeichen und einfachem gestaltbarem Avatar gehören zur ersten Version. Gewähltes Thema: Insel-Abenteuer mit unterschiedlichen Landschaften. Beim Avatar zunächst wenige Farben und Zubehörteile vorsehen. Konkrete Grafiken, Umfang der Welt und Belohnungsregeln sind noch offen.
 
 ## Planen und umsetzen
 
