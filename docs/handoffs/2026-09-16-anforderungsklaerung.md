@@ -25,17 +25,20 @@ Alle offenen Punkte klären, jeweils **eine Frage** stellen, möglichst mehrere 
 - Q5b: Nutzer wählt A. Erwachsene können je Vokabel mehrere gültige englische Antworten hinterlegen, auch britische/amerikanische Schreibvarianten. Jede hinterlegte Variante zählt richtig.
 - Q6a: Nutzer wählt A. Alle drei Elemente kommen in die erste Version: Lernreise/Landkarte, Punkte/Level/Abzeichen und ein einfacher gestaltbarer Avatar mit zunächst wenigen Farben und Zubehörteilen. Sie bilden ein gemeinsames Belohnungssystem, keine drei unabhängigen Spielmodi.
 - Q6b: Nutzer wählt A. Insel-Abenteuer mit unterschiedlichen Landschaften, etwa Wäldern, Stränden und Bergen, als Thema. Modern und passend für 10–13-Jährige gestalten. Konkrete Grafiken und Umfang der Welt sind noch offen.
+- Q6c: Nutzer wählt A. 10 Punkte je richtiger Antwort, auch für später richtig beantwortete Fehlerwörter, plus 20 Punkte je abgeschlossener Runde. Keine Punktabzüge bei Fehlern.
+- Q6d: Nutzer wählt A. Level-Meilensteine schalten Reiseabschnitte und festgelegte Avatar-Ausstattung automatisch frei. Aus bereits freigeschalteter Ausstattung kann das Kind jederzeit frei wählen. Abzeichen für Meilensteine; kein zusätzlicher Münzladen.
+- Q7a: Nutzer wählt A. Einzeleingabe und Kopieren/Einfügen mehrerer Tabellenzeilen mit den Spalten Deutsch und Englisch. Zuordnung zu vorhandenen oder neu angelegten benannten Lektionen. Kein direkter Excel-/CSV-Dateiimport in der ersten Version.
+- Q7b: Nutzer wählt A. Erwachsene ordnen jede Lektion einem oder mehreren Kindern zu. Alle drei Übungsmodi berücksichtigen nur die dem jeweiligen Kind zugeordneten Lektionen. Lernstände, Punkte und Avatar bleiben pro Kind getrennt. Die Zuordnungsgrenze gilt auch bei zusätzlichem Wortschatz gemäß R20.
 
 ## Aktuelle Frage
 
-**Q6c: Wofür soll es Punkte geben? Noch nicht entschieden.**
+**Q8: Wie soll sich die Erwachsenenansicht öffnen lassen? Noch nicht entschieden.**
 
 Vorgesehene Optionen für die nächste Nutzerantwort:
 
-- A: 10 Punkte je richtiger Antwort plus 20 Punkte für eine abgeschlossene Runde. Auch bei einer späteren Wiederholung richtig beantwortete Fehlerwörter geben die vollen 10 Punkte. Empfehlung: richtige Antworten und das Abschließen einer Runde belohnen.
-- B: Nur richtige Antworten bringen jeweils 10 Punkte; keine zusätzliche Rundenbelohnung.
-- C: Nur abgeschlossene Runden bringen Punkte, unabhängig von der Fehlerzahl. Falls gewählt, die Höhe konkretisieren.
+- A: Über den Menüpunkt „Für Erwachsene“ und eine selbst festgelegte vierstellige PIN. Empfehlung: einfache Hürde gegen versehentliche Änderungen an Vokabeln oder Zuordnungen.
+- B: Über denselben Menüpunkt direkt, ohne PIN; einfacherer Wechsel zur Verwaltung.
 
-Alle drei Vorschläge verzichten auf Punktabzüge bei Fehlern. Noch keine Regel als beschlossen behandeln. Für das spätere Detaildesign offenhalten: Abschluss bei erschöpfter Auswahl gemäß R20, Abbruch/Fortsetzung einer Runde und Verhindern mehrfacher Belohnung desselben Abschlusses. Eine leere Auswahl darf keinen Abschlussbonus erzeugen.
+Noch keine Zugangslösung als gewählt behandeln. Eine PIN ist in der gemeinsamen Browser-/Google-Umgebung eine Bedienhürde; keine eigenständige Konten- oder Berechtigungsgrenze zusagen. Bei Auswahl einer PIN deren Einrichtung, Änderung, Vergessen und Verhalten auf mehreren Geräten im Detaildesign klären.
 
-Nach der Antwort die genaue Entscheidung festhalten und Q6d zur Verbindung von Punkten, Leveln, Insel-Fortschritt, Abzeichen und Avatar-Ausstattung vorbereiten. Die drei Auswahlmodi beibehalten; spätere Wiederholungen dürfen nicht stillschweigend als noch nie geübte „Neue Vokabeln“ behandelt werden. Keine vorgeschlagene Option ohne Antwort übernehmen. Diese laufende Übergabe und den Arbeitsstand bei weiteren Antworten kurz aktualisieren.
+Nach der Antwort die genaue Entscheidung festhalten und Q9 zu konkreten Testgeräten vorbereiten. Für Lektionszuordnungen die Reihenfolge von „Letzte“ bei nachträglich zugeordneten älteren Lektionen und den Erhalt von Lernständen bei geänderter Zuordnung im Detaildesign klären. Für Tabellenübernahme Vorschau, Fehlerhinweise, mehrere gültige Antworten und doppelte Einträge berücksichtigen. Konkrete Level-Schwellen, Abzeichen, Ausstattung und Umfang der ersten Inselwelt vorschlagen. Abschluss bei erschöpfter Auswahl gemäß R20, Abbruch/Fortsetzung und einmalige Bonusvergabe bleiben ebenfalls zu klären; siehe R23 und Lernablauf in den Anforderungen. Spätere Wiederholungen dürfen nicht stillschweigend als noch nie geübte „Neue Vokabeln“ behandelt werden. Keine vorgeschlagene Option ohne Antwort übernehmen. Diese laufende Übergabe und den Arbeitsstand bei weiteren Antworten kurz aktualisieren.

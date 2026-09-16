@@ -27,10 +27,14 @@ Prüfbericht: [2026-09-16-dokumentation.md](docs/reports/2026-09-16-dokumentatio
 - Fehlt vor dem geplanten Rundenende eine passende Aufgabe, wählt das Kind zwischen Beenden und Fortsetzen mit zusätzlichem Wortschatz außerhalb der bisherigen Auswahl. Aufgabenzahl und Wiederholungspausen bleiben erhalten.
 - Groß-/Kleinschreibung und äußere Leerzeichen beeinflussen die Bewertung nicht; echte Buchstabenfehler bleiben falsch. Die korrekte Schreibweise wird angezeigt.
 - Erwachsene können pro Vokabel mehrere gültige englische Antworten hinterlegen. Jede eingetragene Übersetzung oder britische/amerikanische Schreibvariante zählt richtig.
+- Vokabeln einzeln eingeben oder mehrere Tabellenzeilen mit den Spalten Deutsch und Englisch kopieren/einfügen. Zuordnung zu vorhandenen oder neu angelegten benannten Lektionen. Kein direkter Excel-/CSV-Dateiimport in der ersten Version.
+- Erwachsene ordnen jede Lektion einem oder mehreren Lernprofilen zu. Die drei Übungsmodi und zusätzlicher Wortschatz bei erschöpfter Auswahl nutzen nur die jeweils zugeordneten Lektionen. Lernstände, Punkte und Avatar bleiben pro Kind getrennt.
 - Google Drive als gemeinsamer Speicher, keine zusätzlichen kostenpflichtigen Cloudabos.
 - Ein gemeinsamer Google-Zugang, eingerichtet durch die Eltern, mit getrennten Lernprofilen in der App.
 - Gewünscht: Vokabelverwaltung, Fortschrittsübersicht, die drei genannten Auswahlmodi und Gamification.
-- Gamification der ersten Version: Lernreise/Landkarte, Punkte/Level/Abzeichen und ein einfacher gestaltbarer Avatar mit wenigen Farben und Zubehörteilen bilden ein gemeinsames System. Thema: Insel-Abenteuer mit unterschiedlichen Landschaften wie Wäldern, Stränden und Bergen. Konkrete Grafiken, Umfang der Welt und genaue Belohnungsregeln sind noch offen.
+- Gamification der ersten Version: Lernreise/Landkarte, Punkte/Level/Abzeichen und ein einfacher gestaltbarer Avatar mit wenigen Farben und Zubehörteilen bilden ein gemeinsames System. Thema: Insel-Abenteuer mit unterschiedlichen Landschaften wie Wäldern, Stränden und Bergen. Konkrete Grafiken, Umfang der Welt und Schwellenwerte sind noch offen.
+- Punktevergabe: 10 Punkte je richtiger Antwort, auch für später richtig beantwortete Fehlerwörter. Zusätzlich 20 Punkte für eine abgeschlossene Runde. Keine Punktabzüge bei Fehlern.
+- Level-Meilensteine schalten Reiseabschnitte und festgelegte Avatar-Ausstattung automatisch frei. Bereits freigeschaltete Ausstattung bleibt frei auswählbar. Abzeichen für Meilensteine; kein zusätzlicher Münzladen.
 - „Letzte Vokabeln“ = zuletzt hinzugefügte Lektion; „Neue Vokabeln“ = vom ausgewählten Kind noch nie geübte Wörter. Beide Definitionen ausdrücklich bestätigt.
 - Runden: standardmäßig 10 Antworten, wahlweise 20 oder 30; Wiederholungen zählen mit. Fortschrittsbalken, beispielsweise „7 von 10“.
 - Plattformübergreifende Web-App mit besonderem Augenmerk auf iOS; PWA, Offlinebetrieb und JSON bilden die besprochene Arbeitsbasis.
@@ -45,7 +49,7 @@ Prüfbericht: [2026-09-16-dokumentation.md](docs/reports/2026-09-16-dokumentatio
 
 ## Nächster sinnvoller Schritt
 
-Die Produktabstimmung fortsetzen: als Nächstes [Q6c in den Anforderungen](docs/ANFORDERUNGEN.md#offene-entscheidungen) zur Punktevergabe klären. Empfehlung: 10 Punkte je richtiger Antwort plus 20 Punkte für eine abgeschlossene Runde. Alternativen: nur richtige Antworten oder nur abgeschlossene Runden belohnen. Noch keine Auswahl. Danach die Verbindung zu Insel-Fortschritt, Leveln, Abzeichen und Avatar-Ausstattung sowie weitere offene Punkte behandeln. Der Nutzer wünscht jeweils eine Frage mit Optionen und Empfehlung; Antworten sofort dokumentieren.
+Die Produktabstimmung fortsetzen: als Nächstes [Q8 in den Anforderungen](docs/ANFORDERUNGEN.md#offene-entscheidungen) zum Zugang zur Erwachsenenansicht klären. Empfehlung: Menüpunkt mit einer von Erwachsenen festgelegten vierstelligen PIN als Hürde gegen versehentliche Änderungen. Alternative: direkter Zugang ohne PIN. Noch keine Auswahl. Danach konkrete Testgeräte und weitere offene Punkte behandeln; Spielschwellen, Abschluss-Sonderfälle und Details geänderter Lektionszuordnungen im Detaildesign erhalten. Der Nutzer wünscht jeweils eine Frage mit Optionen und Empfehlung; Antworten sofort dokumentieren.
 
 Vor umfangreicher Umsetzung muss eine frühe technische Probe den Google-Zugang und erneuten Verbindungsaufbau auf echtem iPhone/Safari sowie als Home-Bildschirm-App prüfen. Dafür sind später die nutzerseitige Google-App-Registrierung und Zugang zum Testgerät nötig. Diese Probe ist noch nicht durchgeführt.
 

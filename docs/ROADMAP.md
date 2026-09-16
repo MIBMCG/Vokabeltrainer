@@ -18,10 +18,14 @@ Ergebnis dieses Arbeitspakets: README, AGENTS.md, Anforderungen, Entwurf, Einric
 - Erledigt: Mehrere von Erwachsenen hinterlegte Übersetzungen/Schreibvarianten je Vokabel zulassen; jede hinterlegte Variante zählt richtig.
 - Erledigt: Lernreise/Landkarte, Punkte/Level/Abzeichen und einfachen gestaltbaren Avatar mit wenigen Farben und Zubehörteilen für die erste Version als gemeinsames System vorsehen.
 - Erledigt: Insel-Abenteuer mit unterschiedlichen Landschaften als Thema wählen; modern und passend für 10–13-Jährige gestalten.
-- Konkrete Grafiken, Umfang der Welt und Belohnungsregeln festlegen.
+- Erledigt: 10 Punkte je richtiger Antwort, auch für später richtig beantwortete Fehlerwörter, plus 20 Punkte je abgeschlossener Runde. Keine Punktabzüge bei Fehlern.
+- Erledigt: Level-Meilensteine schalten Reiseabschnitte und festgelegte Avatar-Ausstattung automatisch frei; freigeschaltete Ausstattung frei auswählbar, Abzeichen für Meilensteine, kein zusätzlicher Münzladen.
+- Konkrete Grafiken, Umfang der Welt, Schwellenwerte und Abschluss-Sonderfälle festlegen.
 - Umfang der Erwachsenenansicht und Wortlistenverwaltung bestimmen.
+- Erledigt: Einzeleingabe und Kopieren/Einfügen mehrerer Tabellenzeilen; Wörter vorhandenen oder neuen benannten Lektionen zuordnen. Kein direkter Excel-/CSV-Dateiimport in der ersten Version.
+- Erledigt: Erwachsene ordnen jede Lektion einem oder mehreren Kindern zu. Übungsmodi berücksichtigen nur die jeweils zugeordneten Lektionen; Lernstände, Punkte und Avatar bleiben pro Kind getrennt.
 
-Ergebnis: ein prüfbares Design mit klaren Grenzen der ersten Version. Offene Produktpunkte beginnen bei [Q6c](ANFORDERUNGEN.md#offene-entscheidungen). Der Nutzer hat festgelegt, alle offenen Punkte einzeln mit Optionen und Empfehlung zu klären und Antworten fortlaufend zu dokumentieren. Nach vollständiger Klärung ist der Entwicklungsbeginn beauftragt. Eine visuelle Vorschau kann helfen; sie wurde noch nicht erstellt oder ausgewählt.
+Ergebnis: ein prüfbares Design mit klaren Grenzen der ersten Version. Offene Produktpunkte beginnen bei [Q8](ANFORDERUNGEN.md#offene-entscheidungen). Der Nutzer hat festgelegt, alle offenen Punkte einzeln mit Optionen und Empfehlung zu klären und Antworten fortlaufend zu dokumentieren. Nach vollständiger Klärung ist der Entwicklungsbeginn beauftragt. Eine visuelle Vorschau kann helfen; sie wurde noch nicht erstellt oder ausgewählt.
 
 ## 2. Google Drive auf iOS früh nachweisen
 
