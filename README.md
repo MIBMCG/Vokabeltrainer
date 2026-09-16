@@ -10,9 +10,17 @@ Ein geplanter Deutsch-Englisch-Vokabeltrainer für Kinder von **10 bis 13 Jahren
 2. Das Kind schreibt die englische Übersetzung.
 3. Die App zeigt bei einer richtigen Antwort ✅, bei einer falschen Antwort ❌ und die richtige Schreibweise.
 4. Mit „Weiter“ folgt das nächste Wort.
-5. Falsch beantwortete Wörter werden häufiger wiederholt. Nach drei richtigen Antworten hintereinander soll ein Wort in dieser Übung selten oder nicht mehr erscheinen.
+5. Nach einem Fehler wird das Wort nach zwei anderen Aufgaben erneut abgefragt. Endet die Runde vorher, bleibt die Wiederholung für später vorgemerkt. Nach drei richtigen Antworten hintereinander pausiert ein Wort für den Rest der laufenden Runde.
 
-Gewünscht sind die Auswahlmodi „Alle Vokabeln“, „Letzte Vokabeln“ und „Neue Vokabeln“, eine altersgerechte Gestaltung und motivierende Spielelemente. Die genaue Abgrenzung der Modi und das Belohnungssystem sind noch offen.
+Die Auswahlmodi sind „Alle Vokabeln“, „Letzte Vokabeln“ (zuletzt hinzugefügte Lektion) und „Neue Vokabeln“ (vom ausgewählten Kind noch nie geübte Wörter). Gewünscht sind außerdem eine altersgerechte Gestaltung und motivierende Spielelemente; das konkrete Belohnungssystem ist noch offen.
+
+Eine Runde umfasst standardmäßig 10 Antworten, wahlweise 20 oder 30. Wiederholungen zählen mit; ein Fortschrittsbalken zeigt den Stand.
+
+Ist vorher keine passende Aufgabe mehr verfügbar, kann das Kind die Runde beenden oder mit zusätzlichem Wortschatz außerhalb der bisherigen Auswahl fortsetzen. Die geplante Aufgabenzahl und Wiederholungspausen bleiben erhalten.
+
+Die Serie richtiger Antworten wird je Wort und Kind über mehrere Runden gespeichert. Ein Fehler bei diesem Wort setzt dessen Serie auf null; Antworten auf andere Wörter verändern sie nicht.
+
+Nach der Dreierserie ist die erste Wiederholung frühestens am nächsten Tag vorgesehen. Bei weiteren richtigen Antworten folgen Abstände von 3, 7 und 14 Tagen, danach jeweils 14 Tage. Bei einem Fehler wird das Wort wieder häufiger geübt.
 
 ## Vereinbarte Richtung
 

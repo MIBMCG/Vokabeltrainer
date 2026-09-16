@@ -8,12 +8,17 @@ Ergebnis dieses Arbeitspakets: README, AGENTS.md, Anforderungen, Entwurf, Einric
 
 ## 1. Produktdesign konkret abstimmen
 
-- „Letzte“ und „Neue“ Vokabeln eindeutig definieren.
-- Rundengröße, Wiederholungsserie, Schreibweisenbewertung und Ende einer Runde festlegen.
+- Erledigt: „Letzte“ = zuletzt hinzugefügte Lektion, „Neue“ = vom ausgewählten Kind noch nie geübte Wörter.
+- Erledigt: standardmäßig 10 Antworten pro Runde, wahlweise 20 oder 30; Wiederholungen zählen mit, Fortschrittsbalken.
+- Erledigt: Richtigserie je Wort und Kind über Runden hinweg speichern; ein Fehler bei diesem Wort setzt dessen Serie auf null.
+- Erledigt: Nach drei richtigen Antworten das Wort für den Rest der laufenden Runde pausieren; Wiederholung frühestens am nächsten Tag, nach richtigen Wiederholungen mit Abständen von 3, 7 und danach jeweils 14 Tagen.
+- Erledigt: Nach einem Fehler zwei andere Aufgaben bearbeiten, dann erneut abfragen. Bei vorherigem Rundenende Wiederholungsbedarf vormerken; keine Verlängerung der gewählten Rundengröße.
+- Erledigt: Bei erschöpfter Auswahl entscheidet das Kind zwischen Beenden und Fortsetzen mit zusätzlichem Wortschatz; Aufgabenzahl und Wiederholungspausen bleiben erhalten.
+- Schreibweisenbewertung und zulässige Antwortvarianten festlegen.
 - Ein konkretes Gestaltungskonzept für 10–13-Jährige und die erste Gamification auswählen.
 - Umfang der Erwachsenenansicht und Wortlistenverwaltung bestimmen.
 
-Ergebnis: ein prüfbares Design mit klaren Grenzen der ersten Version. Offene Punkte: [Q1–Q8](ANFORDERUNGEN.md#offene-entscheidungen). Eine visuelle Vorschau kann helfen; sie wurde noch nicht erstellt oder ausgewählt.
+Ergebnis: ein prüfbares Design mit klaren Grenzen der ersten Version. Offene Produktpunkte beginnen bei [Q5a](ANFORDERUNGEN.md#offene-entscheidungen). Der Nutzer hat festgelegt, alle offenen Punkte einzeln mit Optionen und Empfehlung zu klären und Antworten fortlaufend zu dokumentieren. Nach vollständiger Klärung ist der Entwicklungsbeginn beauftragt. Eine visuelle Vorschau kann helfen; sie wurde noch nicht erstellt oder ausgewählt.
 
 ## 2. Google Drive auf iOS früh nachweisen
 

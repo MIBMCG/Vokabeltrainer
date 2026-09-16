@@ -16,7 +16,7 @@ Bei Widersprüchen hat die aktuelle ausdrückliche Nutzeranweisung Vorrang. Best
 
 Zum dokumentierten Start am 16.09.2026 existieren nur Dokumentation und Repository-Grunddateien. Es gibt keine App, keine Google-Anbindung, keine eingerichtete Hostingumgebung und keine Produkttests. Aktuelle Änderungen können diesen Stand später erweitern; maßgeblich sind Dateien und Prüfbelege.
 
-Der bisherige Auftrag umfasst das Dokumentieren und Pushen dieses Projektstands. Er ist keine pauschale Freigabe für die Umsetzung aller noch offenen Produktideen, Cloudkontenänderungen oder die Veröffentlichung einer laufenden App.
+Das erste Dokumentationspaket wurde beauftragt und veröffentlicht. Der anschließende Nutzerauftrag lautet: alle offenen Punkte Frage für Frage mit Optionen und einer Empfehlung klären, jede Antwort direkt in den Anforderungen festhalten und nach vollständiger Klärung mit der Entwicklung beginnen. Diese bedingte Entwicklungsfreigabe erhalten; keine erneute pauschale Startgenehmigung verlangen, sobald der abgestimmte Umfang vollständig feststeht. Noch offene Produktideen, Cloudkontenänderungen oder die Veröffentlichung einer laufenden App sind damit nicht automatisch freigegeben.
 
 ## Feste Leitplanken
 
@@ -24,7 +24,7 @@ Der bisherige Auftrag umfasst das Dokumentieren und Pushen dieses Projektstands.
 - Plattformübergreifende Web-App mit besonderem Schwerpunkt iOS/iPadOS.
 - Lernrichtung zunächst Deutsch nach Englisch mit Texteingabe.
 - Sofortige Richtig-/Falsch-Rückmeldung, bei Fehlern die richtige Schreibweise, anschließend „Weiter“.
-- Fehler häufiger wiederholen; nach drei richtigen Antworten hintereinander das Wort in der aktuellen Übung selten oder nicht mehr zeigen.
+- Fehler häufiger wiederholen; die Richtigserie je Wort und Kind über Runden hinweg erhalten. Nach drei richtigen Antworten für den Rest der Runde pausieren und später nach den festgelegten Tagesabständen wiederholen (R08/R19 in den Anforderungen).
 - Google Drive; gemeinsamer, von Eltern eingerichteter Google-Zugang auf beiden Geräten; getrennte Lernprofile in der App.
 - Kein zusätzliches kostenpflichtiges Cloudabo, kein stillschweigender Anbieterwechsel.
 - Altersgerechte Gestaltung und Gamification gehören zum gewünschten Produkt. Die konkrete Ausgestaltung ist noch nicht beschlossen.
@@ -33,6 +33,7 @@ Der bisherige Auftrag umfasst das Dokumentieren und Pushen dieses Projektstands.
 
 - Nutzerentscheidungen, technische Vorschläge, implementierte Funktionen und tatsächlich geprüfte Ergebnisse getrennt ausweisen.
 - Die offenen Fragen stehen zentral in [ANFORDERUNGEN.md](docs/ANFORDERUNGEN.md). Abhängige Entscheidungen vor der jeweiligen Umsetzung klären; unabhängige autorisierte Arbeit fortsetzen.
+- In der aktuellen Klärungsphase jeweils genau eine Frage stellen, möglichst mit mehreren klar unterscheidbaren Optionen und einer begründeten Empfehlung. Jede Antwort parallel dokumentieren; zuerst vollständig klären, dann entwickeln.
 - Vor größeren Implementierungspaketen ein konkretes Design und dessen Grenzen abstimmen. Eine Dokumentationsfreigabe nicht als Zustimmung zu allen enthaltenen Vorschlägen auslegen.
 - Falls Superpowers-Skills vorhanden und angefordert sind: Brainstorming, abgestimmtes Design, anschließend Implementierungsplan und passende Verifikation nutzen. Ohne diese Skills denselben Ablauf in normaler Sprache durchführen; fehlende anbieterspezifische Werkzeuge blockieren die Fortsetzung nicht.
 - Die [Roadmap](docs/ROADMAP.md) ist eine Arbeitsreihenfolge, kein freigegebener, direkt ausführbarer Implementierungsplan.

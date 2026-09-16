@@ -12,9 +12,9 @@ Stand: 16.09.2026. Dieses Dokument ist die zentrale Quelle für den Produktumfan
 | R04 | Direkte Rückmeldung | Richtig: ✅. Falsch: ❌ und richtige Schreibweise. |
 | R05 | Bewusster Wechsel | Ein „Weiter“-Button führt zur nächsten Vokabel. |
 | R06 | Vokabelbestand erweiterbar | Verwaltung durch Eltern/Lehrkraft; kein manuelles Bearbeiten einer JSON-Datei als notwendiger Alltagsschritt. |
-| R07 | Adaptive Wiederholung | Falsche Wörter häufiger wiederholen. |
-| R08 | Drei richtige Antworten in Folge | Danach in dieser Übung selten oder gar nicht mehr abfragen. Die konkrete Variante ist offen. |
-| R09 | Auswahlmodi gewünscht | Wenn möglich „Alle Vokabeln“, „Letzte Vokabeln“, „Neue Vokabeln“. Die beiden letzten Begriffe sind noch nicht definiert. |
+| R07 | Adaptive Wiederholung nach Fehlern | Eine falsch beantwortete Vokabel erneut abfragen, nachdem zwei andere Aufgaben bearbeitet wurden. Endet die Runde vorher, bleibt der Wiederholungsbedarf für später vorgemerkt; die gewählte Rundengröße wird nicht verlängert. Fehlt eine passende weitere Aufgabe, gilt R20. |
+| R08 | Drei richtige Antworten in Folge | Die Serie zählt je Wort und Kind über mehrere Runden hinweg. Eine falsche Antwort auf dieses Wort setzt dessen Serie auf null; Antworten auf andere Wörter verändern sie nicht. Nach drei richtigen Antworten pausiert das Wort für den Rest der laufenden Runde. Spätere Wiederholung gemäß R19. |
+| R09 | Drei Auswahlmodi | „Alle Vokabeln“: gesamter verfügbarer Wortschatz. „Letzte Vokabeln“: zuletzt hinzugefügte Lektion. „Neue Vokabeln“: Wörter, die das ausgewählte Kind noch nie geübt hat. Q1/Q2 ausdrücklich bestätigt. |
 | R10 | Fortschritt einsehbar | Übersicht darüber, welche Wörter wie gut und wie oft geübt wurden. |
 | R11 | Ansprechende Gestaltung und Gamification | Art der Belohnungen und visuelles Thema noch nicht ausgewählt. |
 | R12 | Automatischer Cloudaustausch | Google Drive wurde ausdrücklich ausgewählt. Komfortgrenzen des Browserlogins sind zu prüfen. |
@@ -22,8 +22,12 @@ Stand: 16.09.2026. Dieses Dokument ist die zentrale Quelle für den Produktumfan
 | R14 | Gemeinsamer Google-Zugang | Die Eltern richten denselben Zugang auf beiden Geräten ein; eigene Lernprofile trennen die Lernstände der Kinder. |
 | R15 | Privater Gebrauch | Keine öffentliche Schulplattform oder mandantenfähige Klassenverwaltung beauftragt. |
 | R16 | Portable Dokumentation und GitHub | README, AGENTS.md und alle nötigen Übergabedokumente erstellen und pushen, sodass andere KIs/Systeme fortsetzen können. |
+| R17 | Anforderungen im Dialog klären | Jeweils eine Frage mit mehreren Optionen und einer Empfehlung stellen. Jede Antwort direkt dokumentieren. Erst alle offenen Punkte klären; anschließend ist der Beginn der Entwicklung beauftragt. |
+| R18 | Runden mit wählbarer Aufgabenzahl | Standardmäßig 10 Antworten, alternativ 20 oder 30. Wiederholungen zählen mit. Ein Fortschrittsbalken zeigt den Stand, beispielsweise „7 von 10“. Kein Zeitlimit als reguläres Rundenende. |
+| R19 | Wiederholung mit wachsenden Abständen | Nach Erreichen der Dreierserie erste Wiederholung frühestens am nächsten Tag. Nach jeweils richtiger Wiederholung folgen Abstände von 3, 7 und 14 Tagen, danach weiterhin jeweils 14 Tage. Eine falsche Antwort führt zurück ins häufigere Üben und setzt gemäß R08 die Richtigserie auf null. |
+| R20 | Wahl bei erschöpfter Aufgabenauswahl | Ist vor dem geplanten Rundenende keine passende Aufgabe mehr verfügbar, entscheidet das Kind zwischen Beenden und Fortsetzen mit zusätzlichem Wortschatz außerhalb der bisherigen Auswahl. Die gewählte Gesamtzahl der Antworten und die Wiederholungspausen bleiben erhalten. |
 
-R03–R11 stammen aus der ursprünglichen Produktbeschreibung. R12–R14 wurden in der anschließenden Technologie-/Kontenabstimmung konkretisiert. R01 und R16 wurden im letzten Auftrag ergänzt.
+R03–R11 stammen aus der ursprünglichen Produktbeschreibung. R12–R14 wurden in der anschließenden Technologie-/Kontenabstimmung konkretisiert. R01 und R16 wurden mit dem Dokumentationsauftrag ergänzt. Danach bestätigte der Nutzer die Definitionen in R09 und den Ablauf in R17.
 
 ## Besprochene technische Arbeitsbasis
 
@@ -46,17 +50,28 @@ Excel wurde als ursprüngliche Speicheridee genannt. In der Diskussion wurde Imp
 5. Mit „Weiter“ fortfahren; die Antwort nicht mehrfach werten.
 6. Am Ende eine kurze Zusammenfassung des Übens zeigen.
 
-Die Schritte 1, 3 und 6 ergänzen den bestätigten Kernablauf als Vorschlag. Ob Enter zusätzlich auslöst, wie groß eine Runde ist und wann sie endet, wird im Detaildesign entschieden.
+Die Schritte 1, 3 und 6 ergänzen den bestätigten Kernablauf als Vorschlag. Die reguläre Rundengröße ist mit R18 festgelegt; bei erschöpfter Auswahl gilt R20. Die Bedienung über Enter und die konkrete Abschlussansicht sind noch offen.
+
+Aus R18–R20 folgt für das Detaildesign: Zusätzlicher Wortschatz füllt nur die noch übrigen Aufgabenplätze. Auch dort pausierte Wörter bleiben pausiert. Sind insgesamt keine passenden weiteren Aufgaben vorhanden, ist nur der Abschluss möglich; keine Aufgaben oder Erfolge erfinden. Eine leere Auswahl am Start darf nicht als bereits erfolgreich absolvierte Runde erscheinen.
+
+## Geklärte Entscheidungen
+
+| ID | Entscheidung | Bestätigung |
+| --- | --- | --- |
+| Q1 | „Letzte Vokabeln“ bezeichnet die zuletzt hinzugefügte Lektion. | 16.09.2026: Nutzer bestätigt den konkreten Definitionsvorschlag mit „Ja genau“. |
+| Q2 | „Neue Vokabeln“ bezeichnet die Wörter, die das ausgewählte Kind noch nie geübt hat. Der Status ist pro Lernprofil getrennt. | 16.09.2026: dieselbe ausdrückliche Bestätigung. |
+| Q3 | Eine Runde umfasst standardmäßig 10 Antworten, wahlweise 20 oder 30; Wiederholungen zählen mit. Ein Fortschrittsbalken zeigt den Stand. | 16.09.2026: Nutzer wählt Option A der Frage zum Rundenende. |
+| Q4a | Die Richtigserie bleibt je Wort und Kind über mehrere Runden erhalten. Ein Fehler bei diesem Wort setzt dessen Serie auf null; Antworten auf andere Wörter verändern sie nicht. | 16.09.2026: Nutzer wählt Option A der Frage zum Zählzeitraum. |
+| Q4b | Nach drei richtigen Antworten für den Rest der Runde pausieren. Erste Wiederholung frühestens am nächsten Tag; nach richtigen Wiederholungen Abstände von 3, 7, 14 Tagen, anschließend jeweils 14 Tage. Bei Fehler zurück ins häufigere Üben. | 16.09.2026: Nutzer wählt Option A der Frage zur späteren Wiederholung. |
+| Q4c | Nach einer falschen Antwort zwei andere Aufgaben bearbeiten, dann das Wort erneut abfragen. Bei vorherigem Rundenende den Wiederholungsbedarf vormerken, ohne die gewählte Rundengröße zu verlängern. | 16.09.2026: Nutzer wählt Option A der Frage zum Fehlerabstand. |
+| Q4d | Bei erschöpfter Auswahl entscheidet das Kind zwischen Beenden und Fortsetzen mit zusätzlichem Wortschatz außerhalb der bisherigen Auswahl. | 16.09.2026: Nutzer wählt Option B der Frage zum vorzeitigen Rundenende. |
 
 ## Offene Entscheidungen
 
 | ID | Frage | Vorschlag zur Besprechung | Vor welchem Paket klären? |
 | --- | --- | --- | --- |
-| Q1 | Was heißt „Letzte Vokabeln“? | Zuletzt hinzugefügte Lektion oder zuletzt bearbeiteter Wortschatz? Nicht stillschweigend gleichsetzen. | Auswahlmodi |
-| Q2 | Was heißt „Neue Vokabeln“? | Noch nie geübte Wörter dieses Lernprofils; alternativ kürzlich hinzugefügte Wörter. | Auswahlmodi |
-| Q3 | Wie lange ist eine Übung? | Kurze Runde mit sichtbarem Ende; Zahl der Wörter/Aufgaben noch wählen. | Lernlogik |
-| Q4 | Was passiert nach drei richtigen Antworten? | Für die aktuelle Runde pausieren, später gelegentlich wiederholen. Gilt die Serie nur innerhalb einer Runde oder über mehrere Sitzungen? | Lernlogik |
-| Q5 | Wie wird die Schreibweise bewertet? | Leerzeichen außen entfernen; Regeln zu Großschreibung, Apostrophen, mehreren Übersetzungen und britisch/amerikanisch festlegen. | Antwortprüfung |
+| Q5a | Soll Groß-/Kleinschreibung für richtig/falsch zählen? | A: Ignorieren und korrekte Schreibweise trotzdem anzeigen (Empfehlung). B: Mitbewerten. Bei beiden Optionen äußere Leerzeichen ignorieren und echte Buchstabenfehler als falsch werten. Noch nicht bestätigt. | Antwortprüfung |
+| Q5b | Welche alternativen Übersetzungen und Schreibvarianten sind erlaubt? | Mehrere gültige Antworten pro Vokabel durch Erwachsene hinterlegen; Umgang mit britisch/amerikanisch, Wortgruppen und Apostrophvarianten konkretisieren. | Antwortprüfung/Verwaltung |
 | Q6 | Welche Gamification und welche Optik? | Zum Beispiel Sammelobjekte, eine Lernreise oder ein gestaltbarer Avatar. Noch keine Variante gewählt. | UI-/Belohnungsdesign |
 | Q7 | Wie werden Vokabeln organisiert und eingegeben? | Lektionen/Wortlisten, Einzeleingabe; Tabellenimport als mögliche spätere Erweiterung. | Verwaltung |
 | Q8 | Wie wird zur Erwachsenenansicht gewechselt? | Ein klarer Bereich; optional PIN als Bedienhürde. Noch keine PIN beschlossen. | Verwaltung |
@@ -65,7 +80,7 @@ Die Schritte 1, 3 und 6 ergänzen den bestätigten Kernablauf als Vorschlag. Ob 
 | Q11 | Welches endgültige Speicher- und Konfliktmodell? | Stabile IDs, getrennte Inhalte/Ergebnisse, wiederholbare Übertragung ohne Datenverlust. | Datenschema/Sync |
 | Q12 | Welche Lizenz soll gelten? | Keine Lizenz eigenmächtig auswählen. | Lizenzierte Weitergabe |
 
-Die Liste ist kein Fragebogen, der in einer Nachricht abgearbeitet werden muss. Im Gespräch jeweils die nächste sachlich abhängige Entscheidung klären. Für die aktuelle Dokumentationsübergabe müssen diese Fragen nicht vorzeitig entschieden werden.
+Die Liste wird auf ausdrücklichen Wunsch des Nutzers Frage für Frage mit Optionen und Empfehlung abgearbeitet. Jede Antwort wird sofort festgehalten; neu erkannte Produktfragen werden ergänzt. Technische Detailentscheidungen sollen verständlich begründet werden, ohne den Nutzer unnötig mit Implementierungsdetails zu belasten. Nach vollständiger Klärung den konsolidierten Umfang dokumentieren, einen konkreten Implementierungsplan erstellen und mit der beauftragten Entwicklung beginnen. Reale technische Nachweise bleiben als Prüfaufgaben sichtbar und dürfen nicht durch bloße Zustimmung als bestanden gelten.
 
 ## Nicht beauftragt
 
