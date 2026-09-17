@@ -99,6 +99,8 @@ Sechs Badge-IDs: `first-round`, `ten-rounds`, `ten-mastered`, `ten-recovered`, `
 
 ## Pakete, lokale Speicherung und Drive
 
+Für `commitExternal` wird der erwartete lokale Zustands-Hash ausschließlich mit `productStateHash(state):Promise<string>` aus `commands.js` erzeugt. Der Helfer kopiert den vollständigen gültigen `ProductState`, wandelt `rounds` und die enthaltenen `wordCounts` in ASCII-sortierte `[id, value]`-Arrays und verwendet dann den kanonischen SHA-256-Digest. Damit bleiben zulässige Spezial-IDs in lokalen Maps erhalten, ohne die Schlüsselprüfung des Austauschformats zu lockern. Unterschiedliche Einfügereihenfolgen ergeben denselben Hash; geänderte Inhalte ändern ihn. Vor `setup` ist der Befehlszustand `null`, erst danach kann ein PIN-Prüfwert gespeichert werden.
+
 ```js
 // Packet
 {...VERSION, kind: 'packet', datasetId, epochId, packetId, events: Event[]}

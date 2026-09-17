@@ -2,7 +2,9 @@
 
 Ein geplanter Deutsch-Englisch-Vokabeltrainer für Kinder von **10 bis 13 Jahren, Klasse 4 bis 7**. Er soll auf aktuellen Smartphones, Tablets und Computern funktionieren; **iPhone und iPad haben Vorrang**.
 
-**Stand: 17. September 2026 — vollständiger Trainer in Entwicklung.** Datenformat, Inhaltsfassungen, Epochen und Lern-/Belohnungslogik sind implementiert und unabhängig geprüft; der aktuelle Gesamtlauf umfasst 135 bestandene Node-Tests. Die vollständige Lernoberfläche entsteht als Nächstes. Die technische Verbindungsprobe bleibt ausführbar; zwölf Browser-Szenarien mit simulierter Google-Grenze waren erfolgreich. Echte Google-Anmeldung und Drive-Abgleich in zwei Browsern sind manuell bestätigt. Physische Zwei-Geräte- und iPhone/iPad-Prüfung folgen auf ausdrücklichen Nutzerwunsch erst nach der vollständigen Umsetzung. Aktuelle Nachweise stehen in [ARBEITSSTAND.md](ARBEITSSTAND.md).
+**Stand: 17. September 2026 — vollständiger Trainer in Entwicklung.** Datenformat, Inhaltsfassungen, Epochen, Lern-/Belohnungslogik und Rundenablauf sind implementiert und unabhängig geprüft; der aktuelle Gesamtlauf umfasst 149 bestandene Node-Tests. Die vollständige Lernoberfläche entsteht als Nächstes. Die technische Verbindungsprobe bleibt ausführbar; zwölf Browser-Szenarien mit simulierter Google-Grenze waren erfolgreich. Echte Google-Anmeldung und Drive-Abgleich in zwei Browsern sind manuell bestätigt. Physische Zwei-Geräte- und iPhone/iPad-Prüfung folgen auf ausdrücklichen Nutzerwunsch erst nach der vollständigen Umsetzung. Aktuelle Nachweise stehen in [ARBEITSSTAND.md](ARBEITSSTAND.md).
+
+Eine [Gestaltungsvorschau mit Startseite, Übung und Inselreise](docs/design/2026-09-17-insel-konzept.md) zeigt die vorgeschlagene Optik. Das Bild ist kein Screenshot einer fertigen App.
 
 ## Geplanter Lernablauf
 
