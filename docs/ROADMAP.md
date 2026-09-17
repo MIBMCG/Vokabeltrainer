@@ -1,5 +1,7 @@
 # Roadmap zur ersten nutzbaren Version
 
+Änderung der Prüfungsreihenfolge am 17.09.2026: Der Nutzer beauftragt ausdrücklich, zuerst die vollständige App gemäß bestätigtem Gesamtentwurf umzusetzen und erst danach beim Freund auf iPhone/iPad zu testen. Die bisherige Geräteprüfung vor umfangreicher Lernoberfläche ist damit als Entwicklungssperre aufgehoben. Reale Geräteabnahme bleibt offen und darf nicht als bestanden gelten. Bereits bestätigte manuelle Google-/Drive-Tests in zwei Browsern gelten weiter. Keine neue pauschale Startfreigabe verlangen; Hosting/Veröffentlichung und Kostenmodell werden dadurch nicht automatisch geändert.
+
 Stand: 17.09.2026. **Vorgeschlagene Arbeitsreihenfolge, kein freigegebener Implementierungsplan.** Die Punkte beschreiben überprüfbare Ergebnisse, ohne offene Nutzerentscheidungen vorwegzunehmen.
 
 ## 0. Projektwissen übergabefähig machen
@@ -41,9 +43,9 @@ Ergebnis: umsetzbarer Plan. Dieses Dokument ersetzt ihn nicht. Falls Superpowers
 
 ## 3. Google Drive auf iOS früh nachweisen
 
-Lokal erledigt: ausführbare synthetische Probe mit Drive-/Anmeldeschicht, IndexedDB, Offline-Service-Worker, wiederholbaren Uploads und Rücksetzexperiment. 73 Node-Tests und neun Browser-Szenarien mit simulierter Google-Grenze sind dokumentiert. [Prüfbericht](reports/2026-09-17-google-drive-probe.md)
+Lokal erledigt: ausführbare synthetische Probe mit Drive-/Anmeldeschicht, IndexedDB, Offline-Service-Worker, wiederholbaren Uploads und Rücksetzexperiment. 74 Node-Tests und zwölf Browser-Szenarien mit simulierter Google-Grenze sind dokumentiert. [Prüfbericht](reports/2026-09-17-google-drive-probe.md)
 
-Extern offen: Google-Projekt und öffentliche OAuth-Client-ID einrichten, Zugriff auf reale Probe-Dateien und Wiederfinden auf zwei Geräten testen. Danach Safari-Tab und Home-Bildschirm-App getrennt prüfen. Bis dahin ist dieser Meilenstein nicht abgeschlossen.
+Manuell bestätigt: Google-Projekt und OAuth-Client eingerichtet; Anmeldung und echter Drive-Abgleich in zwei Browsern desselben Rechners einschließlich verspäteter Antwort nach Rücksetzung. Physische Zwei-Geräte-, Safari- und Home-Bildschirm-Prüfung bleiben offen und erfolgen gemäß geänderter Nutzerentscheidung erst nach vollständiger Umsetzung.
 
 Für echte Apple-Gerätetests kommen die Geräte des Freundes infrage. Modelle, Betriebssystemversionen und Testverfügbarkeit noch klären; vorhandene Geräte nicht mit zugesagter Testteilnahme verwechseln.
 

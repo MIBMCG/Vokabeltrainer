@@ -1,5 +1,7 @@
 # Vokabeltrainer: Gesamtentwurf für die erste Version
 
+Änderung der Prüfungsreihenfolge am 17.09.2026: Der Nutzer beauftragt ausdrücklich, zuerst die vollständige App gemäß bestätigtem Gesamtentwurf umzusetzen und erst danach beim Freund auf iPhone/iPad zu testen. Die bisherige Geräteprüfung vor umfangreicher Lernoberfläche ist damit als Entwicklungssperre aufgehoben. Reale Geräteabnahme bleibt offen und darf nicht als bestanden gelten. Bereits bestätigte manuelle Google-/Drive-Tests in zwei Browsern gelten weiter. Keine neue pauschale Startfreigabe verlangen; Hosting/Veröffentlichung und Kostenmodell werden dadurch nicht automatisch geändert.
+
 Stand: 16.09.2026. **Gesamtentwurf einschließlich E01–E10 vom Nutzer mit Option A bestätigt.** Implementierungs- und Prüfstatus stehen in [ARBEITSSTAND.md](../../../ARBEITSSTAND.md).
 
 Die [Anforderungen R01–R33](../../ANFORDERUNGEN.md) sowie die Ergänzungen E01–E10 sind bestätigt. Die Einzelfragen Q1–Q14 sind beantwortet. Die nachfolgenden ursprünglichen Formulierungen „Vorschlag“ und „empfohlen“ beschreiben den am 16.09.2026 insgesamt angenommenen Entwurf. Die Umsetzung einschließlich früher Google-/iOS-Probe ist beauftragt; eine Zustimmung ersetzt keine technische Prüfung.

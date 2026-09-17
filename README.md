@@ -2,7 +2,7 @@
 
 Ein geplanter Deutsch-Englisch-Vokabeltrainer für Kinder von **10 bis 13 Jahren, Klasse 4 bis 7**. Er soll auf aktuellen Smartphones, Tablets und Computern funktionieren; **iPhone und iPad haben Vorrang**.
 
-**Stand: 17. September 2026 — ausführbare technische Verbindungsprobe.** Die Probe besitzt eine kleine mobile Oberfläche, lokalen IndexedDB-Speicher, einen eigenen Offline-Service-Worker und den Google-Drive-Adapter. 74 automatisierte Tests sowie zwölf Browser-Szenarien mit simulierter Google-Grenze waren erfolgreich. Echte Google-Anmeldung, zwei reale Geräte und iPhone/iPad sind noch nicht geprüft; der eigentliche Vokabeltrainer ist noch nicht implementiert. Aktuelle Nachweise und Wiedereinstieg stehen in [ARBEITSSTAND.md](ARBEITSSTAND.md).
+**Stand: 17. September 2026 — ausführbare technische Verbindungsprobe.** Die Probe besitzt eine kleine mobile Oberfläche, lokalen IndexedDB-Speicher, einen eigenen Offline-Service-Worker und den Google-Drive-Adapter. 74 automatisierte Tests sowie zwölf Browser-Szenarien mit simulierter Google-Grenze waren erfolgreich. Echte Google-Anmeldung und Drive-Abgleich in zwei Browsern sind manuell bestätigt; zwei reale Geräte und iPhone/iPad sind noch nicht geprüft; der eigentliche Vokabeltrainer ist noch nicht implementiert. Aktuelle Nachweise und Wiedereinstieg stehen in [ARBEITSSTAND.md](ARBEITSSTAND.md).
 
 ## Geplanter Lernablauf
 

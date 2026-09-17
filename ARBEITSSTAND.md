@@ -1,5 +1,7 @@
 # Arbeitsstand
 
+Änderung der Prüfungsreihenfolge am 17.09.2026: Der Nutzer beauftragt ausdrücklich, zuerst die vollständige App gemäß bestätigtem Gesamtentwurf umzusetzen und erst danach beim Freund auf iPhone/iPad zu testen. Die bisherige Geräteprüfung vor umfangreicher Lernoberfläche ist damit als Entwicklungssperre aufgehoben. Reale Geräteabnahme bleibt offen und darf nicht als bestanden gelten. Bereits bestätigte manuelle Google-/Drive-Tests in zwei Browsern gelten weiter. Keine neue pauschale Startfreigabe verlangen; Hosting/Veröffentlichung und Kostenmodell werden dadurch nicht automatisch geändert.
+
 Stand: **17.09.2026**
 
 ## Bestätigt und beauftragt
@@ -29,7 +31,7 @@ Praxisstand 17.09.2026, durch Nutzerrückmeldungen und Screenshots: Echte Anmeld
 
 Für reale iOS-Prüfungen fehlen Geräte-/Versionsangaben, Testverfügbarkeit und eine abgestimmte HTTPS-Bereitstellung. Der Nutzer besitzt keine Apple-Geräte; sein Freund als künftiger Hauptnutzer besitzt iPhone und iPad. Niemand wird ohne Auftrag kontaktiert.
 
-Die erste Anmeldung, Drive-Übertragung und Rücksetzung sind bestätigt. Als Nächstes folgen die Geräte- und Hostingklärung sowie die weiteren Prüfungen nach der [Prüfanleitung](docs/GOOGLE-DRIVE-PROBE.md), später mit demselben OAuth-Client, Google-Konto und Probeordner auf zwei Geräten. Für iPhone/iPad ist zusätzlich eine abgestimmte HTTPS-Bereitstellung nötig; Safari und Home-Bildschirm-App werden getrennt geprüft. Bis diese Nachweise vorliegen, ist die frühe Machbarkeitsprüfung nicht bestanden und umfangreiche Lernoberfläche nicht freigegeben.
+Die erste Anmeldung, Drive-Übertragung und Rücksetzung sind bestätigt. Als Nächstes folgen die Geräte- und Hostingklärung sowie die weiteren Prüfungen nach der [Prüfanleitung](docs/GOOGLE-DRIVE-PROBE.md), später mit demselben OAuth-Client, Google-Konto und Probeordner auf zwei Geräten. Für iPhone/iPad ist zusätzlich eine abgestimmte HTTPS-Bereitstellung nötig; Safari und Home-Bildschirm-App werden getrennt geprüft. Bis diese Nachweise vorliegen, bleibt die Geräteabnahme offen. Die vollständige Produktumsetzung ist durch die geänderte Reihenfolge ausdrücklich freigegeben.
 
 ## Noch nicht vorhanden oder nachgewiesen
 
