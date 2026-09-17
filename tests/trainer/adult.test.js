@@ -5,11 +5,28 @@ import {webcrypto} from 'node:crypto';
 import {createPinGate} from '../../src/trainer/adult/pin.js';
 import {applyRows, parseTable, validateRows} from '../../src/trainer/adult/import.js';
 
+function verifierStore(initial = null) {
+  let verifier = initial === null ? null : structuredClone(initial);
+  return {
+    async load() {
+      return verifier === null ? null : structuredClone(verifier);
+    },
+    async save(next, expected) {
+      assert.deepEqual(verifier, expected, 'stale verifier must not be overwritten');
+      verifier = structuredClone(next);
+    },
+    value() {
+      return verifier === null ? null : structuredClone(verifier);
+    },
+  };
+}
+
 test('table import preserves ambiguity until adult decision', () => {
   const parsed = parseTable('Fahrrad\tbicycle | bike\t\n\nBank\tbench\tSitzplatz\textra');
   assert.equal(parsed.rows.length, 2);
   assert.deepEqual(parsed.rows[0].answers, ['bicycle', 'bike']);
   assert.ok(parsed.issues.some((issue) => issue.code === 'columns'));
+  assert.match(parsed.issues.find((issue) => issue.code === 'columns').message, /Sitzplatz.*extra/);
 });
 
 test('table import accepts CRLF, keeps markup literal and reports values it must not guess', () => {
@@ -19,6 +36,7 @@ test('table import accepts CRLF, keeps markup literal and reports values it must
   assert.deepEqual(parsed.rows[0].answers, ['image']);
   assert.ok(parsed.issues.some(({code}) => code === 'required'));
   assert.ok(parsed.issues.some(({code}) => code === 'quotes'));
+  assert.match(parsed.issues.find(({code}) => code === 'quotes').message, /"mehr.*deutig".*answer/);
 });
 
 test('duplicate import remains blocked until the adult skips or separates it', () => {
@@ -68,10 +86,10 @@ test('multi-row import retry keeps only rows not durably committed before a fail
 });
 
 test('PIN reset requires exact confirmation and equal new entries', async () => {
-  let verifier = null;
+  const store = verifierStore();
   const gate = createPinGate({
-    loadVerifier: async () => verifier,
-    saveVerifier: async (value) => { verifier = value; },
+    loadVerifier: store.load,
+    saveVerifier: store.save,
     cryptoImpl: webcrypto,
   });
   await gate.setup('1234', '1234');
@@ -85,19 +103,19 @@ test('PIN reset requires exact confirmation and equal new entries', async () => 
 });
 
 test('PIN verifier is salted, persists without the PIN and unlocks a new gate', async () => {
-  let verifier = null;
-  const saveVerifier = async (value) => { verifier = structuredClone(value); };
+  const store = verifierStore();
   const first = createPinGate({
-    loadVerifier: async () => structuredClone(verifier), saveVerifier, cryptoImpl: webcrypto,
+    loadVerifier: store.load, saveVerifier: store.save, cryptoImpl: webcrypto,
   });
 
   await first.setup('2468', '2468');
+  const verifier = store.value();
   assert.deepEqual(Object.keys(verifier).sort(), ['hash', 'iterations', 'salt']);
   assert.doesNotMatch(JSON.stringify(verifier), /2468/);
   assert.ok(verifier.iterations >= 100_000);
 
   const reloaded = createPinGate({
-    loadVerifier: async () => structuredClone(verifier), saveVerifier, cryptoImpl: webcrypto,
+    loadVerifier: store.load, saveVerifier: store.save, cryptoImpl: webcrypto,
   });
   await assert.rejects(reloaded.unlock('0000'));
   assert.equal(reloaded.isUnlocked(), false);
@@ -106,10 +124,10 @@ test('PIN verifier is salted, persists without the PIN and unlocks a new gate', 
 });
 
 test('PIN setup and change require four digits, matching entries and the current PIN', async () => {
-  let verifier = null;
+  const store = verifierStore();
   const gate = createPinGate({
-    loadVerifier: async () => verifier,
-    saveVerifier: async (value) => { verifier = value; },
+    loadVerifier: store.load,
+    saveVerifier: store.save,
     cryptoImpl: webcrypto,
   });
 
@@ -123,4 +141,80 @@ test('PIN setup and change require four digits, matching entries and the current
   await assert.rejects(gate.unlock('1234'));
   await gate.unlock('5678');
   assert.equal(gate.isUnlocked(), true);
+});
+
+test('lock invalidates setup, unlock, change and reset permission already in flight', async (t) => {
+  await t.test('setup', async () => {
+    const store = verifierStore();
+    const gate = createPinGate({loadVerifier: store.load, saveVerifier: store.save, cryptoImpl: webcrypto});
+    const pending = gate.setup('1234', '1234');
+    gate.lock();
+    await pending;
+    assert.equal(gate.isUnlocked(), false);
+    await gate.unlock('1234');
+    assert.equal(gate.isUnlocked(), true);
+  });
+
+  for (const operation of ['unlock', 'change', 'reset']) {
+    await t.test(operation, async () => {
+      const store = verifierStore();
+      const gate = createPinGate({loadVerifier: store.load, saveVerifier: store.save, cryptoImpl: webcrypto});
+      await gate.setup('1234', '1234');
+      gate.lock();
+      const pending = operation === 'unlock'
+        ? gate.unlock('1234')
+        : operation === 'change'
+          ? gate.change('1234', '5678', '5678')
+          : gate.reset('PIN zurücksetzen', '5678', '5678');
+      gate.lock();
+      await pending;
+      assert.equal(gate.isUnlocked(), false);
+      await gate.unlock(operation === 'unlock' ? '1234' : '5678');
+      assert.equal(gate.isUnlocked(), true);
+    });
+  }
+});
+
+test('parallel setup attempts serialize and only the original verifier can be replaced', async () => {
+  const store = verifierStore();
+  const gate = createPinGate({loadVerifier: store.load, saveVerifier: store.save, cryptoImpl: webcrypto});
+
+  const outcomes = await Promise.allSettled([
+    gate.setup('1234', '1234'),
+    gate.setup('5678', '5678'),
+  ]);
+
+  assert.deepEqual(outcomes.map(({status}) => status), ['fulfilled', 'rejected']);
+  gate.lock();
+  await gate.unlock('1234');
+  await assert.rejects(gate.unlock('5678'));
+});
+
+test('parallel PIN mutations share their original verifier and a stale second save is rejected', async () => {
+  const store = verifierStore();
+  const gate = createPinGate({loadVerifier: store.load, saveVerifier: store.save, cryptoImpl: webcrypto});
+  await gate.setup('1234', '1234');
+
+  const outcomes = await Promise.allSettled([
+    gate.change('1234', '5678', '5678'),
+    gate.reset('PIN zurücksetzen', '9012', '9012'),
+  ]);
+
+  assert.deepEqual(outcomes.map(({status}) => status), ['fulfilled', 'rejected']);
+  gate.lock();
+  await gate.unlock('5678');
+  await assert.rejects(gate.unlock('9012'));
+});
+
+test('lock invalidates every unlock attempt that was already queued', async () => {
+  const store = verifierStore();
+  const gate = createPinGate({loadVerifier: store.load, saveVerifier: store.save, cryptoImpl: webcrypto});
+  await gate.setup('1234', '1234');
+  gate.lock();
+
+  const queued = [gate.unlock('1234'), gate.unlock('1234')];
+  gate.lock();
+  await Promise.all(queued);
+
+  assert.equal(gate.isUnlocked(), false);
 });

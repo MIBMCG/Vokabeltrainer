@@ -31,6 +31,14 @@ function showFatal(error) {
   root.replaceChildren(section);
 }
 
+function sameVerifier(left, right) {
+  if (left === null || right === null) return left === right;
+  return typeof left === 'object' && typeof right === 'object'
+    && left.salt === right.salt
+    && left.hash === right.hash
+    && left.iterations === right.iterations;
+}
+
 async function start() {
   store = await openProductStore();
   let commands;
@@ -43,9 +51,12 @@ async function start() {
   });
   const pinGate = createPinGate({
     loadVerifier: async () => commands.getState()?.pinVerifier ?? null,
-    saveVerifier: async (pinVerifier) => {
+    saveVerifier: async (pinVerifier, expectedVerifier) => {
       const current = commands.getState();
       if (current === null) throw new Error('Der Datensatz muss zuerst eingerichtet werden.');
+      if (!sameVerifier(current.pinVerifier, expectedVerifier)) {
+        throw new Error('Die lokale PIN wurde zwischenzeitlich geändert. Bitte versuchen Sie es erneut.');
+      }
       const expectedStateHash = await productStateHash(current);
       const next = structuredClone(current);
       next.pinVerifier = structuredClone(pinVerifier);

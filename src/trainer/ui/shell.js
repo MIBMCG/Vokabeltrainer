@@ -2,10 +2,12 @@ import {project} from '../learning/progress.js';
 import {el, field, button, message} from './dom.js';
 import {renderAdult} from './adult.js';
 
-function pinInput(id, name) {
+const MAX_ANSWERS_TEXT_LENGTH = 4_200;
+
+function pinInput(id, name, value = '') {
   return el('input', {attrs: {
     id, name, type: 'password', inputmode: 'numeric', pattern: '[0-9]{4}',
-    minlength: '4', maxlength: '4', autocomplete: 'off', required: true,
+    minlength: '4', maxlength: '4', autocomplete: 'off', required: true, value,
   }});
 }
 
@@ -13,9 +15,13 @@ function textInput(id, name, maxlength, value = '') {
   return el('input', {attrs: {id, name, maxlength, value, required: true}});
 }
 
-function wordFields(index) {
-  const german = textInput(`setup-word-${index}-german`, `word-${index}-german`, 200);
-  const answers = textInput(`setup-word-${index}-answers`, `word-${index}-answers`, 420);
+function wordFields(index, draft) {
+  const germanName = `word-${index}-german`;
+  const answersName = `word-${index}-answers`;
+  const german = textInput(`setup-word-${index}-german`, germanName, 200, draft[germanName]);
+  const answers = textInput(
+    `setup-word-${index}-answers`, answersName, MAX_ANSWERS_TEXT_LENGTH, draft[answersName],
+  );
   return el('fieldset', {}, [
     el('legend', {text: `Vokabel ${index}`}),
     field('Deutsch', german),
@@ -27,6 +33,18 @@ export function mountShell({root, commands, pinGate}) {
   let currentView = 'profiles';
   let activeProfileId = null;
   let destroyed = false;
+  let setupBusy = false;
+  const setupDraft = {
+    'dataset-name': 'Familienwortschatz',
+    pin: '',
+    'pin-repeat': '',
+    profile: '',
+    lesson: '',
+    'word-1-german': '',
+    'word-1-answers': '',
+    'word-2-german': '',
+    'word-2-answers': '',
+  };
 
   function showError(error) {
     const text = error?.message || 'Die Aktion konnte nicht abgeschlossen werden.';
@@ -35,35 +53,50 @@ export function mountShell({root, commands, pinGate}) {
   }
 
   function renderSetup(state) {
-    const form = el('form', {attrs: {class: 'panel setup-panel', id: 'setup-form'}});
+    const form = el('form', {attrs: {
+      class: 'panel setup-panel', id: 'setup-form', 'aria-busy': setupBusy ? 'true' : 'false',
+    }});
     const initial = state === null;
     form.append(
       el('p', {text: initial
         ? 'Ein Erwachsener richtet den gemeinsamen Wortschatz und die lokale PIN ein.'
         : 'Die Datensatzeinrichtung wurde begonnen. Legen Sie jetzt die lokale PIN fest und vervollständigen Sie fehlende Startdaten.'}),
     );
-    if (initial) form.append(field('Name des Datensatzes', textInput('dataset-name', 'dataset-name', 80, 'Familienwortschatz')));
+    if (initial) form.append(field(
+      'Name des Datensatzes',
+      textInput('dataset-name', 'dataset-name', 80, setupDraft['dataset-name']),
+    ));
     else form.append(el('p', {text: `Datensatz: ${state.ledger.descriptor.name}`, attrs: {class: 'summary'}}));
     form.append(
-      field('Vierstellige PIN', pinInput('setup-pin', 'pin')),
-      field('PIN wiederholen', pinInput('setup-pin-repeat', 'pin-repeat')),
-      field('Name des Kindes', textInput('setup-profile', 'profile', 80)),
-      field('Name der ersten Lektion', textInput('setup-lesson', 'lesson', 80)),
-      wordFields(1),
-      wordFields(2),
+      field('Vierstellige PIN', pinInput('setup-pin', 'pin', setupDraft.pin)),
+      field('PIN wiederholen', pinInput('setup-pin-repeat', 'pin-repeat', setupDraft['pin-repeat'])),
+      field('Name des Kindes', textInput('setup-profile', 'profile', 80, setupDraft.profile)),
+      field('Name der ersten Lektion', textInput('setup-lesson', 'lesson', 80, setupDraft.lesson)),
+      wordFields(1, setupDraft),
+      wordFields(2, setupDraft),
       el('p', {text: 'Die PIN bleibt nur auf diesem Gerät. Sie ist eine Bedienhürde und kein Kontoschutz.', attrs: {class: 'hint'}}),
       el('p', {attrs: {id: 'shell-message', class: 'message', role: 'status'}}),
     );
     const submit = el('button', {text: 'Trainer einrichten', attrs: {id: 'setup-submit', type: 'submit', class: 'primary'}});
     form.append(submit);
+    form.addEventListener('input', (event) => {
+      const name = event.target?.name;
+      if (Object.hasOwn(setupDraft, name)) setupDraft[name] = event.target.value;
+    });
+    if (setupBusy) {
+      for (const control of form.querySelectorAll('input, button')) control.disabled = true;
+    }
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
+      if (setupBusy) return;
+      const data = structuredClone(setupDraft);
+      setupBusy = true;
       submit.disabled = true;
-      const data = new FormData(form);
+      render();
       try {
         if (commands.getState() === null) {
           await commands.setup({
-            name: data.get('dataset-name').trim(),
+            name: data['dataset-name'].trim(),
             timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/Berlin',
           });
         }
@@ -74,7 +107,7 @@ export function mountShell({root, commands, pinGate}) {
           const profileId = crypto.randomUUID();
           await commands.revise({
             entityType: 'profile', entityId: profileId, expectedHeads: [],
-            value: {name: data.get('profile').trim(), archived: false},
+            value: {name: data.profile.trim(), archived: false},
           });
           projection = project(commands.getState().ledger);
           profile = projection.entities.profiles[profileId];
@@ -85,7 +118,7 @@ export function mountShell({root, commands, pinGate}) {
           const lessonId = crypto.randomUUID();
           await commands.revise({
             entityType: 'lesson', entityId: lessonId, expectedHeads: [],
-            value: {name: data.get('lesson').trim(), archived: false, profileIds: [profile.id]},
+            value: {name: data.lesson.trim(), archived: false, profileIds: [profile.id]},
           });
           projection = project(commands.getState().ledger);
           lesson = projection.entities.lessons[lessonId];
@@ -93,20 +126,24 @@ export function mountShell({root, commands, pinGate}) {
         const existingWords = Object.values(projection.entities.words)
           .filter((entity) => entity.value && entity.value.lessonId === lesson.id);
         for (let index = existingWords.length + 1; index <= 2; index += 1) {
-          const answers = data.get(`word-${index}-answers`).split('|').map((value) => value.trim()).filter(Boolean);
+          const answers = data[`word-${index}-answers`].split('|').map((value) => value.trim()).filter(Boolean);
           await commands.revise({
             entityType: 'word', entityId: crypto.randomUUID(), expectedHeads: [],
             value: {
               lessonId: lesson.id,
-              german: data.get(`word-${index}-german`).trim(),
+              german: data[`word-${index}-german`].trim(),
               hint: '', answers, archived: false,
             },
           });
         }
-        await pinGate.setup(data.get('pin'), data.get('pin-repeat'));
+        await pinGate.setup(data.pin, data['pin-repeat']);
+        setupBusy = false;
+        setupDraft.pin = '';
+        setupDraft['pin-repeat'] = '';
         render();
       } catch (error) {
-        submit.disabled = false;
+        setupBusy = false;
+        render();
         showError(error);
       }
     });
@@ -219,8 +256,10 @@ export function mountShell({root, commands, pinGate}) {
   function onVisibilityChange() {
     if (document.visibilityState !== 'hidden') return;
     pinGate.lock();
-    if (currentView === 'adult') currentView = 'profiles';
-    render();
+    if (currentView === 'adult') {
+      currentView = 'profiles';
+      render();
+    }
   }
   document.addEventListener('visibilitychange', onVisibilityChange);
 

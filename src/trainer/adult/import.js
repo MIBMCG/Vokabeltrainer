@@ -42,10 +42,18 @@ export function parseTable(text) {
     }, rowId);
     rows.push(row);
     if (columns.length < 2 || columns.length > 3) {
-      issues.push(issue(rowId, 'columns', 'Diese Zeile muss zwei oder drei Tabellenspalten haben.'));
+      issues.push(issue(
+        rowId,
+        'columns',
+        `Diese Zeile muss zwei oder drei Tabellenspalten haben. Rohzeile: ${line}`,
+      ));
     }
     if (line.includes('"')) {
-      issues.push(issue(rowId, 'quotes', 'Anführungszeichen oder mehrzeilige Tabellenzellen bitte direkt prüfen.'));
+      issues.push(issue(
+        rowId,
+        'quotes',
+        `Anführungszeichen oder mehrzeilige Tabellenzellen bitte direkt prüfen. Rohzeile: ${line}`,
+      ));
     }
     if (row.german === '' || row.answers.length === 0) {
       issues.push(issue(rowId, 'required', 'Deutsches Wort und mindestens eine englische Lösung sind erforderlich.'));

@@ -4,6 +4,7 @@ import {applyRows, parseTable, validateRows} from '../adult/import.js';
 import {el, field, button, message} from './dom.js';
 
 const localState = new WeakMap();
+const MAX_ANSWERS_TEXT_LENGTH = 4_200;
 
 function viewState(root) {
   if (!localState.has(root)) {
@@ -137,7 +138,7 @@ function wordEditor({word, lessonId, commands, rerender, ui}) {
   const form = el('form', {attrs: {class: 'stack compact'}});
   const german = input('german', {value: word?.value.german ?? '', maxlength: 200});
   const answerInput = input('answers', {
-    value: word?.value.answers.join(' | ') ?? '', maxlength: 420,
+    value: word?.value.answers.join(' | ') ?? '', maxlength: MAX_ANSWERS_TEXT_LENGTH,
   });
   const hint = input('hint', {value: word?.value.hint ?? '', maxlength: 300, required: false});
   const preview = el('p', {attrs: {class: 'hint', 'data-revision-preview': ''}});
@@ -212,7 +213,9 @@ function importPanel({lesson, words, commands, rerender, ui}) {
   const preview = el('div', {attrs: {class: 'import-preview'}});
   for (const row of validated.rows) {
     const german = input('german', {value: row.german, maxlength: 200});
-    const answerInput = input('answers', {value: row.answers.join(' | '), maxlength: 420});
+    const answerInput = input('answers', {
+      value: row.answers.join(' | '), maxlength: MAX_ANSWERS_TEXT_LENGTH,
+    });
     const hint = input('hint', {value: row.hint, maxlength: 300, required: false});
     const decision = el('select', {attrs: {'aria-label': 'Entscheidung'}} , [
       el('option', {text: 'Übernehmen', attrs: {value: 'include'}}),
@@ -220,18 +223,27 @@ function importPanel({lesson, words, commands, rerender, ui}) {
       el('option', {text: 'Als eigene Bedeutung übernehmen', attrs: {value: 'separate'}}),
     ]);
     decision.value = row.decision;
-    const replace = (changes, edited = false) => {
+    const replace = (changes, resolveStructure = false) => {
       ui.importRows = ui.importRows.map((entry) => entry.rowId === row.rowId ? {...entry, ...changes} : entry);
-      if (edited) ui.importIssues = ui.importIssues.filter((current) => current.rowId !== row.rowId);
+      if (resolveStructure) {
+        ui.importIssues = ui.importIssues.filter((current) => current.rowId !== row.rowId);
+      }
       rerender();
     };
-    german.addEventListener('change', () => replace({german: german.value}, true));
-    answerInput.addEventListener('change', () => replace({answers: answers(answerInput.value)}, true));
-    hint.addEventListener('change', () => replace({hint: hint.value}, true));
+    german.addEventListener('change', () => replace({german: german.value}));
+    answerInput.addEventListener('change', () => replace({answers: answers(answerInput.value)}));
+    hint.addEventListener('change', () => replace({hint: hint.value}));
     decision.addEventListener('change', () => replace({decision: decision.value}, decision.value === 'skip'));
-    preview.append(el('div', {attrs: {class: 'import-row', 'data-import-row': row.rowId}}, [
+    const rowPanel = el('div', {attrs: {class: 'import-row', 'data-import-row': row.rowId}}, [
       field('Deutsch', german), field('Englisch', answerInput), field('Hinweis', hint), field('Entscheidung', decision),
-    ]));
+    ]);
+    if (ui.importIssues.some((current) => current.rowId === row.rowId)) {
+      rowPanel.append(button('Struktur nach Prüfung bestätigen', () => {
+        ui.importIssues = ui.importIssues.filter((current) => current.rowId !== row.rowId);
+        rerender();
+      }, {class: 'secondary'}));
+    }
+    preview.append(rowPanel);
   }
   panel.append(preview);
   const apply = button('Geprüfte Zeilen übernehmen', async () => {
@@ -474,9 +486,13 @@ function renderPinSettings(container, pinGate, rerender, ui) {
 export function renderAdult({root, state, commands, pinGate, onNavigate}) {
   const ui = viewState(root);
   const projection = project(state.ledger);
-  const rerender = () => renderAdult({
-    root, state: commands.getState(), commands, pinGate, onNavigate,
-  });
+  const rerender = () => {
+    if (!pinGate.isUnlocked()) {
+      onNavigate('profiles');
+      return;
+    }
+    renderAdult({root, state: commands.getState(), commands, pinGate, onNavigate});
+  };
   const page = el('div', {attrs: {class: 'adult-layout'}});
   const header = el('header', {attrs: {class: 'adult-header'}}, [
     el('div', {}, [el('p', {text: 'Geschützter Bereich', attrs: {class: 'eyebrow'}}), el('h1', {text: 'Für Erwachsene'})]),

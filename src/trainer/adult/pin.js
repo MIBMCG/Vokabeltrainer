@@ -62,17 +62,30 @@ export function createPinGate({loadVerifier, saveVerifier, cryptoImpl = globalTh
     invalid('Die PIN-Funktion ist auf diesem Gerät nicht verfügbar.');
   }
   let unlocked = false;
+  let permissionGeneration = 0;
+  let operationTail = Promise.resolve();
 
-  async function verify(pin) {
+  function schedule(operation) {
+    const generation = permissionGeneration;
+    const expectedVerifier = Promise.resolve(loadVerifier());
+    const result = operationTail.then(async () => operation(await expectedVerifier, generation));
+    operationTail = result.catch(() => {});
+    return result;
+  }
+
+  function grant(generation) {
+    if (generation === permissionGeneration) unlocked = true;
+  }
+
+  async function verify(pin, verifier) {
     if (!/^\d{4}$/u.test(pin)) invalid('Die PIN muss aus genau vier Ziffern bestehen.');
-    const verifier = await loadVerifier();
     if (verifier === null) invalid('Auf diesem Gerät ist noch keine PIN eingerichtet.');
     assertVerifier(verifier);
     const actual = await derive(pin, fromBase64(verifier.salt), verifier.iterations, cryptoImpl);
     if (!sameBytes(actual, fromBase64(verifier.hash))) invalid('Die PIN ist nicht richtig.');
   }
 
-  async function replace(pin, repeat) {
+  async function replace(pin, repeat, expectedVerifier, generation) {
     validatePin(pin, repeat);
     const salt = cryptoImpl.getRandomValues(new Uint8Array(16));
     const hash = await derive(pin, salt, DEFAULT_ITERATIONS, cryptoImpl);
@@ -80,30 +93,40 @@ export function createPinGate({loadVerifier, saveVerifier, cryptoImpl = globalTh
       salt: toBase64(salt),
       hash: toBase64(hash),
       iterations: DEFAULT_ITERATIONS,
-    });
-    unlocked = true;
+    }, expectedVerifier);
+    grant(generation);
   }
 
   return {
-    async setup(pin, repeat) {
-      if (await loadVerifier() !== null) invalid('Auf diesem Gerät ist bereits eine PIN eingerichtet.');
-      await replace(pin, repeat);
+    setup(pin, repeat) {
+      return schedule(async (expectedVerifier, generation) => {
+        if (expectedVerifier !== null) invalid('Auf diesem Gerät ist bereits eine PIN eingerichtet.');
+        await replace(pin, repeat, expectedVerifier, generation);
+      });
     },
-    async unlock(pin) {
-      await verify(pin);
-      unlocked = true;
+    unlock(pin) {
+      return schedule(async (expectedVerifier, generation) => {
+        await verify(pin, expectedVerifier);
+        grant(generation);
+      });
     },
-    async change(current, next, repeat) {
-      await verify(current);
-      await replace(next, repeat);
+    change(current, next, repeat) {
+      return schedule(async (expectedVerifier, generation) => {
+        await verify(current, expectedVerifier);
+        await replace(next, repeat, expectedVerifier, generation);
+      });
     },
-    async reset(confirmation, next, repeat) {
-      if (confirmation !== 'PIN zurücksetzen') {
-        invalid('Bitte geben Sie genau „PIN zurücksetzen“ ein.');
-      }
-      await replace(next, repeat);
+    reset(confirmation, next, repeat) {
+      return schedule(async (expectedVerifier, generation) => {
+        if (confirmation !== 'PIN zurücksetzen') {
+          invalid('Bitte geben Sie genau „PIN zurücksetzen“ ein.');
+        }
+        if (expectedVerifier === null) invalid('Auf diesem Gerät ist noch keine PIN eingerichtet.');
+        await replace(next, repeat, expectedVerifier, generation);
+      });
     },
     lock() {
+      permissionGeneration += 1;
       unlocked = false;
     },
     isUnlocked() {

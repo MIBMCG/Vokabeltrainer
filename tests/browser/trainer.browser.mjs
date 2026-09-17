@@ -81,7 +81,53 @@ async function seedOneCorrectAnswer(page, state) {
   await writeProductState(page, next);
 }
 
-test('trainer setup, adult decisions, persistence and BFCache lifecycle', {timeout: 60_000}, async () => {
+async function holdNextPinDerivation(page) {
+  await page.evaluate(() => {
+    if (!window.__originalPinDeriveBits) {
+      window.__originalPinDeriveBits = crypto.subtle.deriveBits.bind(crypto.subtle);
+      crypto.subtle.deriveBits = async (...args) => {
+        if (window.__holdPinDerivation) {
+          window.__pinDerivationStarted = true;
+          await window.__pinDerivationGate;
+          window.__holdPinDerivation = false;
+        }
+        const result = await window.__originalPinDeriveBits(...args);
+        window.__pinDerivationFinished = true;
+        return result;
+      };
+    }
+    window.__pinDerivationStarted = false;
+    window.__pinDerivationFinished = false;
+    window.__holdPinDerivation = true;
+    window.__pinDerivationGate = new Promise((resolveGate) => {
+      window.__releasePinDerivation = resolveGate;
+    });
+  });
+}
+
+async function backgroundDuringPinDerivation(page) {
+  await page.waitForFunction(() => window.__pinDerivationStarted === true);
+  await page.evaluate(() => {
+    Object.defineProperty(document, 'visibilityState', {value: 'hidden', configurable: true});
+    document.dispatchEvent(new Event('visibilitychange'));
+    window.__releasePinDerivation();
+  });
+  await page.waitForFunction(() => window.__pinDerivationFinished === true);
+  await page.evaluate(() => {
+    Object.defineProperty(document, 'visibilityState', {value: 'visible', configurable: true});
+  });
+}
+
+async function waitForVerifierChange(page, previousHash) {
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    const current = await productState(page);
+    if (current.pinVerifier?.hash !== previousHash) return current.pinVerifier.hash;
+    await page.waitForTimeout(25);
+  }
+  throw new Error('PIN verifier did not change');
+}
+
+test('trainer setup, adult decisions, persistence and BFCache lifecycle', {timeout: 90_000}, async () => {
   const harness = await createTrainerHarness();
   const device = await harness.newDevice();
   const {page, context} = device;
@@ -101,16 +147,41 @@ test('trainer setup, adult decisions, persistence and BFCache lifecycle', {timeo
     ));
     assert.ok(controlMetrics.every(({height}) => height >= 44));
     assert.ok(controlMetrics.filter((_, index) => index > 0).every(({fontSize}) => fontSize >= 16));
+    const longAnswers = [150, 151, 152].map((length, index) => String.fromCharCode(97 + index).repeat(length)).join(' | ');
+    assert.ok(longAnswers.length > 420);
     await page.locator('#dataset-name').fill('Familienwortschatz');
     await page.locator('#setup-pin').fill('1234');
     await page.locator('#setup-pin-repeat').fill('1234');
     await page.locator('#setup-profile').fill('Ada');
     await page.locator('#setup-lesson').fill('Unit 1');
     await page.locator('#setup-word-1-german').fill('Hund');
-    await page.locator('#setup-word-1-answers').fill('dog');
+    assert.ok(await page.locator('#setup-word-1-answers').evaluate(
+      (input, requiredLength) => input.maxLength >= requiredLength,
+      longAnswers.length,
+    ));
+    await page.locator('#setup-word-1-answers').fill(longAnswers);
     await page.locator('#setup-word-2-german').fill('Fahrrad');
     await page.locator('#setup-word-2-answers').fill('bicycle | bike');
-    await page.locator('#setup-submit').click();
+    await page.evaluate(() => {
+      Object.defineProperty(document, 'visibilityState', {value: 'hidden', configurable: true});
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    assert.equal(await page.locator('#dataset-name').inputValue(), 'Familienwortschatz');
+    assert.equal(await page.locator('#setup-pin').inputValue(), '1234');
+    assert.equal(await page.locator('#setup-profile').inputValue(), 'Ada');
+    assert.equal(await page.locator('#setup-word-1-answers').inputValue(), longAnswers);
+    await page.evaluate(() => {
+      Object.defineProperty(document, 'visibilityState', {value: 'visible', configurable: true});
+      window.__busySetupRenders = 0;
+      window.__setupObserver = new MutationObserver(() => {
+        const form = document.querySelector('#setup-form[aria-busy="true"]');
+        if (form?.querySelector('#setup-submit:disabled')) window.__busySetupRenders += 1;
+      });
+      window.__setupObserver.observe(document.querySelector('#app'), {childList: true, subtree: true});
+      const submit = document.querySelector('#setup-submit');
+      submit.click();
+      submit.click();
+    });
     await page.locator('#profile-list .profile-card', {hasText: /^Ada/}).waitFor({timeout: 8_000})
       .catch(async (error) => {
         error.message += `\nVisible page:\n${await page.locator('body').innerText()}\nPage errors: ${pageErrors.join(' | ')}`;
@@ -123,8 +194,20 @@ test('trainer setup, adult decisions, persistence and BFCache lifecycle', {timeo
     assert.equal(stateAfterSetup.pinVerifier === null, false);
     assert.doesNotMatch(JSON.stringify(stateAfterSetup.pinVerifier), /1234/);
     assert.equal(stateAfterSetup.ledger.events.filter((event) => event.type === 'entity.revised').length, 4);
+    assert.ok(await page.evaluate(() => window.__busySetupRenders > 0));
+    assert.deepEqual(stateAfterSetup.ledger.events.find((event) => (
+      event.type === 'entity.revised' && event.payload.entityType === 'word'
+      && event.payload.value.german === 'Hund'
+    )).payload.value.answers, longAnswers.split(' | '));
 
     await page.reload();
+    await page.locator('#adult-entry').click();
+    await page.locator('#adult-unlock').waitFor();
+    await holdNextPinDerivation(page);
+    await page.locator('#adult-pin').fill('1234');
+    await page.locator('#adult-unlock').click();
+    await backgroundDuringPinDerivation(page);
+    await page.locator('#profile-list').waitFor();
     await page.locator('#adult-entry').click();
     await page.locator('#adult-unlock').waitFor();
     await page.locator('#adult-pin').fill('1234');
@@ -146,8 +229,46 @@ test('trainer setup, adult decisions, persistence and BFCache lifecycle', {timeo
 
     const editWord = page.locator('[data-word-german="Hund"] details');
     await editWord.locator('summary').click();
+    assert.ok(await editWord.locator('input[name="answers"]').evaluate(
+      (input, requiredLength) => input.maxLength >= requiredLength,
+      longAnswers.length,
+    ));
     await editWord.locator('input[name="answers"]').fill('hound');
     assert.match(await editWord.locator('[data-revision-preview]').textContent(), /Serie beginnt/);
+
+    await page.locator('#import-text').fill('Bank\tbench\tSitzplatz\textra');
+    await page.locator('#import-preview').click();
+    await page.getByText(/Rohzeile:.*Sitzplatz.*extra/).waitFor();
+    const structuralRow = page.locator('[data-import-row="row-1"]');
+    await structuralRow.locator('input[name="german"]').fill('Sitzbank');
+    await structuralRow.locator('input[name="german"]').press('Tab');
+    assert.equal(await page.locator('#import-apply').isDisabled(), true);
+    await page.getByText(/Rohzeile:.*Sitzplatz.*extra/).waitFor();
+    await structuralRow.getByRole('button', {name: /Struktur.*bestätigen/}).click();
+    assert.equal(await page.locator('#import-apply').isEnabled(), true);
+    await page.locator('#import-apply').click();
+    await page.getByText('Sitzbank', {exact: true}).waitFor();
+
+    await page.locator('#import-text').fill('"mehr\tdeutig"\tanswer');
+    await page.locator('#import-preview').click();
+    await page.getByText(/Rohzeile:.*"mehr.*deutig".*answer/).waitFor();
+    const quotedRow = page.locator('[data-import-row="row-1"]');
+    await quotedRow.locator('input[name="hint"]').fill('Nur der Hinweis wurde geändert');
+    await quotedRow.locator('input[name="hint"]').press('Tab');
+    assert.equal(await page.locator('#import-apply').isDisabled(), true);
+    await quotedRow.locator('select').selectOption('skip');
+    assert.equal(await page.locator('#import-apply').isEnabled(), true);
+    await page.locator('#import-apply').click();
+
+    await page.locator('#import-text').fill(`Langform\t${longAnswers}`);
+    await page.locator('#import-preview').click();
+    assert.equal(await page.locator('[data-import-row="row-1"] input[name="answers"]').inputValue(), longAnswers);
+    assert.ok(await page.locator('[data-import-row="row-1"] input[name="answers"]').evaluate(
+      (input, requiredLength) => input.maxLength >= requiredLength,
+      longAnswers.length,
+    ));
+    await page.locator('#import-apply').click();
+    await page.getByText('Langform', {exact: true}).waitFor();
 
     await page.locator('#import-text').fill('Pflichtfeld fehlt\t');
     await page.locator('#import-preview').click();
@@ -181,6 +302,42 @@ test('trainer setup, adult decisions, persistence and BFCache lifecycle', {timeo
     await page.setViewportSize({width: 1280, height: 900});
     await page.screenshot({path: resolve(resultsDirectory, 'trainer-adult-desktop.png'), fullPage: true});
     const resumableState = await productState(page);
+
+    await page.getByRole('button', {name: 'Kinder'}).click();
+    const changePin = page.locator('details').filter({has: page.locator('summary', {hasText: 'PIN ändern'})});
+    await changePin.locator('summary').click();
+    await changePin.locator('input[name="current"]').fill('1234');
+    await changePin.locator('input[name="next"]').fill('5678');
+    await changePin.locator('input[name="repeat"]').fill('5678');
+    const beforeChangeHash = (await productState(page)).pinVerifier.hash;
+    await holdNextPinDerivation(page);
+    await changePin.getByRole('button', {name: 'PIN ändern'}).click();
+    await backgroundDuringPinDerivation(page);
+    await waitForVerifierChange(page, beforeChangeHash);
+    await page.locator('#profile-list').waitFor();
+    await page.locator('#adult-entry').click();
+    await page.locator('#adult-unlock').waitFor();
+    await page.locator('#adult-pin').fill('5678');
+    await page.locator('#adult-unlock').click();
+    await page.locator('#adult-nav').waitFor();
+
+    await page.getByRole('button', {name: 'Kinder'}).click();
+    const resetPin = page.locator('details').filter({has: page.locator('summary', {hasText: 'PIN vergessen'})});
+    await resetPin.locator('summary').click();
+    await resetPin.locator('input[name="confirmation"]').fill('PIN zurücksetzen');
+    await resetPin.locator('input[name="next"]').fill('9012');
+    await resetPin.locator('input[name="repeat"]').fill('9012');
+    const beforeResetHash = (await productState(page)).pinVerifier.hash;
+    await holdNextPinDerivation(page);
+    await resetPin.getByRole('button', {name: 'Vergessene PIN lokal zurücksetzen'}).click();
+    await backgroundDuringPinDerivation(page);
+    await waitForVerifierChange(page, beforeResetHash);
+    await page.locator('#profile-list').waitFor();
+    await page.locator('#adult-entry').click();
+    await page.locator('#adult-unlock').waitFor();
+    await page.locator('#adult-pin').fill('9012');
+    await page.locator('#adult-unlock').click();
+    await page.locator('#adult-nav').waitFor();
 
     await page.evaluate(() => {
       Object.defineProperty(document, 'visibilityState', {value: 'hidden', configurable: true});
@@ -230,7 +387,11 @@ test('trainer setup, adult decisions, persistence and BFCache lifecycle', {timeo
       await interrupted.page.locator('#setup-word-1-answers').fill('one');
       await interrupted.page.locator('#setup-word-2-german').fill('Zwei');
       await interrupted.page.locator('#setup-word-2-answers').fill('two');
-      await interrupted.page.locator('#setup-submit').click();
+      await interrupted.page.evaluate(() => {
+        const submit = document.querySelector('#setup-submit');
+        submit.click();
+        submit.click();
+      });
       await interrupted.page.locator('#profile-list .profile-card', {hasText: /^Ada/}).waitFor();
       const resumed = await productState(interrupted.page);
       assert.equal(resumed.pinVerifier === null, false);
