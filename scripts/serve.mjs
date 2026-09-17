@@ -26,6 +26,7 @@ const ASSETS = new Map([
   ['/src/trainer/main.js', ['src/trainer/main.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/ui/dom.js', ['src/trainer/ui/dom.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/ui/shell.js', ['src/trainer/ui/shell.js', 'text/javascript; charset=utf-8']],
+  ['/src/trainer/ui/practice.js', ['src/trainer/ui/practice.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/ui/adult.js', ['src/trainer/ui/adult.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/adult/pin.js', ['src/trainer/adult/pin.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/adult/import.js', ['src/trainer/adult/import.js', 'text/javascript; charset=utf-8']],

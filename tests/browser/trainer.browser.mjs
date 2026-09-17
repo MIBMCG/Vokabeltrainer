@@ -127,6 +127,261 @@ async function waitForVerifierChange(page, previousHash) {
   throw new Error('PIN verifier did not change');
 }
 
+async function setupPractice(page, {
+  profile = 'Ada',
+  first = ['Hund', 'dog | hound'],
+  second = ['Tier', 'dog | hound'],
+} = {}) {
+  await page.goto(page.url() || 'about:blank');
+  await page.locator('#dataset-name').fill('Übungsinsel');
+  await page.locator('#setup-pin').fill('1234');
+  await page.locator('#setup-pin-repeat').fill('1234');
+  await page.locator('#setup-profile').fill(profile);
+  await page.locator('#setup-lesson').fill('Unit 1');
+  await page.locator('#setup-word-1-german').fill(first[0]);
+  await page.locator('#setup-word-1-answers').fill(first[1]);
+  await page.locator('#setup-word-2-german').fill(second[0]);
+  await page.locator('#setup-word-2-answers').fill(second[1]);
+  await page.locator('#setup-submit').click();
+  await page.locator('#profile-list').waitFor();
+}
+
+async function addSecondProfile(page) {
+  const state = await productState(page);
+  const next = structuredClone(state);
+  const lesson = [...next.ledger.events].reverse().find((event) => (
+    event.type === 'entity.revised' && event.payload.entityType === 'lesson'
+  ));
+  const base = {
+    format: 'vokabeltrainer-product', formatVersion: 1, ruleVersion: 1, kind: 'event',
+    datasetId: next.ledger.descriptor.datasetId, epochId: next.ledger.descriptor.rootEpochId,
+    deviceId: next.deviceId, occurredAt: '2026-09-17T12:00:00.000Z', day: '2026-09-17',
+  };
+  const profile = {
+    ...base, id: 'browser-profile-ben', clock: next.clock + 1, type: 'entity.revised',
+    payload: {entityType: 'profile', entityId: 'browser-p2', parents: [], value: {name: 'Ben', archived: false}},
+  };
+  const assignment = {
+    ...base, id: 'browser-lesson-shared', clock: next.clock + 2, type: 'entity.revised',
+    payload: {
+      entityType: 'lesson', entityId: lesson.payload.entityId, parents: [lesson.id],
+      value: {...lesson.payload.value, profileIds: [...lesson.payload.value.profileIds, 'browser-p2'].sort()},
+    },
+  };
+  next.clock = assignment.clock;
+  next.ledger.events.push(profile, assignment);
+  next.outboxEventIds.push(profile.id, assignment.id);
+  await writeProductState(page, next);
+  await page.reload();
+  await page.locator('#profile-list').waitFor().catch(async (error) => {
+    error.message += `\nVisible page after second profile:\n${await page.locator('body').innerText()}`;
+    throw error;
+  });
+}
+
+test('trainer practice is resumable, single-submit safe and completes an exhausted round', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page, context} = await harness.newDevice();
+  const pageErrors = [];
+  page.on('pageerror', (error) => pageErrors.push(error.message));
+  await mkdir(resultsDirectory, {recursive: true});
+
+  try {
+    await page.goto(harness.baseUrl);
+    await setupPractice(page);
+    await addSecondProfile(page);
+    await page.getByRole('button', {name: /^Ada/}).click();
+    assert.equal(await page.getByRole('button', {name: 'Alle Vokabeln', exact: true}).count(), 1);
+    assert.equal(await page.getByRole('button', {name: 'Letzte Vokabeln', exact: true}).count(), 1);
+    assert.equal(await page.getByRole('button', {name: 'Neue Vokabeln', exact: true}).count(), 1);
+    await page.getByLabel('20 Antworten').check();
+    await page.getByLabel('10 Antworten').check();
+    await page.getByRole('button', {name: 'Alle Vokabeln', exact: true}).click();
+
+    const answer = page.getByLabel('Englische Übersetzung');
+    await answer.fill('   ');
+    await page.getByRole('button', {name: 'Prüfen', exact: true}).click();
+    assert.equal((await productState(page)).ledger.events.filter(({type}) => type === 'answer.recorded').length, 0);
+    assert.equal(await answer.inputValue(), '   ');
+
+    await answer.fill('wrong');
+    await page.evaluate(() => {
+      const input = document.querySelector('#answer');
+      input.dispatchEvent(new KeyboardEvent('keydown', {key: 'Enter', repeat: true, bubbles: true}));
+      input.dispatchEvent(new KeyboardEvent('keydown', {key: 'Enter', isComposing: true, bubbles: true}));
+      document.querySelector('#practice-submit').dispatchEvent(new MouseEvent('click', {bubbles: true}));
+      document.querySelector('#practice-submit').dispatchEvent(new MouseEvent('click', {bubbles: true}));
+    });
+    await page.getByText('Noch nicht ganz', {exact: true}).waitFor();
+    assert.equal((await productState(page)).ledger.events.filter(({type}) => type === 'answer.recorded').length, 1);
+    await page.getByText('dog', {exact: true}).waitFor();
+    await page.getByText('hound', {exact: true}).waitFor();
+    assert.equal(await answer.inputValue(), 'wrong');
+    assert.equal(await answer.isDisabled(), true);
+    assert.equal(await page.evaluate(() => document.activeElement?.textContent), 'Weiter');
+
+    await page.reload();
+    await page.getByText('Noch nicht ganz', {exact: true}).waitFor();
+    assert.equal(await page.getByLabel('Englische Übersetzung').inputValue(), 'wrong');
+    await page.getByRole('button', {name: 'Weiter', exact: true}).click();
+    await page.getByLabel('Englische Übersetzung').fill('dog');
+    await page.getByLabel('Englische Übersetzung').press('Enter');
+    await page.getByText('Richtig!', {exact: true}).waitFor();
+    assert.equal((await productState(page)).ledger.events.filter(({type}) => type === 'answer.recorded').length, 2);
+
+    await page.getByRole('button', {name: 'Profil wechseln', exact: true}).click();
+    await page.getByRole('button', {name: /^Ben/}).click();
+    await page.getByRole('button', {name: 'Profil wechseln', exact: true}).click();
+    await page.getByRole('button', {name: /^Ada/}).click();
+    await page.getByRole('button', {name: 'Fortsetzen', exact: true}).click();
+    await page.getByText('Richtig!', {exact: true}).waitFor();
+    assert.match(await page.locator('.practice-points').textContent(), /10 Punkte/);
+
+    await page.getByRole('button', {name: 'Weiter', exact: true}).click();
+    let completedState;
+    for (let index = 0; index < 20; index += 1) {
+      completedState = await productState(page);
+      const activeRound = Object.values(completedState.rounds).find(({status}) => !['completed', 'abandoned'].includes(status));
+      if (activeRound.status === 'exhausted') break;
+      if (activeRound.status === 'asking') {
+        await page.getByLabel('Englische Übersetzung').fill('dog');
+        await page.getByRole('button', {name: 'Prüfen', exact: true}).click();
+      }
+      await page.getByRole('button', {name: 'Weiter', exact: true}).click();
+    }
+    await page.getByRole('heading', {name: 'Für heute ist alles geschafft'}).waitFor();
+    completedState = await productState(page);
+    const exhaustedRound = Object.values(completedState.rounds).find(({status}) => status === 'exhausted');
+    const expectedAnswers = exhaustedRound.answeredIds.length;
+    await page.getByRole('button', {name: 'Runde beenden', exact: true}).click();
+    await page.getByRole('heading', {name: 'Runde geschafft!'}).waitFor();
+    assert.match(await page.locator('.round-summary').innerText(), new RegExp(`Antworten\\s*${expectedAnswers}`));
+    assert.match(await page.locator('.round-summary').innerText(), new RegExp(`Antwortpunkte\\s*${(expectedAnswers - 1) * 10}`));
+    assert.match(await page.locator('.round-summary').innerText(), /Rundenbonus\s*20/);
+
+    await page.setViewportSize({width: 390, height: 844});
+    await page.screenshot({path: resolve(resultsDirectory, 'trainer-summary-mobile.png'), fullPage: true});
+    await page.setViewportSize({width: 1280, height: 900});
+    await page.screenshot({path: resolve(resultsDirectory, 'trainer-summary-desktop.png'), fullPage: true});
+
+    const expectedPoints = ((expectedAnswers - 1) * 10) + 20;
+    await page.getByRole('button', {name: 'Neue Runde', exact: true}).click();
+    await page.getByRole('button', {name: 'Neue Vokabeln', exact: true}).click();
+    await page.getByRole('heading', {name: 'Hier gibt es gerade keine Vokabeln'}).waitFor();
+    assert.equal(await page.getByRole('heading', {name: 'Runde geschafft!'}).count(), 0);
+    await page.getByRole('button', {name: 'Andere Auswahl', exact: true}).click();
+    await page.getByRole('button', {name: 'Neue Runde', exact: true}).click();
+    await page.getByRole('button', {name: 'Alle Vokabeln', exact: true}).waitFor();
+    await page.getByRole('button', {name: 'Profil wechseln', exact: true}).click();
+    await page.locator('#adult-entry').click();
+    await page.locator('#adult-pin').fill('1234');
+    await page.locator('#adult-unlock').click();
+    await page.getByRole('button', {name: 'Lektionen'}).click();
+    await page.locator('[data-lesson-name="Unit 1"]').click();
+    const addWord = page.locator('form').filter({has: page.getByRole('button', {name: 'Vokabel hinzufügen', exact: true})});
+    await addWord.locator('input[name="german"]').fill('Schiff');
+    await addWord.locator('input[name="answers"]').fill('ship');
+    await addWord.getByRole('button', {name: 'Vokabel hinzufügen', exact: true}).click();
+    await page.getByText('Die Vokabel wurde hinzugefügt.', {exact: true}).waitFor();
+    await page.getByRole('button', {name: 'Zur Profilauswahl', exact: true}).click();
+    await page.getByRole('button', {name: /^Ada/}).click();
+    assert.match(await page.locator('.practice-points').textContent(), new RegExp(`${expectedPoints} Punkte`));
+    await page.getByRole('button', {name: 'Alle Vokabeln', exact: true}).click();
+    assert.match(await page.locator('.practice-points').textContent(), new RegExp(`${expectedPoints} Punkte`));
+
+    const preserved = await page.evaluate(async (initialState) => {
+      const {mountShell} = await import('../src/trainer/ui/shell.js');
+      const profileId = Object.values(initialState.rounds).find(({status}) => status === 'asking').profileId;
+      sessionStorage.setItem('vokabeltrainer-shell-v1', JSON.stringify({
+        view: 'practice', profileId, practiceActive: true,
+      }));
+      let current = structuredClone(initialState);
+      const host = document.createElement('div');
+      document.body.append(host);
+      const shell = mountShell({
+        root: host,
+        commands: {getState: () => structuredClone(current)},
+        pinGate: {isUnlocked: () => false, lock() {}},
+      });
+      shell.render();
+      const input = host.querySelector('#answer');
+      input.value = 'unsent draft';
+      input.focus();
+      current.pendingPackets.push({kind: 'unrelated-background-update'});
+      shell.stateChanged();
+      const result = {
+        sameNode: input === host.querySelector('#answer'),
+        value: host.querySelector('#answer').value,
+        focused: document.activeElement === input,
+      };
+      shell.destroy();
+      host.remove();
+      return result;
+    }, await productState(page));
+    assert.deepEqual(preserved, {sameNode: true, value: 'unsent draft', focused: true});
+
+    await page.setViewportSize({width: 390, height: 844});
+    await page.screenshot({path: resolve(resultsDirectory, 'trainer-practice-mobile.png'), fullPage: true});
+    await page.setViewportSize({width: 1280, height: 900});
+    await page.screenshot({path: resolve(resultsDirectory, 'trainer-practice-desktop.png'), fullPage: true});
+    await page.setViewportSize({width: 320, height: 700});
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth), true);
+    await page.screenshot({path: resolve(resultsDirectory, 'trainer-practice-320.png'), fullPage: true});
+    await page.setViewportSize({width: 390, height: 844});
+    await page.evaluate(() => { document.documentElement.style.fontSize = '32px'; });
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth), true);
+    await page.screenshot({path: resolve(resultsDirectory, 'trainer-practice-200-percent.png'), fullPage: true});
+    await page.evaluate(() => { document.documentElement.style.fontSize = ''; });
+    await page.emulateMedia({reducedMotion: 'reduce'});
+    assert.equal(await page.locator('#practice-submit').evaluate((node) => getComputedStyle(node).transitionDuration), '0s');
+
+    const beforeFailure = await productState(page);
+    const beforeFailureAnswers = beforeFailure.ledger.events.filter(({type}) => type === 'answer.recorded').length;
+    await page.evaluate(() => {
+      const original = IDBObjectStore.prototype.put;
+      let failNext = true;
+      IDBObjectStore.prototype.put = function put(...args) {
+        if (failNext) {
+          failNext = false;
+          throw new DOMException('synthetic full storage', 'QuotaExceededError');
+        }
+        return original.apply(this, args);
+      };
+    });
+    await page.getByLabel('Englische Übersetzung').fill('ship');
+    await page.getByRole('button', {name: 'Prüfen', exact: true}).click();
+    await page.getByText('Die lokalen Produktdaten konnten nicht gespeichert werden.', {exact: true}).waitFor();
+    assert.equal(await page.getByLabel('Englische Übersetzung').inputValue(), 'ship');
+    assert.equal((await productState(page)).ledger.events.filter(({type}) => type === 'answer.recorded').length, beforeFailureAnswers);
+    await page.getByRole('button', {name: 'Prüfen', exact: true}).click();
+    await page.getByText('Richtig!', {exact: true}).waitFor();
+    await page.getByRole('button', {name: 'Weiter', exact: true}).click();
+
+    const staleGerman = await page.locator('.word-card h1').textContent();
+    const answersBeforeRevision = (await productState(page)).ledger.events.filter(({type}) => type === 'answer.recorded').length;
+    await page.getByRole('button', {name: 'Profil wechseln', exact: true}).click();
+    await page.locator('#adult-entry').click();
+    await page.locator('#adult-pin').fill('1234');
+    await page.locator('#adult-unlock').click();
+    await page.getByRole('button', {name: 'Lektionen'}).click();
+    await page.locator('[data-lesson-name="Unit 1"]').click();
+    const staleCard = page.locator(`[data-word-german="${staleGerman}"]`);
+    await staleCard.locator('summary', {hasText: 'Bearbeiten'}).click();
+    await staleCard.locator('input[name="answers"]').fill('changed-answer');
+    await staleCard.getByRole('button', {name: 'Änderung speichern', exact: true}).click();
+    await page.getByText('Die Vokabel wurde gespeichert.', {exact: true}).waitFor();
+    await page.getByRole('button', {name: 'Zur Profilauswahl', exact: true}).click();
+    await page.getByRole('button', {name: /^Ada/}).click();
+    await page.getByRole('button', {name: 'Fortsetzen', exact: true}).click();
+    await page.getByText('Die geänderte Vokabel wurde ohne Wertung übersprungen.', {exact: true}).waitFor();
+    assert.equal((await productState(page)).ledger.events.filter(({type}) => type === 'answer.recorded').length, answersBeforeRevision);
+    assert.deepEqual(pageErrors, []);
+  } finally {
+    await context.close();
+    await harness.close();
+  }
+});
+
 test('trainer setup, adult decisions, persistence and BFCache lifecycle', {timeout: 90_000}, async () => {
   const harness = await createTrainerHarness();
   const device = await harness.newDevice();

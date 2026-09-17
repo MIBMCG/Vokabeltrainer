@@ -1,8 +1,25 @@
 import {project} from '../learning/progress.js';
 import {el, field, button, message} from './dom.js';
 import {renderAdult} from './adult.js';
+import {practiceRenderKey, renderPractice, renderPracticeLanding} from './practice.js';
 
 const MAX_ANSWERS_TEXT_LENGTH = 4_200;
+const SHELL_SESSION_KEY = 'vokabeltrainer-shell-v1';
+
+function restoredShellState() {
+  try {
+    const value = JSON.parse(sessionStorage.getItem(SHELL_SESSION_KEY) ?? 'null');
+    if (value === null || typeof value !== 'object') return null;
+    if (!['profiles', 'practice', 'journey', 'avatar'].includes(value.view)) return null;
+    return {
+      view: value.view,
+      profileId: typeof value.profileId === 'string' ? value.profileId : null,
+      practiceActive: value.practiceActive === true,
+    };
+  } catch {
+    return null;
+  }
+}
 
 function pinInput(id, name, value = '') {
   return el('input', {attrs: {
@@ -30,8 +47,11 @@ function wordFields(index, draft) {
 }
 
 export function mountShell({root, commands, pinGate}) {
-  let currentView = 'profiles';
-  let activeProfileId = null;
+  const restored = restoredShellState();
+  let currentView = restored?.view ?? 'profiles';
+  let activeProfileId = restored?.profileId ?? null;
+  let practiceActive = restored?.practiceActive ?? false;
+  let lastPracticeKey = null;
   let destroyed = false;
   let setupBusy = false;
   const setupDraft = {
@@ -45,6 +65,14 @@ export function mountShell({root, commands, pinGate}) {
     'word-2-german': '',
     'word-2-answers': '',
   };
+
+  function persistShellState() {
+    sessionStorage.setItem(SHELL_SESSION_KEY, JSON.stringify({
+      view: currentView,
+      profileId: activeProfileId,
+      practiceActive,
+    }));
+  }
 
   function showError(error) {
     const text = error?.message || 'Die Aktion konnte nicht abgeschlossen werden.';
@@ -172,6 +200,7 @@ export function mountShell({root, commands, pinGate}) {
       const progress = projection.profiles[profile.id];
       list.append(button(profile.value.name, () => {
         activeProfileId = profile.id;
+        practiceActive = false;
         show('practice');
       }, {class: 'profile-card', 'data-profile-id': profile.id}));
       list.lastChild.append(el('span', {text: `Level ${progress?.level ?? 1} · ${progress?.points ?? 0} Punkte`}));
@@ -243,13 +272,43 @@ export function mountShell({root, commands, pinGate}) {
     else if (currentView === 'adult') {
       if (!pinGate.isUnlocked()) renderAdultGate();
       else renderAdult({root, state, commands, pinGate, onNavigate: show});
+    } else if (currentView === 'practice' && activeProfileId !== null) {
+      const projection = project(state.ledger);
+      const profile = projection.entities.profiles[activeProfileId];
+      if (profile?.value === null || profile?.value?.archived || profile === undefined) {
+        currentView = 'profiles';
+        activeProfileId = null;
+        practiceActive = false;
+        persistShellState();
+        renderProfiles(state);
+      } else {
+        const renderPracticeView = practiceActive ? renderPractice : renderPracticeLanding;
+        renderPracticeView({
+          root, state, commands, profileId: activeProfileId, onNavigate: handlePracticeNavigation,
+        });
+        root.append(shellNavigation());
+        lastPracticeKey = practiceRenderKey(state, activeProfileId);
+      }
     } else renderScaffold(state, currentView);
+  }
+
+  function handlePracticeNavigation(destination, {render: shouldRender = true} = {}) {
+    if (destination === 'practice-active' || destination === 'practice-landing') {
+      currentView = 'practice';
+      practiceActive = destination === 'practice-active';
+      persistShellState();
+      if (shouldRender) render();
+      return;
+    }
+    show(destination);
   }
 
   function show(view) {
     if (!['profiles', 'practice', 'journey', 'avatar', 'adult'].includes(view)) return;
     if (currentView === 'adult' && view !== 'adult') pinGate.lock();
+    if (view === 'profiles') practiceActive = false;
     currentView = view;
+    persistShellState();
     render();
   }
 
@@ -265,6 +324,15 @@ export function mountShell({root, commands, pinGate}) {
 
   return {
     render,
+    stateChanged() {
+      if (destroyed) return;
+      const state = commands.getState();
+      if (state !== null && currentView === 'practice' && practiceActive && activeProfileId !== null) {
+        const nextKey = practiceRenderKey(state, activeProfileId);
+        if (nextKey === lastPracticeKey) return;
+      }
+      render();
+    },
     show,
     destroy() {
       destroyed = true;

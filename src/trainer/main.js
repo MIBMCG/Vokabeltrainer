@@ -47,7 +47,7 @@ async function start() {
     now: () => new Date(),
     id: () => crypto.randomUUID(),
     deviceId: deviceId(),
-    onChange: () => shell?.render(),
+    onChange: () => shell?.stateChanged(),
   });
   const pinGate = createPinGate({
     loadVerifier: async () => commands.getState()?.pinVerifier ?? null,
