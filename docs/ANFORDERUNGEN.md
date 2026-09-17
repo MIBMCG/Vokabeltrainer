@@ -113,6 +113,12 @@ Das technische Speicher-/Konfliktmodell E07/E08/E10 ist mit der Gesamtbestätigu
 
 17.09.2026, Nutzerantwort A: Noch kein Google-Cloud-Projekt und keine öffentliche OAuth-Client-ID für den Vokabeltrainer vorhanden. Die Einrichtung wird gemeinsam Schritt für Schritt angeleitet. Projektanlage, Anmeldung und reale Tests sind dadurch noch nicht als durchgeführt bestätigt. Kostenrahmen und Kontenmodell bleiben unverändert.
 
+Fortschritt am 17.09.2026: Der Nutzer bestätigt anschließend die erfolgreiche Erstellung des Google-Cloud-Projekts nach Anleitung. Nächster Schritt ist die Aktivierung der Google Drive API; OAuth-Client und reale Verbindungsprüfung bleiben offen.
+
+Weitere Einrichtung am 17.09.2026: Web-OAuth-Client vorhanden, Testkonto eingetragen und erste echte Anmeldung durch Nutzerscreenshot bestätigt. Reales Speichern/Abgleichen sowie Geräteabnahme bleiben offen.
+
+Praxisprüfung am 17.09.2026: Nutzer bestätigt realen Drive-Abgleich, Uploadwiederholung ohne Doppelwertung, lokalen Erhalt nach Neuladen, erneute Anmeldung, Offlineantwort mit anschließendem Upload und Rücksetzung mit Sicherungsbestätigung. Offline-Neuladen und Mehrgeräte-/iOS-Prüfung bleiben offen. Details und Nachweisgrenzen stehen im [Prüfbericht](reports/2026-09-17-google-drive-probe.md).
+
 ## Nicht beauftragt
 
 - Native App-Store-App, App-Store-Veröffentlichung oder kostenpflichtiger Backenddienst.

@@ -32,7 +32,7 @@ Task 2 wurde mit GPT-5.6 Sol bei hoher Denktiefe umgesetzt und nach zwei Fixrund
 
 ## Offen und nächster Schritt
 
-Nutzerantwort A am 17.09.2026: Noch kein Google-Cloud-Projekt und keine öffentliche OAuth-Client-ID vorhanden; gemeinsame schrittweise Einrichtung gewünscht. Als erster Bedienungsschritt wird das Öffnen der Cloud Console und die Anmeldung angeleitet. Es ist weder eine Registrierung noch echte Google-/Drive-Nutzung nachgewiesen. Als Nächstes:
+Praxisstand 17.09.2026 (Nutzerrückmeldungen und Screenshots): Echte Google-Anmeldung mit drive.file, Probeordnerauswahl, erste Antwort (1/10/1), Drive-Abgleich (1/10/0), Uploadwiederholung ohne Doppelwertung, Neuladen mit erhaltenem Stand und erneutes Verbinden bestätigt. Eine zweite Antwort wurde bei getrennter Internetverbindung gespeichert (2/20/1) und nach Wiederverbindung übertragen (2/20/0). Rücksetzung auf 0/0/0 und Statusmeldung zur bestätigten Sicherung wurden ebenfalls bestätigt. Reihenfolge der Zahlen: Antworten/Punkte/Ausstehend. Offline-Neuladen, zweiter Browser bzw. physisches Zweitgerät und iOS bleiben offen. Die genaue Browser-/OS-Version und der tatsächlich geladene Codecommit wurden nicht erhoben; kein vom Assistenten selbst ausgeführter Live-Test. Nächster Schritt: Seite ohne Internet neu laden. Keine persönlichen Konto-, Client- oder Ordnerkennungen dokumentieren.
 
 1. [Google-Einrichtung](../GOOGLE-DRIVE-PROBE.md#google-einmalig-vorbereiten) durch die projektverantwortliche erwachsene Person durchführen. Nur die öffentliche Client-ID lokal eintragen; kein Passwort oder Client-Secret weitergeben.
 2. Mit derselben OAuth-App, demselben Google-Konto und demselben Probeordner auf zwei Geräten die reale Matrix aus der Anleitung ausführen.

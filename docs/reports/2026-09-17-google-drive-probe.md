@@ -54,8 +54,8 @@ Die Dokumentation und Browserprüfungen wurden mit GPT-5.6 Sol bei mittlerer Den
 
 ## Offene Grenzen
 
-- Es gibt noch keinen nachgewiesenen Google-Cloud-Projekt-/OAuth-Client für dieses Projekt und keine echte Google-Anmeldung.
-- Reales Drive-Verhalten, zwei physische Geräte und derselbe Probeordner wurden nicht geprüft.
+- Erste echte Google-Anmeldung nach manueller Einrichtung ist durch Nutzerscreenshot bestätigt; Details im folgenden Praxisnachtrag.
+- Erste Drive-Übertragung und Rücksetzung sind durch Nutzerrückmeldungen bestätigt. Offline-Neuladen, zwei physische Geräte und iOS bleiben offen.
 - Safari auf iPhone/iPad und die Home-Bildschirm-App wurden nicht geprüft. Dafür fehlen noch HTTPS-Bereitstellung, konkrete Geräte-/Versionsangaben und Testverfügbarkeit.
 - Die frühe Machbarkeitsprüfung ist deshalb noch nicht bestanden.
 - Trainer, Vokabeln, Lernprofile, adaptive Wiederholung, Erwachsenen-PIN, Inselreise, vollständiger Sicherungsimport und Produkt-Konfliktlösung sind nicht implementiert.
@@ -63,4 +63,16 @@ Die Dokumentation und Browserprüfungen wurden mit GPT-5.6 Sol bei mittlerer Den
 
 ## Nächster Nachweis
 
-Die projektverantwortliche erwachsene Person richtet nach [GOOGLE-DRIVE-PROBE.md](../GOOGLE-DRIVE-PROBE.md) ein Google-Projekt, die Drive API und einen Web-OAuth-Client ein. Danach wird die reale Zwei-Geräte-Matrix mit derselben öffentlichen Client-ID, demselben Google-Konto und demselben Probeordner ausgeführt. Zugangsdaten, Client-Secret, Tokens und echte Lernprofile werden weder angefordert noch dokumentiert.
+Die Einrichtung ist inzwischen erfolgt. Als Nächstes werden Offline-Neuladen und die reale Zwei-Geräte-Matrix nach [GOOGLE-DRIVE-PROBE.md](../GOOGLE-DRIVE-PROBE.md) mit derselben öffentlichen Client-ID, demselben Google-Konto und demselben Probeordner ausgeführt. Zugangsdaten, Client-Secret, Tokens und echte Lernprofile werden weder angefordert noch dokumentiert.
+
+## Praxisnachtrag: erste echte Anmeldung
+
+Praxisstand 17.09.2026: Projekt und Web-OAuth-Client wurden vom Nutzer angelegt; der Klick zur Aktivierung der Drive API wurde bestätigt. Nach einem zunächst gemeldeten 401 invalid_client und anschließendem 403 access_denied wurde das Konto als Testnutzer eingetragen. Der aktuelle Nutzerscreenshot zeigt die echte Google-Einwilligung für drive.file und danach in der lokalen Probe eine verbundene Sitzung. Die genaue Ursache des ersten Client-ID-Fehlers ist nicht abschließend belegt. Noch kein Nachweis für Ordneranlage, Dateiübertragung, zwei Geräte oder iOS. Nächster Schritt: einen neuen synthetischen Probeordner erstellen. Keine Konto-Adresse, Client-ID oder Tokens im Prüfbericht speichern.
+
+Nachweis: vom Nutzer bereitgestellte Screenshots der Google-Einwilligung und des verbundenen App-Zustands auf localhost. Kein eigenständig ausgeführter Live-Test durch den Assistenten; Browser-/Betriebssystemversion und tatsächlich geladener Codecommit wurden bei diesem Handtest nicht gesondert erhoben.
+
+## Praxisnachtrag: Drive-Abgleich und Rücksetzung
+
+Praxisstand 17.09.2026 (Nutzerrückmeldungen und Screenshots): Echte Google-Anmeldung mit drive.file, Probeordnerauswahl, erste Antwort (1/10/1), Drive-Abgleich (1/10/0), Uploadwiederholung ohne Doppelwertung, Neuladen mit erhaltenem Stand und erneutes Verbinden bestätigt. Eine zweite Antwort wurde bei getrennter Internetverbindung gespeichert (2/20/1) und nach Wiederverbindung übertragen (2/20/0). Rücksetzung auf 0/0/0 und Statusmeldung zur bestätigten Sicherung wurden ebenfalls bestätigt. Reihenfolge der Zahlen: Antworten/Punkte/Ausstehend. Offline-Neuladen, zweiter Browser bzw. physisches Zweitgerät und iOS bleiben offen. Die genaue Browser-/OS-Version und der tatsächlich geladene Codecommit wurden nicht erhoben; kein vom Assistenten selbst ausgeführter Live-Test. Nächster Schritt: Seite ohne Internet neu laden. Keine persönlichen Konto-, Client- oder Ordnerkennungen dokumentieren.
+
+Die Bestätigung der Rücksetzung war erst nach Scrollen zur Statuszeile sichtbar. Das ist ein beobachteter Bedienhinweis; für die spätere Schüleroberfläche Rückmeldungen unmittelbar am Handlungspunkt berücksichtigen. Eine unabhängige Prüfung der konkreten Backup-Datei in Drive wurde nicht durchgeführt; bestätigt wurde die App-Statusmeldung nach ihrem implementierten Sicherungsablauf.

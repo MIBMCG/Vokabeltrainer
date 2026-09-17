@@ -25,17 +25,17 @@ Einrichtung und Prüfablauf: [Google-Drive-Probe](docs/GOOGLE-DRIVE-PROBE.md).
 
 ## Äußere Voraussetzungen und nächste Schritte
 
-Nutzerantwort A am 17.09.2026: Es gibt noch kein Google-Cloud-Projekt und keine öffentliche OAuth-Client-ID für den Trainer. Die Einrichtung soll gemeinsam Schritt für Schritt erfolgen. Nächster Schritt: Google Cloud Console öffnen und mit einem geeigneten privaten Google-Konto anmelden; Projektanlage und Client-Erstellung sind noch nicht bestätigt. Der lokale Entwicklungsursprung ist `http://localhost:4173`; die öffentliche Client-ID wird nur lokal in der Probe eingegeben. Keine Passwörter oder Client-Secrets anfordern oder speichern.
+Praxisstand 17.09.2026 (Nutzerrückmeldungen und Screenshots): Echte Google-Anmeldung mit drive.file, Probeordnerauswahl, erste Antwort (1/10/1), Drive-Abgleich (1/10/0), Uploadwiederholung ohne Doppelwertung, Neuladen mit erhaltenem Stand und erneutes Verbinden bestätigt. Eine zweite Antwort wurde bei getrennter Internetverbindung gespeichert (2/20/1) und nach Wiederverbindung übertragen (2/20/0). Rücksetzung auf 0/0/0 und Statusmeldung zur bestätigten Sicherung wurden ebenfalls bestätigt. Reihenfolge der Zahlen: Antworten/Punkte/Ausstehend. Offline-Neuladen, zweiter Browser bzw. physisches Zweitgerät und iOS bleiben offen. Die genaue Browser-/OS-Version und der tatsächlich geladene Codecommit wurden nicht erhoben; kein vom Assistenten selbst ausgeführter Live-Test. Nächster Schritt: Seite ohne Internet neu laden. Keine persönlichen Konto-, Client- oder Ordnerkennungen dokumentieren.
 
 Für reale iOS-Prüfungen fehlen Geräte-/Versionsangaben, Testverfügbarkeit und eine abgestimmte HTTPS-Bereitstellung. Der Nutzer besitzt keine Apple-Geräte; sein Freund als künftiger Hauptnutzer besitzt iPhone und iPad. Niemand wird ohne Auftrag kontaktiert.
 
-Nächster fachlicher Schritt ist die [Google-Einrichtung](docs/GOOGLE-DRIVE-PROBE.md#google-einmalig-vorbereiten) durch die projektverantwortliche erwachsene Person und danach der reale Test mit demselben OAuth-Client, Google-Konto und Probeordner auf zwei Geräten. Für iPhone/iPad ist zusätzlich eine abgestimmte HTTPS-Bereitstellung nötig; Safari und Home-Bildschirm-App werden getrennt geprüft. Bis diese Nachweise vorliegen, ist die frühe Machbarkeitsprüfung nicht bestanden und umfangreiche Lernoberfläche nicht freigegeben.
+Die erste Anmeldung, Drive-Übertragung und Rücksetzung sind bestätigt. Als Nächstes folgen Offline-Neuladen und die weiteren Prüfungen nach der [Prüfanleitung](docs/GOOGLE-DRIVE-PROBE.md), später mit demselben OAuth-Client, Google-Konto und Probeordner auf zwei Geräten. Für iPhone/iPad ist zusätzlich eine abgestimmte HTTPS-Bereitstellung nötig; Safari und Home-Bildschirm-App werden getrennt geprüft. Bis diese Nachweise vorliegen, ist die frühe Machbarkeitsprüfung nicht bestanden und umfangreiche Lernoberfläche nicht freigegeben.
 
 ## Noch nicht vorhanden oder nachgewiesen
 
 - Vollständiger Trainer mit Lernprofilen, Wortverwaltung, adaptiver Auswahl, Erwachsenen-PIN und Inselreise.
 - Produktfähige Synchronisation einschließlich vollständigem Sicherungsimport und Erwachsenen-Konfliktlösung.
-- Echte Google-Anmeldung oder Zwei-Geräte-Abgleich für dieses Projekt.
+- Offline-Neuladen und realer Zwei-Geräte-Abgleich; erste Drive-Übertragung und Rücksetzung sind vom Nutzer bestätigt.
 - Reale iPhone-/iPad-Abnahme und festgelegte Mindestversionen.
 - Eingerichtetes Hosting oder veröffentlichte Trainer-URL.
 
