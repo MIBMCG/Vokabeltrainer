@@ -1,6 +1,6 @@
 # Übergabe: lokale Verbindungsprobe
 
-Stand: 17.09.2026. Arbeitszweig: `codex/google-drive-probe`. Geprüfte Codebasis: `230defb`. Die genaue Spitze des Dokumentationscommits ist nach dem Klonen mit `git log -5 --oneline` zu prüfen; dieser Text erfindet keinen noch nicht bekannten SHA.
+Stand: 17.09.2026. Arbeitszweig: `codex/google-drive-probe`. Geprüfte Codebasis: `92f044e`. Die aktuelle Zweigspitze nach dem Klonen mit `git log -5 --oneline` prüfen; spätere Dokumentationscommits können über der geprüften Codebasis liegen.
 
 ## Was vorhanden ist
 
@@ -26,9 +26,9 @@ Danach `http://localhost:4173` öffnen. Es gibt keine npm-Laufzeitabhängigkeite
 
 ## Prüfstand
 
-Auf `230defb` bestanden 73/73 Node-Tests. Neun Browser-Szenarien bestanden mit Playwright 1.62.1, System-Edge 153.0.4234.32 und Node 22.23.2 ohne Seitenfehler. Die Browserprüfung nutzte echte Oberfläche, IndexedDB und Service Worker, simulierte aber GIS und Drive-HTTP. Desktop- und Mobilansicht sowie Rücksetzzustand wurden visuell geprüft. [Vollständiger Bericht](../reports/2026-09-17-google-drive-probe.md)
+Auf `92f044e` bestanden 74/74 Node-Tests. Zwölf Browser-Szenarien bestanden mit Playwright 1.62.1, System-Edge 153.0.4234.32 und Node 22.23.2 ohne Seitenfehler. Die Browserprüfung nutzte echte Oberfläche, IndexedDB und Service Worker, simulierte aber GIS und Drive-HTTP. Desktop- und Mobilansicht sowie Rücksetzzustand wurden visuell geprüft. [Vollständiger Bericht](../reports/2026-09-17-google-drive-probe.md)
 
-Task 2 wurde mit GPT-5.6 Sol bei hoher Denktiefe umgesetzt und nach zwei Fixrunden unabhängig freigegeben. Die portable Dokumentation entstand mit GPT-5.6 Sol bei mittlerer Denktiefe. Eine abschließende Gesamtprüfung mit GPT-6 Astra bei hoher Denktiefe, Push und Remote-SHA-Vergleich stehen zum Zeitpunkt dieser Übergabe noch aus.
+Task 2 wurde mit GPT-5.6 Sol bei hoher Denktiefe umgesetzt und nach zwei Fixrunden unabhängig freigegeben. Die portable Dokumentation entstand mit GPT-5.6 Sol bei mittlerer Denktiefe. Die Gesamtprüfung mit GPT-6 Astra bei hoher Denktiefe fand zwei zusätzliche Fehler bei Browser-Zurücknavigation und Wiederanmeldung nach HTTP 401. Sol korrigierte beide in `92f044e`; Astra bestätigte die Korrektur ohne neuen Befund. Push und Remote-SHA-Vergleich folgen als Abschluss.
 
 ## Offen und nächster Schritt
 

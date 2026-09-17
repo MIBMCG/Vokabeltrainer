@@ -2,7 +2,7 @@
 
 Ein geplanter Deutsch-Englisch-Vokabeltrainer für Kinder von **10 bis 13 Jahren, Klasse 4 bis 7**. Er soll auf aktuellen Smartphones, Tablets und Computern funktionieren; **iPhone und iPad haben Vorrang**.
 
-**Stand: 17. September 2026 — ausführbare technische Verbindungsprobe.** Die Probe besitzt eine kleine mobile Oberfläche, lokalen IndexedDB-Speicher, einen eigenen Offline-Service-Worker und den Google-Drive-Adapter. 73 automatisierte Tests sowie neun Browser-Szenarien mit simulierter Google-Grenze waren erfolgreich. Echte Google-Anmeldung, zwei reale Geräte und iPhone/iPad sind noch nicht geprüft; der eigentliche Vokabeltrainer ist noch nicht implementiert. Aktuelle Nachweise und Wiedereinstieg stehen in [ARBEITSSTAND.md](ARBEITSSTAND.md).
+**Stand: 17. September 2026 — ausführbare technische Verbindungsprobe.** Die Probe besitzt eine kleine mobile Oberfläche, lokalen IndexedDB-Speicher, einen eigenen Offline-Service-Worker und den Google-Drive-Adapter. 74 automatisierte Tests sowie zwölf Browser-Szenarien mit simulierter Google-Grenze waren erfolgreich. Echte Google-Anmeldung, zwei reale Geräte und iPhone/iPad sind noch nicht geprüft; der eigentliche Vokabeltrainer ist noch nicht implementiert. Aktuelle Nachweise und Wiedereinstieg stehen in [ARBEITSSTAND.md](ARBEITSSTAND.md).
 
 ## Geplanter Lernablauf
 
@@ -103,7 +103,7 @@ git switch codex/google-drive-probe
 npm test
 ```
 
-Die Tests benötigen weder npm-Zusatzpakete noch ein Google-Konto oder Internetzugriff. Für den dokumentierten Stand wurden **73 Tests** bestanden. Danach startet `npm start` den lokalen Server auf `http://localhost:4173`; ein Buildschritt oder Laufzeitpakete sind nicht nötig. Anschließend [START-HIER.md](START-HIER.md) und die [aktuelle Übergabe](docs/handoffs/2026-09-17-verbindungsprobe.md) lesen. Die optionale Browserprüfung ist in [tests/browser/README.md](tests/browser/README.md) beschrieben.
+Die Tests benötigen weder npm-Zusatzpakete noch ein Google-Konto oder Internetzugriff. Für den dokumentierten Stand wurden **74 Tests** bestanden. Danach startet `npm start` den lokalen Server auf `http://localhost:4173`; ein Buildschritt oder Laufzeitpakete sind nicht nötig. Anschließend [START-HIER.md](START-HIER.md) und die [aktuelle Übergabe](docs/handoffs/2026-09-17-verbindungsprobe.md) lesen. Die optionale Browserprüfung ist in [tests/browser/README.md](tests/browser/README.md) beschrieben.
 
 ## Bereitstellung und Kosten
 

@@ -1,6 +1,6 @@
 # Qualität und Abnahme
 
-Stand: 17.09.2026. **Prüfplan für das Gesamtprodukt.** Die technische Probe ist lokal ausführbar und besitzt 73 bestandene Node-Tests sowie neun bestandene Browser-Szenarien mit simulierter Google-Grenze; siehe [Prüfbericht](reports/2026-09-17-google-drive-probe.md). Eine vollständige Traineranwendung sowie echte Google-/Zwei-Geräte-/iOS-Abnahme fehlen weiterhin.
+Stand: 17.09.2026. **Prüfplan für das Gesamtprodukt.** Die technische Probe ist lokal ausführbar und besitzt 74 bestandene Node-Tests sowie zwölf bestandene Browser-Szenarien mit simulierter Google-Grenze; siehe [Prüfbericht](reports/2026-09-17-google-drive-probe.md). Eine vollständige Traineranwendung sowie echte Google-/Zwei-Geräte-/iOS-Abnahme fehlen weiterhin.
 
 ## Nachweisstufen
 

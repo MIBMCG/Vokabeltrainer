@@ -1,6 +1,6 @@
 # Prüfbericht: lokale Google-Drive-Verbindungsprobe
 
-Stand: 17.09.2026. Geprüfte Codebasis: `230defb` auf `codex/google-drive-probe`. Dieser Bericht beschreibt die technische Probe, keinen fertigen Vokabeltrainer und keine bestandene externe Machbarkeitsprüfung.
+Stand: 17.09.2026. Geprüfte Codebasis: `92f044e` auf `codex/google-drive-probe`. Dieser Bericht beschreibt die technische Probe, keinen fertigen Vokabeltrainer und keine bestandene externe Machbarkeitsprüfung.
 
 ## Ergebnis
 
@@ -12,9 +12,9 @@ Das genaue begrenzte Format steht in [PROBE-DATENFORMAT.md](../PROBE-DATENFORMAT
 
 ## Automatisierte Prüfung
 
-Auf `230defb` wurde `npm test` mit Node.js 22.23.2 vollständig ausgeführt:
+Auf `92f044e` wurde `npm test` mit Node.js 22.23.2 vollständig ausgeführt:
 
-- 73 Tests bestanden.
+- 74 Tests bestanden.
 - 0 Tests fehlgeschlagen.
 - 0 Tests übersprungen.
 - Exitcode 0.
@@ -27,7 +27,7 @@ Die Implementierung folgte RED/GREEN. Frühere gezielt fehlschlagende Läufe bet
 
 Der lokale Server lief über `npm start` auf `http://localhost:4173`. Das Browser-Skript nutzte Playwright 1.62.1 mit System-Edge 153.0.4234.32. Es bediente echte DOM-, IndexedDB- und Service-Worker-Pfade. Ausschließlich Google Identity Services und Drive-HTTP-Antworten wurden kontrolliert simuliert; die Live-Anwendung enthält keinen Simulationsmodus.
 
-Neun Szenarien bestanden ohne Seitenfehler:
+Zwölf Szenarien bestanden ohne Seitenfehler:
 
 1. Anfangszustand ohne Client-ID und deaktivierte Folgeaktionen.
 2. Probeordner erstellen, auf zweitem Kontext beitreten und Upload wiederholen.
@@ -38,6 +38,9 @@ Neun Szenarien bestanden ohne Seitenfehler:
 7. Zweiten Tab desselben Browserprofils sperren.
 8. Token nicht persistieren und keine Google-Antworten in den Programmcache aufnehmen.
 9. Fremden App-Cache desselben Ursprungs erhalten.
+10. Nach HTTP 401 eine frische Anmeldung anfordern und die erhaltene Warteschlange genau einmal übertragen.
+11. Nach Tokenablauf die Verbindungsanzeige zurücksetzen und erneut anmelden.
+12. Echte Browser-Zurücknavigation aus dem Seitencache: neu laden, Sperre eines inzwischen aktiven zweiten Tabs respektieren und dessen neueren Stand erhalten.
 
 Die Ansichten bei 1280 × 900 und 390 × 844 Pixeln sowie der Zustand nach Rücksetzung wurden visuell auf Lesbarkeit und horizontalen Überlauf geprüft. Der Tastaturfokus war sichtbar. Gemessene Bedienelemente waren mindestens 44 Pixel hoch, das Eingabefeld verwendete mindestens 16 Pixel Schriftgröße.
 
@@ -47,7 +50,7 @@ Die Browserwerkzeuge sind keine Projekt-Laufzeitabhängigkeit. Eine portable opt
 
 Task 2 wurde mit GPT-5.6 Sol bei hoher Denktiefe implementiert und unabhängig geprüft. Die erste Review fand drei wesentliche Gruppen: verlustbehafteten Scope-Wechsel, originweite Cacheeingriffe und unvollständige Reset-/Graphvalidierung. Nach Fixrunde 1 blieb ein kombinierter Snapshot-/Reset-Graphfall offen; Fixrunde 2 schloss ihn. Die letzte Fixreview meldete alle Befunde behoben und keine neue wesentliche Regression.
 
-Diese Dokumentation wurde mit GPT-5.6 Sol bei mittlerer Denktiefe erstellt und gehört zum anschließenden lokalen Dokumentationscommit. Die abschließende unabhängige Gesamtprüfung mit GPT-6 Astra bei hoher Denktiefe, Push und Remote-SHA-Vergleich sind bei Erstellung dieses Berichts noch ausstehend und werden von der übergeordneten Abschlussprüfung übernommen.
+Die Dokumentation und Browserprüfungen wurden mit GPT-5.6 Sol bei mittlerer Denktiefe unabhängig freigegeben. Die anschließende Gesamtprüfung mit GPT-6 Astra bei hoher Denktiefe bestätigte zwei zusätzliche Integrationsfehler: Nach Browser-Zurücknavigation blieb der lokale Speicher geschlossen; nach HTTP 401 wurde ein abgewiesenes Token beim erneuten Verbinden wiederverwendet. Beide Fälle wurden im isolierten Browser mit simulierter Google-Grenze reproduziert. Die gemeinsame Korrektur mit GPT-5.6 Sol bei hoher Denktiefe steht in `92f044e`: lokales Tokenverwerfen ohne Entzug der Google-Berechtigung, kontrolliertes Neuladen nach Rückkehr aus dem Seitencache und Offline-Paket v3. Die neuen Regressionstests bestätigten zuvor die Fehler; anschließend bestanden 74 Node-Tests und zwölf Browser-Szenarien. Die gezielte Nachprüfung mit Astra bestätigte beide Befunde als behoben und fand keine neue Regression. Damit ist der lokale testbare Entwicklungsstand freigegeben. Push und Remote-SHA-Vergleich folgen als Abschluss.
 
 ## Offene Grenzen
 

@@ -2,7 +2,7 @@
 
 Diese kleine Oberfläche prüft technische Grundlagen vor dem eigentlichen Trainer. Sie erzeugt ausschließlich künstliche Antworten und einen ausdrücklich markierten Testordner. Vokabelverwaltung, Kinderprofile, Erwachsenen-PIN und Inselreise folgen später. Produktanforderungen stehen unverändert im [bestätigten Entwurf](superpowers/specs/2026-09-16-vokabeltrainer-design.md).
 
-**Stand 17.09.2026:** Die Probe ist lokal ausführbar. 73 automatisierte Tests und neun Browser-Szenarien mit simulierter Google-Grenze waren erfolgreich. Echte Google-Anmeldung, reales Drive, zwei physische Geräte sowie Safari/Home-Bildschirm-App sind noch nicht geprüft. [Prüfbericht](reports/2026-09-17-google-drive-probe.md)
+**Stand 17.09.2026:** Die Probe ist lokal ausführbar. 74 automatisierte Tests und zwölf Browser-Szenarien mit simulierter Google-Grenze waren erfolgreich. Echte Google-Anmeldung, reales Drive, zwei physische Geräte sowie Safari/Home-Bildschirm-App sind noch nicht geprüft. [Prüfbericht](reports/2026-09-17-google-drive-probe.md)
 
 ## Lokal starten
 
