@@ -5,6 +5,8 @@ import {project} from '../../src/trainer/learning/progress.js';
 import {rewardState} from '../../src/trainer/learning/rewards.js';
 import {createFixture} from './fixtures.js';
 
+const VERSION = {format: 'vokabeltrainer-product', formatVersion: 1, ruleVersion: 1};
+
 function reward(overrides = {}) {
   return rewardState({
     points: 0,
@@ -86,6 +88,44 @@ test('ten correct answers and repeated completion claims award exactly 120 point
   assert.equal(profile.completedRounds, 1);
   assert.deepEqual(profile.badges, ['first-round']);
   assert.deepEqual(project(reversed).profiles.p1, profile);
+});
+
+test('a support-only abandonment cannot suppress an effective completion bonus', () => {
+  const f = createFixture();
+  const answer = f.answer({id: 'effective-answer', clock: 20});
+  const completed = f.event('round.completed', {
+    roundId: 'r1', profileId: 'p1', reason: 'exhausted', answerIds: ['effective-answer'],
+  }, {id: 'effective-completion', clock: 30});
+  const abandoned = f.event('round.abandoned', {
+    roundId: 'r1', profileId: 'p1',
+  }, {id: 'support-abandonment', clock: 10});
+  const ledger = f.withEvents(f.roundStarted, answer, completed, abandoned);
+  ledger.snapshots.push({
+    id: 's1',
+    datasetId: 'd1',
+    effectiveEventIds: [
+      ...f.base.events.map(({id}) => id), answer.id, completed.id,
+    ].sort(),
+    supportEventIds: [f.roundStarted.id, abandoned.id].sort(),
+    contentHash: '0'.repeat(64),
+  });
+  ledger.epochs.push({
+    ...VERSION,
+    kind: 'epoch',
+    id: 'e1',
+    datasetId: 'd1',
+    parents: ['e0'],
+    deviceId: 'restore',
+    clock: 100,
+    occurredAt: '2026-09-18T10:00:00.000Z',
+    snapshotId: 's1',
+    snapshotManifestFileId: null,
+  });
+
+  const profile = project(ledger).profiles.p1;
+  assert.equal(profile.points, 30);
+  assert.equal(profile.completedRounds, 1);
+  assert.deepEqual(profile.badges, ['first-round']);
 });
 
 test('projection exposes exact avatar and preference shape and filters locked equipment', () => {

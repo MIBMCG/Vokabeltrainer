@@ -3,7 +3,11 @@ import assert from 'node:assert/strict';
 
 import {assess} from '../../src/trainer/learning/answers.js';
 import {addDays, dayInZone} from '../../src/trainer/learning/calendar.js';
-import {milestonesAfterAnswer, project} from '../../src/trainer/learning/progress.js';
+import {
+  milestonesAfterAnswer,
+  pendingMilestones,
+  project,
+} from '../../src/trainer/learning/progress.js';
 import {createFixture} from './fixtures.js';
 
 const VERSION = {format: 'vokabeltrainer-product', formatVersion: 1, ruleVersion: 1};
@@ -118,6 +122,7 @@ test('a failure resets the series and two answers to the same other word satisfy
   assert.equal(state.intervalIndex, -1);
   assert.equal(state.dueDay, null);
   assert.equal(state.errorGap, 2);
+  assert.equal(state.retryPending, true);
 
   const sameOther1 = f.answer({id: 'a4', ordinal: 4, wordId: 'w2'});
   const sameOther2 = f.answer({id: 'a5', ordinal: 5, wordId: 'w2'});
@@ -125,6 +130,14 @@ test('a failure resets the series and two answers to the same other word satisfy
     f.roundStarted, first, second, wrong, profile2, r2, otherProfile, sameOther1, sameOther2,
   )).profiles.p1.words.w1;
   assert.equal(state.errorGap, 0);
+  assert.equal(state.retryPending, true);
+
+  const retried = f.answer({id: 'a6', ordinal: 6, wordId: 'w1'});
+  state = project(f.withEvents(
+    f.roundStarted, first, second, wrong, profile2, r2, otherProfile,
+    sameOther1, sameOther2, retried,
+  )).profiles.p1.words.w1;
+  assert.equal(state.retryPending, false);
 });
 
 test('meaning changes and reverts reset only current learning state while spelling changes preserve it', () => {
@@ -143,6 +156,7 @@ test('meaning changes and reverts reset only current learning state while spelli
   )).profiles.p1.words.w1;
   assert.equal(changedState.learningId, 'learn-changed');
   assert.equal(changedState.streak, 0);
+  assert.equal(changedState.retryPending, false);
   assert.equal(changedState.attempts, 3);
   assert.equal(changedState.everPracticed, true);
 
@@ -154,7 +168,43 @@ test('meaning changes and reverts reset only current learning state while spelli
   )).profiles.p1.words.w1;
   assert.equal(revertedState.learningId, 'learn-reverted');
   assert.equal(revertedState.streak, 0);
+  assert.equal(revertedState.retryPending, false);
   assert.equal(revertedState.attempts, 3);
+});
+
+test('a historical learning-version failure cannot mark the current version for retry', () => {
+  const f = createFixture();
+  const wrong = f.answer({id: 'old-wrong', correct: false});
+  const changed = wordRevision(f, {
+    id: 'changed-after-wrong', answers: ['hound'], learningId: 'learn-changed',
+  });
+
+  const word = project(f.withEvents(f.roundStarted, wrong, changed)).profiles.p1.words.w1;
+  assert.equal(word.wrong, 1);
+  assert.equal(word.everPracticed, true);
+  assert.equal(word.learningId, 'learn-changed');
+  assert.equal(word.retryPending, false);
+  assert.equal(word.errorGap, 0);
+});
+
+test('one round cannot advance a word interval twice across a failure and rebuilt series', () => {
+  const f = createFixture();
+  const events = [
+    f.answer({id: 'a1', ordinal: 1, day: '2026-09-17'}),
+    f.answer({id: 'a2', ordinal: 2, day: '2026-09-17'}),
+    f.answer({id: 'a3', ordinal: 3, day: '2026-09-17'}),
+    f.answer({id: 'a4', ordinal: 4, day: '2026-09-18'}),
+    f.answer({id: 'a5', ordinal: 5, day: '2026-09-18', correct: false}),
+    f.answer({id: 'a6', ordinal: 6, day: '2026-09-20'}),
+    f.answer({id: 'a7', ordinal: 7, day: '2026-09-20'}),
+    f.answer({id: 'a8', ordinal: 8, day: '2026-09-20'}),
+    f.answer({id: 'a9', ordinal: 9, day: '2026-09-21'}),
+  ];
+
+  const word = project(f.withEvents(f.roundStarted, ...events)).profiles.p1.words.w1;
+  assert.equal(word.streak, 3);
+  assert.equal(word.intervalIndex, 0);
+  assert.equal(word.dueDay, '2026-09-21');
 });
 
 test('milestone claims survive later errors and archiving', () => {
@@ -214,6 +264,101 @@ test('milestones after an answer contain stable causal evidence and are not repe
     milestonesAfterAnswer(alreadyClaimed, alreadyClaimed, corrected, [wrong, corrected, claim]),
     [],
   );
+});
+
+test('pending milestone reconciliation combines devices and preserves an intermediate mastery', () => {
+  const f = createFixture();
+  const r2 = start(f, 'r2');
+  const r3 = start(f, 'r3');
+  const a1 = f.answer({id: 'a-device-a-1', roundId: 'r1', clock: 20, deviceId: 'A'});
+  const b1 = f.answer({id: 'b-device-b-1', roundId: 'r2', clock: 30, deviceId: 'B'});
+  const a2 = f.answer({id: 'a-device-a-2', roundId: 'r3', clock: 40, deviceId: 'A'});
+  const wrongAfter = f.answer({
+    id: 'wrong-after-mastery', roundId: 'r3', ordinal: 2, correct: false,
+    clock: 50, deviceId: 'B',
+  });
+  const ledger = f.withEvents(f.roundStarted, r2, r3, a2, wrongAfter, b1, a1);
+
+  assert.deepEqual(pendingMilestones(ledger), [{
+    profileId: 'p1',
+    wordId: 'w1',
+    milestone: 'mastered',
+    evidenceAnswerIds: ['a-device-a-1', 'b-device-b-1', 'a-device-a-2'],
+  }]);
+  assert.equal(project(ledger).profiles.p1.words.w1.streak, 0);
+});
+
+test('pending recovery keeps the first wrong evidence until the next correct answer', () => {
+  const f = createFixture();
+  const wrong1 = f.answer({id: 'wrong-1', ordinal: 1, correct: false});
+  const wrong2 = f.answer({id: 'wrong-2', ordinal: 2, correct: false});
+  const correct = f.answer({id: 'correct-1', ordinal: 3});
+
+  assert.deepEqual(pendingMilestones(f.withEvents(
+    f.roundStarted, wrong1, wrong2, correct,
+  )), [{
+    profileId: 'p1',
+    wordId: 'w1',
+    milestone: 'recovered',
+    evidenceAnswerIds: ['wrong-1', 'correct-1'],
+  }]);
+});
+
+test('pending milestone reconciliation keeps durable claims authoritative after an earlier insertion', () => {
+  const f = createFixture();
+  const a1 = f.answer({id: 'a1', ordinal: 1, clock: 20});
+  const a2 = f.answer({id: 'a2', ordinal: 2, clock: 30});
+  const lateWrong = f.answer({id: 'late-wrong', ordinal: 4, correct: false, clock: 40});
+  const a3 = f.answer({id: 'a3', ordinal: 3, clock: 50});
+  const mastered = f.event('word.milestone', {
+    profileId: 'p1', wordId: 'w1', milestone: 'mastered', evidenceAnswerIds: ['a1', 'a2', 'a3'],
+  }, {id: 'mastered-w1', clock: 60});
+  const ledger = f.withEvents(f.roundStarted, a1, a2, a3, mastered, lateWrong);
+
+  assert.equal(project(ledger).profiles.p1.words.w1.masteredEver, true);
+  assert.deepEqual(pendingMilestones(ledger), [{
+    profileId: 'p1',
+    wordId: 'w1',
+    milestone: 'recovered',
+    evidenceAnswerIds: ['late-wrong', 'a3'],
+  }]);
+
+  const recovered = f.event('word.milestone', pendingMilestones(ledger)[0], {
+    id: 'recovered-w1', clock: 70,
+  });
+  assert.deepEqual(pendingMilestones(f.withEvents(
+    f.roundStarted, a1, a2, a3, mastered, lateWrong, recovered,
+  )), []);
+});
+
+test('support-only answers produce no pending milestones and incomplete epochs reconcile nothing', () => {
+  const f = createFixture();
+  const answers = [1, 2, 3].map((ordinal) => f.answer({id: `support-a${ordinal}`, ordinal}));
+  const ledger = f.withEvents(f.roundStarted, ...answers);
+  ledger.snapshots.push({
+    id: 's-support',
+    datasetId: 'd1',
+    effectiveEventIds: f.base.events.map(({id}) => id).sort(),
+    supportEventIds: ['start-r1', ...answers.map(({id}) => id)].sort(),
+    contentHash: '0'.repeat(64),
+  });
+  ledger.epochs.push({
+    ...VERSION,
+    kind: 'epoch',
+    id: 'e-support',
+    datasetId: 'd1',
+    parents: ['e0'],
+    deviceId: 'restore',
+    clock: 100,
+    occurredAt: '2026-09-18T10:00:00.000Z',
+    snapshotId: 's-support',
+    snapshotManifestFileId: null,
+  });
+
+  assert.deepEqual(pendingMilestones(ledger), []);
+  const incomplete = structuredClone(ledger);
+  incomplete.snapshots = [];
+  assert.deepEqual(pendingMilestones(incomplete), []);
 });
 
 test('duplicate logical answer slots and reversed arrivals produce identical progress', () => {
