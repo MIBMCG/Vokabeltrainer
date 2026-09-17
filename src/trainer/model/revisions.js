@@ -21,6 +21,15 @@ function eventOrder(event) {
   return [event.clock, event.deviceId, event.id];
 }
 
+function setOwn(bucket, id, value) {
+  Object.defineProperty(bucket, id, {
+    value,
+    enumerable: true,
+    writable: true,
+    configurable: true,
+  });
+}
+
 function compatibilityValue(event) {
   const {entityType, value} = event.payload;
   if (entityType === 'profile') {
@@ -145,13 +154,13 @@ export function projectEntities(events, {supportEvents = []} = {}) {
     const conflicted = compatibility.size > 1;
     const winner = heads.at(-1);
     const headIds = heads.map(({id}) => id);
-    entities[ENTITY_BUCKETS[group.entityType]][group.entityId] = {
+    setOwn(entities[ENTITY_BUCKETS[group.entityType]], group.entityId, {
       id: group.entityId,
       heads: headIds,
       value: conflicted ? null : structuredClone(winner.payload.value),
       createdOrder: eventOrder(createdFrom),
       conflicted,
-    };
+    });
     if (conflicted) {
       conflicts.push({entityType: group.entityType, entityId: group.entityId, heads: headIds});
     }

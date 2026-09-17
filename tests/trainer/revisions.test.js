@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 import {digest} from '../../src/trainer/model/canonical.js';
+import {assertLedger} from '../../src/trainer/model/schema.js';
 import {
   nextLearningId,
   normalize,
@@ -155,6 +156,39 @@ test('created order remains the earliest reachable root tuple and input permutat
   const reverse = projectEntities([...events].reverse());
   assert.deepEqual(forward, reverse);
   assert.deepEqual(forward.entities.lessons.l1.createdOrder, [2, 'dev1', 'rev-l1']);
+});
+
+test('accepted special-key entity IDs remain enumerable own fields in every bucket', () => {
+  const f = createFixture();
+  const specialKeys = ['__proto__', 'constructor', 'prototype'];
+  const revisions = specialKeys.flatMap((entityId) => [
+    f.event('entity.revised', {
+      entityType: 'profile', entityId, parents: [],
+      value: {name: `Profil ${entityId}`, archived: false},
+    }, {id: `rev-profile-${entityId}`}),
+    f.event('entity.revised', {
+      entityType: 'lesson', entityId, parents: [],
+      value: {name: `Lektion ${entityId}`, archived: false, profileIds: [entityId]},
+    }, {id: `rev-lesson-${entityId}`}),
+    f.event('entity.revised', {
+      entityType: 'word', entityId, parents: [],
+      value: {
+        lessonId: entityId, german: `Wort ${entityId}`, hint: '', answers: ['safe'],
+        archived: false, learningId: `learn-${entityId}`,
+      },
+    }, {id: `rev-word-${entityId}`}),
+  ]);
+  const valid = assertLedger(f.withEvents(...revisions));
+
+  const {entities} = projectEntities(valid.events);
+  for (const bucket of [entities.profiles, entities.lessons, entities.words]) {
+    const serialized = JSON.parse(JSON.stringify(bucket));
+    for (const entityId of specialKeys) {
+      assert.equal(Object.hasOwn(bucket, entityId), true);
+      assert.ok(Object.values(bucket).some(({id}) => id === entityId));
+      assert.equal(Object.hasOwn(serialized, entityId), true);
+    }
+  }
 });
 
 test('deep support chains project without recursive call-stack growth', () => {
