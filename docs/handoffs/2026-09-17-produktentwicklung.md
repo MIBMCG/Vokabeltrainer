@@ -18,13 +18,24 @@ Der bestehende isolierte Worktree wird auf dem neuen Entwicklungszweig weiterver
 
 ## Implementierung bisher
 
-Task 1 wurde in `2e8b6a2` und `cf99ed7` implementiert: versioniertes Ereignisformat, strikte Validierung, Referenz-/Kollisionsprüfung und synthetische Testbasis. Gezielte Prüfung: 17/17; gesamter Node-Lauf: 91/91 bestanden. Die unabhängige Aufgabenreview ist nach zwei korrigierten Befunden und sauberer Nachprüfung abgeschlossen. Task 2 ist in `5e991bf` und `4527736` implementiert: Inhaltsfassungen, Konfliktköpfe, ursprüngliche Anlegereihenfolge, getrennte Support-/Altbestände und Epochen. Gezielte Prüfung 16/16, Gesamtlauf 108/108. Die Nachprüfung des behobenen Spezialkennungsfehlers ist ohne neuen Befund abgeschlossen. Task 3 ist in `99920da`/`1bbd80b` implementiert und nach vier behobenen Befunden unabhängig freigegeben: Antwortprüfung, Kalenderabstände, Lernprojektion, Punkte/Belohnungen und Erkennung zusammengeführter Lernmeilensteine. Gezielte Prüfung 25/25, Gesamtlauf **135/135**. Task 4 ist in `49fbfb2` implementiert und unabhängig freigegeben: feste Auswahl, adaptive Reihenfolge, Wiederaufnahme und Abschluss. Gezielte Prüfung 14/14, Gesamtlauf **149/149**. Task 5 ist in `43e956a` implementiert und unabhängig freigegeben: atomare Speicherung und serielle Fachbefehle einschließlich lokaler und externer Meilensteine. **171/171 Tests** bestanden. Task 6 erstellt jetzt die Einrichtung/Erwachsenenoberfläche und prüft echten Browser-Speicher und Wiederaufnahme. Das ist eine interne Grundlage, noch keine fertige Lernoberfläche.
+| Paket | Geprüfte Commits | Ergebnis |
+| --- | --- | --- |
+| 1: Format/Integrität | `2e8b6a2`, `cf99ed7` | Strikte Validierung, Referenzen und Kollisionen |
+| 2: Fassungen/Epochen | `5e991bf`, `4527736` | Konfliktköpfe, Support und Altbestände getrennt |
+| 3: Lernkern/Belohnungen | `99920da`, `1bbd80b` | Adaptive Projektion und dauerhafte Meilensteine |
+| 4: Runden | `49fbfb2` | Feste Auswahl, adaptive Reihenfolge, Wiederaufnahme/Abschluss |
+| 5: Speicherung | `43e956a` | Serielle atomare Befehle, Aktualitätsprüfung und Meilensteine |
+| 6: Einrichtung/Verwaltung | `da6eb9b`, `86d7bb7` | Browseroberfläche, PIN, Profile/Lektionen/Wörter, Tabellenübernahme |
+
+Alle sechs Pakete sind unabhängig geprüft. Der aktuelle Gesamtlauf bestand **187/187**, der gezielte Adult-Lauf **16/16**. Der echte Edge-Browserlauf bestand **1/1** einschließlich IndexedDB, exklusivem Writer, Neuladen/BFCache, Hintergrund-PIN-Rennen, erhaltenem Setup-Entwurf, expliziter Importklärung und langen Lösungsvarianten. Keine echte Google-Anmeldung oder Apple-Geräteprüfung für die Produkt-App wurde damit behauptet. Ein Minor zur `main`-Semantik ist für Task 11/Finalreview erfasst.
+
+Task 7 setzt jetzt den vollständigen Übungsbildschirm um. Reise/Avatar, Produkt-Sync, vollständige Sicherung/Wiederherstellung und Offline-PWA folgen in den Tasks 8–12. Die vorhandenen Gerüste werden nicht als fertige Funktionen bezeichnet. [Technische Präzisierungen](../ENTWICKLUNGSENTSCHEIDUNGEN.md) erhalten die geklärten Schnittstellen für andere Assistenten.
 
 Die [Benutzungsanleitung](../BENUTZUNG.md) beschreibt die bestätigten Abläufe und kennzeichnet die laufende Entwicklung ausdrücklich.
 
 ## Übertragener Zwischenstand
 
-`4c70a89f85176e5594e15faca6b2d886fddd53a3` wurde auf `origin/codex/vokabeltrainer-v1` übertragen und mit `git ls-remote` identisch bestätigt. Der Zweig enthält die geprüften Tasks 1–4 sowie Planung, Anleitung und das angeforderte [Konzeptbild](../design/2026-09-17-insel-konzept.md); noch keine vollständige Lernoberfläche. Der anschließende Dokumentationscommit hält diesen Nachweis fest. Weiterarbeit läuft, keine erneute Pause beauftragt.
+`6e44ce197a860e7adfd27c8bd322f2e528a30e06` wurde auf `origin/codex/vokabeltrainer-v1` übertragen und mit `git ls-remote` identisch bestätigt. Der Zweig enthält die geprüften Tasks 1–5 sowie Planung, Anleitung und das angeforderte [Konzeptbild](../design/2026-09-17-insel-konzept.md); noch keine vollständige Lernoberfläche. Der anschließende Dokumentationscommit hält diesen Nachweis fest. Weiterarbeit läuft, keine erneute Pause beauftragt.
 
 ## Noch offen
 
