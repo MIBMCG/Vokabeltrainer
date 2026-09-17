@@ -33,3 +33,9 @@ Recherche-/Abrufstand: **16.09.2026**. Die Quellen stützen technische Möglichk
 - Lernereignisse und Vokabeländerungen so modellieren, dass parallele Offlinearbeit nicht still überschrieben wird.
 
 Diese Empfehlungen sind technische Schlussfolgerungen für den Entwurf, keine Aussagen der Quellen über dieses konkrete Repository.
+
+## Nachprüfung für die Verbindungsprobe am 17.09.2026
+
+Die offiziellen Anleitungen zu OAuth-Client, Zielgruppe und Tokenmodell wurden erneut gelesen. Für lokale Browsertests nennt Google beide autorisierten JavaScript-Ursprünge `http://localhost` und den tatsächlich verwendeten Ursprung mit Port, hier `http://localhost:4173`. Die Probe nutzt den Web-Client und den durch eine Nutzeraktion geöffneten Token-Dialog. [Google: Client-ID und lokale Ursprünge](https://developers.google.com/identity/oauth2/web/guides/get-google-api-clientid), [Tokenmodell](https://developers.google.com/identity/oauth2/web/guides/use-token-model).
+
+Die Drive-Limits-Seite bezeichnet Standardnutzung weiterhin als ohne zusätzliche API-Kosten und kündigt ein Abrechnungsmodell für Überschreitungen an. Die Projektvorgabe bleibt Nutzung innerhalb der kostenlosen Grenzen ohne kostenpflichtige Freigabe. Dies ist keine unbegrenzte Kostenzusage und kein bereits eingerichtetes Konto. [Google: aktuelle Limits und Kosten](https://developers.google.com/workspace/drive/api/guides/limits).

@@ -1,6 +1,6 @@
 # Google Drive: spätere Einrichtung und Prüfungen
 
-Stand: 16.09.2026. **Vorbereitende Anleitung. Für dieses Projekt wurde noch kein Google-Cloud-Projekt, OAuth-Client oder Drive-Datensatz eingerichtet.** Die genauen Einstellungsnamen können sich ändern; maßgeblich sind die verlinkten offiziellen Anleitungen.
+Stand: 17.09.2026. **Vorbereitende Anleitung. Für dieses Projekt wurde noch kein Google-Cloud-Projekt, OAuth-Client oder Drive-Datensatz nachgewiesen.** Die lokale synthetische Probe ist implementiert; die genauen Google-Einstellungsnamen können sich ändern, maßgeblich sind die verlinkten offiziellen Anleitungen.
 
 Der Gesamtentwurf ist bestätigt. Konkrete Start-/Registrierungsschritte und der Prüfablauf des ersten Entwicklungspakets stehen in [GOOGLE-DRIVE-PROBE.md](GOOGLE-DRIVE-PROBE.md). Entwicklungsursprung der Probe: `http://localhost:4173`. Eine tatsächliche Registrierung ist damit nicht behauptet.
 
@@ -20,7 +20,7 @@ Der Gesamtentwurf ist bestätigt. Konkrete Start-/Registrierungsschritte und der
 4. Für die Entwicklungsphase das verwendete gemeinsame Konto als Testnutzer eintragen, soweit die aktuelle Konsole dies verlangt.
 5. Einen OAuth-Client vom Typ **Web application** erstellen. Eine PWA auf dem iPhone bleibt für diesen Aufbau eine Webanwendung und benötigt keinen nativen iOS-OAuth-Client.
 6. Die tatsächlich verwendeten JavaScript-Ursprünge eintragen. Beim vorgeschlagenen GitHub-Pages-Hosting wäre der Ursprung `https://mibmcg.github.io` — ohne den Projektpfad. Der Projektpfad für diese App wäre `/Vokabeltrainer/`; die Website existiert derzeit noch nicht.
-7. Den später gewählten lokalen Entwicklungsursprung einschließlich Port separat registrieren. Keinen fiktiven Port oder Callback als bereits eingerichtet dokumentieren.
+7. Für die lokale Probe `http://localhost` und `http://localhost:4173` als autorisierte JavaScript-Ursprünge eintragen. Die Probe selbst unter `http://localhost:4173` öffnen. Keinen fiktiven Callback als bereits eingerichtet dokumentieren.
 8. Redirect-URIs nur für den tatsächlich gewählten Ablauf einrichten und exakt mit der Implementierung abstimmen. Das vorgeschlagene GIS-Tokenmodell nutzt einen Browserdialog.
 9. Die öffentliche OAuth-Client-ID in die spätere Anwendungskonfiguration übernehmen. Falls Picker einen Browser-API-Key benötigt, dessen API- und Websiteeinschränkungen passend setzen. **Kein Client-Secret, Passwort oder Service-Account-Schlüssel gehört in die statische App.**
 
@@ -30,7 +30,7 @@ Quellen: [Zugangsdaten erstellen](https://developers.google.com/workspace/guides
 
 Vorgeschlagen ist `https://www.googleapis.com/auth/drive.file`. Dieser Zugriff ist auf von der App erstellte oder vom Nutzer ausdrücklich mit der App geöffnete/ausgewählte Dateien begrenzt. Eine Ordnerauswahl erteilt keinen pauschalen Vollzugriff auf alle beliebigen Bestandsdateien darin.
 
-Für den Erststart wird ein sichtbarer Trainerordner mit normalen JSON-Dateien vorgeschlagen. Das genaue Dateischema und das Wiederfinden auf dem zweiten Gerät müssen erst bestätigt und geprüft werden. Der versteckte `appDataFolder` darf nicht mit einem normalen Drive-Ordner verwechselt werden.
+Die technische Probe verwendet einen sichtbaren, ausdrücklich markierten Probeordner mit unveränderlichen synthetischen JSON-Dateien. Das begrenzte Schema steht in [PROBE-DATENFORMAT.md](PROBE-DATENFORMAT.md). Wiederfinden und Abgleich auf einem zweiten realen Gerät müssen noch geprüft werden. Der versteckte `appDataFolder` darf nicht mit einem normalen Drive-Ordner verwechselt werden.
 
 Quelle: [Drive-Berechtigungen](https://developers.google.com/workspace/drive/api/guides/api-specific-auth).
 

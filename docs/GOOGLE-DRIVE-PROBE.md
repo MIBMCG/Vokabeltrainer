@@ -1,8 +1,8 @@
 # Verbindungsprobe: starten, einrichten und prüfen
 
-Geplant ist eine kleine Oberfläche zur technischen Prüfung vor dem eigentlichen Trainer. Sie soll ausschließlich künstliche Antworten und einen ausdrücklich markierten Testordner erzeugen. Vokabelverwaltung, Kinderprofile, Erwachsenen-PIN und Inselreise folgen später. Produktanforderungen stehen unverändert im [bestätigten Entwurf](superpowers/specs/2026-09-16-vokabeltrainer-design.md).
+Diese kleine Oberfläche prüft technische Grundlagen vor dem eigentlichen Trainer. Sie erzeugt ausschließlich künstliche Antworten und einen ausdrücklich markierten Testordner. Vokabelverwaltung, Kinderprofile, Erwachsenen-PIN und Inselreise folgen später. Produktanforderungen stehen unverändert im [bestätigten Entwurf](superpowers/specs/2026-09-16-vokabeltrainer-design.md).
 
-**Pausenstand 16.09.2026:** Bisher ist nur die Adapter-/Anmeldeschicht mit 34 automatisierten Tests implementiert. Die in dieser Anleitung beschriebene Oberfläche, `npm start`, Offline-Programmbereitstellung und Rücksetzprobe sind geplant und noch nicht verfügbar. Jetzt ausführbar ist ausschließlich `npm test`; kein Google-Konto erforderlich. Die folgenden Schritte dienen der späteren Einrichtung.
+**Stand 17.09.2026:** Die Probe ist lokal ausführbar. 73 automatisierte Tests und neun Browser-Szenarien mit simulierter Google-Grenze waren erfolgreich. Echte Google-Anmeldung, reales Drive, zwei physische Geräte sowie Safari/Home-Bildschirm-App sind noch nicht geprüft. [Prüfbericht](reports/2026-09-17-google-drive-probe.md)
 
 ## Lokal starten
 
@@ -25,7 +25,7 @@ Die Registrierung erledigt die projektverantwortliche erwachsene Person in ihrem
 2. In der API-Bibliothek **Google Drive API** suchen und für dieses Projekt aktivieren.
 3. In **Google Auth Platform** die App-Informationen eintragen. Bei einem privaten Konto die externe Zielgruppe verwenden und das gemeinsame Testkonto unter Testnutzern ergänzen, sofern die Konsole das verlangt. Name beispielsweise „Vokabeltrainer Test“; Kontaktangaben direkt in Google eintragen.
 4. Unter **Clients** einen Client vom Typ **Webanwendung** erstellen. Die Browser-App bleibt auch auf iOS eine Webanwendung.
-5. Unter **Autorisierte JavaScript-Quellen** exakt `http://localhost:4173` eintragen. Bei späterem HTTPS-Hosting dessen tatsächlichen Ursprung ergänzen, ohne Unterpfad. Für diesen Dialogablauf keine erfundene Weiterleitungsadresse ergänzen.
+5. Unter **Autorisierte JavaScript-Quellen** `http://localhost` und `http://localhost:4173` eintragen, wie von Google für lokale Tests beschrieben. Die Probe unter `http://localhost:4173` öffnen. Bei späterem HTTPS-Hosting dessen tatsächlichen Ursprung ergänzen, ohne Unterpfad. Für diesen Dialogablauf keine erfundene Weiterleitungsadresse ergänzen. [Google: lokale Ursprünge](https://developers.google.com/identity/oauth2/web/guides/get-google-api-clientid)
 6. Die öffentliche **Client-ID** kopieren; sie endet auf `.apps.googleusercontent.com`. Im Eingabefeld der Probe eintragen. Ein Client-Secret, API-Key oder Dienstkontoschlüssel wird nicht benötigt.
 
 Googles aktuelle Oberfläche und Vorgaben sind maßgeblich: [OAuth-Client anlegen](https://developers.google.com/workspace/guides/create-credentials), [Zielgruppe und Einwilligung](https://developers.google.com/workspace/guides/configure-oauth-consent). Die Probe verlangt nur [drive.file](https://developers.google.com/workspace/drive/api/guides/api-specific-auth), nicht vollen Zugriff auf sämtliche Dateien. Kein zusätzlicher kostenpflichtiger Dienst oder Abrechnungskonto ist Teil dieser Vorbereitung; [Nutzungslimits](https://developers.google.com/workspace/drive/api/guides/limits) vor Einrichtung prüfen.
@@ -53,6 +53,8 @@ Erneutes Verbinden nach Neustart oder Ablauf der Zugriffszeit ist vorgesehen. Di
 | Auf beiden Geräten parallel zurücksetzen | Konflikt sichtbar; kein zufälliger Gewinner und keine gelöschte Historie |
 
 Die Probe demonstriert die leere Rücksetzung und den Erhalt alter Generationen. Die spätere allgemeine JSON-Wiederherstellung mit Auswahl und Erwachsenen-Konfliktlösung wird erst im Trainer umgesetzt. Testdateien werden nicht automatisch gelöscht; die Probe überschreibt keine vorhandenen Vokabeltrainer-Produktdaten.
+
+Ein Browserprofil wird nach der ersten Auswahl fest an genau ein Konto und einen Probeordner gebunden. Ein Wechsel wird abgewiesen, damit lokale Ereignisse nicht in einen anderen Bestand gelangen. Für einen weiteren unabhängigen Probeversuch ein separates Browserprofil verwenden. Gleichzeitig darf nur ein Tab desselben Profils die Probe aktiv nutzen; ein zweiter Tab zeigt eine verständliche Sperrmeldung. Dabei werden keine Daten still verworfen.
 
 ## iPhone und iPad
 

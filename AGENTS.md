@@ -20,7 +20,7 @@ Das erste Dokumentationspaket wurde beauftragt und veröffentlicht. Der anschlie
 
 Die Einzelfragen Q1–Q14 sowie der [Gesamtentwurf](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md) einschließlich E01–E10 sind bestätigt (Nutzerantwort A vom 16.09.2026). Die Entwicklung beginnt nach dem [Plan zur Google-Drive-Probe](docs/superpowers/plans/2026-09-16-google-drive-probe.md). Keine erneute Entwurfs- oder pauschale Startfreigabe einholen. Reale Google-/Geräteprüfungen bleiben gesonderte Nachweise. Vor umfangreicher Lernoberfläche zuerst die frühe Verbindungsprobe durchführen.
 
-Aktuelle Steuerung: Der Nutzer wünscht nach Veröffentlichung des ersten testbaren Zwischenstands eine Pause für heute. Task 1 ist mit 34 Tests und unabhängiger Review abgeschlossen; Task 2 ist noch nicht implementiert. Nach Push keine automatische Weiterarbeit. Erst bei einer neuen ausdrücklichen Fortsetzung an der [Pausenübergabe](docs/handoffs/2026-09-16-pause.md) ansetzen.
+Aktuelle Steuerung: Am 17.09.2026 hat der Nutzer die Pause ausdrücklich beendet und die Fortsetzung mit Superpowers beauftragt. Die lokale Verbindungsprobe einschließlich Browserprüfung mit simulierter Google-Grenze ist abgeschlossen; die reale Google-/Zwei-Geräte-/iOS-Prüfung bleibt offen. Modelle und Denktiefen der eingesetzten Agenten nennen und passend zur Aufgabe kostenbewusst wählen. Der aktuelle Stand steht in [ARBEITSSTAND.md](ARBEITSSTAND.md), die aktuelle Übernahme in der [Übergabe vom 17.09.2026](docs/handoffs/2026-09-17-verbindungsprobe.md). Die Pausenübergabe vom 16.09.2026 ist nur historische Vorgeschichte.
 
 ## Feste Leitplanken
 

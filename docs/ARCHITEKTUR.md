@@ -1,6 +1,6 @@
 # Technischer Entwurf
 
-Stand: 16.09.2026. **Bestätigte Architekturgrundlage; Implementierungs- und Prüfstatus im Arbeitsstand.** Die verbindlichen Nutzeranforderungen stehen in [ANFORDERUNGEN.md](ANFORDERUNGEN.md).
+Stand: 17.09.2026. **Bestätigte Architekturgrundlage; Implementierungs- und Prüfstatus im Arbeitsstand.** Die verbindlichen Nutzeranforderungen stehen in [ANFORDERUNGEN.md](ANFORDERUNGEN.md).
 
 Die Ergänzungen E01–E10 sind im [bestätigten Gesamtentwurf](superpowers/specs/2026-09-16-vokabeltrainer-design.md) zusammengeführt. Er präzisiert diesen Architekturüberblick. Erste Umsetzung: [Plan der Google-Drive-Probe](superpowers/plans/2026-09-16-google-drive-probe.md), mit separatem synthetischem Datenformat und ohne fertige Produktfunktionen.
 
@@ -31,7 +31,7 @@ Der Programmcode wird getrennt von den persönlichen Lerninhalten bereitgestellt
 | Synchronisation | Lokale und entfernte Änderungen zusammenführen, Wiederholungsversuche steuern | Ein Ereignis mehrfach zählen |
 | PWA/Offlinefunktion | Programmdateien zwischenspeichern und Updates kontrolliert übernehmen | Dauerhafte Hintergrundausführung voraussetzen |
 
-E01 schlägt JavaScript-Module ohne UI-Framework vor. Build-/Testwerkzeuge, konkrete Versionen und Ordnernamen im anschließenden Implementierungsplan festlegen. Die fachlichen Grenzen bleiben erhalten.
+Die technische Probe setzt E01 mit nativen JavaScript-Modulen ohne UI-Framework und ohne Buildschritt um. Node.js ab 22.8 führt Tests und lokalen Server aus; npm-Laufzeitabhängigkeiten gibt es nicht. Diese Werkzeugentscheidung gilt für die Probe und nimmt spätere Produktentscheidungen nur dort vorweg, wo der bestätigte Entwurf sie festlegt.
 
 ## Datenmodell als Diskussionsgrundlage
 
@@ -62,7 +62,7 @@ Vorgeschlagene Grundregeln, die vor Umsetzung in ein konkretes Protokoll überf�
 7. Konto-/Datensatzwechsel darf keine ausstehenden Änderungen in ein anderes Konto hochladen.
 8. Cloudlöschungen und beschädigte Dateien nicht als leeren, gültigen Ersatz über lokale Daten schreiben.
 
-Ein einfaches „Datei laden, lokal ändern, vollständig hochladen“ ist ohne weiteren Schutz bei zwei Geräten nicht ausreichend. E10 schlägt unveränderliche JSON-Ereignispakete mit stabilen Datei-/Ereignis-IDs und getrennten Wiederherstellungsgenerationen vor. Konflikte werden über bekannte Vorversionen erkannt. Der Ablauf ist im Gesamtentwurf beschrieben, bestätigt, aber noch nicht im Produkt technisch nachgewiesen.
+Ein einfaches „Datei laden, lokal ändern, vollständig hochladen“ ist ohne weiteren Schutz bei zwei Geräten nicht ausreichend. E10 schlägt unveränderliche JSON-Ereignispakete mit stabilen Datei-/Ereignis-IDs und getrennten Wiederherstellungsgenerationen vor. Die synthetische Probe implementiert davon Deduplizierung, wiederholbare Uploads, getrennte Rücksetzungsgenerationen, verspätete Antworten und sichtbare konkurrierende Rücksetzungen. Ihr begrenztes [Probe-Datenformat](PROBE-DATENFORMAT.md) ist kein Produkt- oder Sicherungsformat; reales Drive und zwei Geräte sind noch nicht nachgewiesen.
 
 Zähler lassen sich nicht immer sinnvoll addieren: Auch Serien richtiger Antworten und Reihenfolgen müssen bei parallelem Offlineüben definiert werden. Geräteuhren allein sind kein sicherer Konfliktentscheid.
 
@@ -72,7 +72,7 @@ Als erster Ansatz sind Google Identity Services für den Browser und die Drive-A
 
 Ein sichtbarer Trainerordner mit normalen JSON-Dateien ist vorgeschlagen. Ein versteckter `appDataFolder` wäre technisch eine andere Variante, dessen Inhalte nicht über die normale Drive-Oberfläche erreichbar und nicht zwischen Konten teilbar sind. Das ist keine umgesetzte Entscheidung. [Google: App-Daten](https://developers.google.com/workspace/drive/api/guides/appdata)
 
-Beide Geräte benötigen dieselbe Anwendungskonfiguration und die Zuordnung zum selben Trainerdatensatz. Ein Dateiname allein ist dafür ungeeignet, weil Drive gleichnamige Dateien zulässt. Stabile Drive-Datei-IDs und Wiederfinden des Datensatzes müssen in der technischen Probe verifiziert werden.
+Beide Geräte benötigen dieselbe Anwendungskonfiguration und die Zuordnung zum selben Trainerdatensatz. Ein Dateiname allein ist dafür ungeeignet, weil Drive gleichnamige Dateien zulässt. Die Probe verwendet stabile Drive-Datei-IDs und markierte Ordner; Wiederfinden und Abgleich wurden gegen simulierte Drive-Antworten geprüft. Der Nachweis mit realem Google Drive und zwei Geräten bleibt offen.
 
 ## Anmeldung und Offlinebetrieb
 
@@ -80,13 +80,13 @@ Google Identity Services liefert in seinem Browser-Tokenmodell kurzlebige Zugrif
 
 Ohne Verbindung oder gültigen Google-Zugriff sollen bereits gespeicherte Vokabeln weiter nutzbar bleiben. In der Oberfläche sind mindestens die fachlichen Zustände „auf diesem Gerät gespeichert“, „Abgleich ausstehend“, „mit Google verbinden“, „abgeglichen“ und „Abgleich fehlgeschlagen“ zu berücksichtigen; die exakte Formulierung ist noch Teil des UI-Designs.
 
-Ein Service Worker kann Programmdateien für Offlinebetrieb vorhalten. Dafür werden eine geeignete Webbereitstellung und zusätzliche Dateien benötigt. iOS-Hintergrundausführung ist kein verlässlicher Ersatz für den Abgleich bei geöffneter App. Browserdaten können gelöscht werden; lokaler Speicher ist keine unabhängige Sicherung. [MDN: Offlinebetrieb](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Offline_and_background_operation), [WebKit: Speicherverhalten](https://webkit.org/blog/14403/updates-to-storage-policy/)
+Die Probe hält ihre eigenen Programmdateien mit einem Service Worker offline vor. Der Cache ist auf den Probe-Scope begrenzt und liest oder löscht keine fremden Origin-Caches. iOS-Hintergrundausführung ist kein verlässlicher Ersatz für den Abgleich bei geöffneter App. Browserdaten können gelöscht werden; lokaler Speicher ist keine unabhängige Sicherung. [MDN: Offlinebetrieb](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Offline_and_background_operation), [WebKit: Speicherverhalten](https://webkit.org/blog/14403/updates-to-storage-policy/)
 
 R30/R33 ergänzen den Abgleich um eine vollständige JSON-Sicherung zum Herunterladen und Wiederherstellen im Erwachsenenbereich. Vor dem Einlesen Datenformat und Version prüfen, eine Vorschau zeigen und die Wiederherstellung bestätigen lassen. Vor der Rücksetzung den aktuellen Stand automatisch separat sichern; danach den Sicherungsstand auch über Google Drive übernehmen. Google-Tokens und Zugangsdaten gehören nicht in die Datei. Abschnitt 9 des Gesamtentwurfs schlägt den Online-Ablauf mit überprüfter Sicherheitskopie sowie den separaten Erhalt verspäteter Offlineänderungen vor; diese technische Konkretisierung wurde mit E08 bestätigt.
 
 ## Frühe Machbarkeitsprüfung
 
-Vor umfangreicher UI-Implementierung nachweisen:
+Lokal und mit simulierter Google-Grenze sind Oberfläche, IndexedDB, Offline-Start, wiederholte Übertragung, Kontobindung und Rücksetzpfade geprüft. Vor umfangreicher UI-Implementierung extern noch nachweisen:
 
 - Google verbinden, synthetische Datei anlegen, auf dem zweiten Gerät wiederfinden und ändern.
 - Safari-Tab und installierte Home-Bildschirm-App getrennt testen.

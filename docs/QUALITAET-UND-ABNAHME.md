@@ -1,6 +1,6 @@
 # Qualität und Abnahme
 
-Stand: 16.09.2026. **Prüfplan für das Gesamtprodukt.** Die technische Drive-/Anmeldeschicht besitzt inzwischen eine ausführbare Node-Testumgebung mit 34 bestandenen Prüfungen; siehe [Adapterbericht](reports/2026-09-16-drive-adapter.md). Eine vollständige Anwendung, Browserprüfung und echte Google-/Geräteabnahme fehlen weiterhin.
+Stand: 17.09.2026. **Prüfplan für das Gesamtprodukt.** Die technische Probe ist lokal ausführbar und besitzt 73 bestandene Node-Tests sowie neun bestandene Browser-Szenarien mit simulierter Google-Grenze; siehe [Prüfbericht](reports/2026-09-17-google-drive-probe.md). Eine vollständige Traineranwendung sowie echte Google-/Zwei-Geräte-/iOS-Abnahme fehlen weiterhin.
 
 ## Nachweisstufen
 
@@ -14,7 +14,7 @@ Eine Stufe ersetzt nicht automatisch die nächste. Für jeden Bericht Datum, Com
 
 ## Geplante Prüfmatrix
 
-Alle folgenden Produktprüfungen sind **offen**.
+Alle folgenden Produktprüfungen sind **offen**. Einzelne technische Grundlagen wurden in der begrenzten Probe geprüft; das ersetzt keinen Produktnachweis.
 
 | Bereich | Relevante Fälle | Bezug |
 | --- | --- | --- |
@@ -55,7 +55,9 @@ Bekannter Stand: Der Nutzer besitzt selbst weder iPhone noch iPad. Sein Freund a
 
 ## Testwerkzeuge
 
-Die bisherigen Tests laufen mit Node.js ab Version 22.8.0 und dessen eingebautem Testrunner: `npm test`. Externe Google-Antworten werden kontrolliert simuliert; eigener Adapter und eigene Anmeldelogik laufen unverändert. Keine zusätzlichen npm-Pakete erforderlich. Speicher-/Syncintegrationstests und Browserprüfungen werden mit Task 2/3 ergänzt und sind bislang nicht ausgeführt.
+Die automatisierten Tests laufen mit Node.js ab Version 22.8.0 und dessen eingebautem Testrunner: `npm test`. Externe Google-Antworten werden kontrolliert simuliert; eigener Adapter, Modell, Controller und Speicherlogik laufen unverändert. Keine npm-Laufzeitpakete sind erforderlich.
+
+Die zusätzliche Browserprüfung bedient echte Oberfläche, IndexedDB und Service Worker in zwei getrennten Browserkontexten; nur GIS und Drive-HTTP werden simuliert. Einrichtung und Grenzen stehen in [tests/browser/README.md](../tests/browser/README.md). Sie ersetzt keine echte Google-, Safari- oder Geräteabnahme.
 
 Keine Erfolgsaussage aus einer bloßen Codeinspektion ableiten. Keine echten Kinderprofile oder Google-Tokens als Testfixture verwenden. Für Fehler- und Konfliktfälle reproduzierbare synthetische Daten verwenden.
 
@@ -68,6 +70,6 @@ Für dieses anfängliche Paket sind zu prüfen:
 - Bestätigte Anforderungen und offene Vorschläge sind sichtbar getrennt.
 - Keine tatsächliche App, eingerichtete Google-Verbindung oder bestandene Produktabnahme wird vorgetäuscht.
 - Nur beabsichtigte Dateien werden committed; Git-Whitespaceprüfung ist sauber.
-- Nach dem autorisierten Push stimmt der Commit auf `origin/main` mit dem lokalen Commit überein.
+- Nach einem autorisierten Push stimmt der dokumentierte Remote-Branch mit dem lokalen Commit überein; eine Integration nach `main` ist separat zu beauftragen.
 
-Die Ergebnisse stehen im [ursprünglichen Dokumentationsbericht](reports/2026-09-16-dokumentation.md) und im [Prüfbericht zum Gesamtentwurf](reports/2026-09-16-gesamtentwurf.md).
+Die Ergebnisse stehen im [ursprünglichen Dokumentationsbericht](reports/2026-09-16-dokumentation.md), im [Prüfbericht zum Gesamtentwurf](reports/2026-09-16-gesamtentwurf.md) und im [Prüfbericht der lokalen Verbindungsprobe](reports/2026-09-17-google-drive-probe.md).

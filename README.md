@@ -2,7 +2,7 @@
 
 Ein geplanter Deutsch-Englisch-Vokabeltrainer für Kinder von **10 bis 13 Jahren, Klasse 4 bis 7**. Er soll auf aktuellen Smartphones, Tablets und Computern funktionieren; **iPhone und iPad haben Vorrang**.
 
-**Stand: 16. September 2026 — bestätigter Entwurf, erster automatisiert testbarer Zwischenstand, Pause auf Nutzerwunsch.** Die Google-Anmelde- und Übertragungsschicht ist implementiert und mit 34 Tests geprüft. Eine klickbare Oberfläche ist noch nicht vorhanden. Die Antworten Q1–Q14 und der [Gesamtentwurf](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md) einschließlich E01–E10 sind angenommen. Aktuelle Nachweise und Wiedereinstieg stehen in [ARBEITSSTAND.md](ARBEITSSTAND.md).
+**Stand: 17. September 2026 — ausführbare technische Verbindungsprobe.** Die Probe besitzt eine kleine mobile Oberfläche, lokalen IndexedDB-Speicher, einen eigenen Offline-Service-Worker und den Google-Drive-Adapter. 73 automatisierte Tests sowie neun Browser-Szenarien mit simulierter Google-Grenze waren erfolgreich. Echte Google-Anmeldung, zwei reale Geräte und iPhone/iPad sind noch nicht geprüft; der eigentliche Vokabeltrainer ist noch nicht implementiert. Aktuelle Nachweise und Wiedereinstieg stehen in [ARBEITSSTAND.md](ARBEITSSTAND.md).
 
 ## Geplanter Lernablauf
 
@@ -79,7 +79,9 @@ Weitere Dokumente:
 - [Google-Drive-Einrichtung](docs/GOOGLE-DRIVE-EINRICHTUNG.md)
 - [Qualität und Abnahme](docs/QUALITAET-UND-ABNAHME.md)
 - [Technische Quellen](docs/QUELLEN.md)
-- [Übergabe vom 16.09.2026](docs/handoffs/2026-09-16-projektstart.md)
+- [Datenformat der technischen Probe](docs/PROBE-DATENFORMAT.md)
+- [Aktuelle Übergabe vom 17.09.2026](docs/handoffs/2026-09-17-verbindungsprobe.md)
+- [Prüfbericht der Verbindungsprobe](docs/reports/2026-09-17-google-drive-probe.md)
 - [Prüfbericht der Dokumentation](docs/reports/2026-09-16-dokumentation.md)
 - [Prüfbericht zum Gesamtentwurf](docs/reports/2026-09-16-gesamtentwurf.md)
 
@@ -101,7 +103,7 @@ git switch codex/google-drive-probe
 npm test
 ```
 
-Die Tests benötigen weder npm-Zusatzpakete noch ein Google-Konto oder Internetzugriff. Erwartung für diesen Zwischenstand: **34 Tests bestanden**. Geprüft werden echte Adapter-/Anmeldelogik mit simulierten externen Google-Antworten. Ein Build oder Browserstart ist noch nicht vorhanden; `npm start` wird erst mit der Probeoberfläche ergänzt. Anschließend [START-HIER.md](START-HIER.md) und die [Pausenübergabe](docs/handoffs/2026-09-16-pause.md) lesen.
+Die Tests benötigen weder npm-Zusatzpakete noch ein Google-Konto oder Internetzugriff. Für den dokumentierten Stand wurden **73 Tests** bestanden. Danach startet `npm start` den lokalen Server auf `http://localhost:4173`; ein Buildschritt oder Laufzeitpakete sind nicht nötig. Anschließend [START-HIER.md](START-HIER.md) und die [aktuelle Übergabe](docs/handoffs/2026-09-17-verbindungsprobe.md) lesen. Die optionale Browserprüfung ist in [tests/browser/README.md](tests/browser/README.md) beschrieben.
 
 ## Bereitstellung und Kosten
 

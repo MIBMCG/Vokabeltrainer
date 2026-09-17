@@ -1,6 +1,6 @@
 # Roadmap zur ersten nutzbaren Version
 
-Stand: 16.09.2026. **Vorgeschlagene Arbeitsreihenfolge, kein freigegebener Implementierungsplan.** Die Punkte beschreiben überprüfbare Ergebnisse, ohne offene Nutzerentscheidungen vorwegzunehmen.
+Stand: 17.09.2026. **Vorgeschlagene Arbeitsreihenfolge, kein freigegebener Implementierungsplan.** Die Punkte beschreiben überprüfbare Ergebnisse, ohne offene Nutzerentscheidungen vorwegzunehmen.
 
 ## 0. Projektwissen übergabefähig machen
 
@@ -41,7 +41,9 @@ Ergebnis: umsetzbarer Plan. Dieses Dokument ersetzt ihn nicht. Falls Superpowers
 
 ## 3. Google Drive auf iOS früh nachweisen
 
-Nach Abstimmung einer eng begrenzten Probe die Anmeldung, den Zugriff auf synthetische Dateien, das Wiederfinden auf zwei Geräten und erneutes Verbinden testen. Safari-Tab und Home-Bildschirm-App separat prüfen.
+Lokal erledigt: ausführbare synthetische Probe mit Drive-/Anmeldeschicht, IndexedDB, Offline-Service-Worker, wiederholbaren Uploads und Rücksetzexperiment. 73 Node-Tests und neun Browser-Szenarien mit simulierter Google-Grenze sind dokumentiert. [Prüfbericht](reports/2026-09-17-google-drive-probe.md)
+
+Extern offen: Google-Projekt und öffentliche OAuth-Client-ID einrichten, Zugriff auf reale Probe-Dateien und Wiederfinden auf zwei Geräten testen. Danach Safari-Tab und Home-Bildschirm-App getrennt prüfen. Bis dahin ist dieser Meilenstein nicht abgeschlossen.
 
 Für echte Apple-Gerätetests kommen die Geräte des Freundes infrage. Modelle, Betriebssystemversionen und Testverfügbarkeit noch klären; vorhandene Geräte nicht mit zugesagter Testteilnahme verwechseln.
 

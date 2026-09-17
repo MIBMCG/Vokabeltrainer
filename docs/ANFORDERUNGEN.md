@@ -107,7 +107,7 @@ Die Einzelfragen Q1–Q14 sind beantwortet. Der [Gesamtentwurf](superpowers/spec
 
 Die Liste wird auf ausdrücklichen Wunsch des Nutzers Frage für Frage mit Optionen und Empfehlung abgearbeitet. Jede Antwort wird sofort festgehalten; neu erkannte Produktfragen werden ergänzt. Technische Detailentscheidungen sollen verständlich begründet werden, ohne den Nutzer unnötig mit Implementierungsdetails zu belasten. Nach vollständiger Klärung den konsolidierten Umfang dokumentieren, einen konkreten Implementierungsplan erstellen und mit der beauftragten Entwicklung beginnen. Reale technische Nachweise bleiben als Prüfaufgaben sichtbar und dürfen nicht durch bloße Zustimmung als bestanden gelten.
 
-Das technische Speicher-/Konfliktmodell E07/E08/E10 ist mit der Gesamtbestätigung ebenfalls angenommen: stabile IDs, getrennte Inhalte/Ergebnisse, Reihenfolge paralleler Lernereignisse, Datei-Aufteilung, Wiederholbarkeit von Übertragungen und Erkennen echter Bearbeitungskonflikte. Seine praktische Funktionsfähigkeit ist noch nachzuweisen.
+Das technische Speicher-/Konfliktmodell E07/E08/E10 ist mit der Gesamtbestätigung ebenfalls angenommen: stabile IDs, getrennte Inhalte/Ergebnisse, Reihenfolge paralleler Lernereignisse, Datei-Aufteilung, Wiederholbarkeit von Übertragungen und Erkennen echter Bearbeitungskonflikte. Die [synthetische Verbindungsprobe](reports/2026-09-17-google-drive-probe.md) weist lokale Modell-, Speicher- und Browsergrundlagen mit simulierter Google-Grenze nach. Reales Drive, zwei Geräte und das vollständige Produktprotokoll sind weiterhin nachzuweisen.
 
 ## Nicht beauftragt
 
