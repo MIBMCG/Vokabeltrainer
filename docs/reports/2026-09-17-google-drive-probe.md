@@ -55,7 +55,7 @@ Die Dokumentation und Browserprüfungen wurden mit GPT-5.6 Sol bei mittlerer Den
 ## Offene Grenzen
 
 - Erste echte Google-Anmeldung nach manueller Einrichtung ist durch Nutzerscreenshot bestätigt; Details im folgenden Praxisnachtrag.
-- Erste Drive-Übertragung und Rücksetzung sind durch Nutzerrückmeldungen bestätigt. Offline-Neuladen, zwei physische Geräte und iOS bleiben offen.
+- Reales Drive zwischen zwei Browsern desselben Rechners ist durch Nutzerrückmeldungen bestätigt, einschließlich verspäteter Antwort nach Rücksetzung. Isolierter Offline-Start ohne Server, zwei physische Geräte und iOS bleiben offen.
 - Safari auf iPhone/iPad und die Home-Bildschirm-App wurden nicht geprüft. Dafür fehlen noch HTTPS-Bereitstellung, konkrete Geräte-/Versionsangaben und Testverfügbarkeit.
 - Die frühe Machbarkeitsprüfung ist deshalb noch nicht bestanden.
 - Trainer, Vokabeln, Lernprofile, adaptive Wiederholung, Erwachsenen-PIN, Inselreise, vollständiger Sicherungsimport und Produkt-Konfliktlösung sind nicht implementiert.
@@ -76,3 +76,21 @@ Nachweis: vom Nutzer bereitgestellte Screenshots der Google-Einwilligung und des
 Praxisstand 17.09.2026 (Nutzerrückmeldungen und Screenshots): Echte Google-Anmeldung mit drive.file, Probeordnerauswahl, erste Antwort (1/10/1), Drive-Abgleich (1/10/0), Uploadwiederholung ohne Doppelwertung, Neuladen mit erhaltenem Stand und erneutes Verbinden bestätigt. Eine zweite Antwort wurde bei getrennter Internetverbindung gespeichert (2/20/1) und nach Wiederverbindung übertragen (2/20/0). Rücksetzung auf 0/0/0 und Statusmeldung zur bestätigten Sicherung wurden ebenfalls bestätigt. Reihenfolge der Zahlen: Antworten/Punkte/Ausstehend. Offline-Neuladen, zweiter Browser bzw. physisches Zweitgerät und iOS bleiben offen. Die genaue Browser-/OS-Version und der tatsächlich geladene Codecommit wurden nicht erhoben; kein vom Assistenten selbst ausgeführter Live-Test. Nächster Schritt: Seite ohne Internet neu laden. Keine persönlichen Konto-, Client- oder Ordnerkennungen dokumentieren.
 
 Die Bestätigung der Rücksetzung war erst nach Scrollen zur Statuszeile sichtbar. Das ist ein beobachteter Bedienhinweis; für die spätere Schüleroberfläche Rückmeldungen unmittelbar am Handlungspunkt berücksichtigen. Eine unabhängige Prüfung der konkreten Backup-Datei in Drive wurde nicht durchgeführt; bestätigt wurde die App-Statusmeldung nach ihrem implementierten Sicherungsablauf.
+
+## Praxisnachtrag: Neuladen ohne Internet
+
+17.09.2026: Nutzer bestätigt vollständiges Neuladen bei getrennter Internetverbindung mit allen Zählern auf 0. Der lokale Server lief weiter; damit ist die Bedienbarkeit ohne Internet bestätigt, aber der alleinige Start aus dem Service-Worker-Cache ohne erreichbaren Ursprung nicht isoliert nachgewiesen. Nächster Schritt: zweites getrenntes Browserprofil bzw. anderer Browser für den realen Drive-Abgleich; ein zweiter Tab genügt wegen gemeinsamer lokaler Daten und Tabsperre nicht. Physische Zwei-Geräte-/iOS-Abnahme bleibt offen.
+
+## Praxisnachtrag: zwei Browser und verspätete Antwort
+
+Praxisstand 17.09.2026, durch Nutzerrückmeldungen und Screenshots: Echte Anmeldung, Probeordner, Upload, Wiederholung ohne Doppelwertung, lokales Neuladen, erneute Anmeldung, Offlineantwort mit späterem Upload und gesicherte Rücksetzung bestätigt. Zusätzlich bestätigte der Nutzer das Neuladen ohne Internet bei weiterlaufendem lokalen Server sowie den realen Drive-Abgleich zwischen zwei getrennten Browsern auf demselben Rechner in beide Richtungen. Eine zunächst ungesendete Antwort aus der alten Generation blieb nach Rücksetzung separat erhalten; am Ende zeigten beide Browser Antworten 0, Punkte 0, Ausstehend 0 und Alte Generation 1. Noch offen: isolierter Start ohne erreichbaren lokalen Server, zwei physische Geräte sowie iPhone/iPad in Safari und als Home-Bildschirm-App. Browser-/OS-Versionen und geladener Codecommit des Handtests wurden nicht gesondert erhoben. Nächster Schritt: Verfügbarkeit der Apple-Testgeräte und HTTPS-Bereitstellung klären. Keine persönlichen Kennungen dokumentieren.
+
+| Handtest | Vom Nutzer bestätigtes Ergebnis |
+| --- | --- |
+| Browser B meldet sich an und sucht vorhandenen Ordner | Gleiche Ordnerkennung wie Browser A |
+| B übernimmt Rücksetzung, speichert eine Antwort und gleicht ab; A gleicht ab | Beide 1 Antwort, 10 Punkte, 0 ausstehend |
+| A ergänzt eine Antwort und gleicht ab; B gleicht ab | Beide 2 Antworten, 20 Punkte, 0 ausstehend |
+| B hält dritte Antwort lokal zurück; A setzt gesichert zurück | A 0 Antworten/0 Punkte, B noch 3 Antworten/30 Punkte/1 ausstehend |
+| B gleicht ab, anschließend A | Beide 0 Antworten, 0 Punkte, 0 ausstehend, 1 alte Generation |
+
+Diese Ergebnisse sind geführte manuelle Nutzernachweise mit echtem Google Drive, keine neuen automatisierten Tests und keine Zwei-Geräte-Abnahme. Die vorigen Praxisnachträge bilden frühere Zwischenstände ab; dieser Nachtrag ist der aktuelle Stand.

@@ -25,17 +25,17 @@ Einrichtung und Prüfablauf: [Google-Drive-Probe](docs/GOOGLE-DRIVE-PROBE.md).
 
 ## Äußere Voraussetzungen und nächste Schritte
 
-Praxisstand 17.09.2026 (Nutzerrückmeldungen und Screenshots): Echte Google-Anmeldung mit drive.file, Probeordnerauswahl, erste Antwort (1/10/1), Drive-Abgleich (1/10/0), Uploadwiederholung ohne Doppelwertung, Neuladen mit erhaltenem Stand und erneutes Verbinden bestätigt. Eine zweite Antwort wurde bei getrennter Internetverbindung gespeichert (2/20/1) und nach Wiederverbindung übertragen (2/20/0). Rücksetzung auf 0/0/0 und Statusmeldung zur bestätigten Sicherung wurden ebenfalls bestätigt. Reihenfolge der Zahlen: Antworten/Punkte/Ausstehend. Offline-Neuladen, zweiter Browser bzw. physisches Zweitgerät und iOS bleiben offen. Die genaue Browser-/OS-Version und der tatsächlich geladene Codecommit wurden nicht erhoben; kein vom Assistenten selbst ausgeführter Live-Test. Nächster Schritt: Seite ohne Internet neu laden. Keine persönlichen Konto-, Client- oder Ordnerkennungen dokumentieren.
+Praxisstand 17.09.2026, durch Nutzerrückmeldungen und Screenshots: Echte Anmeldung, Probeordner, Upload, Wiederholung ohne Doppelwertung, lokales Neuladen, erneute Anmeldung, Offlineantwort mit späterem Upload und gesicherte Rücksetzung bestätigt. Zusätzlich bestätigte der Nutzer das Neuladen ohne Internet bei weiterlaufendem lokalen Server sowie den realen Drive-Abgleich zwischen zwei getrennten Browsern auf demselben Rechner in beide Richtungen. Eine zunächst ungesendete Antwort aus der alten Generation blieb nach Rücksetzung separat erhalten; am Ende zeigten beide Browser Antworten 0, Punkte 0, Ausstehend 0 und Alte Generation 1. Noch offen: isolierter Start ohne erreichbaren lokalen Server, zwei physische Geräte sowie iPhone/iPad in Safari und als Home-Bildschirm-App. Browser-/OS-Versionen und geladener Codecommit des Handtests wurden nicht gesondert erhoben. Nächster Schritt: Verfügbarkeit der Apple-Testgeräte und HTTPS-Bereitstellung klären. Keine persönlichen Kennungen dokumentieren.
 
 Für reale iOS-Prüfungen fehlen Geräte-/Versionsangaben, Testverfügbarkeit und eine abgestimmte HTTPS-Bereitstellung. Der Nutzer besitzt keine Apple-Geräte; sein Freund als künftiger Hauptnutzer besitzt iPhone und iPad. Niemand wird ohne Auftrag kontaktiert.
 
-Die erste Anmeldung, Drive-Übertragung und Rücksetzung sind bestätigt. Als Nächstes folgen Offline-Neuladen und die weiteren Prüfungen nach der [Prüfanleitung](docs/GOOGLE-DRIVE-PROBE.md), später mit demselben OAuth-Client, Google-Konto und Probeordner auf zwei Geräten. Für iPhone/iPad ist zusätzlich eine abgestimmte HTTPS-Bereitstellung nötig; Safari und Home-Bildschirm-App werden getrennt geprüft. Bis diese Nachweise vorliegen, ist die frühe Machbarkeitsprüfung nicht bestanden und umfangreiche Lernoberfläche nicht freigegeben.
+Die erste Anmeldung, Drive-Übertragung und Rücksetzung sind bestätigt. Als Nächstes folgen die Geräte- und Hostingklärung sowie die weiteren Prüfungen nach der [Prüfanleitung](docs/GOOGLE-DRIVE-PROBE.md), später mit demselben OAuth-Client, Google-Konto und Probeordner auf zwei Geräten. Für iPhone/iPad ist zusätzlich eine abgestimmte HTTPS-Bereitstellung nötig; Safari und Home-Bildschirm-App werden getrennt geprüft. Bis diese Nachweise vorliegen, ist die frühe Machbarkeitsprüfung nicht bestanden und umfangreiche Lernoberfläche nicht freigegeben.
 
 ## Noch nicht vorhanden oder nachgewiesen
 
 - Vollständiger Trainer mit Lernprofilen, Wortverwaltung, adaptiver Auswahl, Erwachsenen-PIN und Inselreise.
 - Produktfähige Synchronisation einschließlich vollständigem Sicherungsimport und Erwachsenen-Konfliktlösung.
-- Offline-Neuladen und realer Zwei-Geräte-Abgleich; erste Drive-Übertragung und Rücksetzung sind vom Nutzer bestätigt.
+- Isolierter Offline-Start ohne erreichbaren Server und realer Zwei-Geräte-Abgleich; der Abgleich zwischen zwei Browsern desselben Rechners ist bestätigt.
 - Reale iPhone-/iPad-Abnahme und festgelegte Mindestversionen.
 - Eingerichtetes Hosting oder veröffentlichte Trainer-URL.
 

@@ -119,6 +119,10 @@ Weitere Einrichtung am 17.09.2026: Web-OAuth-Client vorhanden, Testkonto eingetr
 
 Praxisprüfung am 17.09.2026: Nutzer bestätigt realen Drive-Abgleich, Uploadwiederholung ohne Doppelwertung, lokalen Erhalt nach Neuladen, erneute Anmeldung, Offlineantwort mit anschließendem Upload und Rücksetzung mit Sicherungsbestätigung. Offline-Neuladen und Mehrgeräte-/iOS-Prüfung bleiben offen. Details und Nachweisgrenzen stehen im [Prüfbericht](reports/2026-09-17-google-drive-probe.md).
 
+17.09.2026: Nutzer bestätigt vollständiges Neuladen bei getrennter Internetverbindung mit allen Zählern auf 0. Der lokale Server lief weiter; damit ist die Bedienbarkeit ohne Internet bestätigt, aber der alleinige Start aus dem Service-Worker-Cache ohne erreichbaren Ursprung nicht isoliert nachgewiesen. Nächster Schritt: zweites getrenntes Browserprofil bzw. anderer Browser für den realen Drive-Abgleich; ein zweiter Tab genügt wegen gemeinsamer lokaler Daten und Tabsperre nicht. Physische Zwei-Geräte-/iOS-Abnahme bleibt offen.
+
+Aktueller Praxisstand am 17.09.2026: Realer Drive-Abgleich zwischen zwei Browsern desselben Rechners in beide Richtungen bestätigt. Nach Rücksetzung bleibt eine verspätet übertragene alte Antwort auf beiden Seiten separat erhalten (0 Antworten/0 Punkte/0 ausstehend/1 alte Generation). Physische Zwei-Geräte- und iOS-Nachweise bleiben offen; Produktanforderungen unverändert.
+
 ## Nicht beauftragt
 
 - Native App-Store-App, App-Store-Veröffentlichung oder kostenpflichtiger Backenddienst.
