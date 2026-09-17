@@ -181,6 +181,36 @@ test('snapshot references and hash syntax are checked synchronously', () => {
   assert.throws(() => assertLedger(wrongHash), {code: 'invalid'});
 });
 
+test('an offline restore epoch accepts a local snapshot without inventing a Drive manifest ID', () => {
+  const f = createFixture();
+  const ledger = structuredClone(f.base);
+  ledger.snapshots.push({
+    id: 's-offline',
+    datasetId: 'd1',
+    effectiveEventIds: f.base.events.map(({id}) => id).sort(),
+    supportEventIds: [],
+    contentHash: '0'.repeat(64),
+  });
+  ledger.epochs.push({
+    ...structuredClone(f.base.epochs[0]),
+    id: 'e-offline',
+    parents: ['e0'],
+    clock: 20,
+    snapshotId: 's-offline',
+    snapshotManifestFileId: null,
+  });
+
+  assert.doesNotThrow(() => assertLedger(ledger));
+
+  const missingSnapshot = structuredClone(ledger);
+  missingSnapshot.snapshots = [];
+  assert.throws(() => assertLedger(missingSnapshot), {code: 'reference'});
+
+  const missingSnapshotId = structuredClone(ledger);
+  missingSnapshotId.epochs[1].snapshotId = null;
+  assert.throws(() => assertLedger(missingSnapshotId), {code: 'reference'});
+});
+
 test('valid event payloads use exact field sets for every event type', () => {
   const f = createFixture();
   const valid = [

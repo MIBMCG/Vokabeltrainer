@@ -637,8 +637,7 @@ export function assertLedger(value) {
     for (const parentId of epoch.parents) {
       if (!epochById.has(parentId)) reference('Eine Epoche verweist auf einen unbekannten Vorgänger.');
     }
-    if (epoch.id !== descriptor.rootEpochId
-      && (epoch.snapshotId === null || epoch.snapshotManifestFileId === null)) {
+    if (epoch.id !== descriptor.rootEpochId && epoch.snapshotId === null) {
       reference('Eine Folgeepoche ist nicht vollständig belegt.');
     }
     if (epoch.snapshotId !== null && !snapshotById.has(epoch.snapshotId)) {
