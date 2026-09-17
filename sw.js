@@ -1,5 +1,5 @@
 const OWN_CACHE_PREFIX = `vokabeltrainer-probe:${encodeURIComponent(new URL(self.registration.scope).pathname)}:`;
-const CACHE_NAME = `${OWN_CACHE_PREFIX}v2`;
+const CACHE_NAME = `${OWN_CACHE_PREFIX}v3`;
 const ASSETS = [
   './',
   './index.html',

@@ -11,7 +11,12 @@ export function createGoogleFixture() {
   const writes = [];
 
   async function attach(context) {
-    const controls = {offline: false, account: 'synthetic-account', loseNextUpload: false};
+    const controls = {
+      offline: false,
+      account: 'synthetic-account',
+      loseNextUpload: false,
+      rejectNextAbout401: false,
+    };
     await context.route('**/*', async (route) => {
       if (['localhost', '127.0.0.1'].includes(new URL(route.request().url()).hostname)) {
         return route.continue();
@@ -33,8 +38,10 @@ export function createGoogleFixture() {
             }
             return {requestAccessToken() {
               if (!navigator.userActivation.isActive) throw new Error('Missing user gesture');
-              queueMicrotask(() => options.callback({access_token:'synthetic-browser-token',
-                scope:${JSON.stringify(scope)}, expires_in:3600}));
+              window.__syntheticOauthRequests = (window.__syntheticOauthRequests || 0) + 1;
+              const token = 'synthetic-browser-token-' + window.__syntheticOauthRequests;
+              queueMicrotask(() => options.callback({access_token:token,
+                scope:${JSON.stringify(scope)}, expires_in:Number(window.__syntheticExpiresIn || 3600)}));
             }};
           },
           revoke(token, done) { done(); }
@@ -53,8 +60,14 @@ export function createGoogleFixture() {
       const respond = (value, status = 200) => route.fulfill({status, headers,
         contentType: 'application/json', body: JSON.stringify(value)});
       if (method === 'OPTIONS') return respond({});
-      assert.equal(request.headers().authorization, 'Bearer synthetic-browser-token');
-      if (url.pathname === '/drive/v3/about') return respond({user: {permissionId: controls.account}});
+      assert.match(request.headers().authorization, /^Bearer synthetic-browser-token-\d+$/);
+      if (url.pathname === '/drive/v3/about') {
+        if (controls.rejectNextAbout401) {
+          controls.rejectNextAbout401 = false;
+          return respond({error: {code: 401}}, 401);
+        }
+        return respond({user: {permissionId: controls.account}});
+      }
       if (url.pathname === '/drive/v3/files/generateIds') return respond({ids: [`file-${++sequence}`]});
       if (url.pathname === '/drive/v3/files' && method === 'GET') {
         const query = url.searchParams.get('q') || '';

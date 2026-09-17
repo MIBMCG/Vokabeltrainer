@@ -104,6 +104,10 @@ export function createTokenSession({oauth2, clientId, now = Date.now} = {}) {
     return token.value;
   }
 
+  function invalidate() {
+    token = null;
+  }
+
   function disconnect() {
     generation += 1;
     if (pending) {
@@ -122,5 +126,5 @@ export function createTokenSession({oauth2, clientId, now = Date.now} = {}) {
     }
   }
 
-  return {connect, getToken, disconnect};
+  return {connect, getToken, invalidate, disconnect};
 }

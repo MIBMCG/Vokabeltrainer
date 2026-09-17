@@ -13,7 +13,7 @@ async function serviceWorkerFixture(scopePath = '/probe-a/') {
   const scopePrefix = `vokabeltrainer-probe:${encodeURIComponent(scopePath)}:`;
   const keys = [
     'unrelated-app-test',
-    `${scopePrefix}old`,
+    `${scopePrefix}v2`,
     `vokabeltrainer-probe:${encodeURIComponent('/probe-b/')}:current`,
   ];
   const caches = {
@@ -60,7 +60,7 @@ test('activation deletes only old caches owned by this registration scope', asyn
 
   await dispatchExtendable(fixture.listeners.get('activate'));
 
-  assert.deepEqual(fixture.deleted, [`${fixture.scopePrefix}old`]);
+  assert.deepEqual(fixture.deleted, [`${fixture.scopePrefix}v2`]);
   assert.equal(fixture.deleted.includes('unrelated-app-test'), false);
   assert.equal(fixture.deleted.some((key) => key.includes(encodeURIComponent('/probe-b/'))), false);
 });

@@ -9,6 +9,7 @@ const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const baseUrl = process.env.PROBE_BASE_URL || 'http://localhost:4173';
 assert.ok(['localhost', '127.0.0.1'].includes(new URL(baseUrl).hostname), 'Use a local synthetic test server');
 const browser = await chromium.launch({headless: true,
+  ignoreDefaultArgs: ['--disable-back-forward-cache'],
   ...(process.env.BROWSER_EXECUTABLE ? {executablePath: process.env.BROWSER_EXECUTABLE} : {})});
 const fixture = createGoogleFixture();
 const results = [];
@@ -183,16 +184,82 @@ try {
     await byId(a.page, 'sync').click();
     await metric(a.page, 'pending-count', 0);
   });
+  await step('HTTP 401 requires a fresh token and retries the queued answer once', async () => {
+    await byId(a.page, 'add-answer').click();
+    await metric(a.page, 'pending-count', 1);
+    const writesBefore = fixture.writes.length;
+    const requestsBefore = await a.page.evaluate(() => window.__syntheticOauthRequests);
+    a.control.rejectNextAbout401 = true;
+
+    await byId(a.page, 'sync').click();
+
+    await a.page.locator('#status[data-tone="error"]').filter({hasText: 'erneuert'}).waitFor();
+    await a.page.locator('#oauth-state').filter({hasText: 'Anmeldung ist vorbereitet'}).waitFor();
+    await metric(a.page, 'pending-count', 1);
+    await byId(a.page, 'connect').click();
+    await a.page.waitForFunction((before) => window.__syntheticOauthRequests === before + 1, requestsBefore);
+    await byId(a.page, 'sync').click();
+    await metric(a.page, 'pending-count', 0);
+    assert.equal(fixture.writes.length, writesBefore + 1);
+  });
+  await step('expired token clears the connected status and preserves the queue', async () => {
+    await byId(a.page, 'add-answer').click();
+    await metric(a.page, 'pending-count', 1);
+    await byId(a.page, 'prepare').click();
+    await a.page.evaluate(() => { window.__syntheticExpiresIn = 1; });
+    await byId(a.page, 'connect').click();
+
+    await byId(a.page, 'sync').click();
+
+    await a.page.locator('#status[data-tone="error"]').filter({hasText: 'nicht aktiv'}).waitFor();
+    await a.page.locator('#oauth-state').filter({hasText: 'Anmeldung ist vorbereitet'}).waitFor();
+    await metric(a.page, 'pending-count', 1);
+    await a.page.evaluate(() => { window.__syntheticExpiresIn = 3600; });
+    await byId(a.page, 'connect').click();
+    await byId(a.page, 'sync').click();
+    await metric(a.page, 'pending-count', 0);
+  });
   await step('second tab cannot overwrite the active tab state', async () => {
+    const activeCount = Number(await byId(a.page, 'answer-count').textContent());
     const second = await a.context.newPage();
     try {
       await second.goto(baseUrl);
       await second.locator('#status[data-tone="error"]').waitFor();
       assert.equal(await byId(second, 'add-answer').isDisabled(), true);
-      await metric(a.page, 'answer-count', 1);
+      await metric(a.page, 'answer-count', activeCount);
     } finally {
       await second.close();
     }
+  });
+  await step('BFCache return cannot overwrite a newer second-tab state', async () => {
+    const parkedCount = Number(await byId(a.page, 'answer-count').textContent());
+    await a.page.evaluate(() => {
+      window.__probeBfcacheMarker = 1;
+      addEventListener('pageshow', (event) => {
+        if (event.persisted) sessionStorage.setItem('probe-bfcache-restored', 'yes');
+      });
+    });
+    await a.page.goto(new URL('styles.css', baseUrl).href);
+    const second = await a.context.newPage();
+    try {
+      await second.goto(baseUrl);
+      await metric(second, 'answer-count', parkedCount);
+      await byId(second, 'add-answer').click();
+      await metric(second, 'answer-count', parkedCount + 1);
+
+      await a.page.goBack({waitUntil: 'commit', timeout: 5_000}).catch((error) => {
+        if (error?.name !== 'TimeoutError') throw error;
+      });
+
+      await a.page.waitForFunction(() => sessionStorage.getItem('probe-bfcache-restored') === 'yes');
+      await a.page.locator('#status[data-tone="error"]').filter({hasText: /anderen (Tab|Fenster)|bereits geöffnet/i}).waitFor();
+      assert.equal(await a.page.evaluate(() => window.__probeBfcacheMarker), undefined);
+      assert.equal(await byId(a.page, 'add-answer').isDisabled(), true);
+    } finally {
+      await second.close();
+    }
+    await a.page.reload();
+    await metric(a.page, 'answer-count', parkedCount + 1);
   });
   await step('token is absent from persisted browser state and program cache', async () => {
     for (const item of [a, b]) {

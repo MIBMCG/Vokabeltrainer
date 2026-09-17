@@ -39,6 +39,14 @@ function safeMessage(error) {
   return 'Die Aktion konnte nicht abgeschlossen werden. Bitte erneut versuchen.';
 }
 
+function handleActionError(error) {
+  if (error instanceof DriveError && error.code === 'auth') {
+    tokenSession?.invalidate();
+    connected = false;
+  }
+  showStatus(safeMessage(error), 'error');
+}
+
 function render() {
   const state = controller?.state();
   const scopeReady = Boolean(state?.scope);
@@ -87,8 +95,8 @@ function run(action, successMessage) {
     operation = action();
   } catch (error) {
     busy = false;
+    handleActionError(error);
     render();
-    showStatus(safeMessage(error), 'error');
     return Promise.reject(error);
   }
   return Promise.resolve(operation)
@@ -96,7 +104,7 @@ function run(action, successMessage) {
       if (successMessage) showStatus(successMessage, 'success');
     })
     .catch((error) => {
-      showStatus(safeMessage(error), 'error');
+      handleActionError(error);
     })
     .finally(() => {
       busy = false;
@@ -220,6 +228,9 @@ globalThis.addEventListener('offline', () => {
   connected = false;
   render();
   showStatus('Offline. Lokale Testantworten bleiben erhalten; der Drive-Abgleich wartet.', 'normal');
+});
+globalThis.addEventListener('pageshow', (event) => {
+  if (event.persisted) globalThis.location.reload();
 });
 
 async function start() {

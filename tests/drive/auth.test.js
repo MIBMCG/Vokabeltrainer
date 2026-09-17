@@ -83,6 +83,30 @@ test('expires the RAM token with a safety margin and requires reconnection', asy
   assert.equal(session.getToken(), 'access-a');
   currentTime = 91_000;
   assert.throws(() => session.getToken(), expectDriveError('auth'));
+
+  const reconnection = session.connect();
+  assert.equal(fixture.requestCount(), 2);
+  fixture.config().callback({access_token: 'access-b', expires_in: 120, scope: DRIVE_SCOPE});
+  await reconnection;
+  assert.equal(session.getToken(), 'access-b');
+});
+
+test('invalidates only the rejected RAM token and requests a fresh token on reconnect', async () => {
+  const fixture = oauthFixture();
+  const session = createTokenSession({oauth2: fixture.oauth2, clientId: 'client-id.apps.googleusercontent.com'});
+  const first = session.connect();
+  fixture.config().callback({access_token: 'rejected-access', expires_in: 3600, scope: DRIVE_SCOPE});
+  await first;
+
+  session.invalidate();
+
+  assert.throws(() => session.getToken(), expectDriveError('auth'));
+  assert.deepEqual(fixture.revoked, []);
+  const second = session.connect();
+  assert.equal(fixture.requestCount(), 2);
+  fixture.config().callback({access_token: 'fresh-access', expires_in: 3600, scope: DRIVE_SCOPE});
+  await second;
+  assert.equal(session.getToken(), 'fresh-access');
 });
 
 test('rejects missing scope, token, or expiry from GIS', async (t) => {
