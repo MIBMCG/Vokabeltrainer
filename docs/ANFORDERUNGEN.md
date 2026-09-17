@@ -109,6 +109,10 @@ Die Liste wird auf ausdrücklichen Wunsch des Nutzers Frage für Frage mit Optio
 
 Das technische Speicher-/Konfliktmodell E07/E08/E10 ist mit der Gesamtbestätigung ebenfalls angenommen: stabile IDs, getrennte Inhalte/Ergebnisse, Reihenfolge paralleler Lernereignisse, Datei-Aufteilung, Wiederholbarkeit von Übertragungen und Erkennen echter Bearbeitungskonflikte. Die [synthetische Verbindungsprobe](reports/2026-09-17-google-drive-probe.md) weist lokale Modell-, Speicher- und Browsergrundlagen mit simulierter Google-Grenze nach. Reales Drive, zwei Geräte und das vollständige Produktprotokoll sind weiterhin nachzuweisen.
 
+## Einrichtung: bestätigter Ausgangsstand
+
+17.09.2026, Nutzerantwort A: Noch kein Google-Cloud-Projekt und keine öffentliche OAuth-Client-ID für den Vokabeltrainer vorhanden. Die Einrichtung wird gemeinsam Schritt für Schritt angeleitet. Projektanlage, Anmeldung und reale Tests sind dadurch noch nicht als durchgeführt bestätigt. Kostenrahmen und Kontenmodell bleiben unverändert.
+
 ## Nicht beauftragt
 
 - Native App-Store-App, App-Store-Veröffentlichung oder kostenpflichtiger Backenddienst.

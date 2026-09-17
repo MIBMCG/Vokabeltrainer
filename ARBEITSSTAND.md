@@ -25,7 +25,7 @@ Einrichtung und Prüfablauf: [Google-Drive-Probe](docs/GOOGLE-DRIVE-PROBE.md).
 
 ## Äußere Voraussetzungen und nächste Schritte
 
-Die Frage nach einer bereits vorhandenen Google-Cloud-Registrierung und öffentlichen OAuth-Client-ID wurde gestellt, aber noch nicht beantwortet. Bisher ist keine Registrierung für dieses Projekt nachgewiesen. Der lokale Entwicklungsursprung ist `http://localhost:4173`; die öffentliche Client-ID wird nur lokal in der Probe eingegeben. Keine Passwörter oder Client-Secrets anfordern oder speichern.
+Nutzerantwort A am 17.09.2026: Es gibt noch kein Google-Cloud-Projekt und keine öffentliche OAuth-Client-ID für den Trainer. Die Einrichtung soll gemeinsam Schritt für Schritt erfolgen. Nächster Schritt: Google Cloud Console öffnen und mit einem geeigneten privaten Google-Konto anmelden; Projektanlage und Client-Erstellung sind noch nicht bestätigt. Der lokale Entwicklungsursprung ist `http://localhost:4173`; die öffentliche Client-ID wird nur lokal in der Probe eingegeben. Keine Passwörter oder Client-Secrets anfordern oder speichern.
 
 Für reale iOS-Prüfungen fehlen Geräte-/Versionsangaben, Testverfügbarkeit und eine abgestimmte HTTPS-Bereitstellung. Der Nutzer besitzt keine Apple-Geräte; sein Freund als künftiger Hauptnutzer besitzt iPhone und iPad. Niemand wird ohne Auftrag kontaktiert.
 
