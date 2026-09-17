@@ -34,7 +34,7 @@ Vor einem lokalen Ereignis: `clock = 1 + max(localClock, ...knownEvents.clock, .
 | `type` | Exakte `payload` | Bedeutung |
 | --- | --- | --- |
 | `entity.revised` | `{entityType, entityId, parents, value}` | Unveränderliche Inhaltsfassung; Fassung-ID ist die Ereignis-ID. |
-| `round.started` | `{roundId, profileId, mode, size, candidates}` | `mode`: `all/latest/new`; `size`: `10/20/30`; `candidates`: `{wordId, learningId}[]`, beim Start eingefroren. |
+| `round.started` | `{roundId, profileId, mode, size}` | `mode`: `all/latest/new`; `size`: `10/20/30`. Die vollständige Kandidatenmenge bleibt ausschließlich in `LocalRound`. |
 | `answer.recorded` | `{roundId, profileId, ordinal, wordId, revisionId, learningId, correct}` | `ordinal` 1–30, im selben Rundendurchlauf eindeutig. Keine getippte Antwort. |
 | `round.completed` | `{roundId, profileId, reason, answerIds}` | `reason`: `full/exhausted`; enthält genau die gewerteten Antwort-IDs der Runde. Ein Bonusanspruch je `roundId`. |
 | `round.abandoned` | `{roundId, profileId}` | Bewusste neue Runde; bisherige Antwortpunkte bleiben, kein Bonus. |
@@ -61,7 +61,7 @@ Aktive Fassungen sind aktive Knoten, die nicht Vorfahren anderer aktiver Nachfol
 
 Referenzen müssen existieren und zum Datensatz passen. Fassungseltern sind azyklisch und gehören zur gleichen Entität. Antwort referenziert eine Wortfassung desselben Wortes mit gleicher Lern-ID, den Rundeneintrag mit gleichem Profil und einen gültigen Ordinal. Mehrere IDs für denselben `(roundId, ordinal)` mit unterschiedlicher Antwort sind Datenfehler. Identische Wiederholung wird fachlich nur einmal berücksichtigt. `full` verlangt genau `size` Antworten, `exhausted` mindestens eine und weniger als `size`; doppelte Abschlussansprüche geben keinen zweiten Bonus. Keine Abschlusswertung nach `round.abandoned`.
 
-Die lokale Befehlsprüfung entscheidet, ob eine Aufgabe zum aktuellen Zeitpunkt zulässig ist. Importvalidierung darf historisch gültige Antworten nicht wegen inzwischen entzogener Zuordnung oder neuer Fassung verwerfen. Antwortereignisse enthalten absichtlich keine gegen manipulierte Clients gerichteten Sicherheitsbeweise.
+Die lokale Befehlsprüfung entscheidet, ob eine Aufgabe zum aktuellen Zeitpunkt zulässig ist; sie prüft die eingefrorene und gegebenenfalls bewusst erweiterte Auswahl in `LocalRound.candidates`. Das kleine synchronisierte Startereignis enthält keine Wortliste. Dadurch überschreitet eine große lokale Auswahl nicht die Ereignisgrenze und eine zulässige spätere Erweiterung widerspricht keinem unveränderlichen Startereignis. Import verlangt keine Kandidatenmitgliedschaft; Wortfassungs-, Profil-, Runden-, Ordinal- und Abschlussreferenzen bleiben verpflichtend. Importvalidierung darf historisch gültige Antworten nicht wegen inzwischen entzogener Zuordnung oder neuer Fassung verwerfen. Antwortereignisse enthalten absichtlich keine gegen manipulierte Clients gerichteten Sicherheitsbeweise.
 
 ## Lernprojektion und lokale Runde
 
@@ -100,12 +100,13 @@ Sechs Badge-IDs: `first-round`, `ten-rounds`, `ten-mastered`, `ten-recovered`, `
 // Persistierter Zustand; niemals als Ganzes exportieren!
 {storageVersion: 1, deviceId, clock, ledger, rounds, binding,
  outboxEventIds, pendingPackets, knownFiles, quarantinedFiles,
- safetyCopies, restoreJobs, pinVerifier}
+ safetyCopies, restoreJobs, snapshotManifests, pinVerifier}
 // binding: null | {accountId, folderId, descriptorFileId, datasetId}
 // pendingPackets entry: {packet, driveFileId: null | string, confirmed: false}
 // knownFiles: {fileId, contentHash, kind}[]
 // outboxEventIds: noch nicht in unveränderliche Pakete aufgenommene Ereignis-IDs
 // pinVerifier: null | {salt,hash,iterations}; Base64werte, PBKDF2-SHA-256
+// snapshotManifests: {snapshotId, fileId}[]; geprüfter lokaler Transportindex, kein Fachinhalt
 // restoreJobs: persistierte Versuche mit Phasen und stabilen Datei-IDs, siehe unten
 ```
 
@@ -145,6 +146,7 @@ Snapshotteile transportieren neben Ereignissen auch die deduplizierten `EpochHis
 
 `effectiveEventIds` bestimmt die wirksame Historie des gewählten Sicherungsstands. `supportEventIds` enthält notwendige Fassungen/Runden/Profil- und Lektionsreferenzen, die nur historische Abhängigkeiten sind. Sie aktivieren keine aktuelle Fassung und geben keine Punkte. Alle referenzierten Ereignisse liegen in der Backupdatei bzw. in vollständig geprüften Snapshotteilen. Snapshot-Hash umfasst kanonisch `{datasetId,effectiveEventIds,supportEventIds,events}`; `events` dabei nach ID sortieren. Ableitbare Anzeigezähler dürfen als lesbarer `summary` außerhalb des gehashten Modells angezeigt werden, werden niemals als Wahrheit importiert. Der portable Export enthält alle lokalen fachlichen Ereignisse einschließlich ausstehender und separater alter Epochen, deren Epoche/Bezüge sowie Index vorhandener Sicherheitskopien; keine PIN, Tokens, Bindung, Drive-Kontokennung oder lokale Runden/Antworttexte. Sicherheitskopien werden nicht rekursiv in andere Sicherungen eingebettet.
 
+`snapshotManifestFileId` ist ein optionaler Transportverweis. Jede Folgeepoche benötigt `snapshotId` und einen vollständigen validierten lokalen Snapshot; ein lokaler Offline-Restore darf `snapshotManifestFileId: null` behalten. Die Epoche wird später nicht verändert. Bei erster Cloudanlage zunächst alle benötigten Snapshotteile/Manifeste hochladen und prüfen, ihre Datei-IDs im lokalen `snapshotManifests`-Index sichern und erst dann die unveränderten Epochen veröffentlichen. Beim Empfang eines Null-Verweises sucht Sync im gebundenen Ordner nach Datensatz-/Snapshot-ID. Erst nach vollständiger Prüfung von Manifest, Teilen und Hashes aktivieren. Ein gesetzter Verweis muss zum Snapshot passen. Fehlende Dateien bleiben wartend; verschiedene Inhalte unter derselben Snapshot-ID sind Datenfehler. Keine erfundenen Drive-IDs und kein späteres Umschreiben der Epoche.
 Es gibt zwei getrennte Graphen. `ledger.epochs` ist ausschließlich der aktive Steuergraph des Zieldatensatzes: genau eine Wurzel `descriptor.rootEpochId`, alle übrigen Eltern innerhalb dieses Graphen. `ledger.historicalEpochs` enthält nur Herkunftseinträge importierter Ereignisse, ohne Snapshot-/Drive-Steuerbezüge. Deren historische Eltern müssen innerhalb der Herkunftseinträge oder als identische Herkunftsprojektion vorhandener Steuerepochen vorliegen; mehrere historische Wurzeln sind erlaubt. Ein Ereignis darf seine `epochId` in einem dieser beiden Graphen finden. Gleiche ID mit anderer Herkunftsmetadatenprojektion bleibt eine Kollision. Historische Herkunftseinträge werden niemals zu Köpfen des Steuergraphen und lösen keinen Restore aus. Ein Backup exportiert unter `epochHistory` die Herkunftsprojektionen beider Graphen, nicht fremde ausführbare Epochensteuerung. So kann die ursprüngliche Ereignis-ID/Epoche erhalten bleiben, ohne fremde Wurzeln zu aktivieren.
 
 Die aktive Epoche ist der einzige Kopf ausschließlich von `ledger.epochs`; Wurzeln und Eltern müssen vollständig vorliegen. Mehrere Köpfe ergeben `epochConflict` mit sämtlichen Köpfen. Es wird kein Gewinner anhand Zeitstempel gewählt. Bestehende bereits gespeicherte Antworten bleiben erhalten; neue Runden sind bis zur Erwachsenenklärung gesperrt, ein vorhandener Eingabetext bleibt lokal erhalten und wird nach Klärung ohne Wertung verworfen. Die UI zeigt ausdrücklich keinen vollständigen Abgleich. Auflösung erzeugt einen neuen Epochennachfolger mit allen bekannten Köpfen als Eltern und dem ausdrücklich ausgewählten, vollständig gesicherten Snapshot.

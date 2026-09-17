@@ -12,6 +12,11 @@ Ziel: Deutsch-Englisch-Vokabeltrainer für 10–13-Jährige, Klassen 4–7, mit 
 
 ## Aktuelles Entwicklungspaket
 
+### Vollständige App: Umsetzung läuft
+
+Die Umsetzung folgt dem [v1-Plan](docs/superpowers/plans/2026-09-17-vokabeltrainer-v1.md) und [Produkt-Datenvertrag](docs/PRODUKT-DATENFORMAT.md). Task 1 ist in `2e8b6a2` und `cf99ed7` umgesetzt und unabhängig geprüft: striktes Ereignisformat, sichere Referenzen, Kollisionsschutz und Testbasis. Ein Zeitüberlauf in Testdaten und eine Stapelgrenze bei langen Bearbeitungsketten wurden mit Regressionstests korrigiert. Aktueller belegter Lauf: **91/91 Node-Tests**, davon 17 Formatprüfungen. Die Lernoberfläche ist noch nicht implementiert. Task 2 ist in `5e991bf`/`4527736` implementiert und in Nachprüfung (Gesamtlauf inzwischen **108/108**); Details in der aktuellen Übergabe. Danach folgt der Lernkern in Task 3.
+
+Der [Benutzungsleitfaden](docs/BENUTZUNG.md) beschreibt die bestätigten Abläufe mit ausdrücklicher Kennzeichnung des Entwicklungsstands. Keine Produkt-Geräteabnahme oder Bereitstellung ist damit behauptet.
 Der [Plan der Google-Drive-Probe](docs/superpowers/plans/2026-09-16-google-drive-probe.md) beschreibt die begrenzte technische Probe vor umfangreicher Lernoberfläche. Sie nutzt ausschließlich synthetische Antworten und einen gekennzeichneten Drive-Testbestand. Der eigentliche Trainer ist noch nicht implementiert.
 
 Die Anmelde-/Drive-Schicht entstand in `7a5a108` und `1745d66`. Die persistente mobile Probe wurde in `0f3f03e` umgesetzt und nach unabhängiger Review in `e7424b5` sowie `230defb` korrigiert. Sie umfasst synthetische Ereignisse, IndexedDB, feste Konto-/Ordnerbindung je Browserprofil, wiederholbare Uploads, leere Rücksetzung mit verifizierter Sicherung, mobile Oberfläche, lokalen Server und eigenen Offline-Service-Worker. Das begrenzte Format ist in [PROBE-DATENFORMAT.md](docs/PROBE-DATENFORMAT.md) beschrieben.

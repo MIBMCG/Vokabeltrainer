@@ -18,10 +18,10 @@ Der bestehende isolierte Worktree wird auf dem neuen Entwicklungszweig weiterver
 
 ## Implementierung bisher
 
-Task 1 wurde in `2e8b6a2` implementiert: versioniertes Ereignisformat, strikte Validierung, Referenz-/Kollisionsprüfung und synthetische Testbasis. Gezielte Prüfung: 15/15; gesamter Node-Lauf: 89/89 bestanden. Die unabhängige Aufgabenreview läuft noch. Das ist eine interne Grundlage, noch keine fertige Lernoberfläche.
+Task 1 wurde in `2e8b6a2` und `cf99ed7` implementiert: versioniertes Ereignisformat, strikte Validierung, Referenz-/Kollisionsprüfung und synthetische Testbasis. Gezielte Prüfung: 17/17; gesamter Node-Lauf: 91/91 bestanden. Die unabhängige Aufgabenreview ist nach zwei korrigierten Befunden und sauberer Nachprüfung abgeschlossen. Task 2 ist in `5e991bf` und `4527736` implementiert: Inhaltsfassungen, Konfliktköpfe, ursprüngliche Anlegereihenfolge, getrennte Support-/Altbestände und Epochen. Gezielte Prüfung 16/16, Gesamtlauf 108/108. Die Nachprüfung des behobenen Spezialkennungsfehlers läuft noch. Task 3 ergänzt anschließend Lernlogik und die dokumentierte Integration des kleinen Startereignisses. Das ist eine interne Grundlage, noch keine fertige Lernoberfläche.
 
 Die [Benutzungsanleitung](../BENUTZUNG.md) beschreibt die bestätigten Abläufe und kennzeichnet die laufende Entwicklung ausdrücklich.
 
 ## Noch offen
 
-Vollständige Produktimplementierung, reale Apple-Geräteabnahme und abgestimmte HTTPS-Bereitstellung. Kein Freund wird ohne Auftrag kontaktiert. Keine echten Lernprofile oder Google-Zugangsdaten ins Repository übernehmen.
+Vollständige Produktimplementierung, [reale Apple-Geräteabnahme](../GERAETE-ABNAHME.md) und abgestimmte HTTPS-Bereitstellung. Kein Freund wird ohne Auftrag kontaktiert. Keine echten Lernprofile oder Google-Zugangsdaten ins Repository übernehmen.

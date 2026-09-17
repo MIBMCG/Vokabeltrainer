@@ -84,4 +84,4 @@ Gleichzeitige Wiederherstellungen auf zwei Geräten erfordern eine bewusste Ausw
 
 ## Geräteprüfung
 
-Safari und eine zum Home-Bildschirm hinzugefügte App werden auf echtem iPhone und iPad getrennt geprüft. Bildschirmtastatur, Offline-Neustart, erneute Google-Anmeldung und Abgleich zwischen den Geräten gehören dazu. Automatisierte Browserprüfungen ersetzen diese Abnahme nicht. Eine öffentliche App-Adresse ist erst nach abgestimmter Bereitstellung verfügbar.
+Die [Geräte-Prüfliste](GERAETE-ABNAHME.md) führt durch die spätere Abnahme. Safari und eine zum Home-Bildschirm hinzugefügte App werden auf echtem iPhone und iPad getrennt geprüft. Bildschirmtastatur, Offline-Neustart, erneute Google-Anmeldung und Abgleich zwischen den Geräten gehören dazu. Automatisierte Browserprüfungen ersetzen diese Abnahme nicht. Eine öffentliche App-Adresse ist erst nach abgestimmter Bereitstellung verfügbar.

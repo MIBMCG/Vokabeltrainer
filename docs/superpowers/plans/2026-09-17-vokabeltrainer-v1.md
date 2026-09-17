@@ -111,7 +111,7 @@ return [...byId.values()];
 
 ## Task 2: Inhaltsfassungen und Epochenprojektion
 
-**Files:** Create `src/trainer/model/revisions.js`, `src/trainer/model/epochs.js`, `tests/trainer/revisions.test.js`, `tests/trainer/epochs.test.js`.
+**Files:** Create `src/trainer/model/revisions.js`, `src/trainer/model/epochs.js`, `tests/trainer/revisions.test.js`, `tests/trainer/epochs.test.js`. Modify `src/trainer/model/schema.js`, `tests/trainer/schema.test.js` nur für die unten beschriebene lokale Snapshotreferenz.
 
 **Interfaces:** Consumes Task-1 Ledger/Validator/Hash. Produces `normalize(text):string`, `semanticWord(value):object`, `nextLearningId({wordId,revisionId,value,parents}):Promise<string>`, `projectEntities(events,{supportEvents=[]}={}):{entities,conflicts}`, `resolveEpochs(ledger):{activeEpochId,heads,epochConflict,effectiveEvents,supportEvents,lateEvents}`, `revisionPayload({entityType,entityId,parents,value}):object`. `entities` ist `{profiles,lessons,words}`, jeweils Objekt nach Entitäts-ID mit `{id,heads,value,createdOrder,conflicted}`; konflikthafte Objekte haben `value:null`. `conflicts` enthält `{entityType,entityId,heads}`. `parents` in `nextLearningId` sind vollständige Vorgängerereignisse.
 
@@ -132,7 +132,7 @@ test('two successors remain conflict until a revision names both parents', () =>
 });
 ```
 
-Zusätzlich zwei gleichzeitige Restore-Köpfe ohne automatischen Gewinner; fehlender Snapshot aktiviert keine Epoche; Snapshot-Support aktiviert keine Wörter/Antwortpunkte; späte Altantwort verbleibt separat; explizite Adoption derselben ID zweimal bleibt einmal wirksam. Fremder Backup-Herkunftsgraph bleibt ausschließlich `historicalEpochs`, erzeugt keinen neuen aktiven Kopf und verletzt nicht die eine Zielwurzel.
+Integration mit Task 1: Folgeepoche mit vollständigem lokalem Snapshot und `snapshotManifestFileId: null` muss gültig sein (echter RED/GREEN-Test in `schema.test.js`); fehlender `snapshotId` oder Snapshot bleibt ungültig. Der optionale Transportverweis bleibt nach späterer Cloudveröffentlichung unverändert. Zusätzlich zwei gleichzeitige Restore-Köpfe ohne automatischen Gewinner; fehlender Snapshot aktiviert keine Epoche; Snapshot-Support aktiviert keine Wörter/Antwortpunkte; späte Altantwort verbleibt separat; explizite Adoption derselben ID zweimal bleibt einmal wirksam. Fremder Backup-Herkunftsgraph bleibt ausschließlich `historicalEpochs`, erzeugt keinen neuen aktiven Kopf und verletzt nicht die eine Zielwurzel.
 - [ ] **2. RED ausführen:** `node --test tests/trainer/revisions.test.js tests/trainer/epochs.test.js` und Fehlbefund lesen.
 - [ ] **3. GREEN:** Kopfbestimmung über referenzierte Eltern, nicht Zeitstempel; semantischer Vergleich umfasst Archivierung/Zuordnung. Epochenauswahl:
 
@@ -143,15 +143,17 @@ const epochConflict = heads.length !== 1;
 const activeEpochId = epochConflict ? null : heads[0].id;
 ```
 
-Bei Konflikt Daten erhalten und keine scheinbar eindeutige Projektion bilden. Snapshot-/Native-/Adoptionsmengen nach IDs vereinigen; Support separat halten. `projectEntities` erhält optional als zweiten Parameter `{supportEvents: []}`: Vorgängerketten werden transitiv in beiden Mengen verfolgt; aktive Kandidaten stammen ausschließlich aus `events`. Ein aktiver Kopf entfällt nur als Vorfahr eines anderen aktiven Kandidaten, niemals allein wegen eines Support-Nachfolgers. `createdOrder` stammt aus der frühesten erreichbaren Wurzelfassung. Tests prüfen aktive v2/v5 mit unterstützenden v3/v4, ausschließlich unterstützendes v5 gegen aktives v2 sowie erhaltene Lektions-Anlegereihenfolge. `project` aus Task 3 übergibt beide von `resolveEpochs` gelieferten Mengen. Normalisierung und Lern-ID-Regeln exakt aus dem Vertrag. Reine Revisionserstellung prüft aktuelle Köpfe vor Speichern; alte Form darf keinen neuen fremden Kopf unterschlagen.
+Bei Konflikt Daten erhalten und keine scheinbar eindeutige Projektion bilden. Snapshot-/Native-/Adoptionsmengen nach IDs vereinigen; Support separat halten. `projectEntities` erhält optional als zweiten Parameter `{supportEvents: []}`: Vorgängerketten werden transitiv in beiden Mengen verfolgt; aktive Kandidaten stammen ausschließlich aus `events`. Ein aktiver Kopf entfällt nur als Vorfahr eines anderen aktiven Kandidaten, niemals allein wegen eines Support-Nachfolgers. `createdOrder` stammt aus der frühesten erreichbaren Wurzelfassung. Tests prüfen aktive v2/v5 mit unterstützenden v3/v4, ausschließlich unterstützendes v5 gegen aktives v2 sowie erhaltene Lektions-Anlegereihenfolge. `project` aus Task 3 übergibt beide von `resolveEpochs` gelieferten Mengen. Normalisierung und Lern-ID-Regeln exakt aus dem Vertrag. `revisionPayload` ist ein reiner Payload-Builder ohne Zugriff auf den aktuellen Bestand. Die zwingende Prüfung aktueller Köpfe erfolgt in Task5 innerhalb des serialisierten `commands.revise` unmittelbar vor dem Speichern anhand `expectedHeads`; ein altes Formular darf keinen neuen fremden Kopf unterschlagen. Die Regression für einen zwischenzeitlich hinzugekommenen Kopf gehört daher Task5, nicht in einen bestandslosen Builder.
 - [ ] **4. GREEN prüfen:** genannte Tests, `npm test`; zusätzlich Permutationen der Eingangsereignisse prüfen, beide Geräte erhalten gleiche Köpfe.
-- [ ] **5. Review/Commit:** `git diff --check`; `git add src/trainer/model/revisions.js src/trainer/model/epochs.js tests/trainer/revisions.test.js tests/trainer/epochs.test.js`; `git commit -m "feat: preserve product revisions and epoch conflicts"`.
+- [ ] **5. Review/Commit:** `git diff --check`; `git add src/trainer/model/revisions.js src/trainer/model/epochs.js src/trainer/model/schema.js tests/trainer/revisions.test.js tests/trainer/epochs.test.js tests/trainer/schema.test.js`; `git commit -m "feat: preserve product revisions and epoch conflicts"`.
 
 ## Task 3: Antwortprüfung, Lernstand und dauerhafte Belohnungen
 
-**Files:** Create `src/trainer/learning/answers.js`, `calendar.js`, `progress.js`, `rewards.js`, `tests/trainer/learning.test.js`, `tests/trainer/rewards.test.js`.
+**Files:** Create `src/trainer/learning/answers.js`, `calendar.js`, `progress.js`, `rewards.js`, `tests/trainer/learning.test.js`, `tests/trainer/rewards.test.js`. Modify `src/trainer/model/schema.js`, `tests/trainer/fixtures.js`, `tests/trainer/schema.test.js` für die folgende vorgezogene Integrationskorrektur.
 
 **Interfaces:** Consumes `normalize`, `resolveEpochs`, `projectEntities`. Produces `assess(typed,wordValue):{empty,correct,solutions}`, `dayInZone(instant,timeZone):string`, `addDays(day,count):string`, `project(ledger):Projection`, `rewardState({points,completedRounds,masteredWordIds,recoveredWordIds}):{level,badges,unlocked,journey}`, `milestonesAfterAnswer(projectionBefore,projectionAfter,answer,events):payload[]`. Milestonepayloads entsprechen dem Datenvertrag und werden Task 5 in derselben Transaktion angefügt. `project` bleibt rein/synchron, nachdem Ledger/Hashes extern geprüft wurden.
+
+- [ ] **0. Integrationskorrektur mit eigenem RED/GREEN:** `round.started` enthält ausschließlich `{roundId,profileId,mode,size}`. Entferne Kandidaten aus Startereignisschema, Fixture und Import-Mitgliedschaftsprüfung; eine bestehende Wortfassung mit passendem Profil/Rundeneintrag bleibt gültig. Lokale Kandidaten gehören Task4/5. Regression für kleines Startereignis unabhängig von großem Wortbestand und gültige weitere Wortantwort; vorhandene Prüfungen für falsche Wortfassung, Profil, Ordinal und Abschluss erhalten. Task5 prüft zusätzlich echte bewusste Erweiterung sowie Ablehnung einer unzulässigen lokalen Antwort. Danach Lernkern umsetzen.
 
 - [ ] **1. RED:**
 
@@ -186,7 +188,7 @@ const completedStages = Math.min(15, Math.floor(points / 200));
 
 `word.milestone`-Belege sichern früher lokal erreichte Erfolge auch dann, wenn Offlineereignisse später in die Reihenfolge eingefügt werden. Zeitzonendrift nicht zur Löschung gespeicherter Ereignisse verwenden. `rewardState` liefert `unlocked:{head:[],back:[],hand:[]}` mit den erlaubten Ausstattung-IDs und `journey:{completedStages,islands}` mit `islands:[{id:'beach'|'forest'|'mountain',unlocked:boolean}]`; `badges` ist ein Array der verdienten Badge-IDs. Haut-/Kleidungsfarben sind immer verfügbar.
 - [ ] **4. GREEN prüfen:** gezielte Tests und `npm test`; reine Funktionen mit eingefrorenen Eingaben auf Mutation prüfen.
-- [ ] **5. Review/Commit:** `git diff --check`; `git add src/trainer/learning tests/trainer/learning.test.js tests/trainer/rewards.test.js`; `git commit -m "feat: project adaptive progress and island rewards"`.
+- [ ] **5. Review/Commit:** `git diff --check`; `git add src/trainer/learning src/trainer/model/schema.js tests/trainer/fixtures.js tests/trainer/schema.test.js tests/trainer/learning.test.js tests/trainer/rewards.test.js`; `git commit -m "feat: project adaptive progress and island rewards"`.
 
 ## Task 4: Deterministische Rundenzustandsmaschine
 
@@ -258,7 +260,7 @@ state = next;
 onChange(structuredClone(state));
 ```
 
-Jeder tatsächliche Befehl erhält vollständige Prüfung statt eines universellen ungeprüften State-Setters. Doppelte Wertung durch gespeicherten `feedback.answerId` verhindern, nicht nur durch deaktivierten Button. Fehler lassen sichtbaren Eingabetext im UI unangetastet. `revise` vergleicht die erwarteten aktuellen Köpfe; Erfolge gemeinsam mit Antwort persistieren. Lokale neue Ereignisse bleiben als unpaketierte Pending-Ereignisse erhalten, bis Task 9 sie bündelt.
+Jeder tatsächliche Befehl erhält vollständige Prüfung statt eines universellen ungeprüften State-Setters. `start` speichert das kleine Startereignis ohne Kandidatenliste und die vollständige lokale Auswahl gemeinsam. `submit` prüft die tatsächliche Aufgabe gegen diese aktuelle Auswahl; `expand` erweitert sie ausschließlich bewusst. Regressionen: großer Wortbestand (mindestens 500 Wörter mit produktionsnahen IDs), gültige Antwort nach Erweiterung und abgewiesene unzulässige lokale Antwort. Doppelte Wertung durch gespeicherten `feedback.answerId` verhindern, nicht nur durch deaktivierten Button. Fehler lassen sichtbaren Eingabetext im UI unangetastet. `revise` vergleicht die erwarteten aktuellen Köpfe innerhalb seiner serialisierten Mutation unmittelbar vor dem Commit (Pflichttest: Formular erwartete h1, inzwischen h2 vorhanden -> stale und unveränderter Ledger); Erfolge gemeinsam mit Antwort persistieren. Lokale neue Ereignisse bleiben als unpaketierte Pending-Ereignisse erhalten, bis Task 9 sie bündelt.
 - [ ] **4. GREEN prüfen:** gezielte Tests und `npm test`. IDB-Fake nur im Test; keine Abhängigkeit der App darauf. Bereits funktionierende Probe-Speicherdatei nicht umbauen.
 - [ ] **5. Review/Commit:** `git diff --check`; `git add src/trainer/storage/store.js src/trainer/commands.js tests/trainer/store.test.js tests/trainer/commands.test.js`; `git commit -m "feat: save trainer commands atomically"`.
 
@@ -453,7 +455,7 @@ const epoch = await publishAndVerifyEpoch(manifest, confirmedParentHeads);
 await activateEpochAtomically(epoch);
 ```
 
-Diese Helfer sind private Restorefunktionen mit Verträgen aus dem Datenformat; bei lokalem ungebundenen Bestand entfallen nur Netzschritte, lokale Sicherheitskopie und atomare Aktivierung bleiben. Epochendaten als Kontrolle unabhängig von normalen 100-Event-Paketen, Snapshotteile vollständig vor Kontrollereignis. Keine Gesamtpunktestandaddition. Snapshotbezug statt ungeschütztem Überschreiben. Fremdes Backup nur explizit auf Zielidentität neu verankern; Kollisionen sichtbar abweisen. Sicherheitskopien in Erwachsenenbereich auflisten/downloaden; keine automatische Löschung.
+Diese Helfer sind private Restorefunktionen mit Verträgen aus dem Datenformat; bei lokalem ungebundenen Bestand entfallen nur Netzschritte, lokale Sicherheitskopie und atomare Aktivierung bleiben. Epochendaten als Kontrolle unabhängig von normalen 100-Event-Paketen, Snapshotteile vollständig vor Kontrollereignis. Lokale Folgeepochen dürfen einen Null-Manifestverweis besitzen und werden bei erster Cloudanlage unverändert veröffentlicht: zuvor alle benötigten Manifeste prüfen, Dateizuordnung separat in `snapshotManifests` speichern. Empfang löst Null-Verweise über gebundenen Ordner plus Datensatz-/Snapshot-ID auf; fehlende/mehrdeutige Inhalte nie aktivieren. Dieses lokale-Restore-dann-Cloud-Szenario gehört in die Integrationstests. Keine Gesamtpunktestandaddition. Snapshotbezug statt ungeschütztem Überschreiben. Fremdes Backup nur explizit auf Zielidentität neu verankern; Kollisionen sichtbar abweisen. Sicherheitskopien in Erwachsenenbereich auflisten/downloaden; keine automatische Löschung.
 - [ ] **4. GREEN prüfen:** genannte Tests + `npm test`; Zwei-Geräte-Fake über beliebige Zustellreihenfolgen, ursprüngliche Ereignisse vor/nach Restore erhalten. Test bestätigt nur Protokoll, keine reale Drive-/iOS-Abnahme.
 - [ ] **5. Review/Commit:** `git diff --check`; nur Taskdateien; `git commit -m "feat: restore complete backups through verified epochs"`.
 
