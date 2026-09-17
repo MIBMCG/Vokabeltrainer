@@ -28,7 +28,7 @@ Danach `http://localhost:4173` öffnen. Es gibt keine npm-Laufzeitabhängigkeite
 
 Auf `92f044e` bestanden 74/74 Node-Tests. Zwölf Browser-Szenarien bestanden mit Playwright 1.62.1, System-Edge 153.0.4234.32 und Node 22.23.2 ohne Seitenfehler. Die Browserprüfung nutzte echte Oberfläche, IndexedDB und Service Worker, simulierte aber GIS und Drive-HTTP. Desktop- und Mobilansicht sowie Rücksetzzustand wurden visuell geprüft. [Vollständiger Bericht](../reports/2026-09-17-google-drive-probe.md)
 
-Task 2 wurde mit GPT-5.6 Sol bei hoher Denktiefe umgesetzt und nach zwei Fixrunden unabhängig freigegeben. Die portable Dokumentation entstand mit GPT-5.6 Sol bei mittlerer Denktiefe. Die Gesamtprüfung mit GPT-6 Astra bei hoher Denktiefe fand zwei zusätzliche Fehler bei Browser-Zurücknavigation und Wiederanmeldung nach HTTP 401. Sol korrigierte beide in `92f044e`; Astra bestätigte die Korrektur ohne neuen Befund. Push und Remote-SHA-Vergleich folgen als Abschluss.
+Task 2 wurde mit GPT-5.6 Sol bei hoher Denktiefe umgesetzt und nach zwei Fixrunden unabhängig freigegeben. Die portable Dokumentation entstand mit GPT-5.6 Sol bei mittlerer Denktiefe. Die Gesamtprüfung mit GPT-6 Astra bei hoher Denktiefe fand zwei zusätzliche Fehler bei Browser-Zurücknavigation und Wiederanmeldung nach HTTP 401. Sol korrigierte beide in `92f044e`; Astra bestätigte die Korrektur ohne neuen Befund. GitHub und lokale Spitze wurden anschließend bei `970a0de2b6c8101cec86164fd354291bcc4957c1` identisch bestätigt. Der folgende Dokumentationscommit hält diesen Nachweis fest. `main` blieb bei `49135c743c7bbb7c51f1c03bf21964884ebc67d1`.
 
 ## Offen und nächster Schritt
 
