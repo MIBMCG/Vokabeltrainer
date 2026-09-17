@@ -1,4 +1,5 @@
-const CACHE_NAME = 'vokabeltrainer-probe-v1';
+const OWN_CACHE_PREFIX = `vokabeltrainer-probe:${encodeURIComponent(new URL(self.registration.scope).pathname)}:`;
+const CACHE_NAME = `${OWN_CACHE_PREFIX}v2`;
 const ASSETS = [
   './',
   './index.html',
@@ -21,7 +22,8 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => Promise.all(
-      keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)),
+      keys.filter((key) => key.startsWith(OWN_CACHE_PREFIX) && key !== CACHE_NAME)
+        .map((key) => caches.delete(key)),
     )),
   );
 });
@@ -30,6 +32,8 @@ self.addEventListener('fetch', (event) => {
   const requestUrl = new URL(event.request.url);
   if (event.request.method !== 'GET' || requestUrl.origin !== self.location.origin) return;
   event.respondWith(
-    caches.match(event.request).then((cached) => cached ?? fetch(event.request)),
+    caches.open(CACHE_NAME)
+      .then((cache) => cache.match(event.request))
+      .then((cached) => cached ?? fetch(event.request)),
   );
 });

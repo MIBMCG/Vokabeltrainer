@@ -58,6 +58,7 @@ test('serves the bounded German probe UI and relative offline manifest', async (
   await withServer(async (port) => {
     const html = (await request(port, '/index.html')).body.toString();
     assert.match(html, /Verbindungsprobe · noch kein Vokabeltrainer/);
+    assert.match(html, /Browserprofil.*fest.*Probestand/i);
     for (const id of [
       'client-id', 'prepare', 'connect', 'find-folders', 'create-folder', 'folder-select',
       'join-folder', 'add-answer', 'sync', 'repeat-upload', 'preview-reset', 'confirm-reset',

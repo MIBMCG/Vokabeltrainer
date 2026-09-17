@@ -271,6 +271,30 @@ test('reset failure retains the old visible count and retry publishes the prepar
   assert.equal(resetUploads.at(-1).id, preparedResetFileId);
 });
 
+test('rejects persisted reset preparations whose backup relationships are corrupted', async (t) => {
+  const fixture = await selectedController({makeId: ids('answer-a', 'reset-a', 'epoch-reset-a')});
+  await fixture.controller.addAnswer();
+  await fixture.controller.sync();
+  fixture.drive.failBeforeRemote();
+  await assert.rejects(fixture.controller.restoreEmpty(), /network failure/);
+  const valid = fixture.store.snapshot();
+
+  const cases = [
+    ['backup ID', (state) => { state.pendingReset.event.backupFileId = 'other-backup'; }],
+    ['scope', (state) => { state.pendingReset.backup.scope.folderId = 'folder-b'; }],
+    ['parent epoch', (state) => { state.pendingReset.event.parentEpoch = 'other-epoch'; }],
+    ['known answers', (state) => { state.pendingReset.event.previousAnswerIds = []; }],
+  ];
+  for (const [name, mutate] of cases) {
+    await t.test(name, async () => {
+      const corrupted = structuredClone(valid);
+      mutate(corrupted);
+      const controller = createProbeController({store: memoryStore(corrupted), drive: fixture.drive});
+      await assert.rejects(controller.load(), /Rücksetzversuch.*beschädigt/i);
+    });
+  }
+});
+
 test('repeat uploads the last confirmed event with the identical Drive ID', async () => {
   const fixture = await selectedController({makeId: ids('answer-a')});
   await fixture.controller.addAnswer();
@@ -290,6 +314,30 @@ test('does not silently replace a selected folder while work is pending', async 
   fixture.drive.folders.set('folder-b', folder('folder-b'));
   await fixture.controller.addAnswer();
 
-  await assert.rejects(fixture.controller.selectFolder(folder('folder-b')), /ausstehend|abgleichen/i);
+  await assert.rejects(fixture.controller.selectFolder(folder('folder-b')), /fest|gebunden|anderen Ordner/i);
   assert.equal(fixture.controller.state().scope.folderId, 'folder-a');
+});
+
+test('keeps a browser profile bound to its first selected account and folder after sync', async () => {
+  const fixture = await selectedController({makeId: ids('answer-a')});
+  fixture.drive.folders.set('folder-b', folder('folder-b'));
+  await fixture.controller.addAnswer();
+  await fixture.controller.sync();
+  const before = fixture.controller.state();
+
+  await assert.rejects(fixture.controller.selectFolder(folder('folder-b')), /fest|gebunden|anderen Ordner/i);
+  await assert.rejects(fixture.controller.createFolder(), /fest|gebunden|neuen Ordner/i);
+  assert.deepEqual(fixture.controller.state(), before);
+
+  fixture.drive.account = 'account-b';
+  await assert.rejects(fixture.controller.selectFolder(folder('folder-a')), /Konto/i);
+  assert.deepEqual(fixture.controller.state(), before);
+});
+
+test('allows the already bound folder to be verified and selected again', async () => {
+  const fixture = await selectedController();
+
+  await fixture.controller.selectFolder(folder('folder-a'));
+
+  assert.deepEqual(fixture.controller.state().scope, {accountId: 'account-a', folderId: 'folder-a'});
 });

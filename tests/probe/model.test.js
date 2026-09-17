@@ -105,3 +105,23 @@ test('rejects malformed reset graphs and JSON extensions', () => {
   assert.throws(() => projectProbe([reset('reset-a', 'initial', 'initial')]), /Generation|epoch/i);
   assert.throws(() => projectProbe([{...answer('answer-a'), token: 'secret'}]), /Ereignis/i);
 });
+
+test('rejects cycles in reset graph components detached from initial', () => {
+  assert.throws(
+    () => projectProbe([
+      reset('reset-a', 'epoch-a', 'epoch-b'),
+      reset('reset-b', 'epoch-b', 'epoch-a'),
+    ]),
+    /Kreis|Generation/i,
+  );
+});
+
+test('rejects a target epoch assigned by more than one reset', () => {
+  assert.throws(
+    () => projectProbe([
+      reset('reset-a', 'initial', 'shared-epoch'),
+      reset('reset-b', 'other-parent', 'shared-epoch'),
+    ]),
+    /Ziel|Generation|mehrfach/i,
+  );
+});

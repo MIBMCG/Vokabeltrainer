@@ -54,7 +54,7 @@ function render() {
   elements.prepare.disabled = busy || elements['client-id'].value.trim() === '';
   elements.connect.disabled = busy || !prepared;
   elements['find-folders'].disabled = busy || !connected;
-  elements['create-folder'].disabled = busy || !connected;
+  elements['create-folder'].disabled = busy || !connected || scopeReady;
   elements['folder-select'].disabled = busy || !connected || foundFolders.size === 0;
   elements['join-folder'].disabled = busy || !connected || !hasFolderChoice;
   elements['add-answer'].disabled = busy || !scopeReady || projection.conflict;
@@ -74,7 +74,7 @@ function render() {
     elements['oauth-state'].textContent = 'Noch keine Client-ID vorbereitet. Es wird kein Zugriffstoken dauerhaft gespeichert.';
   }
   elements['folder-state'].textContent = scopeReady
-    ? `Probeordner ausgewählt: ${state.scope.folderId}`
+    ? `Probeordner ausgewählt: ${state.scope.folderId}. Dieses Browserprofil bleibt fest an diesen Probestand gebunden.`
     : 'Noch kein Probeordner ausgewählt. Ohne Ordner werden keine Testantworten angelegt.';
 }
 

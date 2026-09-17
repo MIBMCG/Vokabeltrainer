@@ -83,10 +83,29 @@ export function projectProbe(events) {
   const uniqueEvents = [...byId.values()].map(({event}) => event);
   const resets = uniqueEvents.filter((event) => event.kind === 'reset');
   const children = new Map();
+  const resetByTarget = new Map();
   for (const reset of resets) {
+    if (reset.epoch === 'initial' || resetByTarget.has(reset.epoch)) {
+      fail('Rücksetz-Zielgeneration ist mehrfach oder ungültig.');
+    }
+    resetByTarget.set(reset.epoch, reset);
     const siblings = children.get(reset.parentEpoch) ?? [];
     siblings.push(reset);
     children.set(reset.parentEpoch, siblings);
+  }
+
+  const graphState = new Map();
+  function visit(epoch) {
+    const state = graphState.get(epoch);
+    if (state === 'visiting') fail('Rücksetz-Generationen enthalten einen Kreis.');
+    if (state === 'visited') return;
+    graphState.set(epoch, 'visiting');
+    for (const reset of children.get(epoch) ?? []) visit(reset.epoch);
+    graphState.set(epoch, 'visited');
+  }
+  for (const reset of resets) {
+    visit(reset.parentEpoch);
+    visit(reset.epoch);
   }
 
   let epoch = 'initial';

@@ -47,6 +47,19 @@ function validateScope(scope) {
     && Object.keys(scope).length === 2;
 }
 
+function sameScope(left, right) {
+  return validateScope(left)
+    && validateScope(right)
+    && left.accountId === right.accountId
+    && left.folderId === right.folderId;
+}
+
+function sameIdSet(left, right) {
+  if (left.length !== right.length) return false;
+  const rightIds = new Set(right);
+  return rightIds.size === right.length && left.every((id) => rightIds.has(id));
+}
+
 function validatePersistedState(value) {
   if (!isPlainObject(value)
     || !exactKeys(value, [
@@ -105,8 +118,20 @@ function validatePersistedState(value) {
       || pending.event.kind !== 'reset') {
       fail('Gespeicherter Rücksetzversuch ist beschädigt.');
     }
-    projectProbe(pending.backup.events);
+    const backupProjection = projectProbe(pending.backup.events);
     projectProbe([pending.event]);
+    const activeBackupAnswerIds = pending.backup.events
+      .filter((event) => event.kind === 'answer' && event.epoch === backupProjection.epoch)
+      .map(({id}) => id);
+    if (!value.scope
+      || pending.backupFileId === pending.resetFileId
+      || pending.event.backupFileId !== pending.backupFileId
+      || !sameScope(pending.backup.scope, value.scope)
+      || backupProjection.conflict
+      || pending.event.parentEpoch !== backupProjection.epoch
+      || !sameIdSet(pending.event.previousAnswerIds, activeBackupAnswerIds)) {
+      fail('Gespeicherter Rücksetzversuch ist beschädigt.');
+    }
   }
   return value;
 }
@@ -320,17 +345,15 @@ export function createProbeController({store, drive, makeId = () => crypto.rando
   async function selectFolderAction(folderMetadata) {
     requireLoaded();
     assertProbeFolder(folderMetadata);
-    if (current.scope?.folderId !== folderMetadata.id
-      && (current.pendingUploads.length > 0 || current.pendingReset !== null)) {
-      fail('Vor dem Ordnerwechsel müssen ausstehende Änderungen abgeglichen werden.');
+    if (current.scope && current.scope.folderId !== folderMetadata.id) {
+      fail('Dieses Browserprofil ist fest an seinen Probeordner gebunden; ein anderer Ordner kann nicht gewählt werden.');
     }
     const accountId = await drive.accountId();
+    if (current.scope && current.scope.accountId !== accountId) {
+      fail('Dieses Browserprofil ist fest an ein anderes Google-Konto gebunden.');
+    }
     const verified = assertProbeFolder(await drive.metadata(folderMetadata.id), folderMetadata.id);
     if (verified.name !== folderMetadata.name) fail('Der Probeordner hat sich während der Auswahl geändert.');
-    if (current.scope?.accountId && current.scope.accountId !== accountId
-      && current.pendingUploads.length > 0) {
-      fail('Mit ausstehenden Änderungen kann das Google-Konto nicht gewechselt werden.');
-    }
     const candidate = clone(current);
     candidate.scope = {accountId, folderId: verified.id};
     await persist(candidate);
@@ -339,13 +362,12 @@ export function createProbeController({store, drive, makeId = () => crypto.rando
 
   async function createFolderAction() {
     requireLoaded();
+    if (current.scope) {
+      fail('Dieses Browserprofil ist fest an seinen Probeordner gebunden; ein neuer Ordner kann nicht erstellt werden.');
+    }
     let pending = current.pendingFolder;
     if (!pending) {
       const accountId = await drive.accountId();
-      if (current.scope && current.scope.accountId !== accountId
-        && (current.pendingUploads.length > 0 || current.pendingReset !== null)) {
-        fail('Mit ausstehenden Änderungen kann das Google-Konto nicht gewechselt werden.');
-      }
       const id = await drive.generateId();
       const candidate = clone(current);
       candidate.pendingFolder = {
