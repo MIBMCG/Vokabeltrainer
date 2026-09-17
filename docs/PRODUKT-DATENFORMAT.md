@@ -76,11 +76,13 @@ Die lokale Befehlsprüfung entscheidet, ob eine Aufgabe zum aktuellen Zeitpunkt 
  learningId, streak, intervalIndex, dueDay, errorGap, masteredEver, recoveredEver}
 // LocalRound wird nur auf diesem Gerät gespeichert, niemals synchronisiert.
 {id, epochId, profileId, mode, size, candidates, expanded,
- pausedWordIds, answeredIds, current, feedback, status}
+ pausedWordIds, answeredIds, wordCounts, lastWordId, current, feedback, status}
 // current: null | {wordId, revisionId, learningId, ordinal}
 // feedback: null | {answerId, typed, correct, solutions}
 // status: 'asking' | 'feedback' | 'exhausted' | 'completed' | 'abandoned'
 ```
+
+`wordCounts` ist die lokale Map Wort-ID → Zahl gewerteter Antworten dieser Runde; fehlender Eintrag bedeutet null. `lastWordId` ist das zuletzt gewertete Wort oder `null`. Eine neue Runde beginnt mit leerer Map und `null`. Nur eine neue Antwort-ID erhöht den Wortzähler und setzt das letzte Wort; Summe der Zähler entspricht `answeredIds.length`. Beide Felder werden mit der Antwort atomar gespeichert, bleiben bei Fortsetzen, Erweiterung, Tages-/Profilwechsel erhalten und ändern sich weder durch fremden Sync noch ungewertete Eingaben/Aufgabenwechsel.
 
 Fehlerabstand wird pro Profil und Lernfassung verarbeitet: bei falscher Antwort `errorGap=2`; jede weitere gewertete Antwort auf ein anderes Wort desselben Profils dekrementiert bis null. Antworten anderer Profile und ungewertete Eingaben verändern ihn nicht. Bei einem Fehler `streak=0`, `intervalIndex=-1`, `dueDay=null`. Drei richtige Aufbauantworten führen zu `streak=3`, `intervalIndex=0`, `dueDay=day+1`. Eine richtige fällige Wiederholung (`answer.day >= dueDay`, höchstens einmal je Wort/Runde) führt zu `intervalIndex=min(3, intervalIndex+1)` und `dueDay=day+[1,3,7,14][intervalIndex]`. Eine parallel entstandene weitere richtige Antwort vor Fälligkeit behält ihre Punkte, steigert aber das Intervall nicht. Der Tag ist der gespeicherte Antworttag. Fehler startet den Aufbau erneut. Kalenderaddition verwendet Datumsbestandteile, niemals `24h` auf lokale Zeitpunkte; Sommerzeit ist kein 23-/25-Stunden-Fehler.
 

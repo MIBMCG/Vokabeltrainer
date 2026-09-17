@@ -221,7 +221,7 @@ if (!allowed.length) return {kind:'exhausted',canExpand:hasAdditionalCandidates(
 return {kind:'task',task:rankCandidates(allowed,round,projection)[0]};
 ```
 
-`eligibleCandidates`, `hasAdditionalCandidates`, `rankCandidates` sind private Funktionen derselben Datei; exakt die oben genannten Regeln implementieren. `applyAnswer` hängt die ID nur einmal an, hält Eingabe/Rückmeldung fest und markiert gemeisterte/richtig wiederholte Wörter für diese Runde pausiert. `advanceRound` beendet nie ungefragt eine erschöpfte Runde.
+`eligibleCandidates`, `hasAdditionalCandidates`, `rankCandidates` sind private Funktionen derselben Datei; exakt die oben genannten Regeln implementieren. `startRound` setzt `wordCounts={}` und `lastWordId=null`. `applyAnswer` hängt die ID nur einmal an, erhöht ausschließlich für eine neue ID den Wortzähler und setzt `lastWordId`; beide bleiben bei Fortsetzen/Erweiterung/ungewertetem Austausch unverändert. Summe der Zähler muss `answeredIds.length` entsprechen, auch nach Reload und doppeltem Submit. Ranking verwendet diese lokale Map; fremde Antworten verändern sie nicht. `applyAnswer` hält Eingabe/Rückmeldung fest und markiert gemeisterte/richtig wiederholte Wörter für diese Runde pausiert. `advanceRound` beendet nie ungefragt eine erschöpfte Runde.
 - [ ] **4. GREEN prüfen:** genannte Tests, `npm test`; Kandidaten-/Tageswechseltests mit mindestens zwei Profilen und spärlichem Wortschatz.
 - [ ] **5. Review/Commit:** `git diff --check`; `git add src/trainer/learning/rounds.js tests/trainer/rounds.test.js`; `git commit -m "feat: implement resumable adaptive rounds"`.
 
