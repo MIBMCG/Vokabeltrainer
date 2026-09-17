@@ -1,0 +1,18 @@
+# Technische Präzisierungen während der Umsetzung
+
+Stand: 17.09.2026. Diese Entscheidungen konkretisieren den bestätigten [Gesamtentwurf](superpowers/specs/2026-09-16-vokabeltrainer-design.md), ohne Kostenmodell, Kontenmodell oder Produktumfang zu ändern. Maßgeblich für die exakten Datenformen ist der [Produkt-Datenvertrag](PRODUKT-DATENFORMAT.md). Die Liste beschreibt Entscheidungen, nicht automatisch die Fertigstellung aller genannten Verbraucher.
+
+| Nr. | Entscheidung und Grund | Falls die Entscheidung geändert wird |
+| --- | --- | --- |
+| 1 | Inhaltsprojektion erhält Support-Ereignisse getrennt und verfolgt darüber Vorgängerketten. Nur wirksame Ereignisse bilden aktive Köpfe; reine Referenzen dürfen keine Inhalte aktivieren. | Revisions- und Projektionslogik anpassen. |
+| 2 | Lokale Runde speichert Wortzähler und letztes Wort. Antwort-IDs allein reichen der Auswahl nicht für die vereinbarte Reihenfolge und Vermeidung direkter Wiederholungen. | Lokales Rundenformat und Auswahl anpassen. |
+| 3 | Snapshot-Manifeste sind optionale Transportverweise. Ein lokaler Restore braucht keine erfundene Drive-ID; beim späteren Verbinden werden vollständige Snapshots vor unveränderten Epochen hochgeladen. | Restore-/Sync-Protokoll und Manifestauflösung anpassen. |
+| 4 | Das synchronisierte Startereignis enthält keine vollständige Wortliste. Die Auswahl bleibt lokal, damit große Bestände und bewusstes Erweitern nicht einer unveränderlichen Startliste widersprechen. | Ereignisformat, Validierung und lokale Aufgabenprüfung anpassen. |
+| 5 | Der Schutz gegen veraltete Bearbeitungsformulare liegt im serialisierten Speicherbefehl, unmittelbar vor dem Commit. Ein reiner Payload-Builder kennt keine aktuellen Köpfe. | Befehlsgrenze und Aktualitätsprüfung anpassen; sonst könnten fremde Änderungen übergangen werden. |
+| 6 | Unvollständige aktive Epochen liefern einen stabilen Diagnosecode, getrennt vom Epochenkonflikt. Erst die Oberfläche übersetzt ihn in eine verständliche Meldung. | Projektions- und Fehlermeldungsvertrag anpassen. |
+| 7 | Die Projektion führt den offenen Fehler der aktuellen Lernfassung ausdrücklich als `retryPending`. Historische Fehlersummen dürfen keine neue Wortfassung zur Fehlerwiederholung machen. | Auswahl- und Projektionsvertrag anpassen. |
+| 8 | Ein gemeinsamer vollständiger Lernlauf erkennt noch ungesicherte Meilensteine auch nach externem Abgleich. Ein bloßer Vorher-/Nachher-Vergleich verliert Erfolge in eingefügten oder später wieder fehlerhaften Serien. Speicherung der Claims erfolgt atomar. | Meilensteinermittlung und Speicherintegration anpassen. |
+| 9 | Ein unzulässiger oder bereits erledigter Rundenabschluss liefert keinen Payload und verändert die Runde nicht. Leere, aufgegebene und noch laufende Runden erzeugen keinen Bonus. | Abschluss- und Befehlsvertrag anpassen. |
+| 10 | Der lokale Zustands-Hash wandelt ausschließlich die lokalen ID-Maps in sortierte Eintragslisten um. So bleiben zulässige Spezial-IDs erhalten, während das Austauschformat gefährliche Objektschlüssel weiterhin zurückweist. Alle CAS-Verbraucher nutzen denselben Helfer. | Lokalen Hash und alle konkurrierenden Speicher-/Sync-Verbraucher gemeinsam anpassen. |
+
+Alle Entscheidungen entstanden aus konkreten Schnittstellen- oder Reviewbefunden. Die Umsetzung wird mit den zugehörigen Produzenten und Verbrauchern geprüft; echte iPhone-/iPad-Nachweise folgen erst nach Fertigstellung. Der jeweilige Stand steht im [Arbeitsstand](../ARBEITSSTAND.md).

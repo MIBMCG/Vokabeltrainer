@@ -2,6 +2,8 @@
 
 Stand: 17.09.2026. Ausführungsgrundlage für den [v1-Plan](superpowers/plans/2026-09-17-vokabeltrainer-v1.md), **noch kein Nachweis implementierter Funktionen**. Der [bestätigte Entwurf](superpowers/specs/2026-09-16-vokabeltrainer-design.md) bestimmt das Produktverhalten. Dieses Dokument konkretisiert seine internen Verträge ohne Änderung des Konten-, Kosten- oder Funktionsumfangs.
 
+Die während der Umsetzung präzisierten Schnittstellen und ihre Gründe sind in [Entwicklungsentscheidungen](ENTWICKLUNGSENTSCHEIDUNGEN.md) dokumentiert.
+
 ## Trennung und Versionen
 
 - Neue App unter `trainer/`, Module unter `src/trainer/`, Datenbank `vokabeltrainer-product-v1`, Web-Lock `vokabeltrainer-product-v1-writer`, Cachepräfix `vokabeltrainer-product-`. Keine Probe-Daten lesen oder migrieren. Die bisherige Probe am Web-Root bleibt erreichbar.
