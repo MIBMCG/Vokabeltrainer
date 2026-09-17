@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#163b62">
+  <title>Vokabeltrainer · Verbindungsprobe</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/probe.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main>
+    <header class="hero">
+      <p class="eyebrow">Technische Vorabprüfung</p>
+      <h1>Verbindungsprobe · noch kein Vokabeltrainer</h1>
+      <p>Diese Seite speichert nur synthetische Testantworten. Sie enthält keine Wörter, Namen oder echten Lernstände.</p>
+    </header>
+
+    <section class="card" aria-labelledby="setup-title">
+      <h2 id="setup-title">1. Google-Zugriff vorbereiten</h2>
+      <label for="client-id">Öffentliche Google-Web-Client-ID</label>
+      <input id="client-id" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="…apps.googleusercontent.com">
+      <div class="actions">
+        <button id="prepare" data-action>Vorbereiten</button>
+        <button id="connect" data-action disabled>Mit Google verbinden</button>
+      </div>
+      <p id="oauth-state" class="hint">Noch keine Client-ID vorbereitet. Offline-Testantworten bleiben nach einer früheren Ordnerauswahl möglich.</p>
+    </section>
+
+    <section class="card" aria-labelledby="folder-title">
+      <h2 id="folder-title">2. Probeordner auswählen</h2>
+      <div class="actions">
+        <button id="find-folders" data-action disabled>Vorhandene suchen</button>
+        <button id="create-folder" data-action disabled>Neuen Probeordner erstellen</button>
+      </div>
+      <label for="folder-select">Gefundener Probeordner</label>
+      <select id="folder-select" disabled>
+        <option value="">Noch keine Suche durchgeführt</option>
+      </select>
+      <button id="join-folder" data-action disabled>Ausgewählten Ordner verwenden</button>
+      <p id="folder-state" class="hint">Noch kein Probeordner ausgewählt.</p>
+    </section>
+
+    <section class="card" aria-labelledby="experiment-title">
+      <h2 id="experiment-title">3. Synthetischen Abgleich prüfen</h2>
+      <dl class="metrics">
+        <div><dt>Antworten</dt><dd id="answer-count">0</dd></div>
+        <div><dt>Punkte</dt><dd id="points">0</dd></div>
+        <div><dt>Ausstehend</dt><dd id="pending-count">0</dd></div>
+        <div><dt>Alte Generation</dt><dd id="late-count">0</dd></div>
+      </dl>
+      <div class="actions">
+        <button id="add-answer" data-action disabled>Richtige Testantwort lokal speichern</button>
+        <button id="sync" data-action disabled>Mit Drive abgleichen</button>
+        <button id="repeat-upload" data-action disabled>Letzten Upload wiederholen</button>
+      </div>
+      <p id="conflict-state" class="warning" hidden>Es gibt konkurrierende Rücksetzungen. Die gemeinsame Ausgangsgeneration bleibt sichtbar.</p>
+    </section>
+
+    <section class="card danger-zone" aria-labelledby="reset-title">
+      <h2 id="reset-title">4. Leere Wiederherstellung erproben</h2>
+      <p>Die Probe legt zuerst eine unveränderliche Sicherung an. Alte Drive-Dateien werden nicht gelöscht.</p>
+      <button id="preview-reset" data-action disabled>Rücksetztest prüfen</button>
+      <div id="reset-confirmation" class="confirmation" hidden>
+        <p><strong>Nur synthetische Probe leeren?</strong> Zuerst wird abgeglichen und die Sicherung zurückgelesen.</p>
+        <div class="actions">
+          <button id="confirm-reset" data-action>Ja, Rücksetztest starten</button>
+          <button id="cancel-reset" data-action class="secondary">Abbrechen</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card checklist" aria-labelledby="checklist-title">
+      <h2 id="checklist-title">Erster Durchlauf</h2>
+      <ol>
+        <li>Öffentliche Client-ID eintragen und vorbereiten.</li>
+        <li>Google verbinden und Probeordner suchen oder bewusst erstellen.</li>
+        <li>Eine synthetische Antwort lokal speichern und abgleichen.</li>
+        <li>Seite offline neu öffnen und den lokalen Stand kontrollieren.</li>
+        <li>Rücksetztest nur mit der sichtbaren Bestätigung starten.</li>
+      </ol>
+    </section>
+
+    <p id="status" class="status" role="status" aria-live="polite">Lokaler Speicher wird geöffnet …</p>
+  </main>
+  <script type="module" src="./src/probe/main.js"></script>
+</body>
+</html>
