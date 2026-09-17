@@ -1,5 +1,7 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
+Pause am 17.09.2026 auf Nutzerwunsch. Das Insel-Konzept ist als Gestaltungsrichtung bestätigt. Alles wird für die Weiterarbeit am Laptop gesichert; heute keine weitere Entwicklung. Nächster Schritt nach ausdrücklicher Fortsetzung: unabhängige Review von Task 7, danach Tasks 8–13. Maßgeblich ist die [Laptop-Übergabe](docs/handoffs/2026-09-17-laptop-pause.md).
+
 Änderung der Prüfungsreihenfolge am 17.09.2026: Der Nutzer beauftragt ausdrücklich, zuerst die vollständige App gemäß bestätigtem Gesamtentwurf umzusetzen und erst danach beim Freund auf iPhone/iPad zu testen. Die bisherige Geräteprüfung vor umfangreicher Lernoberfläche ist damit als Entwicklungssperre aufgehoben. Reale Geräteabnahme bleibt offen und darf nicht als bestanden gelten. Bereits bestätigte manuelle Google-/Drive-Tests in zwei Browsern gelten weiter. Keine neue pauschale Startfreigabe verlangen; Hosting/Veröffentlichung und Kostenmodell werden dadurch nicht automatisch geändert.
 
 Diese Datei gilt für das gesamte Repository. Sie ist anbieterunabhängig und setzt weder Codex noch lokale Skills, Erinnerungen oder bestimmte Betriebssysteme voraus.
@@ -22,7 +24,7 @@ Das erste Dokumentationspaket wurde beauftragt und veröffentlicht. Der anschlie
 
 Die Einzelfragen Q1–Q14 sowie der [Gesamtentwurf](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md) einschließlich E01–E10 sind bestätigt (Nutzerantwort A vom 16.09.2026). Die Entwicklung beginnt nach dem [Plan zur Google-Drive-Probe](docs/superpowers/plans/2026-09-16-google-drive-probe.md). Keine erneute Entwurfs- oder pauschale Startfreigabe einholen. Reale Google-/Geräteprüfungen bleiben gesonderte Nachweise. Die frühe Verbindungsprobe wurde durchgeführt. Die restliche echte Geräteprüfung erfolgt auf Nutzerwunsch erst nach Umsetzung der vollständigen App.
 
-Aktuelle Steuerung: Am 17.09.2026 hat der Nutzer die Pause ausdrücklich beendet und die Fortsetzung mit Superpowers beauftragt. Die lokale Verbindungsprobe einschließlich Browserprüfung mit simulierter Google-Grenze ist abgeschlossen; die reale Google-/Zwei-Geräte-/iOS-Prüfung bleibt offen. Modelle und Denktiefen der eingesetzten Agenten nennen und passend zur Aufgabe kostenbewusst wählen. Der aktuelle Stand steht in [ARBEITSSTAND.md](ARBEITSSTAND.md), die aktuelle Übernahme in der [Übergabe vom 17.09.2026](docs/handoffs/2026-09-17-verbindungsprobe.md). Die Pausenübergabe vom 16.09.2026 ist nur historische Vorgeschichte.
+Aktuelle Steuerung: Pause nach Sicherung auf codex/vokabeltrainer-v1. Konzept bestätigt; Tasks 1–6 unabhängig geprüft, Task 7 implementiert, Review offen. Siehe aktuelle Laptop-Übergabe oben. Ältere Pausen- und Fortsetzungsnotizen sind historische Vorgeschichte.
 
 ## Feste Leitplanken
 

@@ -1,5 +1,7 @@
 # Vokabeltrainer
 
+Pause am 17.09.2026 auf Nutzerwunsch. Das Insel-Konzept ist als Gestaltungsrichtung bestätigt. Alles wird für die Weiterarbeit am Laptop gesichert; heute keine weitere Entwicklung. Nächster Schritt nach ausdrücklicher Fortsetzung: unabhängige Review von Task 7, danach Tasks 8–13. Maßgeblich ist die [Laptop-Übergabe](docs/handoffs/2026-09-17-laptop-pause.md).
+
 Ein geplanter Deutsch-Englisch-Vokabeltrainer für Kinder von **10 bis 13 Jahren, Klasse 4 bis 7**. Er soll auf aktuellen Smartphones, Tablets und Computern funktionieren; **iPhone und iPad haben Vorrang**.
 
 **Stand: 17. September 2026 — vollständiger Trainer in Entwicklung.** Lernkern, Runden und Speicherung sowie Einrichtung und Erwachsenenverwaltung sind implementiert und unabhängig geprüft: 187 bestandene Node-Tests und ein echter Edge-Browserablauf für die neue Produktoberfläche. Der vollständige Übungsbildschirm und die Inselreise entstehen als Nächstes. Die technische Verbindungsprobe bleibt ausführbar; zwölf Browser-Szenarien mit simulierter Google-Grenze waren erfolgreich. Echte Google-Anmeldung und Drive-Abgleich in zwei Browsern sind manuell bestätigt. Physische Zwei-Geräte- und iPhone/iPad-Prüfung folgen auf ausdrücklichen Nutzerwunsch erst nach der vollständigen Umsetzung. Aktuelle Nachweise stehen in [ARBEITSSTAND.md](ARBEITSSTAND.md).

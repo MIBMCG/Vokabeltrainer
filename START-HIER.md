@@ -1,5 +1,7 @@
 # Hier mit der Weiterarbeit beginnen
 
+Pause am 17.09.2026 auf Nutzerwunsch. Das Insel-Konzept ist als Gestaltungsrichtung bestätigt. Alles wird für die Weiterarbeit am Laptop gesichert; heute keine weitere Entwicklung. Nächster Schritt nach ausdrücklicher Fortsetzung: unabhängige Review von Task 7, danach Tasks 8–13. Maßgeblich ist die [Laptop-Übergabe](docs/handoffs/2026-09-17-laptop-pause.md).
+
 Dieses Projekt kann mit beliebigen Entwicklungswerkzeugen und KI-Systemen fortgesetzt werden. Der Gesprächsverlauf ist dafür nicht erforderlich.
 
 ## Lesereihenfolge
@@ -27,6 +29,6 @@ Bei einem bestehenden Checkout lokale Änderungen vor dem Aktualisieren prüfen.
 
 ## Kopierbarer Wiedereinstieg
 
-> Arbeite am Repository MIBMCG/Vokabeltrainer auf `codex/vokabeltrainer-v1` weiter. Lies zuerst AGENTS.md, ARBEITSSTAND.md und die dort verlinkte Übergabe vom 17.09.2026. Prüfe Branch, Remote und lokale Änderungen. Die synthetische Verbindungsprobe ist lokal implementiert und automatisiert geprüft; die echte Google-Anmeldung und der Drive-Abgleich zwischen zwei Browsern wurden durch den Nutzer bestätigt. Physischer Zwei-Geräte-Abgleich und iPhone/iPad-Abnahme bleiben offen. Der eigentliche Trainer für 10–13-Jährige ist noch nicht implementiert. Zusätzliche kostenpflichtige Cloudabos sind ausgeschlossen. Setze an der dokumentierten Produktentwicklung an; die Geräteabnahme wurde ausdrücklich bis nach der Umsetzung verschoben. Erfinde keine bestandene Google-, Geräte- oder Hostingabnahme.
+> Arbeite am Repository MIBMCG/Vokabeltrainer auf `codex/vokabeltrainer-v1` weiter. Lies zuerst AGENTS.md, ARBEITSSTAND.md und die dort verlinkte Übergabe vom 17.09.2026. Prüfe Branch, Remote und lokale Änderungen. Die synthetische Verbindungsprobe ist lokal implementiert und automatisiert geprüft; die echte Google-Anmeldung und der Drive-Abgleich zwischen zwei Browsern wurden durch den Nutzer bestätigt. Physischer Zwei-Geräte-Abgleich und iPhone/iPad-Abnahme bleiben offen. Der Trainer ist teilweise implementiert: Tasks 1–6 geprüft, Task 7 implementiert mit noch offener unabhängiger Review. Zusätzliche kostenpflichtige Cloudabos sind ausgeschlossen. Setze an der dokumentierten Produktentwicklung an; die Geräteabnahme wurde ausdrücklich bis nach der Umsetzung verschoben. Erfinde keine bestandene Google-, Geräte- oder Hostingabnahme.
 
 Der Wiedereinstieg gibt Orientierung. Der konkrete aktuelle Auftrag bestimmt, welche Änderungen, Pushes und Veröffentlichungen autorisiert sind.

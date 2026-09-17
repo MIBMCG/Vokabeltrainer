@@ -1,6 +1,6 @@
 # Visuelles Konzept: Insel-Abenteuer
 
-Auf Nutzerwunsch am 17.09.2026 erzeugte Gestaltungsvorschau, **kein Screenshot einer implementierten Oberfläche und noch keine visuelle Abnahme**. Die vollständige Entwicklung bleibt beauftragt; spätere iPhone-/iPad-Prüfungen bleiben offen.
+Auf Nutzerwunsch am 17.09.2026 erzeugte Gestaltungsvorschau, **kein Screenshot einer implementierten Oberfläche ; die Gestaltungsrichtung wurde am 17.09.2026 vom Nutzer bestätigt**. Die vollständige Entwicklung bleibt beauftragt; spätere iPhone-/iPad-Prüfungen bleiben offen.
 
 ![Startseite, Übung und Inselreise als iPhone-Konzept](2026-09-17-insel-konzept.png)
 

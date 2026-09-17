@@ -1,3 +1,7 @@
+# Historische Entwicklungsübergabe bis Task 6
+
+Abgelöst durch die [Laptop-Pausenübergabe](2026-09-17-laptop-pause.md). Die nachfolgenden Angaben beschreiben den vorherigen Zwischenstand.
+
 # Übergabe: vollständige Produktentwicklung
 
 Stand: 17.09.2026. Arbeitszweig: `codex/vokabeltrainer-v1`, aus dem geprüften Probe-Zweig abgeleitet. `main` bleibt unverändert. Aktuellen Commit und Remote bei Übernahme frisch prüfen.

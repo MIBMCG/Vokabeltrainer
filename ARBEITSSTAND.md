@@ -1,5 +1,7 @@
 # Arbeitsstand
 
+Pause am 17.09.2026 auf Nutzerwunsch. Das Insel-Konzept ist als Gestaltungsrichtung bestätigt. Alles wird für die Weiterarbeit am Laptop gesichert; heute keine weitere Entwicklung. Nächster Schritt nach ausdrücklicher Fortsetzung: unabhängige Review von Task 7, danach Tasks 8–13. Maßgeblich ist die [Laptop-Übergabe](docs/handoffs/2026-09-17-laptop-pause.md).
+
 Änderung der Prüfungsreihenfolge am 17.09.2026: Der Nutzer beauftragt ausdrücklich, zuerst die vollständige App gemäß bestätigtem Gesamtentwurf umzusetzen und erst danach beim Freund auf iPhone/iPad zu testen. Die bisherige Geräteprüfung vor umfangreicher Lernoberfläche ist damit als Entwicklungssperre aufgehoben. Reale Geräteabnahme bleibt offen und darf nicht als bestanden gelten. Bereits bestätigte manuelle Google-/Drive-Tests in zwei Browsern gelten weiter. Keine neue pauschale Startfreigabe verlangen; Hosting/Veröffentlichung und Kostenmodell werden dadurch nicht automatisch geändert.
 
 Stand: **17.09.2026**
@@ -18,7 +20,7 @@ Die Umsetzung folgt dem [v1-Plan](docs/superpowers/plans/2026-09-17-vokabeltrain
 
 Aktueller belegter Gesamtlauf: **187/187 Node-Tests**. Der echte Edge-Browserlauf für Einrichtung/Verwaltung bestand **1/1** und prüfte DOM, IndexedDB, PIN-Sperre, Hintergrundwechsel, Wiederaufnahme, Tabellenübernahme und gezielte Fehlerszenarien. Die fünf Reviewbefunde zu PIN-Rennen, Einrichtungsentwurf, Importklärung und Variantenlänge sind in `86d7bb7` behoben und unabhängig nachgeprüft. Ein kleiner semantischer Befund (verschachteltes `main`) ist für Task 11/Abschlussprüfung vorgemerkt. Reale Apple-Geräte sind damit nicht abgenommen.
 
-Task 7 erstellt jetzt den vollständigen Übungsbildschirm. Die [aktuelle Übergabe](docs/handoffs/2026-09-17-produktentwicklung.md) enthält Commits, Nachweise und verbleibende Grenzen. Zuletzt nachgewiesener Remote-Zwischenstand vor diesem Dokumentationsupdate: `6e44ce197a860e7adfd27c8bd322f2e528a30e06` auf `origin/codex/vokabeltrainer-v1`; aktuelle lokale/entfernte Commits bei Übernahme frisch prüfen.
+Task 7 ist in 85b3629 implementiert; die unabhängige Review steht aus. Der neue Pausenstand und seine Prüfbelege stehen in der Laptop-Übergabe. Die [aktuelle Übergabe](docs/handoffs/2026-09-17-produktentwicklung.md) enthält Commits, Nachweise und verbleibende Grenzen. Zuletzt nachgewiesener Remote-Zwischenstand vor diesem Dokumentationsupdate: `6e44ce197a860e7adfd27c8bd322f2e528a30e06` auf `origin/codex/vokabeltrainer-v1`; aktuelle lokale/entfernte Commits bei Übernahme frisch prüfen.
 
 Auf Wunsch entstand ein [visuelles Konzept mit drei Ansichten](docs/design/2026-09-17-insel-konzept.md). Es ist eine Gestaltungsvorschau, noch kein Screenshot der implementierten App.
 
@@ -46,7 +48,7 @@ Die erste Anmeldung, Drive-Übertragung und Rücksetzung sind bestätigt. Nach d
 
 ## Noch nicht vorhanden oder nachgewiesen
 
-- Vollständiger Kinder-Übungsbildschirm, Inselreise/Avatar und fertige Offline-PWA; Einrichtung, Wortverwaltung, Lernkern und Erwachsenen-PIN sind bereits umgesetzt.
+- Inselreise/Avatar und fertige Offline-PWA fehlen; der Kinder-Übungsbildschirm ist implementiert, aber noch nicht unabhängig geprüft.
 - Produktfähige Synchronisation einschließlich vollständigem Sicherungsimport und Erwachsenen-Konfliktlösung.
 - Isolierter Offline-Start ohne erreichbaren Server und realer Zwei-Geräte-Abgleich; der Abgleich zwischen zwei Browsern desselben Rechners ist bestätigt.
 - Reale iPhone-/iPad-Abnahme und festgelegte Mindestversionen.

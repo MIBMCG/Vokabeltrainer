@@ -355,7 +355,7 @@ Zusätzlich aktuelle Wortfassung während Eingabe von Sync/Erwachsenenänderung 
 
 **Files:** Create `src/trainer/ui/rewards.js`, `trainer/assets/islands.svg`, `avatar.svg`, `badges.svg`, `tests/trainer/reward-view.test.js`; Modify `shell.js`, `trainer/styles.css`, `scripts/serve.mjs`, `tests/browser/trainer.browser.mjs`.
 
-**Interfaces:** `renderJourney({root,profile})`, `renderAvatar({root,profile,commands})`, `avatarParts(profile):{skin,clothing,head,back,hand}`; consumes einzig `rewardState`/Projection. SVGs enthalten feste vertrauenswürdige Symbol-IDs, niemals importierte Textfragmente. Alle Grafiken vollständig selbst erstellen: Strand mit Wasser/Palmen, Wald mit Bäumen/Weg, Berg mit Gipfeln/Schnee, erkennbare Kleidung und sechs Zubehörteile, sechs visuell unterscheidbare Abzeichen.
+**Interfaces:** `renderJourney({root,profile})`, `renderAvatar({root,profile,profileId,commands})`, `avatarParts(profile):{skin,clothing,head,back,hand}`; consumes einzig `rewardState`/Projection. SVGs enthalten feste vertrauenswürdige Symbol-IDs, niemals importierte Textfragmente. Alle Grafiken vollständig selbst erstellen: Strand mit Wasser/Palmen, Wald mit Bäumen/Weg, Berg mit Gipfeln/Schnee, erkennbare Kleidung und sechs Zubehörteile, sechs visuell unterscheidbare Abzeichen.
 
 - [ ] **1. RED:** `avatarParts` zeigt keine gesperrte Ausstattung, vier Haut-/sechs Kleidungsoptionen. Browsertest `trainer rewards`: echte synthetische gespeicherte Meilensteine bei 0/200/1000/2000/3000 Punkten; 15 Etappen, Levelgrenzen, Wald/Berg und sechs Freischaltungen; keine zusätzlichen Inselversprechen oberhalb 3000. Gesperrte Buttons geben Freischaltlevel an.
 
