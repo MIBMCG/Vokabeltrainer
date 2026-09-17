@@ -18,9 +18,13 @@ Der bestehende isolierte Worktree wird auf dem neuen Entwicklungszweig weiterver
 
 ## Implementierung bisher
 
-Task 1 wurde in `2e8b6a2` und `cf99ed7` implementiert: versioniertes Ereignisformat, strikte Validierung, Referenz-/Kollisionsprüfung und synthetische Testbasis. Gezielte Prüfung: 17/17; gesamter Node-Lauf: 91/91 bestanden. Die unabhängige Aufgabenreview ist nach zwei korrigierten Befunden und sauberer Nachprüfung abgeschlossen. Task 2 ist in `5e991bf` und `4527736` implementiert: Inhaltsfassungen, Konfliktköpfe, ursprüngliche Anlegereihenfolge, getrennte Support-/Altbestände und Epochen. Gezielte Prüfung 16/16, Gesamtlauf 108/108. Die Nachprüfung des behobenen Spezialkennungsfehlers läuft noch. Task 3 ergänzt anschließend Lernlogik und die dokumentierte Integration des kleinen Startereignisses. Das ist eine interne Grundlage, noch keine fertige Lernoberfläche.
+Task 1 wurde in `2e8b6a2` und `cf99ed7` implementiert: versioniertes Ereignisformat, strikte Validierung, Referenz-/Kollisionsprüfung und synthetische Testbasis. Gezielte Prüfung: 17/17; gesamter Node-Lauf: 91/91 bestanden. Die unabhängige Aufgabenreview ist nach zwei korrigierten Befunden und sauberer Nachprüfung abgeschlossen. Task 2 ist in `5e991bf` und `4527736` implementiert: Inhaltsfassungen, Konfliktköpfe, ursprüngliche Anlegereihenfolge, getrennte Support-/Altbestände und Epochen. Gezielte Prüfung 16/16, Gesamtlauf 108/108. Die Nachprüfung des behobenen Spezialkennungsfehlers ist ohne neuen Befund abgeschlossen. Task 3 ergänzt jetzt Lernlogik und die dokumentierte Integration des kleinen Startereignisses. Das ist eine interne Grundlage, noch keine fertige Lernoberfläche.
 
 Die [Benutzungsanleitung](../BENUTZUNG.md) beschreibt die bestätigten Abläufe und kennzeichnet die laufende Entwicklung ausdrücklich.
+
+## Übertragener Zwischenstand
+
+`2e4ca2b92db2be43163fb26dc248ad68a8902bcb` wurde auf `origin/codex/vokabeltrainer-v1` übertragen und mit `git ls-remote` identisch bestätigt. Der Zweig enthält die geprüften Tasks 1/2 sowie Planung und Anleitung; noch keine vollständige Lernoberfläche. Der anschließende Dokumentationscommit hält diesen Nachweis fest. Weiterarbeit läuft, keine erneute Pause beauftragt.
 
 ## Noch offen
 

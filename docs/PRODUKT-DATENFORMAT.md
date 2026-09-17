@@ -69,11 +69,12 @@ Die lokale Befehlsprüfung entscheidet, ob eine Aufgabe zum aktuellen Zeitpunkt 
 // project(ledger) -> Projection
 {activeEpochId, epochConflict, entities, conflicts, profiles,
  lateEvents, effectiveEventIds, integrityProblems}
+// integrityProblems: [] oder stabile Codes, derzeit ['active-epoch-incomplete']
 // profiles[profileId]
 {points, level, completedRounds, badges, avatar, animations, words}
 // words[wordId]: Summen über alle Fassungen, aktueller Lernzustand zusätzlich
 {attempts, correct, wrong, lastPracticedAt, everPracticed,
- learningId, streak, intervalIndex, dueDay, errorGap, masteredEver, recoveredEver}
+ learningId, streak, intervalIndex, dueDay, errorGap, retryPending, masteredEver, recoveredEver}
 // LocalRound wird nur auf diesem Gerät gespeichert, niemals synchronisiert.
 {id, epochId, profileId, mode, size, candidates, expanded,
  pausedWordIds, answeredIds, wordCounts, lastWordId, current, feedback, status}
@@ -84,11 +85,15 @@ Die lokale Befehlsprüfung entscheidet, ob eine Aufgabe zum aktuellen Zeitpunkt 
 
 `wordCounts` ist die lokale Map Wort-ID → Zahl gewerteter Antworten dieser Runde; fehlender Eintrag bedeutet null. `lastWordId` ist das zuletzt gewertete Wort oder `null`. Eine neue Runde beginnt mit leerer Map und `null`. Nur eine neue Antwort-ID erhöht den Wortzähler und setzt das letzte Wort; Summe der Zähler entspricht `answeredIds.length`. Beide Felder werden mit der Antwort atomar gespeichert, bleiben bei Fortsetzen, Erweiterung, Tages-/Profilwechsel erhalten und ändern sich weder durch fremden Sync noch ungewertete Eingaben/Aufgabenwechsel.
 
+`retryPending` bezeichnet einen noch offenen Fehler der aktuellen Lernfassung: initial `false`, nach falscher Antwort `true`, nach der nächsten richtigen Antwort dieses Wortes `false`. Historische Fehler anderer Lernfassungen setzen diesen Zustand nicht.
+
 Fehlerabstand wird pro Profil und Lernfassung verarbeitet: bei falscher Antwort `errorGap=2`; jede weitere gewertete Antwort auf ein anderes Wort desselben Profils dekrementiert bis null. Antworten anderer Profile und ungewertete Eingaben verändern ihn nicht. Bei einem Fehler `streak=0`, `intervalIndex=-1`, `dueDay=null`. Drei richtige Aufbauantworten führen zu `streak=3`, `intervalIndex=0`, `dueDay=day+1`. Eine richtige fällige Wiederholung (`answer.day >= dueDay`, höchstens einmal je Wort/Runde) führt zu `intervalIndex=min(3, intervalIndex+1)` und `dueDay=day+[1,3,7,14][intervalIndex]`. Eine parallel entstandene weitere richtige Antwort vor Fälligkeit behält ihre Punkte, steigert aber das Intervall nicht. Der Tag ist der gespeicherte Antworttag. Fehler startet den Aufbau erneut. Kalenderaddition verwendet Datumsbestandteile, niemals `24h` auf lokale Zeitpunkte; Sommerzeit ist kein 23-/25-Stunden-Fehler.
 
 Eine Wortfassung mit neuem `learningId` beginnt mit leerem Lernzustand; Versuchssummen, Punkte und Erfolge vorheriger Fassungen bleiben erhalten. `everPracticed` gilt über sämtliche Fassungen. Wiederholte oder verspätete Ereignisse werden in deterministischer Reihenfolge neu projiziert; die neue Projektion darf Serie/Fälligkeit korrigieren, Ereignisse bleiben unverändert.
 
 `word.milestone` speichert bereits beobachtete Erfolge dauerhaft, damit ein späterer Fehler oder eine durch Offlinezusammenführung geänderte Serie erworbene Abzeichen nicht zurücknimmt. `mastered` referenziert drei verschiedene richtige Antworten derselben Lernfassung, die beim lokalen Erreichen die Dreierserie bildeten. `recovered` referenziert eine falsche und eine später kausal erzeugte richtige Antwort auf dasselbe Wort. Der Validator prüft ID-Eindeutigkeit, Profil/Wort, Ergebnis, Lernfassung für `mastered` und Reihenfolge der Belege; nicht die nachträgliche Nachbarschaft in einer erweiterten Offlinehistorie. Ein Anspruch je Wort/Profil/Typ zählt höchstens einmal.
+
+`pendingMilestones(ledger)` faltet die gesamte wirksame, sortierte und nach Rundenslot deduplizierte Antwortgeschichte mit derselben Lernlogik wie `project`. Der reine Helfer liefert je Profil/Wort/Typ höchstens einen noch nicht wirksam gespeicherten Milestone-Payload; ohne vollständige eindeutige aktive Epoche liefert er `[]`. Erfolge eines Zwischenstands bleiben Kandidaten, auch wenn im selben Batch später ein Fehler folgt. Support und Altbestände erzeugen und unterdrücken keine Ansprüche. Task 5 ergänzt die Claims nach lokalen und externen Änderungen mit neuen IDs/Uhren atomar vor Veröffentlichung des Zustands. Ein Endzustandsvergleich oder ausschließliches Auswerten neu eingetroffener Ereignisse genügt nicht.
 
 Sechs Badge-IDs: `first-round`, `ten-rounds`, `ten-mastered`, `ten-recovered`, `forest`, `journey-complete`. Voraussetzungen: 1/10 Abschlussansprüche, 10 verschiedene `mastered`-/`recovered`-Wörter, 1.000/3.000 Punkte. Punkte nur 10 pro korrekter eindeutiger Antwort und 20 pro gültigem eindeutigem Abschlussanspruch. Level `1+floor(points/200)`; 15 Etappen à 200, Strand/Wald/Berg bei 0/1.000/2.000. Avatar: `head=null/cap/sunhat/mountainhat` (Level 2/6/11), `back=null/backpack` (4), `hand=null/binoculars/compass` (8/14). Alle Auswahlereignisse werden erhalten; gesperrte Ausstattung wird bei Anzeige/Bestätigung nicht freigegeben. Späterer Restore kann Belohnungen und Auswahl auf den Sicherungsstand zurücksetzen.
 

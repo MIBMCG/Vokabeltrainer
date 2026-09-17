@@ -151,7 +151,7 @@ Bei Konflikt Daten erhalten und keine scheinbar eindeutige Projektion bilden. Sn
 
 **Files:** Create `src/trainer/learning/answers.js`, `calendar.js`, `progress.js`, `rewards.js`, `tests/trainer/learning.test.js`, `tests/trainer/rewards.test.js`. Modify `src/trainer/model/schema.js`, `tests/trainer/fixtures.js`, `tests/trainer/schema.test.js` für die folgende vorgezogene Integrationskorrektur.
 
-**Interfaces:** Consumes `normalize`, `resolveEpochs`, `projectEntities`. Produces `assess(typed,wordValue):{empty,correct,solutions}`, `dayInZone(instant,timeZone):string`, `addDays(day,count):string`, `project(ledger):Projection`, `rewardState({points,completedRounds,masteredWordIds,recoveredWordIds}):{level,badges,unlocked,journey}`, `milestonesAfterAnswer(projectionBefore,projectionAfter,answer,events):payload[]`. Milestonepayloads entsprechen dem Datenvertrag und werden Task 5 in derselben Transaktion angefügt. `project` bleibt rein/synchron, nachdem Ledger/Hashes extern geprüft wurden.
+**Interfaces:** Consumes `normalize`, `resolveEpochs`, `projectEntities`. Produces `assess(typed,wordValue):{empty,correct,solutions}`, `dayInZone(instant,timeZone):string`, `addDays(day,count):string`, `project(ledger):Projection`, `rewardState({points,completedRounds,masteredWordIds,recoveredWordIds}):{level,badges,unlocked,journey}`, `milestonesAfterAnswer(projectionBefore,projectionAfter,answer,events):payload[]`, `pendingMilestones(ledger):payload[]`. Milestonepayloads entsprechen dem Datenvertrag und werden Task 5 in derselben Transaktion angefügt. `project` bleibt rein/synchron, nachdem Ledger/Hashes extern geprüft wurden.
 
 - [ ] **0. Integrationskorrektur mit eigenem RED/GREEN:** `round.started` enthält ausschließlich `{roundId,profileId,mode,size}`. Entferne Kandidaten aus Startereignisschema, Fixture und Import-Mitgliedschaftsprüfung; eine bestehende Wortfassung mit passendem Profil/Rundeneintrag bleibt gültig. Lokale Kandidaten gehören Task4/5. Regression für kleines Startereignis unabhängig von großem Wortbestand und gültige weitere Wortantwort; vorhandene Prüfungen für falsche Wortfassung, Profil, Ordinal und Abschluss erhalten. Task5 prüft zusätzlich echte bewusste Erweiterung sowie Ablehnung einer unzulässigen lokalen Antwort. Danach Lernkern umsetzen.
 
@@ -189,6 +189,15 @@ const completedStages = Math.min(15, Math.floor(points / 200));
 `word.milestone`-Belege sichern früher lokal erreichte Erfolge auch dann, wenn Offlineereignisse später in die Reihenfolge eingefügt werden. Zeitzonendrift nicht zur Löschung gespeicherter Ereignisse verwenden. `rewardState` liefert `unlocked:{head:[],back:[],hand:[]}` mit den erlaubten Ausstattung-IDs und `journey:{completedStages,islands}` mit `islands:[{id:'beach'|'forest'|'mountain',unlocked:boolean}]`; `badges` ist ein Array der verdienten Badge-IDs. Haut-/Kleidungsfarben sind immer verfügbar.
 - [ ] **4. GREEN prüfen:** gezielte Tests und `npm test`; reine Funktionen mit eingefrorenen Eingaben auf Mutation prüfen.
 - [ ] **5. Review/Commit:** `git diff --check`; `git add src/trainer/learning src/trainer/model/schema.js tests/trainer/fixtures.js tests/trainer/schema.test.js tests/trainer/learning.test.js tests/trainer/rewards.test.js`; `git commit -m "feat: project adaptive progress and island rewards"`.
+
+
+### Präzisierungen aus der Aufgabenprüfung
+
+Die Wortprojektion enthält `retryPending` für einen offenen Fehler der aktuellen Lernfassung: anfangs `false`, nach Fehler `true`, nach der nächsten richtigen Antwort `false`. Task 4 verwendet diesen Wert gemeinsam mit `errorGap`; historische Fehlersummen sind dafür ungeeignet.
+
+`pendingMilestones(ledger)` verwendet denselben privaten Lernlauf wie `project` und verarbeitet die gesamte wirksame, sortierte und nach Rundenslot deduplizierte Antwortgeschichte. Bereits wirksame Ansprüche werden nicht erneut erzeugt; Support und Altbestände erzeugen und unterdrücken keine Ansprüche. Ohne eindeutige vollständige aktive Epoche ist das Ergebnis `[]`. Erfolge eines Zwischenstands bleiben erhalten, wenn im selben Paket später ein Fehler folgt. Keine wiederholte Gesamtprojektion für jeden einzelnen Präfix.
+
+Task 5 ruft den Helfer nach lokalen und externen Änderungen auf, ergänzt neue IDs und logische Uhren und speichert die Ansprüche mit dem restlichen Zustand atomar vor dessen Veröffentlichung. Pflichtprüfungen im reinen Modell und später in der Befehlsintegration: zwei richtige Antworten auf A plus eine auf B; drei richtige und anschließender Fehler in einem Paket; spät eingetroffene frühere Antwort; dauerhafter Anspruch trotz eingefügtem Fehler; wiederholter Abgleich ohne neue Ansprüche; rein unterstützende Antworten ohne Anspruch.
 
 ## Task 4: Deterministische Rundenzustandsmaschine
 

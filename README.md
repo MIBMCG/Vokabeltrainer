@@ -2,7 +2,7 @@
 
 Ein geplanter Deutsch-Englisch-Vokabeltrainer für Kinder von **10 bis 13 Jahren, Klasse 4 bis 7**. Er soll auf aktuellen Smartphones, Tablets und Computern funktionieren; **iPhone und iPad haben Vorrang**.
 
-**Stand: 17. September 2026 — ausführbare technische Verbindungsprobe.** Die Probe besitzt eine kleine mobile Oberfläche, lokalen IndexedDB-Speicher, einen eigenen Offline-Service-Worker und den Google-Drive-Adapter. 74 automatisierte Tests sowie zwölf Browser-Szenarien mit simulierter Google-Grenze waren erfolgreich. Echte Google-Anmeldung und Drive-Abgleich in zwei Browsern sind manuell bestätigt; zwei reale Geräte und iPhone/iPad sind noch nicht geprüft; der eigentliche Vokabeltrainer ist noch nicht implementiert. Aktuelle Nachweise und Wiedereinstieg stehen in [ARBEITSSTAND.md](ARBEITSSTAND.md).
+**Stand: 17. September 2026 — vollständiger Trainer in Entwicklung.** Datenformat, Inhaltsfassungen und Epochen sind implementiert und unabhängig geprüft; der aktuelle Gesamtlauf umfasst 108 bestandene Node-Tests. Die vollständige Lernoberfläche entsteht als Nächstes. Die technische Verbindungsprobe bleibt ausführbar; zwölf Browser-Szenarien mit simulierter Google-Grenze waren erfolgreich. Echte Google-Anmeldung und Drive-Abgleich in zwei Browsern sind manuell bestätigt. Physische Zwei-Geräte- und iPhone/iPad-Prüfung folgen auf ausdrücklichen Nutzerwunsch erst nach der vollständigen Umsetzung. Aktuelle Nachweise stehen in [ARBEITSSTAND.md](ARBEITSSTAND.md).
 
 ## Geplanter Lernablauf
 
@@ -47,7 +47,7 @@ Bestätigt ist außerdem: Vor einer Wiederherstellung den aktuellen Stand automa
 - Ein gemeinsamer Google-Zugang, den die Eltern auf Eltern- und Schülergerät einrichten.
 - Eigene Lernprofile innerhalb der App mit getrennten Lernständen.
 - Eine Erwachsenenansicht zum Ergänzen und Verwalten von Vokabeln und zum Einsehen des Lernfortschritts. Sie öffnet sich über „Für Erwachsene“ und eine selbst festgelegte vierstellige PIN als Hürde gegen versehentliche Änderungen.
-- JSON als besprochene Grundlage für strukturierte Daten; das genaue Schema ist noch nicht festgelegt.
+- JSON als besprochene Grundlage für strukturierte Daten; der [Produkt-Datenvertrag](docs/PRODUKT-DATENFORMAT.md) konkretisiert Ereignisse, lokale Zustände und Sicherungen.
 - Keine zusätzlichen kostenpflichtigen Cloudabos. Die vorhandene Google-Drive-Kapazität soll ausreichen.
 - Offline üben und Änderungen später abgleichen als besprochene technische Arbeitsbasis.
 
@@ -76,11 +76,15 @@ Bei Googles direkter Browseranbindung laufen Zugriffstokens ab. Eine erneute Nut
 
 Weitere Dokumente:
 
+- [Benutzungsanleitung](docs/BENUTZUNG.md), derzeit mit gekennzeichnetem Entwicklungsstand
+- [Spätere Geräteabnahme](docs/GERAETE-ABNAHME.md), noch nicht durchgeführt
+- [Vollständiger Umsetzungsplan](docs/superpowers/plans/2026-09-17-vokabeltrainer-v1.md)
+
 - [Google-Drive-Einrichtung](docs/GOOGLE-DRIVE-EINRICHTUNG.md)
 - [Qualität und Abnahme](docs/QUALITAET-UND-ABNAHME.md)
 - [Technische Quellen](docs/QUELLEN.md)
 - [Datenformat der technischen Probe](docs/PROBE-DATENFORMAT.md)
-- [Aktuelle Übergabe vom 17.09.2026](docs/handoffs/2026-09-17-verbindungsprobe.md)
+- [Aktuelle Übergabe vom 17.09.2026](docs/handoffs/2026-09-17-produktentwicklung.md)
 - [Prüfbericht der Verbindungsprobe](docs/reports/2026-09-17-google-drive-probe.md)
 - [Prüfbericht der Dokumentation](docs/reports/2026-09-16-dokumentation.md)
 - [Prüfbericht zum Gesamtentwurf](docs/reports/2026-09-16-gesamtentwurf.md)
@@ -99,11 +103,11 @@ git log -5 --oneline
 Danach den Entwicklungszweig wählen und mit Node.js ab Version 22.8.0 die Tests starten:
 
 ```sh
-git switch codex/google-drive-probe
+git switch codex/vokabeltrainer-v1
 npm test
 ```
 
-Die Tests benötigen weder npm-Zusatzpakete noch ein Google-Konto oder Internetzugriff. Für den dokumentierten Stand wurden **74 Tests** bestanden. Danach startet `npm start` den lokalen Server auf `http://localhost:4173`; ein Buildschritt oder Laufzeitpakete sind nicht nötig. Anschließend [START-HIER.md](START-HIER.md) und die [aktuelle Übergabe](docs/handoffs/2026-09-17-verbindungsprobe.md) lesen. Die optionale Browserprüfung ist in [tests/browser/README.md](tests/browser/README.md) beschrieben.
+Die Tests benötigen weder npm-Zusatzpakete noch ein Google-Konto oder Internetzugriff. Für den dokumentierten Produktzwischenstand wurden **108 Tests** bestanden. Danach startet `npm start` den lokalen Server auf `http://localhost:4173`; ein Buildschritt oder Laufzeitpakete sind nicht nötig. Anschließend [START-HIER.md](START-HIER.md) und die [aktuelle Übergabe](docs/handoffs/2026-09-17-produktentwicklung.md) lesen. Die optionale Browserprüfung ist in [tests/browser/README.md](tests/browser/README.md) beschrieben.
 
 ## Bereitstellung und Kosten
 
