@@ -8,6 +8,6 @@
   },
   "scripts": {
     "start": "node scripts/serve.mjs",
-    "test": "node --test --experimental-test-isolation=none tests/drive/*.test.js tests/probe/*.test.js tests/serve.test.js"
+    "test": "node --test --experimental-test-isolation=none tests/drive/*.test.js tests/probe/*.test.js tests/trainer/*.test.js tests/serve.test.js"
   }
 }
