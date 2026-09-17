@@ -79,20 +79,34 @@ test('historical answer days are not reinterpreted in the target dataset timezon
 
 test('an event larger than 16 KiB is rejected', () => {
   const f = createFixture();
-  const candidates = Array.from({length: 600}, (_, index) => ({
-    wordId: `word-${index}`,
-    learningId: `learning-${index}`,
-  }));
-  const oversized = f.event('round.started', {
-    roundId: 'r-big',
-    profileId: 'p1',
-    mode: 'all',
-    size: 10,
-    candidates,
+  const eventIds = Array.from(
+    {length: 600},
+    (_, index) => `event-${String(index).padStart(4, '0')}-${'x'.repeat(24)}`,
+  );
+  const oversized = f.event('events.adopted', {
+    sourceEpochId: 'old-e0',
+    eventIds,
+    supportEventIds: [],
   }, {id: 'start-big'});
 
   assert.ok(new TextEncoder().encode(JSON.stringify(oversized)).byteLength > 16 * 1024);
   assert.throws(() => assertEvent(oversized), {code: 'invalid'});
+});
+
+test('a round start stays small and later answers may use any valid word revision', () => {
+  const words = Array.from(
+    {length: 600},
+    (_, index) => [`w${index}`, `Wort ${index}`, [`answer ${index}`]],
+  );
+  const f = createFixture({words});
+  const answer = f.answer({id: 'a-late-word', wordId: 'w599'});
+
+  assert.ok(new TextEncoder().encode(JSON.stringify(f.roundStarted)).byteLength < 1024);
+  assert.doesNotThrow(() => assertLedger(f.withEvents(f.roundStarted, answer)));
+  assert.throws(
+    () => assertEvent({...f.roundStarted, payload: {...f.roundStarted.payload, candidates: []}}),
+    {code: 'invalid'},
+  );
 });
 
 test('wrong dataset and missing event epoch reject the ledger', () => {
@@ -141,6 +155,33 @@ test('the same round ordinal cannot contain contradictory answers', () => {
   assert.throws(
     () => assertLedger(f.withEvents(f.roundStarted, first, contradictory)),
     {code: 'collision'},
+  );
+});
+
+test('round imports still enforce profile, ordinal, and completion constraints', () => {
+  const f = createFixture();
+  const secondProfile = f.event('entity.revised', {
+    entityType: 'profile', entityId: 'p2', parents: [], value: {name: 'Ben', archived: false},
+  }, {id: 'rev-p2'});
+  const wrongProfile = f.answer({id: 'wrong-profile', profileId: 'p2'});
+  assert.throws(
+    () => assertLedger(f.withEvents(secondProfile, f.roundStarted, wrongProfile)),
+    {code: 'reference'},
+  );
+
+  const wrongOrdinal = f.answer({id: 'wrong-ordinal', ordinal: 11});
+  assert.throws(
+    () => assertLedger(f.withEvents(f.roundStarted, wrongOrdinal)),
+    {code: 'reference'},
+  );
+
+  const answer = f.answer({id: 'a1'});
+  const incompleteFullClaim = f.event('round.completed', {
+    roundId: 'r1', profileId: 'p1', reason: 'full', answerIds: ['a1'],
+  }, {id: 'complete-r1'});
+  assert.throws(
+    () => assertLedger(f.withEvents(f.roundStarted, answer, incompleteFullClaim)),
+    {code: 'reference'},
   );
 });
 
@@ -236,14 +277,15 @@ test('valid event payloads use exact field sets for every event type', () => {
 test('validators and merge results are independent structured copies', () => {
   const f = createFixture();
   const descriptor = assertDescriptor(f.base.descriptor);
-  const event = assertEvent(f.roundStarted);
-  const merged = mergeEvents([], [f.roundStarted]);
+  const lesson = f.base.events.find(({id}) => id === 'rev-l1');
+  const event = assertEvent(lesson);
+  const merged = mergeEvents([], [lesson]);
   descriptor.name = 'Changed';
-  event.payload.candidates[0].wordId = 'changed';
-  merged[0].payload.candidates[0].wordId = 'changed-again';
+  event.payload.value.profileIds[0] = 'changed';
+  merged[0].payload.value.profileIds[0] = 'changed-again';
 
   assert.equal(f.base.descriptor.name, 'Fixture');
-  assert.equal(f.roundStarted.payload.candidates[0].wordId, 'w1');
+  assert.equal(lesson.payload.value.profileIds[0], 'p1');
 });
 
 test('fixtures do not share counters or mutable values between tests', () => {

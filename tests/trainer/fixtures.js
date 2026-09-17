@@ -91,7 +91,6 @@ export function createFixture({
     profileId: 'p1',
     mode: 'all',
     size: 10,
-    candidates: words.map(([wordId]) => ({wordId, learningId: `learn-${wordId}`})),
   }, {id: 'start-r1'});
 
   function answer({

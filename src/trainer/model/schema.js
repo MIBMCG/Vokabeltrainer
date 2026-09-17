@@ -187,20 +187,11 @@ function assertEntityRevision(payload) {
 }
 
 function assertRoundStarted(payload) {
-  assertExactKeys(payload, ['roundId', 'profileId', 'mode', 'size', 'candidates'], 'Der Rundenstart ist ungültig.');
+  assertExactKeys(payload, ['roundId', 'profileId', 'mode', 'size'], 'Der Rundenstart ist ungültig.');
   assertId(payload.roundId);
   assertId(payload.profileId);
   assertEnum(payload.mode, ['all', 'latest', 'new'], 'Der Lernmodus ist ungültig.');
   assertEnum(payload.size, [10, 20, 30], 'Die Rundengröße ist ungültig.');
-  assertArray(payload.candidates, 'Die Aufgabenauswahl ist ungültig.');
-  const words = new Set();
-  for (const candidate of payload.candidates) {
-    assertExactKeys(candidate, ['wordId', 'learningId'], 'Eine Aufgabe ist ungültig.');
-    assertId(candidate.wordId);
-    assertId(candidate.learningId);
-    if (words.has(candidate.wordId)) invalid('Die Aufgabenauswahl enthält ein Wort mehrfach.');
-    words.add(candidate.wordId);
-  }
 }
 
 function assertAnswer(payload) {
@@ -479,14 +470,8 @@ function validateRoundReferences(events, eventsById, entityIds) {
     .map((event) => [event.id, event]));
   const starts = new Map();
   for (const event of events.filter((entry) => entry.type === 'round.started')) {
-    const {roundId, profileId, candidates} = event.payload;
+    const {roundId, profileId} = event.payload;
     if (!entityIds.profile.has(profileId)) reference('Eine Runde verweist auf ein unbekanntes Profil.');
-    for (const candidate of candidates) {
-      const matches = [...revisions.values()].some((revision) => revision.payload.entityType === 'word'
-        && revision.payload.entityId === candidate.wordId
-        && revision.payload.value.learningId === candidate.learningId);
-      if (!matches) reference('Eine Runde verweist auf eine unbekannte Lernfassung.');
-    }
     const previous = starts.get(roundId);
     if (previous && canonical(previous.payload) !== canonical(event.payload)) {
       collision('Eine Runden-ID enthält unterschiedliche Startdaten.');
@@ -507,10 +492,6 @@ function validateRoundReferences(events, eventsById, entityIds) {
       || revision.payload.entityId !== payload.wordId
       || revision.payload.value.learningId !== payload.learningId) {
       reference('Eine Antwort verweist nicht auf die passende Wortfassung.');
-    }
-    const candidate = start.payload.candidates.find(({wordId}) => wordId === payload.wordId);
-    if (!candidate || candidate.learningId !== payload.learningId) {
-      reference('Eine Antwort gehört nicht zur eingefrorenen Aufgabenauswahl.');
     }
     const slot = `${payload.roundId}\u0000${payload.ordinal}`;
     const previous = answerBySlot.get(slot);
