@@ -120,6 +120,7 @@ function validatePersistedState(value) {
     }
     const backupProjection = projectProbe(pending.backup.events);
     projectProbe([pending.event]);
+    const combinedProjection = projectProbe([...pending.backup.events, pending.event]);
     const activeBackupAnswerIds = pending.backup.events
       .filter((event) => event.kind === 'answer' && event.epoch === backupProjection.epoch)
       .map(({id}) => id);
@@ -129,6 +130,8 @@ function validatePersistedState(value) {
       || !sameScope(pending.backup.scope, value.scope)
       || backupProjection.conflict
       || pending.event.parentEpoch !== backupProjection.epoch
+      || combinedProjection.conflict
+      || combinedProjection.epoch !== pending.event.epoch
       || !sameIdSet(pending.event.previousAnswerIds, activeBackupAnswerIds)) {
       fail('Gespeicherter Rücksetzversuch ist beschädigt.');
     }

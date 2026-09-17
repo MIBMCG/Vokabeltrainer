@@ -295,6 +295,47 @@ test('rejects persisted reset preparations whose backup relationships are corrup
   }
 });
 
+test('rejects a pending reset that makes the combined snapshot graph cyclic', async () => {
+  const fixture = await selectedController({makeId: ids('answer-a', 'reset-a', 'epoch-reset-a')});
+  await fixture.controller.addAnswer();
+  await fixture.controller.sync();
+  fixture.drive.failBeforeRemote();
+  await assert.rejects(fixture.controller.restoreEmpty(), /network failure/);
+  const corrupted = fixture.store.snapshot();
+  const chain = [
+    {
+      version: 1,
+      kind: 'reset',
+      id: 'chain-a',
+      parentEpoch: 'initial',
+      epoch: 'epoch-a',
+      baseAnswers: [],
+      previousAnswerIds: [],
+      backupFileId: 'backup-chain-a',
+    },
+    {
+      version: 1,
+      kind: 'reset',
+      id: 'chain-b',
+      parentEpoch: 'epoch-a',
+      epoch: 'epoch-b',
+      baseAnswers: [],
+      previousAnswerIds: [],
+      backupFileId: 'backup-chain-b',
+    },
+  ];
+  corrupted.events = structuredClone(chain);
+  corrupted.pendingUploads = [];
+  corrupted.lastConfirmedUpload = null;
+  corrupted.pendingReset.backup.events = structuredClone(chain);
+  corrupted.pendingReset.event.parentEpoch = 'epoch-b';
+  corrupted.pendingReset.event.epoch = 'epoch-a';
+  corrupted.pendingReset.event.previousAnswerIds = [];
+  const controller = createProbeController({store: memoryStore(corrupted), drive: fixture.drive});
+
+  await assert.rejects(controller.load(), /Kreis|Zielgeneration|Rücksetzversuch.*beschädigt/i);
+});
+
 test('repeat uploads the last confirmed event with the identical Drive ID', async () => {
   const fixture = await selectedController({makeId: ids('answer-a')});
   await fixture.controller.addAnswer();
