@@ -34,7 +34,7 @@ function request(port, path, method = 'GET') {
   });
 }
 
-test('serves only named probe assets and source modules with correct MIME types', async () => {
+test('serves only named probe and trainer assets with correct MIME types', async () => {
   await withServer(async (port) => {
     const cases = [
       ['/', 'text/html; charset=utf-8'],
@@ -44,6 +44,27 @@ test('serves only named probe assets and source modules with correct MIME types'
       ['/icons/probe.svg', 'image/svg+xml; charset=utf-8'],
       ['/src/probe/model.js', 'text/javascript; charset=utf-8'],
       ['/src/drive/client.js', 'text/javascript; charset=utf-8'],
+      ['/trainer/', 'text/html; charset=utf-8'],
+      ['/trainer/index.html', 'text/html; charset=utf-8'],
+      ['/trainer/styles.css', 'text/css; charset=utf-8'],
+      ['/src/trainer/main.js', 'text/javascript; charset=utf-8'],
+      ['/src/trainer/ui/dom.js', 'text/javascript; charset=utf-8'],
+      ['/src/trainer/ui/shell.js', 'text/javascript; charset=utf-8'],
+      ['/src/trainer/ui/adult.js', 'text/javascript; charset=utf-8'],
+      ['/src/trainer/adult/pin.js', 'text/javascript; charset=utf-8'],
+      ['/src/trainer/adult/import.js', 'text/javascript; charset=utf-8'],
+      ['/src/trainer/commands.js', 'text/javascript; charset=utf-8'],
+      ['/src/trainer/storage/store.js', 'text/javascript; charset=utf-8'],
+      ['/src/trainer/model/canonical.js', 'text/javascript; charset=utf-8'],
+      ['/src/trainer/model/errors.js', 'text/javascript; charset=utf-8'],
+      ['/src/trainer/model/revisions.js', 'text/javascript; charset=utf-8'],
+      ['/src/trainer/model/schema.js', 'text/javascript; charset=utf-8'],
+      ['/src/trainer/model/epochs.js', 'text/javascript; charset=utf-8'],
+      ['/src/trainer/learning/answers.js', 'text/javascript; charset=utf-8'],
+      ['/src/trainer/learning/calendar.js', 'text/javascript; charset=utf-8'],
+      ['/src/trainer/learning/progress.js', 'text/javascript; charset=utf-8'],
+      ['/src/trainer/learning/rewards.js', 'text/javascript; charset=utf-8'],
+      ['/src/trainer/learning/rounds.js', 'text/javascript; charset=utf-8'],
     ];
     for (const [path, contentType] of cases) {
       const response = await request(port, path);
@@ -98,6 +119,8 @@ test('blocks non-read methods, traversal, private trees, dotfiles, and missing f
       ['/tests/serve.test.js', 'GET', 404],
       ['/node_modules/example.js', 'GET', 404],
       ['/.git/config', 'GET', 404],
+      ['/trainer/../tests/trainer/adult.test.js', 'GET', 404],
+      ['/trainer/%2e%2e/%2e%2e/.git/config', 'GET', 404],
       ['/missing.js', 'GET', 404],
     ];
     for (const [path, method, status] of cases) {
