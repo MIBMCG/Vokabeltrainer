@@ -227,3 +227,43 @@ test('fixtures do not share counters or mutable values between tests', () => {
   assert.equal(first.event('preference.changed', {profileId: 'p1', animations: true}).clock,
     second.event('preference.changed', {profileId: 'p1', animations: true}).clock);
 });
+
+test('fixture events remain valid when the monotonic clock crosses a minute boundary', () => {
+  const f = createFixture();
+  let later;
+  for (let index = 0; index < 60; index += 1) {
+    later = f.event('preference.changed', {profileId: 'p1', animations: true});
+  }
+
+  assert.equal(later.clock, 66);
+  assert.equal(later.occurredAt, '2026-09-17T10:01:06.000Z');
+  assert.doesNotThrow(() => assertEvent(later));
+});
+
+test('a deep valid revision chain is accepted independently of descendant-first serialization', () => {
+  const f = createFixture();
+  const template = f.event('entity.revised', {
+    entityType: 'word',
+    entityId: 'deep-word',
+    parents: [],
+    value: {
+      lessonId: 'l1',
+      german: 'Tief',
+      hint: '',
+      answers: ['deep'],
+      archived: false,
+      learningId: 'learn-deep',
+    },
+  });
+  const revisions = Array.from({length: 12_005}, (_, index) => ({
+    ...structuredClone(template),
+    id: `deep-${String(index).padStart(5, '0')}`,
+    clock: index + 100,
+    payload: {
+      ...structuredClone(template.payload),
+      parents: index === 0 ? [] : [`deep-${String(index - 1).padStart(5, '0')}`],
+    },
+  })).reverse();
+
+  assert.doesNotThrow(() => assertLedger(f.withEvents(...revisions)));
+});

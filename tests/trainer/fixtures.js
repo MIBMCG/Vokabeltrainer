@@ -13,6 +13,7 @@ export function createFixture({
   ],
 } = {}) {
   let clock = 0;
+  const startedAt = Date.parse('2026-09-17T10:00:00.000Z');
 
   function event(type, payload, overrides = {}) {
     clock += 1;
@@ -24,7 +25,7 @@ export function createFixture({
       epochId: 'e0',
       deviceId: 'dev1',
       clock,
-      occurredAt: `2026-09-17T10:00:${String(clock).padStart(2, '0')}.000Z`,
+      occurredAt: new Date(startedAt + (clock * 1000)).toISOString(),
       day: '2026-09-17',
       type,
       payload: structuredClone(payload),

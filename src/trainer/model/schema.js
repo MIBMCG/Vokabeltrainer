@@ -406,14 +406,26 @@ function uniqueById(values, label) {
 
 function assertDag(nodes, parentLookup, label) {
   const states = new Map();
-  function visit(id) {
-    if (states.get(id) === 'visiting') reference(`${label} enthält einen Kreis.`);
-    if (states.get(id) === 'visited') return;
-    states.set(id, 'visiting');
-    for (const parentId of parentLookup(id)) visit(parentId);
-    states.set(id, 'visited');
+  for (const startId of nodes.keys()) {
+    if (states.has(startId)) continue;
+    states.set(startId, 'visiting');
+    const stack = [{id: startId, parents: parentLookup(startId), index: 0}];
+    while (stack.length > 0) {
+      const current = stack.at(-1);
+      if (current.index >= current.parents.length) {
+        states.set(current.id, 'visited');
+        stack.pop();
+        continue;
+      }
+      const parentId = current.parents[current.index];
+      current.index += 1;
+      const parentState = states.get(parentId);
+      if (parentState === 'visiting') reference(`${label} enthält einen Kreis.`);
+      if (parentState === 'visited') continue;
+      states.set(parentId, 'visiting');
+      stack.push({id: parentId, parents: parentLookup(parentId), index: 0});
+    }
   }
-  for (const id of nodes.keys()) visit(id);
 }
 
 function compareEvents(left, right) {
