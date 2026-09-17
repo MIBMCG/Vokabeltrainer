@@ -1,4 +1,10 @@
 # Technischer Entwurf
+## Aktuelle Umsetzung ab 17.09.2026
+
+Der [v1-Umsetzungsplan](superpowers/plans/2026-09-17-vokabeltrainer-v1.md) und der [Produkt-Datenvertrag](PRODUKT-DATENFORMAT.md) konkretisieren den bestätigten Entwurf. Die Produkt-App entsteht getrennt von der Probe unter `trainer/`, mit eigenen Lernereignissen, Inhaltsfassungen, Datenepochen, Browserdaten und Drive-Kennungen. Die folgenden ursprünglichen Architekturüberlegungen bleiben als Begründung erhalten; Aussagen wie „noch kein Schema“ beschreiben den Stand vor diesem Vertrag. Implementierungsnachweise stehen im [Arbeitsstand](../ARBEITSSTAND.md).
+
+Der Nutzer bestätigte die echte Google-Anmeldung und den Probe-Abgleich zwischen zwei Browsern desselben Rechners. Physische Zwei-Geräte- und Apple-Abnahme folgen ausdrücklich erst nach der vollständigen Umsetzung. Eine bereitgestellte HTTPS-App und neue Cloudkontenänderungen sind damit nicht automatisch beauftragt.
+
 
 Stand: 17.09.2026. **Bestätigte Architekturgrundlage; Implementierungs- und Prüfstatus im Arbeitsstand.** Die verbindlichen Nutzeranforderungen stehen in [ANFORDERUNGEN.md](ANFORDERUNGEN.md).
 

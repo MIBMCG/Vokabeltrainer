@@ -16,6 +16,12 @@ Der bestehende isolierte Worktree wird auf dem neuen Entwicklungszweig weiterver
 
 [Umsetzungsplan](../superpowers/plans/2026-09-17-vokabeltrainer-v1.md) und [Datenvertrag](../PRODUKT-DATENFORMAT.md) wurden ausgearbeitet mit GPT-6 Astra bei hoher Denktiefe. Für abgegrenzte Implementierung und Aufgabenprüfungen ist GPT-5.6 Sol bei hoher Denktiefe vorgesehen; die Gesamtprüfung erfolgt mit Astra. Noch keine Produktfunktion allein aufgrund des Plans als implementiert bezeichnen. Aktuelle Implementierungs- und Prüfbelege werden hier nach jedem Paket ergänzt.
 
+## Implementierung bisher
+
+Task 1 wurde in `2e8b6a2` implementiert: versioniertes Ereignisformat, strikte Validierung, Referenz-/Kollisionsprüfung und synthetische Testbasis. Gezielte Prüfung: 15/15; gesamter Node-Lauf: 89/89 bestanden. Die unabhängige Aufgabenreview läuft noch. Das ist eine interne Grundlage, noch keine fertige Lernoberfläche.
+
+Die [Benutzungsanleitung](../BENUTZUNG.md) beschreibt die bestätigten Abläufe und kennzeichnet die laufende Entwicklung ausdrücklich.
+
 ## Noch offen
 
 Vollständige Produktimplementierung, reale Apple-Geräteabnahme und abgestimmte HTTPS-Bereitstellung. Kein Freund wird ohne Auftrag kontaktiert. Keine echten Lernprofile oder Google-Zugangsdaten ins Repository übernehmen.
