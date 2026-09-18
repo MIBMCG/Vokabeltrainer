@@ -1,6 +1,6 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-Version 1 ist am 18.09.2026 implementiert und automatisiert geprüft. Maßgeblich sind [Arbeitsstand](ARBEITSSTAND.md), [Abschlussbericht](docs/reports/2026-09-18-vokabeltrainer-v1.md) und [aktuelle Übergabe](docs/handoffs/2026-09-18-vokabeltrainer-v1.md). Die unabhängige Gesamtprüfung des finalen Branches folgt nach Task 13. Reale Produkt-Google-, Zwei-Geräte-, iPhone-/iPad- und HTTPS-Nachweise bleiben offen.
+Version 1 ist am 18.09.2026 implementiert und automatisiert geprüft. Maßgeblich sind [Arbeitsstand](ARBEITSSTAND.md), [Abschlussbericht](docs/reports/2026-09-18-vokabeltrainer-v1.md) und [aktuelle Übergabe](docs/handoffs/2026-09-18-vokabeltrainer-v1.md). Die unabhängige Gesamtprüfung einschließlich der vier Abschlusskorrekturen ist bestanden. Reale Produkt-Google-, Zwei-Geräte-, iPhone-/iPad- und HTTPS-Nachweise bleiben offen.
 
 Änderung der Prüfungsreihenfolge am 17.09.2026: Der Nutzer beauftragt ausdrücklich, zuerst die vollständige App gemäß bestätigtem Gesamtentwurf umzusetzen und erst danach beim Freund auf iPhone/iPad zu testen. Die bisherige Geräteprüfung vor umfangreicher Lernoberfläche ist damit als Entwicklungssperre aufgehoben. Reale Geräteabnahme bleibt offen und darf nicht als bestanden gelten. Bereits bestätigte manuelle Google-/Drive-Tests in zwei Browsern gelten weiter. Keine neue pauschale Startfreigabe verlangen; Hosting/Veröffentlichung und Kostenmodell werden dadurch nicht automatisch geändert.
 
@@ -18,11 +18,11 @@ Bei Widersprüchen hat die aktuelle ausdrückliche Nutzeranweisung Vorrang. Best
 
 ## Aktueller Projektzustand
 
-Die statische Produkt-App liegt unter `trainer/`; die technische Drive-Probe bleibt getrennt unter der Wurzel. Tasks 1–13 setzen den bestätigten v1-Umfang um. Automatisierte Node- und Browserprüfungen sind bestanden; sie verwenden synthetische Daten und eine simulierte Google-Grenze. Eine unabhängige Gesamtprüfung des Branches, reale Produktverbindung mit Google Drive auf zwei physischen Geräten, Apple-Geräteabnahme und HTTPS-Bereitstellung stehen noch aus.
+Die statische Produkt-App liegt unter `trainer/`; die technische Drive-Probe bleibt getrennt unter der Wurzel. Tasks 1–13 setzen den bestätigten v1-Umfang um. Automatisierte Node- und Browserprüfungen sind bestanden; sie verwenden synthetische Daten und eine simulierte Google-Grenze. Die unabhängige Gesamtprüfung ist abgeschlossen. Reale Produktverbindung mit Google Drive auf zwei physischen Geräten, Apple-Geräteabnahme und HTTPS-Bereitstellung stehen noch aus.
 
 Die Einzelfragen Q1–Q14 sowie der [Gesamtentwurf](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md) einschließlich E01–E10 sind bestätigt (Nutzerantwort A vom 16.09.2026). Die Entwicklung beginnt nach dem [Plan zur Google-Drive-Probe](docs/superpowers/plans/2026-09-16-google-drive-probe.md). Keine erneute Entwurfs- oder pauschale Startfreigabe einholen. Reale Google-/Geräteprüfungen bleiben gesonderte Nachweise. Die frühe Verbindungsprobe wurde durchgeführt. Die restliche echte Geräteprüfung erfolgt auf Nutzerwunsch erst nach Umsetzung der vollständigen App.
 
-Aktuelle Steuerung: Task 13 und den vollständigen Branch unabhängig prüfen; konkrete Findings gezielt korrigieren. Ältere Pausen- und Zwischenstandsnotizen sind historische Vorgeschichte. Keine erneute pauschale Startfreigabe verlangen.
+Aktuelle Steuerung: Tasks 1–13 und Abschlussreview sind abgeschlossen. Nächster Schritt ist die dokumentierte reale Geräteabnahme; notwendiges Hosting separat abstimmen. Ältere Pausen- und Zwischenstandsnotizen sind historische Vorgeschichte. Keine erneute pauschale Startfreigabe verlangen.
 
 ## Feste Leitplanken
 

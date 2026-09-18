@@ -2,15 +2,15 @@
 
 - Stand: 18.09.2026
 - Branch: `codex/vokabeltrainer-v1`
-- Produktcode: `3b1d16d`
-- Abschlussdokumentation: `18a5722`
-- Remote vor Task 13: `8431786` auf `origin/codex/vokabeltrainer-v1`
+- Finaler Produktcode: `cc079cbea31d6d834b7d8eba1920486daddb4e90`
+- Fixbericht: `c2560f0`; abschließende Dokumentation folgt in der Git-Historie.
+- Letzter vor diesem Abschluss nachgewiesener Remote: `8431786`; Abschluss-Push siehe nachgetragenen Empfangsbeleg.
 
 ## Übergebenes Ergebnis
 
-Version 1 ist gemäß R01–R33 und E01–E10 implementiert. Task 13 korrigierte die letzten bekannten Bedienungs- und Textbefunde, machte das Browserharness portabel und ergänzte die Assetliste. Reviewfix-1-Produktcode `11e3128` führt nach einer profilfreien Navigation die gewählte Übungs-/Reise-/Avataransicht fort; deshalb trägt der Produktcache jetzt `v4`. Der [Abschlussbericht](../reports/2026-09-18-vokabeltrainer-v1.md) enthält Matrix, Taskhistorie, Screenshots und genaue Grenzen.
+Version 1 ist gemäß R01–R33 und E01–E10 implementiert. Task 13 korrigierte die letzten bekannten Bedienungs- und Textbefunde, machte das Browserharness portabel und ergänzte die Assetliste. Reviewfix-1-Produktcode `11e3128` führt nach einer profilfreien Navigation die gewählte Übungs-/Reise-/Avataransicht fort; damals wechselte der Produktcache zu `v4`; der finale Integrationsfix verwendet `v5`. Der [Abschlussbericht](../reports/2026-09-18-vokabeltrainer-v1.md) enthält Matrix, Taskhistorie, Screenshots und genaue Grenzen.
 
-Die unabhängige Task-13- und Gesamtprüfung des Branches steht noch aus. Diese Übergabe behauptet weder deren Bestehen noch eine reale Geräte- oder Produkt-Google-Abnahme.
+Die unabhängige Task-13- und Gesamtprüfung einschließlich einmaliger finaler Nachprüfung ist abgeschlossen. Alle vier Integrationsbefunde sind behoben; keine neuen offenen Reviewbefunde. Siehe [Fixbericht](../reports/2026-09-18-vokabeltrainer-v1-final-fixes.md) und [finale Nachprüfung](../reports/2026-09-18-vokabeltrainer-v1-final-fix-review.md). Eine reale Geräte- oder Produkt-Google-Abnahme bleibt offen.
 
 ## Portabler Start
 
@@ -37,23 +37,24 @@ Sie verwendet standardmäßig das Projektpaket `playwright` und dessen Chromium.
 
 ## Aktuelle Nachweise
 
-- Node.js 22.23.2: 277/277 Tests bestanden.
-- Playwright 1.62.1 mit Edge 153.0.4234.46: 11/11 Trainer-Browsertests bestanden.
-- Getrennte Drive-Probe: 12/12 Szenarien bestanden, keine Seitenfehler.
-- Offline-Neustart mit geschlossenem Testserver unter Wurzel- und Unterpfad bestanden.
-- Auf dem Ausgangscode bestand der echte verzögerte Service-Worker-Wechsel von Produktcache `v3` zu Testfassung `v4`. Reviewfix 1 verwendet Produktcache `v4` und die abweichende Testfassung `v5`; der fokussierte Worker-Test bestand 8/8, der aktuelle vollständige Browserlauf folgt beim Gesamtabschluss.
-- Sechs aktuelle synthetische Desktop-/Mobilaufnahmen visuell geprüft.
-- Reviewfix-Navigation: RED 0/1, GREEN 1/1; Produktcache `v4`, synthetische Updatefassung `v5`, Worker 8/8.
-- Dokumentationsprüfung: 170 Dateien, 71 Markdowndateien und 298 lokale Links, 0 Fehler.
-- `git diff --check`: ohne Befund.
+- Finaler Produktcode cc079cb: Node.js 22.23.2, **277/277 Tests bestanden**.
+- Playwright 1.62.1 mit Edge 153.0.4234.46: **15/15 Trainer-Browsertests bestanden**.
+- Vier neue gezielte Browserregressionen: **4/4 bestanden**; vollständiger Trainerlauf danach erneut grün.
+- Produktcache v5, synthetischer Updateworker v6. Offline-Neustart bei geschlossenem Server unter Wurzel- und Unterpfad sowie kontrollierter Workerwechsel sind Teil des Gesamtlaufs.
+- Unveränderte Drive-Probe: 12/12 Szenarien auf 3b1d16d, keine Seitenfehler; keine unnötige Wiederholung.
+- Sechs synthetische Desktop-/Mobilaufnahmen auf 3b1d16d visuell geprüft; sie sind im Abschlussbericht verlinkt.
+- Alle vier Befunde der unabhängigen Gesamtprüfung behoben und einmalig unabhängig nachgeprüft. Keine offenen Critical-/Important-/Minor-Befunde im Abschlussreview.
+- Abschließende Dokumentprüfung: 175 Dateien, 76 Markdown-Dateien, 347 lokale Links, keine Fehler. `git diff --check` ohne Befund. Der Push wird mit dem Remote verglichen.
+
+Die letzte Korrektur macht PIN-Wiederherstellung auch am gesperrten Zugang verfügbar, erhält ungespeicherte Verwaltungsformulare bei Hintergrundabgleich, startet den Abgleich nach bewusstem Google-Wiederverbinden erneut und schützt offenen Antworttext bei konkurrierenden Wiederherstellungen. Letzterer bleibt nur im Arbeitsspeicher bis zur bewussten Auflösung, nicht über einen Browserneustart.
 
 ## Nächster Schritt
 
-1. Task-13-Diff unabhängig gegen Brief, Preflight und Bericht prüfen.
-2. Anschließend den gesamten Branch funktional und auf Codequalität prüfen.
-3. Findings gezielt korrigieren; nur betroffene Prüfungen und bei Codeänderungen die nötigen Gesamtläufe wiederholen.
-4. Erst danach einen autorisierten Push durchführen und lokalen HEAD mit `git ls-remote origin refs/heads/codex/vokabeltrainer-v1` vergleichen.
-5. Später die [Geräte-Prüfliste](../GERAETE-ABNAHME.md) mit synthetischen Daten auf echten Geräten ausführen.
+Die Umsetzung von Tasks 1–13 und die interne Prüfung sind abgeschlossen. Als Nächstes die [Geräte-Prüfliste](../GERAETE-ABNAHME.md) mit synthetischen Daten auf den Geräten des Freundes durchführen. Eine dafür nötige HTTPS-Bereitstellung erst nach gesondertem Auftrag einrichten. Keine erneute pauschale Entwicklungsfreigabe nötig.
+
+## Nachvollziehbare Entscheidungen
+
+Alle [26 technischen Entscheidungen](../ENTWICKLUNGSENTSCHEIDUNGEN.md) einschließlich Anlass und Folgekosten sind dauerhaft dokumentiert. Die [frühe Prüfhistorie](../reports/history/2026-09-18-tasks-1-6-evidence.md) und die späteren Einzelberichte bleiben erhalten. Ausführende Agenten: GPT-5.6 Sol/high für gewöhnliche Pakete; GPT-6 Astra/high für komplexe Integrationskorrekturen und unabhängige Reviews.
 
 ## Offen und nicht behauptet
 

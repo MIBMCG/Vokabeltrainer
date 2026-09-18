@@ -107,7 +107,7 @@ Jede Zeile folgt der Definition in [ANFORDERUNGEN.md](../ANFORDERUNGEN.md). Ein 
 | 12 Offline/Updates | `8798dd2`, `2b369e3` | `npm test` 276/276; fokussiert 15/15 Node, Offline 1/1 und Update 1/1; drei wichtige Befunde plus Guard-Abdeckung behoben. [Bericht](2026-09-18-offline-pwa.md) |
 | 13 Abschluss/Politur | `3b1d16d`, Reviewfix `11e3128` | Ausgangscode: 277 Node, 11 Trainer-Browser, 12 Probe. Fix 1: Navigation RED 0/1 → GREEN 1/1, Worker 8/8. Unabhängige Korrekturreview und aktueller Gesamtlauf folgen. |
 
-Alle 25 technischen Entscheidungen stehen in [Entwicklungsentscheidungen](../ENTWICKLUNGSENTSCHEIDUNGEN.md). Die Task-1–6-Nachweise sind jetzt unabhängig vom später zu löschenden Arbeitsverzeichnis dauerhaft versionierbar.
+Alle 26 technischen Entscheidungen stehen in [Entwicklungsentscheidungen](../ENTWICKLUNGSENTSCHEIDUNGEN.md). Die Task-1–6-Nachweise sind jetzt unabhängig vom später zu löschenden Arbeitsverzeichnis dauerhaft versionierbar.
 
 ## Reviewfix 1
 
@@ -140,6 +140,14 @@ Die aktuellen Aufnahmen stammen aus dem synthetischen Browserlauf und wurden auf
 
 ## Grenzen und nächster Nachweis
 
-Aktueller Zusatz nach Fixrunde 1: Die [unabhängige Nachprüfung](2026-09-18-vokabeltrainer-v1-task-13-fix-1-review.md) bestätigt I1, I2 und M1 als behoben, ohne neue Befunde. Die [koordinierende Abschlussverifikation](2026-09-18-abschluss-verifikation.md) dokumentiert danach frisch 277/277 Node- und 11/11 Trainer-Browsertests auf dem korrigierten Produktstand. Task 13 ist abgeschlossen; die Gesamtbranchprüfung ist der nächste interne Schritt.
+Aktueller Zusatz nach Fixrunde 1: Die [unabhängige Nachprüfung](2026-09-18-vokabeltrainer-v1-task-13-fix-1-review.md) bestätigt I1, I2 und M1 als behoben, ohne neue Befunde. Die [koordinierende Abschlussverifikation](2026-09-18-abschluss-verifikation.md) dokumentiert danach frisch 277/277 Node- und 11/11 Trainer-Browsertests auf dem korrigierten Produktstand. Damit war Task 13 abgeschlossen. Die anschließende Gesamtbranchprüfung und deren Korrekturen sind inzwischen ebenfalls abgeschlossen; aktueller Nachweis siehe unten.
 
-Die noch folgende Gesamtbranchprüfung ist Voraussetzung für die interne Branchfreigabe. Anschließend bleiben reale Akzeptanzschritte: Produktbestand mit echtem Google Drive auf zwei physischen Geräten verbinden, iPhone und iPad jeweils in Safari und als Home-Bildschirm-App prüfen, Tastatur/Fokus/Offline/erneutes Verbinden testen und tatsächliche Browser-/OS-Versionen festhalten. Eine nötige HTTPS-Bereitstellung wird erst nach gesondertem Auftrag eingerichtet.
+Die interne Branchprüfung ist abgeschlossen. Offen bleiben reale Akzeptanzschritte: Produktbestand mit echtem Google Drive auf zwei physischen Geräten verbinden, iPhone und iPad jeweils in Safari und als Home-Bildschirm-App prüfen, Tastatur/Fokus/Offline/erneutes Verbinden testen und tatsächliche Browser-/OS-Versionen festhalten. Eine nötige HTTPS-Bereitstellung wird erst nach gesondertem Auftrag eingerichtet.
+
+## Finaler Gesamtabschluss am 18.09.2026
+
+Die unabhängige Gesamtprüfung fand vier Integrationsbefunde. Eine gemeinsame Fixwelle in **cc079cb** korrigierte PIN-Wiederherstellung am gesperrten Zugang, ungespeicherte Erwachsenenformulare bei Hintergrundabgleich, automatischen Abgleich nach bewusstem Wiederverbinden und offenen Antworttext bei Epochenkonflikten.
+
+Danach bestanden frisch **277/277 Node-Tests und 15/15 Trainer-Browsertests**, einschließlich vier neuer gezielter Regressionen. Diese Läufe führte der Fixagent aus; der koordinierende Agent las den Bericht, der unabhängige Reviewer prüfte zusätzlich die gespeicherten Abschlusslogs. Es gab danach keine Produktänderung. Alle Daten und Google-Gegenstellen waren synthetisch; echte Apple-/Google-/Zwei-Geräte-Nachweise bleiben offen.
+
+Der [Fixbericht](2026-09-18-vokabeltrainer-v1-final-fixes.md) enthält RED/GREEN, genaue Befehle und Grenzen. Die [einmalige finale Nachprüfung](2026-09-18-vokabeltrainer-v1-final-fix-review.md) schließt alle vier Befunde ohne neue Regression. Damit sind die interne Gesamtprüfung und Tasks 1–13 abgeschlossen; dies ist keine Hosting-, Merge- oder Veröffentlichungsfreigabe.

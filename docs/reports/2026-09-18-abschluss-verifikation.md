@@ -13,4 +13,12 @@ Der vollständige Trainerlauf umfasst die korrigierte Weiterleitung nach Profilw
 
 Die aktuellen Screenshots im v1-Bericht entstanden auf `3b1d16d`. Die spätere Korrektur verändert die Weiterleitung zur Profilansicht und Cacheversion, nicht die darin gezeigten bereits ausgewählten Ansichten.
 
-Noch offen: unabhängige Gesamtprüfung des Branches sowie echte Google-/Zwei-Geräte-/iPhone-/iPad-/Safari-/Home-Bildschirm-Nachweise und abgestimmte HTTPS-Bereitstellung. Ein späterer Produktfix benötigt seine eigenen passenden aktuellen Nachweise.
+Inzwischen ist auch die unabhängige Gesamtprüfung abgeschlossen (aktueller Nachweis unten). Noch offen: echte Google-/Zwei-Geräte-/iPhone-/iPad-/Safari-/Home-Bildschirm-Nachweise und abgestimmte HTTPS-Bereitstellung. Ein späterer Produktfix benötigt seine eigenen passenden aktuellen Nachweise.
+
+## Finaler Gesamtabschluss am 18.09.2026
+
+Die unabhängige Gesamtprüfung fand vier Integrationsbefunde. Eine gemeinsame Fixwelle in **cc079cb** korrigierte PIN-Wiederherstellung am gesperrten Zugang, ungespeicherte Erwachsenenformulare bei Hintergrundabgleich, automatischen Abgleich nach bewusstem Wiederverbinden und offenen Antworttext bei Epochenkonflikten.
+
+Danach bestanden frisch **277/277 Node-Tests und 15/15 Trainer-Browsertests**, einschließlich vier neuer gezielter Regressionen. Diese Läufe führte der Fixagent aus; der koordinierende Agent las den Bericht, der unabhängige Reviewer prüfte zusätzlich die gespeicherten Abschlusslogs. Es gab danach keine Produktänderung. Alle Daten und Google-Gegenstellen waren synthetisch; echte Apple-/Google-/Zwei-Geräte-Nachweise bleiben offen.
+
+Der [Fixbericht](2026-09-18-vokabeltrainer-v1-final-fixes.md) enthält RED/GREEN, genaue Befehle und Grenzen. Die [einmalige finale Nachprüfung](2026-09-18-vokabeltrainer-v1-final-fix-review.md) schließt alle vier Befunde ohne neue Regression. Damit sind die interne Gesamtprüfung und Tasks 1–13 abgeschlossen; dies ist keine Hosting-, Merge- oder Veröffentlichungsfreigabe.

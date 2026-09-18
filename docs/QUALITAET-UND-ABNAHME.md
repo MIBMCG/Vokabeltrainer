@@ -1,6 +1,6 @@
 # Qualität und Abnahme
 
-Stand: 18.09.2026. **Prüfmatrix für Version 1.** Der Task-13-Ausgangscode bestand 277 Node-Tests sowie elf Trainer-Browsertests; die getrennte Drive-Probe bestand zwölf Browser-Szenarien. Der anschließende kleine Navigationsfix bestand seinen Browserfall 1/1 und die Workerprüfung 8/8; aktueller Gesamtlauf und unabhängige Korrekturreview folgen beim Abschluss. Details und Anforderungszuordnung stehen im [Abschlussbericht](reports/2026-09-18-vokabeltrainer-v1.md). Reale Produkt-Google-, Zwei-Geräte- und iOS-/iPadOS-Abnahme fehlen weiterhin.
+Stand: 18.09.2026. **Prüfmatrix für Version 1.** Der Task-13-Ausgangscode bestand 277 Node-Tests sowie elf Trainer-Browsertests; die getrennte Drive-Probe bestand zwölf Browser-Szenarien. Nach Navigation und finaler Integrationskorrektur bestand Produktcode `cc079cb` 277/277 Node- und 15/15 Trainer-Browsertests. Die [unabhängige finale Nachprüfung](reports/2026-09-18-vokabeltrainer-v1-final-fix-review.md) schließt alle vier Gesamtprüfungsbefunde. Details und Anforderungszuordnung stehen im [Abschlussbericht](reports/2026-09-18-vokabeltrainer-v1.md). Reale Produkt-Google-, Zwei-Geräte- und iOS-/iPadOS-Abnahme fehlen weiterhin.
 
 ## Nachweisstufen
 

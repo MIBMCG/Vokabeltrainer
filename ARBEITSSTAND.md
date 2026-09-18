@@ -4,7 +4,7 @@ Stand: **18.09.2026**
 
 Die vollständige Version 1 gemäß [bestätigtem Gesamtentwurf](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md) und [Produkt-Datenvertrag](docs/PRODUKT-DATENFORMAT.md) ist auf `codex/vokabeltrainer-v1` implementiert. Task 13 schloss letzte Bedienungsbefunde, portable Browserwerkzeuge, vollständige Regression, visuelle Prüfung und die portable Dokumentation ab. Ausgangscode: `3b1d16d`; Reviewfix-1-Produktcode `11e3128` korrigiert zusätzlich die Profilweiterleitung. Der [Abschlussbericht](docs/reports/2026-09-18-vokabeltrainer-v1.md) enthält die vollständige Evidenz einschließlich der korrigierten Abschlussmatrix; die [Übergabe](docs/handoffs/2026-09-18-vokabeltrainer-v1.md) nennt den nächsten Schritt.
 
-Die unabhängige [Task-13-Nachprüfung](docs/reports/2026-09-18-vokabeltrainer-v1-task-13-fix-1-review.md) ist abgeschlossen; alle Befunde sind behoben. Die Gesamtprüfung des Branches folgt jetzt und ist noch keine bestandene Freigabe. Reale Produktprüfungen mit Google Drive auf zwei physischen Geräten, Safari und Home-Bildschirm-App auf iPhone/iPad sowie eine HTTPS-Bereitstellung bleiben offen.
+Die unabhängige [Task-13-Nachprüfung](docs/reports/2026-09-18-vokabeltrainer-v1-task-13-fix-1-review.md) ist abgeschlossen; alle Befunde sind behoben. Auch die [Gesamtprüfung mit anschließender Nachprüfung](docs/reports/2026-09-18-vokabeltrainer-v1-final-fix-review.md) ist abgeschlossen: alle vier Integrationsbefunde sind behoben, keine neuen offenen Reviewbefunde. Reale Produktprüfungen mit Google Drive auf zwei physischen Geräten, Safari und Home-Bildschirm-App auf iPhone/iPad sowie eine HTTPS-Bereitstellung bleiben offen.
 
 ## Bestätigter Umfang
 
@@ -13,6 +13,10 @@ Die Anforderungen R01–R33, Entscheidungen Q1–Q14 und Entwurfsergänzungen E0
 Die Produktoberfläche liegt unter `/trainer/`; die technische Drive-Probe bleibt getrennt unter `/`. Persönliche Lerninhalte und Browserdaten gehören nicht ins Repository.
 
 ## Aktueller Prüfstand
+
+Finaler Produktcode `cc079cb`: **277/277 Node- und 15/15 Trainer-Browsertests bestanden**, einschließlich vier neuer Regressionen zu PIN-Wiederherstellung, Verwaltungsentwürfen, erneutem Google-Verbinden und offenem Antworttext bei Wiederherstellungskonflikten. Produktcache `v5`, synthetischer Updateworker `v6`. [Fixbericht](docs/reports/2026-09-18-vokabeltrainer-v1-final-fixes.md) und [unabhängige Nachprüfung](docs/reports/2026-09-18-vokabeltrainer-v1-final-fix-review.md) belegen den Abschluss.
+
+### Historische Vorläufe
 
 Auf dem Task-13-Ausgangscode `3b1d16d` liefen frisch:
 
@@ -43,7 +47,7 @@ Der [Benutzungsleitfaden](docs/BENUTZUNG.md) beschreibt den aktuellen Ablauf. [A
 
 ## Offen und bewusst zurückgestellt
 
-- unabhängige Task-13- und Gesamtprüfung des finalen Branches,
+
 - realer Produktabgleich über Google Drive auf zwei physischen Geräten,
 - iPhone-/iPad-Abnahme in Safari und als Home-Bildschirm-App einschließlich Tastatur, Fokus, Offline-Neustart und erneutem Verbinden,
 - festgelegte und nachgewiesene Browser-/OS-Mindestversionen,
@@ -54,6 +58,6 @@ Keine dieser Grenzen ist eine neue Produktentscheidung. Hosting, Kontenänderung
 
 ## Nächster Schritt
 
-Zuerst Task 13 und den vollständigen Branch unabhängig prüfen. Findings werden gezielt korrigiert und betroffene Prüfungen erneut ausgeführt. Danach können die Schritte aus der [Geräte-Prüfliste](docs/GERAETE-ABNAHME.md) mit synthetischen Daten auf den Geräten des Freundes vorbereitet werden; eine dafür nötige HTTPS-Bereitstellung erfordert einen eigenen Auftrag.
+Die technische Umsetzung und unabhängige Prüfung sind abgeschlossen. Als Nächstes können die Schritte aus der [Geräte-Prüfliste](docs/GERAETE-ABNAHME.md) mit synthetischen Daten auf den Geräten des Freundes vorbereitet werden; eine dafür nötige HTTPS-Bereitstellung erfordert einen eigenen Auftrag.
 
-Aktueller Branch: `codex/vokabeltrainer-v1`. Der Remote-Stand lag vor Task 13 bei `8431786`; die Task-13-Commits sind zum Zeitpunkt dieser Übergabe lokal und noch nicht als Remote-Stand behauptet.
+Aktueller Branch: `codex/vokabeltrainer-v1`. Finaler Produktcode: `cc079cb`. Der überprüfte Remote-Stand wird nach dem Abschluss-Push in der Übergabe dokumentiert.

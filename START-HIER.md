@@ -1,6 +1,6 @@
 # Hier mit der Weiterarbeit beginnen
 
-Die vollständige Version 1 ist am 18.09.2026 implementiert und automatisiert geprüft. Maßgeblich sind der [Abschlussbericht](docs/reports/2026-09-18-vokabeltrainer-v1.md), der [Arbeitsstand](ARBEITSSTAND.md) und die [aktuelle Übergabe](docs/handoffs/2026-09-18-vokabeltrainer-v1.md). Die unabhängige Gesamtprüfung des Branches folgt nach diesem Arbeitspaket; sie ist hier noch nicht als bestanden ausgewiesen.
+Die vollständige Version 1 ist am 18.09.2026 implementiert und automatisiert geprüft. Maßgeblich sind der [Abschlussbericht](docs/reports/2026-09-18-vokabeltrainer-v1.md), der [Arbeitsstand](ARBEITSSTAND.md) und die [aktuelle Übergabe](docs/handoffs/2026-09-18-vokabeltrainer-v1.md). Die unabhängige Gesamtprüfung und die einmalige Nachprüfung aller vier Abschlusskorrekturen sind bestanden; siehe [finale Review](docs/reports/2026-09-18-vokabeltrainer-v1-final-fix-review.md).
 
 Reale Produktprüfungen mit Google Drive auf zwei physischen Geräten, Safari und Home-Bildschirm-App auf iPhone/iPad sowie eine HTTPS-Bereitstellung bleiben offen. Die automatisierten Tests verwenden ausschließlich synthetische Daten und eine simulierte Google-Grenze.
 
@@ -27,6 +27,6 @@ Die Browserprüfungen und ihre optionalen Umgebungsvariablen stehen in [tests/br
 
 ## Kopierbarer Wiedereinstieg
 
-> Arbeite am Repository MIBMCG/Vokabeltrainer auf `codex/vokabeltrainer-v1` weiter. Lies zuerst AGENTS.md, ARBEITSSTAND.md und docs/handoffs/2026-09-18-vokabeltrainer-v1.md. Prüfe Branch, Remote und lokale Änderungen. Version 1 ist implementiert und automatisiert geprüft; die unabhängige Gesamtprüfung des Branches ist der nächste interne Schritt. Reale Produkt-Google-, Zwei-Geräte-, iPhone-/iPad-, Safari-/Home-Screen- und HTTPS-Nachweise bleiben offen. Nutze nur synthetische Daten. Keine Veröffentlichung, Kontenänderung, Lizenzentscheidung oder gebührenpflichtige Einrichtung ohne Auftrag.
+> Arbeite am Repository MIBMCG/Vokabeltrainer auf `codex/vokabeltrainer-v1` weiter. Lies zuerst AGENTS.md, ARBEITSSTAND.md und docs/handoffs/2026-09-18-vokabeltrainer-v1.md. Prüfe Branch, Remote und lokale Änderungen. Version 1 ist implementiert und automatisiert geprüft; die unabhängige Gesamtprüfung einschließlich aller Abschlusskorrekturen ist abgeschlossen. Produktcode cc079cb bestand 277 Node- und 15 Trainer-Browserprüfungen. Bereite als nächsten Schritt die dokumentierte reale Geräteabnahme vor; richte Hosting erst nach ausdrücklichem Auftrag ein. Reale Produkt-Google-, Zwei-Geräte-, iPhone-/iPad-, Safari-/Home-Screen- und HTTPS-Nachweise bleiben offen. Nutze nur synthetische Daten. Keine Veröffentlichung, Kontenänderung, Lizenzentscheidung oder gebührenpflichtige Einrichtung ohne Auftrag.
 
 Der konkrete aktuelle Auftrag bestimmt, welche Änderungen, Pushes und Veröffentlichungen autorisiert sind. Bestätigte Entscheidungen nicht erneut pauschal abfragen.
