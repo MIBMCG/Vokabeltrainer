@@ -70,3 +70,12 @@ Read the completed Task9 fix report for Commands change subscription and cleanup
 
 ## Carried Task9 observation O1
 The scoped fix2 review (docs/reports/2026-09-18-synchronisation-fix-2-review.md) found an unchanged early-status issue: unbound state/datasetSetup may override connect/error published during discover/create/join with local/pending. Task11 owns concrete integration coverage for those autherror paths; preserve actionable phase, invalidate RAMtoken and require deliberate reconnect. Record resolution and carry evidence into final review.
+
+## Join confirmation contract (decision 18)
+Task10 joinDataset(selection,'preview') returns previewId and safetyCopyId after required verified local safety copy. Confirm passes these exact fields back in selection with decision 'confirm'. Never reconstruct, silently renew or bypass a stale preview. Foreign-backup preview explicitly labels foreignDataset and timeZoneChange; confirm(previewId) is the deliberate reanchoring action. Follow actual Task10 report for final field definitions.
+
+## Conflicted backup export (decision 20)
+exportBackup(state, exportedAt, {selectedEpochId} = {}) rejects conflicting active epoch heads without explicit selection (code conflict). Present the available states for deliberate selection; never choose by time/first-array-item. resolveEpochConflict supplies the adult-selected head. All events/history remain in the exported backup despite its explicitly selected effective snapshot.
+
+## Cloud safety-copy metadata (decision 21)
+Snapshot manifests include backupMetadata.exportedAt and safetyCopyIndex protected by totalHash. Cloud-only safety copies use snapshotId as copy identity and exportedAt as actual date; local IDs remain local. List/download must use service-provided IDs/dates, never synthesize a backup date from dataset creation. See final Task10 service report for return shape.
