@@ -22,18 +22,24 @@ export function createSyncScheduler({
   let running = false;
   let queued = false;
   let timerId = null;
+  let timerDue = null;
   let retryIndex = 0;
 
   function cancelTimer() {
     if (timerId !== null) clearTimer(timerId);
     timerId = null;
+    timerDue = null;
   }
 
   function schedule(delay, mode) {
     if (!started || !visible || !onlineState) return;
+    const due = Number(now()) + delay;
+    if (timerId !== null && timerDue <= due) return;
     cancelTimer();
+    timerDue = due;
     timerId = setTimer(() => {
       timerId = null;
+      timerDue = null;
       void run(mode);
     }, delay);
   }

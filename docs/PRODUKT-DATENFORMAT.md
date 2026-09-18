@@ -108,10 +108,14 @@ Für `commitExternal` wird der erwartete lokale Zustands-Hash ausschließlich mi
 {...VERSION, kind: 'packet', datasetId, epochId, packetId, events: Event[]}
 // Persistierter Zustand; niemals als Ganzes exportieren!
 {storageVersion: 1, deviceId, clock, ledger, rounds, binding,
- outboxEventIds, pendingPackets, knownFiles, quarantinedFiles,
+ outboxEventIds, pendingPackets, datasetSetup, packetIntegrity,
+ knownFiles, quarantinedFiles,
  safetyCopies, restoreJobs, snapshotManifests, pinVerifier}
 // binding: null | {accountId, folderId, descriptorFileId, datasetId}
 // pendingPackets entry: {packet, driveFileId: null | string, confirmed: false}
+// datasetSetup: null | {accountId,name,folderId,descriptorFileId,epochFileId,
+//   datasetId,descriptor,rootEpoch}
+// packetIntegrity: {packetId,contentHash}[]
 // knownFiles: {fileId, contentHash, kind}[]
 // outboxEventIds: noch nicht in unveränderliche Pakete aufgenommene Ereignis-IDs
 // pinVerifier: null | {salt,hash,iterations}; Base64werte, PBKDF2-SHA-256
@@ -119,7 +123,11 @@ Für `commitExternal` wird der erwartete lokale Zustands-Hash ausschließlich mi
 // restoreJobs: persistierte Versuche mit Phasen und stabilen Datei-IDs, siehe unten
 ```
 
-`rounds` ist ein Objekt nach Profil-ID. `restoreJobs` ist ein Array aus `{id,phase,backup,previewId,parentHeads,safetyCopyId,snapshot,uploads,epoch}`; optionale noch nicht erreichte Werte sind `null`. Phasen: `preparing/preview/uploading/published/activated`; `uploads` enthält `{kind,logicalId,fileId,value,verified}` und wird vor jedem Netzaufruf gesichert. `safetyCopies` enthält `{id,createdAt,purpose,backup,hash,driveManifestFileId,verified}`; Backup muss lokal rücklesbar sein, Drivebezug ist lokal und wird nicht als gebundene Verbindung exportiert. `quarantinedFiles` enthält `{fileId,code,message,value}` ohne Token/HTTP-Header. PIN-Iterationszahl wird im Prüfeintrag gespeichert; die technische Hürde bleibt ausdrücklich kein Kontenschutz.
+`rounds` ist ein Objekt nach Profil-ID. `datasetSetup` ist ein eigener lokaler Transportauftrag für die erste Veröffentlichung und wird nicht in `restoreJobs` abgelegt: Konto-ID, unveränderlicher Ordnername, Datensatz-ID, die drei vorab reservierten Drive-IDs sowie die exakten Descriptor-/Wurzelepochenwerte werden nach der ID-Reservierung und vor `createFolder` oder `putJson` atomar gespeichert. Ein Wiederholungsversuch verwendet genau diese IDs und Werte; erst die bestätigte Bindung setzt den Auftrag auf `null`. `packetIntegrity` ordnet jede logische Paket-ID ihrem SHA-256-Hash über den kanonischen vollständigen Paketinhalt zu. Gleiche Paket-ID mit anderem Hash ist eine Kollision, unabhängig von Drive-Datei-ID oder Sitzung. Beide Felder sind lokaler Transportzustand und gehören nicht in portable Backups.
+
+Alte gültige Zustände mit `storageVersion: 1`, denen nur `datasetSetup` und/oder `packetIntegrity` fehlen, werden beim Laden kompatibel zu `null` beziehungsweise `[]` normalisiert. Ein leerer alter Paketindex wird beim nächsten Abgleich dadurch sicher aufgebaut, dass bekannte Dateien ohne sitzungsintern bestätigte Version/Hash-Zuordnung erneut gelesen werden; erst vollständig validierte oder lokal dauerhaft erzeugte Pakete erhalten einen Indexeintrag. Andere fehlende, zusätzliche oder ungültige Felder bleiben ein Formatfehler.
+
+`restoreJobs` ist ein Array aus `{id,phase,backup,previewId,parentHeads,safetyCopyId,snapshot,uploads,epoch}`; optionale noch nicht erreichte Werte sind `null`. Phasen: `preparing/preview/uploading/published/activated`; `uploads` enthält `{kind,logicalId,fileId,value,verified}` und wird vor jedem Netzaufruf gesichert. `safetyCopies` enthält `{id,createdAt,purpose,backup,hash,driveManifestFileId,verified}`; Backup muss lokal rücklesbar sein, Drivebezug ist lokal und wird nicht als gebundene Verbindung exportiert. `quarantinedFiles` enthält ausschließlich Inhalts-/Versions-/Referenzprobleme als `{fileId,code,message,value}` ohne Token/HTTP-Header. Konto-/Ordnerbindung, Authentifizierung, Berechtigung und vorübergehende Transportfehler stoppen den Lauf sichtbar und werden nicht als dauerhafte Inhaltsquarantäne gespeichert. PIN-Iterationszahl wird im Prüfeintrag gespeichert; die technische Hürde bleibt ausdrücklich kein Kontenschutz.
 
 Fachereignis, aktuelle lokale Runde einschließlich Rückmeldung und ausstehende Übertragung werden in **einer** IndexedDB-Transaktion bestätigt. Kein „Weiter“, solange sie fehlschlägt. In-Memory-Zustand erst nach `transaction.oncomplete` ersetzen. Ein pro Datenbank exklusiver Web-Lock schützt schreibende Tabs; fehlende Unterstützung meldet eine konkrete Voraussetzung und öffnet keinen ungeschützten Writer. Gescheiterte Migration verändert den alten Bestand nicht. Das Datenformat verwendet zunächst nur Version 1; zukünftige Migrationen benötigen eigene alte/neue Fixtures und Rollbacktests.
 
@@ -130,6 +138,8 @@ Drive-App-Eigenschaften enthalten ausschließlich Zeichenfolgen: `{app:'vokabelt
 Vor Upload Paketinhalt dauerhaft festlegen. Online erzeugte Datei-ID mit `generateId()` beziehen und speichern, **bevor** `putJson()` beginnt. Wiederholung benutzt exakt diese ID und denselben Inhalt. Datei-/Metadaten- und Inhaltsprüfung des bestehenden Adapters bestätigt den Upload. Bei verlorener Antwort verbleibt das Paket pending; nächster Versuch verifiziert dieselbe Datei. Paket-ID und Ereignis-ID deduplizieren unabhängig voneinander. Fremde oder fehlende Dateien, geänderte bekannte Inhalte oder ungültige Pakete erzeugen einen sichtbaren Fehler; sie löschen keine lokale Historie.
 
 Aktiver Abgleich: sofort beim Öffnen, Vordergrund, online und Rundenabschluss; Änderungen höchstens 10 Sekunden bündeln, ohne Änderungen alle 60 Sekunden suchen. Kein Polling bei versteckter App. Ein einzelner laufender Abgleich plus vorgemerkter erneuter Lauf verhindert parallele Uploads. Retry nur bei Netz/429/408/5xx: 1, 2, 4, 8, 16 Sekunden, danach explizite Wiederholung. Auth/403/fehlende Datei/Datenfehler nicht endlos wiederholen. HTTP 401 invalidiert Tokensitzung; „Mit Google verbinden“ startet bewusst neue Anmeldung. Offline weiterüben bleibt möglich.
+
+Statusverbraucher erhalten lokale Änderungen unmittelbar über `createCommands().subscribe(listener)`. `createProductSync` verwendet dieses Abonnement, berechnet `pendingCount` bei jedem Commit aus dem bestätigten Zustand neu und meldet den Wechsel von `synced` zu `pending` über `onStatus`. Wer den Synccontroller ersetzt oder die Anwendung abbaut, ruft dessen `destroy()` auf; damit wird ausschließlich dieses Abonnement gelöst. Task 11 verbindet den bereits vorhandenen UI-/Scheduler-Lebenszyklus mit diesem Vertrag, ohne eine zweite Status- oder Authentifizierungslogik einzuführen.
 
 ## Sicherung, Epochen und Rückkehr alter Geräte
 

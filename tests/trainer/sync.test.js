@@ -34,6 +34,8 @@ function productState(ledger, {deviceId = 'dev1', outbox = ledger.events.map(({i
     binding: null,
     outboxEventIds: [...outbox],
     pendingPackets: [],
+    datasetSetup: null,
+    packetIntegrity: [],
     knownFiles: [],
     quarantinedFiles: [],
     safetyCopies: [],
@@ -58,7 +60,9 @@ class SyntheticDrive {
     this.calls = [];
     this.createdPacketIds = [];
     this.loseNextUploadResponse = false;
+    this.loseUploadKind = null;
     this.onRead = null;
+    this.onMetadata = null;
     this.sequence = 0;
   }
 
@@ -80,6 +84,10 @@ class SyntheticDrive {
     this.calls.push(['metadata', id]);
     const file = this.files.get(id);
     if (!file) throw new DriveError('missing', 'synthetic missing', 404);
+    if (this.onMetadata) {
+      const replacement = await this.onMetadata(id, structuredClone(file.meta));
+      if (replacement !== undefined) return replacement;
+    }
     return structuredClone(file.meta);
   }
 
@@ -93,10 +101,12 @@ class SyntheticDrive {
 
   async createFolder({id, name, appProperties}) {
     this.calls.push(['createFolder', {id, name, appProperties}]);
+    const existing = this.files.get(id);
     const meta = metadata({
-      id, name, mimeType: 'application/vnd.google-apps.folder', appProperties,
+      id, name, mimeType: 'application/vnd.google-apps.folder', parents: ['my-drive-root'], appProperties,
     });
-    this.files.set(id, {meta, value: null});
+    if (existing && !sameJson(existing.meta, meta)) throw new DriveError('conflict', 'synthetic conflict', 409);
+    if (!existing) this.files.set(id, {meta, value: null});
     return structuredClone(meta);
   }
 
@@ -117,8 +127,9 @@ class SyntheticDrive {
       this.files.set(request.id, {meta, value: structuredClone(request.value)});
       if (request.appProperties.kind === 'packet') this.createdPacketIds.push(request.id);
     }
-    if (this.loseNextUploadResponse) {
+    if (this.loseNextUploadResponse || this.loseUploadKind === request.appProperties.kind) {
       this.loseNextUploadResponse = false;
+      this.loseUploadKind = null;
       throw new DriveError('network', 'synthetic lost response');
     }
     return structuredClone(this.files.get(request.id).meta);
@@ -229,6 +240,37 @@ test('two offline devices merge packets by event ID without double counting', as
     secondCommands.getState().ledger.events.length);
 });
 
+test('join rechecks local emptiness after a concurrent commit and preserves that local change', async () => {
+  const drive = new SyntheticDrive();
+  await setupSyntheticSync({drive, outbox: []});
+  const store = memoryStore(null);
+  const commands = await createCommands({
+    store, now: () => new Date('2026-09-18T10:00:00.000Z'),
+    id: sequenceIds('joining'), deviceId: 'joining-device', onChange: () => {},
+  });
+  await commands.setup({name: 'Lokal leer', timeZone: 'Europe/Berlin'});
+  const sync = createProductSync({
+    drive, store, commands, now: () => new Date('2026-09-18T10:00:00.000Z'),
+    id: sequenceIds('joining-sync'), onStatus: () => {},
+  });
+  const [selection] = await sync.discover();
+  const rootFileId = [...drive.files.values()]
+    .find(({meta}) => meta.appProperties.kind === 'epoch').meta.id;
+  drive.onRead = async (fileId) => {
+    if (fileId !== rootFileId) return;
+    drive.onRead = null;
+    await commands.revise({
+      entityType: 'profile', entityId: 'local-profile', expectedHeads: [],
+      value: {name: 'Bleibt lokal', archived: false},
+    });
+  };
+
+  await assert.rejects(sync.joinDataset(selection, 'confirm'), {code: 'not-ready'});
+  assert.equal(project(commands.getState().ledger).entities.profiles['local-profile'].value.name, 'Bleibt lokal');
+  assert.equal(commands.getState().binding, null);
+  assert.ok(commands.getState().outboxEventIds.length > 0);
+});
+
 test('nonempty local collection previews but cannot join another dataset before Task 10 safety selection', async () => {
   const drive = new SyntheticDrive();
   const remote = await setupSyntheticSync({drive, outbox: []});
@@ -325,6 +367,159 @@ test('changed known content and missing known files remain visible without delet
   drive.files.delete('known-file');
   await assert.rejects(sync.retry(), (error) => error.code === 'missing');
   assert.equal(commands.getState().ledger.events.length, count);
+});
+
+test('does not cache a post-read version when the pre-read metadata had no version', async () => {
+  const {sync, drive, commands} = await setupSyntheticSync({outbox: []});
+  const binding = commands.getState().binding;
+  const f = createFixture();
+  const firstEvent = f.event('preference.changed', {profileId: 'p1', animations: false}, {
+    id: 'version-old', deviceId: 'dev2', clock: 100,
+  });
+  const secondEvent = f.event('preference.changed', {profileId: 'p1', animations: true}, {
+    id: 'version-new', deviceId: 'dev2', clock: 101,
+  });
+  const [firstPacket] = buildPackets({events: [firstEvent], datasetId: 'd1', epochId: 'e0', id: () => 'version-packet'});
+  const [secondPacket] = buildPackets({events: [secondEvent], datasetId: 'd1', epochId: 'e0', id: () => 'version-packet'});
+  drive.addJson({
+    id: 'version-file', parentId: binding.folderId, value: firstPacket,
+    appProperties: {app: 'vokabeltrainer-product', kind: 'packet', datasetId: 'd1', epochId: 'e0', packetId: 'version-packet'},
+  });
+  let metadataReads = 0;
+  drive.onMetadata = async (fileId, meta) => {
+    if (fileId !== 'version-file') return undefined;
+    metadataReads += 1;
+    if (metadataReads === 1) {
+      const withoutVersion = structuredClone(meta);
+      delete withoutVersion.version;
+      return withoutVersion;
+    }
+    if (metadataReads === 2) {
+      drive.files.get(fileId).value = structuredClone(secondPacket);
+      drive.files.get(fileId).meta.version = '2';
+      return structuredClone(drive.files.get(fileId).meta);
+    }
+    return undefined;
+  };
+
+  await sync.sync();
+  drive.onMetadata = null;
+  await assert.rejects(sync.sync(), {code: 'collision'});
+  assert.equal(commands.getState().ledger.events.some(({id}) => id === 'version-new'), false);
+});
+
+test('transient cached-file metadata failure is not quarantined and an old transport quarantine clears', async () => {
+  const {sync, drive, commands} = await setupSyntheticSync({outbox: []});
+  const binding = commands.getState().binding;
+  const f = createFixture();
+  const event = f.event('preference.changed', {profileId: 'p1', animations: false}, {
+    id: 'cached-event', deviceId: 'dev2', clock: 100,
+  });
+  const [packet] = buildPackets({events: [event], datasetId: 'd1', epochId: 'e0', id: () => 'cached-packet'});
+  drive.addJson({
+    id: 'cached-file', parentId: binding.folderId, value: packet,
+    appProperties: {app: 'vokabeltrainer-product', kind: 'packet', datasetId: 'd1', epochId: 'e0', packetId: 'cached-packet'},
+  });
+  await sync.sync();
+  let failed = false;
+  drive.onMetadata = async (fileId) => {
+    if (fileId === 'cached-file' && !failed) {
+      failed = true;
+      throw new DriveError('network', 'temporary');
+    }
+    return undefined;
+  };
+  await assert.rejects(sync.sync(), {code: 'network'});
+  assert.equal(commands.getState().quarantinedFiles.some(({fileId}) => fileId === 'cached-file'), false);
+
+  drive.onMetadata = null;
+  const before = commands.getState();
+  const withLegacyTransportQuarantine = structuredClone(before);
+  withLegacyTransportQuarantine.quarantinedFiles.push({
+    fileId: 'cached-file', code: 'network', message: 'Altbestand', value: null,
+  });
+  const {productStateHash} = await import('../../src/trainer/commands.js');
+  await commands.commitExternal(withLegacyTransportQuarantine, await productStateHash(before));
+  await sync.retry();
+  assert.equal(commands.getState().quarantinedFiles.some(({fileId}) => fileId === 'cached-file'), false);
+});
+
+test('rejects the same logical packet ID with different contents across sync runs', async () => {
+  const {sync, drive, commands} = await setupSyntheticSync({outbox: []});
+  const binding = commands.getState().binding;
+  const f = createFixture();
+  const first = f.event('preference.changed', {profileId: 'p1', animations: false}, {id: 'packet-a', deviceId: 'dev2', clock: 100});
+  const second = f.event('preference.changed', {profileId: 'p1', animations: true}, {id: 'packet-b', deviceId: 'dev2', clock: 101});
+  const make = (event) => buildPackets({events: [event], datasetId: 'd1', epochId: 'e0', id: () => 'shared-packet'})[0];
+  const appProperties = {app: 'vokabeltrainer-product', kind: 'packet', datasetId: 'd1', epochId: 'e0', packetId: 'shared-packet'};
+  drive.addJson({id: 'shared-a', parentId: binding.folderId, appProperties, value: make(first)});
+  await sync.sync();
+  drive.addJson({id: 'shared-b', parentId: binding.folderId, appProperties, value: make(second)});
+
+  await assert.rejects(sync.sync(), {code: 'collision'});
+  assert.equal(commands.getState().ledger.events.some(({id}) => id === 'packet-b'), false);
+});
+
+test('interrupted initial publication resumes the persisted setup IDs without a second folder', async () => {
+  const drive = new SyntheticDrive();
+  const commands = await makeCommands(productState(createFixture().base, {outbox: []}));
+  const statuses = [];
+  const sync = createProductSync({
+    drive, store: {}, commands, now: () => new Date('2026-09-18T10:00:00.000Z'),
+    id: sequenceIds('setup'), onStatus: (value) => statuses.push(value),
+  });
+  drive.loseUploadKind = 'dataset';
+  await assert.rejects(sync.createDataset('Familienwortschatz'), {code: 'network'});
+  const interrupted = commands.getState().datasetSetup;
+  assert.ok(interrupted);
+  assert.equal((await sync.discover()).length, 1);
+
+  await sync.retry();
+  assert.equal(commands.getState().datasetSetup, null);
+  assert.equal(commands.getState().binding.folderId, interrupted.folderId);
+  assert.equal([...drive.files.values()].filter(({meta}) => meta.appProperties.kind === 'dataset-folder').length, 1);
+  assert.equal((await sync.discover()).length, 1);
+});
+
+test('local commits immediately invalidate synced status and notify the consumer', async () => {
+  const {sync, commands, statuses} = await setupSyntheticSync({outbox: []});
+  assert.equal(sync.getStatus().phase, 'synced');
+  const beforeNotifications = statuses.length;
+
+  await commands.revise({
+    entityType: 'profile', entityId: 'p1', expectedHeads: ['rev-p1'],
+    value: {name: 'Ada lokal', archived: false},
+  });
+
+  assert.equal(sync.getStatus().phase, 'pending');
+  assert.equal(sync.getStatus().pendingCount, 1);
+  assert.ok(statuses.length > beforeNotifications);
+  assert.equal(statuses.at(-1).phase, 'pending');
+
+  sync.destroy();
+  const afterDestroy = statuses.length;
+  await commands.setAnimations({profileId: 'p1', animations: false});
+  assert.equal(statuses.length, afterDestroy);
+});
+
+test('uploads independent local packets before reporting a malformed remote packet', async () => {
+  const {sync, drive, commands} = await setupSyntheticSync({outbox: []});
+  const binding = commands.getState().binding;
+  await commands.revise({
+    entityType: 'profile', entityId: 'p1', expectedHeads: ['rev-p1'],
+    value: {name: 'Ada lokal', archived: false},
+  });
+  const broken = {...VERSION, kind: 'packet', datasetId: 'd1', epochId: 'e0', packetId: 'broken-independent', events: 'wrong'};
+  drive.addJson({
+    id: 'broken-independent-file', parentId: binding.folderId, value: broken,
+    appProperties: {app: 'vokabeltrainer-product', kind: 'packet', datasetId: 'd1', epochId: 'e0', packetId: 'broken-independent'},
+  });
+
+  await assert.rejects(sync.sync(), {code: 'invalid'});
+  assert.equal(commands.getState().outboxEventIds.length, 0);
+  assert.equal(commands.getState().pendingPackets.length, 0);
+  assert.ok(drive.createdPacketIds.length > 0);
+  assert.equal(sync.getStatus().phase, 'error');
 });
 
 test('quarantines a broken packet with its inspectable synthetic value', async () => {

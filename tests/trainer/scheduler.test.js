@@ -101,3 +101,54 @@ test('does not retry permission or authentication failures', async () => {
     scheduler.stop();
   }
 });
+
+test('repeated changes preserve the first ten-second deadline', async () => {
+  let time = 0;
+  let nextId = 0;
+  const pending = new Map();
+  const scheduler = createSyncScheduler({
+    sync: async () => {}, hasChanges: () => true, now: () => time,
+    setTimer(callback, delay) {
+      const id = ++nextId;
+      pending.set(id, {callback, due: time + delay});
+      return id;
+    },
+    clearTimer(id) { pending.delete(id); },
+  });
+  scheduler.start();
+  await Promise.resolve();
+  await Promise.resolve();
+  scheduler.changed();
+  assert.equal([...pending.values()][0].due, 10_000);
+  time = 9_000;
+  scheduler.changed();
+  assert.equal([...pending.values()][0].due, 10_000);
+  scheduler.stop();
+});
+
+test('completion of an in-flight sync keeps an earlier queued change deadline', async () => {
+  let time = 0;
+  let nextId = 0;
+  let release;
+  const pending = new Map();
+  const scheduler = createSyncScheduler({
+    sync: () => new Promise((resolve) => { release = resolve; }), hasChanges: () => true, now: () => time,
+    setTimer(callback, delay) {
+      const id = ++nextId;
+      pending.set(id, {callback, due: time + delay});
+      return id;
+    },
+    clearTimer(id) { pending.delete(id); },
+  });
+  scheduler.start();
+  await Promise.resolve();
+  time = 1_000;
+  scheduler.changed();
+  assert.equal([...pending.values()][0].due, 11_000);
+  time = 5_000;
+  release();
+  await Promise.resolve();
+  await Promise.resolve();
+  assert.equal([...pending.values()][0].due, 11_000);
+  scheduler.stop();
+});

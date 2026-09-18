@@ -130,6 +130,19 @@ function removeQuarantine(quarantinedFiles, fileId) {
   return quarantinedFiles.filter((entry) => entry.fileId !== fileId);
 }
 
+function upsertPacketIntegrity(packetIntegrity, entry) {
+  const existing = packetIntegrity.find(({packetId}) => packetId === entry.packetId);
+  if (existing && existing.contentHash !== entry.contentHash) {
+    throw productError('collision', 'Eine Paket-ID enthält unterschiedliche Drive-Daten.');
+  }
+  return [...packetIntegrity.filter(({packetId}) => packetId !== entry.packetId), entry]
+    .sort((left, right) => (left.packetId < right.packetId ? -1 : left.packetId > right.packetId ? 1 : 0));
+}
+
+function isTransportFailure(error) {
+  return ['auth', 'network', 'retryable', 'permission', 'missing', 'stale', 'binding'].includes(error?.code);
+}
+
 function safeMessage(error, fallback = 'Der Drive-Abgleich ist fehlgeschlagen.') {
   if (error instanceof ProductError || typeof error?.code === 'string') return error.message || fallback;
   return fallback;
@@ -139,6 +152,7 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
   const driveMethods = ['accountId', 'generateId', 'listFiles', 'metadata', 'readJson', 'createFolder', 'putJson'];
   if (!drive || driveMethods.some((method) => typeof drive[method] !== 'function')
     || !store || !commands || typeof commands.getState !== 'function'
+    || typeof commands.subscribe !== 'function'
     || typeof commands.commitExternal !== 'function' || typeof now !== 'function'
     || typeof id !== 'function' || typeof onStatus !== 'function') {
     throw productError('invalid', 'Der Produktabgleich ist nicht vollständig konfiguriert.');
@@ -155,6 +169,37 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
   function publish(phase, message) {
     status = statusFromState(commands.getState(), phase, message, lastConfirmedAt);
     onStatus(structuredClone(status));
+  }
+
+  function reconcileStatus(notify = false) {
+    const state = commands.getState();
+    let phase = status.phase;
+    let message = status.message;
+    const measured = statusFromState(state, phase, message, lastConfirmedAt);
+    if (state === null || (state.binding === null && state.datasetSetup === null)) {
+      phase = 'local';
+      message = 'Nur lokal gespeichert.';
+    } else if (state.datasetSetup !== null && state.binding === null) {
+      phase = 'pending';
+      message = 'Die Drive-Einrichtung wartet auf Bestätigung.';
+    } else if (state.quarantinedFiles.length > 0) {
+      phase = 'error';
+      message = 'Mindestens eine Drive-Datei benötigt Aufmerksamkeit.';
+    } else if (measured.conflictCount > 0) {
+      phase = 'conflict';
+      message = 'Ein Datenkonflikt muss geklärt werden.';
+    } else if (measured.pendingCount > 0) {
+      phase = 'pending';
+      message = 'Änderungen sind noch nicht vollständig abgeglichen.';
+    } else if (!['synced', 'connect', 'error'].includes(phase)) {
+      phase = 'pending';
+      message = 'Der Datensatz ist verbunden; der Abgleich steht noch aus.';
+    }
+    const next = statusFromState(state, phase, message, lastConfirmedAt);
+    const changed = JSON.stringify(next) !== JSON.stringify(status);
+    status = next;
+    if (notify && changed) onStatus(structuredClone(status));
+    return status;
   }
 
   function handleError(error) {
@@ -200,7 +245,11 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
       throw productError('stale', 'Eine Drive-Datei wurde während des Lesens geändert.');
     }
     const hash = await contentHash(value);
-    if (after.version !== undefined) sessionVersions.set(meta.id, {version: after.version, hash});
+    if (before.version !== undefined && after.version !== undefined && before.version === after.version) {
+      sessionVersions.set(meta.id, {version: after.version, hash});
+    } else {
+      sessionVersions.delete(meta.id);
+    }
     return {value, hash, metadata: after};
   }
 
@@ -242,9 +291,6 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
       datasetId: binding.datasetId,
       mimeType: FOLDER_MIME_TYPE,
     });
-    if (!Array.isArray(meta.parents) || meta.parents.length !== 0) {
-      throw productError('binding', 'Der gebundene Datensatzordner ist ungültig.');
-    }
     return meta;
   }
 
@@ -317,52 +363,117 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
     }
   }
 
+  async function prepareDatasetSetup(name) {
+    const state = commands.getState();
+    if (state === null) throw productError('not-ready', 'Der Vokabeltrainer ist noch nicht eingerichtet.');
+    if (state.binding !== null) throw productError('binding', 'Dieser Browser ist bereits mit einem Datensatz verbunden.');
+    if (state.datasetSetup !== null) {
+      if (typeof name === 'string' && name.trim() !== state.datasetSetup.name) {
+        throw productError('stale', 'Die bereits begonnene Drive-Einrichtung verwendet einen anderen Ordnernamen.');
+      }
+      return state.datasetSetup;
+    }
+    if (typeof name !== 'string' || name.trim() === '') throw productError('invalid', 'Der Drive-Ordnername fehlt.');
+    const {descriptor} = state.ledger;
+    const rootEpoch = state.ledger.epochs.find(({id: epochId}) => epochId === descriptor.rootEpochId);
+    if (!rootEpoch) throw productError('reference', 'Die lokale Wurzelepoche fehlt.');
+    const accountId = await drive.accountId();
+    const folderId = await drive.generateId();
+    const epochFileId = await drive.generateId();
+    const descriptorFileId = await drive.generateId();
+    const setup = {
+      accountId,
+      name: name.trim(),
+      folderId,
+      descriptorFileId,
+      epochFileId,
+      datasetId: descriptor.datasetId,
+      descriptor: structuredClone(descriptor),
+      rootEpoch: structuredClone(rootEpoch),
+    };
+    const descriptorHash = await contentHash(descriptor);
+    const rootEpochHash = await contentHash(rootEpoch);
+    await mutate(async (next) => {
+      if (next.binding !== null) throw productError('binding', 'Die Drive-Bindung wurde inzwischen geändert.');
+      if (next.datasetSetup !== null) {
+        if (await contentHash(next.datasetSetup) !== await contentHash(setup)) {
+          throw productError('collision', 'Es gibt zwei verschiedene Aufträge zur Drive-Einrichtung.');
+        }
+        return false;
+      }
+      const nextEpochHashes = await Promise.all(next.ledger.epochs.map((epoch) => contentHash(epoch)));
+      if (await contentHash(next.ledger.descriptor) !== descriptorHash
+        || !nextEpochHashes.includes(rootEpochHash)) {
+        throw productError('stale', 'Der lokale Datensatz wurde inzwischen geändert.');
+      }
+      next.datasetSetup = setup;
+    });
+    return commands.getState().datasetSetup;
+  }
+
+  async function resumeDatasetSetup() {
+    const setup = commands.getState()?.datasetSetup;
+    if (setup === null || setup === undefined) return false;
+    const accountId = await drive.accountId();
+    if (accountId !== setup.accountId) {
+      throw productError('binding', 'Die Drive-Einrichtung gehört zu einem anderen Google-Konto.');
+    }
+    await drive.createFolder({
+      id: setup.folderId,
+      name: setup.name,
+      appProperties: {app: APP, kind: 'dataset-folder', datasetId: setup.datasetId},
+    });
+    await drive.putJson({
+      id: setup.epochFileId,
+      name: `epoch-${setup.rootEpoch.id}.json`,
+      parentId: setup.folderId,
+      appProperties: {
+        app: APP, kind: 'epoch', datasetId: setup.datasetId, epochId: setup.rootEpoch.id,
+      },
+      value: setup.rootEpoch,
+    });
+    await drive.putJson({
+      id: setup.descriptorFileId,
+      name: 'dataset.json',
+      parentId: setup.folderId,
+      appProperties: {app: APP, kind: 'dataset', datasetId: setup.datasetId},
+      value: setup.descriptor,
+    });
+    const epochHash = await contentHash(setup.rootEpoch);
+    const descriptorHash = await contentHash(setup.descriptor);
+    const setupHash = await contentHash(setup);
+    await mutate(async (next) => {
+      if (next.binding !== null) throw productError('binding', 'Die Drive-Bindung wurde inzwischen geändert.');
+      if (next.datasetSetup === null || await contentHash(next.datasetSetup) !== setupHash) {
+        throw productError('stale', 'Der Auftrag zur Drive-Einrichtung wurde inzwischen geändert.');
+      }
+      const localRoot = next.ledger.epochs.find(({id: epochId}) => epochId === setup.rootEpoch.id);
+      if (await contentHash(next.ledger.descriptor) !== descriptorHash
+        || localRoot === undefined || await contentHash(localRoot) !== epochHash) {
+        throw productError('stale', 'Der lokale Datensatz wurde inzwischen geändert.');
+      }
+      next.binding = {
+        accountId: setup.accountId,
+        folderId: setup.folderId,
+        descriptorFileId: setup.descriptorFileId,
+        datasetId: setup.datasetId,
+      };
+      next.knownFiles = upsertKnown(next.knownFiles, {
+        fileId: setup.epochFileId, contentHash: epochHash, kind: 'epoch',
+      });
+      next.knownFiles = upsertKnown(next.knownFiles, {
+        fileId: setup.descriptorFileId, contentHash: descriptorHash, kind: 'dataset',
+      });
+      next.datasetSetup = null;
+    });
+    publish('pending', 'Der Datensatz ist verbunden; Änderungen werden abgeglichen.');
+    return true;
+  }
+
   async function createDataset(name) {
     try {
-      const state = commands.getState();
-      if (state === null) throw productError('not-ready', 'Der Vokabeltrainer ist noch nicht eingerichtet.');
-      if (state.binding !== null) throw productError('binding', 'Dieser Browser ist bereits mit einem Datensatz verbunden.');
-      if (typeof name !== 'string' || name.trim() === '') throw productError('invalid', 'Der Drive-Ordnername fehlt.');
-      const {descriptor} = state.ledger;
-      const rootEpoch = state.ledger.epochs.find(({id: epochId}) => epochId === descriptor.rootEpochId);
-      if (!rootEpoch) throw productError('reference', 'Die lokale Wurzelepoche fehlt.');
-      const accountId = await drive.accountId();
-      const folderId = await drive.generateId();
-      await drive.createFolder({
-        id: folderId,
-        name,
-        appProperties: {app: APP, kind: 'dataset-folder', datasetId: descriptor.datasetId},
-      });
-      const epochFileId = await drive.generateId();
-      await drive.putJson({
-        id: epochFileId,
-        name: `epoch-${rootEpoch.id}.json`,
-        parentId: folderId,
-        appProperties: {
-          app: APP, kind: 'epoch', datasetId: descriptor.datasetId, epochId: rootEpoch.id,
-        },
-        value: rootEpoch,
-      });
-      const descriptorFileId = await drive.generateId();
-      await drive.putJson({
-        id: descriptorFileId,
-        name: 'dataset.json',
-        parentId: folderId,
-        appProperties: {app: APP, kind: 'dataset', datasetId: descriptor.datasetId},
-        value: descriptor,
-      });
-      const epochHash = await contentHash(rootEpoch);
-      const descriptorHash = await contentHash(descriptor);
-      await mutate((next) => {
-        if (next.binding !== null) throw productError('binding', 'Die Drive-Bindung wurde inzwischen geändert.');
-        if (next.ledger.descriptor.datasetId !== descriptor.datasetId) {
-          throw productError('stale', 'Der lokale Datensatz wurde inzwischen geändert.');
-        }
-        next.binding = {accountId, folderId, descriptorFileId, datasetId: descriptor.datasetId};
-        next.knownFiles = upsertKnown(next.knownFiles, {fileId: epochFileId, contentHash: epochHash, kind: 'epoch'});
-        next.knownFiles = upsertKnown(next.knownFiles, {fileId: descriptorFileId, contentHash: descriptorHash, kind: 'dataset'});
-      });
-      publish('pending', 'Der Datensatz ist verbunden; Änderungen werden abgeglichen.');
+      await prepareDatasetSetup(name);
+      await resumeDatasetSetup();
       await sync();
       return structuredClone(commands.getState().binding);
     } catch (error) {
@@ -383,7 +494,6 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
       const folder = assertMetadata(await drive.metadata(folderId), {
         id: folderId, kind: 'dataset-folder', datasetId: selectedDescriptor.datasetId, mimeType: FOLDER_MIME_TYPE,
       });
-      if (folder.parents.length !== 0) throw productError('binding', 'Der ausgewählte Datensatzordner ist ungültig.');
       const descriptorRead = await readDescriptor({
         folderId, descriptorFileId, datasetId: selectedDescriptor.datasetId,
       });
@@ -412,7 +522,13 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
       const epochHash = root.hash;
       await mutate((next) => {
         if (next.binding !== null) throw productError('binding', 'Dieser Browser ist bereits verbunden.');
-        if (!sameDataset) {
+        const currentSameDataset = next.ledger.descriptor.datasetId === descriptorRead.descriptor.datasetId;
+        const currentNonempty = next.ledger.events.length > 0 || next.outboxEventIds.length > 0
+          || next.pendingPackets.length > 0 || Object.keys(next.rounds).length > 0;
+        if (!currentSameDataset && currentNonempty) {
+          throw productError('not-ready', 'Der lokale Stand wurde inzwischen geändert; vor dem Öffnen ist eine Sicherheitskopie nötig.');
+        }
+        if (!currentSameDataset) {
           next.ledger = {
             descriptor: descriptorRead.descriptor,
             events: [],
@@ -424,6 +540,7 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
           next.rounds = {};
           next.outboxEventIds = [];
           next.pendingPackets = [];
+          next.packetIntegrity = [];
           next.quarantinedFiles = [];
         } else {
           const checked = assertLedger({
@@ -477,7 +594,10 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
     const packetCandidates = [];
     const immediateQuarantine = [];
     const verifiedKnown = [];
-    const packetIds = new Map();
+    const verifiedPackets = [];
+    const packetIds = new Map(before.packetIntegrity.map(({packetId, contentHash: hash}) => (
+      [packetId, {fileId: null, packet: null, hash, persisted: true}]
+    )));
     for (const rawMeta of files) {
       let meta;
       let inspectedValue = null;
@@ -492,7 +612,11 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
           continue;
         }
         const read = await readIfNeeded(meta, before);
-        if (read.skipped) continue;
+        if (read.skipped) {
+          const known = knownFor(before, meta.id);
+          verifiedKnown.push(known);
+          continue;
+        }
         meta = read.metadata;
         inspectedValue = read.value;
         if (kind === 'epoch') {
@@ -519,8 +643,10 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
           packetCandidates.push(entry);
         } else {
           verifiedKnown.push({fileId: meta.id, contentHash: read.hash, kind: 'packet'});
+          verifiedPackets.push({packetId: packet.packetId, contentHash: read.hash});
         }
       } catch (error) {
+        if (isTransportFailure(error)) throw error;
         if (error?.inspectedValue !== undefined) inspectedValue = error.inspectedValue;
         immediateQuarantine.push({
           fileId: rawMeta?.id ?? `unknown-${immediateQuarantine.length + 1}`,
@@ -545,10 +671,13 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
     }
 
     let firstProblem = immediateQuarantine[0] ?? null;
-    await mutate((next) => {
+    await mutate(async (next) => {
       for (const known of verifiedKnown) {
         next.knownFiles = upsertKnown(next.knownFiles, known);
         next.quarantinedFiles = removeQuarantine(next.quarantinedFiles, known.fileId);
+      }
+      for (const packet of verifiedPackets) {
+        next.packetIntegrity = upsertPacketIntegrity(next.packetIntegrity, packet);
       }
       for (const problem of immediateQuarantine) {
         next.quarantinedFiles = upsertQuarantine(next.quarantinedFiles, problem);
@@ -564,6 +693,9 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
             next.ledger = assertLedger({...next.ledger, events});
             next.knownFiles = upsertKnown(next.knownFiles, {
               fileId: entry.fileId, contentHash: entry.hash, kind: 'packet',
+            });
+            next.packetIntegrity = upsertPacketIntegrity(next.packetIntegrity, {
+              packetId: entry.packet.packetId, contentHash: entry.hash,
             });
             next.quarantinedFiles = removeQuarantine(next.quarantinedFiles, entry.fileId);
             progressed = true;
@@ -600,11 +732,11 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
         ...next.ledger.historicalEpochs.map(({clock}) => clock),
       );
     });
-    if (firstProblem !== null) throw productError(firstProblem.code, firstProblem.message);
+    return firstProblem;
   }
 
   async function preparePackets(binding) {
-    await mutate((next) => {
+    await mutate(async (next) => {
       if (next.binding?.datasetId !== binding.datasetId || next.binding.folderId !== binding.folderId) {
         throw productError('binding', 'Die Drive-Bindung wurde während des Abgleichs geändert.');
       }
@@ -621,6 +753,12 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
       for (const [epochId, entries] of byEpoch) {
         packets.push(...buildPackets({events: entries, datasetId: binding.datasetId, epochId, id}));
       }
+      for (const packet of packets) {
+        next.packetIntegrity = upsertPacketIntegrity(next.packetIntegrity, {
+          packetId: packet.packetId,
+          contentHash: await contentHash(packet),
+        });
+      }
       next.pendingPackets.push(...packets.map((packet) => ({packet, driveFileId: null, confirmed: false})));
       next.outboxEventIds = next.outboxEventIds.filter((eventId) => !wanted.has(eventId));
     });
@@ -629,7 +767,10 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
   async function uploadPending(binding) {
     while (true) {
       const state = commands.getState();
-      const pending = state.pendingPackets.find(({confirmed}) => !confirmed);
+      const blockedFileIds = new Set(state.quarantinedFiles.map(({fileId}) => fileId));
+      const pending = state.pendingPackets.find(({confirmed, driveFileId}) => (
+        !confirmed && (driveFileId === null || !blockedFileIds.has(driveFileId))
+      ));
       if (!pending) return;
       if (pending.packet.datasetId !== binding.datasetId) {
         throw productError('binding', 'Ausstehende Änderungen gehören zu einem anderen Datensatz.');
@@ -668,25 +809,35 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
         }
         next.pendingPackets = next.pendingPackets.filter(({packet}) => packet.packetId !== pending.packet.packetId);
         next.knownFiles = upsertKnown(next.knownFiles, {fileId, contentHash: hash, kind: 'packet'});
+        next.packetIntegrity = upsertPacketIntegrity(next.packetIntegrity, {
+          packetId: pending.packet.packetId, contentHash: hash,
+        });
       });
       lastConfirmedAt = now().toISOString();
     }
   }
 
   async function performSync() {
-    const state = commands.getState();
+    let state = commands.getState();
     if (state === null) throw productError('not-ready', 'Der Vokabeltrainer ist noch nicht eingerichtet.');
+    if (state.binding === null && state.datasetSetup !== null) {
+      await resumeDatasetSetup();
+      state = commands.getState();
+    }
     if (state.binding === null) {
       publish('local', 'Nur lokal gespeichert.');
       return getStatus();
     }
     publish('pending', 'Änderungen werden abgeglichen.');
-    await download(state.binding);
+    const remoteProblem = await download(state.binding);
     await preparePackets(state.binding);
     await uploadPending(state.binding);
     const current = commands.getState();
     const projection = project(current.ledger);
-    if (current.quarantinedFiles.length > 0) throw productError('invalid', 'Mindestens eine Drive-Datei benötigt Aufmerksamkeit.');
+    if (current.quarantinedFiles.length > 0) {
+      throw productError(remoteProblem?.code ?? 'invalid',
+        remoteProblem?.message ?? 'Mindestens eine Drive-Datei benötigt Aufmerksamkeit.');
+    }
     if (projection.epochConflict || projection.conflicts.length > 0) {
       publish('conflict', 'Ein Datenkonflikt muss geklärt werden.');
     } else if (current.outboxEventIds.length > 0 || current.pendingPackets.length > 0) {
@@ -725,8 +876,14 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
   }
 
   function getStatus() {
-    return structuredClone(status);
+    return structuredClone(reconcileStatus());
   }
 
-  return {discover, createDataset, joinDataset, sync, retry, getStatus};
+  const unsubscribe = commands.subscribe(() => reconcileStatus(true));
+
+  function destroy() {
+    unsubscribe();
+  }
+
+  return {discover, createDataset, joinDataset, sync, retry, getStatus, destroy};
 }

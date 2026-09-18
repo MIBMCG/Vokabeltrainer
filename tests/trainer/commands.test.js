@@ -96,6 +96,17 @@ test('rejects malformed persisted Drive transport records at the command boundar
   );
 });
 
+test('normalizes legacy storage-version-one state with absent Task 9 transport indexes', async () => {
+  const legacy = validProductState();
+  assert.equal(Object.hasOwn(legacy, 'datasetSetup'), false);
+  assert.equal(Object.hasOwn(legacy, 'packetIntegrity'), false);
+
+  const {commands} = await harness({state: legacy});
+
+  assert.equal(commands.getState().datasetSetup, null);
+  assert.deepEqual(commands.getState().packetIntegrity, []);
+});
+
 test('setup creates the version-one product state and publishes only its committed clone', async () => {
   const store = makeMemoryStore(null);
   const changed = [];

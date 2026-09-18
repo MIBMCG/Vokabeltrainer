@@ -31,6 +31,8 @@ const STATE_KEYS = [
   'binding',
   'outboxEventIds',
   'pendingPackets',
+  'datasetSetup',
+  'packetIntegrity',
   'knownFiles',
   'quarantinedFiles',
   'safetyCopies',
@@ -90,6 +92,46 @@ function assertPendingPacket(value) {
   validatePacket(value.packet);
   if (value.driveFileId !== null) assertId(value.driveFileId, 'Die Drive-Datei-ID ist ungültig.');
   if (value.confirmed !== false) invalid('Ein ausstehendes Drive-Paket hat einen ungültigen Bestätigungsstatus.');
+}
+
+function assertDatasetSetup(value) {
+  if (value === null) return;
+  assertExactKeys(value, [
+    'accountId', 'name', 'folderId', 'descriptorFileId', 'epochFileId',
+    'datasetId', 'descriptor', 'rootEpoch',
+  ], 'Der Auftrag zur Drive-Einrichtung ist ungültig.');
+  for (const key of ['accountId', 'folderId', 'descriptorFileId', 'epochFileId', 'datasetId']) {
+    assertId(value[key], 'Der Auftrag zur Drive-Einrichtung ist ungültig.');
+  }
+  if (typeof value.name !== 'string' || value.name.trim() === '') {
+    invalid('Der Auftrag zur Drive-Einrichtung ist ungültig.');
+  }
+  const ledger = assertLedger({
+    descriptor: value.descriptor,
+    events: [],
+    epochs: [value.rootEpoch],
+    snapshots: [],
+    historicalEpochs: [],
+  });
+  if (ledger.descriptor.datasetId !== value.datasetId
+    || ledger.descriptor.rootEpochId !== value.rootEpoch.id
+    || value.rootEpoch.datasetId !== value.datasetId) {
+    invalid('Der Auftrag zur Drive-Einrichtung enthält widersprüchliche IDs.');
+  }
+}
+
+function assertPacketIntegrity(value) {
+  if (!Array.isArray(value)) invalid('Der Paket-Integritätsindex ist ungültig.');
+  const packetIds = new Set();
+  for (const entry of value) {
+    assertExactKeys(entry, ['packetId', 'contentHash'], 'Ein Paket-Integritätseintrag ist ungültig.');
+    assertId(entry.packetId, 'Die Paket-ID ist ungültig.');
+    if (typeof entry.contentHash !== 'string' || !HASH_PATTERN.test(entry.contentHash)) {
+      invalid('Der Pakethash ist ungültig.');
+    }
+    if (packetIds.has(entry.packetId)) invalid('Der Paket-Integritätsindex enthält eine ID mehrfach.');
+    packetIds.add(entry.packetId);
+  }
 }
 
 function assertKnownFile(value) {
@@ -228,7 +270,9 @@ function assertProductState(value, expectedDeviceId = null) {
     if (!Array.isArray(value[key])) invalid('Eine lokale Speicherliste ist ungültig.');
   }
   assertBinding(value.binding);
+  assertDatasetSetup(value.datasetSetup);
   value.pendingPackets.forEach(assertPendingPacket);
+  assertPacketIntegrity(value.packetIntegrity);
   value.knownFiles.forEach(assertKnownFile);
   value.quarantinedFiles.forEach(assertQuarantine);
   if (value.pinVerifier !== null) assertRecord(value.pinVerifier, 'Der lokale PIN-Prüfwert ist ungültig.');
@@ -237,6 +281,15 @@ function assertProductState(value, expectedDeviceId = null) {
     ledger,
     rounds,
   };
+}
+
+function normalizeProductState(value) {
+  const normalized = structuredClone(value);
+  if (normalized?.storageVersion === 1) {
+    if (!own(normalized, 'datasetSetup')) normalized.datasetSetup = null;
+    if (!own(normalized, 'packetIntegrity')) normalized.packetIntegrity = [];
+  }
+  return normalized;
 }
 
 function stateForHash(state) {
@@ -306,8 +359,9 @@ export async function createCommands({store, now, id, deviceId, onChange}) {
   }
   assertId(deviceId, 'Die Geräte-ID ist ungültig.');
   const loaded = await store.load();
-  let state = loaded === null ? null : assertProductState(loaded, deviceId);
+  let state = loaded === null ? null : assertProductState(normalizeProductState(loaded), deviceId);
   let mutationTail = Promise.resolve();
+  const listeners = new Set();
 
   function enqueue(mutation) {
     const running = mutationTail.then(mutation);
@@ -374,6 +428,7 @@ export async function createCommands({store, now, id, deviceId, onChange}) {
     }
     state = validated;
     onChange(structuredClone(state));
+    for (const listener of listeners) listener(structuredClone(state));
   }
 
   function newWorkingState() {
@@ -387,6 +442,12 @@ export async function createCommands({store, now, id, deviceId, onChange}) {
   return {
     getState() {
       return state === null ? null : structuredClone(state);
+    },
+
+    subscribe(listener) {
+      if (typeof listener !== 'function') invalid('Der Änderungsbeobachter ist ungültig.');
+      listeners.add(listener);
+      return () => listeners.delete(listener);
     },
 
     roundAvailability({roundId}) {
@@ -437,6 +498,8 @@ export async function createCommands({store, now, id, deviceId, onChange}) {
           binding: null,
           outboxEventIds: [],
           pendingPackets: [],
+          datasetSetup: null,
+          packetIntegrity: [],
           knownFiles: [],
           quarantinedFiles: [],
           safetyCopies: [],
