@@ -3,6 +3,7 @@
 - Stand: 18.09.2026
 - Branch: `codex/vokabeltrainer-v1`
 - Produktcode: `3b1d16d`
+- Abschlussdokumentation: `18a5722`
 - Remote vor Task 13: `8431786` auf `origin/codex/vokabeltrainer-v1`
 
 ## Übergebenes Ergebnis
