@@ -30,3 +30,7 @@ Die [erste Nachprüfung](../reports/2026-09-18-synchronisation-fix-1-review.md) 
 ## Task 10 abgeschlossen, Task 11 begonnen
 
 Sicherung/Wiederherstellung ist mit `ee50662` implementiert und nach R1-Korrektur `49fde90` unabhängig nachgeprüft. Der [Bericht](../reports/2026-09-18-sicherung-wiederherstellung.md) dokumentiert 259/259 Node-Tests; die [Nachprüfung](../reports/2026-09-18-sicherung-wiederherstellung-fix-1-review.md) bestätigt keine offenen Befunde. Task 11 verbindet jetzt diese Funktionen mit der Erwachsenenansicht (GPT-5.6 Sol, Denktiefe hoch). Task 12 Offline-PWA und Task 13 Abschlussprüfung bleiben offen. Der vollständige Produkt-Google-/Gerätenachweis steht weiterhin aus.
+
+## Task 11 abgeschlossen, Task 12 begonnen
+
+Abgleich-, Konflikt- und Sicherungsoberflächen sind in `41c3404` implementiert, nach den Korrekturen `d026a4b` und `2a37a25` unabhängig freigegeben. Der [Bericht](../reports/2026-09-18-abgleich-sicherung-oberflaeche.md) und die [abschließende Nachprüfung](../reports/2026-09-18-abgleich-sicherung-oberflaeche-fix-2-review.md) unterscheiden Voll- und fokussierte Läufe. Letzter Node-Gesamtlauf 260/260; nach der letzten reinen UI-Korrektur vier betroffene Browserfälle grün. M1 (gemeinsame Statusformulierung) und M2 (weitere ungebundene Authfehler-Browserfälle) bleiben ausdrücklich für Task 13. Task 12 Offlinebetrieb/kontrollierte Updates läuft mit GPT-5.6 Sol, hoher Denktiefe. Reale Geräte-/Produkt-Google-Abnahme weiterhin offen.
