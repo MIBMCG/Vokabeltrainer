@@ -516,5 +516,6 @@ export function renderAdult({root, state, commands, pinGate, onNavigate, sync, r
   });
   else renderBackup({
     root: content, state, restore, onDownload, isUnlocked: () => pinGate.isUnlocked(), onRefresh: rerender,
+    getState: () => commands.getState(),
   });
 }

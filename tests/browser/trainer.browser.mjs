@@ -1235,6 +1235,10 @@ test('trainer sync and restore keeps concurrent word versions until an adult res
     await second.page.getByRole('button', {name: 'Datensatzwechsel bestätigen', exact: true}).click();
     await second.page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).click();
     await second.page.getByText('Abgeglichen', {exact: true}).waitFor();
+    const unambiguousBackup = await second.page.evaluate(async (current) => {
+      const {exportBackup} = await import('/src/trainer/backup/format.js');
+      return exportBackup(current, '2026-09-18T13:00:00.000Z');
+    }, await productState(second.page));
 
     first.controls.offline = true;
     second.controls.offline = true;
@@ -1254,6 +1258,20 @@ test('trainer sync and restore keeps concurrent word versions until an adult res
       const {exportBackup} = await import('/src/trainer/backup/format.js');
       return exportBackup(current, '2026-09-18T13:30:00.000Z');
     }, await productState(second.page));
+    await second.page.getByRole('button', {name: 'Sicherung', exact: true}).click();
+    await second.page.locator('#backup-file').setInputFiles({
+      name: 'unambiguous-target.json',
+      mimeType: 'application/json',
+      buffer: Buffer.from(JSON.stringify(unambiguousBackup)),
+    });
+    const currentConflictPreview = second.page.getByRole('dialog', {name: 'Wiederherstellung prüfen'});
+    await currentConflictPreview.getByRole('heading', {name: 'Vorherige Fassung 1', exact: true}).waitFor();
+    await currentConflictPreview.getByRole('heading', {name: 'Vorherige Fassung 2', exact: true}).waitFor();
+    await currentConflictPreview.getByText('Vorher · Englisch: dog / hound / pooch', {exact: true}).waitFor();
+    await currentConflictPreview.getByText('Vorher · Englisch: dog / hound / canine', {exact: true}).waitFor();
+    await currentConflictPreview.getByText('Nachher: dog / hound', {exact: true}).waitFor();
+    await currentConflictPreview.getByRole('button', {name: 'Abbrechen'}).click();
+    await second.page.getByRole('button', {name: 'Abgleich', exact: true}).click();
     await second.page.screenshot({path: resolve(resultsDirectory, 'trainer-revision-conflict-mobile.png'), fullPage: true});
 
     await second.page.getByRole('button', {name: 'Zur Profilauswahl', exact: true}).click();

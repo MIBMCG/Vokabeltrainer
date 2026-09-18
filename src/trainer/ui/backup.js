@@ -94,7 +94,7 @@ function assertUnlocked(isUnlocked) {
   }
 }
 
-export function renderBackup({root, state, restore, onDownload, isUnlocked = () => true, onRefresh = null}) {
+export function renderBackup({root, state, restore, onDownload, isUnlocked = () => true, onRefresh = null, getState = () => state}) {
   const ui = uiState(root);
   const resolved = resolveEpochs(state.ledger);
   const section = el('section', {attrs: {'aria-labelledby': 'backup-title', class: 'stack'}});
@@ -139,7 +139,7 @@ export function renderBackup({root, state, restore, onDownload, isUnlocked = () 
     } finally {
       ui.busy = false;
       if (isUnlocked()) {
-        if (root.isConnected) renderBackup({root, state, restore, onDownload, isUnlocked, onRefresh});
+        if (root.isConnected) renderBackup({root, state, restore, onDownload, isUnlocked, onRefresh, getState});
         else onRefresh?.();
       }
     }
@@ -165,7 +165,7 @@ export function renderBackup({root, state, restore, onDownload, isUnlocked = () 
       assertUnlocked(isUnlocked);
       const openPreview = (result, staleNotice = '') => showRestorePreview({
         summary: result.summary,
-        state,
+        state: getState(),
         events: ui.pendingBackup?.events ?? [],
         trigger: file,
         staleNotice,
@@ -194,7 +194,7 @@ export function renderBackup({root, state, restore, onDownload, isUnlocked = () 
       ui.notice = error?.message || 'Die Sicherungsdatei konnte nicht geprüft werden.';
       ui.tone = 'error';
       if (isUnlocked()) {
-        if (root.isConnected) renderBackup({root, state, restore, onDownload, isUnlocked, onRefresh});
+        if (root.isConnected) renderBackup({root, state, restore, onDownload, isUnlocked, onRefresh, getState});
         else onRefresh?.();
       }
     } finally {
@@ -247,7 +247,7 @@ export function renderBackup({root, state, restore, onDownload, isUnlocked = () 
           assertUnlocked(isUnlocked);
           ui.notice = downloadBackup(onDownload, backup, `vokabeltrainer-sicherheitskopie-${copy.createdAt.slice(0, 10)}.json`);
           ui.tone = 'info';
-          if (root.isConnected) renderBackup({root, state, restore, onDownload, isUnlocked, onRefresh});
+          if (root.isConnected) renderBackup({root, state, restore, onDownload, isUnlocked, onRefresh, getState});
           else onRefresh?.();
         } catch (error) {
           ui.notice = error?.message || 'Die Sicherheitskopie konnte nicht gelesen werden.';

@@ -132,6 +132,26 @@ function detailsList(lines, prefix = '') {
   return el('ul', {attrs: {class: 'preview-field-list'}}, lines.map((line) => el('li', {text: prefix ? `${prefix} · ${line}` : line})));
 }
 
+function conflictedBeforeNodes(entity, context) {
+  if (entity?.value !== null || !Array.isArray(entity.heads)) return null;
+  const revisions = entity.heads.map((headId) => context.eventById.get(headId));
+  const peers = revisions.filter(Boolean);
+  const nodes = [el('p', {text: 'Vorher: mehrere sichere Fassungen'})];
+  for (const [index, revision] of revisions.entries()) {
+    const choice = el('div', {attrs: {class: 'revision-choice'}}, [
+      el('h6', {text: `Vorherige Fassung ${index + 1}`}),
+    ]);
+    if (revision) {
+      const presentation = revisionPresentation(revision, context, peers);
+      choice.append(detailsList(presentation.lines, 'Vorher'));
+    } else {
+      choice.append(el('p', {text: 'Diese sichere Fassung kann in der Vorschau nicht vollständig angezeigt werden.'}));
+    }
+    nodes.push(choice);
+  }
+  return nodes;
+}
+
 function conflictNodes(summary, context) {
   if (!summary.conflicts?.length) return [];
   const section = el('section', {attrs: {class: 'preview-conflicts'}}, [
@@ -185,16 +205,23 @@ export function previewSummaryNodes({summary, state, events = [], selectedEventI
       const after = changeSide(change.entityType, change.entityId, change.after, context);
       const value = change.after?.value ?? change.before?.value ?? null;
       const title = `${ENTITY_LABELS[change.entityType] ?? 'Inhalt'} ${context.name(change.entityType, change.entityId, value)}`;
-      section.append(el('article', {attrs: {class: 'preview-change'}}, [
-        el('h5', {text: title}),
-        el('p', {text: `Vorher: ${before.primary}`}),
-        detailsList(before.details, 'Vorher'),
-        el('p', {text: `Nachher: ${after.primary}`}),
-        detailsList(after.details, 'Nachher'),
-        change.entityType === 'word' && change.before?.value && change.after?.value
-          ? el('p', {text: `Lernstand-Zuordnung: ${change.before.value.learningId === change.after.value.learningId ? 'unverändert' : 'ändert sich'}`})
-          : null,
-      ]));
+      const article = el('article', {attrs: {class: 'preview-change'}}, [el('h5', {text: title})]);
+      const conflictedBefore = conflictedBeforeNodes(change.before, context);
+      if (conflictedBefore) article.append(...conflictedBefore);
+      else {
+        article.append(el('p', {text: `Vorher: ${before.primary}`}));
+        const beforeDetails = detailsList(before.details, 'Vorher');
+        if (beforeDetails) article.append(beforeDetails);
+      }
+      article.append(el('p', {text: `Nachher: ${after.primary}`}));
+      const afterDetails = detailsList(after.details, 'Nachher');
+      if (afterDetails) article.append(afterDetails);
+      if (change.entityType === 'word' && change.before?.value && change.after?.value) {
+        article.append(el('p', {
+          text: `Lernstand-Zuordnung: ${change.before.value.learningId === change.after.value.learningId ? 'unverändert' : 'ändert sich'}`,
+        }));
+      }
+      section.append(article);
     }
     nodes.push(section);
   }
