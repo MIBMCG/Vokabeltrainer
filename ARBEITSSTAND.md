@@ -1,6 +1,6 @@
 # Arbeitsstand
 
-Fortsetzung am Desktop am 18.09.2026 ausdrücklich beauftragt. GitHub-Stand c60ced1 wurde in die saubere bestehende Arbeitskopie übernommen; die Pause ist beendet. Zuerst Task 9 Korrekturrunde 1 mit unabhängiger Nachprüfung, anschließend Tasks 10–13. Aktuelle [Desktop-Fortsetzung](docs/handoffs/2026-09-18-desktop-fortsetzung.md); die nachfolgende Pausenübergabe bleibt historische Ausgangsevidenz.
+Fortsetzung am Desktop am 18.09.2026 ausdrücklich beauftragt. GitHub-Stand c60ced1 wurde in die saubere bestehende Arbeitskopie übernommen; die Pause ist beendet. Task 9 ist nach zwei Korrekturrunden unabhängig geprüft (37c459f, 227 Node-Tests). Task 10 Sicherung/Wiederherstellung läuft; danach Tasks 11–13. Aktuelle [Desktop-Fortsetzung](docs/handoffs/2026-09-18-desktop-fortsetzung.md); die nachfolgende Pausenübergabe bleibt historische Ausgangsevidenz.
 
 Pause am 18.09.2026 ausdrücklich beauftragt. Entwicklung angehalten; der Nutzer hat die Sicherung aller Projektänderungen nach GitHub und eine Übergabe für den Desktop beauftragt. Maßgeblich ist die [Desktop-Übergabe](docs/handoffs/2026-09-18-desktop-pause.md). Erst nach ausdrücklicher Fortsetzung weiterarbeiten.
 

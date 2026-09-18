@@ -22,3 +22,7 @@ Bestätigtes Insel-Konzept, Anforderungen und technische Entscheidungen bleiben 
 ## Korrekturstand ef9bec0
 
 Der [Fixbericht](../reports/2026-09-18-synchronisation-fix-1.md) dokumentiert 225/225 Node-Tests und 4/4 Trainer-Browserfälle auf dem korrigierten Code. Die unabhängige Nachprüfung der zehn Befunde läuft; Task 9 ist noch nicht freigegeben. Zwei lokale Transportfelder werden kompatibel ergänzt; Commands-Abonnement und Sync-destroy müssen in Task 11 integriert werden.
+
+## Task 9 abgeschlossen, Task 10 begonnen
+
+Die [erste Nachprüfung](../reports/2026-09-18-synchronisation-fix-1-review.md) fand zwei Wechselwirkungen, behoben in 37c459f. Die [zweite Nachprüfung](../reports/2026-09-18-synchronisation-fix-2-review.md) bestätigt beide als behoben; keine neuen Fehler im Korrekturdiff. Node-Gesamtlauf 227/227. Task 9 ist abgeschlossen. O1 (Authstatus bei noch ungebundener Einrichtung) ist als konkrete Integrationsprüfung für Task 11 vorgemerkt. Task 10 Sicherung/Wiederherstellung läuft mit GPT-6 Astra, hoher Denktiefe. Reale Cloud-/Gerätenachweise bleiben offen.

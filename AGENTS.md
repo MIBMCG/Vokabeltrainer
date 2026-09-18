@@ -1,6 +1,6 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-Fortsetzung am Desktop am 18.09.2026 ausdrücklich beauftragt. GitHub-Stand c60ced1 wurde in die saubere bestehende Arbeitskopie übernommen; die Pause ist beendet. Zuerst Task 9 Korrekturrunde 1 mit unabhängiger Nachprüfung, anschließend Tasks 10–13. Aktuelle [Desktop-Fortsetzung](docs/handoffs/2026-09-18-desktop-fortsetzung.md); die nachfolgende Pausenübergabe bleibt historische Ausgangsevidenz.
+Fortsetzung am Desktop am 18.09.2026 ausdrücklich beauftragt. GitHub-Stand c60ced1 wurde in die saubere bestehende Arbeitskopie übernommen; die Pause ist beendet. Task 9 ist nach zwei Korrekturrunden unabhängig geprüft (37c459f, 227 Node-Tests). Task 10 Sicherung/Wiederherstellung läuft; danach Tasks 11–13. Aktuelle [Desktop-Fortsetzung](docs/handoffs/2026-09-18-desktop-fortsetzung.md); die nachfolgende Pausenübergabe bleibt historische Ausgangsevidenz.
 
 Pause am 18.09.2026 ausdrücklich beauftragt; der aktuelle Stand wird für die Weiterarbeit am Desktop nach GitHub übertragen. Keine Entwicklung während dieser Pause. Maßgeblich ist die [Desktop-Übergabe](docs/handoffs/2026-09-18-desktop-pause.md). Bei ausdrücklicher Fortsetzung auf `codex/vokabeltrainer-v1` zuerst die neun wichtigen Reviewbefunde zu Task 9 korrigieren und unabhängig nachprüfen; danach Tasks 10–13. Tasks 7 und 8 sind geprüft. Gesamtentwurf und Insel-Konzept bleiben bestätigt.
 

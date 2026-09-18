@@ -67,3 +67,6 @@ Task6 review task-6-review.md records a deferred Minor: root #app is already mai
 
 ## Desktop integration follow-up 18 September
 Read the completed Task9 fix report for Commands change subscription and cleanup. Main must connect truthful immediate status updates, scheduler changes and session invalidation without recursive status/render/sync loops; close subscriptions and scheduler on pagehide. Auth failures from discovery/create/join and sync all invalidate the RAM token session before another deliberate connect. Preserve typed practice input and focus for unrelated state/status changes. Add every new browser module to the explicit server whitelist.
+
+## Carried Task9 observation O1
+The scoped fix2 review (docs/reports/2026-09-18-synchronisation-fix-2-review.md) found an unchanged early-status issue: unbound state/datasetSetup may override connect/error published during discover/create/join with local/pending. Task11 owns concrete integration coverage for those autherror paths; preserve actionable phase, invalidate RAMtoken and require deliberate reconnect. Record resolution and carry evidence into final review.
