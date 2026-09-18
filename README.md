@@ -1,12 +1,14 @@
 # Vokabeltrainer
 
-Pause am 17.09.2026 auf Nutzerwunsch. Das Insel-Konzept ist als Gestaltungsrichtung bestätigt. Alles wird für die Weiterarbeit am Laptop gesichert; heute keine weitere Entwicklung. Nächster Schritt nach ausdrücklicher Fortsetzung: unabhängige Review von Task 7, danach Tasks 8–13. Maßgeblich ist die [Laptop-Übergabe](docs/handoffs/2026-09-17-laptop-pause.md).
+Pause am 18.09.2026 auf Nutzerwunsch. Alles wird für die Weiterarbeit am Desktop gesichert. Nächster Schritt nach ausdrücklicher Fortsetzung: die neun offenen Reviewbefunde zur Produktsynchronisation korrigieren, danach Tasks 10–13. Maßgeblich ist die [Desktop-Übergabe](docs/handoffs/2026-09-18-desktop-pause.md).
 
 Ein geplanter Deutsch-Englisch-Vokabeltrainer für Kinder von **10 bis 13 Jahren, Klasse 4 bis 7**. Er soll auf aktuellen Smartphones, Tablets und Computern funktionieren; **iPhone und iPad haben Vorrang**.
 
-**Stand: 17. September 2026 — vollständiger Trainer in Entwicklung.** Lernkern, Runden und Speicherung sowie Einrichtung und Erwachsenenverwaltung sind implementiert und unabhängig geprüft: 187 bestandene Node-Tests und ein echter Edge-Browserablauf für die neue Produktoberfläche. Der vollständige Übungsbildschirm und die Inselreise entstehen als Nächstes. Die technische Verbindungsprobe bleibt ausführbar; zwölf Browser-Szenarien mit simulierter Google-Grenze waren erfolgreich. Echte Google-Anmeldung und Drive-Abgleich in zwei Browsern sind manuell bestätigt. Physische Zwei-Geräte- und iPhone/iPad-Prüfung folgen auf ausdrücklichen Nutzerwunsch erst nach der vollständigen Umsetzung. Aktuelle Nachweise stehen in [ARBEITSSTAND.md](ARBEITSSTAND.md).
+**Stand: 18. September 2026 — vollständiger Trainer in Entwicklung, derzeit pausiert.** Lernkern, Speicherung, Einrichtung, Erwachsenenverwaltung, Übungsbildschirm sowie Inselreise und Avatar sind implementiert und unabhängig geprüft. Die Produktsynchronisation ist implementiert, aber wegen neun wichtiger Reviewbefunde noch nicht freigegeben. Der Node-Lauf vor der Pause bestand 215 Tests; diese decken die neu gefundenen Fehler noch nicht ab. Sicherung/Wiederherstellung, deren Oberfläche und die Produkt-PWA folgen noch. Die technische Verbindungsprobe bleibt ausführbar; ihre frühere manuelle Google-Prüfung ist kein Nachweis für die neue Produktsynchronisation. Reale Produkt-, Zwei-Geräte- und iPhone/iPad-Prüfungen bleiben offen. Details stehen in [ARBEITSSTAND.md](ARBEITSSTAND.md).
 
 Eine [Gestaltungsvorschau mit Startseite, Übung und Inselreise](docs/design/2026-09-17-insel-konzept.md) zeigt die vorgeschlagene Optik. Das Bild ist kein Screenshot einer fertigen App.
+
+Die inzwischen implementierte Inselreise und den Avatar zeigen die [tatsächlichen Browseransichten vom 18.09.2026](docs/reports/2026-09-18-inselreise-avatar.md).
 
 ## Geplanter Lernablauf
 

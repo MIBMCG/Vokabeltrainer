@@ -1,6 +1,8 @@
 # Fortsetzung am Laptop – 18.09.2026
 
-Der Nutzer hat nach dem Klonen und Einlesen ausdrücklich die Weiterarbeit beauftragt. Die Tagespause vom 17.09. ist beendet. Der bestätigte Gesamtentwurf, das Insel-Konzept und die zwölf technischen Präzisierungen bleiben verbindlich. Vollständige Produktumsetzung vor der echten Apple-Geräteabnahme; keine neue pauschale Freigabe nötig.
+Historischer Arbeitsverlauf. Anschließend hat der Nutzer erneut pausiert und die Übergabe an den Desktop beauftragt. Maßgeblich ist jetzt die [Desktop-Pause](2026-09-18-desktop-pause.md).
+
+Der Nutzer hat nach dem Klonen und Einlesen ausdrücklich die Weiterarbeit beauftragt. Die Tagespause vom 17.09. ist beendet. Der bestätigte Gesamtentwurf, das Insel-Konzept und die dokumentierten technischen Präzisierungen bleiben verbindlich. Vollständige Produktumsetzung vor der echten Apple-Geräteabnahme; keine neue pauschale Freigabe nötig.
 
 ## Übernommener Stand
 
@@ -15,9 +17,11 @@ Task 7 ist nach unabhängiger Nachprüfung abgeschlossen. Commit `99d8f13` beheb
 
 Task 8 (Inselreise, Avatar, Abzeichen) ist in `6b83b48` implementiert; `ad3701c` ergänzt die in der Review geforderten direkten Freischaltprüfungen. Die fachliche Nachprüfung ist bestanden. Nachweise: **194/194 Node-Tests**, kompletter Trainer-Browserlauf **4/4**, erweiterter Rewards-Browserlauf **1/1**. [Bericht und tatsächliche Ansichten](../reports/2026-09-18-inselreise-avatar.md).
 
-Task 9 (Produktsynchronisation) wird jetzt umgesetzt. Kleine vorgemerkte Befunde: Task 13 korrigiert den Erschöpfungstext ohne zusätzliche Kandidaten und stärkt den Fokus-Test, indem er den Austausch des alten Radio-DOM-Knotens vor der Fokusprüfung abwartet. Der frühere Minor zu verschachtelten `main`-Elementen bleibt Task 11 zugeordnet.
+Task 9 (Produktsynchronisation) ist zunächst in `a1db93f` implementiert; der dortige Node-Lauf bestand **215/215 Tests**. Die unabhängige Review hat neun wichtige Fehler gefunden, unter anderem bei normalen Drive-Ordnern, gleichzeitigem lokalem Speichern während eines Beitritts, abgebrochener Cloudanlage, Integritätsprüfung und Abgleichstatus. Diese werden vor der Freigabe gezielt reproduziert und korrigiert. Task 9 ist daher noch nicht abgeschlossen.
 
-Danach folgen die Tasks 8–13 des [v1-Plans](../superpowers/plans/2026-09-17-vokabeltrainer-v1.md): Inselreise/Avatar, Produktsynchronisation, Sicherung/Wiederherstellung, Erwachsenen-Integration, Offline-PWA und Gesamtprüfung.
+Kleine vorgemerkte Befunde: Task 13 korrigiert den Erschöpfungstext ohne zusätzliche Kandidaten und stärkt den Fokus-Test, indem er den Austausch des alten Radio-DOM-Knotens vor der Fokusprüfung abwartet. Der frühere Minor zu verschachtelten `main`-Elementen bleibt Task 11 zugeordnet.
+
+Nach der Freigabe von Task 9 folgen die Tasks 10–13 des [v1-Plans](../superpowers/plans/2026-09-17-vokabeltrainer-v1.md): Sicherung/Wiederherstellung, Erwachsenen-Integration, Offline-PWA und Gesamtprüfung.
 
 ## Lokale Prüfwerkzeuge
 

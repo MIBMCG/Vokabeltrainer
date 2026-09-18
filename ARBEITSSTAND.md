@@ -1,10 +1,10 @@
 # Arbeitsstand
 
-Fortsetzung am 18.09.2026 ausdrücklich beauftragt; die Tagespause ist beendet. Aktueller Fortschritt: [Fortsetzung am Laptop](docs/handoffs/2026-09-18-fortsetzung.md). Der folgende Stand vom 17.09. bleibt als Ausgangspunkt erhalten, bis die neuen Arbeitspakete geprüft sind.
+Pause am 18.09.2026 ausdrücklich beauftragt. Entwicklung angehalten; der Nutzer hat die Sicherung aller Projektänderungen nach GitHub und eine Übergabe für den Desktop beauftragt. Maßgeblich ist die [Desktop-Übergabe](docs/handoffs/2026-09-18-desktop-pause.md). Erst nach ausdrücklicher Fortsetzung weiterarbeiten.
 
 Änderung der Prüfungsreihenfolge am 17.09.2026: Der Nutzer beauftragt ausdrücklich, zuerst die vollständige App gemäß bestätigtem Gesamtentwurf umzusetzen und erst danach beim Freund auf iPhone/iPad zu testen. Die bisherige Geräteprüfung vor umfangreicher Lernoberfläche ist damit als Entwicklungssperre aufgehoben. Reale Geräteabnahme bleibt offen und darf nicht als bestanden gelten. Bereits bestätigte manuelle Google-/Drive-Tests in zwei Browsern gelten weiter. Keine neue pauschale Startfreigabe verlangen; Hosting/Veröffentlichung und Kostenmodell werden dadurch nicht automatisch geändert.
 
-Stand: **17.09.2026**
+Stand: **18.09.2026**
 
 ## Bestätigt und beauftragt
 
@@ -14,15 +14,15 @@ Ziel: Deutsch-Englisch-Vokabeltrainer für 10–13-Jährige, Klassen 4–7, mit 
 
 ## Aktuelles Entwicklungspaket
 
-### Vollständige App: Umsetzung läuft
+### Vollständige App: Umsetzung pausiert
 
-Die Umsetzung folgt dem [v1-Plan](docs/superpowers/plans/2026-09-17-vokabeltrainer-v1.md) und [Produkt-Datenvertrag](docs/PRODUKT-DATENFORMAT.md). Die Tasks 1–6 sind implementiert und unabhängig geprüft: Ereignisformat, Inhaltsfassungen/Epochen, adaptive Lern- und Belohnungslogik, fortsetzbare Runden, atomare Speicherung sowie Einrichtung und Erwachsenenverwaltung. Die Produktoberfläche liegt unter `/trainer/`; Üben, Reise und Avatar sind dort noch ausdrücklich als folgende Pakete gekennzeichnet.
+Die Umsetzung folgt dem [v1-Plan](docs/superpowers/plans/2026-09-17-vokabeltrainer-v1.md) und [Produkt-Datenvertrag](docs/PRODUKT-DATENFORMAT.md). Tasks 1–8 sind implementiert und unabhängig geprüft: Ereignisformat, Inhaltsfassungen/Epochen, adaptive Lern- und Belohnungslogik, fortsetzbare Runden, atomare Speicherung, Einrichtung/Erwachsenenverwaltung, Übungsbildschirm sowie Inselreise und Avatar. Die Produktoberfläche liegt unter `/trainer/`. Kleine vorgemerkte Befunde sind in der Desktop-Übergabe einzelnen Folgeaufgaben zugeordnet.
 
-Aktueller belegter Gesamtlauf: **187/187 Node-Tests**. Der echte Edge-Browserlauf für Einrichtung/Verwaltung bestand **1/1** und prüfte DOM, IndexedDB, PIN-Sperre, Hintergrundwechsel, Wiederaufnahme, Tabellenübernahme und gezielte Fehlerszenarien. Die fünf Reviewbefunde zu PIN-Rennen, Einrichtungsentwurf, Importklärung und Variantenlänge sind in `86d7bb7` behoben und unabhängig nachgeprüft. Ein kleiner semantischer Befund (verschachteltes `main`) ist für Task 11/Abschlussprüfung vorgemerkt. Reale Apple-Geräte sind damit nicht abgenommen.
+Aktueller belegter Gesamtlauf beim Pausieren: **215/215 Node-Tests**, 0 Fehler, Node 26.8.2, Produktcommit `a1db93f`. Die unabhängige Task-9-Review hat anschließend zur ersten Implementierung neun wichtige Fehler dokumentiert, die dieser Testbestand noch nicht abdeckt; Task 9 bleibt offen. Frühere Browsernachweise dieser Sitzung: kompletter Trainer-Lauf **4/4** auf `6b83b48`, anschließend erweiterter Rewards-Lauf **1/1** auf `ad3701c`. DOM-/IndexedDB-Pfade wurden mit synthetischen Daten geprüft; reale Apple-Geräte sind damit nicht abgenommen.
 
-Task 7 ist in 85b3629 implementiert; die unabhängige Review steht aus. Der neue Pausenstand und seine Prüfbelege stehen in der Laptop-Übergabe. Die [aktuelle Übergabe](docs/handoffs/2026-09-17-produktentwicklung.md) enthält Commits, Nachweise und verbleibende Grenzen. Zuletzt nachgewiesener Remote-Zwischenstand vor diesem Dokumentationsupdate: `6e44ce197a860e7adfd27c8bd322f2e528a30e06` auf `origin/codex/vokabeltrainer-v1`; aktuelle lokale/entfernte Commits bei Übernahme frisch prüfen.
+Task 7 ist mit `99d8f13` korrigiert und nachgeprüft. Task 8 ist mit `6b83b48` und `ad3701c` geprüft. Task 9 ist in `a1db93f` erstmals implementiert; alle neun wichtigen Befunde der [unabhängigen Review](docs/reports/2026-09-18-synchronisation-review.md) sind offen. Die Korrekturrunde wurde auf Nutzerwunsch vor der ersten Produkt-/Teständerung angehalten. Bei Fortsetzung zuerst diese Fehler mit Regressionstests beheben und nachprüfen, dann Tasks 10–13. Branch, Prüfbelege und genaue Übernahmeschritte stehen in der [Desktop-Übergabe](docs/handoffs/2026-09-18-desktop-pause.md).
 
-Auf Wunsch entstand ein [visuelles Konzept mit drei Ansichten](docs/design/2026-09-17-insel-konzept.md). Es ist eine Gestaltungsvorschau, noch kein Screenshot der implementierten App.
+Auf Wunsch entstand ein [visuelles Konzept mit drei Ansichten](docs/design/2026-09-17-insel-konzept.md). Es bleibt eine Gestaltungsvorschau. Zusätzlich liegen jetzt [tatsächliche Browseransichten der implementierten Inselreise und des Avatars](docs/reports/2026-09-18-inselreise-avatar.md) vor.
 
 Der [Benutzungsleitfaden](docs/BENUTZUNG.md) beschreibt die bestätigten Abläufe mit ausdrücklicher Kennzeichnung des Entwicklungsstands. Keine Produkt-Geräteabnahme oder Bereitstellung ist damit behauptet.
 Der [Plan der Google-Drive-Probe](docs/superpowers/plans/2026-09-16-google-drive-probe.md) beschreibt die begrenzte technische Probe vor umfangreicher Lernoberfläche. Sie nutzt ausschließlich synthetische Antworten und einen gekennzeichneten Drive-Testbestand. Die Produkt-App wird getrennt aufgebaut; die Probe bleibt als eigenständiger Prüfstand erhalten.
@@ -33,9 +33,9 @@ Auf `92f044e` liefen `npm test` mit **74/74 bestandenen Tests** und zwölf Brows
 
 Die unabhängigen Aufgabenprüfungen sind abgeschlossen. GPT-5.6 Sol mit hoher Denktiefe übernahm Implementierung und Funktionsprüfung, Sol mit mittlerer Denktiefe Dokumentation und deren Prüfung. GPT-6 Astra mit hoher Denktiefe fand in der Gesamtprüfung zwei zusätzliche Browser-/Anmeldefehler; Sol korrigierte beide in `92f044e`. Astra bestätigte anschließend beide als behoben, ohne neuen Befund. Der testbare Entwicklungsstand ist freigegeben. Der Abschlussstand `970a0de2b6c8101cec86164fd354291bcc4957c1` wurde auf `origin/codex/google-drive-probe` übertragen und mit `git ls-remote` identisch bestätigt; der anschließende Dokumentationscommit hält diesen Nachweis fest. Keine Integration nach `main` oder öffentliche Bereitstellung wurde durchgeführt.
 
-Aktueller Arbeitszweig: `codex/vokabeltrainer-v1` (von `codex/google-drive-probe` abgeleitet). Getrennte Arbeitskopie im ursprünglichen Checkout unter `.worktrees/drive-probe/`. Ausgangspunkt ist `707d504` auf `main`; aktuelle Commits und Remote frisch prüfen. Die Arbeitskopie erfordert keinen bestimmten Rechnerpfad auf einem anderen System.
+Aktueller Arbeitszweig: `codex/vokabeltrainer-v1` (von `codex/google-drive-probe` abgeleitet). Am Laptop wurde am 18.09. ein frischer regulärer Checkout auf diesem Branch angelegt; die ältere Worktree-Angabe gehört zum vorherigen Rechner. Aktuelle Commits und Remote bei Übernahme frisch prüfen. Kein bestimmter Rechnerpfad ist erforderlich.
 
-Aktuelle Übergabe: [Vollständige Produktentwicklung](docs/handoffs/2026-09-17-produktentwicklung.md). Die [Probe-Übergabe](docs/handoffs/2026-09-17-verbindungsprobe.md) dokumentiert den geprüften Ausgangspunkt. Vorgeschichte: [Pause und Wiedereinstieg](docs/handoffs/2026-09-16-pause.md).
+Aktuelle Übergabe: [Desktop-Pause](docs/handoffs/2026-09-18-desktop-pause.md). Historische Zwischenstände: [Produktentwicklung](docs/handoffs/2026-09-17-produktentwicklung.md) und [Fortsetzung am Laptop](docs/handoffs/2026-09-18-fortsetzung.md). Die [Probe-Übergabe](docs/handoffs/2026-09-17-verbindungsprobe.md) dokumentiert den geprüften Ausgangspunkt.
 Einrichtung und Prüfablauf: [Google-Drive-Probe](docs/GOOGLE-DRIVE-PROBE.md).
 
 ## Äußere Voraussetzungen und nächste Schritte
@@ -48,8 +48,8 @@ Die erste Anmeldung, Drive-Übertragung und Rücksetzung sind bestätigt. Nach d
 
 ## Noch nicht vorhanden oder nachgewiesen
 
-- Inselreise/Avatar und fertige Offline-PWA fehlen; der Kinder-Übungsbildschirm ist implementiert, aber noch nicht unabhängig geprüft.
-- Produktfähige Synchronisation einschließlich vollständigem Sicherungsimport und Erwachsenen-Konfliktlösung.
+- Fertige Produkt-Offline-PWA fehlt; Übungsbildschirm, Inselreise und Avatar sind bereits geprüft.
+- Freigabe der Produktsynchronisation: neun wichtige Reviewbefunde offen. Vollständiger Sicherungsimport und Erwachsenen-Konfliktlösung noch nicht implementiert.
 - Isolierter Offline-Start ohne erreichbaren Server und realer Zwei-Geräte-Abgleich; der Abgleich zwischen zwei Browsern desselben Rechners ist bestätigt.
 - Reale iPhone-/iPad-Abnahme und festgelegte Mindestversionen.
 - Eingerichtetes Hosting oder veröffentlichte Trainer-URL.
@@ -58,6 +58,9 @@ Die allgemeine Lizenzentscheidung bleibt bewusst zurückgestellt. Keine öffentl
 
 ## Bisherige Berichte
 
+- [Übungsbildschirm-Korrektur](docs/reports/2026-09-18-uebungsbildschirm-korrektur.md).
+- [Inselreise/Avatar mit echten Screenshots](docs/reports/2026-09-18-inselreise-avatar.md).
+- [Synchronisation: Implementierungszwischenstand](docs/reports/2026-09-18-synchronisation-zwischenstand.md) und [offene unabhängige Review](docs/reports/2026-09-18-synchronisation-review.md).
 - [Gesamtentwurf und Anforderungsklärung](docs/reports/2026-09-16-gesamtentwurf.md), historischer Stand vor Entwurfsbestätigung.
 - [Ursprüngliches Dokumentationspaket](docs/reports/2026-09-16-dokumentation.md).
 - [Drive-Adapter](docs/reports/2026-09-16-drive-adapter.md).

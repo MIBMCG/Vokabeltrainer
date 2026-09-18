@@ -1,6 +1,6 @@
 # Hier mit der Weiterarbeit beginnen
 
-Fortsetzung am 18.09.2026 ausdrücklich beauftragt; die Tagespause ist beendet. Das Insel-Konzept bleibt bestätigt. Aktueller Fortschritt und nächster Schritt stehen in der [Fortsetzungsübergabe](docs/handoffs/2026-09-18-fortsetzung.md).
+Pause am 18.09.2026 auf Nutzerwunsch. Code, Prüfberichte und offene Befunde werden für den Desktop gesichert. Das Insel-Konzept bleibt bestätigt. Maßgeblich ist die [Desktop-Übergabe](docs/handoffs/2026-09-18-desktop-pause.md); bis zur ausdrücklichen Fortsetzung keine weitere Entwicklung.
 
 Dieses Projekt kann mit beliebigen Entwicklungswerkzeugen und KI-Systemen fortgesetzt werden. Der Gesprächsverlauf ist dafür nicht erforderlich.
 
@@ -13,7 +13,7 @@ Dieses Projekt kann mit beliebigen Entwicklungswerkzeugen und KI-Systemen fortge
 5. [Architektur](docs/ARCHITEKTUR.md) und [Roadmap](docs/ROADMAP.md)
 6. [Bestätigter Gesamtentwurf](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md) einschließlich E01–E10 und [aktueller Umsetzungsplan](docs/superpowers/plans/2026-09-17-vokabeltrainer-v1.md).
 
-Aktuelle Übergabe: [Produktentwicklung vom 17.09.2026](docs/handoffs/2026-09-17-produktentwicklung.md). Der Nutzer hat die vollständige Umsetzung vor den Apple-Gerätetest gezogen; Entwicklung auf `codex/vokabeltrainer-v1` fortsetzen.
+Aktuelle Übergabe: [Desktop-Pause vom 18.09.2026](docs/handoffs/2026-09-18-desktop-pause.md). Nach Fortsetzung zuerst Task 9 korrigieren und unabhängig nachprüfen, danach Tasks 10–13. Die vollständige Umsetzung bleibt vor der Apple-Geräteabnahme beauftragt.
 
 ## Vor dem Arbeiten
 
@@ -29,6 +29,6 @@ Bei einem bestehenden Checkout lokale Änderungen vor dem Aktualisieren prüfen.
 
 ## Kopierbarer Wiedereinstieg
 
-> Arbeite am Repository MIBMCG/Vokabeltrainer auf `codex/vokabeltrainer-v1` weiter. Lies zuerst AGENTS.md, ARBEITSSTAND.md und die dort verlinkte Übergabe vom 17.09.2026. Prüfe Branch, Remote und lokale Änderungen. Die synthetische Verbindungsprobe ist lokal implementiert und automatisiert geprüft; die echte Google-Anmeldung und der Drive-Abgleich zwischen zwei Browsern wurden durch den Nutzer bestätigt. Physischer Zwei-Geräte-Abgleich und iPhone/iPad-Abnahme bleiben offen. Der Trainer ist teilweise implementiert: Tasks 1–6 geprüft, Task 7 implementiert mit noch offener unabhängiger Review. Zusätzliche kostenpflichtige Cloudabos sind ausgeschlossen. Setze an der dokumentierten Produktentwicklung an; die Geräteabnahme wurde ausdrücklich bis nach der Umsetzung verschoben. Erfinde keine bestandene Google-, Geräte- oder Hostingabnahme.
+> Beende die Pause und arbeite am Repository MIBMCG/Vokabeltrainer auf `codex/vokabeltrainer-v1` weiter. Lies zuerst AGENTS.md, ARBEITSSTAND.md und docs/handoffs/2026-09-18-desktop-pause.md. Prüfe Branch, Remote und lokale Änderungen. Tasks 1–8 sind geprüft; Task 9 ist in a1db93f implementiert, hat aber neun wichtige offene Reviewbefunde in docs/reports/2026-09-18-synchronisation-review.md. Korrigiere diese mit gezielten Regressionstests und unabhängiger Nachprüfung; danach führe Tasks 10–13 vollständig aus. Beachte die technischen Entscheidungen und Integrationshinweise der Übergabe. Gesamtentwurf und Insel-Konzept sind bestätigt; keine erneute pauschale Startfreigabe nötig. Reale Produkt-Google-, Zwei-Geräte-, iPhone/iPad- und Hostingabnahmen bleiben offen. Kein zusätzliches kostenpflichtiges Cloudabo und keine Veröffentlichung ohne Auftrag.
 
 Der Wiedereinstieg gibt Orientierung. Der konkrete aktuelle Auftrag bestimmt, welche Änderungen, Pushes und Veröffentlichungen autorisiert sind.

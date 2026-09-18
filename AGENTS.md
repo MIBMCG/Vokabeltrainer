@@ -1,6 +1,6 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-Fortsetzung am 18.09.2026 ausdrücklich beauftragt. Die Tagespause vom 17.09. ist beendet. Auf `codex/vokabeltrainer-v1` zunächst die unabhängige Review von Task 7 einschließlich Korrekturen abschließen, danach Tasks 8–13 ausführen. Das Insel-Konzept bleibt bestätigt. Aktueller Nachweis: [Fortsetzung am Laptop](docs/handoffs/2026-09-18-fortsetzung.md); die ältere [Laptop-Übergabe](docs/handoffs/2026-09-17-laptop-pause.md) bleibt historische Grundlage.
+Pause am 18.09.2026 ausdrücklich beauftragt; der aktuelle Stand wird für die Weiterarbeit am Desktop nach GitHub übertragen. Keine Entwicklung während dieser Pause. Maßgeblich ist die [Desktop-Übergabe](docs/handoffs/2026-09-18-desktop-pause.md). Bei ausdrücklicher Fortsetzung auf `codex/vokabeltrainer-v1` zuerst die neun wichtigen Reviewbefunde zu Task 9 korrigieren und unabhängig nachprüfen; danach Tasks 10–13. Tasks 7 und 8 sind geprüft. Gesamtentwurf und Insel-Konzept bleiben bestätigt.
 
 Änderung der Prüfungsreihenfolge am 17.09.2026: Der Nutzer beauftragt ausdrücklich, zuerst die vollständige App gemäß bestätigtem Gesamtentwurf umzusetzen und erst danach beim Freund auf iPhone/iPad zu testen. Die bisherige Geräteprüfung vor umfangreicher Lernoberfläche ist damit als Entwicklungssperre aufgehoben. Reale Geräteabnahme bleibt offen und darf nicht als bestanden gelten. Bereits bestätigte manuelle Google-/Drive-Tests in zwei Browsern gelten weiter. Keine neue pauschale Startfreigabe verlangen; Hosting/Veröffentlichung und Kostenmodell werden dadurch nicht automatisch geändert.
 
@@ -24,7 +24,7 @@ Das erste Dokumentationspaket wurde beauftragt und veröffentlicht. Der anschlie
 
 Die Einzelfragen Q1–Q14 sowie der [Gesamtentwurf](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md) einschließlich E01–E10 sind bestätigt (Nutzerantwort A vom 16.09.2026). Die Entwicklung beginnt nach dem [Plan zur Google-Drive-Probe](docs/superpowers/plans/2026-09-16-google-drive-probe.md). Keine erneute Entwurfs- oder pauschale Startfreigabe einholen. Reale Google-/Geräteprüfungen bleiben gesonderte Nachweise. Die frühe Verbindungsprobe wurde durchgeführt. Die restliche echte Geräteprüfung erfolgt auf Nutzerwunsch erst nach Umsetzung der vollständigen App.
 
-Aktuelle Steuerung: Vollständige Umsetzung auf `codex/vokabeltrainer-v1` fortsetzen. Konzept bestätigt; Tasks 1–6 unabhängig geprüft. Der aktuelle Fortschritt steht in der Übergabe vom 18.09.2026. Ältere Pausen- und Fortsetzungsnotizen sind historische Vorgeschichte.
+Aktuelle Steuerung: Nutzerpause; bei ausdrücklicher Fortsetzung die vollständige Umsetzung auf `codex/vokabeltrainer-v1` wieder aufnehmen. Konzept bestätigt; Tasks 1–8 unabhängig geprüft, kleinere vorgemerkte Befunde stehen in der Desktop-Übergabe. Task 9 hat neun offene wichtige Reviewbefunde. Ältere Pausen- und Fortsetzungsnotizen sind historische Vorgeschichte.
 
 ## Feste Leitplanken
 
