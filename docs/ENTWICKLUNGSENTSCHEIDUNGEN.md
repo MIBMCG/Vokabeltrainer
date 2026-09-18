@@ -1,6 +1,6 @@
 # Technische Präzisierungen während der Umsetzung
 
-Stand: 17.09.2026. Diese Entscheidungen konkretisieren den bestätigten [Gesamtentwurf](superpowers/specs/2026-09-16-vokabeltrainer-design.md), ohne Kostenmodell, Kontenmodell oder Produktumfang zu ändern. Maßgeblich für die exakten Datenformen ist der [Produkt-Datenvertrag](PRODUKT-DATENFORMAT.md). Die Liste beschreibt Entscheidungen, nicht automatisch die Fertigstellung aller genannten Verbraucher.
+Stand: 18.09.2026. Diese Entscheidungen konkretisieren den bestätigten [Gesamtentwurf](superpowers/specs/2026-09-16-vokabeltrainer-design.md), ohne Kostenmodell, Kontenmodell oder Produktumfang zu ändern. Maßgeblich für die exakten Datenformen ist der [Produkt-Datenvertrag](PRODUKT-DATENFORMAT.md). Die Liste beschreibt Entscheidungen, nicht automatisch die Fertigstellung aller genannten Verbraucher.
 
 | Nr. | Entscheidung und Grund | Falls die Entscheidung geändert wird |
 | --- | --- | --- |
@@ -16,5 +16,9 @@ Stand: 17.09.2026. Diese Entscheidungen konkretisieren den bestätigten [Gesamte
 | 10 | Der lokale Zustands-Hash wandelt ausschließlich die lokalen ID-Maps in sortierte Eintragslisten um. So bleiben zulässige Spezial-IDs erhalten, während das Austauschformat gefährliche Objektschlüssel weiterhin zurückweist. Alle CAS-Verbraucher nutzen denselben Helfer. | Lokalen Hash und alle konkurrierenden Speicher-/Sync-Verbraucher gemeinsam anpassen. |
 | 11 | PIN-Speicherung prüft den zu Operationsbeginn erwarteten Prüfeintrag zusätzlich zum Zustands-CAS. PIN-Aktionen laufen seriell; eine spätere Sperre entwertet laufende Entsperrvorgänge. Sonst können verspätete Antworten eine Hintergrundsperre aufheben oder die PIN überschreiben. | PIN-Gate, Speicheradapter und asynchrone Sperrtests gemeinsam anpassen. |
 | 12 | Die Avataransicht erhält die Profil-ID ausdrücklich neben den projizierten Werten. Diese Werte enthalten ihren Map-Schlüssel nicht; die Speicherung muss trotzdem das richtige Kind adressieren. | Parameterübergabe zwischen Oberfläche und Avatarbefehl anpassen. |
+| 13 | Die geplante Produkt-Synchronisation darf den bestehenden Drive-Adapter um das optionale Metadatenfeld `version` ergänzen. Nur eine identische, zuvor mit dem Inhalt geprüfte Version erlaubt das Überspringen erneuter Downloads; ohne Version wird erneut gelesen. Die bisherige Metadatenliste enthält kein verlässliches Änderungsmerkmal. | Zusätzliche Downloads oder eine andere ausdrücklich geprüfte Änderungserkennung; fehlende Metadaten dürfen keine Integritätsprüfung ersetzen. |
+| 14 | Die Übungsoberfläche fragt die vorhandene `nextTask().canExpand`-Entscheidung über die rein lesende Commands-Methode `roundAvailability({roundId})` ab. Dadurch nutzt sie dieselbe injizierte Uhr und Lernzeitzone wie Mutationen und bietet keine wirkungslose Erweiterung an. | Verfügbarkeitsabfrage und UI gemeinsam anpassen; keine zweite Kandidatenlogik in der Darstellung. |
 
 Alle Entscheidungen entstanden aus konkreten Schnittstellen- oder Reviewbefunden. Die Umsetzung wird mit den zugehörigen Produzenten und Verbrauchern geprüft; echte iPhone-/iPad-Nachweise folgen erst nach Fertigstellung. Der jeweilige Stand steht im [Arbeitsstand](../ARBEITSSTAND.md).
+
+Quelle für Nr. 13, geprüft am 18.09.2026: [Google Drive Files v3](https://developers.google.com/workspace/drive/api/reference/rest/v3/files) beschreibt `version` als monoton steigende Dateiversion für Änderungen auf dem Server. Die konkrete sichere Verwendung im Cache ist unsere Implementierungsentscheidung und benötigt eigene Tests.

@@ -13,7 +13,9 @@ Der Nutzer hat nach dem Klonen und Einlesen ausdrücklich die Weiterarbeit beauf
 
 Task 7 ist nach unabhängiger Nachprüfung abgeschlossen. Commit `99d8f13` behebt die übersehene Hintergrundarchivierung und Profilkonflikte sowie die angebotene Erweiterungsaktion ohne zusätzliche Kandidaten. Profilungültigkeit führt sichtbar und ohne Wertung zur Profilauswahl; eine weiterhin gültige Eingabe bleibt erhalten. Nachweise: **192/192 Node-Tests**, **5/5 fokussierte Practice-Tests**, **2/2 fokussierte Edge-Szenarien**. Siehe [Korrekturbericht](../reports/2026-09-18-uebungsbildschirm-korrektur.md) und [Node-26-Bericht](../reports/2026-09-18-node26-testkorrektur.md).
 
-Task 8 (Inselreise, Avatar, Abzeichen) wird jetzt umgesetzt. Ein kleiner verbliebener Textbefund aus Task 7 wird in Task 13 korrigiert: Ohne zusätzliche Kandidaten ist die Erweiterungsschaltfläche verborgen, der erklärende Text verspricht aber weiterhin zusätzliche Wörter. Der frühere Minor zu verschachtelten `main`-Elementen bleibt Task 11 zugeordnet.
+Task 8 (Inselreise, Avatar, Abzeichen) ist in `6b83b48` implementiert; `ad3701c` ergänzt die in der Review geforderten direkten Freischaltprüfungen. Die fachliche Nachprüfung ist bestanden. Nachweise: **194/194 Node-Tests**, kompletter Trainer-Browserlauf **4/4**, erweiterter Rewards-Browserlauf **1/1**. [Bericht und tatsächliche Ansichten](../reports/2026-09-18-inselreise-avatar.md).
+
+Task 9 (Produktsynchronisation) wird jetzt umgesetzt. Kleine vorgemerkte Befunde: Task 13 korrigiert den Erschöpfungstext ohne zusätzliche Kandidaten und stärkt den Fokus-Test, indem er den Austausch des alten Radio-DOM-Knotens vor der Fokusprüfung abwartet. Der frühere Minor zu verschachtelten `main`-Elementen bleibt Task 11 zugeordnet.
 
 Danach folgen die Tasks 8–13 des [v1-Plans](../superpowers/plans/2026-09-17-vokabeltrainer-v1.md): Inselreise/Avatar, Produktsynchronisation, Sicherung/Wiederherstellung, Erwachsenen-Integration, Offline-PWA und Gesamtprüfung.
 
