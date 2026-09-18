@@ -64,3 +64,6 @@ Use the actual completion date for report/handoff filenames. The user approved t
 Resolve the carried Task7 Minor: when roundAvailability/nextTask canExpand is false, exhausted-round text must not promise additional available words.
 Resolve the carried Task8 Minor: wait until asynchronous avatar persistence has replaced the old radio DOM node, then assert focus on the new selected radio; do not mistake old-node focus for persistence.
 Include all current technical decisions (more than twelve) and preserve their evidence. Task11 owns the already-carried nested-main correction; confirm its resolution in final review.
+
+## Additional Task11 carried Minor observations
+From docs/reports/2026-09-18-abgleich-sicherung-oberflaeche-review.md: M1 duplicated five-status formatter/conditions in ui/sync.js and ui/shell.js; consolidate a small shared formatter when completing final polish, preserving exact labels. M2 browser-level invalidation/reconnect coverage after auth errors in unbound discovery, initial create and join is narrower than the Node status tests; add concrete synthetic integration cases for these wrapper paths. Preserve finalTask11fix results; do not reimplement reviewed functions. Finalreview must see explicit disposition of both.
