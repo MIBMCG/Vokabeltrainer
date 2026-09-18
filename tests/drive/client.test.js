@@ -10,6 +10,7 @@ const jsonMetadata = (overrides = {}) => ({
   parents: ['folder-a'],
   appProperties: {kind: 'probe', dataset: 'set-a'},
   trashed: false,
+  version: '7',
   ...overrides,
 });
 
@@ -113,6 +114,20 @@ test('collects every search page and obtains a fresh token for every request', a
   assert.equal(requests[1].parsed.searchParams.get('pageToken'), 'next page');
   assert.equal(requests[0].init.headers.Authorization, 'Bearer token-1');
   assert.equal(requests[1].init.headers.Authorization, 'Bearer token-2');
+  assert.match(requests[0].parsed.searchParams.get('fields'), /version/);
+});
+
+test('accepts an optional decimal Drive version and rejects malformed values', async () => {
+  const values = [jsonMetadata({version: undefined}), jsonMetadata({version: '9007199254740993'}), jsonMetadata({version: '1.5'})];
+  let index = 0;
+  const client = createDriveClient({
+    getToken: () => 'token-a',
+    fetchImpl: async () => Response.json(values[index++]),
+  });
+
+  assert.equal((await client.metadata('file-a')).version, undefined);
+  assert.equal((await client.metadata('file-a')).version, '9007199254740993');
+  await assert.rejects(client.metadata('file-a'), expectDriveError('invalid'));
 });
 
 test('rejects incomplete or malformed search pages instead of returning partial data', async () => {

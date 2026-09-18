@@ -1,7 +1,7 @@
 const DRIVE_API_ORIGIN = 'https://www.googleapis.com';
 const DRIVE_API_ROOT = `${DRIVE_API_ORIGIN}/drive/v3`;
 const DRIVE_UPLOAD_ROOT = `${DRIVE_API_ORIGIN}/upload/drive/v3`;
-const METADATA_FIELDS = 'id,name,mimeType,parents,appProperties,trashed';
+const METADATA_FIELDS = 'id,name,mimeType,parents,appProperties,trashed,version';
 const FOLDER_MIME_TYPE = 'application/vnd.google-apps.folder';
 const JSON_MIME_TYPE = 'application/json';
 const SAFE_ID = /^[A-Za-z0-9_-]+$/;
@@ -59,6 +59,10 @@ function validateMetadata(value) {
   }
   assertAppProperties(value.appProperties);
   if (typeof value.trashed !== 'boolean') throw invalid('Drive-Papierkorbstatus ist ungültig.');
+  if (value.version !== undefined
+    && (typeof value.version !== 'string' || !/^(?:0|[1-9][0-9]*)$/.test(value.version))) {
+    throw invalid('Die Drive-Dateiversion ist ungültig.');
+  }
   return value;
 }
 

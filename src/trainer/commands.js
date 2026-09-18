@@ -11,10 +11,11 @@ import {
   nextTask,
   startRound,
 } from './learning/rounds.js';
-import {digest} from './model/canonical.js';
+import {canonical, digest} from './model/canonical.js';
 import {ProductError} from './model/errors.js';
 import {nextLearningId, revisionPayload} from './model/revisions.js';
 import {assertLedger} from './model/schema.js';
+import {validatePacket} from './sync/packets.js';
 
 const VERSION = {
   format: 'vokabeltrainer-product',
@@ -42,6 +43,7 @@ const ROUND_KEYS = [
   'pausedWordIds', 'answeredIds', 'wordCounts', 'lastWordId', 'current', 'feedback', 'status',
 ];
 const ID_PATTERN = /^[A-Za-z0-9_-]{1,128}$/;
+const HASH_PATTERN = /^[0-9a-f]{64}$/;
 
 function fail(code, message) {
   throw new ProductError(code, message);
@@ -73,6 +75,42 @@ function assertIdArray(value, message) {
   if (!Array.isArray(value) || value.some((entry) => typeof entry !== 'string')) invalid(message);
   for (const entry of value) assertId(entry, message);
   if (new Set(value).size !== value.length) invalid(message);
+}
+
+function assertBinding(value) {
+  if (value === null) return;
+  assertExactKeys(value, ['accountId', 'folderId', 'descriptorFileId', 'datasetId'], 'Die Drive-Bindung ist ungültig.');
+  for (const key of ['accountId', 'folderId', 'descriptorFileId', 'datasetId']) {
+    assertId(value[key], 'Die Drive-Bindung ist ungültig.');
+  }
+}
+
+function assertPendingPacket(value) {
+  assertExactKeys(value, ['packet', 'driveFileId', 'confirmed'], 'Ein ausstehendes Drive-Paket ist ungültig.');
+  validatePacket(value.packet);
+  if (value.driveFileId !== null) assertId(value.driveFileId, 'Die Drive-Datei-ID ist ungültig.');
+  if (value.confirmed !== false) invalid('Ein ausstehendes Drive-Paket hat einen ungültigen Bestätigungsstatus.');
+}
+
+function assertKnownFile(value) {
+  assertExactKeys(value, ['fileId', 'contentHash', 'kind'], 'Ein bekannter Drive-Dateieintrag ist ungültig.');
+  assertId(value.fileId, 'Die Drive-Datei-ID ist ungültig.');
+  if (typeof value.contentHash !== 'string' || !HASH_PATTERN.test(value.contentHash)) {
+    invalid('Der bekannte Drive-Dateihash ist ungültig.');
+  }
+  if (!['dataset', 'packet', 'epoch', 'snapshot-part', 'snapshot-manifest', 'safety-copy'].includes(value.kind)) {
+    invalid('Die bekannte Drive-Dateiart ist ungültig.');
+  }
+}
+
+function assertQuarantine(value) {
+  assertExactKeys(value, ['fileId', 'code', 'message', 'value'], 'Ein Quarantäneeintrag ist ungültig.');
+  assertId(value.fileId, 'Die Drive-Datei-ID ist ungültig.');
+  if (typeof value.code !== 'string' || value.code.length === 0
+    || typeof value.message !== 'string' || value.message.length === 0) {
+    invalid('Ein Quarantäneeintrag ist ungültig.');
+  }
+  canonical(value.value);
 }
 
 function own(record, key) {
@@ -186,13 +224,13 @@ function assertProductState(value, expectedDeviceId = null) {
   if (value.outboxEventIds.some((eventId) => !eventIds.has(eventId))) {
     invalid('Ein ausstehendes Ereignis fehlt im Fachmodell.');
   }
-  for (const key of [
-    'pendingPackets', 'knownFiles', 'quarantinedFiles', 'safetyCopies', 'restoreJobs',
-    'snapshotManifests',
-  ]) {
+  for (const key of ['pendingPackets', 'knownFiles', 'quarantinedFiles', 'safetyCopies', 'restoreJobs', 'snapshotManifests']) {
     if (!Array.isArray(value[key])) invalid('Eine lokale Speicherliste ist ungültig.');
   }
-  if (value.binding !== null) assertRecord(value.binding, 'Die Drive-Bindung ist ungültig.');
+  assertBinding(value.binding);
+  value.pendingPackets.forEach(assertPendingPacket);
+  value.knownFiles.forEach(assertKnownFile);
+  value.quarantinedFiles.forEach(assertQuarantine);
   if (value.pinVerifier !== null) assertRecord(value.pinVerifier, 'Der lokale PIN-Prüfwert ist ungültig.');
   return {
     ...structuredClone(value),

@@ -80,6 +80,22 @@ function addRoundAnswer(f, ledger, {roundId, answerId, clock, correct = true}) {
   ledger.events.push(started, answer);
 }
 
+test('rejects malformed persisted Drive transport records at the command boundary', async () => {
+  const state = validProductState();
+  state.knownFiles.push({fileId: 'file-a', contentHash: 'not-a-hash', kind: 'packet'});
+
+  await assert.rejects(
+    createCommands({
+      store: makeMemoryStore(state),
+      now: () => new Date('2026-09-17T10:00:00.000Z'),
+      id: sequenceIds(),
+      deviceId: 'dev1',
+      onChange: () => {},
+    }),
+    (error) => error?.code === 'invalid',
+  );
+});
+
 test('setup creates the version-one product state and publishes only its committed clone', async () => {
   const store = makeMemoryStore(null);
   const changed = [];
