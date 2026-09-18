@@ -4,7 +4,7 @@ Stand: **18.09.2026**
 
 Die vollständige Version 1 gemäß [bestätigtem Gesamtentwurf](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md) und [Produkt-Datenvertrag](docs/PRODUKT-DATENFORMAT.md) ist auf `codex/vokabeltrainer-v1` implementiert. Task 13 schloss letzte Bedienungsbefunde, portable Browserwerkzeuge, vollständige Regression, visuelle Prüfung und die portable Dokumentation ab. Ausgangscode: `3b1d16d`; Reviewfix-1-Produktcode `11e3128` korrigiert zusätzlich die Profilweiterleitung. Der [Abschlussbericht](docs/reports/2026-09-18-vokabeltrainer-v1.md) enthält die vollständige Evidenz einschließlich der korrigierten Abschlussmatrix; die [Übergabe](docs/handoffs/2026-09-18-vokabeltrainer-v1.md) nennt den nächsten Schritt.
 
-Die unabhängige Task-13- und Gesamtprüfung des Branches folgt nach diesem Paket. Sie ist noch keine bestandene Freigabe. Reale Produktprüfungen mit Google Drive auf zwei physischen Geräten, Safari und Home-Bildschirm-App auf iPhone/iPad sowie eine HTTPS-Bereitstellung bleiben offen.
+Die unabhängige [Task-13-Nachprüfung](docs/reports/2026-09-18-vokabeltrainer-v1-task-13-fix-1-review.md) ist abgeschlossen; alle Befunde sind behoben. Die Gesamtprüfung des Branches folgt jetzt und ist noch keine bestandene Freigabe. Reale Produktprüfungen mit Google Drive auf zwei physischen Geräten, Safari und Home-Bildschirm-App auf iPhone/iPad sowie eine HTTPS-Bereitstellung bleiben offen.
 
 ## Bestätigter Umfang
 
@@ -22,7 +22,7 @@ Auf dem Task-13-Ausgangscode `3b1d16d` liefen frisch:
 - Offline-Neustart mit geschlossenem Testserver für `/trainer/` und `/repo/trainer/` sowie ein echter verzögerter Service-Worker-Wechsel sind Bestandteil der Trainerregression.
 - Desktop-, Mobil-, Reise-, Avatar-, Konflikt- und Wiederherstellungsansichten wurden mit synthetischen Daten erzeugt und visuell geprüft.
 
-Reviewfix 1 wurde gezielt geprüft: Profilweiterleitung RED 0/1 und GREEN 1/1, Service-Worker 8/8. Der aktuelle vollständige Gesamtlauf und die unabhängige Korrekturreview folgen beim Gesamtabschluss.
+Reviewfix 1 wurde gezielt geprüft: Profilweiterleitung RED 0/1 und GREEN 1/1, Service-Worker 8/8. Danach bestand auf `0ea9502` einschließlich Produktfix `11e3128` die [aktuelle vollständige Abschlussverifikation](docs/reports/2026-09-18-abschluss-verifikation.md): erneut 277/277 Node- und 11/11 Trainer-Browsertests. Die unveränderte Probe wurde nicht wiederholt. Die unabhängige Korrekturreview ist ohne offene Befunde abgeschlossen.
 
 Browserregression und Node-Tests simulieren Google Identity Services und Drive-HTTP. Die frühere manuelle Probe bestätigte echte Google-Anmeldung und Drive-Abgleich zwischen zwei Browsern desselben Rechners; das ist kein Nachweis für das Produktprotokoll auf zwei physischen Geräten.
 

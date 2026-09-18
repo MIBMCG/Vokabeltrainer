@@ -140,4 +140,6 @@ Die aktuellen Aufnahmen stammen aus dem synthetischen Browserlauf und wurden auf
 
 ## Grenzen und nächster Nachweis
 
-Die unabhängige Korrekturreview prüft I1, I2 und M1; danach folgt die Gesamtbranchprüfung. Erst diese Nachweise können eine interne Branchfreigabe begründen. Anschließend bleiben reale Akzeptanzschritte: Produktbestand mit echtem Google Drive auf zwei physischen Geräten verbinden, iPhone und iPad jeweils in Safari und als Home-Bildschirm-App prüfen, Tastatur/Fokus/Offline/erneutes Verbinden testen und tatsächliche Browser-/OS-Versionen festhalten. Eine nötige HTTPS-Bereitstellung wird erst nach gesondertem Auftrag eingerichtet.
+Aktueller Zusatz nach Fixrunde 1: Die [unabhängige Nachprüfung](2026-09-18-vokabeltrainer-v1-task-13-fix-1-review.md) bestätigt I1, I2 und M1 als behoben, ohne neue Befunde. Die [koordinierende Abschlussverifikation](2026-09-18-abschluss-verifikation.md) dokumentiert danach frisch 277/277 Node- und 11/11 Trainer-Browsertests auf dem korrigierten Produktstand. Task 13 ist abgeschlossen; die Gesamtbranchprüfung ist der nächste interne Schritt.
+
+Die noch folgende Gesamtbranchprüfung ist Voraussetzung für die interne Branchfreigabe. Anschließend bleiben reale Akzeptanzschritte: Produktbestand mit echtem Google Drive auf zwei physischen Geräten verbinden, iPhone und iPad jeweils in Safari und als Home-Bildschirm-App prüfen, Tastatur/Fokus/Offline/erneutes Verbinden testen und tatsächliche Browser-/OS-Versionen festhalten. Eine nötige HTTPS-Bereitstellung wird erst nach gesondertem Auftrag eingerichtet.
