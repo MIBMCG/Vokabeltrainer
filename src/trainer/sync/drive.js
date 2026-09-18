@@ -262,10 +262,10 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
     return state.knownFiles.find((entry) => entry.fileId === fileId) ?? null;
   }
 
-  async function readIfNeeded(meta, state) {
+  async function readIfNeeded(meta, state, {force = false} = {}) {
     const known = knownFor(state, meta.id);
     const cached = sessionVersions.get(meta.id);
-    if (known && meta.version !== undefined && cached
+    if (!force && known && meta.version !== undefined && cached
       && cached.version === meta.version && cached.hash === known.contentHash) {
       const fresh = assertMetadata(await drive.metadata(meta.id));
       if (fresh.version === meta.version && metadataIdentity(fresh) === metadataIdentity(meta)) {
@@ -688,6 +688,7 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
 
     const packetCandidates = [];
     const epochCandidates = [];
+    const manifestGroups = new Map();
     const receivedSafetyCopies = [];
     const immediateQuarantine = [];
     const verifiedKnown = [];
@@ -707,7 +708,9 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
           verifiedKnown.push({fileId: meta.id, contentHash: descriptorRead.hash, kind});
           continue;
         }
-        const read = await readIfNeeded(meta, before);
+        // Snapshot identity is shared by all physical manifests, including newly
+        // discovered ones. A cached epoch/file must not bypass this fetch's group.
+        const read = await readIfNeeded(meta, before, {force: kind === 'snapshot-manifest'});
         if (read.skipped) {
           const known = knownFor(before, meta.id);
           verifiedKnown.push(known);
@@ -718,25 +721,7 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
         if (kind === 'epoch') {
           const epoch=assertEpoch(read.value);
           if(meta.appProperties.epochId!==epoch.id || epoch.datasetId!==binding.datasetId) throw productError('binding','Die Epochenkennung stimmt nicht.');
-          let backup=null,manifestId=null;
-          if(epoch.snapshotId!==null) {
-            const matches=files.filter(m=>m.appProperties.kind==='snapshot-manifest' && m.appProperties.snapshotId===epoch.snapshotId);
-            if(epoch.snapshotManifestFileId!==null) {
-              if(!matches.some(m=>m.id===epoch.snapshotManifestFileId))throw productError('reference','Das Snapshot-Manifest fehlt.');
-              manifestId=epoch.snapshotManifestFileId;
-            } else {
-              if(matches.length!==1)throw productError('reference','Das Snapshot-Manifest fehlt oder ist nicht eindeutig.');
-              manifestId=matches[0].id;
-            }
-            const readSnapshotResult=await readSnapshot({drive,binding,fileId:manifestId,descriptor:before.ledger.descriptor});
-            if(readSnapshotResult.manifest.purpose!=='restore' || readSnapshotResult.backup.snapshot.id!==epoch.snapshotId)throw productError('reference','Das Snapshot-Manifest passt nicht zur Epoche.');
-            backup=readSnapshotResult.backup;
-            for(const alternative of matches.filter(m=>m.id!==manifestId)) {
-              const other=await readSnapshot({drive,binding,fileId:alternative.id,descriptor:before.ledger.descriptor});
-              if(other.manifest.totalHash!==readSnapshotResult.manifest.totalHash)throw productError('collision','Eine Snapshot-ID enthält verschiedene Inhalte.');
-            }
-          }
-          epochCandidates.push({epoch,backup,manifestId,fileId:meta.id,hash:read.hash});
+          epochCandidates.push({epoch,backup:null,manifestId:null,fileId:meta.id,hash:read.hash});
           continue;
         }
         if(kind==='snapshot-part' || kind==='snapshot-manifest') {
@@ -745,11 +730,13 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
             || read.value.snapshotId!==meta.appProperties.snapshotId)throw productError('invalid','Die Snapshot-Dateikennung stimmt nicht.');
           if(kind==='snapshot-manifest') {
             const checked=await readSnapshot({drive,binding,fileId:meta.id,descriptor:before.ledger.descriptor});
-            if(checked.manifest.purpose==='safety') receivedSafetyCopies.push({id:checked.manifest.snapshotId,
-              createdAt:checked.backup.exportedAt,purpose:'safety',backup:checked.backup,hash:await digest(checked.backup),
-              driveManifestFileId:meta.id,verified:true});
+            if(await digest(checked.manifest)!==read.hash)throw productError('stale','Das Snapshot-Manifest wurde während der Prüfung geändert.');
+            const snapshotId=checked.manifest.snapshotId;
+            if(!manifestGroups.has(snapshotId))manifestGroups.set(snapshotId,[]);
+            manifestGroups.get(snapshotId).push({...checked,fileId:meta.id,hash:read.hash});
+          } else {
+            verifiedKnown.push({fileId:meta.id,contentHash:read.hash,kind});
           }
-          verifiedKnown.push({fileId:meta.id,contentHash:read.hash,kind});
           continue;
         }
         if (kind !== 'packet') throw productError('invalid', 'Der gebundene Ordner enthält eine unbekannte Produktdatei.');
@@ -784,6 +771,46 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
       }
     }
 
+    const conflictingSnapshots = new Set();
+    for (const [snapshotId, group] of manifestGroups) {
+      group.sort((left,right)=>left.fileId<right.fileId?-1:left.fileId>right.fileId?1:0);
+      if (new Set(group.map(entry=>entry.manifest.totalHash)).size > 1) {
+        conflictingSnapshots.add(snapshotId);
+        for (const entry of group) immediateQuarantine.push({
+          fileId:entry.fileId,code:'collision',message:'Eine Snapshot-ID enthält verschiedene Inhalte.',value:entry.manifest,
+        });
+        continue;
+      }
+      for (const entry of group) {
+        verifiedKnown.push({fileId:entry.fileId,contentHash:entry.hash,kind:'snapshot-manifest'});
+        if (entry.manifest.purpose === 'safety') receivedSafetyCopies.push({
+          id:snapshotId,createdAt:entry.backup.exportedAt,purpose:'safety',backup:entry.backup,
+          hash:await digest(entry.backup),driveManifestFileId:entry.fileId,verified:true,
+        });
+      }
+    }
+    const completeEpochs = [];
+    for (const entry of epochCandidates) {
+      const {epoch} = entry;
+      if (epoch.snapshotId === null) {
+        completeEpochs.push(entry);
+        continue;
+      }
+      const group = manifestGroups.get(epoch.snapshotId) ?? [];
+      // Physical duplicates with the same totalHash are one unambiguous content.
+      const selected = epoch.snapshotManifestFileId === null
+        ? group.find(candidate=>candidate.manifest.purpose==='restore')
+        : group.find(candidate=>candidate.fileId===epoch.snapshotManifestFileId && candidate.manifest.purpose==='restore');
+      if (conflictingSnapshots.has(epoch.snapshotId) || !selected) {
+        immediateQuarantine.push({fileId:entry.fileId,
+          code:conflictingSnapshots.has(epoch.snapshotId)?'collision':'reference',
+          message:conflictingSnapshots.has(epoch.snapshotId)
+            ?'Eine Snapshot-ID enthält verschiedene Inhalte.':'Das vollständige Snapshot-Manifest fehlt.',value:epoch});
+        continue;
+      }
+      completeEpochs.push({...entry,backup:selected.backup,manifestId:selected.fileId});
+    }
+
     for (const entry of before.quarantinedFiles) {
       if (entry.code !== 'reference' || entry.value?.kind !== 'packet') continue;
       try {
@@ -806,7 +833,7 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
         if(previous && previous.hash!==copy.hash)throw productError('collision','Eine Sicherheitskopie-ID enthält andere Daten.');
         if(!next.safetyCopies.some(c=>c.hash===copy.hash || c.driveManifestFileId===copy.driveManifestFileId))next.safetyCopies.push(copy);
       }
-      let controls=[...epochCandidates],controlProgress=true;
+      let controls=[...completeEpochs],controlProgress=true;
       while(controls.length && controlProgress) {
         controlProgress=false;const waiting=[];
         for(const entry of controls) {

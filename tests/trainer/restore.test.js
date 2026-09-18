@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createRestoreService} from '../../src/trainer/backup/restore.js';
 import {exportBackup} from '../../src/trainer/backup/format.js';
+import {planSnapshotUploads,uploadVerified,readSnapshot} from '../../src/trainer/backup/transport.js';
 import {createCommands} from '../../src/trainer/commands.js';
 import {createProductSync} from '../../src/trainer/sync/drive.js';
 import {project} from '../../src/trainer/learning/progress.js';
@@ -263,4 +264,65 @@ test('resuming a published job preserves a round already begun in its new epoch'
   const round=h.commands.getState().rounds.p1;
   await h.restore.confirm(p.previewId);
   assert.deepEqual(h.commands.getState().rounds.p1,round);
+});
+
+async function cachedRestore({nullManifest=false}={}) {
+  const h=await setupRestoreFixture({connected:!nullManifest});
+  const conflictingBackup=await exportBackup(h.commands.getState(),now().toISOString());
+  const preview=await h.restore.prepare(h.olderBackup);await h.restore.confirm(preview.previewId);
+  if(nullManifest)await h.sync.createDataset('Family');
+  await h.sync.sync();
+  const state=h.commands.getState(),job=state.restoreJobs.find(j=>j.previewId===preview.previewId);
+  const manifest=job.uploads.find(u=>u.kind==='snapshot-manifest' && u.value.purpose==='restore');
+  const original=await readSnapshot({drive:h.drive,binding:state.binding,fileId:manifest.fileId,descriptor:state.ledger.descriptor});
+  return {...h,conflictingBackup,original:original.backup,epoch:job.epoch,manifest};
+}
+async function publishSnapshot(h,backup) {
+  const uploads=await planSnapshotUploads(backup,'restore',h.drive);
+  for(const upload of uploads)await uploadVerified(h.drive,h.commands.getState().binding,upload);
+  return uploads.at(-1);
+}
+
+for(const nullManifest of [false,true]) {
+  test(`cached ${nullManifest?'null-manifest':'referenced-manifest'} epoch rejects a later conflicting snapshot identity`,async()=>{
+    const h=await cachedRestore({nullManifest});
+    const backup=structuredClone(h.conflictingBackup);backup.snapshot.id=h.epoch.snapshotId;
+    const conflicting=await publishSnapshot(h,backup),before=h.commands.getState().ledger;
+    await assert.rejects(h.sync.sync(),e=>e.code==='collision');
+    assert.notEqual(h.sync.getStatus().phase,'synced');
+    assert.ok(h.commands.getState().quarantinedFiles.some(f=>f.fileId===conflicting.fileId && f.code==='collision'));
+    assert.deepEqual(h.commands.getState().ledger,before);
+    const restarted=await setupRestoreFixture({connected:false,drive:h.drive,state:h.store.snapshot()});
+    await assert.rejects(restarted.sync.sync(),e=>e.code==='collision');
+    assert.equal(project(restarted.commands.getState().ledger).activeEpochId,h.epoch.id);
+    const list=h.drive.listFiles.bind(h.drive);h.drive.listFiles=async query=>(await list(query)).reverse();
+    const fresh=await setupRestoreFixture({connected:false,drive:h.drive});
+    await fresh.sync.joinDataset((await fresh.sync.discover())[0],'confirm');
+    await assert.rejects(fresh.sync.sync(),e=>e.code==='collision');
+    assert.equal(project(fresh.commands.getState().ledger).activeEpochId,'e0');
+  });
+  test(`identical physical snapshot duplicates remain valid for ${nullManifest?'null-manifest':'referenced-manifest'} epochs, cached and fresh`,async()=>{
+    const h=await cachedRestore({nullManifest});
+    await publishSnapshot(h,h.original);
+    assert.equal((await h.sync.sync()).phase,'synced');
+    assert.equal(h.commands.getState().quarantinedFiles.length,0);
+    const fresh=await setupRestoreFixture({connected:false,drive:h.drive});
+    await fresh.sync.joinDataset((await fresh.sync.discover())[0],'confirm');
+    assert.equal((await fresh.sync.sync()).phase,'synced');
+    assert.equal(project(fresh.commands.getState().ledger).activeEpochId,h.epoch.id);
+    assert.equal(project(fresh.commands.getState().ledger).profiles.p1.points,0);
+  });
+}
+test('invalid independent snapshot manifest is quarantined without suppressing a good local upload',async()=>{
+  const h=await cachedRestore(),backup=structuredClone(h.original);backup.snapshot.id='independent-snapshot';
+  const uploads=await planSnapshotUploads(backup,'restore',h.drive);
+  uploads.at(-1).value.totalHash='0'.repeat(64);
+  for(const upload of uploads)await uploadVerified(h.drive,h.commands.getState().binding,upload);
+  await h.commands.setAnimations({profileId:'p1',animations:false});
+  const localId=h.commands.getState().outboxEventIds.at(-1);
+  await assert.rejects(h.sync.sync(),e=>e.code==='invalid');
+  assert.equal(h.commands.getState().pendingPackets.length,0);
+  assert.equal(h.commands.getState().outboxEventIds.length,0);
+  assert.ok([...h.drive.files.values()].some(f=>f.value?.kind==='packet' && f.value.events.some(e=>e.id===localId)));
+  assert.ok(h.commands.getState().quarantinedFiles.some(f=>f.fileId===uploads.at(-1).fileId));
 });
