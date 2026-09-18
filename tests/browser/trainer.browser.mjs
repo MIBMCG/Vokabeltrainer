@@ -4,6 +4,8 @@ import {mkdir} from 'node:fs/promises';
 import {resolve} from 'node:path';
 
 import {createTrainerHarness} from './trainer-harness.mjs';
+import {snapshotHash} from '../../src/trainer/backup/format.js';
+import {project as projectState} from '../../src/trainer/learning/progress.js';
 
 const resultsDirectory = resolve('test-results');
 
@@ -294,6 +296,7 @@ test('trainer practice is resumable, single-submit safe and completes an exhaust
   await mkdir(resultsDirectory, {recursive: true});
 
   try {
+    await mkdir(resultsDirectory, {recursive: true});
     await page.goto(harness.baseUrl);
     await setupPractice(page);
     await addSecondProfile(page);
@@ -994,6 +997,389 @@ test('trainer rewards render the complete journey and save profile-specific avat
     const avatarEvents = (await productState(page)).ledger.events.filter(({type}) => type === 'avatar.changed');
     assert.equal(new Set(avatarEvents.map(({payload}) => payload.profileId)).size, 2);
     assert.deepEqual(pageErrors, []);
+  } finally {
+    await context.close();
+    await harness.close();
+  }
+});
+
+test('trainer sync and restore exposes deliberate Google, download and import flows', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page, context, controls} = await harness.newDevice();
+  const pageErrors = [];
+  page.on('pageerror', (error) => pageErrors.push(error.message));
+
+  try {
+    await page.goto(harness.baseUrl);
+    await setupPractice(page);
+    await page.locator('#adult-entry').click();
+    if (await page.locator('#adult-pin').count()) {
+      await page.locator('#adult-pin').fill('1234');
+      await page.locator('#adult-unlock').click();
+    }
+    await page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+
+    await page.getByLabel('Öffentliche Google-Web-Client-ID').fill('synthetic-client-id');
+    await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
+    await page.getByText('Google ist für diese Sitzung verbunden.', {exact: true}).waitFor({timeout: 5_000}).catch(async (error) => {
+      const diagnostics = await page.evaluate(() => ({
+        googleReady: Boolean(window.google?.accounts?.oauth2),
+        oauthRequests: window.__syntheticOauthRequests,
+        scripts: [...document.scripts].map(({src}) => src),
+      }));
+      error.message += `\nGoogle diagnostics: ${JSON.stringify(diagnostics)}\nVisible page after Google connect:\n${await page.locator('body').innerText()}`;
+      throw error;
+    });
+    await page.getByLabel('Name des Drive-Ordners').fill('Familienwortschatz');
+    await page.getByRole('button', {name: 'Neuen Drive-Datensatz anlegen', exact: true}).click();
+    await page.getByText('Abgeglichen', {exact: true}).waitFor();
+
+    controls.rejectNextAbout401 = true;
+    await page.getByRole('button', {name: 'Zur Profilauswahl', exact: true}).click();
+    await page.getByRole('button', {name: /^Ada/}).click();
+    await page.getByRole('button', {name: 'Alle Vokabeln', exact: true}).click();
+    const preservedAnswer = page.getByLabel('Englische Übersetzung');
+    await preservedAnswer.fill('unfinished answer');
+    await preservedAnswer.focus();
+    await page.waitForTimeout(10_500);
+    assert.equal(await preservedAnswer.inputValue(), 'unfinished answer');
+    assert.equal(await preservedAnswer.evaluate((input) => document.activeElement === input), true);
+    await page.getByRole('button', {name: 'Profil wechseln', exact: true}).click();
+    await page.locator('#adult-entry').click();
+    await page.locator('#adult-pin').fill('1234');
+    await page.locator('#adult-unlock').click();
+    assert.equal(await page.getByRole('main').count(), 1);
+    await page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    await page.locator('[data-sync-status]').filter({hasText: 'Mit Google verbinden'}).waitFor();
+    await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
+    await page.getByText('Google ist für diese Sitzung verbunden.', {exact: true}).waitFor();
+
+    await page.getByRole('button', {name: 'Sicherung', exact: true}).click();
+    const downloading = page.waitForEvent('download');
+    await page.getByRole('button', {name: 'Sicherung herunterladen', exact: true}).click();
+    const download = await downloading;
+    assert.match(download.suggestedFilename(), /\.json$/);
+    await page.getByText('Download gestartet', {exact: true}).waitFor();
+
+    const before = await productState(page);
+    await page.locator('#backup-file').setInputFiles({
+      name: 'future.json',
+      mimeType: 'application/json',
+      buffer: Buffer.from(JSON.stringify({
+        format: 'vokabeltrainer-product', formatVersion: 999, ruleVersion: 1, kind: 'backup',
+        exportedAt: '2026-09-18T12:00:00.000Z', descriptor: null, snapshot: null,
+        events: [], epochHistory: [], safetyCopyIndex: [],
+      })),
+    });
+    await page.getByText(/Sicherungsversion wird nicht unterstützt/i).waitFor().catch(async (error) => {
+      error.message += `\nVisible page after future backup:\n${await page.locator('body').innerText()}`;
+      throw error;
+    });
+    await page.screenshot({path: resolve(resultsDirectory, 'trainer-sync-import-error-mobile.png'), fullPage: true});
+    assert.deepEqual(await productState(page), before);
+
+    const validBackup = await page.evaluate(async (current) => {
+      const {exportBackup} = await import('/src/trainer/backup/format.js');
+      return exportBackup(current, '2026-09-18T12:30:00.000Z');
+    }, before);
+    await page.locator('#backup-file').setInputFiles({
+      name: 'valid.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(validBackup)),
+    });
+    await page.getByRole('dialog', {name: 'Wiederherstellung prüfen'}).waitFor();
+    await page.getByRole('dialog').getByRole('button', {name: 'Abbrechen'}).click();
+    await page.waitForTimeout(50);
+    const restoredFocus = await page.evaluate(() => ({
+      activeId: document.activeElement?.id ?? '',
+      fileConnected: document.querySelector('#backup-file')?.isConnected ?? false,
+      fileCount: document.querySelectorAll('#backup-file').length,
+    }));
+    assert.deepEqual(restoredFocus, {activeId: 'backup-file', fileConnected: true, fileCount: 1});
+    await page.locator('#backup-file').setInputFiles({
+      name: 'valid.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(validBackup)),
+    });
+    await page.getByRole('dialog', {name: 'Wiederherstellung prüfen'}).waitFor();
+    const eventsBeforeStaleChange = (await productState(page)).ledger.events.length;
+    await page.evaluate(() => {
+      [...document.querySelectorAll('#adult-nav button')].find((node) => node.textContent === 'Lektionen').click();
+    });
+    await page.locator('[data-word-german="Hund"] details').waitFor();
+    await page.locator('[data-word-german="Hund"] details').evaluate((details) => { details.open = true; });
+    await page.locator('[data-word-german="Hund"] input[name="answers"]').evaluate((input) => {
+      input.value = 'dog | hound | canine';
+      input.dispatchEvent(new Event('input', {bubbles: true}));
+    });
+    await page.locator('[data-word-german="Hund"] details form').evaluate((form) => {
+      form.dispatchEvent(new Event('submit', {bubbles: true, cancelable: true}));
+    });
+    await page.waitForFunction(async (count) => new Promise((resolveState) => {
+      const request = indexedDB.open('vokabeltrainer-product-v1', 1);
+      request.onsuccess = () => {
+        const database = request.result;
+        const get = database.transaction('product-state', 'readonly').objectStore('product-state').get('current');
+        get.onsuccess = () => {
+          resolveState(get.result.ledger.events.length > count);
+          database.close();
+        };
+      };
+    }), eventsBeforeStaleChange);
+    await page.getByRole('dialog').getByRole('button', {name: 'Wiederherstellung verbindlich bestätigen'}).click();
+    await page.getByText(/Datenstand hat sich geändert.*erneut bestätigt/i).waitFor();
+    await page.screenshot({path: resolve(resultsDirectory, 'trainer-restore-stale-mobile.png'), fullPage: true});
+    assert.equal(await page.getByRole('dialog').count(), 1);
+    await page.getByRole('dialog').getByRole('button', {name: 'Abbrechen'}).click();
+    assert.ok((await productState(page)).ledger.events.length > eventsBeforeStaleChange);
+
+    await page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    controls.rejectNextAbout401 = true;
+    await page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).click();
+    await page.locator('[data-sync-status]').filter({hasText: 'Mit Google verbinden'}).waitFor();
+    const requests = await page.evaluate(() => window.__syntheticOauthRequests);
+    await page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).click();
+    assert.equal(await page.evaluate(() => window.__syntheticOauthRequests), requests);
+
+    await page.evaluate(() => {
+      window.__holdSyntheticOauth = true;
+      window.__syntheticOauthStarted = false;
+      window.__syntheticOauthGate = new Promise((resolveGate) => {
+        window.__releaseSyntheticOauth = resolveGate;
+      });
+    });
+    await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
+    await page.waitForFunction(() => window.__syntheticOauthStarted === true);
+    await page.evaluate(() => {
+      Object.defineProperty(document, 'visibilityState', {value: 'hidden', configurable: true});
+      document.dispatchEvent(new Event('visibilitychange'));
+      window.__releaseSyntheticOauth();
+    });
+    await page.locator('#profile-list').waitFor();
+    await page.evaluate(() => {
+      window.__holdSyntheticOauth = false;
+      Object.defineProperty(document, 'visibilityState', {value: 'visible', configurable: true});
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    await page.locator('#adult-entry').click();
+    await page.locator('#adult-pin').fill('1234');
+    await page.locator('#adult-unlock').click();
+    await page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    const afterLockedPopup = await page.evaluate(() => window.__syntheticOauthRequests);
+    await page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).click();
+    await page.locator('[data-sync-status]').filter({hasText: 'Mit Google verbinden'}).waitFor();
+    assert.equal(await page.evaluate(() => window.__syntheticOauthRequests), afterLockedPopup);
+
+    assert.deepEqual(pageErrors, []);
+    assert.deepEqual(harness.google.unexpected, []);
+  } finally {
+    await context.close();
+    await harness.close();
+  }
+});
+
+test('trainer sync and restore keeps concurrent word versions until an adult resolves them', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const first = await harness.newDevice();
+  const second = await harness.newDevice();
+  const errors = [];
+  first.page.on('pageerror', (error) => errors.push(`A: ${error.message}`));
+  second.page.on('pageerror', (error) => errors.push(`B: ${error.message}`));
+
+  const openAdult = async (page) => {
+    await page.locator('#adult-entry').click();
+    if (await page.locator('#adult-pin').count()) {
+      await page.locator('#adult-pin').fill('1234');
+      await page.locator('#adult-unlock').click();
+    }
+    await page.locator('#adult-nav').waitFor();
+  };
+  const connect = async (page) => {
+    await page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    await page.getByLabel('Öffentliche Google-Web-Client-ID').fill('synthetic-client-id');
+    await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
+    await page.getByText('Google ist für diese Sitzung verbunden.', {exact: true}).waitFor();
+  };
+  const reviseHund = async (page, answer) => {
+    await page.getByRole('button', {name: 'Lektionen', exact: true}).click();
+    const details = page.locator('[data-word-german="Hund"] details');
+    await details.locator('summary').click();
+    await details.locator('input[name="answers"]').fill(answer);
+    await details.getByRole('button', {name: 'Speichern'}).click();
+    await page.getByText('Die Vokabel wurde gespeichert.', {exact: true}).waitFor({timeout: 5_000}).catch(async (error) => {
+      error.message += `\nVisible page after revising ${answer}:\n${await page.locator('body').innerText()}`;
+      throw error;
+    });
+  };
+
+  try {
+    await mkdir(resultsDirectory, {recursive: true});
+    await first.page.goto(harness.baseUrl);
+    await setupPractice(first.page);
+    await openAdult(first.page);
+    await connect(first.page);
+    await first.page.getByLabel('Name des Drive-Ordners').fill('Gemeinsame Lerninsel');
+    await first.page.getByRole('button', {name: 'Neuen Drive-Datensatz anlegen', exact: true}).click();
+    await first.page.getByText('Abgeglichen', {exact: true}).waitFor();
+
+    await second.page.goto(harness.baseUrl);
+    await setupPractice(second.page);
+    await openAdult(second.page);
+    await connect(second.page);
+    await second.page.getByRole('button', {name: 'Vorhandene Datensätze suchen', exact: true}).click();
+    await second.page.getByText('Gefundene Datensätze', {exact: true}).waitFor();
+    await second.page.getByRole('button', {name: 'Diesen Datensatz prüfen', exact: true}).click();
+    await second.page.getByRole('heading', {name: 'Datensatzwechsel prüfen'}).waitFor({timeout: 5_000}).catch(async (error) => {
+      error.message += `\nVisible join page:\n${await second.page.locator('body').innerText()}`;
+      throw error;
+    });
+    await second.page.getByRole('button', {name: 'Datensatzwechsel bestätigen', exact: true}).click();
+    await second.page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).click();
+    await second.page.getByText('Abgeglichen', {exact: true}).waitFor();
+
+    first.controls.offline = true;
+    second.controls.offline = true;
+    await reviseHund(first.page, 'dog | hound | pooch');
+    await reviseHund(second.page, 'dog | hound | canine');
+    first.controls.offline = false;
+    second.controls.offline = false;
+
+    await first.page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    await first.page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).click();
+    await second.page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    await second.page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).click();
+    await second.page.getByRole('heading', {name: 'Inhaltskonflikte'}).waitFor();
+    await second.page.getByText(/pooch/).waitFor();
+    await second.page.getByText(/canine/).waitFor();
+    await second.page.screenshot({path: resolve(resultsDirectory, 'trainer-revision-conflict-mobile.png'), fullPage: true});
+
+    await second.page.getByRole('button', {name: 'Zur Profilauswahl', exact: true}).click();
+    await second.page.getByRole('button', {name: /^Ada/}).click();
+    await second.page.getByRole('button', {name: 'Alle Vokabeln', exact: true}).click();
+    await second.page.getByRole('heading', {name: 'Tier', exact: true}).waitFor();
+    assert.equal(await second.page.getByRole('heading', {name: 'Hund', exact: true}).count(), 0);
+    await second.page.getByRole('button', {name: 'Profil wechseln', exact: true}).click();
+    await openAdult(second.page);
+    await second.page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    const versions = second.page.getByRole('button', {name: 'Diese Fassung übernehmen', exact: true});
+    assert.equal(await versions.count(), 2);
+    await versions.first().click();
+    await second.page.getByText('Eine gemeinsame Fassung wurde angelegt.', {exact: true}).waitFor();
+    assert.equal(await second.page.getByRole('heading', {name: 'Inhaltskonflikte'}).count(), 0);
+
+    await second.page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).click();
+    await second.page.getByText('Abgeglichen', {exact: true}).waitFor();
+    await first.page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).click();
+    await first.page.getByText('Abgeglichen', {exact: true}).waitFor();
+    const restoreSourceState = await productState(first.page);
+    const restoreBackup = await first.page.evaluate(async (current) => {
+      const {exportBackup} = await import('/src/trainer/backup/format.js');
+      return exportBackup(current, '2026-09-18T14:00:00.000Z');
+    }, restoreSourceState);
+
+    second.controls.offline = true;
+    await second.page.getByRole('button', {name: 'Zur Profilauswahl', exact: true}).click();
+    await second.page.getByRole('button', {name: /^Ada/}).click();
+    await second.page.getByRole('button', {name: 'Fortsetzen', exact: true}).click();
+
+    await first.page.getByRole('button', {name: 'Sicherung', exact: true}).click();
+    await first.page.locator('#backup-file').setInputFiles({
+      name: 'restore-before-offline-answer.json',
+      mimeType: 'application/json',
+      buffer: Buffer.from(JSON.stringify(restoreBackup)),
+    });
+    await first.page.getByRole('dialog').waitFor({timeout: 10_000}).catch(async (error) => {
+      error.message += `\nVisible restore page:\n${await first.page.locator('body').innerText()}`;
+      throw error;
+    });
+    first.controls.loseNextUpload = true;
+    await first.page.getByRole('dialog').getByRole('button', {name: 'Wiederherstellung verbindlich bestätigen'}).click();
+    await first.page.getByRole('dialog').getByText(/nicht erreicht|vorübergehend/i).waitFor();
+    await first.page.reload();
+    await first.page.locator('#profile-list').waitFor();
+    await openAdult(first.page);
+    await connect(first.page);
+    await first.page.getByRole('button', {name: 'Sicherung', exact: true}).click();
+    await first.page.getByRole('button', {name: 'Bestätigte Wiederherstellung fortsetzen', exact: true}).click();
+    await first.page.getByText('Die bestätigte Wiederherstellung wurde fortgesetzt.', {exact: true}).waitFor();
+    assert.ok(await first.page.getByRole('button', {name: 'Sicherheitskopie herunterladen', exact: true}).count() >= 1);
+
+    await second.page.getByLabel('Englische Übersetzung').fill('dog');
+    await second.page.getByRole('button', {name: 'Prüfen', exact: true}).click();
+    await second.page.getByText('Richtig!', {exact: true}).waitFor();
+    second.controls.offline = false;
+    await first.page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    await first.page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).click();
+
+    await second.page.getByRole('button', {name: 'Profil wechseln', exact: true}).click();
+    await openAdult(second.page);
+    await second.page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    await second.page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).click();
+    await second.page.getByRole('heading', {name: 'Alte Änderungen getrennt erhalten'}).waitFor();
+    await second.page.screenshot({path: resolve(resultsDirectory, 'trainer-late-change-mobile.png'), fullPage: true});
+    const beforeAdoptionState = await productState(second.page);
+    const adoptedProfileId = beforeAdoptionState.ledger.events.find((event) => (
+      event.type === 'entity.revised' && event.payload.entityType === 'profile'
+    )).payload.entityId;
+    const pointsBeforeAdoption = projectState(beforeAdoptionState.ledger).profiles[adoptedProfileId].points;
+    await second.page.getByLabel(/Antwort von Ada/).check();
+    await second.page.getByRole('button', {name: 'Auswahl prüfen', exact: true}).click();
+    await second.page.getByRole('heading', {name: 'Übernahme bestätigen'}).waitFor();
+    await second.page.getByText(new RegExp(`${pointsBeforeAdoption} → ${pointsBeforeAdoption + 10}`)).waitFor();
+    await second.page.getByRole('button', {name: 'Ausgewählte Änderungen übernehmen', exact: true}).click();
+    await second.page.getByRole('heading', {name: 'Übernahme bestätigen'}).waitFor({state: 'detached'});
+    const adoptedState = await productState(second.page);
+    assert.equal(projectState(adoptedState.ledger).profiles[adoptedProfileId].points, pointsBeforeAdoption + 10);
+
+    assert.deepEqual(errors, []);
+    assert.deepEqual(harness.google.unexpected, []);
+  } finally {
+    await Promise.allSettled([first.context.close(), second.context.close()]);
+    await harness.close();
+  }
+});
+
+test('trainer sync and restore renders a mobile epoch conflict without choosing a winner', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page, context} = await harness.newDevice();
+  try {
+    await mkdir(resultsDirectory, {recursive: true});
+    await page.goto(harness.baseUrl);
+    await setupPractice(page);
+    const state = await productState(page);
+    const eventIds = state.ledger.events.map(({id}) => id).sort();
+    for (const [index, epochId] of ['browser-restore-a', 'browser-restore-b'].entries()) {
+      const snapshot = {
+        id: `browser-snapshot-${index + 1}`,
+        datasetId: state.ledger.descriptor.datasetId,
+        effectiveEventIds: eventIds,
+        supportEventIds: [],
+        contentHash: '',
+      };
+      snapshot.contentHash = await snapshotHash(snapshot, state.ledger.events);
+      state.ledger.snapshots.push(snapshot);
+      state.ledger.epochs.push({
+        format: 'vokabeltrainer-product', formatVersion: 1, ruleVersion: 1, kind: 'epoch',
+        id: epochId, datasetId: state.ledger.descriptor.datasetId,
+        parents: [state.ledger.descriptor.rootEpochId], deviceId: state.deviceId,
+        clock: state.clock + index + 1,
+        occurredAt: `2026-09-18T1${index}:00:00.000Z`,
+        snapshotId: snapshot.id, snapshotManifestFileId: null,
+      });
+    }
+    state.clock += 2;
+    await writeProductState(page, state);
+    await page.reload();
+    await page.locator('#adult-entry').click();
+    await page.locator('#adult-pin').fill('1234');
+    await page.locator('#adult-unlock').click();
+    await page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    await page.getByRole('heading', {name: 'Konflikt zwischen Wiederherstellungen'}).waitFor();
+    assert.equal(await page.getByRole('button', {name: /Datenstand .* prüfen/}).count(), 2);
+    assert.equal(await page.getByText(/browser-restore|browser-snapshot/).count(), 0);
+    await page.screenshot({path: resolve(resultsDirectory, 'trainer-epoch-conflict-mobile.png'), fullPage: true});
+    await page.getByRole('button', {name: 'Sicherung', exact: true}).click();
+    const epochOptions = page.locator('#backup-epoch option');
+    assert.equal(await epochOptions.count(), 3);
+    assert.equal(await page.getByText(/browser-restore|browser-snapshot/).count(), 0);
+    assert.equal(await page.getByRole('button', {name: 'Sicherung herunterladen', exact: true}).isDisabled(), true);
+    await page.screenshot({path: resolve(resultsDirectory, 'trainer-epoch-export-mobile.png'), fullPage: true});
   } finally {
     await context.close();
     await harness.close();

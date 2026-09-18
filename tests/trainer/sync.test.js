@@ -576,6 +576,32 @@ test('pending counters do not hide connect or error until an explicit sync opera
   }
 });
 
+test('unbound discovery and interrupted setup retain actionable auth status after local commits', async () => {
+  for (const interruptedSetup of [false, true]) {
+    const drive = new SyntheticDrive();
+    const commands = await makeCommands(productState(createFixture().base, {outbox: []}));
+    const statuses = [];
+    const sync = createProductSync({
+      drive, store: {}, commands, now: () => new Date('2026-09-18T10:00:00.000Z'),
+      id: sequenceIds(interruptedSetup ? 'setup-auth' : 'discover-auth'),
+      onStatus: (status) => statuses.push(status),
+    });
+    if (interruptedSetup) {
+      drive.loseUploadKind = 'dataset';
+      await assert.rejects(sync.createDataset('Familienwortschatz'), {code: 'network'});
+      assert.ok(commands.getState().datasetSetup);
+    }
+    drive.accountId = async () => { throw new DriveError('auth', 'synthetic auth', 401); };
+    await assert.rejects(interruptedSetup ? sync.retry() : sync.discover(), {code: 'auth'});
+    assert.equal(sync.getStatus().phase, 'connect');
+
+    await commands.setAnimations({profileId: 'p1', animations: false});
+    assert.equal(statuses.at(-1).phase, 'connect');
+    assert.equal(sync.getStatus().phase, 'connect');
+    sync.destroy();
+  }
+});
+
 test('uploads independent local packets before reporting a malformed remote packet', async () => {
   const {sync, drive, commands} = await setupSyntheticSync({outbox: []});
   const binding = commands.getState().binding;

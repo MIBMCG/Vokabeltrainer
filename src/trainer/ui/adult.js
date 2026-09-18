@@ -2,6 +2,8 @@ import {project} from '../learning/progress.js';
 import {semanticWord} from '../model/revisions.js';
 import {applyRows, parseTable, validateRows} from '../adult/import.js';
 import {el, field, button, message} from './dom.js';
+import {renderBackup} from './backup.js';
+import {renderSync} from './sync.js';
 
 const localState = new WeakMap();
 const MAX_ANSWERS_TEXT_LENGTH = 4_200;
@@ -423,17 +425,6 @@ function renderProgress(container, projection) {
   container.append(section);
 }
 
-function renderLocalStatus(container, state, kind) {
-  const pending = state.outboxEventIds.length;
-  const copy = kind === 'sync'
-    ? `Auf diesem Gerät gespeichert. ${pending} Änderung${pending === 1 ? '' : 'en'} wartet auf einen späteren Abgleich. Eine Google-Verbindung ist hier noch nicht eingerichtet.`
-    : 'Der vollständige lokale Stand ist in IndexedDB gespeichert. Export und Wiederherstellung werden erst mit dem geprüften Sicherungspaket angeboten.';
-  container.append(el('section', {attrs: {class: 'panel'}}, [
-    el('h2', {text: kind === 'sync' ? 'Abgleich' : 'Sicherung'}),
-    message(copy),
-  ]));
-}
-
 function renderPinSettings(container, pinGate, rerender, ui) {
   const section = el('section', {attrs: {class: 'subpanel'}}, [
     el('h3', {text: 'PIN auf diesem Gerät'}),
@@ -483,7 +474,7 @@ function renderPinSettings(container, pinGate, rerender, ui) {
   container.append(section);
 }
 
-export function renderAdult({root, state, commands, pinGate, onNavigate}) {
+export function renderAdult({root, state, commands, pinGate, onNavigate, sync, restore, auth, onDownload}) {
   const ui = viewState(root);
   const projection = project(state.ledger);
   const rerender = () => {
@@ -491,7 +482,7 @@ export function renderAdult({root, state, commands, pinGate, onNavigate}) {
       onNavigate('profiles');
       return;
     }
-    renderAdult({root, state: commands.getState(), commands, pinGate, onNavigate});
+    renderAdult({root, state: commands.getState(), commands, pinGate, onNavigate, sync, restore, auth, onDownload});
   };
   const page = el('div', {attrs: {class: 'adult-layout'}});
   const header = el('header', {attrs: {class: 'adult-header'}}, [
@@ -508,7 +499,9 @@ export function renderAdult({root, state, commands, pinGate, onNavigate}) {
       rerender();
     }, {class: ui.section === key ? 'active' : '', 'aria-current': ui.section === key ? 'page' : null}));
   }
-  const content = el('main', {attrs: {id: 'adult-content', tabindex: '-1'}});
+  const content = el('section', {attrs: {id: 'adult-content', tabindex: '-1', 'aria-label': 'Inhalt der Erwachsenenverwaltung'}});
+  page.append(header, nav, content);
+  root.replaceChildren(page);
   if (ui.notice) content.append(message(ui.notice, ui.tone));
   if (projection.conflicts.length > 0 || projection.epochConflict) {
     content.append(message('Mindestens eine Änderung benötigt eine Konfliktklärung. Neue Bearbeitungen sind bis dahin eingeschränkt.', 'error'));
@@ -518,8 +511,10 @@ export function renderAdult({root, state, commands, pinGate, onNavigate}) {
     renderPinSettings(content, pinGate, rerender, ui);
   } else if (ui.section === 'lessons') renderLessons(content, projection, commands, rerender, ui);
   else if (ui.section === 'progress') renderProgress(content, projection);
-  else if (ui.section === 'sync') renderLocalStatus(content, state, 'sync');
-  else renderLocalStatus(content, state, 'backup');
-  page.append(header, nav, content);
-  root.replaceChildren(page);
+  else if (ui.section === 'sync') renderSync({
+    root: content, state, sync, restore, auth, commands, isUnlocked: () => pinGate.isUnlocked(), onRefresh: rerender,
+  });
+  else renderBackup({
+    root: content, state, restore, onDownload, isUnlocked: () => pinGate.isUnlocked(), onRefresh: rerender,
+  });
 }

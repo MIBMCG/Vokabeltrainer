@@ -179,7 +179,9 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
     let phase = status.phase;
     let message = status.message;
     const measured = statusFromState(state, phase, message, lastConfirmedAt);
-    if (state === null || (state.binding === null && state.datasetSetup === null)) {
+    if (phase === 'connect' || phase === 'error') {
+      // Keep an actionable discovery/setup/sync failure until a deliberate new operation starts.
+    } else if (state === null || (state.binding === null && state.datasetSetup === null)) {
       phase = 'local';
       message = 'Nur lokal gespeichert.';
     } else if (state.datasetSetup !== null && state.binding === null) {
@@ -188,8 +190,6 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
     } else if (state.quarantinedFiles.length > 0) {
       phase = 'error';
       message = 'Mindestens eine Drive-Datei benötigt Aufmerksamkeit.';
-    } else if (phase === 'connect' || phase === 'error') {
-      // Keep the action-required phase until retry()/sync() explicitly starts a new operation.
     } else if (measured.conflictCount > 0) {
       phase = 'conflict';
       message = 'Ein Datenkonflikt muss geklärt werden.';

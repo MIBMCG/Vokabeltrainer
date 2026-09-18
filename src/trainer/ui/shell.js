@@ -47,7 +47,7 @@ function wordFields(index, draft) {
   ]);
 }
 
-export function mountShell({root, commands, pinGate}) {
+export function mountShell({root, commands, pinGate, sync, restore, auth, onDownload}) {
   const restored = restoredShellState();
   let currentView = restored?.view ?? 'profiles';
   let activeProfileId = restored?.profileId ?? null;
@@ -275,7 +275,7 @@ export function mountShell({root, commands, pinGate}) {
     if (currentView === 'profiles') renderProfiles(state);
     else if (currentView === 'adult') {
       if (!pinGate.isUnlocked()) renderAdultGate();
-      else renderAdult({root, state, commands, pinGate, onNavigate: show});
+      else renderAdult({root, state, commands, pinGate, onNavigate: show, sync, restore, auth, onDownload});
     } else if (currentView === 'practice' && activeProfileId !== null) {
       const projection = project(state.ledger);
       const profile = projection.entities.profiles[activeProfileId];
@@ -329,9 +329,19 @@ export function mountShell({root, commands, pinGate}) {
     show(destination);
   }
 
+  function closeAdultDialogs() {
+    for (const dialog of document.querySelectorAll('dialog.restore-dialog')) {
+      dialog.close();
+      dialog.remove();
+    }
+  }
+
   function show(view) {
     if (!['profiles', 'practice', 'journey', 'avatar', 'adult'].includes(view)) return;
-    if (currentView === 'adult' && view !== 'adult') pinGate.lock();
+    if (currentView === 'adult' && view !== 'adult') {
+      closeAdultDialogs();
+      pinGate.lock();
+    }
     if (view === 'profiles') practiceActive = false;
     currentView = view;
     persistShellState();
@@ -340,6 +350,7 @@ export function mountShell({root, commands, pinGate}) {
 
   function onVisibilityChange() {
     if (document.visibilityState !== 'hidden') return;
+    closeAdultDialogs();
     pinGate.lock();
     if (currentView === 'adult') {
       currentView = 'profiles';
@@ -359,10 +370,29 @@ export function mountShell({root, commands, pinGate}) {
       }
       render();
     },
+    syncStatusChanged(status) {
+      if (destroyed) return;
+      const node = root.querySelector('[data-sync-status]');
+      if (!node) return;
+      const label = status?.phase === 'synced' && status.pendingCount === 0 && status.conflictCount === 0
+        ? 'Abgeglichen'
+        : status?.phase === 'connect'
+          ? 'Mit Google verbinden'
+          : status?.phase === 'pending'
+            ? 'Abgleich ausstehend'
+            : ['error', 'conflict'].includes(status?.phase)
+              ? 'Abgleich fehlgeschlagen'
+              : 'Auf diesem Gerät gespeichert';
+      node.textContent = label;
+      node.dataset.phase = status?.phase ?? 'local';
+      const detail = node.nextElementSibling;
+      if (detail?.classList.contains('hint')) detail.textContent = status?.message ?? '';
+    },
     show,
     destroy() {
       destroyed = true;
       document.removeEventListener('visibilitychange', onVisibilityChange);
+      closeAdultDialogs();
       pinGate.lock();
     },
   };

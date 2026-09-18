@@ -40,8 +40,12 @@ export function createGoogleFixture() {
               if (!navigator.userActivation.isActive) throw new Error('Missing user gesture');
               window.__syntheticOauthRequests = (window.__syntheticOauthRequests || 0) + 1;
               const token = 'synthetic-browser-token-' + window.__syntheticOauthRequests;
-              queueMicrotask(() => options.callback({access_token:token,
+              const finish = () => queueMicrotask(() => options.callback({access_token:token,
                 scope:${JSON.stringify(scope)}, expires_in:Number(window.__syntheticExpiresIn || 3600)}));
+              if (window.__holdSyntheticOauth) {
+                window.__syntheticOauthStarted = true;
+                Promise.resolve(window.__syntheticOauthGate).then(finish);
+              } else finish();
             }};
           },
           revoke(token, done) { done(); }
