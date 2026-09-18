@@ -87,7 +87,7 @@ test('refuses a second active tab instead of risking last-writer data loss', asy
 
 test('requires browser lock support for explicit exclusive-tab mode', async () => {
   await assert.rejects(
-    openProbeStore({indexedDBImpl: fakeIndexedDb(), locks: undefined}),
+    openProbeStore({indexedDBImpl: fakeIndexedDb(), locks: null}),
     /Einzelfenster|Browser/i,
   );
 });

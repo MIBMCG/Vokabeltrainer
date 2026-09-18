@@ -133,7 +133,7 @@ test('missing Web Lock support never opens an unprotected product writer', async
   let opens = 0;
   await assert.rejects(openProductStore({
     indexedDBImpl: {open() { opens += 1; }},
-    locks: undefined,
+    locks: null,
   }), {code: 'locked'});
   assert.equal(opens, 0);
 });
