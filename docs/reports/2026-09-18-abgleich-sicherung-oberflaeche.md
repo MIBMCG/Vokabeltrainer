@@ -36,4 +36,4 @@ Die geforderten öffentlichen Schnittstellen bleiben erhalten. `isUnlocked` und 
 
 Die Browserprüfung verwendet synthetische GIS-/Drive-Antworten und System-Edge. Eine echte Google-Anmeldung, echte iPhone-/iPad-Abnahme und die PWA-Installation bleiben spätere Nachweise. Task 12 kann an den dokumentierten Lebenszyklus anschließen: laufende Runden bleiben im Shellzustand erhalten; Commit-Abonnements melden Änderungen an den Scheduler, Rundenabschluss löst sofortigen Abgleich aus, Statusupdates ersetzen die Übungsoberfläche nicht, und `pagehide` schließt Scheduler, Sync, Auth, Store sowie Shell. Eine PWA oder Hostingänderung wurde nicht implementiert.
 
-Commit: `feat: expose safe sync conflict and restore workflows` (SHA in der Taskübergabe, da dieser Bericht Bestandteil desselben Commits ist).
+Codecommit: `41c3404 feat: expose safe sync conflict and restore workflows`.
