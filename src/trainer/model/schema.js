@@ -319,7 +319,7 @@ export function assertEvent(value) {
   return structuredClone(value);
 }
 
-function assertEpoch(value) {
+export function assertEpoch(value) {
   assertExactKeys(
     value,
     [
@@ -349,7 +349,7 @@ function assertEpoch(value) {
   return structuredClone(value);
 }
 
-function assertEpochHistory(value) {
+export function assertEpochHistory(value) {
   assertExactKeys(
     value,
     ['id', 'datasetId', 'parents', 'deviceId', 'clock', 'occurredAt'],
@@ -364,7 +364,7 @@ function assertEpochHistory(value) {
   return structuredClone(value);
 }
 
-function assertSnapshot(value) {
+export function assertSnapshot(value) {
   assertExactKeys(
     value,
     ['id', 'datasetId', 'effectiveEventIds', 'supportEventIds', 'contentHash'],

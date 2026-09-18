@@ -1,9 +1,11 @@
 import {digest} from '../model/canonical.js';
 import {ProductError} from '../model/errors.js';
-import {assertDescriptor, assertLedger, mergeEvents} from '../model/schema.js';
+import {assertDescriptor, assertLedger, assertEpoch, mergeEvents} from '../model/schema.js';
 import {project} from '../learning/progress.js';
 import {productStateHash} from '../commands.js';
 import {buildPackets, validatePacket} from './packets.js';
+import {mergeById, epochHistory, exportBackup} from '../backup/format.js';
+import {readSnapshot, planSnapshotUploads, uploadVerified, localSafetyCopy} from '../backup/transport.js';
 
 const APP = 'vokabeltrainer-product';
 const FOLDER_MIME_TYPE = 'application/vnd.google-apps.folder';
@@ -165,6 +167,7 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
   let active = null;
   let rerun = false;
   const sessionVersions = new Map();
+  const joinPreviews = new Map();
 
   function publish(phase, message) {
     status = statusFromState(commands.getState(), phase, message, lastConfirmedAt);
@@ -425,6 +428,7 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
       name: setup.name,
       appProperties: {app: APP, kind: 'dataset-folder', datasetId: setup.datasetId},
     });
+    await publishLocalEpochs(setup);
     await drive.putJson({
       id: setup.epochFileId,
       name: `epoch-${setup.rootEpoch.id}.json`,
@@ -472,6 +476,41 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
     return true;
   }
 
+  // Activated offline restore jobs own their reserved IDs even before a binding exists.
+  async function publishLocalEpochs(binding) {
+    const jobs=commands.getState().restoreJobs.filter(j=>j.phase==='activated' && j.epoch!==null);
+    for(const original of jobs) {
+      let job=commands.getState().restoreJobs.find(j=>j.id===original.id);
+      let manifest=job.uploads.find(u=>u.kind==='snapshot-manifest' && u.value.purpose==='restore');
+      if(manifest?.verified && job.uploads.some(u=>u.kind==='epoch' && u.verified)
+        && commands.getState().snapshotManifests.some(m=>m.snapshotId===job.snapshot.id))continue;
+      if(!manifest) {
+        const state=commands.getState(),datasetId=binding.datasetId;
+        const backup={...job.backup,descriptor:state.ledger.descriptor,snapshot:job.snapshot,
+          events:job.backup.events.map(e=>({...e,datasetId})),
+          epochHistory:mergeById(job.backup.epochHistory.map(e=>({...e,datasetId})),epochHistory(state.ledger))};
+        const uploads=await planSnapshotUploads(backup,'restore',drive);
+        await mutate(next=>{next.restoreJobs.find(j=>j.id===job.id).uploads.push(...uploads);});
+        job=commands.getState().restoreJobs.find(j=>j.id===job.id);
+        manifest=job.uploads.find(u=>u.kind==='snapshot-manifest' && u.value.purpose==='restore');
+      }
+      const ids=new Set([...manifest.value.parts.map(p=>p.fileId),manifest.fileId]);
+      for(const upload of job.uploads.filter(u=>ids.has(u.fileId))) {
+        await uploadVerified(drive,binding,upload);
+        await mutate(next=>{next.restoreJobs.find(j=>j.id===job.id).uploads.find(u=>u.fileId===upload.fileId).verified=true;});
+      }
+      await mutate(next=>{const found=next.snapshotManifests.find(m=>m.snapshotId===job.snapshot.id);
+        if(!found)next.snapshotManifests.push({snapshotId:job.snapshot.id,fileId:manifest.fileId});});
+      let control=job.uploads.find(u=>u.kind==='epoch');
+      if(!control) {
+        control={kind:'epoch',logicalId:job.epoch.id,fileId:await drive.generateId(),value:job.epoch,verified:false};
+        await mutate(next=>{next.restoreJobs.find(j=>j.id===job.id).uploads.push(control);});
+      }
+      await uploadVerified(drive,binding,control);
+      await mutate(next=>{next.restoreJobs.find(j=>j.id===job.id).uploads.find(u=>u.fileId===control.fileId).verified=true;});
+    }
+  }
+
   async function createDataset(name) {
     try {
       await prepareDatasetSetup(name);
@@ -505,6 +544,8 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
       const root = await rootEpochFor(folderId, descriptorRead.descriptor);
       const current = commands.getState();
       if (current === null) throw productError('not-ready', 'Der Vokabeltrainer ist noch nicht eingerichtet.');
+      if(current.binding!==null)throw productError('binding','Dieser Browser ist bereits verbunden.');
+      const binding={accountId,folderId,descriptorFileId,datasetId:selectedDescriptor.datasetId};
       const sameDataset = current.ledger.descriptor.datasetId === descriptorRead.descriptor.datasetId;
       const nonempty = current.ledger.events.length > 0 || current.outboxEventIds.length > 0
         || current.pendingPackets.length > 0 || Object.keys(current.rounds).length > 0;
@@ -516,19 +557,46 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
         remoteBootstrapEventCount: 0,
         requiresSafetyCopy: !sameDataset && nonempty,
       };
-      if (decision === 'preview') return preview;
+      let expectedLocalHash=null,remoteState=null;
+      if(!sameDataset && nonempty) {
+        remoteState=await inspectJoinedDataset(current,binding,descriptorRead.descriptor,root.epoch);
+        preview.remoteBootstrapEventCount=remoteState.ledger.events.length;
+      }
+      if (decision === 'preview') {
+        if(preview.requiresSafetyCopy) {
+          const safety=await localSafetyCopy({commands,store,now,id,purpose:'join'});
+          const freshBackup=await exportBackup(commands.getState(),safety.createdAt);
+          if(await digest({...freshBackup,safetyCopyIndex:[]})!==await digest({...safety.backup,safetyCopyIndex:[]})) {
+            throw productError('stale','Der lokale Stand wurde während der Sicherung geändert. Bitte eine neue Vorschau öffnen.');
+          }
+          expectedLocalHash=await productStateHash(commands.getState());
+          const previewId=await digest({binding,local:expectedLocalHash,remote:remoteState.ledger,safetyCopyId:safety.id});
+          joinPreviews.set(previewId,{expectedLocalHash,remoteHash:await digest(remoteState.ledger),binding,safetyCopyId:safety.id});
+          return {...preview,previewId,safetyCopyId:safety.id};
+        }
+        return {...preview,previewId:null,safetyCopyId:null};
+      }
       if (!sameDataset && nonempty) {
-        throw productError('not-ready', 'Vor dem Öffnen dieses Datensatzes ist ab Task 10 eine Sicherheitskopie und ausdrückliche Auswahl nötig.');
+        if(!selection.previewId || !selection.safetyCopyId)throw productError('not-ready','Bitte die Sicherheitskopie und Datensatzauswahl ausdrücklich bestätigen.');
+        const approved=joinPreviews.get(selection.previewId);
+        if(!approved || approved.safetyCopyId!==selection.safetyCopyId
+          || await digest(approved.binding)!==await digest(binding)
+          || approved.expectedLocalHash!==await productStateHash(commands.getState())
+          || approved.remoteHash!==await digest(remoteState.ledger))throw productError('stale','Die Datensatzauswahl wurde geändert. Bitte eine neue Vorschau öffnen.');
+        const safety=commands.getState().safetyCopies.find(c=>c.id===approved.safetyCopyId);
+        if(!safety?.verified || await digest(safety.backup)!==safety.hash)throw productError('storage','Die Sicherheitskopie ist nicht mehr vollständig.');
+        expectedLocalHash=approved.expectedLocalHash;
       }
       const descriptorHash = descriptorRead.hash;
       const epochHash = root.hash;
-      await mutate((next) => {
+      await mutate(async (next) => {
         if (next.binding !== null) throw productError('binding', 'Dieser Browser ist bereits verbunden.');
         const currentSameDataset = next.ledger.descriptor.datasetId === descriptorRead.descriptor.datasetId;
         const currentNonempty = next.ledger.events.length > 0 || next.outboxEventIds.length > 0
           || next.pendingPackets.length > 0 || Object.keys(next.rounds).length > 0;
         if (!currentSameDataset && currentNonempty) {
-          throw productError('not-ready', 'Der lokale Stand wurde inzwischen geändert; vor dem Öffnen ist eine Sicherheitskopie nötig.');
+          if(expectedLocalHash===null)throw productError('not-ready','Der lokale Stand wurde inzwischen geändert; eine Sicherheitskopie ist nötig.');
+          if(await productStateHash(next)!==expectedLocalHash)throw productError('stale','Der lokale Stand wurde inzwischen geändert. Bitte die Auswahl erneut prüfen.');
         }
         if (!currentSameDataset) {
           next.ledger = {
@@ -538,12 +606,20 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
             snapshots: [],
             historicalEpochs: [],
           };
+          if(remoteState)next.ledger=remoteState.ledger;
           next.clock = Math.max(next.clock, root.epoch.clock);
           next.rounds = {};
           next.outboxEventIds = [];
           next.pendingPackets = [];
           next.packetIntegrity = [];
           next.quarantinedFiles = [];
+          next.restoreJobs=[];
+          next.snapshotManifests=remoteState?.snapshotManifests??[];
+          next.datasetSetup=null;
+          next.knownFiles=remoteState?.knownFiles??[];
+          next.packetIntegrity=remoteState?.packetIntegrity??[];
+          if(remoteState)next.safetyCopies=mergeById(next.safetyCopies,remoteState.safetyCopies);
+          next.clock=Math.max(next.clock,remoteState?.clock??0);
         } else {
           const checked = assertLedger({
             ...next.ledger,
@@ -560,11 +636,28 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
         next.knownFiles = upsertKnown(next.knownFiles, {fileId: descriptorFileId, contentHash: descriptorHash, kind: 'dataset'});
         next.knownFiles = upsertKnown(next.knownFiles, {fileId: root.fileId, contentHash: epochHash, kind: 'epoch'});
       });
+      if(selection.previewId)joinPreviews.delete(selection.previewId);
       publish('pending', 'Der Datensatz ist verbunden und wird geladen.');
       return preview;
     } catch (error) {
       return handleError(error);
     }
+  }
+
+  async function inspectJoinedDataset(current,binding,descriptor,root) {
+    let value={...structuredClone(current),ledger:{descriptor,events:[],epochs:[root],snapshots:[],historicalEpochs:[]},
+      binding,clock:Math.max(current.clock,root.clock),rounds:{},outboxEventIds:[],pendingPackets:[],datasetSetup:null,
+      packetIntegrity:[],knownFiles:[],quarantinedFiles:[],safetyCopies:[],restoreJobs:[],snapshotManifests:[]};
+    const scratch={async load(){return structuredClone(value);},async save(next){value=structuredClone(next);}};
+    // Read-only staging has no local command hooks: discovering a remote milestone
+    // must not generate/upload a new claim before the user confirms the join.
+    const reader={getState:()=>structuredClone(value),subscribe:()=>()=>{},
+      async commitExternal(next,expected){
+        if(await productStateHash(value)!==expected)throw productError('stale','Die Datensatzvorschau wurde geändert.');
+        assertLedger(next.ledger);await scratch.save(next);
+      }};
+    const probe=createProductSync({drive,store:scratch,commands:reader,now,id,onStatus:()=>{}});
+    try {await probe.sync();return reader.getState();} finally {probe.destroy();}
   }
 
   function packetMetadataMatches(meta, packet, binding) {
@@ -594,6 +687,8 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
     }
 
     const packetCandidates = [];
+    const epochCandidates = [];
+    const receivedSafetyCopies = [];
     const immediateQuarantine = [];
     const verifiedKnown = [];
     const packetIds = new Map(before.packetIntegrity.map(({packetId, contentHash: hash}) => (
@@ -621,10 +716,40 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
         meta = read.metadata;
         inspectedValue = read.value;
         if (kind === 'epoch') {
-          const candidate = {...before.ledger, epochs: [...before.ledger.epochs, read.value]};
-          const duplicate = before.ledger.epochs.some(({id: epochId}) => epochId === read.value?.id);
-          if (!duplicate) assertLedger(candidate);
-          verifiedKnown.push({fileId: meta.id, contentHash: read.hash, kind});
+          const epoch=assertEpoch(read.value);
+          if(meta.appProperties.epochId!==epoch.id || epoch.datasetId!==binding.datasetId) throw productError('binding','Die Epochenkennung stimmt nicht.');
+          let backup=null,manifestId=null;
+          if(epoch.snapshotId!==null) {
+            const matches=files.filter(m=>m.appProperties.kind==='snapshot-manifest' && m.appProperties.snapshotId===epoch.snapshotId);
+            if(epoch.snapshotManifestFileId!==null) {
+              if(!matches.some(m=>m.id===epoch.snapshotManifestFileId))throw productError('reference','Das Snapshot-Manifest fehlt.');
+              manifestId=epoch.snapshotManifestFileId;
+            } else {
+              if(matches.length!==1)throw productError('reference','Das Snapshot-Manifest fehlt oder ist nicht eindeutig.');
+              manifestId=matches[0].id;
+            }
+            const readSnapshotResult=await readSnapshot({drive,binding,fileId:manifestId,descriptor:before.ledger.descriptor});
+            if(readSnapshotResult.manifest.purpose!=='restore' || readSnapshotResult.backup.snapshot.id!==epoch.snapshotId)throw productError('reference','Das Snapshot-Manifest passt nicht zur Epoche.');
+            backup=readSnapshotResult.backup;
+            for(const alternative of matches.filter(m=>m.id!==manifestId)) {
+              const other=await readSnapshot({drive,binding,fileId:alternative.id,descriptor:before.ledger.descriptor});
+              if(other.manifest.totalHash!==readSnapshotResult.manifest.totalHash)throw productError('collision','Eine Snapshot-ID enthält verschiedene Inhalte.');
+            }
+          }
+          epochCandidates.push({epoch,backup,manifestId,fileId:meta.id,hash:read.hash});
+          continue;
+        }
+        if(kind==='snapshot-part' || kind==='snapshot-manifest') {
+          // Parts may arrive before their manifest/control; only a complete control activates them.
+          if(read.value?.kind!==kind || read.value.datasetId!==binding.datasetId
+            || read.value.snapshotId!==meta.appProperties.snapshotId)throw productError('invalid','Die Snapshot-Dateikennung stimmt nicht.');
+          if(kind==='snapshot-manifest') {
+            const checked=await readSnapshot({drive,binding,fileId:meta.id,descriptor:before.ledger.descriptor});
+            if(checked.manifest.purpose==='safety') receivedSafetyCopies.push({id:checked.manifest.snapshotId,
+              createdAt:checked.backup.exportedAt,purpose:'safety',backup:checked.backup,hash:await digest(checked.backup),
+              driveManifestFileId:meta.id,verified:true});
+          }
+          verifiedKnown.push({fileId:meta.id,contentHash:read.hash,kind});
           continue;
         }
         if (kind !== 'packet') throw productError('invalid', 'Der gebundene Ordner enthält eine unbekannte Produktdatei.');
@@ -676,6 +801,33 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
 
     let firstProblem = immediateQuarantine[0] ?? null;
     await mutate(async (next) => {
+      for(const copy of receivedSafetyCopies) {
+        const previous=next.safetyCopies.find(c=>c.id===copy.id);
+        if(previous && previous.hash!==copy.hash)throw productError('collision','Eine Sicherheitskopie-ID enthält andere Daten.');
+        if(!next.safetyCopies.some(c=>c.hash===copy.hash || c.driveManifestFileId===copy.driveManifestFileId))next.safetyCopies.push(copy);
+      }
+      let controls=[...epochCandidates],controlProgress=true;
+      while(controls.length && controlProgress) {
+        controlProgress=false;const waiting=[];
+        for(const entry of controls) {
+          try {
+            const backup=entry.backup;
+            next.ledger=assertLedger({...next.ledger,epochs:mergeById(next.ledger.epochs,[entry.epoch]),
+              events:backup?mergeEvents(next.ledger.events,backup.events):next.ledger.events,
+              snapshots:backup?mergeById(next.ledger.snapshots,[backup.snapshot]):next.ledger.snapshots,
+              historicalEpochs:backup?mergeById(next.ledger.historicalEpochs,backup.epochHistory):next.ledger.historicalEpochs});
+            if(backup && !next.snapshotManifests.some(m=>m.snapshotId===backup.snapshot.id))next.snapshotManifests.push({snapshotId:backup.snapshot.id,fileId:entry.manifestId});
+            verifiedKnown.push({fileId:entry.fileId,contentHash:entry.hash,kind:'epoch'});controlProgress=true;
+          } catch(error) {
+            if(error.code==='reference')waiting.push({...entry,error});
+            else {const problem={fileId:entry.fileId,code:error.code??'invalid',message:safeMessage(error),value:entry.epoch};
+              next.quarantinedFiles=upsertQuarantine(next.quarantinedFiles,problem);if(!firstProblem)firstProblem=problem;}
+          }
+        }
+        controls=waiting;
+      }
+      for(const entry of controls){const problem={fileId:entry.fileId,code:'reference',message:safeMessage(entry.error),value:entry.epoch};
+        next.quarantinedFiles=upsertQuarantine(next.quarantinedFiles,problem);if(!firstProblem)firstProblem=problem;}
       for (const known of verifiedKnown) {
         next.knownFiles = upsertKnown(next.knownFiles, known);
         next.quarantinedFiles = removeQuarantine(next.quarantinedFiles, known.fileId);
@@ -836,6 +988,7 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
       return getStatus();
     }
     publish('pending', 'Änderungen werden abgeglichen.');
+    await publishLocalEpochs(state.binding);
     const remoteProblem = await download(state.binding);
     await preparePackets(state.binding);
     await uploadPending(state.binding);

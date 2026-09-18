@@ -271,12 +271,13 @@ test('join rechecks local emptiness after a concurrent commit and preserves that
   assert.ok(commands.getState().outboxEventIds.length > 0);
 });
 
-test('nonempty local collection previews but cannot join another dataset before Task 10 safety selection', async () => {
+test('nonempty local collection requires the explicit Task 10 safety and preview IDs before joining', async () => {
   const drive = new SyntheticDrive();
   const remote = await setupSyntheticSync({drive, outbox: []});
-  const localCommands = await makeCommands(productState(createFixture().base, {deviceId: 'dev2', outbox: []}), {deviceId: 'dev2'});
+  const localStore=memoryStore(productState(createFixture().base, {deviceId:'dev2',outbox:[]}));
+  const localCommands=await createCommands({store:localStore,now:()=>new Date(),id:sequenceIds('local-command'),deviceId:'dev2',onChange:()=>{}});
   const localSync = createProductSync({
-    drive, store: {}, commands: localCommands, now: () => new Date(), id: sequenceIds('local'), onStatus: () => {},
+    drive, store: localStore, commands: localCommands, now: () => new Date(), id: sequenceIds('local'), onStatus: () => {},
   });
   const [selection] = await localSync.discover();
   const local = localCommands.getState();

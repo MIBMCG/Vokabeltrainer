@@ -14,7 +14,8 @@ import {
 import {canonical, digest} from './model/canonical.js';
 import {ProductError} from './model/errors.js';
 import {nextLearningId, revisionPayload} from './model/revisions.js';
-import {assertLedger} from './model/schema.js';
+import {assertLedger, assertEpoch, assertSnapshot} from './model/schema.js';
+import {assertBackup} from './backup/format.js';
 import {validatePacket} from './sync/packets.js';
 
 const VERSION = {
@@ -92,6 +93,44 @@ function assertPendingPacket(value) {
   validatePacket(value.packet);
   if (value.driveFileId !== null) assertId(value.driveFileId, 'Die Drive-Datei-ID ist ungültig.');
   if (value.confirmed !== false) invalid('Ein ausstehendes Drive-Paket hat einen ungültigen Bestätigungsstatus.');
+}
+
+function assertRestoreRecords(state) {
+  const unique = (entries, key) => {
+    const values = entries.map(entry => entry[key]);
+    if (new Set(values).size !== values.length) invalid('Eine lokale Sicherungsliste enthält doppelte IDs.');
+  };
+  for (const copy of state.safetyCopies) {
+    assertExactKeys(copy, ['id','createdAt','purpose','backup','hash','driveManifestFileId','verified']);
+    assertId(copy.id); assertBackup(copy.backup);
+    if (copy.createdAt !== copy.backup.exportedAt || !['safety','restore','join'].includes(copy.purpose)
+      || !HASH_PATTERN.test(copy.hash) || typeof copy.verified !== 'boolean') invalid('Die lokale Sicherheitskopie ist ungültig.');
+    if (copy.driveManifestFileId !== null) assertId(copy.driveManifestFileId);
+  }
+  unique(state.safetyCopies,'id');
+  for (const job of state.restoreJobs) {
+    assertExactKeys(job,['id','phase','backup','previewId','parentHeads','safetyCopyId','snapshot','uploads','epoch']);
+    assertId(job.id); assertBackup(job.backup);
+    if (!['preparing','preview','uploading','published','activated'].includes(job.phase)) invalid('Die Wiederherstellungsphase ist ungültig.');
+    if (job.previewId !== null && !HASH_PATTERN.test(job.previewId)) invalid('Die Vorschau-ID ist ungültig.');
+    if (job.parentHeads !== null) assertIdArray(job.parentHeads);
+    if (job.safetyCopyId !== null) assertId(job.safetyCopyId);
+    if (job.snapshot !== null) assertSnapshot(job.snapshot);
+    if (job.epoch !== null) assertEpoch(job.epoch);
+    if (!Array.isArray(job.uploads)) invalid('Die Wiederherstellungsdateien sind ungültig.');
+    for (const upload of job.uploads) {
+      assertExactKeys(upload,['kind','logicalId','fileId','value','verified']);
+      assertId(upload.logicalId); assertId(upload.fileId); canonical(upload.value);
+      if (!['snapshot-part','snapshot-manifest','epoch'].includes(upload.kind)
+        || upload.value?.kind !== upload.kind || typeof upload.verified !== 'boolean') invalid('Eine Wiederherstellungsdatei ist ungültig.');
+    }
+    unique(job.uploads,'fileId');
+  }
+  unique(state.restoreJobs,'id');
+  for (const entry of state.snapshotManifests) {
+    assertExactKeys(entry,['snapshotId','fileId']); assertId(entry.snapshotId); assertId(entry.fileId);
+  }
+  unique(state.snapshotManifests,'snapshotId');
 }
 
 function assertDatasetSetup(value) {
@@ -275,6 +314,7 @@ function assertProductState(value, expectedDeviceId = null) {
   assertPacketIntegrity(value.packetIntegrity);
   value.knownFiles.forEach(assertKnownFile);
   value.quarantinedFiles.forEach(assertQuarantine);
+  assertRestoreRecords(value);
   if (value.pinVerifier !== null) assertRecord(value.pinVerifier, 'Der lokale PIN-Prüfwert ist ungültig.');
   return {
     ...structuredClone(value),
@@ -732,6 +772,17 @@ export async function createCommands({store, now, id, deviceId, onChange}) {
           fail('stale', 'Der lokale Stand hat sich inzwischen geändert.');
         }
         const next = assertProductState(structuredClone(nextState), deviceId);
+        const previousEpoch = project(current.ledger).activeEpochId;
+        const nextEpoch = project(next.ledger).activeEpochId;
+        if (nextEpoch !== null && nextEpoch !== previousEpoch) {
+          for (const round of Object.values(next.rounds)) {
+            if (round.epochId !== nextEpoch && !['completed', 'abandoned'].includes(round.status)) {
+              round.status = 'abandoned';
+              round.current = null;
+              round.feedback = null;
+            }
+          }
+        }
         reconcileMilestones(next);
         await commit(next);
       });
