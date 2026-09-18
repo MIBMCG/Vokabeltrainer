@@ -347,6 +347,56 @@ test('dependency quarantine recovers when a later packet supplies its parent', a
   assert.equal(commands.getState().ledger.events.some(({id}) => id === 'word-child'), true);
 });
 
+test('duplicate unresolved packet stays mergeable after its dependency arrives and the session restarts', async () => {
+  const {sync, drive, commands} = await setupSyntheticSync({outbox: []});
+  const binding = commands.getState().binding;
+  const f = createFixture();
+  const parent = f.event('entity.revised', {
+    entityType: 'word', entityId: 'w1', parents: ['rev-w1'],
+    value: {lessonId: 'l1', german: 'Hund!', hint: '', answers: ['dog'], archived: false, learningId: 'duplicate-parent'},
+  }, {id: 'duplicate-parent-event', deviceId: 'dev2', clock: 100});
+  const child = f.event('entity.revised', {
+    entityType: 'word', entityId: 'w1', parents: ['duplicate-parent-event'],
+    value: {lessonId: 'l1', german: 'Hund!!', hint: '', answers: ['dog'], archived: false, learningId: 'duplicate-child'},
+  }, {id: 'duplicate-child-event', deviceId: 'dev2', clock: 101});
+  const childPacket = buildPackets({
+    events: [child], datasetId: 'd1', epochId: 'e0', id: () => 'duplicate-child-packet',
+  })[0];
+  const childProperties = {
+    app: 'vokabeltrainer-product', kind: 'packet', datasetId: 'd1',
+    epochId: 'e0', packetId: 'duplicate-child-packet',
+  };
+  drive.addJson({id: 'duplicate-child-a', parentId: binding.folderId, appProperties: childProperties, value: childPacket});
+  drive.addJson({id: 'duplicate-child-b', parentId: binding.folderId, appProperties: childProperties, value: childPacket});
+
+  await assert.rejects(sync.sync(), {code: 'reference'});
+  assert.equal(commands.getState().packetIntegrity.some(({packetId}) => packetId === 'duplicate-child-packet'), false);
+  drive.addJson({
+    id: 'duplicate-parent-file', parentId: binding.folderId,
+    appProperties: {
+      app: 'vokabeltrainer-product', kind: 'packet', datasetId: 'd1',
+      epochId: 'e0', packetId: 'duplicate-parent-packet',
+    },
+    value: buildPackets({events: [parent], datasetId: 'd1', epochId: 'e0', id: () => 'duplicate-parent-packet'})[0],
+  });
+  sync.destroy();
+
+  const reloadedStore = memoryStore(commands.getState());
+  const reloadedCommands = await createCommands({
+    store: reloadedStore, now: () => new Date('2026-09-18T10:01:00.000Z'),
+    id: sequenceIds('reloaded'), deviceId: 'dev1', onChange: () => {},
+  });
+  const reloadedSync = createProductSync({
+    drive, store: reloadedStore, commands: reloadedCommands,
+    now: () => new Date('2026-09-18T10:01:00.000Z'), id: sequenceIds('reloaded-sync'), onStatus: () => {},
+  });
+
+  await reloadedSync.sync();
+  assert.equal(reloadedCommands.getState().ledger.events.some(({id}) => id === 'duplicate-child-event'), true);
+  assert.equal(reloadedSync.getStatus().phase, 'synced');
+  reloadedSync.destroy();
+});
+
 test('changed known content and missing known files remain visible without deleting history', async () => {
   const {sync, drive, commands} = await setupSyntheticSync({outbox: []});
   const binding = commands.getState().binding;
@@ -500,6 +550,29 @@ test('local commits immediately invalidate synced status and notify the consumer
   const afterDestroy = statuses.length;
   await commands.setAnimations({profileId: 'p1', animations: false});
   assert.equal(statuses.length, afterDestroy);
+});
+
+test('pending counters do not hide connect or error until an explicit sync operation starts', async () => {
+  for (const [code, expectedPhase] of [['auth', 'connect'], ['permission', 'error']]) {
+    const {sync, drive, commands, statuses} = await setupSyntheticSync({outbox: []});
+    await commands.revise({
+      entityType: 'profile', entityId: 'p1', expectedHeads: ['rev-p1'],
+      value: {name: `Ada ${code}`, archived: false},
+    });
+    drive.accountId = async () => { throw new DriveError(code, `synthetic ${code}`, code === 'auth' ? 401 : 403); };
+
+    await assert.rejects(sync.sync(), {code});
+    assert.equal(sync.getStatus().phase, expectedPhase);
+    assert.equal(sync.getStatus().pendingCount, 1);
+    await commands.setAnimations({profileId: 'p1', animations: false});
+    assert.equal(statuses.at(-1).phase, expectedPhase);
+    assert.equal(statuses.at(-1).pendingCount, 2);
+    drive.accountId = async () => 'account-a';
+    await sync.retry();
+    assert.equal(sync.getStatus().phase, 'synced');
+    assert.equal(sync.getStatus().pendingCount, 0);
+    sync.destroy();
+  }
 });
 
 test('uploads independent local packets before reporting a malformed remote packet', async () => {

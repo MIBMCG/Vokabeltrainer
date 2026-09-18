@@ -185,13 +185,15 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
     } else if (state.quarantinedFiles.length > 0) {
       phase = 'error';
       message = 'Mindestens eine Drive-Datei benötigt Aufmerksamkeit.';
+    } else if (phase === 'connect' || phase === 'error') {
+      // Keep the action-required phase until retry()/sync() explicitly starts a new operation.
     } else if (measured.conflictCount > 0) {
       phase = 'conflict';
       message = 'Ein Datenkonflikt muss geklärt werden.';
     } else if (measured.pendingCount > 0) {
       phase = 'pending';
       message = 'Änderungen sind noch nicht vollständig abgeglichen.';
-    } else if (!['synced', 'connect', 'error'].includes(phase)) {
+    } else if (phase !== 'synced') {
       phase = 'pending';
       message = 'Der Datensatz ist verbunden; der Abgleich steht noch aus.';
     }
@@ -594,7 +596,6 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
     const packetCandidates = [];
     const immediateQuarantine = [];
     const verifiedKnown = [];
-    const verifiedPackets = [];
     const packetIds = new Map(before.packetIntegrity.map(({packetId, contentHash: hash}) => (
       [packetId, {fileId: null, packet: null, hash, persisted: true}]
     )));
@@ -638,12 +639,13 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
           throw productError('collision', 'Eine Paket-ID enthält unterschiedliche Drive-Daten.');
         }
         if (!previous) {
-          const entry = {fileId: meta.id, packet, hash: read.hash};
+          const entry = {fileId: meta.id, packet, hash: read.hash, duplicates: []};
           packetIds.set(packet.packetId, entry);
           packetCandidates.push(entry);
-        } else {
+        } else if (previous.persisted) {
           verifiedKnown.push({fileId: meta.id, contentHash: read.hash, kind: 'packet'});
-          verifiedPackets.push({packetId: packet.packetId, contentHash: read.hash});
+        } else {
+          previous.duplicates.push({fileId: meta.id, hash: read.hash});
         }
       } catch (error) {
         if (isTransportFailure(error)) throw error;
@@ -662,7 +664,9 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
       try {
         const packet = validatePacket(entry.value);
         if (!packetIds.has(packet.packetId)) {
-          packetIds.set(packet.packetId, {fileId: entry.fileId, packet, hash: await contentHash(packet)});
+          packetIds.set(packet.packetId, {
+            fileId: entry.fileId, packet, hash: await contentHash(packet), duplicates: [],
+          });
           packetCandidates.push(packetIds.get(packet.packetId));
         }
       } catch {
@@ -676,9 +680,6 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
         next.knownFiles = upsertKnown(next.knownFiles, known);
         next.quarantinedFiles = removeQuarantine(next.quarantinedFiles, known.fileId);
       }
-      for (const packet of verifiedPackets) {
-        next.packetIntegrity = upsertPacketIntegrity(next.packetIntegrity, packet);
-      }
       for (const problem of immediateQuarantine) {
         next.quarantinedFiles = upsertQuarantine(next.quarantinedFiles, problem);
       }
@@ -691,39 +692,45 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
           try {
             const events = mergeEvents(next.ledger.events, entry.packet.events);
             next.ledger = assertLedger({...next.ledger, events});
-            next.knownFiles = upsertKnown(next.knownFiles, {
-              fileId: entry.fileId, contentHash: entry.hash, kind: 'packet',
-            });
+            for (const physical of [entry, ...entry.duplicates]) {
+              next.knownFiles = upsertKnown(next.knownFiles, {
+                fileId: physical.fileId, contentHash: physical.hash, kind: 'packet',
+              });
+              next.quarantinedFiles = removeQuarantine(next.quarantinedFiles, physical.fileId);
+            }
             next.packetIntegrity = upsertPacketIntegrity(next.packetIntegrity, {
               packetId: entry.packet.packetId, contentHash: entry.hash,
             });
-            next.quarantinedFiles = removeQuarantine(next.quarantinedFiles, entry.fileId);
             progressed = true;
           } catch (error) {
             if (error?.code === 'reference') postponed.push({...entry, error});
             else {
-              const problem = {
-                fileId: entry.fileId,
-                code: error?.code ?? 'invalid',
-                message: safeMessage(error, 'Ein Änderungspaket ist ungültig.'),
-                value: entry.packet,
-              };
-              next.quarantinedFiles = upsertQuarantine(next.quarantinedFiles, problem);
-              if (firstProblem === null) firstProblem = problem;
+              for (const physical of [entry, ...entry.duplicates]) {
+                const problem = {
+                  fileId: physical.fileId,
+                  code: error?.code ?? 'invalid',
+                  message: safeMessage(error, 'Ein Änderungspaket ist ungültig.'),
+                  value: entry.packet,
+                };
+                next.quarantinedFiles = upsertQuarantine(next.quarantinedFiles, problem);
+                if (firstProblem === null) firstProblem = problem;
+              }
             }
           }
         }
         remaining = postponed;
       }
       for (const entry of remaining) {
-        const problem = {
-          fileId: entry.fileId,
-          code: 'reference',
-          message: safeMessage(entry.error, 'Ein Änderungspaket wartet auf abhängige Daten.'),
-          value: entry.packet,
-        };
-        next.quarantinedFiles = upsertQuarantine(next.quarantinedFiles, problem);
-        if (firstProblem === null) firstProblem = problem;
+        for (const physical of [entry, ...entry.duplicates]) {
+          const problem = {
+            fileId: physical.fileId,
+            code: 'reference',
+            message: safeMessage(entry.error, 'Ein Änderungspaket wartet auf abhängige Daten.'),
+            value: entry.packet,
+          };
+          next.quarantinedFiles = upsertQuarantine(next.quarantinedFiles, problem);
+          if (firstProblem === null) firstProblem = problem;
+        }
       }
       next.clock = Math.max(
         next.clock,

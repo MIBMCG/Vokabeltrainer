@@ -49,3 +49,30 @@ Damit sind die echten Modulabrufe, Setup, Übungsablauf, Hintergrundentwertung, 
 - Task 11 erstellt genau einen Synccontroller, verwendet dessen `onStatus`- und bestehende Authentifizierungsgrenze und ruft beim Abbau `destroy()` auf. Das Commands-Abonnement ersetzt keine zweite Main- oder Tokenlogik.
 - Der Server führt die Task-9-Module nur als statische, ausdrücklich erlaubte Produktdateien. Die eigentliche Main-Integration von Drive und Scheduler bleibt Task 11.
 - Reales Google Drive, zwei physische Geräte, Safari sowie iPhone/iPad wurden in dieser Runde nicht geprüft und bleiben offen.
+
+## Korrekturrunde 2
+
+Die unabhängige Nachprüfung der ersten Runde bestätigte die ursprünglichen zehn Befunde als behoben und fand zwei neue wichtige Wechselwirkungen. Beide wurden am 18.09.2026 mit neuen Regressionen zuerst reproduziert:
+
+- Zwei physische Dateien desselben referenzunvollständigen Kindpakets schrieben den logischen Paketindex bereits vor erfolgreicher Übernahme. RED: Der fokussierte Test fand `duplicate-child-packet` fälschlich in `packetIntegrity`, bevor die Elternrevision vorlag.
+- Ein 401-/403-Fehler wurde korrekt als `connect` beziehungsweise `error` gemeldet, aber `getStatus()` setzte die Phase wegen lokaler Pending-Ereignisse sofort wieder auf `pending`. RED: Erwartet war `connect`, geliefert wurde `pending`.
+
+Der Download gruppiert nun identische physische Dateien eines noch nicht übernommenen logischen Pakets. Erst ein erfolgreicher Ledger-Merge schreibt `packetIntegrity`; dann werden alle geprüften physischen Kopien gemeinsam als bekannt bestätigt. Bei fehlender Referenz bleiben alle Kopien quarantänisiert und nach einem Neustart erneut mergefähig. Bereits dauerhaft übernommene Paket-IDs dürfen weiterhin identische weitere physische Kopien ohne erneute Wertung bestätigen.
+
+Die Statusableitung erhält `connect` und `error` einschließlich aktualisierter Pending-Zähler über nachfolgende lokale Commits hinweg. Erst eine ausdrücklich gestartete neue Operation (`retry()` oder `sync()`) setzt die Arbeitsphase wieder auf `pending`; ein erfolgreicher Lauf endet anschließend wieder in `synced`.
+
+Fokussierte GREEN-Prüfung:
+
+```text
+node --test --experimental-test-isolation=none tests/trainer/sync.test.js
+20 Tests, 20 bestanden, 0 fehlgeschlagen
+```
+
+Vollständige GREEN-Prüfung unter Node 22.23.2:
+
+```text
+npm test
+227 Tests, 227 bestanden, 0 fehlgeschlagen
+```
+
+Die UI- und Serverdateien blieben in Runde 2 unverändert; deshalb wurde der bereits bestandene 4/4-Browserlauf nicht unnötig wiederholt. Reale Google-/Geräteabnahmen bleiben weiterhin offen.
