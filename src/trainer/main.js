@@ -6,6 +6,7 @@ import {createDriveClient} from '../drive/client.js';
 import {openProductStore} from './storage/store.js';
 import {createProductSync} from './sync/drive.js';
 import {createSyncScheduler} from './sync/scheduler.js';
+import {createUpdateController} from './updates.js';
 import {mountShell} from './ui/shell.js';
 
 const root = document.querySelector('#app');
@@ -18,6 +19,8 @@ let auth = null;
 let unsubscribeScheduler = null;
 let schedulerVisibility = null;
 let schedulerOnline = null;
+let updates = null;
+let updateNotice = null;
 let closing = false;
 
 function deviceId() {
@@ -137,6 +140,75 @@ function downloadBlob(blob, filename) {
   return 'Download gestartet';
 }
 
+function hasActiveRound(commands) {
+  const rounds = commands.getState()?.rounds ?? {};
+  return Object.values(rounds).some((round) => !['completed', 'abandoned'].includes(round.status));
+}
+
+function refreshUpdateNotice(commands) {
+  const activate = updateNotice?.querySelector('#update-activate');
+  if (!activate) return;
+  const activeRound = hasActiveRound(commands);
+  activate.dataset.activeRound = String(activeRound);
+  activate.textContent = activeRound ? 'Runde pausieren und aktualisieren' : 'Jetzt aktualisieren';
+}
+
+function showUpdateAvailable(commands) {
+  if (updateNotice?.isConnected) return;
+  const notice = document.createElement('aside');
+  notice.id = 'update-notice';
+  notice.className = 'update-notice';
+  notice.setAttribute('aria-labelledby', 'update-title');
+  const title = document.createElement('strong');
+  title.id = 'update-title';
+  title.textContent = 'Neue Programmversion verfügbar';
+  const detail = document.createElement('p');
+  detail.id = 'update-message';
+  detail.textContent = 'Dein gespeicherter Lernstand bleibt erhalten.';
+  const activate = document.createElement('button');
+  activate.id = 'update-activate';
+  activate.className = 'primary';
+  activate.addEventListener('click', async () => {
+    const activeRound = hasActiveRound(commands);
+    if (activeRound && activate.dataset.activeRound !== 'true') {
+      refreshUpdateNotice(commands);
+      detail.textContent = 'Die laufende Runde bleibt gespeichert. Bitte bestätige die Pause mit dem neuen Knopftext.';
+      return;
+    }
+    activate.disabled = true;
+    detail.textContent = 'Die Aktualisierung wird vorbereitet …';
+    try {
+      await updates.activate({pauseConfirmed: activeRound});
+      detail.textContent = 'Gespeichert. Die neue Version wird geladen …';
+    } catch (error) {
+      detail.textContent = error?.message || 'Die Aktualisierung konnte noch nicht gestartet werden.';
+      detail.dataset.tone = 'error';
+      activate.disabled = false;
+    }
+  });
+  notice.append(title, detail, activate);
+  root.before(notice);
+  updateNotice = notice;
+  refreshUpdateNotice(commands);
+}
+
+async function startUpdates(commands) {
+  if (!('serviceWorker' in navigator)) return;
+  try {
+    const registration = await navigator.serviceWorker.register('./sw.js', {scope: './'});
+    updates = createUpdateController({
+      registration,
+      hasActiveRound: () => hasActiveRound(commands),
+      pauseAndSave: () => shell.pauseForUpdate(),
+      reload: () => location.reload(),
+      onAvailable: () => showUpdateAvailable(commands),
+    });
+    await updates.check();
+  } catch {
+    // Offline use after a successful first load remains available if an update check fails.
+  }
+}
+
 async function start() {
   store = await openProductStore();
   let commands;
@@ -186,8 +258,10 @@ async function start() {
     onDownload: downloadBlob,
   });
   shell.render();
+  await startUpdates(commands);
   let completedRounds = commands.getState()?.ledger.events.filter(({type}) => type === 'round.completed').length ?? 0;
   unsubscribeScheduler = commands.subscribe((state) => {
+    refreshUpdateNotice(commands);
     const nextCompleted = state.ledger.events.filter(({type}) => type === 'round.completed').length;
     if (nextCompleted > completedRounds) scheduler?.roundCompleted();
     else scheduler?.changed();
@@ -216,6 +290,9 @@ function close() {
   }
   if (schedulerOnline) removeEventListener('online', schedulerOnline);
   syncController?.destroy();
+  updates?.destroy();
+  updateNotice?.remove();
+  updateNotice = null;
   auth?.disconnect();
   shell?.destroy();
   store?.close();

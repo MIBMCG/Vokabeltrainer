@@ -1,7 +1,7 @@
 import {project} from '../learning/progress.js';
 import {el, field, button, message} from './dom.js';
 import {renderAdult} from './adult.js';
-import {practiceRenderKey, renderPractice, renderPracticeLanding} from './practice.js';
+import {practiceRenderKey, practiceUpdateBlocker, renderPractice, renderPracticeLanding} from './practice.js';
 import {renderAvatar, renderJourney} from './rewards.js';
 
 const MAX_ANSWERS_TEXT_LENGTH = 4_200;
@@ -80,6 +80,12 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, onDown
     const text = error?.message || 'Die Aktion konnte nicht abgeschlossen werden.';
     const existing = root.querySelector('#shell-message');
     if (existing) existing.replaceWith(message(text, 'error'));
+  }
+
+  function updateBoundaryError(code, text) {
+    const error = new Error(text);
+    error.code = code;
+    return error;
   }
 
   function renderSetup(state) {
@@ -387,6 +393,24 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, onDown
       node.dataset.phase = status?.phase ?? 'local';
       const detail = node.nextElementSibling;
       if (detail?.classList.contains('hint')) detail.textContent = status?.message ?? '';
+    },
+    async pauseForUpdate() {
+      if (destroyed) throw updateBoundaryError('not-ready', 'Die App wird gerade geschlossen.');
+      const state = commands.getState();
+      if (setupBusy || state === null || state.pinVerifier === null) {
+        throw updateBoundaryError('not-ready', 'Bitte die Einrichtung zuerst abschließen.');
+      }
+      if (currentView === 'adult') {
+        throw updateBoundaryError('not-ready', 'Bitte die Erwachsenenansicht zuerst verlassen.');
+      }
+      const blocker = practiceUpdateBlocker(root);
+      if (blocker === 'busy') {
+        throw updateBoundaryError('not-ready', 'Die Antwort wird gerade gespeichert. Bitte kurz warten und erneut aktualisieren.');
+      }
+      if (blocker === 'typed-answer') {
+        throw updateBoundaryError('typed-answer-present', 'Bitte die offene Eingabe zuerst absenden oder leeren.');
+      }
+      persistShellState();
     },
     show,
     destroy() {

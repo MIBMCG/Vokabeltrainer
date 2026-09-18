@@ -131,6 +131,21 @@ h2 { margin-top: 0; font-size: 1.7rem; }
 .sync-status[data-phase="pending"] { background: #fff0c9; color: #684b12; }
 .sync-status[data-phase="connect"], .sync-status[data-phase="error"], .sync-status[data-phase="conflict"] { background: #fff0ef; color: #7d2020; }
 
+.update-notice {
+  display: grid;
+  grid-template-columns: minmax(12rem, 1fr) minmax(12rem, 2fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid #d49a2b;
+  border-radius: 1rem;
+  background: #fff8df;
+  box-shadow: var(--shadow);
+}
+.update-notice p { margin: 0; }
+.update-notice p[data-tone="error"] { color: var(--danger); }
+
 .profile-grid, .management-list { display: grid; gap: 1rem; margin: 1.25rem 0; }
 .profile-grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
 .profile-card { display: grid; gap: 0.2rem; min-height: 88px; text-align: left; color: #123b4b; }
@@ -404,6 +419,7 @@ th:first-child { position: sticky; left: 0; background: #fff; }
 }
 
 @media (max-width: 700px) {
+  .update-notice { grid-template-columns: 1fr; }
   .adult-header { align-items: flex-start; flex-direction: column; }
   .import-row { grid-template-columns: 1fr; }
   .management-list { grid-template-columns: 1fr; }

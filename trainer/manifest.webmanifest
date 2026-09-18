@@ -1,0 +1,19 @@
+{
+  "name": "Vokabeltrainer · Insel-Abenteuer",
+  "short_name": "Vokabeltrainer",
+  "description": "Vokabeln üben auf einer gemeinsamen Inselreise.",
+  "lang": "de",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fffaf0",
+  "theme_color": "#0b817c",
+  "icons": [
+    {
+      "src": "./assets/app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

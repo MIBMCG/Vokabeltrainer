@@ -1,13 +1,21 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdir} from 'node:fs/promises';
-import {resolve} from 'node:path';
+import {mkdir, mkdtemp, rm} from 'node:fs/promises';
+import {resolve, sep} from 'node:path';
 
 import {createTrainerHarness} from './trainer-harness.mjs';
 import {snapshotHash} from '../../src/trainer/backup/format.js';
 import {project as projectState} from '../../src/trainer/learning/progress.js';
 
 const resultsDirectory = resolve('test-results');
+
+async function syntheticProfileDirectory(prefix) {
+  const root = resolve(resultsDirectory, 'offline-profiles');
+  await mkdir(root, {recursive: true});
+  const directory = await mkdtemp(resolve(root, `${prefix}-`));
+  if (!directory.startsWith(`${root}${sep}`)) throw new Error('Unsafe synthetic profile directory.');
+  return {directory, root};
+}
 
 async function productState(page) {
   return page.evaluate(() => new Promise((resolveState, reject) => {
@@ -1499,6 +1507,106 @@ test('trainer sync and restore describes archive and assignment conflict choices
     await page.getByText('Freigegeben für: Ada', {exact: true}).first().waitFor();
     await page.getByText('Freigegeben für: kein Kind', {exact: true}).first().waitFor();
     assert.equal(await page.getByText(/browser-l2|browser-profile|browser-word|browser-lesson/).count(), 0);
+  } finally {
+    await context.close();
+    await harness.close();
+  }
+});
+
+test('trainer offline starts in a new tab and after a persistent browser restart with the server closed', {timeout: 180_000}, async () => {
+  for (const [label, basePath] of [['root', ''], ['repo', '/repo']]) {
+    const profile = await syntheticProfileDirectory(label);
+    const harness = await createTrainerHarness({basePath});
+    let first;
+    let restarted;
+    try {
+      first = await harness.newPersistentDevice({userDataDir: profile.directory});
+      await first.page.goto(harness.baseUrl);
+      await setupPractice(first.page);
+      await first.page.waitForFunction(() => navigator.serviceWorker.controller !== null, null, {timeout: 10_000});
+      await first.context.setOffline(true);
+      await harness.stopServer();
+
+      await first.page.close();
+      const offlineTab = await first.context.newPage();
+      await offlineTab.goto(harness.baseUrl, {waitUntil: 'domcontentloaded'});
+      await offlineTab.locator('#profile-list').waitFor().catch(async (error) => {
+        error.message += `\nOffline page body:\n${await offlineTab.locator('body').innerText()}\nCaches: ${JSON.stringify(await offlineTab.evaluate(() => caches.keys()))}`;
+        throw error;
+      });
+      await offlineTab.getByRole('button', {name: /^Ada/}).click();
+      await offlineTab.getByRole('button', {name: 'Alle Vokabeln', exact: true}).click();
+      await offlineTab.getByLabel('Englische Übersetzung').fill('dog');
+      await offlineTab.getByRole('button', {name: 'Prüfen', exact: true}).click();
+      await offlineTab.getByText('Richtig!', {exact: true}).waitFor();
+      await first.context.close();
+      first = null;
+
+      restarted = await harness.newPersistentDevice({userDataDir: profile.directory});
+      await restarted.context.setOffline(true);
+      await restarted.page.goto(harness.baseUrl, {waitUntil: 'domcontentloaded'});
+      await restarted.page.locator('#profile-list').waitFor();
+      await restarted.page.getByRole('button', {name: /^Ada/}).click();
+      await restarted.page.getByText('1 Antworten sind schon sicher gespeichert.', {exact: true}).waitFor();
+      await restarted.page.getByRole('button', {name: 'Fortsetzen', exact: true}).click();
+      await restarted.page.getByText('Richtig!', {exact: true}).waitFor();
+    } finally {
+      await Promise.allSettled([first?.context.close(), restarted?.context.close()]);
+      await harness.close();
+      if (!profile.directory.startsWith(`${profile.root}${sep}`)) throw new Error('Unsafe profile cleanup target.');
+      await rm(profile.directory, {recursive: true, force: true});
+    }
+  }
+});
+
+test('trainer offline update UI blocks typing and pending answers before controlled activation', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page, context} = await harness.newDevice();
+  try {
+    await page.goto(harness.baseUrl);
+    await setupPractice(page);
+    await page.waitForFunction(() => navigator.serviceWorker.controller !== null, null, {timeout: 10_000});
+    harness.setServiceWorkerVersion('v2');
+    await page.evaluate(async () => {
+      const registration = await navigator.serviceWorker.getRegistration('./');
+      await registration.update();
+    });
+    await page.waitForFunction(async () => (await navigator.serviceWorker.getRegistration('./'))?.waiting !== null);
+    const updateButton = page.locator('#update-activate');
+    await updateButton.waitFor();
+    assert.equal(await updateButton.textContent(), 'Jetzt aktualisieren');
+    await page.getByRole('button', {name: /^Ada/}).click();
+    await page.getByRole('button', {name: 'Alle Vokabeln', exact: true}).click();
+    await page.getByLabel('Englische Übersetzung').waitFor();
+    assert.equal(await updateButton.textContent(), 'Runde pausieren und aktualisieren');
+
+    await page.getByLabel('Englische Übersetzung').fill('draft');
+    await updateButton.click();
+    await page.getByText(/zuerst.*absenden oder leeren/i).waitFor();
+    assert.equal(await page.evaluate(async () => (await navigator.serviceWorker.getRegistration('./')).waiting !== null), true);
+
+    await page.getByLabel('Englische Übersetzung').fill('dog');
+    await page.evaluate(() => {
+      document.querySelector('#practice-submit').click();
+      document.querySelector('#update-activate').click();
+    });
+    await page.getByText(/Antwort.*gespeichert/i).waitFor();
+    assert.equal(await page.evaluate(async () => (await navigator.serviceWorker.getRegistration('./')).waiting !== null), true);
+    await page.getByText('Richtig!', {exact: true}).waitFor();
+
+    const beforeReload = await productState(page);
+    assert.equal(beforeReload.ledger.events.some(({type}) => type === 'round.completed' || type === 'round.abandoned'), false);
+    assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product-')).sort()), [
+      'vokabeltrainer-product-trainer-v1',
+      'vokabeltrainer-product-trainer-v2',
+    ]);
+    const navigation = page.waitForNavigation();
+    await updateButton.click();
+    await navigation;
+    await page.getByText('Richtig!', {exact: true}).waitFor();
+    assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product-')).sort()), [
+      'vokabeltrainer-product-trainer-v2',
+    ]);
   } finally {
     await context.close();
     await harness.close();

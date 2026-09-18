@@ -10,6 +10,14 @@ function uiState(root) {
   return uiByRoot.get(root);
 }
 
+export function practiceUpdateBlocker(root) {
+  const ui = uiState(root);
+  if (ui.busy) return 'busy';
+  const input = root.querySelector('#answer:not([disabled])');
+  if (input?.value.trim()) return 'typed-answer';
+  return null;
+}
+
 function own(record, key) {
   return record !== null && typeof record === 'object' && Object.hasOwn(record, key);
 }

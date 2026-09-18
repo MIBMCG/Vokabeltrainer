@@ -23,10 +23,14 @@ const ASSETS = new Map([
   ['/trainer/', ['trainer/index.html', 'text/html; charset=utf-8']],
   ['/trainer/index.html', ['trainer/index.html', 'text/html; charset=utf-8']],
   ['/trainer/styles.css', ['trainer/styles.css', 'text/css; charset=utf-8']],
+  ['/trainer/manifest.webmanifest', ['trainer/manifest.webmanifest', 'application/manifest+json; charset=utf-8']],
+  ['/trainer/sw.js', ['trainer/sw.js', 'text/javascript; charset=utf-8']],
+  ['/trainer/assets/app-icon.svg', ['trainer/assets/app-icon.svg', 'image/svg+xml; charset=utf-8']],
   ['/trainer/assets/islands.svg', ['trainer/assets/islands.svg', 'image/svg+xml; charset=utf-8']],
   ['/trainer/assets/avatar.svg', ['trainer/assets/avatar.svg', 'image/svg+xml; charset=utf-8']],
   ['/trainer/assets/badges.svg', ['trainer/assets/badges.svg', 'image/svg+xml; charset=utf-8']],
   ['/src/trainer/main.js', ['src/trainer/main.js', 'text/javascript; charset=utf-8']],
+  ['/src/trainer/updates.js', ['src/trainer/updates.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/ui/dom.js', ['src/trainer/ui/dom.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/ui/shell.js', ['src/trainer/ui/shell.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/ui/practice.js', ['src/trainer/ui/practice.js', 'text/javascript; charset=utf-8']],
@@ -74,7 +78,10 @@ function send(response, status, body, headers = {}) {
   response.end(body);
 }
 
-export function createProbeServer({root = ROOT} = {}) {
+export function createProbeServer({root = ROOT, basePath = ''} = {}) {
+  if (basePath !== '' && !/^\/[A-Za-z0-9_-]+(?:\/[A-Za-z0-9_-]+)*$/u.test(basePath)) {
+    throw new TypeError('basePath must be empty or a normalized URL path prefix.');
+  }
   return http.createServer(async (request, response) => {
     if (request.method !== 'GET' && request.method !== 'HEAD') {
       send(response, 405, 'Methode nicht erlaubt.', {Allow: 'GET, HEAD'});
@@ -88,6 +95,13 @@ export function createProbeServer({root = ROOT} = {}) {
     } catch {
       send(response, 400, 'Ungültige Anfrage.');
       return;
+    }
+    if (basePath !== '') {
+      if (!pathname.startsWith(`${basePath}/`)) {
+        send(response, 404, 'Nicht gefunden.');
+        return;
+      }
+      pathname = pathname.slice(basePath.length);
     }
     const asset = ASSETS.get(pathname);
     if (!asset) {

@@ -4,8 +4,8 @@ import http from 'node:http';
 
 import {createProbeServer} from '../scripts/serve.mjs';
 
-async function withServer(run) {
-  const server = createProbeServer();
+async function withServer(run, options) {
+  const server = createProbeServer(options);
   await new Promise((resolve, reject) => {
     server.once('error', reject);
     server.listen(0, '127.0.0.1', resolve);
@@ -47,7 +47,11 @@ test('serves only named probe and trainer assets with correct MIME types', async
       ['/trainer/', 'text/html; charset=utf-8'],
       ['/trainer/index.html', 'text/html; charset=utf-8'],
       ['/trainer/styles.css', 'text/css; charset=utf-8'],
+      ['/trainer/manifest.webmanifest', 'application/manifest+json; charset=utf-8'],
+      ['/trainer/sw.js', 'text/javascript; charset=utf-8'],
+      ['/trainer/assets/app-icon.svg', 'image/svg+xml; charset=utf-8'],
       ['/src/trainer/main.js', 'text/javascript; charset=utf-8'],
+      ['/src/trainer/updates.js', 'text/javascript; charset=utf-8'],
       ['/src/trainer/ui/dom.js', 'text/javascript; charset=utf-8'],
       ['/src/trainer/ui/shell.js', 'text/javascript; charset=utf-8'],
       ['/src/trainer/ui/adult.js', 'text/javascript; charset=utf-8'],
@@ -82,6 +86,19 @@ test('serves only named probe and trainer assets with correct MIME types', async
       assert.ok(response.body.length > 0, path);
     }
   });
+});
+
+test('serves the same bounded trainer below a repository path prefix', async () => {
+  await withServer(async (port) => {
+    for (const path of [
+      '/repo/trainer/', '/repo/trainer/sw.js', '/repo/trainer/manifest.webmanifest',
+      '/repo/src/trainer/main.js', '/repo/src/trainer/ui/preview.js', '/repo/src/drive/auth.js',
+    ]) assert.equal((await request(port, path)).status, 200, path);
+    assert.equal((await request(port, '/trainer/')).status, 404);
+    const manifest = JSON.parse((await request(port, '/repo/trainer/manifest.webmanifest')).body.toString());
+    assert.equal(manifest.start_url, './');
+    assert.equal(manifest.scope, './');
+  }, {basePath: '/repo'});
 });
 
 test('serves the bounded German probe UI and relative offline manifest', async () => {
