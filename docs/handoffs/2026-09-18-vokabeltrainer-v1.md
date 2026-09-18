@@ -4,7 +4,7 @@
 - Branch: `codex/vokabeltrainer-v1`
 - Finaler Produktcode: `cc079cbea31d6d834b7d8eba1920486daddb4e90`
 - Fixbericht: `c2560f0`; abschließende Dokumentation folgt in der Git-Historie.
-- Letzter vor diesem Abschluss nachgewiesener Remote: `8431786`; Abschluss-Push siehe nachgetragenen Empfangsbeleg.
+- Verifizierter Abschluss-Push: `a8842b7a6a9591cf9f815ac2ffc2049a2b5876f8` auf `origin/codex/vokabeltrainer-v1`; lokaler HEAD und `git ls-remote` stimmten am 18.09.2026 exakt überein. Dieser Empfangsbeleg wird als nachfolgender Dokumentationscommit ebenfalls übertragen.
 
 ## Übergebenes Ergebnis
 
@@ -44,7 +44,7 @@ Sie verwendet standardmäßig das Projektpaket `playwright` und dessen Chromium.
 - Unveränderte Drive-Probe: 12/12 Szenarien auf 3b1d16d, keine Seitenfehler; keine unnötige Wiederholung.
 - Sechs synthetische Desktop-/Mobilaufnahmen auf 3b1d16d visuell geprüft; sie sind im Abschlussbericht verlinkt.
 - Alle vier Befunde der unabhängigen Gesamtprüfung behoben und einmalig unabhängig nachgeprüft. Keine offenen Critical-/Important-/Minor-Befunde im Abschlussreview.
-- Abschließende Dokumentprüfung: 175 Dateien, 76 Markdown-Dateien, 347 lokale Links, keine Fehler. `git diff --check` ohne Befund. Der Push wird mit dem Remote verglichen.
+- Abschließende Dokumentprüfung: 175 Dateien, 76 Markdown-Dateien, 347 lokale Links, keine Fehler. `git diff --check` ohne Befund. Der Abschluss-Push wurde mit dem Remote verglichen (siehe oben).
 
 Die letzte Korrektur macht PIN-Wiederherstellung auch am gesperrten Zugang verfügbar, erhält ungespeicherte Verwaltungsformulare bei Hintergrundabgleich, startet den Abgleich nach bewusstem Google-Wiederverbinden erneut und schützt offenen Antworttext bei konkurrierenden Wiederherstellungen. Letzterer bleibt nur im Arbeitsspeicher bis zur bewussten Auflösung, nicht über einen Browserneustart.
 

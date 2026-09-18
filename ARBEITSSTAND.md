@@ -60,4 +60,4 @@ Keine dieser Grenzen ist eine neue Produktentscheidung. Hosting, Kontenänderung
 
 Die technische Umsetzung und unabhängige Prüfung sind abgeschlossen. Als Nächstes können die Schritte aus der [Geräte-Prüfliste](docs/GERAETE-ABNAHME.md) mit synthetischen Daten auf den Geräten des Freundes vorbereitet werden; eine dafür nötige HTTPS-Bereitstellung erfordert einen eigenen Auftrag.
 
-Aktueller Branch: `codex/vokabeltrainer-v1`. Finaler Produktcode: `cc079cb`. Der überprüfte Remote-Stand wird nach dem Abschluss-Push in der Übergabe dokumentiert.
+Aktueller Branch: `codex/vokabeltrainer-v1`. Finaler Produktcode: `cc079cb`. Der Abschlussstand `a8842b7` wurde auf GitHub übertragen und mit dem lokalen Commit verglichen; siehe Empfangsbeleg in der Übergabe. Nachfolgende reine Dokumentationscommits sind in der Branchhistorie sichtbar.
