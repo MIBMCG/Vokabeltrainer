@@ -34,3 +34,9 @@ Sicherung/Wiederherstellung ist mit `ee50662` implementiert und nach R1-Korrektu
 ## Task 11 abgeschlossen, Task 12 begonnen
 
 Abgleich-, Konflikt- und Sicherungsoberflächen sind in `41c3404` implementiert, nach den Korrekturen `d026a4b` und `2a37a25` unabhängig freigegeben. Der [Bericht](../reports/2026-09-18-abgleich-sicherung-oberflaeche.md) und die [abschließende Nachprüfung](../reports/2026-09-18-abgleich-sicherung-oberflaeche-fix-2-review.md) unterscheiden Voll- und fokussierte Läufe. Letzter Node-Gesamtlauf 260/260; nach der letzten reinen UI-Korrektur vier betroffene Browserfälle grün. M1 (gemeinsame Statusformulierung) und M2 (weitere ungebundene Authfehler-Browserfälle) bleiben ausdrücklich für Task 13. Task 12 Offlinebetrieb/kontrollierte Updates läuft mit GPT-5.6 Sol, hoher Denktiefe. Reale Geräte-/Produkt-Google-Abnahme weiterhin offen.
+
+## Task 12 abgeschlossen, Task 13 begonnen
+
+Offline-PWA und kontrollierte Updates sind nach Korrektur `2b369e3` unabhängig geprüft. Der [Bericht](../reports/2026-09-18-offline-pwa.md) dokumentiert 276/276 Node-Tests und echte Offline-Neustarts bei geschlossenem Server für beide Installationspfade. Die [Nachprüfung](../reports/2026-09-18-offline-pwa-fix-1-review.md) bestätigt Scopeisolation, kontrollierten Workerwechsel und den Schutz vor Eingaben während der Aktivierung. Alte mehrdeutige Caches bleiben vorsorglich erhalten; die neue Cachegrenze ist eindeutig. Entscheidung 25 beschreibt das überarbeitete Aktivierungsprotokoll.
+
+Task 13 läuft mit GPT-5.6 Sol, hoher Denktiefe: letzte konkrete Bedienungsbefunde, portable Browserwerkzeuge, vollständige Regression, tatsächliche Screenshots und aktuelle Übergabe. Danach folgt die Gesamtprüfung des Branches. Der aktuelle Zwischenstand ist noch keine abgeschlossene v1-Abnahme. Reale Apple-Geräte, Produkt-Google-Abgleich und HTTPS-Bereitstellung bleiben offen.
