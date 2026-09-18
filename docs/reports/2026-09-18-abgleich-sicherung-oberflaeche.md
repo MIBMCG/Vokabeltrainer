@@ -37,3 +37,29 @@ Die geforderten öffentlichen Schnittstellen bleiben erhalten. `isUnlocked` und 
 Die Browserprüfung verwendet synthetische GIS-/Drive-Antworten und System-Edge. Eine echte Google-Anmeldung, echte iPhone-/iPad-Abnahme und die PWA-Installation bleiben spätere Nachweise. Task 12 kann an den dokumentierten Lebenszyklus anschließen: laufende Runden bleiben im Shellzustand erhalten; Commit-Abonnements melden Änderungen an den Scheduler, Rundenabschluss löst sofortigen Abgleich aus, Statusupdates ersetzen die Übungsoberfläche nicht, und `pagehide` schließt Scheduler, Sync, Auth, Store sowie Shell. Eine PWA oder Hostingänderung wurde nicht implementiert.
 
 Codecommit: `41c3404 feat: expose safe sync conflict and restore workflows`.
+
+## Fixrunde 1 nach unabhängiger Prüfung
+
+Ausgangspunkt war die vollständige unabhängige Prüfung in `docs/reports/2026-09-18-abgleich-sicherung-oberflaeche-review.md` gegen `41c3404`. Die drei als Important eingestuften Befunde R1–R3 wurden korrigiert. M1 und M2 bleiben entsprechend der Reviewsteuerung für Task 13 dokumentiert und wurden in dieser Fixrunde nicht vorgezogen.
+
+### Korrekturen
+
+- **R1 – unmittelbare Auswahlreaktion:** Epochenwahl und Abwahl setzen den Zustand von „Sicherung herunterladen“ direkt im `change`-Handler. Der Browser wählt, wählt wieder ab, wählt den anderen Kopf und lädt anschließend eine echte konfliktbehaftete JSON-Sicherung herunter. Altänderungs-Checkboxen aktivieren beziehungsweise sperren „Auswahl prüfen“ ebenfalls unmittelbar. Auswahl, Abwahl und erneute Auswahl werden in derselben DOM-Instanz vor einem möglichen Scheduler- oder Hintergrund-Render geprüft.
+- **R2 – prüfbare Vorschau:** Der neue reine Präsentationshelfer `src/trainer/ui/preview.js` erhält ausschließlich bereits vorliegende Zustands-, Summary- und Ereignisdaten. Er zeigt benannte Kinder und Vokabeln, Punkte, geänderten Wortlernstand, vollständige Vorher-/Nachher-Inhalte, Konfliktfassungen und ihre Felder. `preview.eventIds` erscheint unter „Ausgewählte Änderungen“; `preview.supportEventIds` erscheint getrennt unter „Nur benötigte Grundlagen“ mit dem ausdrücklichen Hinweis, dass diese Belege keine zusätzliche Wertung geben. Der Zweikontextfall verwendet dafür eine bewusst neue Offline-Runde, sodass die ausgewählte richtige Antwort eine echte `round.started`-Supportabhängigkeit besitzt.
+- **R3 – unterscheidbare Konfliktentscheidungen:** Profilfassungen nennen Kind und Aktiv-/Archivstatus. Lektionsfassungen nennen Name, Status und die freigegebenen Kinder. Wortfassungen nennen Lektion, deutsches Wort, Lösungen, Hinweis, Status und die Lernstand-Zuordnung; unterschiedliche Lern-IDs werden als getrennte, nummerierte Lernentwicklung beschrieben, nie als rohe ID. Der Browser prüft echte Konflikte „Ada aktiv/archiviert“, „Hund in Unit 1/Unit 2“ und „Unit 1 für Ada/kein Kind“.
+
+Der Helper greift auf keinen Dienst zu und verändert keinen Zustand. `backup.js` und `sync.js` bleiben für Ablauf, PIN-Prüfung und Bestätigung verantwortlich. Es gab keine Änderung an Datenformat, Backup-/Restore-Service oder Sync-Vertrag. `preview.js` wurde in die explizite Server-Whitelist und den zugehörigen Servertest aufgenommen.
+
+### RED/GREEN der Fixrunde
+
+- RED Assetvertrag: `node --test --experimental-test-isolation=none --test-name-pattern="serves only named" tests/serve.test.js` – 0/1; `/src/trainer/ui/preview.js` lieferte erwartungsgemäß zunächst 404 statt 200 (99 ms).
+- RED R1–R3: `node --test --test-name-pattern="trainer sync and restore" tests/browser/trainer.browser.mjs` – 0/4. Die vier fachlich erwarteten Fehler waren: fehlende stale Vorher-/Nachher-Darstellung, fehlende Fassungen in der Restore-Konfliktvorschau, nach Epochenwahl weiterhin deaktivierter Download und fehlende Archivierungs-/Zuordnungsangaben (117,97 s wegen der absichtlich fehlenden Elemente).
+- RED ergänztes R3-Feld: `node --test --test-name-pattern="archive and assignment" tests/browser/trainer.browser.mjs` – 0/1; „Lernstand: bleibt bei allen Fassungen gleich“ fehlte (31,46 s).
+- GREEN Assetvertrag: derselbe fokussierte Servertest – 1/1 bestanden (156 ms).
+- GREEN einzeln: Epochenwahl/-download 1/1 (1,56 s), stale Inhaltsvorschau 1/1 (13,95 s), Archivierungs-/Zuordnungskonflikte einschließlich Lernstand 1/1 (1,39 s), Zweikontext-Konflikt-/Support-/Altänderungsablauf 1/1 (4,89 s).
+- GREEN gemeinsam betroffen: `node --test --test-name-pattern="trainer sync and restore" tests/browser/trainer.browser.mjs` – 4/4 bestanden, 0 fehlgeschlagen (20,62 s).
+- GREEN Node vollständig: `npm test` – 260/260 bestanden, 0 fehlgeschlagen (6,60 s).
+
+Die aktualisierten mobilen Ansichten der stale Vorschau, Altänderung und des Epochenexports wurden erneut angesehen. Die Vorschau bleibt scrollbar; Hund, Ada, Unit 1/2, konkrete Lösungen und Lernwerte sind lesbar. Die angezeigten Informationen enthalten keine rohen Ereignis-, Epochen-, Snapshot-, Profil-, Lektions-, Wort- oder Lern-IDs. Ausgabe entsteht weiterhin ausschließlich über DOM-/Textknoten; `git diff --check` war vor dem Commit sauber.
+
+Fixcommit: `d026a4b fix: make sync and restore choices reviewable`.
