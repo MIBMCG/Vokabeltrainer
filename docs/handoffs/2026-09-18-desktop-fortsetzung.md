@@ -26,3 +26,7 @@ Der [Fixbericht](../reports/2026-09-18-synchronisation-fix-1.md) dokumentiert 22
 ## Task 9 abgeschlossen, Task 10 begonnen
 
 Die [erste Nachprüfung](../reports/2026-09-18-synchronisation-fix-1-review.md) fand zwei Wechselwirkungen, behoben in 37c459f. Die [zweite Nachprüfung](../reports/2026-09-18-synchronisation-fix-2-review.md) bestätigt beide als behoben; keine neuen Fehler im Korrekturdiff. Node-Gesamtlauf 227/227. Task 9 ist abgeschlossen. O1 (Authstatus bei noch ungebundener Einrichtung) ist als konkrete Integrationsprüfung für Task 11 vorgemerkt. Task 10 Sicherung/Wiederherstellung läuft mit GPT-6 Astra, hoher Denktiefe. Reale Cloud-/Gerätenachweise bleiben offen.
+
+## Task 10 abgeschlossen, Task 11 begonnen
+
+Sicherung/Wiederherstellung ist mit `ee50662` implementiert und nach R1-Korrektur `49fde90` unabhängig nachgeprüft. Der [Bericht](../reports/2026-09-18-sicherung-wiederherstellung.md) dokumentiert 259/259 Node-Tests; die [Nachprüfung](../reports/2026-09-18-sicherung-wiederherstellung-fix-1-review.md) bestätigt keine offenen Befunde. Task 11 verbindet jetzt diese Funktionen mit der Erwachsenenansicht (GPT-5.6 Sol, Denktiefe hoch). Task 12 Offline-PWA und Task 13 Abschlussprüfung bleiben offen. Der vollständige Produkt-Google-/Gerätenachweis steht weiterhin aus.
