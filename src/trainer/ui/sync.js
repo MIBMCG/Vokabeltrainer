@@ -34,13 +34,13 @@ function ensureUnlocked(isUnlocked, auth) {
   }
 }
 
-export function renderSync({root, state, sync, restore, auth, commands, isUnlocked = () => true, onRefresh = null}) {
+export function renderSync({root, state, sync, restore, auth, commands, isUnlocked = () => true, onRefresh = null, onConnected}) {
   const ui = uiState(root, auth);
   const projection = project(state.ledger);
   const resolved = resolveEpochs(state.ledger);
   const status = sync.getStatus();
   const rerender = () => renderSync({
-    root, state: commands.getState(), sync, restore, auth, commands, isUnlocked, onRefresh,
+    root, state: commands.getState(), sync, restore, auth, commands, isUnlocked, onRefresh, onConnected,
   });
 
   async function run(action, {after} = {}) {
@@ -91,6 +91,7 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
       ui.connected = true;
       ui.notice = 'Google ist für diese Sitzung verbunden.';
       ui.tone = 'info';
+      onConnected?.();
     }});
   });
   section.append(connection);

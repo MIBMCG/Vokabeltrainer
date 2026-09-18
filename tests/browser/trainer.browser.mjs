@@ -9,6 +9,249 @@ import {project as projectState} from '../../src/trainer/learning/progress.js';
 
 const resultsDirectory = resolve('test-results');
 
+// A separate synthetic store allows background commits while a real DOM editor
+// remains focused. All mutations still use the production Commands/Sync services.
+async function mountFixIntegration(page, initial) {
+  await page.evaluate(async (state) => {
+    const {createCommands, productStateHash} = await import('/src/trainer/commands.js');
+    const {mountShell} = await import('/src/trainer/ui/shell.js');
+    const {createProductSync} = await import('/src/trainer/sync/drive.js');
+    const {createDriveClient} = await import('/src/drive/client.js');
+    const {createRestoreService} = await import('/src/trainer/backup/restore.js');
+    const {project} = await import('/src/trainer/learning/progress.js');
+    let stored = structuredClone(state);
+    const store = {load: async () => structuredClone(stored), save: async (next) => { stored = structuredClone(next); }};
+    let shell;
+    const commands = await createCommands({store, deviceId: state.deviceId,
+      now: () => new Date('2026-09-18T12:00:00.000Z'), id: () => crypto.randomUUID(),
+      onChange: () => shell?.stateChanged()});
+    const drive = createDriveClient({getToken: () => 'synthetic-browser-token-1'});
+    const sync = createProductSync({drive, store, commands, now: () => new Date(), id: () => crypto.randomUUID(),
+      onStatus: (status) => shell?.syncStatusChanged(status)});
+    await sync.createDataset('Synthetic integration');
+    const restore = createRestoreService({commands, store, sync, drive, now: () => new Date(), id: () => crypto.randomUUID()});
+    document.querySelector('#app').hidden = true;
+    const root = document.createElement('main');
+    root.id = 'fix-app';
+    document.body.append(root);
+    let unlocked = true;
+    const pinGate = {isUnlocked: () => unlocked, lock: () => { unlocked = false; }};
+    shell = mountShell({root, commands, pinGate, sync, restore,
+      auth: {clientId: () => '', invalidate() {}}});
+    shell.show('adult');
+    window.__fix = {root, commands, shell, sync, restore, pinGate, project, productStateHash};
+  }, initial);
+}
+
+test('final I1 forgotten PIN is recoverable from the locked gate without old PIN or data loss', {timeout: 60_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page} = await harness.newDevice();
+  try {
+    await page.goto(harness.baseUrl);
+    await setupPractice(page);
+    const before = await productState(page);
+    await page.reload();
+    await page.locator('#adult-entry').click();
+    assert.equal(await page.getByText('PIN vergessen', {exact: true}).count(), 1);
+    await page.getByText('PIN vergessen', {exact: true}).click();
+    await page.getByLabel('Bestätigungstext', {exact: true}).fill('PIN zurücksetzen');
+    await page.getByLabel('Neue PIN', {exact: true}).fill('9012');
+    await page.getByLabel('Neue PIN wiederholen', {exact: true}).fill('9012');
+    await page.getByRole('button', {name: 'Vergessene PIN lokal zurücksetzen'}).click();
+    await page.locator('#adult-nav').waitFor();
+    assert.deepEqual((await productState(page)).ledger, before.ledger);
+    assert.deepEqual((await productState(page)).rounds, before.rounds);
+    assert.notEqual((await productState(page)).pinVerifier.hash, before.pinVerifier.hash);
+    assert.equal(await page.evaluate(() => window.__syntheticOauthRequests ?? 0), 0);
+    await page.reload();
+    await page.locator('#adult-entry').click();
+    await page.locator('#adult-pin').fill('9012');
+    await page.locator('#adult-unlock').click();
+    await page.locator('#adult-nav').waitFor();
+  } finally { await harness.close(); }
+});
+
+test('final I2 adult drafts retain focus and original revision heads across unchanged and foreign sync', {timeout: 60_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page} = await harness.newDevice();
+  try {
+    await page.goto(harness.baseUrl);
+    await setupPractice(page);
+    await mountFixIntegration(page, await productState(page));
+    const root = page.locator('#fix-app');
+    const name = root.locator('form').first().locator('[name="name"]');
+    await name.fill('Noch nicht gespeichert');
+    const profileEditor = root.locator('.management-card details');
+    await profileEditor.locator('summary').click();
+    await profileEditor.locator('[name="name"]').fill('Ada Entwurf');
+    const pinChange = root.locator('details').filter({has: page.getByText('PIN ändern', {exact: true})}).last();
+    await pinChange.locator('summary').click();
+    await pinChange.locator('[name="next"]').fill('5678');
+    await name.focus();
+    await page.evaluate(() => window.__fix.sync.sync());
+    assert.equal(await name.inputValue(), 'Noch nicht gespeichert');
+    assert.equal(await profileEditor.locator('[name="name"]').inputValue(), 'Ada Entwurf');
+    assert.equal(await pinChange.locator('[name="next"]').inputValue(), '5678');
+    assert.equal(await name.evaluate((node) => document.activeElement === node), true);
+    await root.getByRole('button', {name: 'Lektionen', exact: true}).click();
+    const lessonForm = root.locator('.lesson-detail > form');
+    await lessonForm.locator('[name="name"]').fill('Lektionsentwurf');
+    await lessonForm.locator('[name="profileIds"]').uncheck();
+    const card = root.locator('[data-word-german="Hund"]');
+    await card.locator('summary').click();
+    const answer = card.locator('[name="answers"]');
+    await answer.fill('local draft');
+    const table = root.locator('#import-text');
+    await table.fill('Katze\tcat');
+    await answer.focus();
+    const before = await page.evaluate(() => window.__fix.commands.getState());
+    await page.evaluate(() => window.__fix.sync.sync());
+    assert.equal(await answer.inputValue(), 'local draft');
+    assert.equal(await answer.evaluate((node) => document.activeElement === node), true);
+    assert.equal(await card.locator('details').evaluate((node) => node.open), true);
+    assert.equal(await table.inputValue(), 'Katze\tcat');
+    assert.equal(await lessonForm.locator('[name="name"]').inputValue(), 'Lektionsentwurf');
+    assert.equal(await lessonForm.locator('[name="profileIds"]').isChecked(), false);
+    const original = before.ledger.events.find((event) => event.payload?.value?.german === 'Hund');
+    const foreign = {...structuredClone(original), id: 'foreign-editor-revision', deviceId: 'foreign-device', clock: before.clock + 1,
+      payload: {...structuredClone(original.payload), parents: [original.id], value: {...original.payload.value, hint: 'Foreign hint'}}};
+    const {buildPackets} = await import('../../src/trainer/sync/packets.js');
+    const [packet] = buildPackets({events: [foreign], datasetId: foreign.datasetId, epochId: foreign.epochId, id: () => 'foreign-editor-packet'});
+    harness.google.files.set('foreign-editor-file', {metadata: {id: 'foreign-editor-file', name: 'foreign.json', mimeType: 'application/json',
+      parents: [before.binding.folderId], trashed: false, appProperties: {app: 'vokabeltrainer-product', kind: 'packet', datasetId: foreign.datasetId,
+        epochId: packet.epochId, packetId: packet.packetId}}, value: packet});
+    await table.focus();
+    await page.evaluate(() => window.__fix.sync.sync());
+    assert.equal(await answer.inputValue(), 'local draft');
+    assert.equal(await table.inputValue(), 'Katze\tcat');
+    assert.equal(await table.evaluate((node) => document.activeElement === node), true);
+    assert.equal(await card.locator('details').evaluate((node) => node.open), true);
+    assert.ok((await page.evaluate(() => window.__fix.commands.getState())).ledger.events.some(({id}) => id === foreign.id));
+    await card.getByRole('button', {name: 'Änderung speichern'}).click();
+    await root.getByRole('alert').filter({hasText: /inzwischen geändert/}).waitFor();
+    const after = await page.evaluate(() => window.__fix.commands.getState());
+    assert.equal(after.ledger.events.length, before.ledger.events.length + 1, 'stale draft must not silently rebase');
+    assert.equal(await answer.inputValue(), 'local draft');
+    await root.getByRole('button', {name: 'Ansicht neu laden (Eingaben verwerfen)'}).click();
+    assert.equal(await answer.inputValue(), 'dog | hound');
+    assert.equal(await card.locator('[name="hint"]').inputValue(), 'Foreign hint');
+    assert.equal(await table.inputValue(), '');
+    await page.evaluate(() => { window.__fix.pinGate.lock(); window.__fix.shell.stateChanged(); });
+    assert.equal(await root.locator('#adult-nav').count(), 0);
+    assert.equal(await root.locator('#adult-pin').count(), 1);
+  } finally { await harness.close(); }
+});
+
+test('final I3 deliberate reconnect wakes pending bound sync without another lifecycle event', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page, controls} = await harness.newDevice();
+  try {
+    await page.clock.install();
+    await page.goto(harness.baseUrl);
+    await setupPractice(page);
+    await page.locator('#adult-entry').click();
+    await page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    await page.locator('#google-client-id').fill('synthetic-client-id');
+    await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
+    await page.getByRole('button', {name: 'Neuen Drive-Datensatz anlegen'}).click();
+    await page.getByText('Abgeglichen', {exact: true}).waitFor();
+    await page.getByRole('button', {name: 'Kinder', exact: true}).click();
+    const form = page.locator('#adult-content form').first();
+    await form.locator('[name="name"]').fill('Bea');
+    await form.getByRole('button', {name: 'Kind hinzufügen'}).click();
+    await page.getByText('Das Kind wurde hinzugefügt.', {exact: true}).waitFor();
+    controls.rejectNextAbout401 = true;
+    await page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    await page.locator('[data-sync-status]').filter({hasText: 'Mit Google verbinden'}).waitFor({timeout: 15_000});
+    const pending = (await productState(page)).outboxEventIds;
+    assert.ok(pending.length > 0);
+    const requests = await page.evaluate(() => window.__syntheticOauthRequests);
+    await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
+    await page.getByText('Google ist für diese Sitzung verbunden.', {exact: true}).waitFor();
+    await page.waitForTimeout(1200);
+    assert.equal((await productState(page)).outboxEventIds.length, 0, 'successful reconnect must wake stopped scheduler');
+    assert.equal(await page.evaluate(() => window.__syntheticOauthRequests), requests + 1);
+    for (const id of pending) assert.equal([...harness.google.files.values()].flatMap(({value}) => value?.kind === 'packet' ? value.events : []).filter((event) => event.id === id).length, 1);
+    // Advancing the browser clock exercises normal polling without visibility/focus triggers.
+    let polls = 0;
+    page.on('request', (request) => { if (request.url().includes('/drive/v3/about')) polls += 1; });
+    await page.clock.runFor(61_000);
+    await page.waitForTimeout(100);
+    assert.ok(polls > 0, 'normal polling resumes');
+    assert.equal(harness.google.writes.some(({duplicate}) => duplicate), false);
+  } finally { await harness.close(); }
+});
+
+test('final I4 restore conflict preserves an open answer until adult resolution without scoring', {timeout: 60_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page} = await harness.newDevice();
+  try {
+    await page.goto(harness.baseUrl);
+    await setupPractice(page);
+    await mountFixIntegration(page, await productState(page));
+    await page.evaluate(() => window.__fix.shell.show('profiles'));
+    const root = page.locator('#fix-app');
+    await root.getByRole('button', {name: /^Ada/}).click();
+    await root.getByRole('button', {name: 'Alle Vokabeln', exact: true}).click();
+    await root.locator('#answer').fill('unsubmitted answer');
+    await page.evaluate(async () => {
+      const {commands, productStateHash} = window.__fix;
+      const {snapshotHash} = await import('/src/trainer/backup/format.js');
+      const current = commands.getState();
+      const next = structuredClone(current);
+      for (const [index, id] of ['conflict-a', 'conflict-b'].entries()) {
+        const snapshot = {id: `snapshot-${id}`, datasetId: next.ledger.descriptor.datasetId,
+          effectiveEventIds: next.ledger.events.map(({id}) => id).sort(), supportEventIds: [], contentHash: ''};
+        snapshot.contentHash = await snapshotHash(snapshot, next.ledger.events);
+        next.ledger.snapshots.push(snapshot);
+        next.ledger.epochs.push({format: 'vokabeltrainer-product', formatVersion: 1, ruleVersion: 1, kind: 'epoch',
+          id, datasetId: next.ledger.descriptor.datasetId, parents: [next.ledger.descriptor.rootEpochId],
+          deviceId: 'foreign-restore', clock: next.clock + index + 1, occurredAt: '2026-09-18T12:00:00.000Z',
+          snapshotId: snapshot.id, snapshotManifestFileId: null});
+      }
+      next.clock += 2;
+      // Same atomic receive boundary used by product synchronization.
+      await commands.commitExternal(next, await productStateHash(current));
+    });
+    assert.equal(await root.locator('#answer').count(), 1, 'conflict must not discard the answer as a missing profile');
+    assert.equal(await root.locator('#answer').inputValue(), 'unsubmitted answer');
+    assert.equal(await root.locator('#practice-submit:not([disabled])').count(), 0);
+    await root.getByText(/Wiederherstellungen.*klären|Wiederherstellungen.*geklärt/).waitFor();
+    const blocked = await page.evaluate(async () => {
+      const {shell, commands} = window.__fix;
+      const round = Object.values(commands.getState().rounds)[0];
+      const codes = [];
+      for (const action of [() => shell.pauseForUpdate(), () => commands.submit({roundId: round.id, typed: 'dog'}),
+        () => commands.start({profileId: round.profileId, mode: 'all', size: 10})]) {
+        try { await action(); codes.push('unexpected-success'); } catch (error) { codes.push(error.code); }
+      }
+      return codes;
+    });
+    assert.ok(blocked.every((code) => code !== 'unexpected-success'));
+    await root.getByRole('button', {name: 'Für Erwachsene', exact: true}).click();
+    // The test gate is deliberately unlocked again; production PIN behavior is covered separately.
+    await page.evaluate(() => { window.__fix.pinGate.isUnlocked = () => true; window.__fix.shell.render(); });
+    await page.evaluate(() => window.__fix.shell.show('profiles'));
+    assert.equal(await root.locator('#answer').inputValue(), 'unsubmitted answer', 'adult navigation retains the conflict draft');
+    const retainedBlocker = await page.evaluate(async () => {
+      window.__fix.root.querySelector('#answer').remove();
+      try { await window.__fix.shell.pauseForUpdate(); return 'unexpected-success'; } catch (error) { return error.code; }
+    });
+    assert.equal(retainedBlocker, 'typed-answer-present');
+    await root.getByRole('button', {name: 'Für Erwachsene', exact: true}).click();
+    await page.evaluate(() => { window.__fix.pinGate.isUnlocked = () => true; window.__fix.shell.render(); });
+    await root.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    await root.getByRole('button', {name: /Datenstand 1 .* prüfen/}).click();
+    await root.getByRole('button', {name: 'Datenstand gemeinsam übernehmen'}).click();
+    await page.waitForFunction(() => !window.__fix.project(window.__fix.commands.getState().ledger).epochConflict);
+    const after = await page.evaluate(() => window.__fix.commands.getState());
+    assert.equal(Object.values(after.rounds)[0].status, 'abandoned');
+    assert.equal(after.ledger.events.filter(({type}) => ['answer.recorded', 'round.completed'].includes(type)).length, 0);
+    await page.evaluate(() => window.__fix.shell.show('practice'));
+    assert.equal(await root.locator('#answer').count(), 0);
+  } finally { await harness.close(); }
+});
+
 async function syntheticProfileDirectory(prefix) {
   const root = resolve(resultsDirectory, 'offline-profiles');
   await mkdir(root, {recursive: true});
@@ -1706,7 +1949,7 @@ test('trainer offline update UI blocks typing and pending answers before control
   try {
     await page.goto(harness.baseUrl);
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null, null, {timeout: 10_000});
-    harness.setServiceWorkerVersion('v5', {activationDelayMs: 750});
+    harness.setServiceWorkerVersion('v6', {activationDelayMs: 750});
     await page.evaluate(async () => {
       const registration = await navigator.serviceWorker.getRegistration('./');
       await registration.update();
@@ -1764,8 +2007,8 @@ test('trainer offline update UI blocks typing and pending answers before control
     const beforeReload = await productState(page);
     assert.equal(beforeReload.ledger.events.some(({type}) => type === 'round.completed' || type === 'round.abandoned'), false);
     assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product:')).sort()), [
-      'vokabeltrainer-product:%2Ftrainer%2F:v4',
       'vokabeltrainer-product:%2Ftrainer%2F:v5',
+      'vokabeltrainer-product:%2Ftrainer%2F:v6',
     ]);
     const navigation = page.waitForNavigation();
     await updateButton.click();
@@ -1780,7 +2023,7 @@ test('trainer offline update UI blocks typing and pending answers before control
     await navigation;
     await page.getByText('Richtig!', {exact: true}).waitFor();
     assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product:')).sort()), [
-      'vokabeltrainer-product:%2Ftrainer%2F:v5',
+      'vokabeltrainer-product:%2Ftrainer%2F:v6',
     ]);
   } finally {
     await context.close();

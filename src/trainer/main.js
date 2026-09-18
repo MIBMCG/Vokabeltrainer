@@ -256,6 +256,9 @@ async function start() {
   shell = mountShell({
     root, commands, pinGate, sync: syncController, restore, auth,
     onDownload: downloadBlob,
+    onConnected: () => {
+      if (!closing && pinGate.isUnlocked() && commands.getState()?.binding) scheduler?.online();
+    },
   });
   shell.render();
   await startUpdates(commands);

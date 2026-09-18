@@ -22,6 +22,18 @@ function viewState(root) {
   return localState.get(root);
 }
 
+// Background commits never replace the live editor: its controls and closures
+// retain both the draft and the revision heads with which editing began.
+export function adultStateChanged(root, state) {
+  const ui = viewState(root);
+  if (JSON.stringify(state.ledger) === ui.renderedLedger || root.querySelector('#adult-background-notice')) return;
+  const notice = el('aside', {attrs: {id: 'adult-background-notice', class: 'message', role: 'status'}}, [
+    el('p', {text: 'Im Hintergrund wurde der Datenstand geändert. Ihre offenen Eingaben bleiben erhalten. Veraltete Bearbeitungen werden beim Speichern geprüft.'}),
+    button('Ansicht neu laden (Eingaben verwerfen)', () => ui.refresh(), {class: 'secondary'}),
+  ]);
+  root.querySelector('.adult-header')?.after(notice);
+}
+
 function input(name, {value = '', maxlength = 80, required = true, type = 'text'} = {}) {
   return el('input', {attrs: {name, value, maxlength, required, type}});
 }
@@ -184,6 +196,9 @@ function wordEditor({word, lessonId, commands, rerender, ui}) {
       setNotice(ui, word ? 'Die Vokabel wurde gespeichert.' : 'Die Vokabel wurde hinzugefügt.');
     } catch (error) {
       setNotice(ui, error.message, 'error');
+      form.append(message(error.message, 'error'));
+      submit.disabled = false;
+      return;
     }
     rerender();
   });
@@ -425,6 +440,37 @@ function renderProgress(container, projection) {
   container.append(section);
 }
 
+export function pinResetForm({pinGate, onSuccess}) {
+  const reset = el('form', {attrs: {class: 'stack compact'}});
+  const status = message('Die Lerndaten bleiben beim lokalen Zurücksetzen erhalten.');
+  reset.append(
+    el('p', {text: 'Geben Sie zur Bestätigung genau „PIN zurücksetzen“ ein.'}),
+    field('Bestätigungstext', input('confirmation', {maxlength: 30})),
+    field('Neue PIN', input('next', {maxlength: 4, type: 'password'})),
+    field('Neue PIN wiederholen', input('repeat', {maxlength: 4, type: 'password'})),
+    status,
+  );
+  const submit = el('button', {text: 'Vergessene PIN lokal zurücksetzen', attrs: {type: 'submit', class: 'secondary'}});
+  reset.append(submit);
+  reset.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (submit.disabled) return;
+    submit.disabled = true;
+    const data = new FormData(reset);
+    try {
+      await pinGate.reset(data.get('confirmation'), data.get('next'), data.get('repeat'));
+      reset.reset();
+      onSuccess();
+    } catch (error) {
+      status.textContent = error.message;
+      status.dataset.tone = 'error';
+    } finally {
+      submit.disabled = false;
+    }
+  });
+  return el('details', {}, [el('summary', {text: 'PIN vergessen'}), reset]);
+}
+
 function renderPinSettings(container, pinGate, rerender, ui) {
   const section = el('section', {attrs: {class: 'subpanel'}}, [
     el('h3', {text: 'PIN auf diesem Gerät'}),
@@ -448,33 +494,16 @@ function renderPinSettings(container, pinGate, rerender, ui) {
     }
     rerender();
   });
-  const reset = el('form', {attrs: {class: 'stack compact'}});
-  reset.append(
-    el('p', {text: 'Geben Sie zur Bestätigung genau „PIN zurücksetzen“ ein.'}),
-    field('Bestätigungstext', input('confirmation', {maxlength: 30})),
-    field('Neue PIN', input('next', {maxlength: 4, type: 'password'})),
-    field('Neue PIN wiederholen', input('repeat', {maxlength: 4, type: 'password'})),
-  );
-  const resetButton = el('button', {text: 'Vergessene PIN lokal zurücksetzen', attrs: {type: 'submit', class: 'secondary'}});
-  reset.append(resetButton);
-  reset.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const data = new FormData(reset);
-    try {
-      await pinGate.reset(data.get('confirmation'), data.get('next'), data.get('repeat'));
+  const reset = pinResetForm({pinGate, onSuccess: () => {
       setNotice(ui, 'Die lokale PIN wurde zurückgesetzt. Die Lerndaten blieben erhalten.');
-      reset.reset();
-    } catch (error) {
-      setNotice(ui, error.message, 'error');
-    }
-    rerender();
-  });
+      rerender();
+  }});
   section.append(el('details', {}, [el('summary', {text: 'PIN ändern'}), change]));
-  section.append(el('details', {}, [el('summary', {text: 'PIN vergessen'}), reset]));
+  section.append(reset);
   container.append(section);
 }
 
-export function renderAdult({root, state, commands, pinGate, onNavigate, sync, restore, auth, onDownload}) {
+export function renderAdult({root, state, commands, pinGate, onNavigate, sync, restore, auth, onDownload, onConnected}) {
   const ui = viewState(root);
   const projection = project(state.ledger);
   const rerender = () => {
@@ -482,8 +511,10 @@ export function renderAdult({root, state, commands, pinGate, onNavigate, sync, r
       onNavigate('profiles');
       return;
     }
-    renderAdult({root, state: commands.getState(), commands, pinGate, onNavigate, sync, restore, auth, onDownload});
+    renderAdult({root, state: commands.getState(), commands, pinGate, onNavigate, sync, restore, auth, onDownload, onConnected});
   };
+  ui.renderedLedger = JSON.stringify(state.ledger);
+  ui.refresh = rerender;
   const page = el('div', {attrs: {class: 'adult-layout'}});
   const header = el('header', {attrs: {class: 'adult-header'}}, [
     el('div', {}, [el('p', {text: 'Geschützter Bereich', attrs: {class: 'eyebrow'}}), el('h1', {text: 'Für Erwachsene'})]),
@@ -512,7 +543,7 @@ export function renderAdult({root, state, commands, pinGate, onNavigate, sync, r
   } else if (ui.section === 'lessons') renderLessons(content, projection, commands, rerender, ui);
   else if (ui.section === 'progress') renderProgress(content, projection);
   else if (ui.section === 'sync') renderSync({
-    root: content, state, sync, restore, auth, commands, isUnlocked: () => pinGate.isUnlocked(), onRefresh: rerender,
+    root: content, state, sync, restore, auth, commands, isUnlocked: () => pinGate.isUnlocked(), onRefresh: rerender, onConnected,
   });
   else renderBackup({
     root: content, state, restore, onDownload, isUnlocked: () => pinGate.isUnlocked(), onRefresh: rerender,

@@ -1,6 +1,6 @@
 import {project} from '../learning/progress.js';
 import {el, field, button, message} from './dom.js';
-import {renderAdult} from './adult.js';
+import {adultStateChanged, pinResetForm, renderAdult} from './adult.js';
 import {practiceRenderKey, practiceUpdateBlocker, renderPractice, renderPracticeLanding} from './practice.js';
 import {renderAvatar, renderJourney} from './rewards.js';
 import {syncStatusLabel} from './status.js';
@@ -48,7 +48,7 @@ function wordFields(index, draft) {
   ]);
 }
 
-export function mountShell({root, commands, pinGate, sync, restore, auth, onDownload}) {
+export function mountShell({root, commands, pinGate, sync, restore, auth, onDownload, onConnected}) {
   const restored = restoredShellState();
   let currentView = restored?.view ?? 'profiles';
   let activeProfileId = restored?.profileId ?? null;
@@ -60,6 +60,7 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, onDown
   let setupBusy = false;
   let updateLocked = false;
   let updateRelease = null;
+  let conflictAnswer = null;
   const setupDraft = {
     'dataset-name': 'Familienwortschatz',
     pin: '',
@@ -275,7 +276,21 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, onDown
         showError(error);
       }
     });
-    root.replaceChildren(form);
+    root.replaceChildren(form, pinResetForm({pinGate, onSuccess: render}));
+  }
+
+  function renderEpochConflict() {
+    const section = el('section', {attrs: {class: 'panel narrow'}}, [
+      el('h1', {text: 'Bitte einen Erwachsenen holen'}),
+      message('Mehrere Wiederherstellungen müssen zuerst geklärt werden. Bis dahin sind Antworten und neue Runden gesperrt.'),
+    ]);
+    if (conflictAnswer !== null) {
+      section.append(field('Deine noch nicht gewertete Antwort', el('input', {attrs: {
+        id: 'answer', value: conflictAnswer.value, readonly: true,
+      }})), el('p', {text: 'Deine Eingabe bleibt bis zur Klärung hier erhalten. Danach endet die alte Runde ohne Wertung und ohne Bonus.'}));
+    }
+    section.append(button('Für Erwachsene', () => show('adult'), {id: 'adult-entry', class: 'primary'}));
+    root.replaceChildren(section);
   }
 
   function render() {
@@ -285,10 +300,21 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, onDown
       renderSetup(state);
       return;
     }
-    if (currentView === 'profiles') renderProfiles(state);
+    const projection = project(state.ledger);
+    if (projection.epochConflict && conflictAnswer === null && currentView === 'practice' && practiceActive) {
+      const round = state.rounds[activeProfileId];
+      const answer = root.querySelector('#answer:not([disabled])');
+      if (round && answer) conflictAnswer = {roundId: round.id, epochId: round.epochId, value: answer.value};
+    }
+    // A temporary conflict is not a removed profile. Only a definite new epoch
+    // discards the held draft; Commands has already abandoned the old round.
+    if (conflictAnswer !== null && projection.activeEpochId !== null
+      && projection.activeEpochId !== conflictAnswer.epochId) conflictAnswer = null;
+    if (projection.epochConflict && currentView !== 'adult') renderEpochConflict();
+    else if (currentView === 'profiles') renderProfiles(state);
     else if (currentView === 'adult') {
       if (!pinGate.isUnlocked()) renderAdultGate();
-      else renderAdult({root, state, commands, pinGate, onNavigate: show, sync, restore, auth, onDownload});
+      else renderAdult({root, state, commands, pinGate, onNavigate: show, sync, restore, auth, onDownload, onConnected});
     } else if (currentView === 'practice' && activeProfileId !== null) {
       const projection = project(state.ledger);
       const profile = projection.entities.profiles[activeProfileId];
@@ -379,6 +405,16 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, onDown
     stateChanged() {
       if (destroyed) return;
       const state = commands.getState();
+      // Explicit lock always wins. Keeping the DOM also keeps its original
+      // expectedHeads, open details, focus, selection and unsaved form values.
+      if (state !== null && currentView === 'adult' && pinGate.isUnlocked()
+        && root.querySelector('.adult-layout')) {
+        const projection = project(state.ledger);
+        if (conflictAnswer !== null && projection.activeEpochId !== null
+          && projection.activeEpochId !== conflictAnswer.epochId) conflictAnswer = null;
+        adultStateChanged(root, state);
+        return;
+      }
       if (state !== null && currentView === 'practice' && practiceActive && activeProfileId !== null) {
         const nextKey = practiceRenderKey(state, activeProfileId);
         if (nextKey === lastPracticeKey) return;
@@ -408,7 +444,7 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, onDown
       if (blocker === 'busy') {
         throw updateBoundaryError('not-ready', 'Die Antwort wird gerade gespeichert. Bitte kurz warten und erneut aktualisieren.');
       }
-      if (blocker === 'typed-answer') {
+      if (blocker === 'typed-answer' || conflictAnswer?.value.trim()) {
         throw updateBoundaryError('typed-answer-present', 'Bitte die offene Eingabe zuerst absenden oder leeren.');
       }
       persistShellState();
@@ -432,6 +468,7 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, onDown
     destroy() {
       updateRelease?.();
       destroyed = true;
+      conflictAnswer = null;
       document.removeEventListener('visibilitychange', onVisibilityChange);
       closeAdultDialogs();
       pinGate.lock();
