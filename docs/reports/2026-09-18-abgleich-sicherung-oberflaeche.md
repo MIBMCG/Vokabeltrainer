@@ -63,3 +63,19 @@ Der Helper greift auf keinen Dienst zu und verändert keinen Zustand. `backup.js
 Die aktualisierten mobilen Ansichten der stale Vorschau, Altänderung und des Epochenexports wurden erneut angesehen. Die Vorschau bleibt scrollbar; Hund, Ada, Unit 1/2, konkrete Lösungen und Lernwerte sind lesbar. Die angezeigten Informationen enthalten keine rohen Ereignis-, Epochen-, Snapshot-, Profil-, Lektions-, Wort- oder Lern-IDs. Ausgabe entsteht weiterhin ausschließlich über DOM-/Textknoten; `git diff --check` war vor dem Commit sauber.
 
 Fixcommit: `d026a4b fix: make sync and restore choices reviewable`.
+
+## Fixrunde 2 nach der fokussierten Nachprüfung
+
+Ausgangspunkt war R2 der unabhängigen Nachprüfung in `docs/reports/2026-09-18-abgleich-sicherung-oberflaeche-fix-1-review.md`. Wenn der aktuelle Stand einer Vokabel zwei sichere Fassungen enthielt, das gewählte Sicherungsziel aber eindeutig war, zeigte die Wiederherstellungsvorschau bislang nur den Platzhalter „mehrere sichere Fassungen“. Die beiden zu ersetzenden Inhalte blieben unsichtbar.
+
+Der gemeinsame Präsentationshelfer löst nun jeden Kopf der konfliktbehafteten Vorher-Seite über die Ereignisse des aktuellen Zustands auf. Jede Fassung erhält eine eigene Überschrift und zeigt alle entscheidungsrelevanten Felder; beim geprüften Wort „Hund“ sind damit beide bisherigen englischen Lösungen `dog / hound / pooch` und `dog / hound / canine` sichtbar, getrennt vom eindeutigen Ziel `dog / hound`. Der Backup-Renderer erhält einen aktuellen Zustandszugriff aus der Erwachsenenansicht. Dieser Zugriff wird beim Öffnen jeder Vorschau erneut ausgewertet, daher verwendet auch eine nach einer stale-Ablehnung neu vorbereitete Vorschau die dazu passende aktuelle Ereignismenge.
+
+### RED/GREEN der Fixrunde 2
+
+- RED: `node --test --test-name-pattern="concurrent word versions" tests/browser/trainer.browser.mjs` – 0/1; Timeout auf der erwarteten Überschrift „Vorherige Fassung 1“, weil die konfliktbehaftete Vorher-Seite noch nur als Platzhalter erschien (41,85 s).
+- GREEN gezielt: derselbe Befehl – 1/1 bestanden; beide bisherigen Schreibweisen und das eindeutige Ziel wurden im echten Zweikontext-Restoreablauf unterschieden (15,06 s).
+- GREEN gemeinsam betroffen nach der abschließenden DOM-Selbstreviewkorrektur: `node --test --test-name-pattern="trainer sync and restore" tests/browser/trainer.browser.mjs` – 4/4 bestanden, 0 fehlgeschlagen (20,96 s).
+
+`git diff --check` war sauber. Die Darstellung erzeugt weiterhin ausschließlich DOM- und Textknoten und zeigt keine technischen Kopf- oder Ereignis-IDs. Es gab keine Änderung am Datenformat, Backup-/Restore-Servicevertrag oder Synchronisationsvertrag. Entsprechend der Fixrundensteuerung wurde die vollständige Node-Suite nicht erneut ausgeführt; die Änderung betrifft nur den UI-Helfer, dessen Backup-Aufrufer und den abdeckenden Browserfall. R1 und R3 blieben in den vier betroffenen Abläufen grün. M1 und M2 bleiben für Task 13 vorgemerkt.
+
+Fixcommit: `2a37a25 fix: show replaced conflict versions in restore preview`.
