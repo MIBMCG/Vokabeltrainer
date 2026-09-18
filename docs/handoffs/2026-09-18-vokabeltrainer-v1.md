@@ -8,7 +8,7 @@
 
 ## Übergebenes Ergebnis
 
-Version 1 ist gemäß R01–R33 und E01–E10 implementiert. Task 13 korrigierte die letzten bekannten Bedienungs- und Textbefunde, machte das Browserharness portabel, erhöhte den Produktcache auf `v3`, ergänzte die Assetliste und schloss die frische Gesamtregression ab. Der [Abschlussbericht](../reports/2026-09-18-vokabeltrainer-v1.md) enthält Matrix, Taskhistorie, Screenshots und genaue Grenzen.
+Version 1 ist gemäß R01–R33 und E01–E10 implementiert. Task 13 korrigierte die letzten bekannten Bedienungs- und Textbefunde, machte das Browserharness portabel und ergänzte die Assetliste. Reviewfix-1-Produktcode `11e3128` führt nach einer profilfreien Navigation die gewählte Übungs-/Reise-/Avataransicht fort; deshalb trägt der Produktcache jetzt `v4`. Der [Abschlussbericht](../reports/2026-09-18-vokabeltrainer-v1.md) enthält Matrix, Taskhistorie, Screenshots und genaue Grenzen.
 
 Die unabhängige Task-13- und Gesamtprüfung des Branches steht noch aus. Diese Übergabe behauptet weder deren Bestehen noch eine reale Geräte- oder Produkt-Google-Abnahme.
 
@@ -41,9 +41,10 @@ Sie verwendet standardmäßig das Projektpaket `playwright` und dessen Chromium.
 - Playwright 1.62.1 mit Edge 153.0.4234.46: 11/11 Trainer-Browsertests bestanden.
 - Getrennte Drive-Probe: 12/12 Szenarien bestanden, keine Seitenfehler.
 - Offline-Neustart mit geschlossenem Testserver unter Wurzel- und Unterpfad bestanden.
-- Echter verzögerter Service-Worker-Wechsel von Produktcache `v3` zu Testfassung `v4` bestanden.
+- Auf dem Ausgangscode bestand der echte verzögerte Service-Worker-Wechsel von Produktcache `v3` zu Testfassung `v4`. Reviewfix 1 verwendet Produktcache `v4` und die abweichende Testfassung `v5`; der fokussierte Worker-Test bestand 8/8, der aktuelle vollständige Browserlauf folgt beim Gesamtabschluss.
 - Sechs aktuelle synthetische Desktop-/Mobilaufnahmen visuell geprüft.
-- Dokumentationsprüfung: 168 Dateien, 69 Markdowndateien und 227 lokale Links, 0 Fehler.
+- Reviewfix-Navigation: RED 0/1, GREEN 1/1; Produktcache `v4`, synthetische Updatefassung `v5`, Worker 8/8.
+- Dokumentationsprüfung: 170 Dateien, 71 Markdowndateien und 298 lokale Links, 0 Fehler.
 - `git diff --check`: ohne Befund.
 
 ## Nächster Schritt
