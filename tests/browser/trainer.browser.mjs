@@ -56,6 +56,41 @@ async function writeProductState(page, state) {
   }), state);
 }
 
+async function readSyntheticStorage(page) {
+  return page.evaluate(async () => {
+    const databases = [];
+    for (const info of await indexedDB.databases()) {
+      const database = await new Promise((resolveDatabase, reject) => {
+        const request = indexedDB.open(info.name);
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolveDatabase(request.result);
+      });
+      const stores = {};
+      for (const name of database.objectStoreNames) {
+        stores[name] = await new Promise((resolveValues, reject) => {
+          const request = database.transaction(name).objectStore(name).getAll();
+          request.onerror = () => reject(request.error);
+          request.onsuccess = () => resolveValues(request.result);
+        });
+      }
+      databases.push({name: info.name, stores});
+      database.close();
+    }
+    return JSON.stringify({
+      indexedDB: databases,
+      localStorage: {...localStorage},
+      sessionStorage: {...sessionStorage},
+    });
+  });
+}
+
+async function exportedBackupText(download) {
+  const stream = await download.createReadStream();
+  const chunks = [];
+  for await (const chunk of stream) chunks.push(chunk);
+  return Buffer.concat(chunks).toString('utf8');
+}
+
 async function seedOneCorrectAnswer(page, state) {
   const profile = state.ledger.events.find((event) => (
     event.type === 'entity.revised' && event.payload.entityType === 'profile'
@@ -369,6 +404,8 @@ test('trainer practice is resumable, single-submit safe and completes an exhaust
     }
     await page.getByRole('heading', {name: 'Für heute ist alles geschafft'}).waitFor();
     assert.equal(await page.getByRole('button', {name: 'Weitere Vokabeln', exact: true}).count(), 0);
+    assert.equal(await page.getByText(/weitere zulässige Wörter wählen/i).count(), 0);
+    await page.getByText(/Alle verfügbaren Wörter dieser Runde sind beantwortet/i).waitFor();
     completedState = await productState(page);
     const exhaustedRound = Object.values(completedState.rounds).find(({status}) => status === 'exhausted');
     const expectedAnswers = exhaustedRound.answeredIds.length;
@@ -687,6 +724,14 @@ test('trainer setup, adult decisions, persistence and BFCache lifecycle', {timeo
       && event.payload.value.german === 'Hund'
     )).payload.value.answers, longAnswers.split(' | '));
 
+    for (const label of ['Üben', 'Inselreise', 'Mein Avatar']) {
+      await page.getByRole('button', {name: label, exact: true}).click();
+      await page.getByText(/Wähle zuerst ein Lernprofil/i).waitFor();
+      assert.equal(await page.getByText(/nächsten Arbeitspaket|folgt mit den freigeschalteten/i).count(), 0);
+      await page.getByRole('button', {name: 'Profil auswählen', exact: true}).click();
+      await page.getByRole('heading', {name: 'Wer möchte üben?'}).waitFor();
+    }
+
     await page.reload();
     await page.locator('#adult-entry').click();
     await page.locator('#adult-unlock').waitFor();
@@ -962,7 +1007,13 @@ test('trainer rewards render the complete journey and save profile-specific avat
     await page.getByRole('button', {name: 'Mein Avatar', exact: true}).click();
     assert.equal(await page.getByRole('group', {name: 'Hautfarbe'}).getByRole('radio').count(), 4);
     assert.equal(await page.getByRole('group', {name: 'Kleidungsfarbe'}).getByRole('radio').count(), 6);
+    const previousSkinRadio = await page.getByRole('radio', {name: 'Hautfarbe 4', exact: true}).elementHandle();
     await page.getByRole('radio', {name: 'Hautfarbe 4', exact: true}).check();
+    await page.waitForFunction(() => (
+      document.activeElement?.matches('input[type="radio"][name="skin"][value="3"]')
+      && document.activeElement.checked
+    ));
+    assert.equal(await previousSkinRadio.evaluate((radio) => radio.isConnected), false);
     assert.deepEqual(await page.evaluate(() => ({
       name: document.activeElement?.getAttribute('name'),
       value: document.activeElement?.getAttribute('value'),
@@ -1067,6 +1118,9 @@ test('trainer sync and restore exposes deliberate Google, download and import fl
     await page.getByRole('button', {name: 'Sicherung herunterladen', exact: true}).click();
     const download = await downloading;
     assert.match(download.suggestedFilename(), /\.json$/);
+    const backupText = await exportedBackupText(download);
+    assert.equal(backupText.includes('pinVerifier'), false);
+    assert.equal(backupText.includes('synthetic-browser-token-'), false);
     await page.getByText('Download gestartet', {exact: true}).waitFor();
 
     const before = await productState(page);
@@ -1094,6 +1148,8 @@ test('trainer sync and restore exposes deliberate Google, download and import fl
       name: 'valid.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(validBackup)),
     });
     await page.getByRole('dialog', {name: 'Wiederherstellung prüfen'}).waitFor();
+    await page.getByRole('dialog').getByText(/gemeinsame[mn] Datenstand/i).waitFor();
+    assert.equal(await page.getByRole('dialog').getByText(/Datenepoche|Schutzgrenzen/i).count(), 0);
     await page.getByRole('dialog').getByRole('button', {name: 'Abbrechen'}).click();
     await page.waitForTimeout(50);
     const restoredFocus = await page.evaluate(() => ({
@@ -1179,8 +1235,78 @@ test('trainer sync and restore exposes deliberate Google, download and import fl
 
     assert.deepEqual(pageErrors, []);
     assert.deepEqual(harness.google.unexpected, []);
+    assert.equal((await readSyntheticStorage(page)).includes('synthetic-browser-token-'), false);
   } finally {
     await context.close();
+    await harness.close();
+  }
+});
+
+test('trainer unbound discovery, create and join require an explicit reconnect after authentication errors', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const creator = await harness.newDevice();
+  const joining = await harness.newDevice();
+  const creating = await harness.newDevice();
+  const errors = [];
+  for (const {page} of [creator, joining, creating]) {
+    page.on('pageerror', (error) => errors.push(error.message));
+  }
+
+  const openSync = async ({page}) => {
+    await page.locator('#adult-entry').click();
+    if (await page.locator('#adult-pin').count()) {
+      await page.locator('#adult-pin').fill('1234');
+      await page.locator('#adult-unlock').click();
+    }
+    await page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+  };
+  const reconnect = async ({page}) => {
+    await page.getByLabel('Öffentliche Google-Web-Client-ID').fill('synthetic-client-id');
+    await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
+    await page.getByText('Google ist für diese Sitzung verbunden.', {exact: true}).waitFor();
+  };
+
+  try {
+    await creator.page.goto(harness.baseUrl);
+    await setupPractice(creator.page, {profile: 'Ada'});
+    await openSync(creator);
+    await reconnect(creator);
+    await creator.page.getByRole('button', {name: 'Neuen Drive-Datensatz anlegen', exact: true}).click();
+    await creator.page.getByText('Abgeglichen', {exact: true}).waitFor();
+
+    await joining.page.goto(harness.baseUrl);
+    await setupPractice(joining.page, {profile: 'Bea'});
+    await openSync(joining);
+    await reconnect(joining);
+    joining.controls.rejectNextAbout401 = true;
+    await joining.page.getByRole('button', {name: 'Vorhandene Datensätze suchen', exact: true}).click();
+    await joining.page.locator('[data-sync-status]').filter({hasText: 'Mit Google verbinden'}).waitFor();
+    await reconnect(joining);
+    await joining.page.getByRole('button', {name: 'Vorhandene Datensätze suchen', exact: true}).click();
+    await joining.page.getByRole('button', {name: 'Diesen Datensatz prüfen', exact: true}).waitFor();
+
+    joining.controls.rejectNextAbout401 = true;
+    await joining.page.getByRole('button', {name: 'Diesen Datensatz prüfen', exact: true}).click();
+    await joining.page.locator('[data-sync-status]').filter({hasText: 'Mit Google verbinden'}).waitFor();
+    await reconnect(joining);
+    await joining.page.getByRole('button', {name: 'Diesen Datensatz prüfen', exact: true}).click();
+    await joining.page.getByRole('heading', {name: 'Datensatzwechsel prüfen'}).waitFor();
+
+    await creating.page.goto(harness.baseUrl);
+    await setupPractice(creating.page, {profile: 'Cem'});
+    await openSync(creating);
+    await reconnect(creating);
+    creating.controls.rejectNextAbout401 = true;
+    await creating.page.getByRole('button', {name: 'Neuen Drive-Datensatz anlegen', exact: true}).click();
+    await creating.page.locator('[data-sync-status]').filter({hasText: 'Mit Google verbinden'}).waitFor();
+    await reconnect(creating);
+    await creating.page.getByRole('button', {name: 'Neuen Drive-Datensatz anlegen', exact: true}).click();
+    await creating.page.getByText('Abgeglichen', {exact: true}).waitFor();
+
+    assert.deepEqual(errors, []);
+    assert.deepEqual(harness.google.unexpected, []);
+  } finally {
+    await Promise.allSettled([creator.context.close(), joining.context.close(), creating.context.close()]);
     await harness.close();
   }
 });
@@ -1356,6 +1482,7 @@ test('trainer sync and restore keeps concurrent word versions until an adult res
     await second.page.getByRole('button', {name: 'Abgleich', exact: true}).click();
     await second.page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).click();
     await second.page.getByRole('heading', {name: 'Alte Änderungen getrennt erhalten'}).waitFor();
+    await second.page.getByText(/^\d+ alte Änderungen bleiben getrennt erhalten\.$/).waitFor();
     await second.page.screenshot({path: resolve(resultsDirectory, 'trainer-late-change-mobile.png'), fullPage: true});
     const beforeAdoptionState = await productState(second.page);
     const adoptedProfileId = beforeAdoptionState.ledger.events.find((event) => (
@@ -1565,7 +1692,7 @@ test('trainer offline update UI blocks typing and pending answers before control
   try {
     await page.goto(harness.baseUrl);
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null, null, {timeout: 10_000});
-    harness.setServiceWorkerVersion('v3', {activationDelayMs: 750});
+    harness.setServiceWorkerVersion('v4', {activationDelayMs: 750});
     await page.evaluate(async () => {
       const registration = await navigator.serviceWorker.getRegistration('./');
       await registration.update();
@@ -1623,8 +1750,8 @@ test('trainer offline update UI blocks typing and pending answers before control
     const beforeReload = await productState(page);
     assert.equal(beforeReload.ledger.events.some(({type}) => type === 'round.completed' || type === 'round.abandoned'), false);
     assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product:')).sort()), [
-      'vokabeltrainer-product:%2Ftrainer%2F:v2',
       'vokabeltrainer-product:%2Ftrainer%2F:v3',
+      'vokabeltrainer-product:%2Ftrainer%2F:v4',
     ]);
     const navigation = page.waitForNavigation();
     await updateButton.click();
@@ -1639,7 +1766,7 @@ test('trainer offline update UI blocks typing and pending answers before control
     await navigation;
     await page.getByText('Richtig!', {exact: true}).waitFor();
     assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product:')).sort()), [
-      'vokabeltrainer-product:%2Ftrainer%2F:v3',
+      'vokabeltrainer-product:%2Ftrainer%2F:v4',
     ]);
   } finally {
     await context.close();

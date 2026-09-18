@@ -5,9 +5,8 @@ import {createProbeServer} from '../../scripts/serve.mjs';
 import {createGoogleFixture} from './google-fixture.mjs';
 
 const playwrightPath = process.env.PLAYWRIGHT_MODULE
-  ?? '../../.superpowers/sdd/2026-09-16-google-drive-probe/browser-runtime/node_modules/playwright/index.mjs';
-const executablePath = process.env.BROWSER_EXECUTABLE
-  ?? 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
+  ?? 'playwright';
+const executablePath = process.env.BROWSER_EXECUTABLE;
 
 function moduleUrl() {
   if (playwrightPath.startsWith('.')) return new URL(playwrightPath, import.meta.url).href;
@@ -19,15 +18,15 @@ export async function createTrainerHarness({basePath = ''} = {}) {
   const {chromium} = await import(moduleUrl());
   const server = createProbeServer({basePath});
   const productWorker = await readFile(new URL('../../trainer/sw.js', import.meta.url), 'utf8');
-  let workerVersion = 'v2';
+  let workerVersion = 'v3';
   let workerActivationDelayMs = 0;
   const originalRequest = server.listeners('request')[0];
   server.removeAllListeners('request');
   server.on('request', (request, response) => {
     const pathname = new URL(request.url, 'http://127.0.0.1').pathname;
-    if (pathname === `${basePath}/trainer/sw.js` && workerVersion !== 'v2') {
+    if (pathname === `${basePath}/trainer/sw.js` && workerVersion !== 'v3') {
       let source = productWorker.replace(
-        'const CACHE_NAME = `${CACHE_OWNER}v2`;',
+        'const CACHE_NAME = `${CACHE_OWNER}v3`;',
         `const CACHE_NAME = \`\${CACHE_OWNER}${workerVersion}\`;`,
       );
       if (source === productWorker) throw new Error('Synthetic worker version marker was not replaced.');
@@ -60,7 +59,7 @@ export async function createTrainerHarness({basePath = ''} = {}) {
   try {
     browser = await chromium.launch({
       headless: true,
-      executablePath,
+      ...(executablePath ? {executablePath} : {}),
       ignoreDefaultArgs: ['--disable-back-forward-cache'],
     });
   } catch (error) {
@@ -90,7 +89,7 @@ export async function createTrainerHarness({basePath = ''} = {}) {
     async newPersistentDevice({userDataDir, viewport = {width: 390, height: 844}}) {
       const context = await chromium.launchPersistentContext(userDataDir, {
         headless: true,
-        executablePath,
+        ...(executablePath ? {executablePath} : {}),
         viewport,
         ignoreDefaultArgs: ['--disable-back-forward-cache'],
       });
@@ -102,7 +101,7 @@ export async function createTrainerHarness({basePath = ''} = {}) {
     },
     stopServer,
     setServiceWorkerVersion(version, {activationDelayMs = 0} = {}) {
-      if (!/^v(?:[3-9]|[1-9][0-9]+)$/u.test(version)) throw new TypeError('Synthetic worker version must be v3 or later.');
+      if (!/^v(?:[4-9]|[1-9][0-9]+)$/u.test(version)) throw new TypeError('Synthetic worker version must be v4 or later.');
       if (!Number.isSafeInteger(activationDelayMs) || activationDelayMs < 0) {
         throw new TypeError('Synthetic activation delay must be a non-negative integer.');
       }

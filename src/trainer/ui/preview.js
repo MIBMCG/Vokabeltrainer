@@ -117,6 +117,7 @@ function eventPresentation(event, context) {
   }
   if (event.type === 'round.started') return `Rundenstart für ${context.name('profile', event.payload.profileId)} am ${day}`;
   if (event.type === 'round.completed') return `Rundenabschluss für ${context.name('profile', event.payload.profileId)} am ${day}`;
+  if (event.type === 'round.abandoned') return `Abgebrochene Runde von ${context.name('profile', event.payload.profileId)} am ${day}`;
   if (event.type === 'entity.revised') {
     const described = revisionPresentation(event, context);
     return `${described.title} geändert am ${day}`;
@@ -124,6 +125,7 @@ function eventPresentation(event, context) {
   if (event.type === 'word.milestone') return `Lernerfolg zu ${context.name('word', event.payload.wordId)} für ${context.name('profile', event.payload.profileId)} am ${day}`;
   if (event.type === 'avatar.changed') return `Avatar von ${context.name('profile', event.payload.profileId)} geändert am ${day}`;
   if (event.type === 'preference.changed') return `Bewegungseinstellung von ${context.name('profile', event.payload.profileId)} geändert am ${day}`;
+  if (event.type === 'events.adopted') return `Ausgewählte alte Änderungen übernommen am ${day}`;
   return `Historische Lernänderung vom ${day}`;
 }
 

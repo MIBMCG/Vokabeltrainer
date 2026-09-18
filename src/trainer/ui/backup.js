@@ -61,15 +61,16 @@ function showRestorePreview({summary, state, events, onConfirm, onCancel, trigge
     }
   }, {class: 'primary'});
   const warnings = [];
-  if (summary.affectsConnectedDevices) warnings.push('Die Auswahl wird als gemeinsame neue Datenepoche für verbundene Geräte veröffentlicht.');
   if (summary.foreignDataset) warnings.push('Diese Sicherung stammt aus einem anderen Datensatz und wird bewusst neu verankert.');
   if (summary.timeZoneChange) warnings.push(`Lernzeitzone der Sicherung: ${summary.timeZoneChange.from}; Ziel: ${summary.timeZoneChange.to}.`);
   dialog.append(
     el('h2', {text: title, attrs: {id: 'restore-dialog-title'}}),
     staleNotice ? message(staleNotice, 'error') : null,
+    el('p', {text: summary.affectsConnectedDevices
+      ? 'Nach der Bestätigung wird diese Sicherung zum gemeinsamen Datenstand der verbundenen Geräte.'
+      : 'Diese Sicherung ersetzt nur den aktiven Datenstand auf diesem Gerät und wird nicht automatisch zum gemeinsamen Datenstand in Drive.'}),
     ...previewSummaryNodes({summary, state, events}),
     ...warnings.map((text) => message(text, 'error')),
-    el('p', {text: `Schutzgrenzen: höchstens ${summary.limits.events} Ereignisse und ${Math.round(summary.limits.bytes / 1024 / 1024)} MiB.`}),
     el('div', {attrs: {class: 'dialog-actions'}}, [confirm, cancel]),
   );
   dialog.addEventListener('keydown', (event) => {

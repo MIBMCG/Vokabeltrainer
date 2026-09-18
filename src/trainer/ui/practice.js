@@ -282,7 +282,9 @@ function renderExhausted({root, round, profile, points, commands, onNavigate, ui
     profileHeader(profile.value.name, points, onNavigate),
     el('h1', {text: hasAnswers ? 'Für heute ist alles geschafft' : 'Hier gibt es gerade keine Vokabeln'}),
     el('p', {text: hasAnswers
-      ? `${round.answeredIds.length} Antworten sind sicher gespeichert. Du kannst weitere zulässige Wörter wählen oder die Runde beenden.`
+      ? canExpand
+        ? `${round.answeredIds.length} Antworten sind sicher gespeichert. Du kannst weitere zulässige Wörter wählen oder die Runde beenden.`
+        : `${round.answeredIds.length} Antworten sind sicher gespeichert. Alle verfügbaren Wörter dieser Runde sind beantwortet. Du kannst die Runde beenden.`
       : 'Für diese Auswahl ist gerade kein Wort fällig. Wähle eine andere Runde.'}),
   ]);
   if (ui.notice) {

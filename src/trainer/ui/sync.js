@@ -2,6 +2,7 @@ import {project} from '../learning/progress.js';
 import {resolveEpochs} from '../model/epochs.js';
 import {el, field, button, message} from './dom.js';
 import {eventLabel, previewSummaryNodes, revisionChoiceNodes} from './preview.js';
+import {syncStatusLabel} from './status.js';
 
 const stateByRoot = new WeakMap();
 
@@ -22,14 +23,6 @@ function uiState(root, auth) {
     });
   }
   return stateByRoot.get(owner);
-}
-
-function statusLabel(status) {
-  if (status?.phase === 'synced' && status.pendingCount === 0 && status.conflictCount === 0) return 'Abgeglichen';
-  if (status?.phase === 'connect') return 'Mit Google verbinden';
-  if (status?.phase === 'pending') return 'Abgleich ausstehend';
-  if (status?.phase === 'error' || status?.phase === 'conflict') return 'Abgleich fehlgeschlagen';
-  return 'Auf diesem Gerät gespeichert';
 }
 
 function ensureUnlocked(isUnlocked, auth) {
@@ -76,11 +69,11 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
   const section = el('section', {attrs: {'aria-labelledby': 'sync-title', class: 'stack'}});
   section.append(
     el('h2', {text: 'Abgleich', attrs: {id: 'sync-title'}}),
-    el('p', {text: statusLabel(status), attrs: {class: 'sync-status', 'data-sync-status': '', 'data-phase': status.phase}}),
+    el('p', {text: syncStatusLabel(status), attrs: {class: 'sync-status', 'data-sync-status': '', 'data-phase': status.phase}}),
     el('p', {text: status.message || '', attrs: {class: 'hint'}}),
   );
   if (status.pendingCount > 0) section.append(message(`${status.pendingCount} Änderung${status.pendingCount === 1 ? '' : 'en'} wartet noch auf Bestätigung.`));
-  if (status.lateCount > 0) section.append(message(`${status.lateCount} alte Änderung${status.lateCount === 1 ? '' : 'en'} bleibt getrennt erhalten.`));
+  if (status.lateCount > 0) section.append(message(`${status.lateCount} alte Änderung${status.lateCount === 1 ? ' bleibt' : 'en bleiben'} getrennt erhalten.`));
   if (ui.notice) section.append(message(ui.notice, ui.tone));
 
   const connection = el('form', {attrs: {class: 'subpanel stack compact'}});

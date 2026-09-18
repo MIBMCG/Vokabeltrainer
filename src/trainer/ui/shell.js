@@ -3,6 +3,7 @@ import {el, field, button, message} from './dom.js';
 import {renderAdult} from './adult.js';
 import {practiceRenderKey, practiceUpdateBlocker, renderPractice, renderPracticeLanding} from './practice.js';
 import {renderAvatar, renderJourney} from './rewards.js';
+import {syncStatusLabel} from './status.js';
 
 const MAX_ANSWERS_TEXT_LENGTH = 4_200;
 const SHELL_SESSION_KEY = 'vokabeltrainer-shell-v1';
@@ -229,20 +230,18 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, onDown
   }
 
   function renderScaffold(state, view) {
-    const projection = project(state.ledger);
-    const profile = activeProfileId ? projection.entities.profiles[activeProfileId] : null;
     const labels = {
-      practice: ['Üben', 'Die vollständige Übungsrunde wird im nächsten Arbeitspaket angeschlossen. Ihre Inhalte sind bereits sicher gespeichert.'],
-      journey: ['Inselreise', 'Die Reiseansicht wird im nächsten Arbeitspaket aus dem echten Lernfortschritt aufgebaut.'],
-      avatar: ['Avatar', 'Die Avatar-Auswahl folgt mit den freigeschalteten Reisebelohnungen.'],
+      practice: ['Üben', 'Wähle zuerst ein Lernprofil. Danach kannst du eine Übungsrunde starten oder fortsetzen.'],
+      journey: ['Inselreise', 'Wähle zuerst ein Lernprofil. Danach siehst du die persönliche Inselreise.'],
+      avatar: ['Avatar', 'Wähle zuerst ein Lernprofil. Danach kannst du den persönlichen Avatar gestalten.'],
     };
     const [title, copy] = labels[view];
     root.replaceChildren(
       el('section', {attrs: {class: 'panel scaffold'}}, [
-        el('p', {text: profile?.value?.name ?? 'Profil wählen', attrs: {class: 'eyebrow'}}),
+        el('p', {text: 'Profil wählen', attrs: {class: 'eyebrow'}}),
         el('h1', {text: title}),
         el('p', {text: copy}),
-        button('Zur Profilauswahl', () => show('profiles'), {class: 'secondary'}),
+        button('Profil auswählen', () => show('profiles'), {class: 'primary'}),
       ]),
       shellNavigation(),
     );
@@ -384,16 +383,7 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, onDown
       if (destroyed) return;
       const node = root.querySelector('[data-sync-status]');
       if (!node) return;
-      const label = status?.phase === 'synced' && status.pendingCount === 0 && status.conflictCount === 0
-        ? 'Abgeglichen'
-        : status?.phase === 'connect'
-          ? 'Mit Google verbinden'
-          : status?.phase === 'pending'
-            ? 'Abgleich ausstehend'
-            : ['error', 'conflict'].includes(status?.phase)
-              ? 'Abgleich fehlgeschlagen'
-              : 'Auf diesem Gerät gespeichert';
-      node.textContent = label;
+      node.textContent = syncStatusLabel(status);
       node.dataset.phase = status?.phase ?? 'local';
       const detail = node.nextElementSibling;
       if (detail?.classList.contains('hint')) detail.textContent = status?.message ?? '';
