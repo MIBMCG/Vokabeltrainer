@@ -1,70 +1,57 @@
 # Arbeitsstand
 
-Fortsetzung am Desktop am 18.09.2026 ausdrücklich beauftragt. GitHub-Stand c60ced1 wurde in die saubere bestehende Arbeitskopie übernommen; die Pause ist beendet. Task 9 ist nach zwei Korrekturrunden unabhängig geprüft (37c459f, 227 Node-Tests). Task 10 ist nach Korrektur und unabhängiger Nachprüfung abgeschlossen (49fde90, 259 Node-Tests). Task 11 ist nach zwei Korrekturrunden unabhängig geprüft (2a37a25). Task 12 Offline-PWA ist nach Korrektur und unabhängiger Nachprüfung abgeschlossen (2b369e3, 276 Node-Tests). Task 13 Abschlussprüfung und portable Übergabe läuft. Aktuelle [Desktop-Fortsetzung](docs/handoffs/2026-09-18-desktop-fortsetzung.md); die nachfolgende Pausenübergabe bleibt historische Ausgangsevidenz.
-
-**Historischer Ausgangsstand (durch die Fortsetzung aufgehoben):** Pause am 18.09.2026 ausdrücklich beauftragt. Entwicklung damals angehalten; der Nutzer hat die Sicherung aller Projektänderungen nach GitHub und eine Übergabe für den Desktop beauftragt. Maßgeblich ist die [Desktop-Übergabe](docs/handoffs/2026-09-18-desktop-pause.md). Erst nach ausdrücklicher Fortsetzung weiterarbeiten.
-
-Änderung der Prüfungsreihenfolge am 17.09.2026: Der Nutzer beauftragt ausdrücklich, zuerst die vollständige App gemäß bestätigtem Gesamtentwurf umzusetzen und erst danach beim Freund auf iPhone/iPad zu testen. Die bisherige Geräteprüfung vor umfangreicher Lernoberfläche ist damit als Entwicklungssperre aufgehoben. Reale Geräteabnahme bleibt offen und darf nicht als bestanden gelten. Bereits bestätigte manuelle Google-/Drive-Tests in zwei Browsern gelten weiter. Keine neue pauschale Startfreigabe verlangen; Hosting/Veröffentlichung und Kostenmodell werden dadurch nicht automatisch geändert.
-
 Stand: **18.09.2026**
 
-## Bestätigt und beauftragt
+Die vollständige Version 1 gemäß [bestätigtem Gesamtentwurf](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md) und [Produkt-Datenvertrag](docs/PRODUKT-DATENFORMAT.md) ist auf `codex/vokabeltrainer-v1` implementiert. Task 13 schloss letzte Bedienungsbefunde, portable Browserwerkzeuge, vollständige Regression, visuelle Prüfung und die portable Dokumentation ab. Codecommit: `3b1d16d`. Der [Abschlussbericht](docs/reports/2026-09-18-vokabeltrainer-v1.md) enthält die vollständige Evidenz; die [Übergabe](docs/handoffs/2026-09-18-vokabeltrainer-v1.md) nennt den nächsten Schritt.
 
-Der Nutzer hat den [Gesamtentwurf](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md) einschließlich E01–E10 mit Option A angenommen. Die Einzelfragen Q1–Q14 sind abgeschlossen; die [Anforderungen R01–R33](docs/ANFORDERUNGEN.md) bleiben verbindlich. Entwicklung und portable Projektdokumentation einschließlich GitHub-Übertragung sind beauftragt.
+Die unabhängige Task-13- und Gesamtprüfung des Branches folgt nach diesem Paket. Sie ist noch keine bestandene Freigabe. Reale Produktprüfungen mit Google Drive auf zwei physischen Geräten, Safari und Home-Bildschirm-App auf iPhone/iPad sowie eine HTTPS-Bereitstellung bleiben offen.
 
-Ziel: Deutsch-Englisch-Vokabeltrainer für 10–13-Jährige, Klassen 4–7, mit Schwerpunkt iPhone/iPad. Gemeinsames Google Drive mit durch Erwachsene eingerichtetem Google-Zugang, getrennte Lernprofile, kein zusätzliches kostenpflichtiges Cloudabo. Drei Lernmodi, adaptive Wiederholung, Erwachsenenansicht und Inselreise gehören zur späteren ersten Trainerversion.
+## Bestätigter Umfang
 
-## Aktuelles Entwicklungspaket
+Die Anforderungen R01–R33, Entscheidungen Q1–Q14 und Entwurfsergänzungen E01–E10 sind bestätigt. Zielgruppe sind 10–13-Jährige in Klasse 4–7. Die statische Web-App bietet getrennte Lernprofile, adaptive Deutsch-Englisch-Übungen, fortsetzbare Runden, Erwachsenenverwaltung, Inselreise, Avatar, Offlinebetrieb, konfliktfesten Drive-Abgleich sowie vollständige Sicherung und Wiederherstellung. Kein zusätzliches kostenpflichtiges Cloudabo ist vorgesehen.
 
-### Vollständige App: Umsetzung wieder aufgenommen
+Die Produktoberfläche liegt unter `/trainer/`; die technische Drive-Probe bleibt getrennt unter `/`. Persönliche Lerninhalte und Browserdaten gehören nicht ins Repository.
 
-Die Umsetzung folgt dem [v1-Plan](docs/superpowers/plans/2026-09-17-vokabeltrainer-v1.md) und [Produkt-Datenvertrag](docs/PRODUKT-DATENFORMAT.md). Tasks 1–9 sind implementiert und unabhängig geprüft: Ereignisformat, Inhaltsfassungen/Epochen, adaptive Lern- und Belohnungslogik, fortsetzbare Runden, atomare Speicherung, Einrichtung/Erwachsenenverwaltung, Übungsbildschirm sowie Inselreise und Avatar. Die Produktoberfläche liegt unter `/trainer/`. Kleine vorgemerkte Befunde sind in der Desktop-Übergabe einzelnen Folgeaufgaben zugeordnet.
+## Aktueller Prüfstand
 
-Task 9 ist nach zwei Korrekturrunden abgeschlossen: `37c459f`, **227/227 Node-Tests**, unabhängige Nachprüfung ohne neue Fehler im Korrekturdiff. Details und ältere Laptop-Belege bleiben in der [Desktop-Fortsetzung](docs/handoffs/2026-09-18-desktop-fortsetzung.md) erhalten.
+Auf dem finalen Task-13-Code liefen frisch:
 
-Task 10 (Sicherung/Wiederherstellung) ist in `ee50662` erstmals implementiert: **254/254 Node-Tests**, **4/4 Trainer-Browserfälle**. Die [unabhängige Review](docs/reports/2026-09-18-sicherung-wiederherstellung-review.md) fand eine wichtige Lücke bei nachträglich widersprüchlichen Snapshotmanifesten und bereits gecachten Epochen. Korrekturrunde 1 ist mit `49fde90` abgeschlossen: **259/259 Node-Tests**, [Nachprüfung ohne offene Befunde](docs/reports/2026-09-18-sicherung-wiederherstellung-fix-1-review.md). Task 10 ist freigegeben. Task 11 Oberflächenintegration ist abgeschlossen: [Implementierungsbericht](docs/reports/2026-09-18-abgleich-sicherung-oberflaeche.md), [abschließende Nachprüfung](docs/reports/2026-09-18-abgleich-sicherung-oberflaeche-fix-2-review.md). Gesamtlauf auf dem Implementierungsstand: 260 Node-Tests; nach den UI-Korrekturen vier betroffene Browserfälle grün. Task 12 Offline-PWA ist nach Korrektur 2b369e3 unabhängig geprüft: 276/276 Node-Tests, echte Offline-Neustarts und kontrollierter Versionswechsel. Task 13 Abschlussprüfung läuft. Reale Apple-Geräte sind weiterhin nicht abgenommen.
-Auf Wunsch entstand ein [visuelles Konzept mit drei Ansichten](docs/design/2026-09-17-insel-konzept.md). Es bleibt eine Gestaltungsvorschau. Zusätzlich liegen jetzt [tatsächliche Browseransichten der implementierten Inselreise und des Avatars](docs/reports/2026-09-18-inselreise-avatar.md) vor.
+- `npm test`: **277/277 Tests bestanden**, Node.js 22.23.2.
+- Trainer-Browserregression: **11/11 Tests bestanden**, Playwright 1.62.1, Edge 153.0.4234.46.
+- Bestehende Drive-Probe: **12/12 Szenarien bestanden**, keine Seitenfehler.
+- Offline-Neustart mit geschlossenem Testserver für `/trainer/` und `/repo/trainer/` sowie ein echter verzögerter Service-Worker-Wechsel sind Bestandteil der Trainerregression.
+- Desktop-, Mobil-, Reise-, Avatar-, Konflikt- und Wiederherstellungsansichten wurden mit synthetischen Daten erzeugt und visuell geprüft.
 
-Der [Benutzungsleitfaden](docs/BENUTZUNG.md) beschreibt die bestätigten Abläufe mit ausdrücklicher Kennzeichnung des Entwicklungsstands. Keine Produkt-Geräteabnahme oder Bereitstellung ist damit behauptet.
-Der [Plan der Google-Drive-Probe](docs/superpowers/plans/2026-09-16-google-drive-probe.md) beschreibt die begrenzte technische Probe vor umfangreicher Lernoberfläche. Sie nutzt ausschließlich synthetische Antworten und einen gekennzeichneten Drive-Testbestand. Die Produkt-App wird getrennt aufgebaut; die Probe bleibt als eigenständiger Prüfstand erhalten.
+Browserregression und Node-Tests simulieren Google Identity Services und Drive-HTTP. Die frühere manuelle Probe bestätigte echte Google-Anmeldung und Drive-Abgleich zwischen zwei Browsern desselben Rechners; das ist kein Nachweis für das Produktprotokoll auf zwei physischen Geräten.
 
-Die Anmelde-/Drive-Schicht entstand in `7a5a108` und `1745d66`. Die persistente mobile Probe wurde in `0f3f03e` umgesetzt und nach unabhängiger Review in `e7424b5` sowie `230defb` korrigiert. Sie umfasst synthetische Ereignisse, IndexedDB, feste Konto-/Ordnerbindung je Browserprofil, wiederholbare Uploads, leere Rücksetzung mit verifizierter Sicherung, mobile Oberfläche, lokalen Server und eigenen Offline-Service-Worker. Das begrenzte Format ist in [PROBE-DATENFORMAT.md](docs/PROBE-DATENFORMAT.md) beschrieben.
+## Umgesetzte Arbeitspakete
 
-Auf `92f044e` liefen `npm test` mit **74/74 bestandenen Tests** und zwölf Browser-Szenarien mit Playwright 1.62.1, System-Edge 153.0.4234.32 und Node 22.23.2 ohne Seitenfehler. Die Browserprüfung bediente echte DOM-, IndexedDB- und Service-Worker-Pfade; nur Google Identity Services und Drive-HTTP wurden simuliert. Desktop 1280×900 und Mobil 390×844 wurden visuell geprüft; Bedienelemente waren mindestens 44 Pixel hoch, das Eingabefeld mindestens 16 Pixel groß. Details: [Prüfbericht](docs/reports/2026-09-17-google-drive-probe.md).
+Tasks 1–12 sind implementiert, korrigiert und jeweils unabhängig nachgeprüft. Ihre versionierten Berichte stehen unter [docs/reports](docs/reports/). Task 13 ergänzt unter anderem:
 
-Die unabhängigen Aufgabenprüfungen sind abgeschlossen. GPT-5.6 Sol mit hoher Denktiefe übernahm Implementierung und Funktionsprüfung, Sol mit mittlerer Denktiefe Dokumentation und deren Prüfung. GPT-6 Astra mit hoher Denktiefe fand in der Gesamtprüfung zwei zusätzliche Browser-/Anmeldefehler; Sol korrigierte beide in `92f044e`. Astra bestätigte anschließend beide als behoben, ohne neuen Befund. Der testbare Entwicklungsstand ist freigegeben. Der Abschlussstand `970a0de2b6c8101cec86164fd354291bcc4957c1` wurde auf `origin/codex/google-drive-probe` übertragen und mit `git ls-remote` identisch bestätigt; der anschließende Dokumentationscommit hält diesen Nachweis fest. Keine Integration nach `main` oder öffentliche Bereitstellung wurde durchgeführt.
+- wahrheitsgemäße Texte für ausgeschöpfte Übungsrunden,
+- Fokus auf den nach asynchronem Rendern tatsächlich neuen Avatar-Schalter,
+- eine gemeinsame Statusformatierung,
+- Browserfälle für ungebundene Authentifizierungsfehler,
+- klare Profil- und Wiederherstellungstexte,
+- verständliche Bezeichnungen für alte Ereignisse,
+- portable Playwright-/Chromium-Standardwerte mit optionalen Umgebungsvariablen,
+- Produktcache `v3` einschließlich des neuen Statusmoduls.
 
-Aktueller Arbeitszweig: `codex/vokabeltrainer-v1` (von `codex/google-drive-probe` abgeleitet). Am Laptop wurde am 18.09. ein frischer regulärer Checkout auf diesem Branch angelegt; die ältere Worktree-Angabe gehört zum vorherigen Rechner. Aktuelle Commits und Remote bei Übernahme frisch prüfen. Kein bestimmter Rechnerpfad ist erforderlich.
+Der [Benutzungsleitfaden](docs/BENUTZUNG.md) beschreibt den aktuellen Ablauf. [Architektur](docs/ARCHITEKTUR.md), [Qualitätsmatrix](docs/QUALITAET-UND-ABNAHME.md) und [Google-Einrichtung](docs/GOOGLE-DRIVE-EINRICHTUNG.md) trennen implementierte Funktionen von noch offenen Realnachweisen.
 
-Aktuelle Übergabe: [Desktop-Pause](docs/handoffs/2026-09-18-desktop-pause.md). Historische Zwischenstände: [Produktentwicklung](docs/handoffs/2026-09-17-produktentwicklung.md) und [Fortsetzung am Laptop](docs/handoffs/2026-09-18-fortsetzung.md). Die [Probe-Übergabe](docs/handoffs/2026-09-17-verbindungsprobe.md) dokumentiert den geprüften Ausgangspunkt.
-Einrichtung und Prüfablauf: [Google-Drive-Probe](docs/GOOGLE-DRIVE-PROBE.md).
+## Offen und bewusst zurückgestellt
 
-## Äußere Voraussetzungen und nächste Schritte
+- unabhängige Task-13- und Gesamtprüfung des finalen Branches,
+- realer Produktabgleich über Google Drive auf zwei physischen Geräten,
+- iPhone-/iPad-Abnahme in Safari und als Home-Bildschirm-App einschließlich Tastatur, Fokus, Offline-Neustart und erneutem Verbinden,
+- festgelegte und nachgewiesene Browser-/OS-Mindestversionen,
+- autorisierte HTTPS-Bereitstellung und veröffentlichte Trainer-URL,
+- allgemeine Lizenzentscheidung und Änderung der Repository-Sichtbarkeit.
 
-Praxisstand 17.09.2026, durch Nutzerrückmeldungen und Screenshots: Echte Anmeldung, Probeordner, Upload, Wiederholung ohne Doppelwertung, lokales Neuladen, erneute Anmeldung, Offlineantwort mit späterem Upload und gesicherte Rücksetzung bestätigt. Zusätzlich bestätigte der Nutzer das Neuladen ohne Internet bei weiterlaufendem lokalen Server sowie den realen Drive-Abgleich zwischen zwei getrennten Browsern auf demselben Rechner in beide Richtungen. Eine zunächst ungesendete Antwort aus der alten Generation blieb nach Rücksetzung separat erhalten; am Ende zeigten beide Browser Antworten 0, Punkte 0, Ausstehend 0 und Alte Generation 1. Noch offen: isolierter Start ohne erreichbaren lokalen Server, zwei physische Geräte sowie iPhone/iPad in Safari und als Home-Bildschirm-App. Browser-/OS-Versionen und geladener Codecommit des Handtests wurden nicht gesondert erhoben. Nächster Schritt: den vollständigen Trainer nach dem v1-Plan implementieren; Geräte- und Hostingklärung folgt danach. Keine persönlichen Kennungen dokumentieren.
+Keine dieser Grenzen ist eine neue Produktentscheidung. Hosting, Kontenänderungen, Veröffentlichung und Kosten bleiben gesondert zu beauftragen.
 
-Für reale iOS-Prüfungen fehlen Geräte-/Versionsangaben, Testverfügbarkeit und eine abgestimmte HTTPS-Bereitstellung. Der Nutzer besitzt keine Apple-Geräte; sein Freund als künftiger Hauptnutzer besitzt iPhone und iPad. Niemand wird ohne Auftrag kontaktiert.
+## Nächster Schritt
 
-Die erste Anmeldung, Drive-Übertragung und Rücksetzung sind bestätigt. Nach der vollständigen Umsetzung folgen die Geräte- und Hostingklärung sowie die weiteren Prüfungen nach der [Prüfanleitung](docs/GOOGLE-DRIVE-PROBE.md), später mit demselben OAuth-Client, Google-Konto und Probeordner auf zwei Geräten. Für iPhone/iPad ist zusätzlich eine abgestimmte HTTPS-Bereitstellung nötig; Safari und Home-Bildschirm-App werden getrennt geprüft. Bis diese Nachweise vorliegen, bleibt die Geräteabnahme offen. Die vollständige Produktumsetzung ist durch die geänderte Reihenfolge ausdrücklich freigegeben.
+Zuerst Task 13 und den vollständigen Branch unabhängig prüfen. Findings werden gezielt korrigiert und betroffene Prüfungen erneut ausgeführt. Danach können die Schritte aus der [Geräte-Prüfliste](docs/GERAETE-ABNAHME.md) mit synthetischen Daten auf den Geräten des Freundes vorbereitet werden; eine dafür nötige HTTPS-Bereitstellung erfordert einen eigenen Auftrag.
 
-## Noch nicht vorhanden oder nachgewiesen
-
-- Fertige Produkt-Offline-PWA fehlt; Übungsbildschirm, Inselreise und Avatar sind bereits geprüft.
-- Freigabe der Produktsynchronisation: neun wichtige Reviewbefunde offen. Vollständiger Sicherungsimport und Erwachsenen-Konfliktlösung noch nicht implementiert.
-- Isolierter Offline-Start ohne erreichbaren Server und realer Zwei-Geräte-Abgleich; der Abgleich zwischen zwei Browsern desselben Rechners ist bestätigt.
-- Reale iPhone-/iPad-Abnahme und festgelegte Mindestversionen.
-- Eingerichtetes Hosting oder veröffentlichte Trainer-URL.
-
-Die allgemeine Lizenzentscheidung bleibt bewusst zurückgestellt. Keine öffentliche Freigabe, Repository-Sichtbarkeitsänderung, gebührenpflichtige Einrichtung oder Veröffentlichung einer laufenden App ist durchgeführt.
-
-## Bisherige Berichte
-
-- [Übungsbildschirm-Korrektur](docs/reports/2026-09-18-uebungsbildschirm-korrektur.md).
-- [Inselreise/Avatar mit echten Screenshots](docs/reports/2026-09-18-inselreise-avatar.md).
-- [Synchronisation: Implementierungszwischenstand](docs/reports/2026-09-18-synchronisation-zwischenstand.md) und [offene unabhängige Review](docs/reports/2026-09-18-synchronisation-review.md).
-- [Gesamtentwurf und Anforderungsklärung](docs/reports/2026-09-16-gesamtentwurf.md), historischer Stand vor Entwurfsbestätigung.
-- [Ursprüngliches Dokumentationspaket](docs/reports/2026-09-16-dokumentation.md).
-- [Drive-Adapter](docs/reports/2026-09-16-drive-adapter.md).
-- [Lokale Verbindungsprobe](docs/reports/2026-09-17-google-drive-probe.md).
-
-Keine erneute pauschale Entwicklungs- oder Entwurfsfreigabe verlangen. Neue Produktabweichungen anhand konkreter Befunde klären; technische Nachweise nicht durch Zustimmung ersetzen.
+Aktueller Branch: `codex/vokabeltrainer-v1`. Der Remote-Stand lag vor Task 13 bei `8431786`; die Task-13-Commits sind zum Zeitpunkt dieser Übergabe lokal und noch nicht als Remote-Stand behauptet.

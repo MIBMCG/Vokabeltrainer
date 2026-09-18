@@ -1,8 +1,6 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-Fortsetzung am Desktop am 18.09.2026 ausdrücklich beauftragt. GitHub-Stand c60ced1 wurde in die saubere bestehende Arbeitskopie übernommen; die Pause ist beendet. Task 9 ist nach zwei Korrekturrunden unabhängig geprüft (37c459f, 227 Node-Tests). Task 10 Sicherung/Wiederherstellung läuft; danach Tasks 11–13. Aktuelle [Desktop-Fortsetzung](docs/handoffs/2026-09-18-desktop-fortsetzung.md); die nachfolgende Pausenübergabe bleibt historische Ausgangsevidenz.
-
-Pause am 18.09.2026 ausdrücklich beauftragt; der aktuelle Stand wird für die Weiterarbeit am Desktop nach GitHub übertragen. Keine Entwicklung während dieser Pause. Maßgeblich ist die [Desktop-Übergabe](docs/handoffs/2026-09-18-desktop-pause.md). Bei ausdrücklicher Fortsetzung auf `codex/vokabeltrainer-v1` zuerst die neun wichtigen Reviewbefunde zu Task 9 korrigieren und unabhängig nachprüfen; danach Tasks 10–13. Tasks 7 und 8 sind geprüft. Gesamtentwurf und Insel-Konzept bleiben bestätigt.
+Version 1 ist am 18.09.2026 implementiert und automatisiert geprüft. Maßgeblich sind [Arbeitsstand](ARBEITSSTAND.md), [Abschlussbericht](docs/reports/2026-09-18-vokabeltrainer-v1.md) und [aktuelle Übergabe](docs/handoffs/2026-09-18-vokabeltrainer-v1.md). Die unabhängige Gesamtprüfung des finalen Branches folgt nach Task 13. Reale Produkt-Google-, Zwei-Geräte-, iPhone-/iPad- und HTTPS-Nachweise bleiben offen.
 
 Änderung der Prüfungsreihenfolge am 17.09.2026: Der Nutzer beauftragt ausdrücklich, zuerst die vollständige App gemäß bestätigtem Gesamtentwurf umzusetzen und erst danach beim Freund auf iPhone/iPad zu testen. Die bisherige Geräteprüfung vor umfangreicher Lernoberfläche ist damit als Entwicklungssperre aufgehoben. Reale Geräteabnahme bleibt offen und darf nicht als bestanden gelten. Bereits bestätigte manuelle Google-/Drive-Tests in zwei Browsern gelten weiter. Keine neue pauschale Startfreigabe verlangen; Hosting/Veröffentlichung und Kostenmodell werden dadurch nicht automatisch geändert.
 
@@ -20,13 +18,11 @@ Bei Widersprüchen hat die aktuelle ausdrückliche Nutzeranweisung Vorrang. Best
 
 ## Aktueller Projektzustand
 
-Zum dokumentierten Start am 16.09.2026 existieren nur Dokumentation und Repository-Grunddateien. Es gibt keine App, keine Google-Anbindung, keine eingerichtete Hostingumgebung und keine Produkttests. Aktuelle Änderungen können diesen Stand später erweitern; maßgeblich sind Dateien und Prüfbelege.
-
-Das erste Dokumentationspaket wurde beauftragt und veröffentlicht. Der anschließende Nutzerauftrag lautet: alle offenen Punkte Frage für Frage mit Optionen und einer Empfehlung klären, jede Antwort direkt in den Anforderungen festhalten und nach vollständiger Klärung mit der Entwicklung beginnen. Diese bedingte Entwicklungsfreigabe erhalten; keine erneute pauschale Startgenehmigung verlangen, sobald der abgestimmte Umfang vollständig feststeht. Noch offene Produktideen, Cloudkontenänderungen oder die Veröffentlichung einer laufenden App sind damit nicht automatisch freigegeben.
+Die statische Produkt-App liegt unter `trainer/`; die technische Drive-Probe bleibt getrennt unter der Wurzel. Tasks 1–13 setzen den bestätigten v1-Umfang um. Automatisierte Node- und Browserprüfungen sind bestanden; sie verwenden synthetische Daten und eine simulierte Google-Grenze. Eine unabhängige Gesamtprüfung des Branches, reale Produktverbindung mit Google Drive auf zwei physischen Geräten, Apple-Geräteabnahme und HTTPS-Bereitstellung stehen noch aus.
 
 Die Einzelfragen Q1–Q14 sowie der [Gesamtentwurf](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md) einschließlich E01–E10 sind bestätigt (Nutzerantwort A vom 16.09.2026). Die Entwicklung beginnt nach dem [Plan zur Google-Drive-Probe](docs/superpowers/plans/2026-09-16-google-drive-probe.md). Keine erneute Entwurfs- oder pauschale Startfreigabe einholen. Reale Google-/Geräteprüfungen bleiben gesonderte Nachweise. Die frühe Verbindungsprobe wurde durchgeführt. Die restliche echte Geräteprüfung erfolgt auf Nutzerwunsch erst nach Umsetzung der vollständigen App.
 
-Aktuelle Steuerung: ausdrückliche Desktop-Fortsetzung; vollständige Umsetzung auf `codex/vokabeltrainer-v1` fortführen. Konzept bestätigt; Tasks 1–8 unabhängig geprüft, kleinere vorgemerkte Befunde stehen in der Desktop-Übergabe. Task 9 hat neun offene wichtige Reviewbefunde. Ältere Pausen- und Fortsetzungsnotizen sind historische Vorgeschichte.
+Aktuelle Steuerung: Task 13 und den vollständigen Branch unabhängig prüfen; konkrete Findings gezielt korrigieren. Ältere Pausen- und Zwischenstandsnotizen sind historische Vorgeschichte. Keine erneute pauschale Startfreigabe verlangen.
 
 ## Feste Leitplanken
 
@@ -65,6 +61,7 @@ Aktuelle Steuerung: ausdrückliche Desktop-Fortsetzung; vollständige Umsetzung 
 ## Prüfung
 
 - Funktionsänderungen mit passenden Tests prüfen. Bei Lernlogik und Synchronisation relevante Fehlerszenarien zuerst reproduzieren und anschließend den Erfolg belegen.
+- Wenn sich eine ausgelieferte Produktdatei ändert oder ein neues Laufzeitmodul hinzukommt, die versionierte Cachekennung in `trainer/sw.js` erhöhen und die explizite Assetliste vollständig halten. Offline- und kontrollierten Updatepfad anschließend mit dem echten Browserfall prüfen.
 - Bei reinen Dokumentationsänderungen genügen die betroffenen Verweis-, Inhalts- und Git-Prüfungen; keine Scheintests schreiben.
 - Keine nicht existierenden Befehle als ausgeführt oder erfolgreich dokumentieren. Testbefehle erst nach Einrichtung der tatsächlichen Werkzeuge ergänzen.
 - Eine Desktopsimulation oder ein WebKit-Test ersetzt keine Abnahme auf echtem iPhone/iPad. Offene Geräteprüfungen offen lassen.

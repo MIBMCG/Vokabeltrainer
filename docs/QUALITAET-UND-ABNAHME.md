@@ -1,6 +1,6 @@
 # Qualität und Abnahme
 
-Stand: 17.09.2026. **Prüfplan für das Gesamtprodukt.** Die technische Probe ist lokal ausführbar und besitzt 74 bestandene Node-Tests sowie zwölf bestandene Browser-Szenarien mit simulierter Google-Grenze; siehe [Prüfbericht](reports/2026-09-17-google-drive-probe.md). Eine vollständige Traineranwendung sowie echte Google-/Zwei-Geräte-/iOS-Abnahme fehlen weiterhin.
+Stand: 18.09.2026. **Prüfmatrix für Version 1.** Die Produkt-App ist implementiert und mit 277 Node-Tests sowie elf Trainer-Browsertests automatisiert geprüft. Die getrennte Drive-Probe bestand zusätzlich zwölf Browser-Szenarien. Details und Anforderungszuordnung stehen im [Abschlussbericht](reports/2026-09-18-vokabeltrainer-v1.md). Reale Produkt-Google-, Zwei-Geräte- und iOS-/iPadOS-Abnahme fehlen weiterhin.
 
 ## Nachweisstufen
 
@@ -12,9 +12,9 @@ Stand: 17.09.2026. **Prüfplan für das Gesamtprodukt.** Die technische Probe is
 
 Eine Stufe ersetzt nicht automatisch die nächste. Für jeden Bericht Datum, Commit, Umgebung, Vorgehen, Ergebnis und offene Grenzen festhalten.
 
-## Geplante Prüfmatrix
+## Prüfmatrix
 
-Alle folgenden Produktprüfungen sind **offen**. Einzelne technische Grundlagen wurden in der begrenzten Probe geprüft; das ersetzt keinen Produktnachweis.
+Die folgenden Bereiche sind automatisiert mit synthetischen Daten geprüft, soweit der [Abschlussbericht](reports/2026-09-18-vokabeltrainer-v1.md) sie belegt. Fälle mit realem Google Drive, zwei physischen Geräten oder Apple-Hardware bleiben offen; ein automatisierter Browsernachweis ersetzt diese Abnahme nicht.
 
 | Bereich | Relevante Fälle | Bezug |
 | --- | --- | --- |
@@ -38,7 +38,7 @@ Alle folgenden Produktprüfungen sind **offen**. Einzelne technische Grundlagen 
 | Updates | Neue App-Version während einer Übung; keine verlorenen Ergebnisse oder gemischten Datenformate | PWA-Entwurf |
 | Sicherung | Vollständige JSON-Sicherung; Format-/Versionsprüfung, Vorschau und Bestätigung; automatische separate Sicherheitskopie vor Rücksetzung, Übernahme auf verbundenen Geräten und Rückweg zum vorherigen Stand; keine doppelte Wertung | R30/R33, Q11b/Q14 |
 
-Die zusätzlichen Abnahmefälle aus Abschnitt 10 des [Gesamtentwurfs](superpowers/specs/2026-09-16-vokabeltrainer-design.md) sind Bestandteil seines Vorschlags, noch keine bestandenen Tests. Besonders zu prüfen: ausgeschöpfte Aufgabenmenge, Lernrevisionen, parallele Wiederherstellungen und verspätete Offlineereignisse.
+Die zusätzlichen Abnahmefälle aus Abschnitt 10 des [Gesamtentwurfs](superpowers/specs/2026-09-16-vokabeltrainer-design.md) sind Bestandteil der automatisierten Matrix. Ausgeschöpfte Aufgabenmenge, Lernrevisionen, konkurrierende Wiederherstellungen und verspätete Offlineereignisse sind synthetisch geprüft; ihre geräteübergreifende Realabnahme bleibt offen.
 
 ## Echte Geräte und Oberfläche
 
@@ -63,13 +63,13 @@ Keine Erfolgsaussage aus einer bloßen Codeinspektion ableiten. Keine echten Kin
 
 ## Dokumentationsprüfung
 
-Für dieses anfängliche Paket sind zu prüfen:
+Für jeden Abschlussstand sind zu prüfen:
 
 - Alle internen Datei- und Abschnittsverweise lösen sich auf, einschließlich korrekter Groß-/Kleinschreibung.
 - README, AGENTS.md, Arbeitsstand und Übergabe stimmen bei Zielgruppe, Cloudanbieter, Kontenmodell und Status überein.
 - Bestätigte Anforderungen und offene Vorschläge sind sichtbar getrennt.
-- Keine tatsächliche App, eingerichtete Google-Verbindung oder bestandene Produktabnahme wird vorgetäuscht.
+- Implementierte App, eingerichtete Google-Probe und noch offene Produkt-/Geräteabnahmen werden klar getrennt.
 - Nur beabsichtigte Dateien werden committed; Git-Whitespaceprüfung ist sauber.
 - Nach einem autorisierten Push stimmt der dokumentierte Remote-Branch mit dem lokalen Commit überein; eine Integration nach `main` ist separat zu beauftragen.
 
-Die Ergebnisse stehen im [ursprünglichen Dokumentationsbericht](reports/2026-09-16-dokumentation.md), im [Prüfbericht zum Gesamtentwurf](reports/2026-09-16-gesamtentwurf.md) und im [Prüfbericht der lokalen Verbindungsprobe](reports/2026-09-17-google-drive-probe.md).
+Die aktuellen Ergebnisse stehen im [v1-Abschlussbericht](reports/2026-09-18-vokabeltrainer-v1.md). Historische Grundlagen stehen im [ursprünglichen Dokumentationsbericht](reports/2026-09-16-dokumentation.md), im [Prüfbericht zum Gesamtentwurf](reports/2026-09-16-gesamtentwurf.md) und im [Prüfbericht der lokalen Verbindungsprobe](reports/2026-09-17-google-drive-probe.md).

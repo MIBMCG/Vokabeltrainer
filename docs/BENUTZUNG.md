@@ -1,6 +1,6 @@
 # Vokabeltrainer benutzen
 
-**Entwicklungsstand:** Diese Anleitung beschreibt den bestätigten Ablauf der ersten vollständigen Version. Die Umsetzung läuft noch. Welche Funktionen bereits implementiert und geprüft sind, steht im [Arbeitsstand](../ARBEITSSTAND.md). Reale iPhone-/iPad-Prüfungen folgen nach der Fertigstellung.
+**Entwicklungsstand:** Diese Anleitung beschreibt die implementierte und automatisiert geprüfte Version 1. Der [Abschlussbericht](reports/2026-09-18-vokabeltrainer-v1.md) nennt die Nachweise und Grenzen. Reale Produktprüfungen mit Google Drive auf zwei physischen Geräten sowie iPhone/iPad folgen getrennt.
 
 ## Einrichten
 

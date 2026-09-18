@@ -1,6 +1,6 @@
-# Google Drive: spätere Einrichtung und Prüfungen
+# Google Drive: Einrichtung und Prüfungen
 
-Stand: 17.09.2026. **Einrichtung für die lokale Probe erfolgt: Projekt, Web-OAuth-Client, Testnutzer und echter Drive-Abgleich sind durch Nutzerangaben/Screenshots bestätigt. Geräteabnahme bleibt offen.** Die lokale synthetische Probe ist implementiert; die genauen Google-Einstellungsnamen können sich ändern, maßgeblich sind die verlinkten offiziellen Anleitungen.
+Stand: 18.09.2026. **Einrichtung für die lokale Probe erfolgt: Projekt, Web-OAuth-Client, Testnutzer und echter Drive-Abgleich sind durch Nutzerangaben/Screenshots bestätigt.** Die Produkt-App ist mit simulierter Google-Grenze automatisiert geprüft. Realer Produktabgleich über zwei physische Geräte und die Apple-Geräteabnahme bleiben offen. Die genauen Google-Einstellungsnamen können sich ändern; maßgeblich sind die verlinkten offiziellen Anleitungen.
 
 Der Gesamtentwurf ist bestätigt. Konkrete Start-/Registrierungsschritte und der Prüfablauf des ersten Entwicklungspakets stehen in [GOOGLE-DRIVE-PROBE.md](GOOGLE-DRIVE-PROBE.md). Entwicklungsursprung der Probe: `http://localhost:4173`. Eine tatsächliche Registrierung ist damit nicht behauptet.
 
@@ -21,8 +21,8 @@ Der Gesamtentwurf ist bestätigt. Konkrete Start-/Registrierungsschritte und der
 5. Einen OAuth-Client vom Typ **Web application** erstellen. Eine PWA auf dem iPhone bleibt für diesen Aufbau eine Webanwendung und benötigt keinen nativen iOS-OAuth-Client.
 6. Die tatsächlich verwendeten JavaScript-Ursprünge eintragen. Beim vorgeschlagenen GitHub-Pages-Hosting wäre der Ursprung `https://mibmcg.github.io` — ohne den Projektpfad. Der Projektpfad für diese App wäre `/Vokabeltrainer/`; die Website existiert derzeit noch nicht.
 7. Für die lokale Probe `http://localhost` und `http://localhost:4173` als autorisierte JavaScript-Ursprünge eintragen. Die Probe selbst unter `http://localhost:4173` öffnen. Keinen fiktiven Callback als bereits eingerichtet dokumentieren.
-8. Redirect-URIs nur für den tatsächlich gewählten Ablauf einrichten und exakt mit der Implementierung abstimmen. Das vorgeschlagene GIS-Tokenmodell nutzt einen Browserdialog.
-9. Die öffentliche OAuth-Client-ID in die spätere Anwendungskonfiguration übernehmen. Falls Picker einen Browser-API-Key benötigt, dessen API- und Websiteeinschränkungen passend setzen. **Kein Client-Secret, Passwort oder Service-Account-Schlüssel gehört in die statische App.**
+8. Redirect-URIs nur für den tatsächlich gewählten Ablauf einrichten und exakt mit der Implementierung abstimmen. Das implementierte GIS-Tokenmodell nutzt einen Browserdialog.
+9. Die öffentliche OAuth-Client-ID in der lokalen Erwachsenenansicht des Trainers hinterlegen. Falls Picker einen Browser-API-Key benötigt, dessen API- und Websiteeinschränkungen passend setzen. **Kein Client-Secret, Passwort oder Service-Account-Schlüssel gehört in die statische App.**
 
 Quellen: [Zugangsdaten erstellen](https://developers.google.com/workspace/guides/create-credentials), [OAuth-Konfiguration](https://developers.google.com/workspace/guides/configure-oauth-consent), [OAuth-Clienttypen](https://developers.google.com/identity/protocols/oauth2).
 
@@ -30,7 +30,7 @@ Quellen: [Zugangsdaten erstellen](https://developers.google.com/workspace/guides
 
 Vorgeschlagen ist `https://www.googleapis.com/auth/drive.file`. Dieser Zugriff ist auf von der App erstellte oder vom Nutzer ausdrücklich mit der App geöffnete/ausgewählte Dateien begrenzt. Eine Ordnerauswahl erteilt keinen pauschalen Vollzugriff auf alle beliebigen Bestandsdateien darin.
 
-Die technische Probe verwendet einen sichtbaren, ausdrücklich markierten Probeordner mit unveränderlichen synthetischen JSON-Dateien. Das begrenzte Schema steht in [PROBE-DATENFORMAT.md](PROBE-DATENFORMAT.md). Wiederfinden und Abgleich auf einem zweiten realen Gerät müssen noch geprüft werden. Der versteckte `appDataFolder` darf nicht mit einem normalen Drive-Ordner verwechselt werden.
+Die technische Probe verwendet einen sichtbaren, ausdrücklich markierten Probeordner mit unveränderlichen synthetischen JSON-Dateien. Das begrenzte Schema steht in [PROBE-DATENFORMAT.md](PROBE-DATENFORMAT.md). Das Produkt verwendet sein getrenntes [Produkt-Datenformat](PRODUKT-DATENFORMAT.md). Wiederfinden und Abgleich des Produktbestands auf einem zweiten realen Gerät müssen noch geprüft werden. Der versteckte `appDataFolder` darf nicht mit einem normalen Drive-Ordner verwechselt werden.
 
 Quelle: [Drive-Berechtigungen](https://developers.google.com/workspace/drive/api/guides/api-specific-auth).
 
@@ -38,11 +38,11 @@ Quelle: [Drive-Berechtigungen](https://developers.google.com/workspace/drive/api
 
 Die App-Registrierung und Zuordnung zum Trainerdatensatz sind eine einmalige Einrichtung. Eine Google-Anmeldesitzung ist dagegen zeitlich begrenzt.
 
-Im hier vorgeschlagenen Browser-Tokenmodell wird nach Ablauf des Zugriffstokens ein neuer Zugriff über eine Nutzeraktion angefordert. Ein verständlicher „Mit Google verbinden“-Ablauf ist deshalb Teil des Entwurfs. Währenddessen bleiben Offlineübungen und noch nicht übertragene Ergebnisse erhalten. Wie häufig der Dialog auf den Zielgeräten tatsächlich erscheint, ist ein **offener Akzeptanzpunkt**.
+Im implementierten Browser-Tokenmodell wird nach Ablauf des Zugriffstokens ein neuer Zugriff über eine Nutzeraktion angefordert. Die App zeigt dafür „Mit Google verbinden“; Offlineübungen und noch nicht übertragene Ergebnisse bleiben erhalten. Wie häufig der Dialog auf den Zielgeräten tatsächlich erscheint, ist ein **offener Akzeptanzpunkt**.
 
 Produktentscheidung Q10 vom 16.09.2026: Der Nutzer akzeptiert dieses erneute Verbinden grundsätzlich, einschließlich einer möglichen erneuten Bestätigung beim Öffnen der App. Mit vorhandenen Vokabeln soll offline weitergeübt und nach erneuter Verbindung automatisch abgeglichen werden. Die reale Dialoghäufigkeit und Bedienbarkeit auf iPhone/iPad sind damit noch nicht nachgewiesen oder abgenommen.
 
-Ein Wechsel des OAuth-Veröffentlichungsstatus auf „Production“ hebt die begrenzte Lebensdauer der Zugriffstokens nicht auf. Googles zusätzlich dokumentierte Sieben-Tage-Regel betrifft Refresh-Tokens bestimmter externer Apps im Teststatus; der vorgeschlagene Browserablauf verwendet kein eigenes serverseitiges Refresh-Token-Lager. Diese Sachverhalte nicht miteinander verwechseln.
+Ein Wechsel des OAuth-Veröffentlichungsstatus auf „Production“ hebt die begrenzte Lebensdauer der Zugriffstokens nicht auf. Googles zusätzlich dokumentierte Sieben-Tage-Regel betrifft Refresh-Tokens bestimmter externer Apps im Teststatus; der implementierte Browserablauf verwendet kein eigenes serverseitiges Refresh-Token-Lager. Diese Sachverhalte nicht miteinander verwechseln.
 
 Quellen: [Browser-Tokenmodell](https://developers.google.com/identity/oauth2/web/guides/use-token-model), [Refresh-Token-Grenzen](https://developers.google.com/identity/protocols/oauth2).
 

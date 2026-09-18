@@ -536,11 +536,11 @@ event.respondWith(caches.match(request).then(hit => hit || fetch(request)));
 
 ## Task 13: Vollständige Regression, visuelle Prüfung und portable Übergabe
 
-**Files:** Modify `tests/browser/trainer.browser.mjs`, `tests/browser/README.md`, `README.md`, `START-HIER.md`, `ARBEITSSTAND.md`, `docs/ARCHITEKTUR.md`, `docs/QUALITAET-UND-ABNAHME.md`, `docs/GOOGLE-DRIVE-EINRICHTUNG.md`, diesen Plan. Create `docs/reports/2026-09-17-vokabeltrainer-v1.md`, `docs/handoffs/2026-09-17-vokabeltrainer-v1.md`. Produktkorrekturen nur als separat nachvollziehbare RED/GREEN-Fixschritte mit betroffenen Taskdateien.
+**Files:** Modify `tests/browser/trainer.browser.mjs`, `tests/browser/README.md`, `README.md`, `START-HIER.md`, `ARBEITSSTAND.md`, `docs/ARCHITEKTUR.md`, `docs/QUALITAET-UND-ABNAHME.md`, `docs/GOOGLE-DRIVE-EINRICHTUNG.md`, diesen Plan. Create `docs/reports/2026-09-18-vokabeltrainer-v1.md`, `docs/handoffs/2026-09-18-vokabeltrainer-v1.md`. Produktkorrekturen nur als separat nachvollziehbare RED/GREEN-Fixschritte mit betroffenen Taskdateien.
 
 **Interfaces:** Keine neue Produktfunktion. Ergebnis ist implementierter und automatisiert geprüfter v1-Stand, dessen echte Geräte-/Google-/Hostinggrenzen kenntlich bleiben. Nutzer muss keine neue pauschale Startentscheidung treffen.
 
-- [ ] **1. Fehlende Regressionen konkret ergänzen:** Gesamtreise Setup -> Lektion -> zwei Kinder -> Üben -> Fehlerabstand -> Fortsetzen -> Archivierung -> Offline -> Sync -> Konfliktlösung -> Backup -> Restore -> späte Übernahme. Stressfälle: Speicherkontingent, Abbruch vor/nach Transaktion, zwei physisch simulierte unabhängige Browserkontexte, doppelte Paket-/Abschluss-ID, Unicode, große Tabellen, gefährlicher HTML-Text, beschädigte/fehlende Dateien, wechselnde Browserzeitzone, Sommerzeit, 200% Schrift und 320px Breite. Beispiel letzte Schutzprüfung:
+- [x] **1. Fehlende Regressionen konkret ergänzen:** Gesamtreise Setup -> Lektion -> zwei Kinder -> Üben -> Fehlerabstand -> Fortsetzen -> Archivierung -> Offline -> Sync -> Konfliktlösung -> Backup -> Restore -> späte Übernahme. Stressfälle: Speicherkontingent, Abbruch vor/nach Transaktion, zwei physisch simulierte unabhängige Browserkontexte, doppelte Paket-/Abschluss-ID, Unicode, große Tabellen, gefährlicher HTML-Text, beschädigte/fehlende Dateien, wechselnde Browserzeitzone, Sommerzeit, 200% Schrift und 320px Breite. Beispiel letzte Schutzprüfung:
 
 ```js
 assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),true);
@@ -551,8 +551,8 @@ assert.equal(pageErrors.length,0);
 ```
 
 `readSyntheticStorage` liest ausschließlich den Testkontext; `exportedBackupText` fängt ausschließlich dessen Browserdownload ab. Beide im Testharness implementieren, keine Diagnosedumps persönlicher Browserprofile.
-- [ ] **2. Vor Fix RED ausführen:** Falls Lücke/Bug erkannt, betroffenen Einzeltest ausführen und konkrete Abweichung dokumentieren. Für reine Dokumentation keine künstlichen Rot-/Grün-Tests erfinden.
-- [ ] **3. Korrigieren und Dokumentieren:** Kleinstmögliche Fachkorrekturen, volle Grafiken und bedienbare Leer-/Fehler-/Ladezustände abschließen. Bericht benennt Datum, Codecommit, Node/Browser/Playwrightversion, Szenarienanzahl, echte/simulierte Grenzen und Screenshots ohne echte Daten. Aktualisierte Startanleitung:
+- [x] **2. Vor Fix RED ausführen:** Falls Lücke/Bug erkannt, betroffenen Einzeltest ausführen und konkrete Abweichung dokumentieren. Für reine Dokumentation keine künstlichen Rot-/Grün-Tests erfinden.
+- [x] **3. Korrigieren und Dokumentieren:** Kleinstmögliche Fachkorrekturen, volle Grafiken und bedienbare Leer-/Fehler-/Ladezustände abschließen. Bericht benennt Datum, Codecommit, Node/Browser/Playwrightversion, Szenarienanzahl, echte/simulierte Grenzen und Screenshots ohne echte Daten. Aktualisierte Startanleitung:
 
 ```sh
 npm test
@@ -560,8 +560,8 @@ npm start
 ```
 
 Produkt unter `http://localhost:4173/trainer/`, Probe unverändert unter `http://localhost:4173/`. Browserregression mit `node --test tests/browser/trainer.browser.mjs`; eigener Testserver belegt einen freien Port. Vorhandene Probe-Browserregression nach ihrer README zusätzlich ausführen, ohne privaten laufenden Probeversuch umzuschalten. Keine ungesicherte Netzfreigabe als iOS-Hostingersatz.
-- [ ] **4. Endnachweise ausführen:** `npm test`; `node --test tests/browser/trainer.browser.mjs`; vorhandene Probe-Browserregression; `git diff --check`; relative Markdownlinks lokal prüfen. Screenshots Desktop/Mobil/Reise/Avatar/Erwachsenen-Konflikt/Restore selbst ansehen. Funktions-/Spezifikationsreview und Codequalitätsreview aller finalen Änderungen nach angeforderter Arbeitsweise; Findings korrigieren und nur betroffene Prüfungen plus notwendige Gesamtprüfung wiederholen. R01–R33/E01–E10 Matrix unten abhaken anhand Belegen, nicht anhand bloßer Dateiexistenz.
-- [ ] **5. Übergabe/Commit:** Genannte Dokumente und tatsächliche Fixdateien gezielt stagen; `git commit -m "docs: record verified trainer v1 and device acceptance steps"`. Aktueller Branch/Commit, portable Startschritte, Tests und offene reale iPhone/iPad/Safari/Home-Screen/Zwei-Geräte-Nachweise nennen. Keine öffentliche Bereitstellung behaupten. Bei autorisiertem Push anschließend lokalen Commit und `git ls-remote` vergleichen; sonst lokalen Stand klar benennen.
+- [ ] **4. Endnachweise ausführen:** `npm test`; `node --test tests/browser/trainer.browser.mjs`; vorhandene Probe-Browserregression; `git diff --check`; relative Markdownlinks lokal prüfen. Screenshots Desktop/Mobil/Reise/Avatar/Erwachsenen-Konflikt/Restore selbst ansehen. Funktions-/Spezifikationsreview und Codequalitätsreview aller finalen Änderungen nach angeforderter Arbeitsweise; Findings korrigieren und nur betroffene Prüfungen plus notwendige Gesamtprüfung wiederholen. R01–R33/E01–E10 Matrix unten abhaken anhand Belegen, nicht anhand bloßer Dateiexistenz. **Stand 18.09.:** drei Gesamtläufe, visuelle Prüfung und Matrix abgeschlossen; unabhängige Task-13-/Gesamtbranchreview noch offen.
+- [ ] **5. Übergabe/Commit:** Genannte Dokumente und tatsächliche Fixdateien gezielt stagen; `git commit -m "docs: record verified trainer v1 and device acceptance steps"`. Aktueller Branch/Commit, portable Startschritte, Tests und offene reale iPhone/iPad/Safari/Home-Screen/Zwei-Geräte-Nachweise nennen. Keine öffentliche Bereitstellung behaupten. Bei autorisiertem Push anschließend lokalen Commit und `git ls-remote` vergleichen; sonst lokalen Stand klar benennen. **Stand 18.09.:** Übergabe erstellt; Dokumentationscommit und unabhängige Review stehen noch aus.
 
 ## Abdeckungs- und Selbstprüfmatrix
 

@@ -1,16 +1,14 @@
 # Vokabeltrainer
 
-Pause am 18.09.2026 auf Nutzerwunsch. Alles wird für die Weiterarbeit am Desktop gesichert. Nächster Schritt nach ausdrücklicher Fortsetzung: die neun offenen Reviewbefunde zur Produktsynchronisation korrigieren, danach Tasks 10–13. Maßgeblich ist die [Desktop-Übergabe](docs/handoffs/2026-09-18-desktop-pause.md).
+Ein Deutsch-Englisch-Vokabeltrainer für Kinder von **10 bis 13 Jahren, Klasse 4 bis 7**. Die Web-App ist für Smartphones, Tablets und Computer gestaltet; **iPhone und iPad haben Vorrang**.
 
-Ein geplanter Deutsch-Englisch-Vokabeltrainer für Kinder von **10 bis 13 Jahren, Klasse 4 bis 7**. Er soll auf aktuellen Smartphones, Tablets und Computern funktionieren; **iPhone und iPad haben Vorrang**.
-
-**Stand: 18. September 2026 — vollständiger Trainer in Entwicklung, derzeit pausiert.** Lernkern, Speicherung, Einrichtung, Erwachsenenverwaltung, Übungsbildschirm sowie Inselreise und Avatar sind implementiert und unabhängig geprüft. Die Produktsynchronisation ist implementiert, aber wegen neun wichtiger Reviewbefunde noch nicht freigegeben. Der Node-Lauf vor der Pause bestand 215 Tests; diese decken die neu gefundenen Fehler noch nicht ab. Sicherung/Wiederherstellung, deren Oberfläche und die Produkt-PWA folgen noch. Die technische Verbindungsprobe bleibt ausführbar; ihre frühere manuelle Google-Prüfung ist kein Nachweis für die neue Produktsynchronisation. Reale Produkt-, Zwei-Geräte- und iPhone/iPad-Prüfungen bleiben offen. Details stehen in [ARBEITSSTAND.md](ARBEITSSTAND.md).
+**Stand: 18. September 2026 — Version 1 ist implementiert und automatisiert geprüft.** Lernkern, lokale Speicherung, Erwachsenenverwaltung, Übungsbildschirm, Inselreise, Avatar, unveränderlicher Drive-Abgleich, Sicherung/Wiederherstellung und Offline-PWA sind vorhanden. Der [v1-Abschlussbericht](docs/reports/2026-09-18-vokabeltrainer-v1.md) trennt automatisierte Nachweise von den noch offenen echten Prüfungen mit Produktdatenformat, zwei physischen Geräten, Safari/Home-Bildschirm und einer später autorisierten HTTPS-Bereitstellung. Es gibt weiterhin keine veröffentlichte Trainer-URL. Details stehen in [ARBEITSSTAND.md](ARBEITSSTAND.md).
 
 Eine [Gestaltungsvorschau mit Startseite, Übung und Inselreise](docs/design/2026-09-17-insel-konzept.md) zeigt die vorgeschlagene Optik. Das Bild ist kein Screenshot einer fertigen App.
 
 Die inzwischen implementierte Inselreise und den Avatar zeigen die [tatsächlichen Browseransichten vom 18.09.2026](docs/reports/2026-09-18-inselreise-avatar.md).
 
-## Geplanter Lernablauf
+## Lernablauf
 
 1. Ein deutsches Wort erscheint.
 2. Das Kind schreibt die englische Übersetzung.
@@ -18,7 +16,7 @@ Die inzwischen implementierte Inselreise und den Avatar zeigen die [tatsächlich
 4. Mit „Weiter“ folgt das nächste Wort.
 5. Nach einem Fehler wird das Wort nach zwei anderen Aufgaben erneut abgefragt. Endet die Runde vorher, bleibt die Wiederholung für später vorgemerkt. Nach drei richtigen Antworten hintereinander pausiert ein Wort für den Rest der laufenden Runde.
 
-Die Auswahlmodi sind „Alle Vokabeln“, „Letzte Vokabeln“ (zuletzt hinzugefügte Lektion) und „Neue Vokabeln“ (vom ausgewählten Kind noch nie geübte Wörter). Die erste Version soll eine Lernreise/Landkarte, Punkte/Level/Abzeichen und einen einfachen gestaltbaren Avatar mit wenigen Farben und Zubehörteilen verbinden. Thema ist ein Insel-Abenteuer mit Wäldern, Stränden und Bergen. Drei Inseln, 200 Punkte je Level sowie konkrete Abzeichen und Zubehör sind im Gesamtentwurf bestätigt.
+Die Auswahlmodi sind „Alle Vokabeln“, „Letzte Vokabeln“ (zuletzt hinzugefügte Lektion) und „Neue Vokabeln“ (vom ausgewählten Kind noch nie geübte Wörter). Die erste Version verbindet Lernreise/Landkarte, Punkte/Level/Abzeichen und einen einfachen gestaltbaren Avatar mit wenigen Farben und Zubehörteilen. Thema ist ein Insel-Abenteuer mit Wäldern, Stränden und Bergen. Drei Inseln, 200 Punkte je Level sowie konkrete Abzeichen und Zubehör sind umgesetzt.
 
 Jede richtige Antwort bringt 10 Punkte, auch bei einer späteren Wiederholung eines zuvor falsch beantworteten Wortes. Eine abgeschlossene Runde bringt zusätzlich 20 Punkte. Fehler führen zu keinem Punktabzug.
 
@@ -42,9 +40,9 @@ Neue Wörter lassen sich einzeln eingeben oder als Tabellenzeilen mit den Spalte
 
 Erwachsene ordnen jede Lektion einem oder mehreren Kindern zu. Alle drei Übungsmodi berücksichtigen nur die dem jeweiligen Kind zugeordneten Lektionen. Auch beim Fortsetzen mit zusätzlichem Wortschatz gilt diese Zuordnung. Lernstände, Punkte und Avatar bleiben pro Kind getrennt.
 
-Im Erwachsenenbereich ist eine vollständige Sicherung als JSON-Datei vorgesehen: Wortschatz, Lektionen, Zuordnungen, Profile, Lernstände und Belohnungsfortschritt lassen sich herunterladen und bei Bedarf wiederherstellen. Vor der Wiederherstellung werden eine Vorschau und Bestätigung angezeigt.
+Im Erwachsenenbereich ist eine vollständige Sicherung als JSON-Datei umgesetzt: Wortschatz, Lektionen, Zuordnungen, Profile, Lernstände und Belohnungsfortschritt lassen sich herunterladen und bei Bedarf wiederherstellen. Vor der Wiederherstellung werden eine Vorschau und Bestätigung angezeigt.
 
-Bestätigt ist außerdem: Vor einer Wiederherstellung den aktuellen Stand automatisch separat sichern. Danach ersetzt der ausgewählte Sicherungsstand den aktiven Bestand, auch über Google Drive auf verbundenen Geräten. Der vorherige Stand bleibt zurückholbar. Der Gesamtentwurf schlägt dafür einen Online-Ablauf mit überprüfter Drive-Sicherheitskopie und separatem Erhalt später eintreffender Offlineantworten vor.
+Vor einer Wiederherstellung sichert die App den aktuellen Stand automatisch separat. Danach ersetzt der ausgewählte Sicherungsstand den aktiven Bestand, auch über Google Drive auf verbundenen Geräten. Der vorherige Stand bleibt zurückholbar. Verspätete Offlineantworten bleiben getrennt erhalten und können bewusst übernommen werden.
 
 ## Vereinbarte Richtung
 
@@ -61,7 +59,7 @@ Die vollständige Unterscheidung zwischen Nutzerentscheidungen, Vorschlägen und
 
 ## Was „automatisch“ bedeutet
 
-Geplant ist ein selbstständiger Datenabgleich bei geöffneter App, vorhandener Internetverbindung und gültigem Google-Zugriff. Eine lokale Datei aus der iOS-Dateien-App auszuwählen ersetzt diese Verbindung nicht.
+Die App führt bei geöffneter App, vorhandener Internetverbindung und gültigem Google-Zugriff einen selbstständigen Datenabgleich aus. Eine lokale Datei aus der iOS-Dateien-App auszuwählen ersetzt diese Verbindung nicht.
 
 Erneutes Verbinden mit Google bei Bedarf ist grundsätzlich akzeptiert. Währenddessen soll mit bereits gespeicherten Vokabeln offline weitergeübt werden können; die Ergebnisse werden lokal erhalten und nach erneuter Verbindung automatisch abgeglichen.
 
@@ -82,7 +80,7 @@ Bei Googles direkter Browseranbindung laufen Zugriffstokens ab. Eine erneute Nut
 
 Weitere Dokumente:
 
-- [Benutzungsanleitung](docs/BENUTZUNG.md), derzeit mit gekennzeichnetem Entwicklungsstand
+- [Benutzungsanleitung](docs/BENUTZUNG.md)
 - [Spätere Geräteabnahme](docs/GERAETE-ABNAHME.md), noch nicht durchgeführt
 - [Vollständiger Umsetzungsplan](docs/superpowers/plans/2026-09-17-vokabeltrainer-v1.md)
 
@@ -90,7 +88,7 @@ Weitere Dokumente:
 - [Qualität und Abnahme](docs/QUALITAET-UND-ABNAHME.md)
 - [Technische Quellen](docs/QUELLEN.md)
 - [Datenformat der technischen Probe](docs/PROBE-DATENFORMAT.md)
-- [Aktuelle Übergabe vom 17.09.2026](docs/handoffs/2026-09-17-produktentwicklung.md)
+- [Aktuelle v1-Übergabe](docs/handoffs/2026-09-18-vokabeltrainer-v1.md)
 - [Prüfbericht der Verbindungsprobe](docs/reports/2026-09-17-google-drive-probe.md)
 - [Prüfbericht der Dokumentation](docs/reports/2026-09-16-dokumentation.md)
 - [Prüfbericht zum Gesamtentwurf](docs/reports/2026-09-16-gesamtentwurf.md)
@@ -113,7 +111,7 @@ git switch codex/vokabeltrainer-v1
 npm test
 ```
 
-Die Tests benötigen weder npm-Zusatzpakete noch ein Google-Konto oder Internetzugriff. Für den dokumentierten Produktzwischenstand wurden **108 Tests** bestanden. Danach startet `npm start` den lokalen Server auf `http://localhost:4173`; ein Buildschritt oder Laufzeitpakete sind nicht nötig. Anschließend [START-HIER.md](START-HIER.md) und die [aktuelle Übergabe](docs/handoffs/2026-09-17-produktentwicklung.md) lesen. Die optionale Browserprüfung ist in [tests/browser/README.md](tests/browser/README.md) beschrieben.
+Die Node-Tests benötigen weder npm-Zusatzpakete noch ein Google-Konto oder Internetzugriff. Danach startet `npm start` den lokalen Server auf `http://localhost:4173`: die technische Probe liegt unter `/`, der Trainer unter `/trainer/`. Ein Buildschritt oder Laufzeitpakete sind nicht nötig. Anschließend [START-HIER.md](START-HIER.md) und die [aktuelle Übergabe](docs/handoffs/2026-09-18-vokabeltrainer-v1.md) lesen. Die zusätzliche Browserprüfung und ihre einmalige Playwright-Einrichtung sind in [tests/browser/README.md](tests/browser/README.md) beschrieben.
 
 ## Bereitstellung und Kosten
 

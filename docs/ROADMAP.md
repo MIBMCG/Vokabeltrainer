@@ -2,7 +2,7 @@
 
 Änderung der Prüfungsreihenfolge am 17.09.2026: Der Nutzer beauftragt ausdrücklich, zuerst die vollständige App gemäß bestätigtem Gesamtentwurf umzusetzen und erst danach beim Freund auf iPhone/iPad zu testen. Die bisherige Geräteprüfung vor umfangreicher Lernoberfläche ist damit als Entwicklungssperre aufgehoben. Reale Geräteabnahme bleibt offen und darf nicht als bestanden gelten. Bereits bestätigte manuelle Google-/Drive-Tests in zwei Browsern gelten weiter. Keine neue pauschale Startfreigabe verlangen; Hosting/Veröffentlichung und Kostenmodell werden dadurch nicht automatisch geändert.
 
-Stand: 17.09.2026. **Vorgeschlagene Arbeitsreihenfolge, kein freigegebener Implementierungsplan.** Die Punkte beschreiben überprüfbare Ergebnisse, ohne offene Nutzerentscheidungen vorwegzunehmen.
+Stand: 18.09.2026. **Historische Arbeitsreihenfolge mit aktuellem Ergebnisstatus.** Die bestätigte Version 1 ist implementiert und automatisiert geprüft; die unabhängige Gesamtprüfung sowie reale Produkt-/Gerätenachweise bleiben offen.
 
 ## 0. Projektwissen übergabefähig machen
 
@@ -22,8 +22,8 @@ Ergebnis dieses Arbeitspakets: README, AGENTS.md, Anforderungen, Entwurf, Einric
 - Erledigt: Insel-Abenteuer mit unterschiedlichen Landschaften als Thema wählen; modern und passend für 10–13-Jährige gestalten.
 - Erledigt: 10 Punkte je richtiger Antwort, auch für später richtig beantwortete Fehlerwörter, plus 20 Punkte je abgeschlossener Runde. Keine Punktabzüge bei Fehlern.
 - Erledigt: Level-Meilensteine schalten Reiseabschnitte und festgelegte Avatar-Ausstattung automatisch frei; freigeschaltete Ausstattung frei auswählbar, Abzeichen für Meilensteine, kein zusätzlicher Münzladen.
-- Konkrete Grafiken, Umfang der Welt, Schwellenwerte und Abschluss-Sonderfälle festlegen.
-- Umfang der Erwachsenenansicht und Wortlistenverwaltung bestimmen.
+- Erledigt: konkrete Grafiken, Umfang der Welt, Schwellenwerte und Abschluss-Sonderfälle festgelegt und umgesetzt.
+- Erledigt: Umfang der Erwachsenenansicht und Wortlistenverwaltung festgelegt und umgesetzt.
 - Erledigt: Einzeleingabe und Kopieren/Einfügen mehrerer Tabellenzeilen; Wörter vorhandenen oder neuen benannten Lektionen zuordnen. Kein direkter Excel-/CSV-Dateiimport in der ersten Version.
 - Erledigt: Erwachsene ordnen jede Lektion einem oder mehreren Kindern zu. Übungsmodi berücksichtigen nur die jeweils zugeordneten Lektionen; Lernstände, Punkte und Avatar bleiben pro Kind getrennt.
 - Erledigt: Erwachsenenansicht über „Für Erwachsene“ mit selbst festgelegter vierstelliger PIN öffnen. Einrichtungs- und Wiederherstellungsablauf im Detaildesign festlegen.
@@ -33,13 +33,13 @@ Ergebnis dieses Arbeitspakets: README, AGENTS.md, Anforderungen, Entwurf, Einric
 - Erledigt: Allgemeine Lizenzentscheidung bewusst zurückgestellt; private Entwicklung fortsetzen und vorerst keine allgemeine Open-Source-Freigabe hinzufügen.
 - Erledigt: Unterbrochene Runden auf dem jeweiligen Gerät speichern; beim nächsten Öffnen Fortsetzen oder eine neue Runde anbieten. Antworten/Antwortpunkte erhalten, kein Abschlussbonus allein für Unterbrechen/Aufgeben.
 
-Ergebnis: Die Einzelfragen Q1–Q14 und der [Gesamtentwurf](superpowers/specs/2026-09-16-vokabeltrainer-design.md) einschließlich E01–E10 sind bestätigt. Die dort konkretisierten Detailregeln sind verbindlich; die Entwicklung wurde begonnen. Der Nutzer besitzt keine eigenen Apple-Geräte; der Freund als künftiger Hauptnutzer besitzt iPhone und iPad. Modelle und Testverfügbarkeit bleiben zu klären.
+Ergebnis: Die Einzelfragen Q1–Q14 und der [Gesamtentwurf](superpowers/specs/2026-09-16-vokabeltrainer-design.md) einschließlich E01–E10 sind bestätigt und umgesetzt. Der Nutzer besitzt keine eigenen Apple-Geräte; der Freund als künftiger Hauptnutzer besitzt iPhone und iPad. Modelle und Testverfügbarkeit bleiben zu klären.
 
 ## 2. Implementierungsplan erstellen
 
 Der [Plan der Google-Drive-Probe](superpowers/plans/2026-09-16-google-drive-probe.md) beschreibt das erste ausführbare Paket mit Dateien, Schnittstellen, Probeformat und Tests. Seine Ergebnisse können gezielte Anpassungen erfordern. Anschließende Pläne für Lernkern, Erwachsenenbereich und Belohnungen übernehmen den bestätigten Gesamtentwurf; kein erneutes Abfragen bereits gewählter Produktdetails.
 
-Ergebnis: umsetzbarer Plan. Dieses Dokument ersetzt ihn nicht. Falls Superpowers verwendet wird, ist an dieser Stelle der Skill `writing-plans` passend; andere KIs können gleichwertig vorgehen.
+Ergebnis: Der [v1-Umsetzungsplan](superpowers/plans/2026-09-17-vokabeltrainer-v1.md) und der [Produkt-Datenvertrag](PRODUKT-DATENFORMAT.md) wurden erstellt und ausgeführt. Dieses Dokument ersetzt sie nicht.
 
 ## 3. Google Drive auf iOS früh nachweisen
 
@@ -51,20 +51,20 @@ Für echte Apple-Gerätetests kommen die Geräte des Freundes infrage. Modelle, 
 
 Ergebnis: technischer Prüfbericht und eine konkrete Aussage zum Anmeldekomfort. Wenn die geforderte Bedienung mit der vorgeschlagenen direkten Browseranbindung nicht ausreichend erreichbar ist, die Abweichung mit dem Nutzer klären, bevor umfangreiche Produktarbeit davon abhängig gemacht wird.
 
-## 4. Lokaler Trainer
+## 4. Lokaler Trainer — automatisiert abgeschlossen
 
 Lernprofile, Vokabelverwaltung, Übungsablauf, Antwortprüfung, Wiederholungssteuerung und Fortschrittsanzeige umsetzen. Danach die gewählte Gamification integrieren. Lokal gespeicherte Daten müssen Neustarts überstehen.
 
-Ergebnis: offline bedienbare Kernfunktionen mit geprüfter Lernlogik und synthetischen Beispielvokabeln.
+Ergebnis: offline bedienbare Kernfunktionen mit geprüfter Lernlogik und synthetischen Beispielvokabeln; 277 Node-Tests und die Trainer-Browserregression belegen den aktuellen Stand.
 
-## 5. Synchronisation, Offlinefunktion und Updates
+## 5. Synchronisation, Offlinefunktion und Updates — synthetisch abgeschlossen
 
 Die nachgewiesene Google-Anbindung produktfähig integrieren, ausstehende Änderungen erhalten und Konflikte nachvollziehbar behandeln. PWA-Installation, Offlinebereitstellung und Aktualisierungen prüfen.
 
-Ergebnis: Eltern- und Schülergerät tauschen Vokabeln und Lernstände im definierten Umfang ohne manuelle Dateiübertragung aus. Abgelaufene Zugriffe werden verständlich behandelt.
+Ergebnis: Zwei getrennte synthetische Browserkontexte tauschen Vokabeln und Lernstände im definierten Umfang ohne manuelle Dateiübertragung aus. Abgelaufene Zugriffe, Konflikte, Offline-Neustart und kontrollierte Updates sind automatisiert geprüft. Der reale Produktnachweis über Google Drive auf zwei physischen Geräten bleibt offen.
 
-## 6. Geräteabnahme und Bereitstellung
+## 6. Unabhängige Gesamtprüfung, Geräteabnahme und Bereitstellung
 
-Die [Prüfmatrix](QUALITAET-UND-ABNAHME.md) durchführen, offene Befunde beheben, Einrichtungs- und Nutzungsanleitung auf die echte App aktualisieren. Eine Veröffentlichung der laufenden App mit dem Nutzer abstimmen; der bisherige Pushauftrag bezieht sich auf die Dokumentation.
+Zuerst Task 13 und den vollständigen Branch unabhängig prüfen. Danach die offenen realen Fälle der [Prüfmatrix](QUALITAET-UND-ABNAHME.md) auf den Geräten des Freundes durchführen. Eine HTTPS-Bereitstellung oder Veröffentlichung der App gesondert mit dem Nutzer abstimmen.
 
 Ergebnis: nachvollziehbar geprüfte erste Version, klare Geräte-/Versionsgrenzen und ein dokumentierter Weg zur Wiederaufnahme auf einem anderen System.

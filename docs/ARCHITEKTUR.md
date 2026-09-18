@@ -1,7 +1,7 @@
 # Technischer Entwurf
 ## Aktuelle Umsetzung ab 17.09.2026
 
-Der [v1-Umsetzungsplan](superpowers/plans/2026-09-17-vokabeltrainer-v1.md) und der [Produkt-Datenvertrag](PRODUKT-DATENFORMAT.md) konkretisieren den bestätigten Entwurf. Die Produkt-App entsteht getrennt von der Probe unter `trainer/`, mit eigenen Lernereignissen, Inhaltsfassungen, Datenepochen, Browserdaten und Drive-Kennungen. Die folgenden ursprünglichen Architekturüberlegungen bleiben als Begründung erhalten; Aussagen wie „noch kein Schema“ beschreiben den Stand vor diesem Vertrag. Implementierungsnachweise stehen im [Arbeitsstand](../ARBEITSSTAND.md).
+Der [v1-Umsetzungsplan](superpowers/plans/2026-09-17-vokabeltrainer-v1.md) und der [Produkt-Datenvertrag](PRODUKT-DATENFORMAT.md) konkretisieren den bestätigten Entwurf. Die Produkt-App ist getrennt von der Probe unter `trainer/` umgesetzt, mit eigenen Lernereignissen, Inhaltsfassungen, Datenepochen, Browserdaten und Drive-Kennungen. Die folgenden ursprünglichen Architekturüberlegungen bleiben als Begründung erhalten; Aussagen wie „noch kein Schema“ beschreiben den historischen Stand vor diesem Vertrag. Implementierungsnachweise stehen im [Abschlussbericht](reports/2026-09-18-vokabeltrainer-v1.md).
 
 Der Nutzer bestätigte die echte Google-Anmeldung und den Probe-Abgleich zwischen zwei Browsern desselben Rechners. Physische Zwei-Geräte- und Apple-Abnahme folgen ausdrücklich erst nach der vollständigen Umsetzung. Eine bereitgestellte HTTPS-App und neue Cloudkontenänderungen sind damit nicht automatisch beauftragt.
 
@@ -37,7 +37,7 @@ Der Programmcode wird getrennt von den persönlichen Lerninhalten bereitgestellt
 | Synchronisation | Lokale und entfernte Änderungen zusammenführen, Wiederholungsversuche steuern | Ein Ereignis mehrfach zählen |
 | PWA/Offlinefunktion | Programmdateien zwischenspeichern und Updates kontrolliert übernehmen | Dauerhafte Hintergrundausführung voraussetzen |
 
-Die technische Probe setzt E01 mit nativen JavaScript-Modulen ohne UI-Framework und ohne Buildschritt um. Node.js ab 22.8 führt Tests und lokalen Server aus; npm-Laufzeitabhängigkeiten gibt es nicht. Diese Werkzeugentscheidung gilt für die Probe und nimmt spätere Produktentscheidungen nur dort vorweg, wo der bestätigte Entwurf sie festlegt.
+Probe und Produkt setzen E01 mit nativen JavaScript-Modulen ohne UI-Framework und ohne Buildschritt um. Node.js ab 22.8 führt Tests und lokalen Server aus; npm-Laufzeitabhängigkeiten gibt es nicht.
 
 ## Datenmodell als Diskussionsgrundlage
 
@@ -68,7 +68,7 @@ Vorgeschlagene Grundregeln, die vor Umsetzung in ein konkretes Protokoll überf�
 7. Konto-/Datensatzwechsel darf keine ausstehenden Änderungen in ein anderes Konto hochladen.
 8. Cloudlöschungen und beschädigte Dateien nicht als leeren, gültigen Ersatz über lokale Daten schreiben.
 
-Ein einfaches „Datei laden, lokal ändern, vollständig hochladen“ ist ohne weiteren Schutz bei zwei Geräten nicht ausreichend. E10 schlägt unveränderliche JSON-Ereignispakete mit stabilen Datei-/Ereignis-IDs und getrennten Wiederherstellungsgenerationen vor. Die synthetische Probe implementiert davon Deduplizierung, wiederholbare Uploads, getrennte Rücksetzungsgenerationen, verspätete Antworten und sichtbare konkurrierende Rücksetzungen. Ihr begrenztes [Probe-Datenformat](PROBE-DATENFORMAT.md) ist kein Produkt- oder Sicherungsformat; reales Drive und zwei Geräte sind noch nicht nachgewiesen.
+Ein einfaches „Datei laden, lokal ändern, vollständig hochladen“ ist ohne weiteren Schutz bei zwei Geräten nicht ausreichend. Das Produkt implementiert unveränderliche Ereignispakete, Deduplizierung, kausale Zusammenführung, getrennte Epochen sowie sichtbare Inhalts- und Wiederherstellungskonflikte. Die synthetische Probe bleibt ein begrenzter Prüfstand; ihr [Probe-Datenformat](PROBE-DATENFORMAT.md) ist kein Produkt- oder Sicherungsformat. Reales Drive mit dem Produktprotokoll auf zwei physischen Geräten ist noch nicht nachgewiesen.
 
 Zähler lassen sich nicht immer sinnvoll addieren: Auch Serien richtiger Antworten und Reihenfolgen müssen bei parallelem Offlineüben definiert werden. Geräteuhren allein sind kein sicherer Konfliktentscheid.
 
@@ -76,7 +76,7 @@ Zähler lassen sich nicht immer sinnvoll addieren: Auch Serien richtiger Antwort
 
 Als erster Ansatz sind Google Identity Services für den Browser und die Drive-API mit `drive.file` vorgesehen. Damit bearbeitet die Anwendung von ihr angelegte oder vom Nutzer ausdrücklich ausgewählte Dateien. Der Zugriff gilt nicht pauschal für beliebige vorhandene Dateien in einem ausgewählten Ordner. [Google: Berechtigungen](https://developers.google.com/workspace/drive/api/guides/api-specific-auth)
 
-Ein sichtbarer Trainerordner mit normalen JSON-Dateien ist vorgeschlagen. Ein versteckter `appDataFolder` wäre technisch eine andere Variante, dessen Inhalte nicht über die normale Drive-Oberfläche erreichbar und nicht zwischen Konten teilbar sind. Das ist keine umgesetzte Entscheidung. [Google: App-Daten](https://developers.google.com/workspace/drive/api/guides/appdata)
+Das Produkt verwendet einen sichtbaren, markierten Trainerordner mit normalen JSON-Dateien. Ein versteckter `appDataFolder` wäre technisch eine andere Variante, dessen Inhalte nicht über die normale Drive-Oberfläche erreichbar und nicht zwischen Konten teilbar sind. Das ist keine umgesetzte Entscheidung. [Google: App-Daten](https://developers.google.com/workspace/drive/api/guides/appdata)
 
 Beide Geräte benötigen dieselbe Anwendungskonfiguration und die Zuordnung zum selben Trainerdatensatz. Ein Dateiname allein ist dafür ungeeignet, weil Drive gleichnamige Dateien zulässt. Die Probe verwendet stabile Drive-Datei-IDs und markierte Ordner; Wiederfinden und Abgleich wurden gegen simulierte Drive-Antworten geprüft. Der Nachweis mit realem Google Drive und zwei Geräten bleibt offen.
 
@@ -84,15 +84,15 @@ Beide Geräte benötigen dieselbe Anwendungskonfiguration und die Zuordnung zum 
 
 Google Identity Services liefert in seinem Browser-Tokenmodell kurzlebige Zugriffstokens. Nach Ablauf kann eine neue Nutzeraktion erforderlich sein. Das Modell bietet der reinen statischen App keinen zugesagten unbegrenzten stillen Zugriff. Client-Secrets oder Service-Account-Schlüssel werden nicht in Browsercode eingebettet. [Google: Tokenmodell](https://developers.google.com/identity/oauth2/web/guides/use-token-model)
 
-Ohne Verbindung oder gültigen Google-Zugriff sollen bereits gespeicherte Vokabeln weiter nutzbar bleiben. In der Oberfläche sind mindestens die fachlichen Zustände „auf diesem Gerät gespeichert“, „Abgleich ausstehend“, „mit Google verbinden“, „abgeglichen“ und „Abgleich fehlgeschlagen“ zu berücksichtigen; die exakte Formulierung ist noch Teil des UI-Designs.
+Ohne Verbindung oder gültigen Google-Zugriff bleiben bereits gespeicherte Vokabeln nutzbar. Die Oberfläche unterscheidet die fachlichen Zustände „Auf diesem Gerät gespeichert“, „Abgleich ausstehend“, „Mit Google verbinden“, „Abgeglichen“ und „Abgleich fehlgeschlagen“.
 
-Die Probe hält ihre eigenen Programmdateien mit einem Service Worker offline vor. Der Cache ist auf den Probe-Scope begrenzt und liest oder löscht keine fremden Origin-Caches. iOS-Hintergrundausführung ist kein verlässlicher Ersatz für den Abgleich bei geöffneter App. Browserdaten können gelöscht werden; lokaler Speicher ist keine unabhängige Sicherung. [MDN: Offlinebetrieb](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Offline_and_background_operation), [WebKit: Speicherverhalten](https://webkit.org/blog/14403/updates-to-storage-policy/)
+Probe und Produkt halten ihre jeweils explizit aufgeführten Programmdateien mit getrennten Service Workern offline vor. Der Produktcache ist versioniert und auf seinen Scope begrenzt; Updates werden erst nach gesicherter Pause einer laufenden Runde aktiviert. Automatisiert sind Offline-Neustarts mit geschlossenem Testserver unter Wurzel- und Unterpfad sowie ein verzögerter Workerwechsel geprüft. iOS-Hintergrundausführung ist kein verlässlicher Ersatz für den Abgleich bei geöffneter App. Browserdaten können gelöscht werden; lokaler Speicher ist keine unabhängige Sicherung. [MDN: Offlinebetrieb](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Offline_and_background_operation), [WebKit: Speicherverhalten](https://webkit.org/blog/14403/updates-to-storage-policy/)
 
-R30/R33 ergänzen den Abgleich um eine vollständige JSON-Sicherung zum Herunterladen und Wiederherstellen im Erwachsenenbereich. Vor dem Einlesen Datenformat und Version prüfen, eine Vorschau zeigen und die Wiederherstellung bestätigen lassen. Vor der Rücksetzung den aktuellen Stand automatisch separat sichern; danach den Sicherungsstand auch über Google Drive übernehmen. Google-Tokens und Zugangsdaten gehören nicht in die Datei. Abschnitt 9 des Gesamtentwurfs schlägt den Online-Ablauf mit überprüfter Sicherheitskopie sowie den separaten Erhalt verspäteter Offlineänderungen vor; diese technische Konkretisierung wurde mit E08 bestätigt.
+R30/R33 ergänzen den Abgleich um eine vollständige JSON-Sicherung zum Herunterladen und Wiederherstellen im Erwachsenenbereich. Die Umsetzung prüft Datenformat und Version vollständig, zeigt eine Vorschau und verlangt Bestätigung. Vor der Rücksetzung wird der aktuelle Stand separat gesichert; danach übernimmt eine neue Epoche den Sicherungsstand auch über Google Drive. Google-Tokens und Zugangsdaten gehören nicht in die Datei. Verspätete Offlineänderungen bleiben separat erhalten und können bewusst übernommen werden.
 
 ## Frühe Machbarkeitsprüfung
 
-Lokal und mit simulierter Google-Grenze sind Oberfläche, IndexedDB, Offline-Start, wiederholte Übertragung, Kontobindung und Rücksetzpfade geprüft. Vor umfangreicher UI-Implementierung extern noch nachweisen:
+Lokal und mit simulierter Google-Grenze sind die vollständige Produktoberfläche, IndexedDB, Offline-Start, wiederholte Übertragung, Kontobindung, Konfliktlösung und Rücksetzpfade geprüft. Extern noch nachweisen:
 
 - Google verbinden, synthetische Datei anlegen, auf dem zweiten Gerät wiederfinden und ändern.
 - Safari-Tab und installierte Home-Bildschirm-App getrennt testen.
