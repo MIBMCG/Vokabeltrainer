@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <symbol id="island-beach" viewBox="0 0 600 360">
+    <defs>
+      <linearGradient id="beach-sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#8bd8e8"/><stop offset="1" stop-color="#eef9e9"/></linearGradient>
+      <linearGradient id="beach-water" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#1aa7ad"/><stop offset="1" stop-color="#087f8b"/></linearGradient>
+      <linearGradient id="beach-sand" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffe7a9"/><stop offset="1" stop-color="#e7b96a"/></linearGradient>
+    </defs>
+    <rect width="600" height="360" rx="34" fill="url(#beach-sky)"/>
+    <circle cx="500" cy="62" r="34" fill="#ffd45c" opacity=".9"/>
+    <path d="M0 146 Q100 123 200 148 T400 143 T600 137 V270 H0Z" fill="url(#beach-water)"/>
+    <path d="M0 177 Q75 160 150 177 T300 174 T450 176 T600 168" fill="none" stroke="#b9f3eb" stroke-width="8" opacity=".8"/>
+    <path d="M0 248 Q105 207 220 238 Q342 269 600 218 V360 H0Z" fill="url(#beach-sand)"/>
+    <path d="M180 149 Q232 94 294 145 Q243 153 180 149Z" fill="#4c9a58"/>
+    <path d="M190 147 Q232 118 273 146" fill="none" stroke="#2e7348" stroke-width="11"/>
+    <path d="M88 265 Q114 188 108 96" fill="none" stroke="#7a4f2e" stroke-width="18" stroke-linecap="round"/>
+    <path d="M108 104 Q57 73 33 111 Q77 110 106 120 M109 105 Q145 61 180 91 Q147 104 116 125 M105 102 Q75 54 47 74 Q76 91 108 112 M111 104 Q158 91 173 129 Q145 124 113 119" fill="#267747" stroke="#15593b" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M403 360 Q406 287 455 241 Q500 200 564 196" fill="none" stroke="#fff4ca" stroke-width="42" stroke-linecap="round" stroke-dasharray="4 28"/>
+    <path d="M360 285 l20 -13 14 20 -22 10Z M492 263 l20 7 -9 18 -20 -9Z" fill="#a76e43" opacity=".8"/>
+    <path d="M260 322 q14 -22 28 0 q-14 15 -28 0Z M310 300 q11 -18 22 0" fill="none" stroke="#c97562" stroke-width="7"/>
+    <path d="M541 112 l21 7 -18 12 2 22 -17 -14 -22 7 8 -21 -13 -17 23 1 13 -19Z" fill="#fff" opacity=".75"/>
+  </symbol>
+
+  <symbol id="island-forest" viewBox="0 0 600 360">
+    <defs>
+      <linearGradient id="forest-sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#bce6d4"/><stop offset="1" stop-color="#edf2cc"/></linearGradient>
+      <linearGradient id="forest-ground" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#4f9b61"/><stop offset="1" stop-color="#1e6046"/></linearGradient>
+    </defs>
+    <rect width="600" height="360" rx="34" fill="url(#forest-sky)"/>
+    <path d="M0 145 Q98 65 191 151 Q303 36 401 148 Q505 71 600 143 V360 H0Z" fill="#7dbb70"/>
+    <path d="M0 190 Q102 118 217 194 Q320 101 433 187 Q520 130 600 174 V360 H0Z" fill="url(#forest-ground)"/>
+    <path d="M330 360 Q303 305 330 249 Q355 197 337 154" fill="none" stroke="#cde9d8" stroke-width="42" stroke-linecap="round"/>
+    <path d="M330 360 Q304 306 330 250 Q353 203 340 157" fill="none" stroke="#50a9ad" stroke-width="29" stroke-linecap="round"/>
+    <g stroke="#70472b" stroke-width="15" stroke-linecap="round">
+      <path d="M76 283 V115"/><path d="M174 291 V132"/><path d="M472 285 V113"/><path d="M538 306 V151"/>
+    </g>
+    <g fill="#2c7a4a" stroke="#1f5e3c" stroke-width="5">
+      <circle cx="76" cy="99" r="50"/><circle cx="45" cy="129" r="39"/><circle cx="110" cy="132" r="42"/>
+      <circle cx="174" cy="118" r="45"/><circle cx="145" cy="153" r="34"/><circle cx="205" cy="154" r="36"/>
+      <circle cx="472" cy="96" r="52"/><circle cx="438" cy="131" r="38"/><circle cx="510" cy="133" r="42"/>
+      <circle cx="538" cy="141" r="42"/><circle cx="567" cy="173" r="34"/>
+    </g>
+    <g fill="#70b95a"><circle cx="61" cy="85" r="13"/><circle cx="190" cy="104" r="12"/><circle cx="455" cy="80" r="14"/><circle cx="526" cy="127" r="11"/></g>
+    <path d="M136 360 Q171 300 228 270 Q269 247 301 201" fill="none" stroke="#d3b77c" stroke-width="34" stroke-linecap="round"/>
+    <g fill="#f7df7b" stroke="#9a5c3f" stroke-width="4"><path d="M122 286 q18 -30 36 0Z"/><path d="M235 312 q15 -27 30 0Z"/><path d="M423 313 q18 -31 36 0Z"/></g>
+    <g fill="#fff4d8" opacity=".9"><circle cx="284" cy="83" r="8"/><circle cx="306" cy="68" r="5"/><circle cx="323" cy="91" r="6"/></g>
+  </symbol>
+
+  <symbol id="island-mountain" viewBox="0 0 600 360">
+    <defs>
+      <linearGradient id="mountain-sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#94cbe1"/><stop offset="1" stop-color="#eef4e6"/></linearGradient>
+      <linearGradient id="mountain-rock" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#7895a1"/><stop offset="1" stop-color="#435e67"/></linearGradient>
+    </defs>
+    <rect width="600" height="360" rx="34" fill="url(#mountain-sky)"/>
+    <circle cx="89" cy="67" r="29" fill="#ffe39a" opacity=".85"/>
+    <path d="M28 244 L178 67 264 180 355 35 561 246Z" fill="url(#mountain-rock)" stroke="#3c5f6a" stroke-width="6" stroke-linejoin="round"/>
+    <path d="M108 151 178 67l47 62 -35 -15 -25 35 -23 -20Z M277 129 355 35l79 96 -43 -20 -29 42 -31 -38Z" fill="#f3f8f3"/>
+    <path d="M0 255 Q115 224 223 258 Q346 292 600 237 V360 H0Z" fill="#307d66"/>
+    <path d="M0 302 Q119 264 247 300 Q393 337 600 281 V360 H0Z" fill="#6aaeb1"/>
+    <path d="M143 360 Q161 317 213 290 Q259 267 298 226 Q332 190 380 174" fill="none" stroke="#dec998" stroke-width="33" stroke-linecap="round" stroke-dasharray="5 23"/>
+    <g fill="#174f3e">
+      <path d="M52 288 89 204l37 84h-24l31 55H45l29-55Z"/><path d="M455 278 489 197l35 81h-22l29 55h-84l27-55Z"/><path d="M516 300 544 234l29 66h-18l23 44h-68l22-44Z"/>
+    </g>
+    <g fill="#6b7c7f"><ellipse cx="245" cy="327" rx="28" ry="13"/><ellipse cx="388" cy="283" rx="24" ry="11"/><ellipse cx="431" cy="334" rx="31" ry="14"/></g>
+    <path d="M471 78 q18 -16 36 0 q18 -16 36 0" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+  </symbol>
+</svg>

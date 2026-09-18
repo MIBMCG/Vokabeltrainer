@@ -2,6 +2,7 @@ import {project} from '../learning/progress.js';
 import {el, field, button, message} from './dom.js';
 import {renderAdult} from './adult.js';
 import {practiceRenderKey, renderPractice, renderPracticeLanding} from './practice.js';
+import {renderAvatar, renderJourney} from './rewards.js';
 
 const MAX_ANSWERS_TEXT_LENGTH = 4_200;
 const SHELL_SESSION_KEY = 'vokabeltrainer-shell-v1';
@@ -184,7 +185,7 @@ export function mountShell({root, commands, pinGate}) {
 
   function shellNavigation() {
     const nav = el('nav', {attrs: {'aria-label': 'Hauptnavigation', class: 'bottom-nav'}});
-    for (const [view, label] of [['practice', 'Üben'], ['journey', 'Reise'], ['avatar', 'Avatar']]) {
+    for (const [view, label] of [['practice', 'Üben'], ['journey', 'Inselreise'], ['avatar', 'Mein Avatar']]) {
       nav.append(button(label, () => show(view), {
         class: currentView === view ? 'active' : '', 'aria-current': currentView === view ? 'page' : null,
       }));
@@ -294,6 +295,25 @@ export function mountShell({root, commands, pinGate}) {
         });
         root.append(shellNavigation());
         lastPracticeKey = practiceRenderKey(state, activeProfileId);
+      }
+    } else if ((currentView === 'journey' || currentView === 'avatar') && activeProfileId !== null) {
+      const projection = project(state.ledger);
+      const profileEntity = projection.entities.profiles[activeProfileId];
+      if (profileEntity?.value === null || profileEntity?.value?.archived || profileEntity === undefined) {
+        profileNotice = 'Dieses Lernprofil ist nicht mehr verfügbar. Bitte wähle ein anderes Profil.';
+        currentView = 'profiles';
+        activeProfileId = null;
+        practiceActive = false;
+        persistShellState();
+        renderProfiles(state);
+      } else {
+        const profile = projection.profiles[activeProfileId];
+        if (currentView === 'journey') renderJourney({root, profile});
+        else renderAvatar({root, profile, profileId: activeProfileId, commands});
+        root.firstElementChild?.prepend(button('Profil wechseln', () => show('profiles'), {
+          class: 'secondary profile-switch',
+        }));
+        root.append(shellNavigation());
       }
     } else renderScaffold(state, currentView);
   }

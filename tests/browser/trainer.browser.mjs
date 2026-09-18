@@ -81,6 +81,113 @@ async function seedOneCorrectAnswer(page, state) {
   await writeProductState(page, next);
 }
 
+function rewardProgressState(state, points, {allBadges = false} = {}) {
+  const next = structuredClone(state);
+  const profile = next.ledger.events.find((event) => (
+    event.type === 'entity.revised' && event.payload.entityType === 'profile'
+  ));
+  const originalWords = next.ledger.events.filter((event) => (
+    event.type === 'entity.revised' && event.payload.entityType === 'word'
+  ));
+  const envelope = {
+    format: 'vokabeltrainer-product', formatVersion: 1, ruleVersion: 1, kind: 'event',
+    datasetId: next.ledger.descriptor.datasetId,
+    epochId: next.ledger.descriptor.rootEpochId,
+    deviceId: next.deviceId,
+    occurredAt: '2026-09-18T08:00:00.000Z', day: '2026-09-18',
+  };
+  let clock = next.clock;
+  const append = (type, payload, id) => {
+    clock += 1;
+    const event = {...envelope, id, clock, type, payload};
+    next.ledger.events.push(event);
+    next.outboxEventIds.push(id);
+    return event;
+  };
+
+  const words = [...originalWords];
+  if (allBadges) {
+    for (let index = words.length; index < 10; index += 1) {
+      const source = originalWords[index % originalWords.length];
+      words.push(append('entity.revised', {
+        entityType: 'word',
+        entityId: `reward-word-${index + 1}`,
+        parents: [],
+        value: {
+          ...structuredClone(source.payload.value),
+          german: `Inselwort ${index + 1}`,
+          learningId: `reward-learning-${index + 1}`,
+        },
+      }, `reward-word-revision-${index + 1}`));
+    }
+  }
+
+  let correctAnswers = 0;
+  let roundNumber = 0;
+  const addRound = ({word, wrongFirst = false, complete = false, answerCount = 10}) => {
+    roundNumber += 1;
+    const roundId = `reward-round-${String(roundNumber).padStart(2, '0')}`;
+    append('round.started', {
+      roundId, profileId: profile.payload.entityId, mode: 'all', size: answerCount <= 10 ? 10 : 30,
+    }, `reward-start-${String(roundNumber).padStart(2, '0')}`);
+    const answerIds = [];
+    for (let ordinal = 1; ordinal <= answerCount; ordinal += 1) {
+      const correct = !(wrongFirst && ordinal === 1);
+      const id = `reward-answer-${String(roundNumber).padStart(2, '0')}-${String(ordinal).padStart(2, '0')}`;
+      append('answer.recorded', {
+        roundId,
+        profileId: profile.payload.entityId,
+        ordinal,
+        wordId: word.payload.entityId,
+        revisionId: word.id,
+        learningId: word.payload.value.learningId,
+        correct,
+      }, id);
+      answerIds.push(id);
+      if (correct) correctAnswers += 1;
+    }
+    if (allBadges && wrongFirst) {
+      append('word.milestone', {
+        profileId: profile.payload.entityId,
+        wordId: word.payload.entityId,
+        milestone: 'recovered',
+        evidenceAnswerIds: [answerIds[0], answerIds[1]],
+      }, `reward-recovered-${String(roundNumber).padStart(2, '0')}`);
+      append('word.milestone', {
+        profileId: profile.payload.entityId,
+        wordId: word.payload.entityId,
+        milestone: 'mastered',
+        evidenceAnswerIds: [answerIds[1], answerIds[2], answerIds[3]],
+      }, `reward-mastered-${String(roundNumber).padStart(2, '0')}`);
+    }
+    if (complete) {
+      append('round.completed', {
+        roundId,
+        profileId: profile.payload.entityId,
+        reason: 'full',
+        answerIds,
+      }, `reward-complete-${String(roundNumber).padStart(2, '0')}`);
+    }
+  };
+
+  if (allBadges) {
+    for (const word of words) addRound({word, wrongFirst: true, complete: true});
+    for (let index = 0; index < 15; index += 1) {
+      addRound({word: words[index % words.length], complete: true});
+    }
+  }
+
+  const completionPoints = allBadges ? 25 * 20 : 0;
+  let pointsRemaining = points - ((correctAnswers * 10) + completionPoints);
+  while (pointsRemaining > 0) {
+    const answerCount = Math.min(30, pointsRemaining / 10);
+    addRound({word: words[roundNumber % words.length], answerCount});
+    pointsRemaining -= answerCount * 10;
+  }
+  next.clock = clock;
+  return next;
+}
+
 async function holdNextPinDerivation(page) {
   await page.evaluate(() => {
     if (!window.__originalPinDeriveBits) {
@@ -774,6 +881,83 @@ test('trainer setup, adult decisions, persistence and BFCache lifecycle', {timeo
     assert.deepEqual(pageErrors, []);
     assert.deepEqual(harness.google.unexpected, []);
   } finally {
+    await harness.close();
+  }
+});
+
+test('trainer rewards render the complete journey and save profile-specific avatar choices', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page, context} = await harness.newDevice();
+  const pageErrors = [];
+  page.on('pageerror', (error) => pageErrors.push(error.message));
+  await mkdir(resultsDirectory, {recursive: true});
+
+  try {
+    await page.goto(harness.baseUrl);
+    await setupPractice(page);
+    await addSecondProfile(page);
+    const base = await productState(page);
+    await page.getByRole('button', {name: /^Ada/}).click();
+    await page.getByRole('button', {name: 'Inselreise', exact: true}).click();
+
+    for (const [points, level, stages] of [
+      [0, 1, 0], [200, 2, 1], [1000, 6, 5], [2000, 11, 10],
+    ]) {
+      await writeProductState(page, rewardProgressState(base, points));
+      await page.reload();
+      await page.getByRole('heading', {name: 'Deine Inselreise'}).waitFor();
+      assert.equal(await page.locator('[data-level]').textContent(), `Level ${level}`);
+      assert.equal(await page.locator('[data-journey-progress]').textContent(), `${stages} von 15 Etappen`);
+      assert.equal(await page.locator('[data-stage]').count(), 15);
+    }
+
+    await writeProductState(page, rewardProgressState(base, 3000, {allBadges: true}));
+    await page.reload();
+    await page.getByText('Reise geschafft!', {exact: true}).waitFor({timeout: 3_000}).catch(async (error) => {
+      throw new Error(`${error.message}\nPage errors: ${pageErrors.join(' | ')}\nVisible page:\n${await page.locator('body').innerText()}`);
+    });
+    assert.equal(await page.locator('[data-level]').textContent(), 'Level 16');
+    assert.equal(await page.locator('[data-journey-progress]').textContent(), '15 von 15 Etappen');
+    assert.equal(await page.locator('[data-badge][data-earned="true"]').count(), 6);
+    assert.equal(await page.getByText(/weitere Insel/i).count(), 0);
+
+    await page.setViewportSize({width: 390, height: 844});
+    await page.screenshot({path: resolve(resultsDirectory, 'trainer-rewards-mobile.png'), fullPage: true});
+    await page.setViewportSize({width: 1280, height: 900});
+    await page.screenshot({path: resolve(resultsDirectory, 'trainer-rewards-desktop.png'), fullPage: true});
+
+    await page.getByRole('button', {name: 'Mein Avatar', exact: true}).click();
+    assert.equal(await page.getByRole('group', {name: 'Hautfarbe'}).getByRole('radio').count(), 4);
+    assert.equal(await page.getByRole('group', {name: 'Kleidungsfarbe'}).getByRole('radio').count(), 6);
+    await page.getByRole('radio', {name: 'Hautfarbe 4', exact: true}).check();
+    await page.getByRole('radio', {name: 'Kleidung Koralle', exact: true}).check();
+    await page.getByRole('radio', {name: 'Kompass', exact: true}).check();
+    await page.getByText('Alle sechs Ausrüstungsteile sind freigeschaltet. Wähle deine Favoriten.', {exact: true}).waitFor();
+    assert.equal(await page.evaluate(() => document.activeElement?.classList.contains('skip-link')), false);
+    const skipBox = await page.locator('.skip-link').boundingBox();
+    assert.ok(skipBox.y + skipBox.height <= 0);
+    await page.setViewportSize({width: 390, height: 844});
+    assert.equal(await page.evaluate(() => document.activeElement?.classList.contains('skip-link')), false);
+    const mobileSkipBox = await page.locator('.skip-link').boundingBox();
+    assert.ok(mobileSkipBox.y + mobileSkipBox.height <= 0);
+    await page.screenshot({path: resolve(resultsDirectory, 'trainer-avatar-mobile.png'), fullPage: true});
+    await page.setViewportSize({width: 1280, height: 900});
+    await page.screenshot({path: resolve(resultsDirectory, 'trainer-avatar-desktop.png'), fullPage: true});
+
+    await page.getByRole('button', {name: 'Profil wechseln', exact: true}).click();
+    await page.getByRole('button', {name: /^Ben/}).click();
+    await page.getByRole('button', {name: 'Mein Avatar', exact: true}).click();
+    assert.equal(await page.getByRole('radio', {name: /Kappe.*Level 2/}).isDisabled(), true);
+    await page.getByRole('radio', {name: 'Hautfarbe 2', exact: true}).check();
+    await page.getByRole('button', {name: 'Profil wechseln', exact: true}).click();
+    await page.getByRole('button', {name: /^Ada/}).click();
+    await page.getByRole('button', {name: 'Mein Avatar', exact: true}).click();
+    assert.equal(await page.getByRole('radio', {name: 'Hautfarbe 4', exact: true}).isChecked(), true);
+    const avatarEvents = (await productState(page)).ledger.events.filter(({type}) => type === 'avatar.changed');
+    assert.equal(new Set(avatarEvents.map(({payload}) => payload.profileId)).size, 2);
+    assert.deepEqual(pageErrors, []);
+  } finally {
+    await context.close();
     await harness.close();
   }
 });
