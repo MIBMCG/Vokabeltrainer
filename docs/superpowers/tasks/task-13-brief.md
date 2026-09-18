@@ -58,3 +58,9 @@ Read docs/PRODUKT-DATENFORMAT.md for exact types. Approved product spec is docs/
 
 ## Visual deliverable and durable decisions
 User explicitly requested screenshot or concept during implementation. A generated preview was delivered and committed at docs/design/2026-09-17-insel-konzept.png with status companion; it is NOT an actual screenshot or visual acceptance. At final state capture and inspect actual synthetic-data practice/journey views; preserve selected representative screenshots in docs/reports/assets (not only ignored test-results) so GitHub handoff can show real implemented UI. Do not copy PIN/auth/realaccount/profile data or test injection fixtures into those final presentation captures. Final report distinguishes concept from actual screenshots and actual browser evidence from deferredphysicaldeviceacceptance. docs/ENTWICKLUNGSENTSCHEIDUNGEN.md records controller Rulings and must remain accurate; no additional generallicense/publication change.
+
+## Carried laptop findings and current dates
+Use the actual completion date for report/handoff filenames. The user approved the concept as a style direction on 17 September; it remains a concept, not device evidence.
+Resolve the carried Task7 Minor: when roundAvailability/nextTask canExpand is false, exhausted-round text must not promise additional available words.
+Resolve the carried Task8 Minor: wait until asynchronous avatar persistence has replaced the old radio DOM node, then assert focus on the new selected radio; do not mistake old-node focus for persistence.
+Include all current technical decisions (more than twelve) and preserve their evidence. Task11 owns the already-carried nested-main correction; confirm its resolution in final review.

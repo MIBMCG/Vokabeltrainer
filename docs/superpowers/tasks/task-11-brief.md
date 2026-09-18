@@ -64,3 +64,6 @@ Use productStateHash(state):Promise<string> exported from src/trainer/commands.j
 
 ## Carried minor review finding
 Task6 review task-6-review.md records a deferred Minor: root #app is already main but renderAdult inserts main#adult-content. When editing adult UI in this task, resolve to section/div with heading association, preserving one main landmark and navigation. Record explicit test/evidence and resolution in report; finalreviewmustsee status rather than silentlydiscarding.
+
+## Desktop integration follow-up 18 September
+Read the completed Task9 fix report for Commands change subscription and cleanup. Main must connect truthful immediate status updates, scheduler changes and session invalidation without recursive status/render/sync loops; close subscriptions and scheduler on pagehide. Auth failures from discovery/create/join and sync all invalidate the RAM token session before another deliberate connect. Preserve typed practice input and focus for unrelated state/status changes. Add every new browser module to the explicit server whitelist.

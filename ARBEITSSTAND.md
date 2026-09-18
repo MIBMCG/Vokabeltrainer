@@ -1,5 +1,7 @@
 # Arbeitsstand
 
+Fortsetzung am Desktop am 18.09.2026 ausdrücklich beauftragt. GitHub-Stand c60ced1 wurde in die saubere bestehende Arbeitskopie übernommen; die Pause ist beendet. Zuerst Task 9 Korrekturrunde 1 mit unabhängiger Nachprüfung, anschließend Tasks 10–13. Aktuelle [Desktop-Fortsetzung](docs/handoffs/2026-09-18-desktop-fortsetzung.md); die nachfolgende Pausenübergabe bleibt historische Ausgangsevidenz.
+
 Pause am 18.09.2026 ausdrücklich beauftragt. Entwicklung angehalten; der Nutzer hat die Sicherung aller Projektänderungen nach GitHub und eine Übergabe für den Desktop beauftragt. Maßgeblich ist die [Desktop-Übergabe](docs/handoffs/2026-09-18-desktop-pause.md). Erst nach ausdrücklicher Fortsetzung weiterarbeiten.
 
 Änderung der Prüfungsreihenfolge am 17.09.2026: Der Nutzer beauftragt ausdrücklich, zuerst die vollständige App gemäß bestätigtem Gesamtentwurf umzusetzen und erst danach beim Freund auf iPhone/iPad zu testen. Die bisherige Geräteprüfung vor umfangreicher Lernoberfläche ist damit als Entwicklungssperre aufgehoben. Reale Geräteabnahme bleibt offen und darf nicht als bestanden gelten. Bereits bestätigte manuelle Google-/Drive-Tests in zwei Browsern gelten weiter. Keine neue pauschale Startfreigabe verlangen; Hosting/Veröffentlichung und Kostenmodell werden dadurch nicht automatisch geändert.
@@ -14,7 +16,7 @@ Ziel: Deutsch-Englisch-Vokabeltrainer für 10–13-Jährige, Klassen 4–7, mit 
 
 ## Aktuelles Entwicklungspaket
 
-### Vollständige App: Umsetzung pausiert
+### Vollständige App: Umsetzung wieder aufgenommen
 
 Die Umsetzung folgt dem [v1-Plan](docs/superpowers/plans/2026-09-17-vokabeltrainer-v1.md) und [Produkt-Datenvertrag](docs/PRODUKT-DATENFORMAT.md). Tasks 1–8 sind implementiert und unabhängig geprüft: Ereignisformat, Inhaltsfassungen/Epochen, adaptive Lern- und Belohnungslogik, fortsetzbare Runden, atomare Speicherung, Einrichtung/Erwachsenenverwaltung, Übungsbildschirm sowie Inselreise und Avatar. Die Produktoberfläche liegt unter `/trainer/`. Kleine vorgemerkte Befunde sind in der Desktop-Übergabe einzelnen Folgeaufgaben zugeordnet.
 

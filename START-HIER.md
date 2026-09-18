@@ -1,5 +1,7 @@
 # Hier mit der Weiterarbeit beginnen
 
+Fortsetzung am Desktop am 18.09.2026 ausdrücklich beauftragt. GitHub-Stand c60ced1 wurde in die saubere bestehende Arbeitskopie übernommen; die Pause ist beendet. Zuerst Task 9 Korrekturrunde 1 mit unabhängiger Nachprüfung, anschließend Tasks 10–13. Aktuelle [Desktop-Fortsetzung](docs/handoffs/2026-09-18-desktop-fortsetzung.md); die nachfolgende Pausenübergabe bleibt historische Ausgangsevidenz.
+
 Pause am 18.09.2026 auf Nutzerwunsch. Code, Prüfberichte und offene Befunde werden für den Desktop gesichert. Das Insel-Konzept bleibt bestätigt. Maßgeblich ist die [Desktop-Übergabe](docs/handoffs/2026-09-18-desktop-pause.md); bis zur ausdrücklichen Fortsetzung keine weitere Entwicklung.
 
 Dieses Projekt kann mit beliebigen Entwicklungswerkzeugen und KI-Systemen fortgesetzt werden. Der Gesprächsverlauf ist dafür nicht erforderlich.
