@@ -1,7 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import {keyAction, roundSummary} from '../../src/trainer/ui/practice.js';
+import {project} from '../../src/trainer/learning/progress.js';
+import {startRound} from '../../src/trainer/learning/rounds.js';
+import {keyAction, practiceRenderKey, roundSummary} from '../../src/trainer/ui/practice.js';
+import {createFixture} from './fixtures.js';
 
 test('keyAction maps one intentional Enter press to the phase action', () => {
   assert.equal(keyAction({key: 'Enter', repeat: false, isComposing: false, phase: 'asking'}), 'submit');
@@ -39,4 +42,36 @@ test('roundSummary gives neither answer points nor bonus to an empty or uncomple
     answerPoints: 0,
     bonusPoints: 0,
   });
+});
+
+test('practiceRenderKey preserves valid drafts and changes when the profile becomes invalid', () => {
+  const fixture = createFixture({words: [['w1', 'Hund', ['dog']]]});
+  const round = startRound({
+    id: 'render-key', profileId: 'p1', mode: 'all', size: 10,
+    projection: project(fixture.base), day: '2026-09-17',
+  });
+  const initial = {ledger: fixture.base, rounds: {p1: round}, pendingPackets: []};
+  const validBackgroundUpdate = structuredClone(initial);
+  validBackgroundUpdate.pendingPackets.push({kind: 'unrelated-update'});
+
+  const archived = fixture.event('entity.revised', {
+    entityType: 'profile', entityId: 'p1', parents: ['rev-p1'],
+    value: {name: 'Ada', archived: true},
+  }, {id: 'profile-archived'});
+  const left = fixture.event('entity.revised', {
+    entityType: 'profile', entityId: 'p1', parents: ['rev-p1'],
+    value: {name: 'Ada A', archived: false},
+  }, {id: 'profile-conflict-left'});
+  const right = fixture.event('entity.revised', {
+    entityType: 'profile', entityId: 'p1', parents: ['rev-p1'],
+    value: {name: 'Ada B', archived: false},
+  }, {id: 'profile-conflict-right'});
+  const withoutProfile = structuredClone(fixture.base);
+  withoutProfile.events = withoutProfile.events.filter((event) => event.payload.entityType !== 'profile');
+
+  const initialKey = practiceRenderKey(initial, 'p1');
+  assert.equal(practiceRenderKey(validBackgroundUpdate, 'p1'), initialKey);
+  assert.notEqual(practiceRenderKey({...initial, ledger: fixture.withEvents(archived)}, 'p1'), initialKey);
+  assert.notEqual(practiceRenderKey({...initial, ledger: fixture.withEvents(left, right)}, 'p1'), initialKey);
+  assert.notEqual(practiceRenderKey({...initial, ledger: withoutProfile}, 'p1'), initialKey);
 });

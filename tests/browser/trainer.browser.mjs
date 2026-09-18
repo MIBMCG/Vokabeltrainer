@@ -250,6 +250,7 @@ test('trainer practice is resumable, single-submit safe and completes an exhaust
       await page.getByRole('button', {name: 'Weiter', exact: true}).click();
     }
     await page.getByRole('heading', {name: 'Für heute ist alles geschafft'}).waitFor();
+    assert.equal(await page.getByRole('button', {name: 'Weitere Vokabeln', exact: true}).count(), 0);
     completedState = await productState(page);
     const exhaustedRound = Object.values(completedState.rounds).find(({status}) => status === 'exhausted');
     const expectedAnswers = exhaustedRound.answeredIds.length;
@@ -375,6 +376,119 @@ test('trainer practice is resumable, single-submit safe and completes an exhaust
     await page.getByRole('button', {name: 'Fortsetzen', exact: true}).click();
     await page.getByText('Die geänderte Vokabel wurde ohne Wertung übersprungen.', {exact: true}).waitFor();
     assert.equal((await productState(page)).ledger.events.filter(({type}) => type === 'answer.recorded').length, answersBeforeRevision);
+    assert.deepEqual(pageErrors, []);
+  } finally {
+    await context.close();
+    await harness.close();
+  }
+});
+
+test('trainer practice reacts to background profile invalidation without scoring', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page, context} = await harness.newDevice();
+  const pageErrors = [];
+  page.on('pageerror', (error) => pageErrors.push(error.message));
+
+  try {
+    await page.goto(harness.baseUrl);
+    await setupPractice(page, {first: ['Hund', 'dog'], second: ['Katze', 'cat']});
+    await page.getByRole('button', {name: /^Ada/}).click();
+    await page.getByRole('button', {name: 'Alle Vokabeln', exact: true}).click();
+
+    const result = await page.evaluate(async (initialState) => {
+      const {mountShell} = await import('../src/trainer/ui/shell.js');
+      const profileRevision = initialState.ledger.events.find((event) => (
+        event.type === 'entity.revised' && event.payload.entityType === 'profile'
+      ));
+      const profileId = profileRevision.payload.entityId;
+      const answerCount = (state) => state.ledger.events.filter(({type}) => type === 'answer.recorded').length;
+      const session = JSON.stringify({view: 'practice', profileId, practiceActive: true});
+
+      function mount(state) {
+        sessionStorage.setItem('vokabeltrainer-shell-v1', session);
+        let current = structuredClone(state);
+        const host = document.createElement('div');
+        document.body.append(host);
+        const shell = mountShell({
+          root: host,
+          commands: {getState: () => structuredClone(current)},
+          pinGate: {isUnlocked: () => false, lock() {}},
+        });
+        shell.render();
+        return {host, shell, update(next) { current = structuredClone(next); }};
+      }
+
+      const valid = mount(initialState);
+      const input = valid.host.querySelector('#answer');
+      input.value = 'unsent draft';
+      input.focus();
+      const unrelated = structuredClone(initialState);
+      unrelated.pendingPackets.push({kind: 'unrelated-background-update'});
+      valid.update(unrelated);
+      valid.shell.stateChanged();
+      const preserved = {
+        sameNode: input === valid.host.querySelector('#answer'),
+        value: valid.host.querySelector('#answer')?.value,
+        focused: document.activeElement === input,
+      };
+      valid.shell.destroy();
+      valid.host.remove();
+
+      const archivedState = structuredClone(initialState);
+      const archive = structuredClone(profileRevision);
+      archive.id = 'browser-profile-archived';
+      archive.clock = archivedState.clock + 1;
+      archive.payload.parents = [profileRevision.id];
+      archive.payload.value = {...profileRevision.payload.value, archived: true};
+      archivedState.clock = archive.clock;
+      archivedState.ledger.events.push(archive);
+      const archived = mount(initialState);
+      archived.update(archivedState);
+      archived.shell.stateChanged();
+      const archiveResult = {
+        redirected: archived.host.querySelector('#profile-list') !== null,
+        notice: archived.host.textContent.includes('Die offene Antwort wurde nicht gewertet.'),
+        inputRemoved: archived.host.querySelector('#answer') === null,
+        answerCount: answerCount(archivedState),
+      };
+      archived.shell.destroy();
+      archived.host.remove();
+
+      const conflictState = structuredClone(initialState);
+      const left = structuredClone(profileRevision);
+      left.id = 'browser-profile-conflict-left';
+      left.clock = conflictState.clock + 1;
+      left.payload.parents = [profileRevision.id];
+      left.payload.value = {...profileRevision.payload.value, name: 'Ada A'};
+      const right = structuredClone(profileRevision);
+      right.id = 'browser-profile-conflict-right';
+      right.clock = conflictState.clock + 2;
+      right.payload.parents = [profileRevision.id];
+      right.payload.value = {...profileRevision.payload.value, name: 'Ada B'};
+      conflictState.clock = right.clock;
+      conflictState.ledger.events.push(left, right);
+      const conflicted = mount(initialState);
+      conflicted.update(conflictState);
+      conflicted.shell.stateChanged();
+      const conflictResult = {
+        redirected: conflicted.host.querySelector('#profile-list') !== null,
+        notice: conflicted.host.textContent.includes('Die offene Antwort wurde nicht gewertet.'),
+        inputRemoved: conflicted.host.querySelector('#answer') === null,
+        answerCount: answerCount(conflictState),
+      };
+      conflicted.shell.destroy();
+      conflicted.host.remove();
+
+      return {preserved, archiveResult, conflictResult, initialAnswers: answerCount(initialState)};
+    }, await productState(page));
+
+    assert.deepEqual(result.preserved, {sameNode: true, value: 'unsent draft', focused: true});
+    assert.deepEqual(result.archiveResult, {
+      redirected: true, notice: true, inputRemoved: true, answerCount: result.initialAnswers,
+    });
+    assert.deepEqual(result.conflictResult, {
+      redirected: true, notice: true, inputRemoved: true, answerCount: result.initialAnswers,
+    });
     assert.deepEqual(pageErrors, []);
   } finally {
     await context.close();

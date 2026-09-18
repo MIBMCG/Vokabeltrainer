@@ -52,6 +52,7 @@ export function mountShell({root, commands, pinGate}) {
   let activeProfileId = restored?.profileId ?? null;
   let practiceActive = restored?.practiceActive ?? false;
   let lastPracticeKey = null;
+  let profileNotice = '';
   let destroyed = false;
   let setupBusy = false;
   const setupDraft = {
@@ -199,6 +200,7 @@ export function mountShell({root, commands, pinGate}) {
     for (const profile of profiles) {
       const progress = projection.profiles[profile.id];
       list.append(button(profile.value.name, () => {
+        profileNotice = '';
         activeProfileId = profile.id;
         practiceActive = false;
         show('practice');
@@ -209,6 +211,7 @@ export function mountShell({root, commands, pinGate}) {
       el('section', {attrs: {class: 'home'}}, [
         el('p', {text: 'Insel-Abenteuer', attrs: {class: 'eyebrow'}}),
         el('h1', {text: 'Wer möchte üben?'}),
+        profileNotice ? message(profileNotice) : null,
         list,
         button('Für Erwachsene', () => show('adult'), {id: 'adult-entry', class: 'secondary'}),
       ]),
@@ -276,6 +279,9 @@ export function mountShell({root, commands, pinGate}) {
       const projection = project(state.ledger);
       const profile = projection.entities.profiles[activeProfileId];
       if (profile?.value === null || profile?.value?.archived || profile === undefined) {
+        profileNotice = practiceActive
+          ? 'Dieses Lernprofil ist nicht mehr verfügbar. Die offene Antwort wurde nicht gewertet.'
+          : 'Dieses Lernprofil ist nicht mehr verfügbar. Bitte wähle ein anderes Profil.';
         currentView = 'profiles';
         activeProfileId = null;
         practiceActive = false;

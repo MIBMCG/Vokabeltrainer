@@ -35,6 +35,12 @@ export function practiceRenderKey(state, profileId) {
   const round = selectedRound(state, profileId);
   if (round === null) return `none:${profileId}`;
   const projection = project(state.ledger);
+  const profile = own(projection.entities.profiles, profileId)
+    ? projection.entities.profiles[profileId]
+    : null;
+  const profileValidity = profile !== null && profile.value !== null && !profile.value.archived
+    ? 'profile-valid'
+    : 'profile-invalid';
   const word = currentWord(projection, round);
   const task = round.current === null
     ? 'none'
@@ -42,7 +48,9 @@ export function practiceRenderKey(state, profileId) {
   const validity = round.current === null
     ? 'none'
     : (word === null ? 'stale' : `${word.heads.join(',')}:${word.value.lessonId}`);
-  return [round.id, round.status, task, validity, round.feedback?.answerId ?? 'none'].join('|');
+  return [
+    round.id, round.status, profileValidity, task, validity, round.feedback?.answerId ?? 'none',
+  ].join('|');
 }
 
 export function keyAction({key, repeat, isComposing, phase}) {
@@ -260,7 +268,7 @@ function renderAsking({root, round, word, profile, points, commands, onNavigate,
   focusSoon(input);
 }
 
-function renderExhausted({root, round, profile, points, commands, onNavigate, ui}) {
+function renderExhausted({root, round, profile, points, commands, onNavigate, ui, canExpand}) {
   const hasAnswers = round.answeredIds.length > 0;
   const section = el('section', {attrs: {class: 'panel practice-finish'}}, [
     profileHeader(profile.value.name, points, onNavigate),
@@ -274,7 +282,7 @@ function renderExhausted({root, round, profile, points, commands, onNavigate, ui
     ui.notice = '';
   }
   if (hasAnswers) {
-    if (!round.expanded) section.append(button('Weitere Vokabeln', async () => {
+    if (canExpand) section.append(button('Weitere Vokabeln', async () => {
       if (ui.busy) return;
       ui.busy = true;
       try { await commands.expand({roundId: round.id}); } catch (error) {
@@ -340,7 +348,11 @@ function renderPracticeView({root, state, commands, profileId, onNavigate}, acti
     return;
   }
   if (round.status === 'exhausted') {
-    renderExhausted({root, round, profile, points, commands, onNavigate, ui});
+    const availability = commands.roundAvailability({roundId: round.id});
+    renderExhausted({
+      root, round, profile, points, commands, onNavigate, ui,
+      canExpand: availability.kind === 'exhausted' && availability.canExpand,
+    });
     return;
   }
   const word = currentWord(projection, round);

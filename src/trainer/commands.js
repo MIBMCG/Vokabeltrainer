@@ -351,6 +351,14 @@ export async function createCommands({store, now, id, deviceId, onChange}) {
       return state === null ? null : structuredClone(state);
     },
 
+    roundAvailability({roundId}) {
+      const current = requireState();
+      const found = findRound(current, roundId);
+      const projection = project(current.ledger);
+      const day = calendarDay(now(), current.ledger.descriptor.timeZone);
+      return structuredClone(nextTask({round: found.round, projection, day}));
+    },
+
     setup({name, timeZone}) {
       return enqueue(async () => {
         if (state !== null) invalid('Der Vokabeltrainer ist bereits eingerichtet.');
