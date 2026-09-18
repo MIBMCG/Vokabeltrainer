@@ -900,15 +900,37 @@ test('trainer rewards render the complete journey and save profile-specific avat
     await page.getByRole('button', {name: /^Ada/}).click();
     await page.getByRole('button', {name: 'Inselreise', exact: true}).click();
 
-    for (const [points, level, stages] of [
-      [0, 1, 0], [200, 2, 1], [1000, 6, 5], [2000, 11, 10],
+    const equipmentNames = ['Kappe', 'Rucksack', 'Sonnenhut', 'Fernglas', 'Bergmütze', 'Kompass'];
+    for (const milestone of [
+      {points: 0, level: 1, stages: 0, islands: [true, false, false], equipment: [false, false, false, false, false, false]},
+      {points: 200, level: 2, stages: 1, islands: [true, false, false], equipment: [true, false, false, false, false, false]},
+      {points: 600, level: 4, stages: 3, islands: [true, false, false], equipment: [true, true, false, false, false, false]},
+      {points: 1000, level: 6, stages: 5, islands: [true, true, false], equipment: [true, true, true, false, false, false]},
+      {points: 1400, level: 8, stages: 7, islands: [true, true, false], equipment: [true, true, true, true, false, false]},
+      {points: 2000, level: 11, stages: 10, islands: [true, true, true], equipment: [true, true, true, true, true, false]},
+      {points: 2600, level: 14, stages: 13, islands: [true, true, true], equipment: [true, true, true, true, true, true]},
+      {points: 3000, level: 16, stages: 15, islands: [true, true, true], equipment: [true, true, true, true, true, true]},
     ]) {
+      const {points, level, stages, islands, equipment} = milestone;
       await writeProductState(page, rewardProgressState(base, points));
       await page.reload();
       await page.getByRole('heading', {name: 'Deine Inselreise'}).waitFor();
       assert.equal(await page.locator('[data-level]').textContent(), `Level ${level}`);
       assert.equal(await page.locator('[data-journey-progress]').textContent(), `${stages} von 15 Etappen`);
       assert.equal(await page.locator('[data-stage]').count(), 15);
+      for (const [index, islandId] of ['beach', 'forest', 'mountain'].entries()) {
+        const island = page.locator(`[data-island="${islandId}"]`);
+        assert.equal(await island.isVisible(), true, `${islandId} visible at ${points} points`);
+        assert.equal(await island.getAttribute('data-unlocked'), String(islands[index]), `${islandId} unlocked at ${points} points`);
+      }
+
+      await page.getByRole('button', {name: 'Mein Avatar', exact: true}).click();
+      for (const [index, equipmentName] of equipmentNames.entries()) {
+        const radio = page.getByRole('radio', {name: new RegExp(`^${equipmentName}`)});
+        assert.equal(await radio.isVisible(), true, `${equipmentName} visible at ${points} points`);
+        assert.equal(await radio.isDisabled(), !equipment[index], `${equipmentName} enabled at ${points} points`);
+      }
+      await page.getByRole('button', {name: 'Inselreise', exact: true}).click();
     }
 
     await writeProductState(page, rewardProgressState(base, 3000, {allBadges: true}));
@@ -930,8 +952,24 @@ test('trainer rewards render the complete journey and save profile-specific avat
     assert.equal(await page.getByRole('group', {name: 'Hautfarbe'}).getByRole('radio').count(), 4);
     assert.equal(await page.getByRole('group', {name: 'Kleidungsfarbe'}).getByRole('radio').count(), 6);
     await page.getByRole('radio', {name: 'Hautfarbe 4', exact: true}).check();
+    assert.deepEqual(await page.evaluate(() => ({
+      name: document.activeElement?.getAttribute('name'),
+      value: document.activeElement?.getAttribute('value'),
+    })), {name: 'skin', value: '3'});
+    await page.getByRole('radio', {name: 'Hautfarbe 4', exact: true}).press('ArrowLeft');
+    assert.equal(await page.getByRole('radio', {name: 'Hautfarbe 3', exact: true}).isChecked(), true);
+    assert.deepEqual(await page.evaluate(() => ({
+      name: document.activeElement?.getAttribute('name'),
+      value: document.activeElement?.getAttribute('value'),
+    })), {name: 'skin', value: '2'});
+    await page.getByRole('radio', {name: 'Hautfarbe 3', exact: true}).press('ArrowRight');
+    assert.equal(await page.getByRole('radio', {name: 'Hautfarbe 4', exact: true}).isChecked(), true);
     await page.getByRole('radio', {name: 'Kleidung Koralle', exact: true}).check();
     await page.getByRole('radio', {name: 'Kompass', exact: true}).check();
+    assert.deepEqual(await page.evaluate(() => ({
+      name: document.activeElement?.getAttribute('name'),
+      value: document.activeElement?.getAttribute('value'),
+    })), {name: 'hand', value: 'compass'});
     await page.getByText('Alle sechs Ausrüstungsteile sind freigeschaltet. Wähle deine Favoriten.', {exact: true}).waitFor();
     assert.equal(await page.evaluate(() => document.activeElement?.classList.contains('skip-link')), false);
     const skipBox = await page.locator('.skip-link').boundingBox();
