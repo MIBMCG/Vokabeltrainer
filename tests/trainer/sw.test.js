@@ -16,7 +16,7 @@ async function loadWorker({failInstall = false, currentCache = false, workerScop
     ['vokabeltrainer-product-repo-trainer-v1', new Map([['legacy', new Response('legacy')]])],
   ]);
   if (currentCache) {
-    stores.set(`${cacheOwner}v3`, new Map([
+    stores.set(`${cacheOwner}v4`, new Map([
       [`${scope}index.html`, new Response('current-version')],
     ]));
   }
@@ -98,7 +98,7 @@ test('worker installs the complete scoped trainer app without Google or personal
 test('failed installation preserves an existing active product cache', async () => {
   const worker = await loadWorker({failInstall: true, currentCache: true});
   await assert.rejects(dispatchExtendable(worker.listeners.get('install')), /synthetic install failure/);
-  const current = worker.stores.get('vokabeltrainer-product:%2Frepo%2Ftrainer%2F:v3');
+  const current = worker.stores.get('vokabeltrainer-product:%2Frepo%2Ftrainer%2F:v4');
   assert.equal(await current.get(`${scope}index.html`).text(), 'current-version');
 });
 

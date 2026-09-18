@@ -55,6 +55,7 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, onDown
   let practiceActive = restored?.practiceActive ?? false;
   let lastPracticeKey = null;
   let profileNotice = '';
+  let pendingProfileView = null;
   let destroyed = false;
   let setupBusy = false;
   let updateLocked = false;
@@ -210,10 +211,12 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, onDown
     for (const profile of profiles) {
       const progress = projection.profiles[profile.id];
       list.append(button(profile.value.name, () => {
+        const destination = pendingProfileView ?? 'practice';
+        pendingProfileView = null;
         profileNotice = '';
         activeProfileId = profile.id;
         practiceActive = false;
-        show('practice');
+        show(destination);
       }, {class: 'profile-card', 'data-profile-id': profile.id}));
       list.lastChild.append(el('span', {text: `Level ${progress?.level ?? 1} · ${progress?.points ?? 0} Punkte`}));
     }
@@ -241,7 +244,10 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, onDown
         el('p', {text: 'Profil wählen', attrs: {class: 'eyebrow'}}),
         el('h1', {text: title}),
         el('p', {text: copy}),
-        button('Profil auswählen', () => show('profiles'), {class: 'primary'}),
+        button('Profil auswählen', () => {
+          pendingProfileView = view;
+          show('profiles');
+        }, {class: 'primary'}),
       ]),
       shellNavigation(),
     );

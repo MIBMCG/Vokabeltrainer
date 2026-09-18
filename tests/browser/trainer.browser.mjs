@@ -724,11 +724,25 @@ test('trainer setup, adult decisions, persistence and BFCache lifecycle', {timeo
       && event.payload.value.german === 'Hund'
     )).payload.value.answers, longAnswers.split(' | '));
 
-    for (const label of ['Üben', 'Inselreise', 'Mein Avatar']) {
+    for (const [label, destinationHeading] of [
+      ['Üben', 'Hallo, Ada!'],
+      ['Inselreise', 'Deine Inselreise'],
+      ['Mein Avatar', 'Mein Avatar'],
+    ]) {
       await page.getByRole('button', {name: label, exact: true}).click();
       await page.getByText(/Wähle zuerst ein Lernprofil/i).waitFor();
       assert.equal(await page.getByText(/nächsten Arbeitspaket|folgt mit den freigeschalteten/i).count(), 0);
       await page.getByRole('button', {name: 'Profil auswählen', exact: true}).click();
+      await page.getByRole('heading', {name: 'Wer möchte üben?'}).waitFor();
+      await page.locator('#profile-list .profile-card', {hasText: /^Ada/}).click();
+      await page.getByRole('heading', {name: destinationHeading, exact: true}).waitFor();
+      await page.getByRole('button', {name: 'Profil wechseln', exact: true}).click();
+      await page.evaluate(() => {
+        const key = 'vokabeltrainer-shell-v1';
+        const state = JSON.parse(sessionStorage.getItem(key));
+        sessionStorage.setItem(key, JSON.stringify({...state, view: 'profiles', profileId: null}));
+      });
+      await page.reload();
       await page.getByRole('heading', {name: 'Wer möchte üben?'}).waitFor();
     }
 
@@ -1692,7 +1706,7 @@ test('trainer offline update UI blocks typing and pending answers before control
   try {
     await page.goto(harness.baseUrl);
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null, null, {timeout: 10_000});
-    harness.setServiceWorkerVersion('v4', {activationDelayMs: 750});
+    harness.setServiceWorkerVersion('v5', {activationDelayMs: 750});
     await page.evaluate(async () => {
       const registration = await navigator.serviceWorker.getRegistration('./');
       await registration.update();
@@ -1750,8 +1764,8 @@ test('trainer offline update UI blocks typing and pending answers before control
     const beforeReload = await productState(page);
     assert.equal(beforeReload.ledger.events.some(({type}) => type === 'round.completed' || type === 'round.abandoned'), false);
     assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product:')).sort()), [
-      'vokabeltrainer-product:%2Ftrainer%2F:v3',
       'vokabeltrainer-product:%2Ftrainer%2F:v4',
+      'vokabeltrainer-product:%2Ftrainer%2F:v5',
     ]);
     const navigation = page.waitForNavigation();
     await updateButton.click();
@@ -1766,7 +1780,7 @@ test('trainer offline update UI blocks typing and pending answers before control
     await navigation;
     await page.getByText('Richtig!', {exact: true}).waitFor();
     assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product:')).sort()), [
-      'vokabeltrainer-product:%2Ftrainer%2F:v4',
+      'vokabeltrainer-product:%2Ftrainer%2F:v5',
     ]);
   } finally {
     await context.close();
