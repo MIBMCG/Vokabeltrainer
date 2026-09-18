@@ -1,6 +1,6 @@
 # Arbeitsstand
 
-Pause am 17.09.2026 auf Nutzerwunsch. Das Insel-Konzept ist als Gestaltungsrichtung bestätigt. Alles wird für die Weiterarbeit am Laptop gesichert; heute keine weitere Entwicklung. Nächster Schritt nach ausdrücklicher Fortsetzung: unabhängige Review von Task 7, danach Tasks 8–13. Maßgeblich ist die [Laptop-Übergabe](docs/handoffs/2026-09-17-laptop-pause.md).
+Fortsetzung am 18.09.2026 ausdrücklich beauftragt; die Tagespause ist beendet. Aktueller Fortschritt: [Fortsetzung am Laptop](docs/handoffs/2026-09-18-fortsetzung.md). Der folgende Stand vom 17.09. bleibt als Ausgangspunkt erhalten, bis die neuen Arbeitspakete geprüft sind.
 
 Änderung der Prüfungsreihenfolge am 17.09.2026: Der Nutzer beauftragt ausdrücklich, zuerst die vollständige App gemäß bestätigtem Gesamtentwurf umzusetzen und erst danach beim Freund auf iPhone/iPad zu testen. Die bisherige Geräteprüfung vor umfangreicher Lernoberfläche ist damit als Entwicklungssperre aufgehoben. Reale Geräteabnahme bleibt offen und darf nicht als bestanden gelten. Bereits bestätigte manuelle Google-/Drive-Tests in zwei Browsern gelten weiter. Keine neue pauschale Startfreigabe verlangen; Hosting/Veröffentlichung und Kostenmodell werden dadurch nicht automatisch geändert.
 

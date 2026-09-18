@@ -1,6 +1,6 @@
 # Hier mit der Weiterarbeit beginnen
 
-Pause am 17.09.2026 auf Nutzerwunsch. Das Insel-Konzept ist als Gestaltungsrichtung bestätigt. Alles wird für die Weiterarbeit am Laptop gesichert; heute keine weitere Entwicklung. Nächster Schritt nach ausdrücklicher Fortsetzung: unabhängige Review von Task 7, danach Tasks 8–13. Maßgeblich ist die [Laptop-Übergabe](docs/handoffs/2026-09-17-laptop-pause.md).
+Fortsetzung am 18.09.2026 ausdrücklich beauftragt; die Tagespause ist beendet. Das Insel-Konzept bleibt bestätigt. Aktueller Fortschritt und nächster Schritt stehen in der [Fortsetzungsübergabe](docs/handoffs/2026-09-18-fortsetzung.md).
 
 Dieses Projekt kann mit beliebigen Entwicklungswerkzeugen und KI-Systemen fortgesetzt werden. Der Gesprächsverlauf ist dafür nicht erforderlich.
 
