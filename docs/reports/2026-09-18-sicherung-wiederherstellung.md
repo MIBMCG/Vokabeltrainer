@@ -88,3 +88,41 @@ Die Selbstprüfung umfasst Import-/Exportgrenzen, Hashumfang, reservierte IDs vo
 ## Grenzen
 
 Task 10 stellt die Backend-/Speicher-/Synchronisationsschnittstellen bereit. Task 11 muss die beschriebenen Vorschauen, Bestätigungen, Konfliktentscheidungen, Wiederanläufe, Dateidialoge und Downloads in die Erwachsenenansicht einbinden. Task 12/PWA wurde nicht vorgezogen. Task-9-Beobachtung O1 zum Authstatus vor Bindung bleibt ausdrücklich Task 11 zugeordnet. Reale Produkt-Google-, physische Zwei-Geräte-, iPhone/iPad-, Safari-/Home-Bildschirm- und Hostingabnahmen bleiben offen. Die Tests sind Protokoll- und Browsernachweise mit synthetischen Daten, keine reale Gerätefreigabe. Unabhängige Review folgt durch den Controller.
+
+## Korrekturrunde 1 – R1: Snapshotidentität unabhängig vom Epochen-Cache
+
+Die [unabhängige Review](2026-09-18-sicherung-wiederherstellung-review.md) hat R1 reproduziert: Nach erfolgreichem Cacheaufbau wurde ein später veröffentlichtes, intern gültiges Manifest mit derselben Snapshot-ID und anderem Inhalt als abgeglichen angenommen. Der ursprüngliche Manifestvergleich lag nur im bei Cachetreffer übersprungenen Epochenzweig. R1 wurde vollständig gelesen und mit den echten Transporthelfern in der synthetischen Drive-Fixture nachgestellt.
+
+Korrekturcode: **`49fde90fb089745e73f7d75438c720dbdab87d62`**, `fix: verify snapshot identity beyond epoch cache`. Unmittelbare Basis: **`fc127499e565e449712c4a4907e5b34300dbee1f`**. Die Controller-Dokumentationscommits bis einschließlich `fc12749`, der Reviewbericht und die übrigen Schnittstellen bleiben erhalten. Nur `src/trainer/sync/drive.js` und `tests/trainer/restore.test.js` wurden im Codecommit geändert.
+
+Jeder Abruf liest und validiert sämtliche gefundenen Snapshotmanifeste samt Teilen und gruppiert sie nach logischer Snapshot-ID, unabhängig vom Cache der Epochen oder Manifestdateien. Bestehende physische Datei-Hashprüfungen bleiben aktiv. Verschiedene gültige `totalHash`-Werte derselben Gruppe erzeugen `collision`-Quarantäne und verhindern „Abgeglichen“. Betroffene neue Epochen werden nicht aktiviert; ein bereits gespeicherter Stand bleibt erhalten. Sicherheitskopien und bekannte Manifestdateien werden erst nach erfolgreicher Gruppenprüfung bestätigt. Der zweite Manifestabruf muss zusätzlich denselben Datei-Hash liefern wie die vorangehende gebundene Dateiprüfung.
+
+Identische physische Duplikate sind ein eindeutiger Inhalt, auch bei Nullmanifest-Epochen. Ein expliziter Manifestverweis bleibt maßgeblich; ohne Verweis wird unter geprüften identischen Restoremanifesten stabil nach ASCII-Datei-ID ausgewählt. Alle Gruppen liegen vor der Epochenzuordnung vollständig vor, daher ist die Dateireihenfolge unerheblich. Ungültige unabhängige Manifeste werden separat quarantänisiert; gültige unabhängige Änderungen werden weiterhin übertragen. Keine neue persistierte Form und keine Änderung des Datenvertrags erforderlich. Preis dieser begrenzten Korrektur sind erneute vollständige Manifest-/Teillesungen je Abruf; es wird kein neuer, ungeprüfter logischer Cache eingeführt.
+
+RED vor der Produktänderung, Node 22.23.2:
+
+```text
+node --test --experimental-test-isolation=none --test-name-pattern='cached .*epoch rejects|identical physical snapshot|invalid independent snapshot' tests/trainer/restore.test.js
+tests 5; pass 2; fail 3
+cached referenced-manifest epoch: Missing expected rejection.
+cached null-manifest epoch: Missing expected rejection.
+identical duplicates, fresh null-manifest reader: Das Snapshot-Manifest fehlt oder ist nicht eindeutig.
+```
+
+GREEN desselben Befehls nach der Korrektur: **5 Tests, 5 bestanden, 0 fehlgeschlagen**. Die neuen Fälle nutzen `planSnapshotUploads`, `uploadVerified`, tatsächliche Commands-/Restore-/Syncinstanzen und persistierte Neustarts. Beide Kollisionsfälle prüfen zusätzlich einen neuen Leser mit umgekehrter Dateireihenfolge: Dieser bleibt in der Wurzelepoche; der bereits aktive Leser behält seinen gespeicherten Stand, meldet aber nicht `synced`. Die beiden Duplikatfälle prüfen sowohl warme Caches als auch neue Leser. Der fünfte Fall prüft nach einem beschädigten unabhängigen Manifest eine tatsächlich auf Drive vorhandene lokale Änderung und leere Pending-/Outboxlisten.
+
+Gezielter Lauf nach Erweiterung um den frischen Leser und Reihenfolgeprüfung:
+
+```text
+node --test --experimental-test-isolation=none tests/trainer/backup.test.js tests/trainer/restore.test.js tests/trainer/sync.test.js
+tests 52; pass 52; fail 0; cancelled 0; skipped 0; todo 0
+```
+
+Vollständiger Lauf auf dem Korrekturcode:
+
+```text
+npm test
+tests 259; pass 259; fail 0; cancelled 0; skipped 0; todo 0
+```
+
+`git diff --check` und `git diff --cached --check` waren ohne Ausgabe. Selbstreview des vollständigen Korrekturdiffs durchgeführt. Keine UI-/Serveränderung, deshalb kein erneuter Browserlauf; der frühere 4/4-Nachweis bleibt ein früherer Nachweis und wird nicht als neuer Lauf ausgegeben. Kein Push, Merge, Google-/Gerätezugriff oder zusätzliche Implementierung. R1 ist aus Implementierungssicht korrigiert; die unabhängige Nachprüfung übernimmt der Controller.
