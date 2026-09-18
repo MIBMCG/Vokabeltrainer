@@ -1,6 +1,7 @@
 import {project} from '../learning/progress.js';
 import {resolveEpochs} from '../model/epochs.js';
 import {el, field, button, message} from './dom.js';
+import {eventLabel, previewSummaryNodes, revisionChoiceNodes} from './preview.js';
 
 const stateByRoot = new WeakMap();
 
@@ -31,27 +32,6 @@ function statusLabel(status) {
   return 'Auf diesem Gerät gespeichert';
 }
 
-function describeRevision(event) {
-  const value = event?.payload?.value;
-  if (!value) return 'Diese Fassung ist nicht mehr lesbar.';
-  if (event.payload.entityType === 'word') {
-    return `${value.german} → ${value.answers.join(' / ')}${value.hint ? ` · Hinweis: ${value.hint}` : ''}`;
-  }
-  return value.name ?? 'Unbenannte Fassung';
-}
-
-function lateEventLabel(event, state) {
-  const profiles = project(state.ledger).entities.profiles;
-  const profileName = (profileId) => profiles[profileId]?.value?.name ?? 'ein Kind';
-  if (event.type === 'answer.recorded') return `Antwort von ${profileName(event.payload.profileId)} am ${event.day}`;
-  if (event.type === 'round.completed') return `Rundenabschluss von ${profileName(event.payload.profileId)} am ${event.day}`;
-  if (event.type === 'entity.revised') {
-    const names = {profile: 'Kind', lesson: 'Lektion', word: 'Vokabel'};
-    return `${names[event.payload.entityType] ?? 'Inhalt'} geändert am ${event.day}`;
-  }
-  return `Lernänderung vom ${event.day}`;
-}
-
 function ensureUnlocked(isUnlocked, auth) {
   if (typeof isUnlocked === 'function' && !isUnlocked()) {
     auth.invalidate();
@@ -59,23 +39,6 @@ function ensureUnlocked(isUnlocked, auth) {
     error.code = 'locked';
     throw error;
   }
-}
-
-function summaryList(summary) {
-  const list = el('dl', {attrs: {class: 'summary-list'}}, [
-    el('dt', {text: 'Profile'}), el('dd', {text: `${summary.profiles.before} → ${summary.profiles.after}`} ),
-    el('dt', {text: 'Vokabeln'}), el('dd', {text: `${summary.wordCount.before} → ${summary.wordCount.after}`} ),
-    el('dt', {text: 'Antworten'}), el('dd', {text: `${summary.answerCount.before} → ${summary.answerCount.after}`} ),
-    el('dt', {text: 'Inhaltsänderungen'}), el('dd', {text: String(summary.contentChanges.length)}),
-    el('dt', {text: 'Konflikte'}), el('dd', {text: String(summary.conflicts.length)}),
-  ]);
-  for (const [index, progress] of summary.progressChanges.entries()) {
-    list.append(
-      el('dt', {text: `Punkte · Kind ${index + 1}`}),
-      el('dd', {text: `${progress.points.before} → ${progress.points.after}`}),
-    );
-  }
-  return list;
 }
 
 export function renderSync({root, state, sync, restore, auth, commands, isUnlocked = () => true, onRefresh = null}) {
@@ -218,6 +181,7 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
   if (projection.conflicts.length > 0) {
     const conflicts = el('section', {attrs: {class: 'subpanel'}}, [el('h3', {text: 'Inhaltskonflikte'})]);
     for (const conflict of projection.conflicts) {
+      const conflictRevisions = conflict.heads.map((headId) => state.ledger.events.find(({id}) => id === headId));
       const card = el('article', {attrs: {class: 'management-card'}}, [
         el('h4', {text: conflict.entityType === 'word' ? 'Vokabelkonflikt' : 'Bearbeitungskonflikt'}),
         el('p', {text: 'Beide Fassungen bleiben erhalten, bis Sie eine gemeinsame Nachfolgerfassung wählen.'}),
@@ -225,7 +189,7 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
       for (const headId of conflict.heads) {
         const revision = state.ledger.events.find(({id}) => id === headId);
         card.append(el('div', {attrs: {class: 'revision-choice'}}, [
-          el('p', {text: describeRevision(revision)}),
+          ...revisionChoiceNodes(revision, state, [], conflictRevisions),
           button('Diese Fassung übernehmen', () => run(() => commands.revise({
             entityType: conflict.entityType,
             entityId: conflict.entityId,
@@ -260,18 +224,20 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
       el('h3', {text: 'Alte Änderungen getrennt erhalten'}),
       el('p', {text: 'Nicht gewählte Änderungen bleiben sichtbar und werden weiter in Sicherungen aufgenommen.'}),
     ]);
+    const inspectSelection = button('Auswahl prüfen', () => run(
+      () => restore.previewAdoption([...ui.selectedLate]),
+      {after: (preview) => { ui.adoptionPreview = {kind: 'adoption', preview}; }},
+    ), {class: 'secondary', disabled: ui.selectedLate.size === 0});
     for (const event of projection.lateEvents) {
       const checkbox = el('input', {attrs: {type: 'checkbox', value: event.id, checked: ui.selectedLate.has(event.id)}});
       checkbox.addEventListener('change', () => {
         if (checkbox.checked) ui.selectedLate.add(event.id);
         else ui.selectedLate.delete(event.id);
+        inspectSelection.disabled = ui.selectedLate.size === 0;
       });
-      late.append(el('label', {text: lateEventLabel(event, state)}, [checkbox]));
+      late.append(el('label', {text: eventLabel(event, state)}, [checkbox]));
     }
-    late.append(button('Auswahl prüfen', () => run(
-      () => restore.previewAdoption([...ui.selectedLate]),
-      {after: (preview) => { ui.adoptionPreview = {kind: 'adoption', preview}; }},
-    ), {class: 'secondary', disabled: ui.selectedLate.size === 0}));
+    late.append(inspectSelection);
     section.append(late);
   }
 
@@ -279,7 +245,12 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
     const {kind, preview} = ui.adoptionPreview;
     section.append(el('section', {attrs: {class: 'restore-preview', 'aria-labelledby': 'sync-preview-title'}}, [
       el('h3', {text: kind === 'epoch' ? 'Datenstand bestätigen' : 'Übernahme bestätigen', attrs: {id: 'sync-preview-title'}}),
-      summaryList(preview.summary),
+      ...previewSummaryNodes({
+        summary: preview.summary,
+        state,
+        selectedEventIds: preview.eventIds ?? [],
+        supportEventIds: preview.supportEventIds ?? [],
+      }),
       button(kind === 'epoch' ? 'Datenstand gemeinsam übernehmen' : 'Ausgewählte Änderungen übernehmen', () => run(
         () => kind === 'epoch'
           ? restore.confirm(preview.previewId)

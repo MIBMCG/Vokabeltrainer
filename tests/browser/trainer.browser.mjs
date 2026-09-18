@@ -1124,6 +1124,9 @@ test('trainer sync and restore exposes deliberate Google, download and import fl
     }), eventsBeforeStaleChange);
     await page.getByRole('dialog').getByRole('button', {name: 'Wiederherstellung verbindlich bestätigen'}).click();
     await page.getByText(/Datenstand hat sich geändert.*erneut bestätigt/i).waitFor();
+    await page.getByRole('dialog').getByRole('heading', {name: 'Vokabel Hund', exact: true}).waitFor();
+    await page.getByRole('dialog').getByText('Vorher: dog / hound / canine', {exact: true}).waitFor();
+    await page.getByRole('dialog').getByText('Nachher: dog / hound', {exact: true}).waitFor();
     await page.screenshot({path: resolve(resultsDirectory, 'trainer-restore-stale-mobile.png'), fullPage: true});
     assert.equal(await page.getByRole('dialog').count(), 1);
     await page.getByRole('dialog').getByRole('button', {name: 'Abbrechen'}).click();
@@ -1247,6 +1250,10 @@ test('trainer sync and restore keeps concurrent word versions until an adult res
     await second.page.getByRole('heading', {name: 'Inhaltskonflikte'}).waitFor();
     await second.page.getByText(/pooch/).waitFor();
     await second.page.getByText(/canine/).waitFor();
+    const conflictingBackup = await second.page.evaluate(async (current) => {
+      const {exportBackup} = await import('/src/trainer/backup/format.js');
+      return exportBackup(current, '2026-09-18T13:30:00.000Z');
+    }, await productState(second.page));
     await second.page.screenshot({path: resolve(resultsDirectory, 'trainer-revision-conflict-mobile.png'), fullPage: true});
 
     await second.page.getByRole('button', {name: 'Zur Profilauswahl', exact: true}).click();
@@ -1267,6 +1274,17 @@ test('trainer sync and restore keeps concurrent word versions until an adult res
     await second.page.getByText('Abgeglichen', {exact: true}).waitFor();
     await first.page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).click();
     await first.page.getByText('Abgeglichen', {exact: true}).waitFor();
+    await first.page.getByRole('button', {name: 'Sicherung', exact: true}).click();
+    await first.page.locator('#backup-file').setInputFiles({
+      name: 'conflicting-words.json',
+      mimeType: 'application/json',
+      buffer: Buffer.from(JSON.stringify(conflictingBackup)),
+    });
+    const conflictPreview = first.page.getByRole('dialog', {name: 'Wiederherstellung prüfen'});
+    await conflictPreview.getByRole('heading', {name: 'Konflikt: Vokabel Hund', exact: true}).waitFor();
+    await conflictPreview.getByText('Englisch: dog / hound / pooch', {exact: true}).waitFor();
+    await conflictPreview.getByText('Englisch: dog / hound / canine', {exact: true}).waitFor();
+    await conflictPreview.getByRole('button', {name: 'Abbrechen'}).click();
     const restoreSourceState = await productState(first.page);
     const restoreBackup = await first.page.evaluate(async (current) => {
       const {exportBackup} = await import('/src/trainer/backup/format.js');
@@ -1276,9 +1294,9 @@ test('trainer sync and restore keeps concurrent word versions until an adult res
     second.controls.offline = true;
     await second.page.getByRole('button', {name: 'Zur Profilauswahl', exact: true}).click();
     await second.page.getByRole('button', {name: /^Ada/}).click();
-    await second.page.getByRole('button', {name: 'Fortsetzen', exact: true}).click();
+    await second.page.getByRole('button', {name: 'Neue Runde', exact: true}).click();
+    await second.page.getByRole('button', {name: 'Alle Vokabeln', exact: true}).click();
 
-    await first.page.getByRole('button', {name: 'Sicherung', exact: true}).click();
     await first.page.locator('#backup-file').setInputFiles({
       name: 'restore-before-offline-answer.json',
       mimeType: 'application/json',
@@ -1318,9 +1336,27 @@ test('trainer sync and restore keeps concurrent word versions until an adult res
       event.type === 'entity.revised' && event.payload.entityType === 'profile'
     )).payload.entityId;
     const pointsBeforeAdoption = projectState(beforeAdoptionState.ledger).profiles[adoptedProfileId].points;
-    await second.page.getByLabel(/Antwort von Ada/).check();
-    await second.page.getByRole('button', {name: 'Auswahl prüfen', exact: true}).click();
+    const lateAnswer = second.page.getByLabel(/Antwort von Ada/);
+    const inspectSelection = second.page.getByRole('button', {name: 'Auswahl prüfen', exact: true});
+    assert.equal(await inspectSelection.isDisabled(), true);
+    await lateAnswer.check();
+    assert.equal(await inspectSelection.isEnabled(), true);
+    await lateAnswer.uncheck();
+    assert.equal(await inspectSelection.isDisabled(), true);
+    await lateAnswer.check();
+    assert.equal(await inspectSelection.isEnabled(), true);
+    await inspectSelection.click();
     await second.page.getByRole('heading', {name: 'Übernahme bestätigen'}).waitFor();
+    const adoptionPreview = second.page.locator('.restore-preview');
+    await adoptionPreview.getByRole('heading', {name: 'Ausgewählte Änderungen', exact: true}).waitFor();
+    await adoptionPreview.getByText(/Antwort von Ada zu (Hund|Tier).*richtig/).waitFor({timeout: 5_000}).catch(async (error) => {
+      error.message += `\nVisible adoption preview:\n${await second.page.locator('body').innerText()}`;
+      throw error;
+    });
+    await adoptionPreview.getByRole('heading', {name: 'Nur benötigte Grundlagen', exact: true}).waitFor();
+    await adoptionPreview.getByText(/Rundenstart für Ada/).waitFor();
+    await adoptionPreview.getByText(/keine zusätzliche Wertung/i).waitFor();
+    await adoptionPreview.getByText('Punkte · Ada', {exact: true}).waitFor();
     await second.page.getByText(new RegExp(`${pointsBeforeAdoption} → ${pointsBeforeAdoption + 10}`)).waitFor();
     await second.page.getByRole('button', {name: 'Ausgewählte Änderungen übernehmen', exact: true}).click();
     await second.page.getByRole('heading', {name: 'Übernahme bestätigen'}).waitFor({state: 'detached'});
@@ -1379,7 +1415,72 @@ test('trainer sync and restore renders a mobile epoch conflict without choosing 
     assert.equal(await epochOptions.count(), 3);
     assert.equal(await page.getByText(/browser-restore|browser-snapshot/).count(), 0);
     assert.equal(await page.getByRole('button', {name: 'Sicherung herunterladen', exact: true}).isDisabled(), true);
+    await page.locator('#backup-epoch').selectOption('browser-restore-a');
+    assert.equal(await page.getByRole('button', {name: 'Sicherung herunterladen', exact: true}).isEnabled(), true);
+    await page.locator('#backup-epoch').selectOption('');
+    assert.equal(await page.getByRole('button', {name: 'Sicherung herunterladen', exact: true}).isDisabled(), true);
+    await page.locator('#backup-epoch').selectOption('browser-restore-b');
+    const conflictedDownload = page.waitForEvent('download');
+    await page.getByRole('button', {name: 'Sicherung herunterladen', exact: true}).click();
+    assert.match((await conflictedDownload).suggestedFilename(), /\.json$/);
+    await page.getByText('Download gestartet', {exact: true}).waitFor();
     await page.screenshot({path: resolve(resultsDirectory, 'trainer-epoch-export-mobile.png'), fullPage: true});
+  } finally {
+    await context.close();
+    await harness.close();
+  }
+});
+
+test('trainer sync and restore describes archive and assignment conflict choices', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page, context} = await harness.newDevice();
+  try {
+    await page.goto(harness.baseUrl);
+    await setupPractice(page);
+    const state = await productState(page);
+    const profile = state.ledger.events.find((event) => event.type === 'entity.revised' && event.payload.entityType === 'profile');
+    const lesson = state.ledger.events.find((event) => event.type === 'entity.revised' && event.payload.entityType === 'lesson');
+    const word = state.ledger.events.find((event) => event.type === 'entity.revised'
+      && event.payload.entityType === 'word' && event.payload.value.german === 'Hund');
+    const baseEnvelope = {
+      format: 'vokabeltrainer-product', formatVersion: 1, ruleVersion: 1, kind: 'event',
+      datasetId: state.ledger.descriptor.datasetId, epochId: state.ledger.descriptor.rootEpochId,
+      deviceId: state.deviceId, occurredAt: '2026-09-18T15:00:00.000Z', day: '2026-09-18',
+      type: 'entity.revised',
+    };
+    let clock = state.clock;
+    const revision = (id, entityType, entityId, parents, value) => ({
+      ...baseEnvelope, id, clock: ++clock,
+      payload: {entityType, entityId, parents, value},
+    });
+    state.ledger.events.push(
+      revision('browser-unit-2', 'lesson', 'browser-l2', [], {
+        name: 'Unit 2', archived: false, profileIds: [profile.payload.entityId],
+      }),
+      revision('browser-profile-active', 'profile', profile.payload.entityId, [profile.id], {...profile.payload.value, archived: false}),
+      revision('browser-profile-archived', 'profile', profile.payload.entityId, [profile.id], {...profile.payload.value, archived: true}),
+      revision('browser-lesson-ada', 'lesson', lesson.payload.entityId, [lesson.id], {...lesson.payload.value, profileIds: [profile.payload.entityId]}),
+      revision('browser-lesson-none', 'lesson', lesson.payload.entityId, [lesson.id], {...lesson.payload.value, profileIds: []}),
+      revision('browser-word-unit-1', 'word', word.payload.entityId, [word.id], {...word.payload.value, lessonId: lesson.payload.entityId}),
+      revision('browser-word-unit-2', 'word', word.payload.entityId, [word.id], {...word.payload.value, lessonId: 'browser-l2'}),
+    );
+    state.clock = clock;
+    await writeProductState(page, state);
+    await page.reload();
+    await page.locator('#adult-entry').click();
+    await page.locator('#adult-pin').fill('1234');
+    await page.locator('#adult-unlock').click();
+    await page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    await page.getByRole('heading', {name: 'Inhaltskonflikte'}).waitFor();
+    await page.getByText('Kind: Ada', {exact: true}).first().waitFor();
+    await page.getByText('Status: Aktiv', {exact: true}).first().waitFor();
+    await page.getByText('Status: Archiviert', {exact: true}).first().waitFor();
+    await page.getByText('Lektion: Unit 1', {exact: true}).first().waitFor();
+    await page.getByText('Lektion: Unit 2', {exact: true}).first().waitFor();
+    await page.getByText('Lernstand: bleibt bei allen Fassungen gleich', {exact: true}).first().waitFor();
+    await page.getByText('Freigegeben für: Ada', {exact: true}).first().waitFor();
+    await page.getByText('Freigegeben für: kein Kind', {exact: true}).first().waitFor();
+    assert.equal(await page.getByText(/browser-l2|browser-profile|browser-word|browser-lesson/).count(), 0);
   } finally {
     await context.close();
     await harness.close();

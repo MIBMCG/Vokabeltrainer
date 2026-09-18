@@ -1,6 +1,7 @@
 import {exportBackup, parseBackup} from '../backup/format.js';
 import {resolveEpochs} from '../model/epochs.js';
 import {el, field, button, message} from './dom.js';
+import {previewSummaryNodes} from './preview.js';
 
 const stateByRoot = new WeakMap();
 
@@ -15,21 +16,6 @@ function uiState(root) {
 function downloadBackup(onDownload, backup, filename) {
   const blob = new Blob([JSON.stringify(backup, null, 2)], {type: 'application/json;charset=utf-8'});
   return onDownload(blob, filename);
-}
-
-function summaryNodes(summary) {
-  const list = el('dl', {attrs: {class: 'summary-list'}}, [
-    el('dt', {text: 'Profile'}), el('dd', {text: `${summary.profiles.before} → ${summary.profiles.after}`}),
-    el('dt', {text: 'Vokabeln'}), el('dd', {text: `${summary.wordCount.before} → ${summary.wordCount.after}`}),
-    el('dt', {text: 'Antworten'}), el('dd', {text: `${summary.answerCount.before} → ${summary.answerCount.after}`}),
-  ]);
-  for (const [index, progress] of summary.progressChanges.entries()) {
-    list.append(
-      el('dt', {text: `Punkte · Kind ${index + 1}`}),
-      el('dd', {text: `${progress.points.before} → ${progress.points.after}`}),
-    );
-  }
-  return list;
 }
 
 function keepFocusInside(dialog, event) {
@@ -47,7 +33,7 @@ function keepFocusInside(dialog, event) {
   }
 }
 
-function showRestorePreview({summary, onConfirm, onCancel, trigger, title = 'Wiederherstellung prüfen', staleNotice = ''}) {
+function showRestorePreview({summary, state, events, onConfirm, onCancel, trigger, title = 'Wiederherstellung prüfen', staleNotice = ''}) {
   const dialog = el('dialog', {attrs: {class: 'restore-dialog', 'aria-labelledby': 'restore-dialog-title'}});
   const close = () => {
     dialog.close();
@@ -81,9 +67,8 @@ function showRestorePreview({summary, onConfirm, onCancel, trigger, title = 'Wie
   dialog.append(
     el('h2', {text: title, attrs: {id: 'restore-dialog-title'}}),
     staleNotice ? message(staleNotice, 'error') : null,
-    summaryNodes(summary),
+    ...previewSummaryNodes({summary, state, events}),
     ...warnings.map((text) => message(text, 'error')),
-    el('p', {text: `${summary.contentChanges.length} Inhaltsänderungen und ${summary.conflicts.length} Konflikte sind in der Vorschau enthalten.`}),
     el('p', {text: `Schutzgrenzen: höchstens ${summary.limits.events} Ereignisse und ${Math.round(summary.limits.bytes / 1024 / 1024)} MiB.`}),
     el('div', {attrs: {class: 'dialog-actions'}}, [confirm, cancel]),
   );
@@ -128,7 +113,10 @@ export function renderBackup({root, state, restore, onDownload, isUnlocked = () 
       select.append(el('option', {text: `Datenstand ${index + 1} vom ${date}`, attrs: {value: epochId}}));
     }
     select.value = ui.selectedEpochId;
-    select.addEventListener('change', () => { ui.selectedEpochId = select.value; });
+    select.addEventListener('change', () => {
+      ui.selectedEpochId = select.value;
+      exportButton.disabled = ui.busy || !ui.selectedEpochId;
+    });
     section.append(message('Mehrere Wiederherstellungsstände sind offen. Für die Sicherung muss ein Kopf ausdrücklich gewählt werden.', 'error'), field('Datenstand für die Sicherung', select));
   }
 
@@ -177,6 +165,8 @@ export function renderBackup({root, state, restore, onDownload, isUnlocked = () 
       assertUnlocked(isUnlocked);
       const openPreview = (result, staleNotice = '') => showRestorePreview({
         summary: result.summary,
+        state,
+        events: ui.pendingBackup?.events ?? [],
         trigger: file,
         staleNotice,
         onConfirm: async () => {
