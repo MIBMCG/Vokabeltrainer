@@ -56,6 +56,8 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, onDown
   let profileNotice = '';
   let destroyed = false;
   let setupBusy = false;
+  let updateLocked = false;
+  let updateRelease = null;
   const setupDraft = {
     'dataset-name': 'Familienwortschatz',
     pin: '',
@@ -325,6 +327,7 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, onDown
   }
 
   function handlePracticeNavigation(destination, {render: shouldRender = true} = {}) {
+    if (updateLocked) return;
     if (destination === 'practice-active' || destination === 'practice-landing') {
       currentView = 'practice';
       practiceActive = destination === 'practice-active';
@@ -343,6 +346,7 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, onDown
   }
 
   function show(view) {
+    if (updateLocked) return;
     if (!['profiles', 'practice', 'journey', 'avatar', 'adult'].includes(view)) return;
     if (currentView === 'adult' && view !== 'adult') {
       closeAdultDialogs();
@@ -396,6 +400,7 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, onDown
     },
     async pauseForUpdate() {
       if (destroyed) throw updateBoundaryError('not-ready', 'Die App wird gerade geschlossen.');
+      if (updateLocked) throw updateBoundaryError('not-ready', 'Die Aktualisierung läuft bereits.');
       const state = commands.getState();
       if (setupBusy || state === null || state.pinVerifier === null) {
         throw updateBoundaryError('not-ready', 'Bitte die Einrichtung zuerst abschließen.');
@@ -411,9 +416,25 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, onDown
         throw updateBoundaryError('typed-answer-present', 'Bitte die offene Eingabe zuerst absenden oder leeren.');
       }
       persistShellState();
+      updateLocked = true;
+      root.inert = true;
+      root.setAttribute('aria-busy', 'true');
+      let released = false;
+      const release = () => {
+        if (released) return;
+        released = true;
+        if (updateRelease !== release) return;
+        updateRelease = null;
+        updateLocked = false;
+        root.inert = false;
+        root.removeAttribute('aria-busy');
+      };
+      updateRelease = release;
+      return release;
     },
     show,
     destroy() {
+      updateRelease?.();
       destroyed = true;
       document.removeEventListener('visibilitychange', onVisibilityChange);
       closeAdultDialogs();

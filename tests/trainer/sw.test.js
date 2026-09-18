@@ -5,22 +5,38 @@ import vm from 'node:vm';
 
 const scope = 'https://example.test/repo/trainer/';
 
-async function loadWorker({failInstall = false, currentCache = false} = {}) {
+async function loadWorker({failInstall = false, currentCache = false, workerScope = scope, hasWaiting = true} = {}) {
   const listeners = new Map();
+  const cacheOwner = `vokabeltrainer-product:${encodeURIComponent(new URL(workerScope).pathname)}:`;
   const stores = new Map([
     ['drive-probe-v1', new Map([['probe', new Response('probe')]])],
     ['foreign-cache', new Map([['foreign', new Response('foreign')]])],
-    ['vokabeltrainer-product-repo-trainer-v0', new Map([['old', new Response('old')]])],
+    [`${cacheOwner}v1`, new Map([['old', new Response('old')]])],
+    ['vokabeltrainer-product:%2Frepo%2Ftrainer%2Fother%2Ftrainer%2F:v1', new Map([['nested', new Response('nested')]])],
+    ['vokabeltrainer-product-repo-trainer-v1', new Map([['legacy', new Response('legacy')]])],
   ]);
   if (currentCache) {
-    stores.set('vokabeltrainer-product-repo-trainer-v1', new Map([
+    stores.set(`${cacheOwner}v2`, new Map([
       [`${scope}index.html`, new Response('current-version')],
     ]));
   }
-  const controlled = [{id: 'controlled', url: `${scope}index.html`}];
-  const calls = {addAll: [], deleted: [], fetch: [], skipWaiting: 0, claim: 0};
+  const controlled = [{
+    id: 'controlled',
+    url: `${workerScope}index.html`,
+    postMessage(message) { calls.responses.push(message); },
+  }];
+  const activeWorker = {state: 'activated'};
+  const waitingWorker = {
+    postMessage(message) {
+      calls.relayed.push(message);
+    },
+  };
+  const calls = {
+    addAll: [], deleted: [], fetch: [], opened: [], relayed: [], responses: [], matched: [], skipWaiting: 0, claim: 0,
+  };
   const caches = {
     async open(name) {
+      calls.opened.push(name);
       if (!stores.has(name)) stores.set(name, new Map());
       const store = stores.get(name);
       return {
@@ -38,10 +54,10 @@ async function loadWorker({failInstall = false, currentCache = false} = {}) {
     async delete(name) { calls.deleted.push(name); return stores.delete(name); },
   };
   const self = {
-    location: new URL(`${scope}sw.js`),
-    registration: {scope},
+    location: new URL(`${workerScope}sw.js`),
+    registration: {scope: workerScope, active: activeWorker, waiting: hasWaiting ? waitingWorker : null},
     clients: {
-      async matchAll() { return controlled; },
+      async matchAll(options) { calls.matched.push(options); return controlled; },
       async claim() { calls.claim += 1; },
     },
     async skipWaiting() { calls.skipWaiting += 1; },
@@ -55,7 +71,7 @@ async function loadWorker({failInstall = false, currentCache = false} = {}) {
     },
   });
   vm.runInContext(await readFile(new URL('../../trainer/sw.js', import.meta.url), 'utf8'), context);
-  return {listeners, stores, calls};
+  return {listeners, stores, calls, activeWorker, waitingWorker, controlled};
 }
 
 async function dispatchExtendable(listener, extra = {}) {
@@ -81,7 +97,7 @@ test('worker installs the complete scoped trainer app without Google or personal
 test('failed installation preserves an existing active product cache', async () => {
   const worker = await loadWorker({failInstall: true, currentCache: true});
   await assert.rejects(dispatchExtendable(worker.listeners.get('install')), /synthetic install failure/);
-  const current = worker.stores.get('vokabeltrainer-product-repo-trainer-v1');
+  const current = worker.stores.get('vokabeltrainer-product:%2Frepo%2Ftrainer%2F:v2');
   assert.equal(await current.get(`${scope}index.html`).text(), 'current-version');
 });
 
@@ -91,8 +107,18 @@ test('activation removes only older caches for the same product scope', async ()
   await dispatchExtendable(worker.listeners.get('activate'));
   assert.equal(worker.stores.has('drive-probe-v1'), true);
   assert.equal(worker.stores.has('foreign-cache'), true);
-  assert.equal(worker.stores.has('vokabeltrainer-product-repo-trainer-v0'), false);
+  assert.equal(worker.stores.has('vokabeltrainer-product:%2Frepo%2Ftrainer%2Fother%2Ftrainer%2F:v1'), true);
+  assert.equal(worker.stores.has('vokabeltrainer-product-repo-trainer-v1'), true);
+  assert.equal(worker.stores.has('vokabeltrainer-product:%2Frepo%2Ftrainer%2F:v1'), false);
   assert.equal(worker.calls.claim, 1);
+});
+
+test('cache ownership is injective for differently segmented scope paths', async () => {
+  const segmented = await loadWorker({workerScope: 'https://example.test/a/b/trainer/'});
+  const dashed = await loadWorker({workerScope: 'https://example.test/a-b/trainer/'});
+  await dispatchExtendable(segmented.listeners.get('install'));
+  await dispatchExtendable(dashed.listeners.get('install'));
+  assert.notEqual(segmented.calls.opened.at(-1), dashed.calls.opened.at(-1));
 });
 
 test('fetch serves only exact same-origin app assets from the product cache', async () => {
@@ -119,16 +145,50 @@ test('fetch serves only exact same-origin app assets from the product cache', as
   }
 });
 
-test('waiting worker activates only for an explicit message from a controlled scoped client', async () => {
+test('active worker relays activation only for the current controlled scoped client', async () => {
   const worker = await loadWorker();
   await dispatchExtendable(worker.listeners.get('message'), {
-    data: {type: 'ACTIVATE_UPDATE'},
+    data: {type: 'REQUEST_UPDATE_ACTIVATION', requestId: 'outside-request'},
     source: {id: 'outside', url: 'https://example.test/other/'},
+  });
+  assert.deepEqual(worker.calls.relayed, []);
+  await dispatchExtendable(worker.listeners.get('message'), {
+    data: {type: 'ACTIVATE_UPDATE', requestId: 'direct-request'},
+    source: worker.controlled[0],
+  });
+  assert.equal(worker.calls.skipWaiting, 0, 'a window client must not address the waiting-worker command');
+  await dispatchExtendable(worker.listeners.get('message'), {
+    data: {type: 'REQUEST_UPDATE_ACTIVATION', requestId: 'controlled-request'},
+    source: worker.controlled[0],
+  });
+  assert.equal(worker.calls.matched.at(-1).type, 'window');
+  assert.equal(worker.calls.matched.at(-1).includeUncontrolled, false);
+  assert.equal(worker.calls.relayed.length, 1);
+  assert.equal(worker.calls.relayed[0].type, 'ACTIVATE_UPDATE');
+  assert.equal(worker.calls.relayed[0].requestId, 'controlled-request');
+});
+
+test('waiting worker accepts activation only from the registered active worker', async () => {
+  const worker = await loadWorker();
+  await dispatchExtendable(worker.listeners.get('message'), {
+    data: {type: 'ACTIVATE_UPDATE', requestId: 'direct-request'},
+    source: worker.controlled[0],
   });
   assert.equal(worker.calls.skipWaiting, 0);
   await dispatchExtendable(worker.listeners.get('message'), {
-    data: {type: 'ACTIVATE_UPDATE'},
-    source: {id: 'controlled', url: `${scope}index.html`},
+    data: {type: 'ACTIVATE_UPDATE', requestId: 'relayed-request'},
+    source: worker.activeWorker,
   });
   assert.equal(worker.calls.skipWaiting, 1);
+});
+
+test('active worker rejects the current controlled request when no update is waiting', async () => {
+  const worker = await loadWorker({hasWaiting: false});
+  await dispatchExtendable(worker.listeners.get('message'), {
+    data: {type: 'REQUEST_UPDATE_ACTIVATION', requestId: 'stale-request'},
+    source: worker.controlled[0],
+  });
+  assert.equal(worker.calls.responses.length, 1);
+  assert.equal(worker.calls.responses[0].type, 'UPDATE_ACTIVATION_REJECTED');
+  assert.equal(worker.calls.responses[0].requestId, 'stale-request');
 });

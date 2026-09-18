@@ -1,7 +1,6 @@
 const SCOPE = self.registration.scope;
-const SCOPE_KEY = new URL(SCOPE).pathname.split('/').filter(Boolean).join('-') || 'root';
-const CACHE_PREFIX = `vokabeltrainer-product-${SCOPE_KEY}-`;
-const CACHE_NAME = `${CACHE_PREFIX}v1`;
+const CACHE_OWNER = `vokabeltrainer-product:${encodeURIComponent(new URL(SCOPE).pathname)}:`;
+const CACHE_NAME = `${CACHE_OWNER}v2`;
 const APP_ASSETS = [
   './',
   './index.html',
@@ -55,7 +54,7 @@ self.addEventListener('activate', (event) => {
   event.waitUntil((async () => {
     const names = await caches.keys();
     await Promise.all(names
-      .filter((name) => name.startsWith(CACHE_PREFIX) && name !== CACHE_NAME)
+      .filter((name) => name.startsWith(CACHE_OWNER) && name !== CACHE_NAME)
       .map((name) => caches.delete(name)));
     await self.clients.claim();
   })());
@@ -74,7 +73,14 @@ self.addEventListener('fetch', (event) => {
 });
 
 self.addEventListener('message', (event) => {
-  if (event.data?.type !== 'ACTIVATE_UPDATE' || !event.source?.id) return;
+  const requestId = event.data?.requestId;
+  if (typeof requestId !== 'string' || !requestId) return;
+  if (event.data.type === 'ACTIVATE_UPDATE') {
+    if (event.source !== self.registration.active) return;
+    event.waitUntil(self.skipWaiting());
+    return;
+  }
+  if (event.data.type !== 'REQUEST_UPDATE_ACTIVATION' || !event.source?.id) return;
   event.waitUntil((async () => {
     let sourceUrl;
     try {
@@ -83,6 +89,13 @@ self.addEventListener('message', (event) => {
       return;
     }
     if (sourceUrl.origin !== self.location.origin || !sourceUrl.href.startsWith(SCOPE)) return;
-    await self.skipWaiting();
+    const controlledClients = await self.clients.matchAll({type: 'window', includeUncontrolled: false});
+    if (!controlledClients.some((client) => client.id === event.source.id)) return;
+    const waiting = self.registration.waiting;
+    if (!waiting) {
+      event.source.postMessage?.({type: 'UPDATE_ACTIVATION_REJECTED', requestId});
+      return;
+    }
+    waiting.postMessage({type: 'ACTIVATE_UPDATE', requestId});
   })());
 });

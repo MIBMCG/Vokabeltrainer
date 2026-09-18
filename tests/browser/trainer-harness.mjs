@@ -19,17 +19,26 @@ export async function createTrainerHarness({basePath = ''} = {}) {
   const {chromium} = await import(moduleUrl());
   const server = createProbeServer({basePath});
   const productWorker = await readFile(new URL('../../trainer/sw.js', import.meta.url), 'utf8');
-  let workerVersion = 'v1';
+  let workerVersion = 'v2';
+  let workerActivationDelayMs = 0;
   const originalRequest = server.listeners('request')[0];
   server.removeAllListeners('request');
   server.on('request', (request, response) => {
     const pathname = new URL(request.url, 'http://127.0.0.1').pathname;
-    if (pathname === `${basePath}/trainer/sw.js` && workerVersion !== 'v1') {
-      const source = productWorker.replace(
-        'const CACHE_NAME = `${CACHE_PREFIX}v1`;',
-        `const CACHE_NAME = \`\${CACHE_PREFIX}${workerVersion}\`;`,
+    if (pathname === `${basePath}/trainer/sw.js` && workerVersion !== 'v2') {
+      let source = productWorker.replace(
+        'const CACHE_NAME = `${CACHE_OWNER}v2`;',
+        `const CACHE_NAME = \`\${CACHE_OWNER}${workerVersion}\`;`,
       );
       if (source === productWorker) throw new Error('Synthetic worker version marker was not replaced.');
+      if (workerActivationDelayMs > 0) {
+        const beforeDelay = source;
+        source = source.replace(
+          'event.waitUntil(self.skipWaiting());',
+          `event.waitUntil(new Promise((resolveActivation) => setTimeout(resolveActivation, ${workerActivationDelayMs}))\n      .then(() => self.skipWaiting()));`,
+        );
+        if (source === beforeDelay) throw new Error('Synthetic activation delay marker was not replaced.');
+      }
       response.writeHead(200, {
         'Cache-Control': 'no-cache',
         'Content-Type': 'text/javascript; charset=utf-8',
@@ -92,9 +101,13 @@ export async function createTrainerHarness({basePath = ''} = {}) {
       return {context, page, controls};
     },
     stopServer,
-    setServiceWorkerVersion(version) {
-      if (!/^v[2-9][0-9]*$/u.test(version)) throw new TypeError('Synthetic worker version must be v2 or later.');
+    setServiceWorkerVersion(version, {activationDelayMs = 0} = {}) {
+      if (!/^v(?:[3-9]|[1-9][0-9]+)$/u.test(version)) throw new TypeError('Synthetic worker version must be v3 or later.');
+      if (!Number.isSafeInteger(activationDelayMs) || activationDelayMs < 0) {
+        throw new TypeError('Synthetic activation delay must be a non-negative integer.');
+      }
       workerVersion = version;
+      workerActivationDelayMs = activationDelayMs;
     },
     async close() {
       await Promise.allSettled([...contexts].map((context) => context.close()));

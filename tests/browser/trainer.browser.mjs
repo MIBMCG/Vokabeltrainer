@@ -1564,17 +1564,43 @@ test('trainer offline update UI blocks typing and pending answers before control
   const {page, context} = await harness.newDevice();
   try {
     await page.goto(harness.baseUrl);
-    await setupPractice(page);
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null, null, {timeout: 10_000});
-    harness.setServiceWorkerVersion('v2');
+    harness.setServiceWorkerVersion('v3', {activationDelayMs: 750});
     await page.evaluate(async () => {
       const registration = await navigator.serviceWorker.getRegistration('./');
       await registration.update();
     });
     await page.waitForFunction(async () => (await navigator.serviceWorker.getRegistration('./'))?.waiting !== null);
+    await page.reload();
+    await page.locator('#dataset-name').waitFor();
     const updateButton = page.locator('#update-activate');
     await updateButton.waitFor();
     assert.equal(await updateButton.textContent(), 'Jetzt aktualisieren');
+
+    await page.evaluate(async () => {
+      const registration = await navigator.serviceWorker.getRegistration('./');
+      registration.waiting.postMessage({type: 'ACTIVATE_UPDATE', requestId: 'direct-page-message'});
+    });
+    await page.waitForTimeout(100);
+    assert.equal(await page.evaluate(async () => (await navigator.serviceWorker.getRegistration('./')).waiting !== null), true);
+
+    await page.locator('#dataset-name').fill('Bleibt im Formular');
+    await updateButton.click();
+    await page.getByText(/Einrichtung zuerst abschließen/i).waitFor();
+    assert.equal(await page.locator('#dataset-name').inputValue(), 'Bleibt im Formular');
+
+    await setupPractice(page);
+    await updateButton.waitFor();
+    await page.locator('#adult-entry').click();
+    if (await page.locator('#adult-pin').count()) {
+      await page.locator('#adult-pin').fill('1234');
+      await page.locator('#adult-unlock').click();
+    }
+    await page.locator('#adult-nav').waitFor();
+    await updateButton.click();
+    await page.getByText(/Erwachsenenansicht zuerst verlassen/i).waitFor();
+    await page.getByRole('button', {name: 'Zur Profilauswahl', exact: true}).click();
+
     await page.getByRole('button', {name: /^Ada/}).click();
     await page.getByRole('button', {name: 'Alle Vokabeln', exact: true}).click();
     await page.getByLabel('Englische Übersetzung').waitFor();
@@ -1596,16 +1622,24 @@ test('trainer offline update UI blocks typing and pending answers before control
 
     const beforeReload = await productState(page);
     assert.equal(beforeReload.ledger.events.some(({type}) => type === 'round.completed' || type === 'round.abandoned'), false);
-    assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product-')).sort()), [
-      'vokabeltrainer-product-trainer-v1',
-      'vokabeltrainer-product-trainer-v2',
+    assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product:')).sort()), [
+      'vokabeltrainer-product:%2Ftrainer%2F:v2',
+      'vokabeltrainer-product:%2Ftrainer%2F:v3',
     ]);
     const navigation = page.waitForNavigation();
     await updateButton.click();
+    await page.waitForFunction(() => document.querySelector('#app')?.inert === true);
+    assert.equal(await page.locator('#app').getAttribute('aria-busy'), 'true');
+    assert.equal(await page.getByLabel('Englische Übersetzung').isEditable(), false);
+    await page.evaluate(() => {
+      [...document.querySelectorAll('button')].find((node) => node.textContent === 'Inselreise')?.click();
+    });
+    await page.waitForTimeout(50);
+    await page.getByText('Richtig!', {exact: true}).waitFor();
     await navigation;
     await page.getByText('Richtig!', {exact: true}).waitFor();
-    assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product-')).sort()), [
-      'vokabeltrainer-product-trainer-v2',
+    assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product:')).sort()), [
+      'vokabeltrainer-product:%2Ftrainer%2F:v3',
     ]);
   } finally {
     await context.close();
