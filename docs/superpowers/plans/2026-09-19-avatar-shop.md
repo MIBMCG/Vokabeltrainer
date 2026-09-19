@@ -115,7 +115,7 @@ test('every allowed equipment layer has a small offline fallback', async () => {
 ```
 
 - [x] Kontaktbögen aller ausgelieferten kompatiblen Kombinationen erzeugen, tatsächliche Bilder öffnen und Konturen/Hals/Gesicht/Hörner/Flügel prüfen. Browserbilder nur nach `test-results/`; bewusst ausgewählte Nachweise anschließend nach Dokumentation kopieren. Handybreite, DPR2 und fehlende große Variante prüfen.
-- [ ] Nachweisbericht mit Quellen-Hashes, Größen, bewusst verbleibenden Grenzen und Katalogabdeckung erstellen. Neue Galeriequellen noch nicht als produktiv ausgewählte Figuren ausgeben, bis der versionierte Auswahlvertrag integriert ist. Gezielte Pipeline-/Browserprüfungen, Review und Commit.
+- [x] Nachweisbericht mit Quellen-Hashes, Größen, bewusst verbleibenden Grenzen und Katalogabdeckung erstellen. Neue Galeriequellen noch nicht als produktiv ausgewählte Figuren ausgeben, bis der versionierte Auswahlvertrag integriert ist. Gezielte Pipeline-/Browserprüfungen, Review und Commit. Abschluss des Bildpakets mit `2b4c47f`, Remote-SHA exakt bestätigt; echte Google-Probe und anschließende Produktintegration bleiben offen.
 
 ## Danach: produktive Integration aus belegten Verträgen
 

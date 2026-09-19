@@ -1,6 +1,6 @@
 # Übergabe: freigegebene Avatarwelt und Punkteshop
 
-Stand 19.09.2026, Umsetzung läuft auf `codex/vokabeltrainer-v1` im vorhandenen isolierten Worktree. Ausgangspunkt: `c614fb5f29357929803f6ebd9ea927fb43ef22a7`. Kaufprobe und Katalog sind mit `f61c6ef9ad550fe3b157466e4bc9d39c7338e1f7` exakt auf GitHub bestätigt. Neuere lokale Änderungen sind bis zum jeweils dokumentierten Empfangsbeleg nicht als veröffentlicht anzusehen.
+Stand 19.09.2026, Umsetzung läuft auf `codex/vokabeltrainer-v1` im vorhandenen isolierten Worktree. Ausgangspunkt: `c614fb5f29357929803f6ebd9ea927fb43ef22a7`. Kaufprobe und Katalog sind mit `f61c6ef9ad550fe3b157466e4bc9d39c7338e1f7` exakt auf GitHub bestätigt. Auch Bildquellen, Pipeline, Halskorrektur, Vorschau und Nachweise sind mit **`2b4c47f202486a6c63407acae6ba38b677e27409`** gepusht und durch identische lokale HEAD-/Remote-Branch-SHA bestätigt. Dieser nachfolgende Dokumentationscommit ergänzt den Empfangsbeleg; seine eigene SHA ergibt sich aus der Git-Historie.
 
 ## Auftrag und Freigabe
 
