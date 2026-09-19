@@ -1,6 +1,6 @@
 # Übergabe: Überarbeitung nach Praxistest
 
-Stand: 19.09.2026. Branch: `codex/vokabeltrainer-v1`. Ausgangscommit: `8948a3b`. Dieses Paket enthält ausschließlich Anforderungen und Entwurf; keine neue Produktfunktion und keine neuen Produktprüfungen.
+Stand: 19.09.2026. Branch: `codex/vokabeltrainer-v1`. Ausgangscommit des Entwurfs: `8948a3b`; veröffentlichter Entwurf: `e035093255fbf1b290223eef96a6e247a554e4f7`. Dieses Paket ergänzt die bestätigte Freigabe und konkrete Umsetzungspläne; keine neue Produktfunktion und keine neuen Produktprüfungen. Der zugehörige Planungscommit ist über die Dateihistorie dieser Übergabe nachvollziehbar; sein überprüfter Remote-Stand wird nach Push im Gespräch ausgegeben.
 
 ## Nutzerauftrag
 
@@ -10,19 +10,30 @@ Optik wesentlich näher an das freigegebene Inselkonzept bringen, Avatar und Rei
 
 1. Google Drive und automatischer Abgleich bleiben. Die vorhandene öffentliche Google-Konfiguration wird einmal in der App vorbereitet; Eltern brauchen weder eigenes Cloud-Projekt noch Client-ID-Eingabe. Kein Excel-Formatwechsel.
 2. Lernregeln werden je Kind getrennt einstellbar, mit gemeinsamen Standardwerten als Ausgangspunkt.
+3. Der gesamte schriftliche Entwurf einschließlich Zahlenbereichen, Wirkung ab nächster neuer Runde, Wiederaktivierung, Bedienabläufen und Bildwelt ist durch „Ja, Freigabe erteilt“ bestätigt.
 
-Der [schriftliche Entwurf](../design/2026-09-19-ueberarbeitung.md) enthält die weiteren Vorschläge, Zahlenbereiche, Bedienabläufe, Bildtechnik, Datenvertragsgrenzen und Abnahmekriterien. Diese Konkretisierungen sind noch nicht als vom Nutzer bestätigt auszugeben.
+Der [schriftliche Entwurf](../design/2026-09-19-ueberarbeitung.md) wird durch den [Umsetzungsplan](../superpowers/plans/2026-09-19-ueberarbeitung.md) mit drei Etappen und neun Aufgaben konkretisiert. Die Planprüfung und Wahl der Ausführung stehen noch aus; die Entwurfsfreigabe wird nicht erneut verlangt.
 
 ## Arbeit und Prüfung
 
 - Using Superpowers und Brainstorming angewandt; Architekturpfad wegen neuer Lernregeln und Schnittstellenänderungen.
 - Bestehendes Konzept und tatsächliche Übungs-/Avatarbilder verglichen, Cloudzugriff anhand offizieller Google-/MDN-Quellen geprüft.
 - Lesende Bestandsanalyse mit GPT-5.6 Sol/high: Lernlogik, Runden, v1-Formatvalidierung, Erwachsenenansicht und Statistik. Keine Agenten-Codeänderungen.
-- Dokumentprüfung: 177 Dateien, 78 Markdown-Dateien, 356 lokale Links; 0 Fehler. `git diff --check` ohne Befund.
+- Anschließend lesende Vertragsprüfung durch GPT-6 Astra/high: alte Paket-/Snapshotprüfsummen, Versionsübergang, eingefrorene Runden und verspätete Altclientantworten. Keine Agenten-Codeänderungen.
+- Writing Plans angewandt; Plan selbst gegen U01–U07 geprüft, Schnittstellen zwischen A/B/C vereinheitlicht, Platzhalterprüfung und fünf wesentliche Fehlerklassen je Teilplan den zugehörigen Prüfaufgaben zugeordnet. Keine ausgelagerte Planreview.
+- Historische Dokumentprüfung des Entwurfs: 177 Dateien, 78 Markdown-Dateien, 356 lokale Links; 0 Fehler. Aktuelle Planungsprüfung: `npm run check:docs` mit 181 Dateien, 82 Markdown-Dateien, 374 lokalen Links und 0 Fehlern; `git diff --check` ohne Befund. Nur Dokumente geändert, deshalb keine Produkt-Suites erneut ausgeführt.
 - Alte Testergebnisse aus dem v1-Abschluss wurden nicht als neue Prüfung wiederholt oder umetikettiert.
+
+## Technisch konkretisiert, noch nicht implementiert
+
+- A1–A4: Rasterwelt/Avatar, erklärte Moduswahl, vorbereitete öffentliche Google-ID, vier Hauptbereiche für Erwachsene mit Entwurfsschutz.
+- B1–B3: v1/v2-Leser erhalten alte Objekte und Hashwerte, atomare Migration mit lokaler Sicherung, eigene Wiederholungsprojektion, eingefrorene Policy und Wortgeneration, Regeln je Kind und „Wieder üben“.
+- C1–C2: Statistik aus denselben effektiven deduplizierten Antworten, reale Screenshotprüfung gegen das Konzept, Offline-/Update-/Migrationsprüfung und portable Übergabe.
+- Ein alter Offlineclient kann technisch weiterhin v1-Antworten hochladen. Diese werden übernommen; die neue App darf unbekannte Formate nicht als erfolgreich synchronisiert darstellen. Keine behauptete Fernsperre alter Programme.
+- Subagentenvorschlag: Sol/high für Oberfläche/Statistik; Astra/high für Datenübergang, Scheduler und Vertrags-/Abschlussreview. Modelle vor tatsächlicher Delegation nennen. Umsetzung ein Schreiber gleichzeitig.
 
 ## Fortsetzung
 
-Zuerst den schriftlichen Entwurf durch den Nutzer prüfen lassen. Nach seiner Bestätigung den Implementierungsplan mit konkreter Formatmigration, Bildpaket und Prüfungen erstellen. Bereits bestätigte Cloud- und Profilentscheidungen nicht erneut fragen. Die laufende App und persönliche Browserdaten bleiben während der Entwurfsarbeit unverändert.
+Den Umsetzungsplan zur Prüfung vorlegen und zwischen Umsetzung mit frischen Aufgabenagenten/Reviews oder direkter Umsetzung mit unabhängiger Abschlussreview wählen lassen. Das entspricht dem angeforderten Writing-Plans-Ablauf; keine allgemeine neue Startgenehmigung erfragen. Nach dieser Planprüfung mit A1 beginnen und die Aufgaben ohne weitere pauschale Freigabepausen fortlaufend bearbeiten. Bereits bestätigten Entwurf und Cloud-/Profilentscheidungen nicht erneut fragen. Die laufende App und persönliche Browserdaten bleiben während der Planung unverändert.
 
-Die vorangehende [v1-Übergabe](2026-09-18-vokabeltrainer-v1.md) dokumentiert den bestehenden Produktstand. Hosting, Kontenänderungen, Kosten und echte Apple-/Zwei-Geräte-Abnahme sind weiterhin getrennte Aufgaben. Eine allgemeine neue Startgenehmigung ist nicht erforderlich; es geht um die konkrete Prüfung dieses größeren Entwurfs.
+Die vorangehende [v1-Übergabe](2026-09-18-vokabeltrainer-v1.md) dokumentiert den bestehenden Produktstand. Hosting, Kontenänderungen, Kosten und echte Apple-/Zwei-Geräte-Abnahme sind weiterhin getrennte Aufgaben.

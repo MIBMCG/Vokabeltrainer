@@ -1,6 +1,6 @@
 # Überarbeitung nach dem Praxistest
 
-Stand: 19.09.2026. **Schriftlicher Überarbeitungsentwurf zur Prüfung. Cloudweg und Einstellungen je Kind sind bestätigt; die übrigen konkretisierten Vorschläge warten auf Entwurfsbestätigung. Noch keine Produktänderung dieses Pakets.** Ausgangsstand: `8948a3b` auf `codex/vokabeltrainer-v1`. Bestehende Tests belegen die bisherige Funktion, nicht die vom Nutzer gewünschte gestalterische Qualität.
+Stand: 19.09.2026. **Schriftlicher Überarbeitungsentwurf vom Nutzer mit „Ja, Freigabe erteilt“ bestätigt. Die Freigabe umfasst die hier konkretisierten Vorschläge als Grundlage des Umsetzungsplans. Noch keine Produktänderung dieses Pakets.** Ausgangsstand: `8948a3b` auf `codex/vokabeltrainer-v1`. Bestehende Tests belegen die bisherige Funktion, nicht die vom Nutzer gewünschte gestalterische Qualität.
 
 ## Auftrag und Erfolgskriterien
 
@@ -28,7 +28,7 @@ Die bestehende Vorschau bleibt die Stilreferenz: warme Papier-/Sandflächen, Tü
 - Avatar: detailreicher freundlicher Entdecker im Stil des Konzeptbildes, große Vorschau und kompakte Auswahlbereiche. Vorhandene vier Hauttöne, sechs Kleidungsfarben und sechs Ausrüstungsteile bleiben auswählbar und mit ihren bisherigen Freischaltungen verbunden. Passende transparente Rasterebenen müssen gemeinsam ausgerichtet sein; keine unabhängigen Figuren, die beim Umziehen Stil oder Haltung wechseln.
 - Erwachsenenbereich: ruhiger und informationsorientierter als der Kinderbereich, mit vier klaren Zugängen „Vokabeln“, „Lernstand“, „Lernregeln“ und „Einstellungen“. Keine lange Folge aller Formulare auf einer Seite.
 
-### Bildtechnik als Vorschlag
+### Bestätigte Bildtechnik
 
 Originalillustrationen werden mit der eingebauten Bildgenerierung erstellt. Zunächst ein zusammenpassender Satz aus Strand, Reise und Avatar als visueller Nachweis, erst danach weitere Teile. Keine zusätzlichen kostenpflichtigen Bilddienste und keine fremden Markenfiguren.
 
@@ -60,7 +60,7 @@ Die Cloudfrage ist entschieden: A. Kein Wechsel zu Excel als Synchronisationsspe
 
 Die Auswahl startet noch keine Runde. Eine Zusammenfassung nennt den gewählten Modus und 10/20/30 Antworten. Angezeigte Wortanzahlen müssen Zuordnung, Archivierung, Fälligkeit, Lernregeln und Konflikte berücksichtigen. Unterschied zwischen verschiedenen Wörtern und Antworten einer Runde erklären: Wiederholungen zählen als Antworten mit. Leere oder aktuell ausgeschöpfte Auswahl erklären und eine passende Alternative anbieten.
 
-## Lernregeln: vorgeschlagene Bedienung und Grenzen
+## Lernregeln: bestätigte Bedienung und Grenzen
 
 Ein direkt sichtbarer Zugang „Lernregeln“ im Erwachsenenbereich. **Bestätigt am 19.09.2026:** „Je Kind getrennt, mit gemeinsamen Standardwerten als Ausgangspunkt (empfohlen)“. Neue und bestehende Profile ohne eigene Einstellung verwenden die bisherigen Standardregeln. Das Bearbeiten eines Kindes verändert keine anderen Profile. Die Oberfläche zeigt einen lesbaren Ergebnissatz, beispielsweise: „Nach 3 richtigen Antworten hintereinander kommt ein Wort seltener. Gelernte Wörter werden weiterhin zur Auffrischung angeboten.“
 
@@ -69,7 +69,7 @@ Ein direkt sichtbarer Zugang „Lernregeln“ im Erwachsenenbereich. **Bestätig
 3. „Wiederholungsabstände“ – vier ganze Tageswerte, Standard 1/3/7/14, im aufklappbaren Detailbereich. Werte müssen positiv, nicht absteigend und höchstens 365 sein; der letzte Abstand wiederholt sich. Bei einem Fehler greifen erneut die bestehenden zwei anderen Aufgaben bis zur nächsten Fehlerwiederholung.
 4. Ausgenommene Wörter bleiben im Lernstand sichtbar und lassen sich für das jeweilige Kind wieder ins Üben aufnehmen. Kein Löschen von Vokabeln, Antworten oder Punkten.
 
-Die konkreten Zahlenbereiche und zeitlichen Regeln sind Vorschläge zur Entwurfsbestätigung. „Nicht mehr“ meint Ausschluss aus automatischer Auswahl, nicht Löschung. Einstellungen werden erst beim Start der nächsten Runde übernommen; eine angefangene oder fortgesetzte Runde behält ihren Regelstand. Vor dem Speichern zeigt die App, wie viele Wörter künftig aus der automatischen Auswahl fallen. Neue Regeln verändern keine alte Antwortwertung und vergeben keine zusätzlichen Punkte oder Abzeichen.
+Die konkreten Zahlenbereiche und zeitlichen Regeln sind mit der Entwurfsfreigabe bestätigt. „Nicht mehr“ meint Ausschluss aus automatischer Auswahl, nicht Löschung. Einstellungen werden erst beim Start der nächsten Runde übernommen; eine angefangene oder fortgesetzte Runde behält ihren Regelstand. Vor dem Speichern zeigt die App, wie viele Wörter künftig aus der automatischen Auswahl fallen. Neue Regeln verändern keine alte Antwortwertung und vergeben keine zusätzlichen Punkte oder Abzeichen.
 
 Die Drei-Richtig-Meilensteine für bereits festgelegte Abzeichen bleiben ein eigener Belohnungsvertrag. Eine erhöhte Einstellungsschwelle darf erworbene Abzeichen nicht entfernen; eine abgesenkte Schwelle darf solche Abzeichen nicht automatisch neu vergeben. Der bisher bei 3 gedeckelte Lernserienzähler reicht für die neue Einstellung nicht: die Scheduling-Serie wird getrennt aus den wirksamen Antworten der aktuellen Wortfassung ermittelt.
 
@@ -81,7 +81,7 @@ Die Bestandsanalyse zeigt eine echte Schnittstellenänderung: `learning/progress
 
 Vokabeln: Suche, Lektionsfilter, zugeordnete Kinder und klare Aktionen „Wort hinzufügen“/„Mehrere Wörter einfügen“. Neue Lektion und Kinderzuordnung direkt im Hinzufügen-Ablauf anbieten. Mehrere erlaubte englische Antworten bleiben erhalten. Importvorschau mit direkt korrigierbaren Zeilen und sichtbaren Dopplungen; keine stillen Übernahmen. Archivierung und Wiederaktivierung behalten den bisherigen Verlauf.
 
-Lernstand: Kind und Zeitraum auswählen, dann drei Kennzahlen und zwei Diagramme. Vorgeschlagen sind ein Ringdiagramm für „Noch neu / In Übung / Zur Auffrischung / Aus dem Üben genommen“ und ein Säulendiagramm für richtige/falsche Antworten je Lerntag. Ein beschrifteter Balken kann die Trefferquote ergänzen. Alle Diagramme erhalten Zahlen/Legende und eine lesbare Tabelle; Bedeutung wird nicht allein über Farbe vermittelt.
+Lernstand: Kind und Zeitraum auswählen, dann drei Kennzahlen und zwei Diagramme. Bestätigt sind ein Ringdiagramm für „Noch neu / In Übung / Zur Auffrischung / Aus dem Üben genommen“ und ein Säulendiagramm für richtige/falsche Antworten je Lerntag. Ein beschrifteter Balken kann die Trefferquote ergänzen. Alle Diagramme erhalten Zahlen/Legende und eine lesbare Tabelle; Bedeutung wird nicht allein über Farbe vermittelt.
 
 Statusgruppen müssen sich gegenseitig ausschließen. „Heute fällig“ ist ein zusätzlicher Wert, keine fünfte Ringkategorie, die dieselben Wörter erneut mitzählt. Die Wortverteilung beschreibt den aktuellen Stand; das Tagesdiagramm beschreibt Antworten im ausgewählten Zeitraum. Keine erfundene Lernzeit, da bisher keine verlässliche Zeitmessung vorgesehen ist. Fehler sind Lernhinweise, keine Punktstrafe.
 
@@ -89,7 +89,7 @@ Zeitreihen verwenden ausschließlich effektive, bereits deduplizierte Antwort-/R
 
 ## Reihenfolge und Prüfung
 
-1. Cloudweg und Einstellungen je Kind sind bestätigt. Den vorliegenden Entwurf einschließlich konkreter Schwellen, Gültigkeit ab nächster Runde und Wiederaktivierung abstimmen; daraus anschließend den überprüfbaren Implementierungsplan ableiten.
+1. Der vorliegende Entwurf einschließlich konkreter Schwellen, Gültigkeit ab nächster Runde und Wiederaktivierung ist bestätigt. Der [Implementierungsplan in drei Etappen](../superpowers/plans/2026-09-19-ueberarbeitung.md) konkretisiert Umsetzung und Prüfungen; er ist noch nicht ausgeführt.
 2. Visuelle Referenz in tatsächlichen App-Ansichten nachweisen, einschließlich Mobilansicht, Reise und kombinierbarem Avatar; keine Freigabe allein anhand eines generierten Mockups.
 3. Einrichtung, Rundenstart und Erwachsenenverwaltung umsetzen; bestehende Formulareingaben und Schutz bei Hintergrundabgleich erhalten.
 4. Lernregelvertrag, Migration und Statistik ergänzen; gezielte Tests für Grenzwerte, Änderungen während Runden und Geräteabgleich.
@@ -100,7 +100,7 @@ Kein Hosting, kein neues Abo, keine Änderung von Google-Konten, Repository-Sich
 ## Selbstprüfung und verbleibende Implementierungsdetails
 
 - Keine Änderung von Punktwerten, Kontenmodell oder Lizenz vorgeschlagen.
-- Einstellungen je Kind und zentral vorbereiteter Google-Zugang sind Nutzerentscheidungen; Zahlenbereiche, Layout und Bildgrößen sind konkrete Gestaltungsvorschläge.
+- Einstellungen je Kind, zentral vorbereiteter Google-Zugang, Zahlenbereiche und Layout sind bestätigt. Bildrenditionen werden innerhalb des bestätigten Konzepts an tatsächliche Quellgröße und Darstellung angepasst.
 - Die normale Elterneinrichtung darf kein Client-ID-Feld verlangen. Ein alter lokaler Wert oder Datenbestand wird nicht still überschrieben. Vor der tatsächlichen Auslieferung wird die existierende öffentliche Client-ID verifiziert; kein Secret wird benötigt.
 - Neue Lernregeln benötigen ein versioniertes Format und neue Leser für ältere Sicherungen. Alte Ereignisse/Hashes bleiben unverändert. Ein altes Programm, das neue Regeln nicht versteht, darf nicht als erfolgreich synchronisiert dargestellt werden. Die konkrete Versionierung, Synchronisationssperre beziehungsweise Updateanforderung und Ereignisabhängigkeiten müssen vor dem Lernkernpaket im Implementierungsplan feststehen.
 - Wortanzahlen der Moduskarten und Diagramme verwenden dieselben effektiven Daten und dieselbe Auswahlregel wie die Übung; keine getrennte vereinfachte Nebenrechnung.
