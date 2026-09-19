@@ -1,0 +1,45 @@
+{
+  "sourceFile": "unicorn-moon-moon-adornment-front.png",
+  "prompt": "Use case: precise-object-edit\nAsset type: transparent equipment layer for a layered game avatar\nInput image: Image 1 is alignment and fit reference only for the exact horse rig.\nPrimary request: Create ONLY four matching silver hoof rings, one precisely around each of the four visible hooves, elegant slim moonlit metal bands with restrained blue-violet glow; hoof adornment only.\nCanvas and placement: preserve the exact 1024 x 1536 canvas and position the equipment to fit Image 1 without moving, scaling, or redrawing the rig.\nStyle: premium magical children's adventure illustration, detailed blue, silver, and violet materials, polished painterly rendering matching the horse reference.\nTransparency: output a genuinely transparent background. The entire horse, its mane, tail, body, legs, hooves, eyes, and the brown backdrop must be absent and fully transparent. Include only the named equipment pixels in their aligned positions.\nConstraints: exactly one equipment concept and one slot; clean alpha edges; no labels, no text, no watermark.\nAvoid: horse or animal pixels, complete animal silhouette, background, landscape, pedestal, cast shadow, extra jewelry, extra tack, unrelated stars or loose decorative objects, duplicated parts, additional slot items.",
+  "relativeReference": "horse.png",
+  "generator": "built-in image_gen",
+  "generatedOn": "2026-09-19",
+  "candidate": false,
+  "canvas": {
+    "width": 1024,
+    "height": 1536
+  },
+  "alphaBounds": {
+    "threshold": 16,
+    "x": 188,
+    "y": 1273,
+    "width": 745,
+    "height": 201
+  },
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "provenance": "Byte-for-byte copy of horse-moon-adornment-front.png with body-specific browser-verified affine registration; no redrawing or resampling.",
+  "sourceSha256": "2935d71a79cf5640e9d01b9fd2d3230913c4d7ff91312d1e029b390aa572d636",
+  "figure": "unicorn-moon",
+  "layer": "front",
+  "registeredBounds": {
+    "alphaThreshold": 16,
+    "x": 188,
+    "y": 1273,
+    "width": 745,
+    "height": 201
+  },
+  "qa": {
+    "date": "2026-09-19",
+    "method": "Headless Edge composition on the exact 1024 x 1536 source canvas.",
+    "evidence": ".superpowers/avatar-shop-equine-qa/screens/unicorn-moon-moon-adornment-front.png",
+    "setEvidence": ".superpowers/avatar-shop-equine-qa/screens/unicorn-moon-set-moon.png",
+    "observedFit": "The equipment is visibly aligned with its intended slot; eyes and face remain readable, and the unicorn horn and pegasus wings remain unobscured."
+  },
+  "registrationReference": "unicorn-moon.png",
+  "derivedFrom": "horse-moon-adornment-front.png",
+  "copy": "byte-for-byte"
+}

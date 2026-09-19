@@ -1,0 +1,17 @@
+{
+  "source": "explorer-boy-runes-hand-front.png",
+  "reference": "explorer-boy-skin-0.png",
+  "prompt": "An ornate handheld magical crystal compass on a short leather wrist loop to hang from the reference explorer's RIGHT hand (viewer's right, around x790 y820 on the 1086x1448 canvas). Silver and gold engraved frame, luminous violet crystal needle and cyan compass face, delicate runes, visibly more special than a simple brass compass. Item about 130 pixels wide, small and wearable. No hand or arm in output. Use the attached human explorer only as a size and pose reference. Output ONLY the wearable item on the exact same 1086x1448 transparent canvas, at the intended body coordinates. Remove the entire person, all skin, hair and clothing. Do not enlarge or center the equipment as a product photo. Genuine transparent alpha background, no scenery, no text. Match the premium painterly adventure-game style.",
+  "generator": "OpenAI image generation tool",
+  "generatedAt": "2026-09-19",
+  "canvas": {
+    "width": 1086,
+    "height": 1448
+  },
+  "registration": {
+    "scale": 0.45,
+    "x": 430,
+    "y": 575
+  },
+  "qa": "Source composition inspected on 2026-09-19: all 48 skin/color combinations and all 20 human equipment previews. Neck/eyes remain visible; small original silhouette differences between skin variants remain."
+}

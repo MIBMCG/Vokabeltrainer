@@ -1,0 +1,23 @@
+{
+  "sourceFile": "wolf-aurora-aurora-head-front.png",
+  "reference": "wolf-aurora.png",
+  "prompt": "An exquisite silver neck chain and luminous cyan ice-crystal amulet resting on the reference wolf's upper chest, just below the neck ruff. Use the attached wolf ONLY as a fitting reference. Output ONLY the accessory at its correct worn position and scale on the exact same canvas. Remove the entire animal including all fur, eyes and paws. All other pixels must be genuine transparent alpha. Premium detailed painterly fantasy game art, no text or scene. Do not enlarge or center the equipment as a product photo.",
+  "generator": "built-in image_gen",
+  "generatedOn": "2026-09-19",
+  "registration": {
+    "scale": 0.5,
+    "x": 145,
+    "y": 320
+  },
+  "canvas": {
+    "width": 1223,
+    "height": 1286
+  },
+  "qa": {
+    "status": "accepted-for-current-base",
+    "method": "Headless Edge full-canvas composition, individual layer and complete set",
+    "evidence": "../../../test-results/avatar-art/dragon-wolf-fit/wolf-aurora-complete.png",
+    "result": "The chain rests below the neck ruff and the pendant sits on the upper chest instead of covering the face.",
+    "limits": "Fine chain segments partly blend into the bright fur at small display sizes."
+  }
+}

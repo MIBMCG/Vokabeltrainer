@@ -1,0 +1,23 @@
+{
+  "sourceFile": "dragon-crystal-crystal-head-front.png",
+  "reference": "dragon.png",
+  "prompt": "Using the attached dragon ONLY as a fitting reference, create a transparent equipment layer containing ONLY a magnificent magical rune amulet on a short silver chain, sized and positioned to hang on this dragon's upper golden chest below its long neck. Violet crystal at the center with engraved silver runes, premium painterly fantasy game art. Remove the entire dragon and leave all body, head, wings, legs and background genuinely alpha-transparent. Keep the exact reference canvas dimensions and amulet at its intended worn position; do NOT center or enlarge the amulet as a product photo. One wearable amulet, no text, no other equipment.",
+  "generator": "built-in image_gen",
+  "generatedOn": "2026-09-19",
+  "registration": {
+    "scale": 0.55,
+    "x": 200,
+    "y": 150
+  },
+  "canvas": {
+    "width": 1199,
+    "height": 1312
+  },
+  "qa": {
+    "status": "accepted-for-current-base",
+    "method": "Headless Edge full-canvas composition, individual layer and complete set",
+    "evidence": "../../../test-results/avatar-art/dragon-wolf-fit/dragon-crystal-complete.png",
+    "result": "Chain and pendant sit on the upper pale chest below the long neck without covering the face.",
+    "limits": "The source was generated against dragon.png; this duplicate registration was separately checked on dragon-crystal.png."
+  }
+}

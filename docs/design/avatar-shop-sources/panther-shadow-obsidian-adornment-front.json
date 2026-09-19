@@ -1,0 +1,16 @@
+{
+  "sourceFile": "panther-shadow-obsidian-adornment-front.png",
+  "prompt": "Use case: stylized-concept\nAsset type: transparent game equipment layer\nInput image: panther-shadow.png is a reference image for exact body pose, original 1223 x 1286 canvas, placement, scale, perspective, and painterly magical style.\nPrimary request: create only the Obsidian set adornment called Sternenpfoten: four elegant dark-silver paw cuffs and small star-shaped violet crystal ornaments fitted around the wrists and ankles just above all four paws, perspective matched to each leg.\nComposition/framing: preserve the exact 1223 x 1286 canvas coordinate system. Place each adornment at the exact coordinates of the four paws in the reference. Do not crop or rescale the canvas.\nStyle/medium: high-quality detailed magical game illustration matching the shadow-panther palette.\nConstraints: output only the four paw adornments on a genuinely transparent background; no panther, no legs, no paws, no fur, no scenery, no text, no watermark. Front layer.",
+  "reference": "panther-shadow.png",
+  "generator": "built-in image_gen",
+  "generatedOn": "2026-09-19",
+  "registration": {"scale": 1, "x": 0, "y": 0},
+  "canvas": {"width": 1223, "height": 1286},
+  "qa": {
+    "status": "accepted-for-current-base",
+    "method": "Fresh headless Edge full-canvas composition, individual layer and complete set",
+    "evidence": "../../../.superpowers/sdd/2026-09-19-avatar-shop/mystic-gear-evidence/panther-shadow-obsidian-adornment-front-composite.png",
+    "result": "Four star cuffs meet the four paw positions and retain the reference perspective.",
+    "limits": "The nearest foreground cuff is deliberately larger than the rear cuffs; the source canvas differs by minus one pixel in width and plus one in height."
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "date": "2026-09-19",
+  "provenance": "Existing generated source reused byte-for-byte",
+  "references": [
+    "../art-sources/avatar-skin-0.png"
+  ],
+  "sourceSha256": "e168a0142b21b92effb5984b475102637a12c1bbf74f54704ec646cf1f08b477",
+  "canvas": {
+    "height": 1448,
+    "width": 1086
+  },
+  "qa": "Source composition inspected on 2026-09-19: all 48 skin/color combinations and all 20 human equipment previews. Neck/eyes remain visible; small original silhouette differences between skin variants remain.",
+  "registration": {
+    "x": 0,
+    "scale": 1,
+    "y": 0
+  }
+}

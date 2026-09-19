@@ -48,7 +48,9 @@ Jede richtige Antwort gibt zehn Punkte. Eine volle Runde oder eine nach mindeste
 
 Alle zweihundert Punkte steigt das Level. Die Reise führt über fünfzehn Etappen: zunächst am Strand, ab tausend Punkten durch den Wald, ab zweitausend in die Berge. Bei dreitausend Punkten ist die Reise abgeschlossen; weiterüben und weitere Level sind trotzdem möglich.
 
-Im Avatarbereich stehen vier Hauttöne und sechs Kleidungsfarben zur Wahl. Mit höheren Leveln werden Kappe, Rucksack, Sonnenhut, Fernglas, Bergmütze und Kompass freigeschaltet. Sechs Abzeichen würdigen Lernmeilensteine. Es gibt keinen Münzladen und keine Käufe. Animationen können abgeschaltet werden.
+Im Avatarbereich stehen vier Hauttöne und sechs Kleidungsfarben zur Wahl. Mit höheren Leveln werden Kappe, Rucksack, Sonnenhut, Fernglas, Bergmütze und Kompass freigeschaltet. Sechs Abzeichen würdigen Lernmeilensteine. Animationen können abgeschaltet werden. Die Hemdbilder sind so korrigiert, dass der Hals in allen sechs Farben sichtbar bleibt.
+
+Die beauftragte Erweiterung mit Entdeckerin, Tier- und Fantasiefiguren sowie Punkteshop ist noch in Entwicklung. Die neuen Grafiken allein schalten noch keine Auswahl oder Käufe in der App frei. Der [aktuelle Arbeitsstand](../ARBEITSSTAND.md) trennt diese Vorbereitung von bereits nutzbaren Funktionen.
 
 ## Lernstand und Änderungen
 

@@ -37,14 +37,16 @@ Der konkrete Entwurf ist jetzt ausdrücklich zur Umsetzung freigegeben. Plan ers
 
 ## Task 1: Isolierte Kaufkoordination prüfen
 
+Status 19.09.2026: Implementierung, synthetische Prüfungen, Review und Push abgeschlossen (`f61c6ef`). Reale Google-Schreibgarantien bleiben ungeprüft; Serverneustart und Nutzeranmeldung stehen aus.
+
 **Modell:** GPT-6 Astra/high; unabhängige Review ohne Produktmitwirkung.
 
-**Dateien:** neue `src/shop-probe/transport.js`, `src/shop-probe/scenarios.js`, `shop-probe/index.html`, `src/shop-probe/main.js`, `tests/shop-probe/transport.test.js`, `tests/shop-probe/scenarios.test.js`; gezielte statische Routen in `scripts/serve.mjs`, eigener Testbefehl in `package.json`; Bericht `docs/reports/2026-09-19-shop-vorpruefung.md`. Keine Änderungen am Produktledger.
+**Dateien:** neue `src/shop-probe/transport.js`, `src/shop-probe/scenarios.js`, `shop-probe/index.html`, `src/shop-probe/main.js`, `tests/shop-probe/transport.test.js`, `tests/shop-probe/scenarios.test.js`; gezielte statische Routen in `scripts/serve.mjs`, eigener Testbefehl in `package.json`; Bericht `docs/reports/2026-09-19-avatar-shop-task1.md`. Keine Änderungen am Produktledger.
 
 **Schnittstellen:** `createProbeTransport({fetch, token})` mit `create`, `read`, `updateIfUnchanged`; Transportergebnisse enthalten explizit Dateiversion und Inhalt oder einen klassifizierten Fehler. `runProbeScenarios({transport, emit})` liefert `{passed, failed, unsupported, checks}`; jeder Check nennt erwartete und tatsächliche Wirkung. Kein Token im Ergebnis. Exakte HTTP-Verträge werden anhand Primärquelle und realem Verhalten festgehalten.
 
 - [ ] Tatsächliche Drive-Annahme isolieren: Versionsheader lesbar? Schreibbedingung vom konkreten JSON-Medienendpunkt erzwungen? Denselben ursprünglichen Stand zweimal ändern; zweite Änderung muss ablehnen und darf erste nicht überschreiben. Erfolgsantwort allein genügt nicht, Inhalt erneut lesen.
-- [ ] RED-Tests mit adversarialem Fake erstellen: ignorierte If-Match-Bedingung, fehlender Header, erfolgreicher Upload mit verlorener Antwort, 409 mit fremdem Inhalt, zwei Initialisierer, zwei unterschiedliche Käufe und Epochenwechsel. Die Probe muss unzureichende Garantien ausdrücklich als `unsupported`/fehlgeschlagen ausweisen.
+- [x] RED-Tests mit adversarialem Fake erstellen: ignorierte If-Match-Bedingung, fehlender Header, erfolgreicher Upload mit verlorener Antwort, 409 mit fremdem Inhalt, zwei Initialisierer, zwei unterschiedliche Käufe und Epochenwechsel. Die Probe muss unzureichende Garantien ausdrücklich als `unsupported`/fehlgeschlagen ausweisen.
 
 ```js
 test('unconditional overwrite cannot pass the purchase capability gate', async () => {
@@ -54,12 +56,14 @@ test('unconditional overwrite cannot pass the purchase capability gate', async (
 });
 ```
 
-- [ ] Probeimplementierung ergänzen und mit `node --test --experimental-test-isolation=none tests/shop-probe/*.test.js` prüfen. Browserseite erzeugt ausschließlich klar bezeichnete synthetische Probe-Dateien nach bewusstem Start, mit vorbereiteter öffentlicher Google-ID und gleichem Scope. Tokens ausschließlich im Arbeitsspeicher, keine lokale Speicherung persönlicher Dateien. Keine automatische Kontenanmeldung oder private Datensatzänderung.
+- [x] Probeimplementierung ergänzen und mit `node --test --experimental-test-isolation=none tests/shop-probe/*.test.js` prüfen. Browserseite erzeugt ausschließlich klar bezeichnete synthetische Probe-Dateien nach bewusstem Start, mit vorbereiteter öffentlicher Google-ID und gleichem Scope. Tokens ausschließlich im Arbeitsspeicher, keine lokale Speicherung persönlicher Dateien. Keine automatische Kontenanmeldung oder private Datensatzänderung.
 - [ ] Echte Prüfung im autorisierten Browserpfad durchführen, soweit Anmeldung verfügbar. Wenn Nutzeranmeldung erforderlich ist, nur diese fehlende Mitwirkung anfordern und Task 2/3 fortsetzen. Fake-Grün nicht als reale Drive-Garantie ausgeben.
 - [ ] Ergebnis mit exakten Grenzen dokumentieren. Erst bei bewiesener Initialisierungs-, Kauf- und Epochenkoordination den produktiven Kaufvertrag festlegen; andernfalls die kaufende Integration sperren, unabhängige Arbeit fortsetzen. Keine ungeschützte Datei als Ersatz.
-- [ ] Passende Server-/Probeprüfungen, `npm run check:docs`, `git diff --check`, eigene Dateien committen und unabhängig prüfen lassen.
+- [x] Passende Server-/Probeprüfungen, `npm run check:docs`, `git diff --check`, eigene Dateien committen und unabhängig prüfen lassen.
 
 ## Task 2: Reiner Figuren-/Ausrüstungskatalog
+
+Status 19.09.2026: abgeschlossen, unabhängig geprüft und mit `f61c6ef` veröffentlicht.
 
 **Modell:** GPT-5.6 Sol/high. Eigene Verantwortung: `src/trainer/avatar/catalog.js`, `src/trainer/avatar/selection.js`, `tests/trainer/avatar-catalog.test.js`. Noch keine Referenz aus produktiv ausgelieferten Modulen; dadurch keine halbfertige Benutzeroberfläche.
 
@@ -69,7 +73,7 @@ test('unconditional overwrite cannot pass the purchase capability gate', async (
 
 **Katalogform:** Figuren `{id,name,group,unlock:{kind:'start'|'level'|'shop',level?,price?}}`; Gegenstände `{id,name,group,slot,unlock}`. IDs stabil und unabhängig vom deutschen Namen. Menschliche Slots `clothing/head/back/hand`, Tiere `head/body/adornment`. Menschliches Runenmedaillon belegt `head`, Sternenumhang `back`, Kristall-Kompass `hand`; Ritterrüstung `clothing`. Alte IDs werden durch eindeutige Adapterabbildung erhalten. Besitzprüfung erfolgt gegen IDs, nie nur gegen genug Punkte.
 
-- [ ] RED: 13 eindeutige Figuren, genau acht käuflich, 30 käufliche Gegenstände, Ritter/alte Gegenstände kostenlos und alle exakten Schwellen/Preise prüfen. Unbekannte IDs oder manipulierte Felder nicht als freie Figur akzeptieren.
+- [x] RED: 13 eindeutige Figuren, genau acht käuflich, 30 käufliche Gegenstände, Ritter/alte Gegenstände kostenlos und alle exakten Schwellen/Preise prüfen. Unbekannte IDs oder manipulierte Felder nicht als freie Figur akzeptieren.
 
 ```js
 test('shared equine equipment is portable, dragon equipment is not', () => {
@@ -79,20 +83,24 @@ test('shared equine equipment is portable, dragon equipment is not', () => {
 });
 ```
 
-- [ ] Minimalen Katalog und Normalisierung schreiben; keine doppelte Eigentums-/Lernprojektion. Unbekannte Figur fällt auf `explorer-boy` zurück; bekannte aber nicht besessene Figur ebenso. Unbekannte oder nicht besessene Ausrüstung wird neutral entfernt, ohne Eigentumsdaten zu verändern.
-- [ ] Getrennte Körperauswahl und Ausrüstung sicherstellen: Figurwechsel soll später je Figur erinnerte Ausrüstung nutzen können, ohne hier Persistenz zu erfinden. Alte Haut-/Kleidungsbereiche 0..3/0..5 für Menschen beibehalten. Tierauswahl ignoriert menschliche Kleidungsfelder in der Darstellung, löscht aber keine gespeicherte menschliche Variante.
-- [ ] `node --test --experimental-test-isolation=none tests/trainer/avatar-catalog.test.js` RED/GREEN; unabhängige Review, committen. Keine Bilder erfinden oder CSS-Platzhalter als fertige Illustration deklarieren.
+- [x] Minimalen Katalog und Normalisierung schreiben; keine doppelte Eigentums-/Lernprojektion. Unbekannte Figur fällt auf `explorer-boy` zurück; bekannte aber nicht besessene Figur ebenso. Unbekannte oder nicht besessene Ausrüstung wird neutral entfernt, ohne Eigentumsdaten zu verändern.
+- [x] Getrennte Körperauswahl und Ausrüstung sicherstellen: Figurwechsel soll später je Figur erinnerte Ausrüstung nutzen können, ohne hier Persistenz zu erfinden. Alte Haut-/Kleidungsbereiche 0..3/0..5 für Menschen beibehalten. Tierauswahl ignoriert menschliche Kleidungsfelder in der Darstellung, löscht aber keine gespeicherte menschliche Variante.
+- [x] `node --test --experimental-test-isolation=none tests/trainer/avatar-catalog.test.js` RED/GREEN; unabhängige Review, committen. Keine Bilder erfinden oder CSS-Platzhalter als fertige Illustration deklarieren.
 
 ## Task 3: Rasterquellen, Halskorrektur und passgenaue Ableitung
+
+Status 19.09.2026: Vollständiger Bildsatz und Halskorrektur umgesetzt. [Prüfbericht und Bildnachweise](../../reports/2026-09-19-avatar-shop-task3.md) dokumentieren den Abschluss der Teilprüfungen; aktuelle Review-/Git-Belege stehen in der [Übergabe](../../handoffs/2026-09-19-avatar-shop.md).
 
 **Modell:** GPT-5.6 Sol/high für Pipeline/Darstellung; eingebautes Bildwerkzeug für die Rasterkunst. Quelle/Prompts unter `docs/design/avatar-shop-sources/`; Laufzeitbilder unter `trainer/assets/avatar-shop/`. Neue `scripts/build-avatar-art.mjs`, `src/trainer/avatar/art-manifest.js`, `src/trainer/avatar/art.js`; Tests `tests/trainer/avatar-art.test.js` und `tests/browser/avatar-art.browser.mjs`. `scripts/build-art.mjs` und Legacybilder nur gezielt für nachvollziehbare Halskorrektur verändern.
 
 **Schnittstellen:** Manifest bildet Figur und kompatiblen Gegenstand auf ausgerichtete hintere/vordere Lagen und drei Breiten 256/512/768 ohne Hochskalieren ab. `figureLayers(selection)` liefert geordnete Bildschlüssel; `figurePicture(selection, {sizes, animations})` rendert die Auswahl ohne Datenänderung. Kleine Fallbacks explizit auflisten, alle tatsächlichen Bytegrößen berichten.
 
-- [ ] Bestehende Hemd-/Grundbilder visuell prüfen; Fehlerdiagnose als Vorherbild festhalten. Bildwerkzeug für neue/geänderte Rasterbilder verwenden. Niemals einen Hals durch SVG/CSS-Ersatz überdecken. Jedes lokale Zielbild vor einer Bearbeitung ansehen.
-- [ ] Zuerst Körpergeometrie und zwei menschliche Grundlagen auf einheitlicher transparenter Leinwand festlegen. Vier Hautfarben und sechs Kleidungsfarben bleiben unterscheidbar; Ausschnitt bleibt transparent zum passenden Hals. Kleidung darf nicht pauschal vor dem Hals liegen.
-- [ ] Danach 11 tierische/mystische Grundlagen und Ausrüstung nach kompatiblen Gruppen erstellen. Für gemeinsame Pferde-/Drachenteile pro Körper passende Bildvarianten desselben Gegenstands speichern. Ein Bildtool-Aufruf je Asset/Variante; keine ungefragte kostenpflichtige API-Ausweichlösung. Herkunft und Prompts dauerhaft sichern.
-- [ ] Deterministische Größenableitung erhält Alpha und Koordinaten. Keine automatische enge Bounding-Box-Normalisierung einzelner Teile, die Kopf/Körper gegeneinander verschiebt. Kein beliebiger Größenabgleich unpassender Kleidung. Paketbudget gegen reale Bytes testen.
+Konkretisierung bei der Quellprüfung: Registrierungen gelten auf der vollständigen Quellleinwand, also `Ziel = Quelle * scale + (x,y)`, nicht auf einer ausgeschnittenen sichtbaren Kontur. Gemessene Negativverschiebungen sind möglich, wenn nur transparenter Rand außerhalb liegt. Bei alten Quellen mit ein bis zwei Pixeln abweichender Leinwand erklärt der Sidecar die feste Ziel-Leinwand `canvas`. Ein registrierter Gegenstand darf innerhalb dieser logischen Leinwand größer erscheinen; die tatsächlich kodierte Ausgaberendition darf seine Quellpixel nicht hochskalieren. Keine automatische Kontur-Erkennung im produktiven Aufbau.
+
+- [x] Bestehende Hemd-/Grundbilder visuell prüfen; Fehlerdiagnose als Vorherbild festhalten. Bildwerkzeug für neue/geänderte Rasterbilder verwenden. Niemals einen Hals durch SVG/CSS-Ersatz überdecken. Jedes lokale Zielbild vor einer Bearbeitung ansehen.
+- [x] Zuerst Körpergeometrie und zwei menschliche Grundlagen auf einheitlicher transparenter Leinwand festlegen. Vier Hautfarben und sechs Kleidungsfarben bleiben unterscheidbar; Ausschnitt bleibt transparent zum passenden Hals. Kleidung darf nicht pauschal vor dem Hals liegen.
+- [x] Danach 11 tierische/mystische Grundlagen und Ausrüstung nach kompatiblen Gruppen erstellen. Für gemeinsame Pferde-/Drachenteile pro Körper passende Bildvarianten desselben Gegenstands speichern. Ein Bildtool-Aufruf je Asset/Variante; keine ungefragte kostenpflichtige API-Ausweichlösung. Herkunft und Prompts dauerhaft sichern.
+- [x] Deterministische Größenableitung erhält Alpha und Koordinaten. Keine automatische enge Bounding-Box-Normalisierung einzelner Teile, die Kopf/Körper gegeneinander verschiebt. Wenn das Bildwerkzeug trotz Vorgabe die Lage eines passenden Teils ändert, ist eine einmalig gemessene und in echten Kompositionen geprüfte feste Registrierung der gesamten Quelle zulässig: `registration:{scale,x,y}` im Quell-Sidecar. Alle Renditions verwenden exakt diese Abbildung. Keine dynamische Anpassung anhand wechselnder Pixelkonturen oder beliebiger Größenabgleich unpassender Kleidung. Paketbudget gegen reale Bytes testen.
 
 ```js
 test('every allowed equipment layer has a small offline fallback', async () => {
@@ -106,7 +114,7 @@ test('every allowed equipment layer has a small offline fallback', async () => {
 });
 ```
 
-- [ ] Kontaktbögen aller ausgelieferten kompatiblen Kombinationen erzeugen, tatsächliche Bilder öffnen und Konturen/Hals/Gesicht/Hörner/Flügel prüfen. Browserbilder nur nach `test-results/`; bewusst ausgewählte Nachweise anschließend nach Dokumentation kopieren. Handybreite, DPR2 und fehlende große Variante prüfen.
+- [x] Kontaktbögen aller ausgelieferten kompatiblen Kombinationen erzeugen, tatsächliche Bilder öffnen und Konturen/Hals/Gesicht/Hörner/Flügel prüfen. Browserbilder nur nach `test-results/`; bewusst ausgewählte Nachweise anschließend nach Dokumentation kopieren. Handybreite, DPR2 und fehlende große Variante prüfen.
 - [ ] Nachweisbericht mit Quellen-Hashes, Größen, bewusst verbleibenden Grenzen und Katalogabdeckung erstellen. Neue Galeriequellen noch nicht als produktiv ausgewählte Figuren ausgeben, bis der versionierte Auswahlvertrag integriert ist. Gezielte Pipeline-/Browserprüfungen, Review und Commit.
 
 ## Danach: produktive Integration aus belegten Verträgen

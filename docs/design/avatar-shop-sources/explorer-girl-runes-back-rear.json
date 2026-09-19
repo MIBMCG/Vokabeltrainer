@@ -1,0 +1,17 @@
+{
+  "source": "explorer-girl-runes-back-rear.png",
+  "reference": "explorer-boy-skin-0.png",
+  "prompt": "A beautiful midnight blue starry explorer cloak with silver embroidered constellations and a warm gold lining, draped from the reference explorer's shoulders and flowing behind their body down to mid-calf. Open front with a simple small gold clasp. This is a REAR clothing overlay: fabric visible to both sides of the explorer, not a front dress. Keep the natural relaxed standing pose fitting; no hood. Use the attached human explorer only as a size and pose reference. Output ONLY the wearable item on the exact same 1086x1448 transparent canvas, at the intended body coordinates. Remove the entire person, all skin, hair and clothing. Do not enlarge or center the equipment as a product photo. Genuine transparent alpha background, no scenery, no text. Match the premium painterly adventure-game style.",
+  "generator": "OpenAI image generation tool",
+  "generatedAt": "2026-09-19",
+  "canvas": {
+    "width": 1086,
+    "height": 1448
+  },
+  "registration": {
+    "scale": 0.9,
+    "x": 50,
+    "y": 120
+  },
+  "qa": "Source composition inspected on 2026-09-19: all 48 skin/color combinations and all 20 human equipment previews. Neck/eyes remain visible; small original silhouette differences between skin variants remain."
+}

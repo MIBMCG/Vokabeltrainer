@@ -1,0 +1,7 @@
+{
+  "sourceFile": "dragon-margin.png",
+  "reference": "dragon.png",
+  "prompt": "Edit this exact friendly dragon sprite. The tips of its wings are currently cropped at the sides. Reframe the full dragon to be SMALLER inside the same portrait canvas, with all wing tips and tail completely visible and a transparent empty margin of at least 10 percent on every side. Preserve its emerald green and gold colors, kind amber eyes, all four legs and elegant raised wings. Restore the missing wing edges naturally. True transparent alpha background, no scenery, no shadow, no new equipment. Full-body game sprite.",
+  "generator": "built-in image_gen",
+  "generatedOn": "2026-09-19"
+}

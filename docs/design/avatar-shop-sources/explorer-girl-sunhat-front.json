@@ -1,0 +1,44 @@
+{
+  "date": "2026-09-19",
+  "provenance": "Existing generated source reused without redrawing or resampling.",
+  "references": [
+    "../art-sources/avatar-head-sunhat.png"
+  ],
+  "sourceSha256": "0ace139465638c1f4d3811083870200bf5bd6100a9c3c24aa3a26ae5f9066732",
+  "copy": "byte-for-byte",
+  "figure": "explorer-girl",
+  "layer": "front",
+  "sourceCanvas": {
+    "width": 1086,
+    "height": 1448
+  },
+  "sourceBounds": {
+    "alphaThreshold": 16,
+    "x": 211,
+    "y": 43,
+    "width": 671,
+    "height": 341
+  },
+  "legacyTarget": {
+    "x": 306,
+    "y": 12,
+    "width": 474,
+    "height": 292
+  },
+  "registration": {
+    "scale": 0.706408345752608,
+    "x": 156.9478390461997,
+    "y": -40.375558867362145
+  },
+  "registeredBounds": {
+    "x": 306,
+    "y": -10,
+    "width": 474,
+    "height": 241
+  },
+  "canvas": {
+    "width": 1086,
+    "height": 1448
+  },
+  "qa": "Source composition inspected on 2026-09-19: all 48 skin/color combinations and all 20 human equipment previews. Neck/eyes remain visible; small original silhouette differences between skin variants remain."
+}

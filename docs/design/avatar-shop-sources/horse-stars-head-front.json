@@ -1,0 +1,43 @@
+{
+  "sourceFile": "horse-stars-head-front.png",
+  "prompt": "Use case: precise-object-edit\nAsset type: transparent equipment layer for a layered game avatar\nInput image: Image 1 is alignment and fit reference only for the exact horse rig.\nPrimary request: Create ONLY a refined constellation head ornament: a slim silver-violet forehead band shaped to fit between the horse's ears, with a small central star-map medallion and restrained blue-silver constellation points connected by delicate lines; head-slot only.\nCanvas and placement: preserve the exact 1024 x 1536 canvas and position the equipment to fit Image 1 without moving, scaling, or redrawing the rig.\nStyle: premium magical children's adventure illustration, detailed blue, silver, and violet materials, polished painterly rendering matching the horse reference.\nTransparency: output a genuinely transparent background. The entire horse, its mane, tail, body, legs, hooves, eyes, and the brown backdrop must be absent and fully transparent. Include only the named equipment pixels in their aligned positions.\nConstraints: exactly one equipment concept and one slot; clean alpha edges; no labels, no text, no watermark.\nAvoid: horse or animal pixels, complete animal silhouette, background, landscape, pedestal, cast shadow, extra jewelry, extra tack, unrelated stars or loose decorative objects, duplicated parts, additional slot items.",
+  "relativeReference": "horse.png",
+  "generator": "built-in image_gen",
+  "generatedOn": "2026-09-19",
+  "candidate": false,
+  "canvas": {
+    "width": 1024,
+    "height": 1536
+  },
+  "alphaBounds": {
+    "threshold": 16,
+    "x": 160,
+    "y": 227,
+    "width": 702,
+    "height": 358
+  },
+  "registration": {
+    "scale": 0.3,
+    "x": 520,
+    "y": 90
+  },
+  "provenance": "Original built-in image_gen equipment source with body-specific browser-verified affine registration.",
+  "sourceSha256": "cac821155d085eb77cac101814894cbb42c5bba93b7e141deaf8b6e99f75ab1b",
+  "figure": "horse",
+  "layer": "front",
+  "registeredBounds": {
+    "alphaThreshold": 16,
+    "x": 568,
+    "y": 158.1,
+    "width": 210.6,
+    "height": 107.4
+  },
+  "qa": {
+    "date": "2026-09-19",
+    "method": "Headless Edge composition on the exact 1024 x 1536 source canvas.",
+    "evidence": ".superpowers/avatar-shop-equine-qa/screens/horse-stars-head-front.png",
+    "setEvidence": ".superpowers/avatar-shop-equine-qa/screens/horse-set-stars.png",
+    "observedFit": "The equipment is visibly aligned with its intended slot; eyes and face remain readable, and the unicorn horn and pegasus wings remain unobscured."
+  },
+  "registrationReference": "horse.png"
+}

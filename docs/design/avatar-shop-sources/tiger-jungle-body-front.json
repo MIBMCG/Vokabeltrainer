@@ -1,0 +1,16 @@
+{
+  "sourceFile": "tiger-jungle-body-front.png",
+  "prompt": "Use case: stylized-concept\nAsset type: transparent game equipment layer\nInput image: tiger.png is a reference image for exact body pose, original 1223 x 1286 canvas, placement, scale, perspective, and painterly magical style.\nPrimary request: create only the Dschungel set body equipment called Entdecker-Geschirr: a refined practical forest-green leather exploration harness across chest and upper back with brass buckles, woven straps, a tiny leaf insignia and compact magical map case, fitted precisely to the tiger.\nComposition/framing: preserve the exact 1223 x 1286 canvas coordinate system. Place the harness pieces where they would fit the reference tiger. Do not crop or rescale the canvas.\nStyle/medium: high-quality detailed magical adventure game illustration matching the tiger.\nConstraints: output only the harness and attached case on a genuinely transparent background; no tiger, no fur, no eyes, no paws, no scenery, no text, no watermark. Front layer.",
+  "reference": "tiger.png",
+  "generator": "built-in image_gen",
+  "generatedOn": "2026-09-19",
+  "registration": {"scale": 1, "x": 0, "y": 0},
+  "canvas": {"width": 1223, "height": 1286},
+  "qa": {
+    "status": "accepted-for-current-base",
+    "method": "Fresh headless Edge full-canvas composition, individual layer and complete set",
+    "evidence": "../../../.superpowers/sdd/2026-09-19-avatar-shop/mystic-gear-evidence/tiger-jungle-body-front-composite.png",
+    "result": "Chest straps, back strap and map case follow the torso and leave head and paws free.",
+    "limits": "The map case is intentionally broad and the lower rear straps overlap part of the hind leg in the front-only source."
+  }
+}

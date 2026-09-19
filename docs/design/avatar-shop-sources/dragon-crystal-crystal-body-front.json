@@ -1,0 +1,23 @@
+{
+  "sourceFile": "dragon-crystal-crystal-body-front.png",
+  "reference": "dragon.png",
+  "prompt": "Using the attached friendly dragon ONLY as a fitting reference, create an isolated transparent equipment layer for a magnificent crystal chest armor and shoulder guards. Silver filigree and cobalt blue faceted crystals with violet runes, premium painterly fantasy game art. The fitted chest armor covers only the lower golden chest and upper shoulders, leaves long neck, head, wings, legs and belly-tip free. Remove the entire dragon completely: output ONLY the wearable armor at the EXACT intended worn location, scale and angle on the same reference canvas. All other pixels genuine transparent alpha. Do NOT center/enlarge as a product photo. No wings, creature, weapons or background.",
+  "generator": "built-in image_gen",
+  "generatedOn": "2026-09-19",
+  "registration": {
+    "scale": 0.55,
+    "x": 175,
+    "y": 260
+  },
+  "canvas": {
+    "width": 1199,
+    "height": 1312
+  },
+  "qa": {
+    "status": "accepted-for-current-base",
+    "method": "Headless Edge full-canvas composition, individual layer and complete set",
+    "evidence": "../../../test-results/avatar-art/dragon-wolf-fit/dragon-crystal-complete.png",
+    "result": "Armor follows the shoulders and lower chest instead of floating beside the belly.",
+    "limits": "The source was generated against dragon.png and is visually busy on the crystal body, but its silhouette and attachment remain legible."
+  }
+}

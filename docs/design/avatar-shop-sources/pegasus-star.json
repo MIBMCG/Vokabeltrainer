@@ -1,0 +1,7 @@
+{
+  "sourceFile": "pegasus-star.png",
+  "reference": "horse.png",
+  "prompt": "Edit this horse into a magnificent star pegasus game sprite. Keep its standing pose and body geometry, but make the coat midnight blue with tiny subtle star-like flecks, silvery long mane and tail, and add two majestic raised feathered wings with silver blue and violet iridescence. Reduce the entire character if needed to keep both wings completely inside the portrait frame, with generous 10 percent transparent margins all around. Friendly confident eyes, premium detailed painterly fantasy game character. Clean base without jewelry, saddle, cape or other equipment. Genuine transparent alpha background, no scene or shadow.",
+  "generator": "built-in image_gen",
+  "generatedOn": "2026-09-19"
+}

@@ -1,41 +1,104 @@
 import {mkdir, readFile, writeFile} from 'node:fs/promises';
-import {dirname, resolve} from 'node:path';
+import {dirname, extname, resolve} from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const SOURCE_ROOT = resolve(ROOT, 'docs/design/art-sources');
+const LEGACY_SOURCE_ROOT = resolve(ROOT, 'docs/design/art-sources');
+const AVATAR_SOURCE_ROOT = resolve(ROOT, 'docs/design/avatar-shop-sources');
 const OUTPUT_ROOT = resolve(ROOT, 'trainer/assets/art');
 const MANIFEST_PATH = resolve(ROOT, 'src/trainer/ui/art-manifest.js');
 const playwrightPath = process.env.PLAYWRIGHT_MODULE ?? 'playwright';
 const executablePath = process.env.BROWSER_EXECUTABLE;
 
-const AVATAR_CANVAS = {width: 1086, height: 1448};
-const LANDSCAPE_WIDTHS = [480, 960, 1440];
-const AVATAR_WIDTHS = [256, 512, 768];
+const AVATAR_CANVAS = Object.freeze({width: 1086, height: 1448});
+const LANDSCAPE_WIDTHS = Object.freeze([480, 960, 1440]);
+const AVATAR_WIDTHS = Object.freeze([256, 512, 768]);
 
-const SOURCES = [
-  {key: 'island-beach', file: 'island-beach.png', widths: LANDSCAPE_WIDTHS},
-  {key: 'island-journey', file: 'island-journey.png', widths: LANDSCAPE_WIDTHS},
-  ...Array.from({length: 4}, (_, index) => ({
-    key: `avatar-skin-${index}`, file: `avatar-skin-${index}.png`, widths: AVATAR_WIDTHS,
-    canvas: AVATAR_CANVAS, target: [313, 24, 495, 1414],
-  })),
-  ...Array.from({length: 6}, (_, index) => ({
-    key: `avatar-clothing-${index}`, file: `avatar-clothing-${index}.png`, widths: AVATAR_WIDTHS,
-    canvas: AVATAR_CANVAS, target: [323, 296, 440, 382],
-  })),
-  {key: 'avatar-head-cap', file: 'avatar-head-cap.png', widths: AVATAR_WIDTHS, canvas: AVATAR_CANVAS, target: [403, 0, 280, 170]},
-  {key: 'avatar-head-sunhat', file: 'avatar-head-sunhat.png', widths: AVATAR_WIDTHS, canvas: AVATAR_CANVAS, target: [306, 12, 474, 292]},
-  {key: 'avatar-head-mountainhat', file: 'avatar-head-mountainhat.png', widths: AVATAR_WIDTHS, canvas: AVATAR_CANVAS, target: [410, 0, 266, 175]},
-  {key: 'avatar-back-backpack', file: 'avatar-back-backpack.png', widths: AVATAR_WIDTHS, canvas: AVATAR_CANVAS, target: [270, 275, 555, 610]},
-  {key: 'avatar-hand-binoculars', file: 'avatar-hand-binoculars.png', widths: AVATAR_WIDTHS, canvas: AVATAR_CANVAS, target: [710, 650, 220, 250]},
-  {key: 'avatar-hand-compass', file: 'avatar-hand-compass.png', widths: AVATAR_WIDTHS, canvas: AVATAR_CANVAS, target: [735, 690, 170, 205]},
-];
+const LANDSCAPE_SOURCES = Object.freeze([
+  {kind: 'landscape', key: 'island-beach', file: 'island-beach.png', widths: LANDSCAPE_WIDTHS, sourceRoot: LEGACY_SOURCE_ROOT},
+  {kind: 'landscape', key: 'island-journey', file: 'island-journey.png', widths: LANDSCAPE_WIDTHS, sourceRoot: LEGACY_SOURCE_ROOT},
+]);
+
+const AVATAR_SOURCE_FILES = Object.freeze([
+  ...Array.from({length: 4}, (_, index) => ({key: `avatar-skin-${index}`, file: `explorer-boy-skin-${index}.png`})),
+  ...Array.from({length: 6}, (_, index) => ({key: `avatar-clothing-${index}`, file: `explorer-boy-clothing-${index}.png`})),
+  {key: 'avatar-head-cap', file: 'explorer-boy-cap-front.png'},
+  {key: 'avatar-head-sunhat', file: 'explorer-boy-sunhat-front.png'},
+  {key: 'avatar-head-mountainhat', file: 'explorer-boy-mountainhat-front.png'},
+  {key: 'avatar-back-backpack', file: 'explorer-boy-backpack-rear.png'},
+  {key: 'avatar-hand-binoculars', file: 'explorer-boy-binoculars-front.png'},
+  {key: 'avatar-hand-compass', file: 'explorer-boy-compass-front.png'},
+]);
 
 function moduleUrl(value) {
   if (/^[A-Za-z]:[\\/]/u.test(value)) return pathToFileURL(value).href;
   if (value.startsWith('.')) return new URL(value, import.meta.url).href;
   return value;
+}
+
+function pngDimensions(bytes, filename) {
+  if (bytes.length < 24 || bytes.subarray(0, 8).toString('hex') !== '89504e470d0a1a0a') {
+    throw new Error(`Invalid PNG source: ${filename}`);
+  }
+  return {width: bytes.readUInt32BE(16), height: bytes.readUInt32BE(20)};
+}
+
+function finiteNumber(value, name, filename) {
+  if (!Number.isFinite(value)) throw new Error(`Invalid ${name} in ${filename}`);
+  return value;
+}
+
+export async function loadAvatarSource(definition, {sourceRoot = AVATAR_SOURCE_ROOT} = {}) {
+  const metadataName = `${definition.file.slice(0, -extname(definition.file).length)}.json`;
+  let metadata;
+  try {
+    metadata = JSON.parse(await readFile(resolve(sourceRoot, metadataName), 'utf8'));
+  } catch (error) {
+    if (error?.code === 'ENOENT') throw new Error(`Missing avatar sidecar: ${metadataName}`, {cause: error});
+    if (error instanceof SyntaxError) throw new Error(`Invalid avatar sidecar JSON: ${metadataName}`, {cause: error});
+    throw error;
+  }
+  const sourceBytes = await readFile(resolve(sourceRoot, definition.file));
+  const dimensions = pngDimensions(sourceBytes, definition.file);
+  const canvas = metadata.canvas ?? AVATAR_CANVAS;
+  if (canvas?.width !== AVATAR_CANVAS.width || canvas?.height !== AVATAR_CANVAS.height) {
+    throw new Error(`Avatar sidecar canvas must be ${AVATAR_CANVAS.width}x${AVATAR_CANVAS.height}: ${metadataName}`);
+  }
+  const registration = metadata.registration;
+  if (!registration) throw new Error(`Missing avatar registration: ${metadataName}`);
+  const scale = finiteNumber(registration.scale, 'registration scale', metadataName);
+  const x = finiteNumber(registration.x, 'registration x', metadataName);
+  const y = finiteNumber(registration.y, 'registration y', metadataName);
+  if (scale <= 0 || scale > 2) throw new Error(`Avatar registration scale is out of range: ${metadataName}`);
+  if (x < -canvas.width || x > canvas.width || y < -canvas.height || y > canvas.height) {
+    throw new Error(`Avatar registration translation is out of range: ${metadataName}`);
+  }
+  for (const requestedWidth of AVATAR_WIDTHS) {
+    const requestedHeight = Math.round(canvas.height * requestedWidth / canvas.width);
+    const horizontalScale = requestedWidth / canvas.width * scale;
+    const verticalScale = requestedHeight / canvas.height * scale;
+    if (horizontalScale > 1 || verticalScale > 1) {
+      throw new Error(`Avatar rendition would upscale source pixels at ${requestedWidth}px: ${metadataName}`);
+    }
+  }
+  return {
+    kind: 'avatar',
+    ...definition,
+    widths: AVATAR_WIDTHS,
+    sourceRoot,
+    metadataName,
+    canvas: {...canvas},
+    registration: {scale, x, y},
+    sourceWidth: dimensions.width,
+    sourceHeight: dimensions.height,
+  };
+}
+
+export async function loadArtSources() {
+  return [
+    ...LANDSCAPE_SOURCES,
+    ...await Promise.all(AVATAR_SOURCE_FILES.map((definition) => loadAvatarSource(definition))),
+  ];
 }
 
 function manifestModule(art) {
@@ -52,48 +115,24 @@ function manifestModule(art) {
     + `});\n`;
 }
 
-async function encode(page, sourceBytes, requestedWidth, transform) {
-  return page.evaluate(async ({source, requestedWidth, transform}) => {
+async function encode(page, sourceBytes, requestedWidth, sourceDefinition) {
+  return page.evaluate(async ({source, requestedWidth, sourceDefinition}) => {
     const img = new Image();
     img.src = source;
     await img.decode();
     let logicalWidth = img.naturalWidth;
     let logicalHeight = img.naturalHeight;
     const normalized = document.createElement('canvas');
-    if (transform?.canvas) {
-      logicalWidth = transform.canvas.width;
-      logicalHeight = transform.canvas.height;
+    if (sourceDefinition.kind === 'avatar') {
+      logicalWidth = sourceDefinition.canvas.width;
+      logicalHeight = sourceDefinition.canvas.height;
       normalized.width = logicalWidth;
       normalized.height = logicalHeight;
-      const scan = document.createElement('canvas');
-      scan.width = img.naturalWidth;
-      scan.height = img.naturalHeight;
-      const scanContext = scan.getContext('2d', {willReadFrequently: true});
-      scanContext.drawImage(img, 0, 0);
-      const pixels = scanContext.getImageData(0, 0, scan.width, scan.height).data;
-      let minX = scan.width;
-      let minY = scan.height;
-      let maxX = -1;
-      let maxY = -1;
-      for (let y = 0; y < scan.height; y += 1) {
-        for (let x = 0; x < scan.width; x += 1) {
-          if (pixels[(y * scan.width + x) * 4 + 3] < 16) continue;
-          minX = Math.min(minX, x);
-          minY = Math.min(minY, y);
-          maxX = Math.max(maxX, x);
-          maxY = Math.max(maxY, y);
-        }
-      }
-      if (maxX < minX || maxY < minY) throw new Error('Transparent source has no visible pixels');
-      const sourceWidth = maxX - minX + 1;
-      const sourceHeight = maxY - minY + 1;
-      const [targetX, targetY, targetWidth, targetHeight] = transform.target;
-      const scale = Math.min(targetWidth / sourceWidth, targetHeight / sourceHeight);
-      const width = Math.round(sourceWidth * scale);
-      const height = Math.round(sourceHeight * scale);
-      const x = Math.round(targetX + (targetWidth - width) / 2);
-      const y = Math.round(targetY + (targetHeight - height) / 2);
-      normalized.getContext('2d').drawImage(img, minX, minY, sourceWidth, sourceHeight, x, y, width, height);
+      const context = normalized.getContext('2d');
+      const {scale, x, y} = sourceDefinition.registration;
+      context.setTransform(scale, 0, 0, scale, x, y);
+      context.drawImage(img, 0, 0);
+      context.resetTransform();
     } else {
       normalized.width = logicalWidth;
       normalized.height = logicalHeight;
@@ -110,34 +149,43 @@ async function encode(page, sourceBytes, requestedWidth, transform) {
   }, {
     source: `data:image/png;base64,${sourceBytes.toString('base64')}`,
     requestedWidth,
-    transform: transform.canvas ? {canvas: transform.canvas, target: transform.target} : null,
+    sourceDefinition: sourceDefinition.kind === 'avatar'
+      ? {kind: sourceDefinition.kind, canvas: sourceDefinition.canvas, registration: sourceDefinition.registration}
+      : {kind: sourceDefinition.kind},
   });
 }
 
-await mkdir(OUTPUT_ROOT, {recursive: true});
-const {chromium} = await import(moduleUrl(playwrightPath));
-const browser = await chromium.launch({headless: true, ...(executablePath ? {executablePath} : {})});
-const page = await browser.newPage();
-const art = {};
-try {
-  for (const source of SOURCES) {
-    const bytes = await readFile(resolve(SOURCE_ROOT, source.file));
-    const variants = [];
-    for (const requestedWidth of source.widths) {
-      const result = await encode(page, bytes, requestedWidth, source);
-      if (variants.some(({width}) => width === result.width)) continue;
-      const filename = `${source.key}-${result.width}.webp`;
-      await writeFile(resolve(OUTPUT_ROOT, filename), Uint8Array.from(result.bytes));
-      variants.push({width: result.width, url: `../../../trainer/assets/art/${filename}`});
-      art[source.key] ??= {width: result.width, height: result.height, variants: [], fallbackUrl: ''};
-      art[source.key].width = Math.max(art[source.key].width, result.width);
-      art[source.key].height = Math.max(art[source.key].height, result.height);
+export async function buildArt() {
+  const sources = await loadArtSources();
+  await mkdir(OUTPUT_ROOT, {recursive: true});
+  const {chromium} = await import(moduleUrl(playwrightPath));
+  const browser = await chromium.launch({headless: true, ...(executablePath ? {executablePath} : {})});
+  const page = await browser.newPage();
+  const art = {};
+  try {
+    for (const source of sources) {
+      const bytes = await readFile(resolve(source.sourceRoot, source.file));
+      const variants = [];
+      for (const requestedWidth of source.widths) {
+        const result = await encode(page, bytes, requestedWidth, source);
+        if (variants.some(({width}) => width === result.width)) continue;
+        const filename = `${source.key}-${result.width}.webp`;
+        await writeFile(resolve(OUTPUT_ROOT, filename), Uint8Array.from(result.bytes));
+        variants.push({width: result.width, url: `../../../trainer/assets/art/${filename}`});
+        art[source.key] ??= {width: result.width, height: result.height, variants: [], fallbackUrl: ''};
+        art[source.key].width = Math.max(art[source.key].width, result.width);
+        art[source.key].height = Math.max(art[source.key].height, result.height);
+      }
+      art[source.key].variants = variants;
+      art[source.key].fallbackUrl = variants[0].url;
     }
-    art[source.key].variants = variants;
-    art[source.key].fallbackUrl = variants[0].url;
+  } finally {
+    await browser.close();
   }
-} finally {
-  await browser.close();
+  await writeFile(MANIFEST_PATH, manifestModule(art), 'utf8');
+  process.stdout.write(`Built ${Object.keys(art).length} art assets with ${Object.values(art).reduce((sum, asset) => sum + asset.variants.length, 0)} renditions.\n`);
+  return art;
 }
-await writeFile(MANIFEST_PATH, manifestModule(art), 'utf8');
-process.stdout.write(`Built ${Object.keys(art).length} art assets with ${Object.values(art).reduce((sum, asset) => sum + asset.variants.length, 0)} renditions.\n`);
+
+const invokedPath = process.argv[1] ? pathToFileURL(resolve(process.argv[1])).href : '';
+if (import.meta.url === invokedPath) await buildArt();

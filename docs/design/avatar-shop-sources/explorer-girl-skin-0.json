@@ -1,0 +1,8 @@
+{
+  "sourceFile": "explorer-girl-skin-0.png",
+  "reference": "explorer-boy-skin-0.png",
+  "prompt": "Edit the provided explorer-boy game avatar into a matching explorer GIRL, age about 12, warm confident friendly expression, rich painterly 3D storybook illustration for an island vocabulary-learning adventure, not sexualized. Preserve EXACT full-body front-facing pose, head/body/arm/leg positions, size and camera, same teal short-sleeved safari shirt with clearly visible natural neck and cream undershirt, khaki shorts, socks and hiking boots. Girl has expressive brown eyes and practical medium brown hair in one braid resting BEHIND her shoulder; keep head silhouette compact so future caps fit, ears visible, NO accessories, no hat, no backpack. Genuine transparent alpha background, no scene, no baked shadow, no text, entire body fully in frame with generous same margins as input. Coordinate-compatible game asset: use the same 3:4 portrait canvas and figure center as the reference. Make a finished crisp high quality girl base sprite, one character only.",
+  "generator": "built-in image_gen",
+  "generatedOn": "2026-09-19",
+  "qa": "Source composition inspected on 2026-09-19: all 48 skin/color combinations and all 20 human equipment previews. Neck/eyes remain visible; small original silhouette differences between skin variants remain."
+}

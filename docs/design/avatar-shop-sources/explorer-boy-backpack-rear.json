@@ -1,0 +1,44 @@
+{
+  "date": "2026-09-19",
+  "provenance": "Existing generated source reused without redrawing or resampling.",
+  "references": [
+    "../art-sources/avatar-back-backpack.png"
+  ],
+  "sourceSha256": "6b9bbe7512cfbb586b5cf88b7fab4fe8d4bfbed83df0bc4fb622aec7befc4843",
+  "copy": "byte-for-byte",
+  "figure": "explorer-boy",
+  "layer": "rear",
+  "sourceCanvas": {
+    "width": 1086,
+    "height": 1448
+  },
+  "sourceBounds": {
+    "alphaThreshold": 16,
+    "x": 284,
+    "y": 344,
+    "width": 518,
+    "height": 540
+  },
+  "legacyTarget": {
+    "x": 270,
+    "y": 275,
+    "width": 555,
+    "height": 610
+  },
+  "registration": {
+    "scale": 1.0714285714285714,
+    "x": -34.28571428571428,
+    "y": -78.57142857142856
+  },
+  "registeredBounds": {
+    "x": 270,
+    "y": 290,
+    "width": 555,
+    "height": 579
+  },
+  "canvas": {
+    "width": 1086,
+    "height": 1448
+  },
+  "qa": "Source composition inspected on 2026-09-19: all 48 skin/color combinations and all 20 human equipment previews. Neck/eyes remain visible; small original silhouette differences between skin variants remain."
+}

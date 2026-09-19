@@ -1,0 +1,14 @@
+{
+  "sourceFile": "explorer-girl-clothing-2.png",
+  "reference": "explorer-boy-skin-0.png",
+  "prompt": "Create a perfectly aligned transparent CLOTHING OVERLAY for the reference game character. Keep the EXACT canvas dimensions 1086 by 1448 and keep the shirt at the EXACT same original pixel coordinates, scale, outline and folds. Isolate ONLY the short-sleeved collared shirt and recolor it bright sunshine yellow. REMOVE the entire person, hair, face, neck, arms, hands, belt, shorts and legs; all those regions must be fully transparent. The shirt's open V neck MUST be a genuine transparent hole where the original neck and cream undershirt were visible. Do NOT draw the interior back collar fabric across the open V. Preserve the original shoulder, sleeve, hem positions exactly. Output only this empty wearable shirt layer against true alpha transparency, not an enlarged shirt or centered product photo.",
+  "generator": "built-in image_gen",
+  "generatedOn": "2026-09-19",
+  "registration": {
+    "scale": 0.658,
+    "x": 205,
+    "y": 82
+  },
+  "reuse": "Identical torso geometry; same registered layer visually checked on both figures",
+  "qa": "Source composition inspected on 2026-09-19: all 48 skin/color combinations and all 20 human equipment previews. Neck/eyes remain visible; small original silhouette differences between skin variants remain."
+}

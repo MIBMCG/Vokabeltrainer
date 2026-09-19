@@ -1,0 +1,13 @@
+{
+  "sourceFile": "explorer-girl-clothing-5.png",
+  "reference": "explorer-boy-clothing-2.png",
+  "prompt": "Recolor ONLY the yellow cloth in this exact transparent shirt overlay to warm coral red. Preserve every pixel position, size, shirt contour, sleeve, button, fold, and the exact transparent V-shaped neck hole. Do not move, enlarge, center or reframe the shirt. Do not add a person or fill any transparent region. Keep EXACT original canvas 1086 by 1448. All original transparent areas remain truly transparent alpha. Only a color variant of this aligned game clothing layer.",
+  "generator": "built-in image_gen",
+  "generatedOn": "2026-09-19",
+  "registration": {
+    "scale": 0.658,
+    "x": 205,
+    "y": 82
+  },
+  "qa": "Source composition inspected on 2026-09-19: all 48 skin/color combinations and all 20 human equipment previews. Neck/eyes remain visible; small original silhouette differences between skin variants remain."
+}

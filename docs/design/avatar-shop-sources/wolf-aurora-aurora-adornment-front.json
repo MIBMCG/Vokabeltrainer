@@ -1,0 +1,23 @@
+{
+  "sourceFile": "wolf-aurora-aurora-adornment-front.png",
+  "reference": "wolf-aurora.png",
+  "prompt": "Four luminous silver and cyan paw cuffs, each positioned exactly around one lower leg just above the paws of the reference wolf. Small ice gems and subtle soft blue glow, elegant and visually distinct, matching the perspective of each leg. Only the four separate cuffs, NO legs or paws between them. Use the attached wolf ONLY as a fitting reference. Output ONLY the accessory at its correct worn position and scale on the exact same canvas. Remove the entire animal including all fur, eyes and paws. All other pixels must be genuine transparent alpha. Premium detailed painterly fantasy game art, no text or scene. Do not enlarge or center the equipment as a product photo.",
+  "generator": "built-in image_gen",
+  "generatedOn": "2026-09-19",
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "canvas": {
+    "width": 1223,
+    "height": 1286
+  },
+  "qa": {
+    "status": "accepted-for-current-base",
+    "method": "Headless Edge full-canvas composition, individual layer and complete set",
+    "evidence": "../../../test-results/avatar-art/dragon-wolf-fit/wolf-aurora-complete.png",
+    "result": "All four cuffs align with the visible lower legs and stay clear of the body.",
+    "limits": "Perspective and fur partly obscure the rear-leg cuffs in the complete composition, as expected."
+  }
+}

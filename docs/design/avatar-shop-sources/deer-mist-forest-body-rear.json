@@ -1,0 +1,16 @@
+{
+  "sourceFile": "deer-mist-forest-body-rear.png",
+  "prompt": "Use case: stylized-concept\nAsset type: transparent game equipment layer\nInput image: deer-mist.png is a reference image for exact body pose, original 1145 x 1374 canvas, placement, scale, perspective, and painterly magical style.\nPrimary request: create only the Waldgeist set body equipment called Runenumhang: a flowing deep forest-green and mist-teal magical cloak with embroidered silver runes, leaf-shaped edging and one subtle crystal clasp, fitted behind the neck, shoulders and back of the deer.\nComposition/framing: preserve the exact 1145 x 1374 canvas coordinate system. Place the cloak at the coordinates where it would sit behind the deer in the reference. Do not crop or rescale the canvas.\nStyle/medium: high-quality detailed magical game illustration matching the reference animal.\nConstraints: output only the cloak on a genuinely transparent background; no deer, no antlers, no fur, no eyes, no body, no scenery, no text, no watermark. Rear layer; body and legs are intended to render in front of it.",
+  "reference": "deer-mist.png",
+  "generator": "built-in image_gen",
+  "generatedOn": "2026-09-19",
+  "registration": {"scale": 1, "x": 0, "y": 0},
+  "canvas": {"width": 1145, "height": 1374},
+  "qa": {
+    "status": "accepted-for-current-base",
+    "method": "Fresh headless Edge full-canvas composition, individual rear layer and complete set",
+    "evidence": "../../../.superpowers/sdd/2026-09-19-avatar-shop/mystic-gear-evidence/deer-mist-forest-body-rear-composite.png",
+    "result": "The cloak flows behind the shoulder, flank and tail without covering the body silhouette.",
+    "limits": "The generated source is 1145 x 1373, one pixel shorter than the 1145 x 1374 logical canvas; the rear clasp is mostly hidden by the base body as intended."
+  }
+}

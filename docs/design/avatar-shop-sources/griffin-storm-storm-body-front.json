@@ -1,0 +1,16 @@
+{
+  "sourceFile": "griffin-storm-storm-body-front.png",
+  "prompt": "Use case: stylized-concept\nAsset type: transparent game equipment layer\nInput image: griffin-storm.png is a reference image for exact body pose, original 1225 x 1284 canvas, placement, scale, perspective, and painterly magical style.\nPrimary request: create only the Sturm set body equipment called Blitzrüstung: articulated blue-steel and silver armor with restrained electric-blue lightning runes, fitted across the griffin's chest, shoulders and flank while leaving both wings, head and legs free.\nComposition/framing: preserve the exact 1225 x 1284 canvas coordinate system. Place armor pieces at the coordinates where they would fit the reference griffin. Do not crop or rescale the canvas.\nStyle/medium: high-quality detailed magical game illustration matching the storm griffin.\nConstraints: output only the armor on a genuinely transparent background; no griffin, no feathers, no wings, no fur, no paws, no scenery, no text, no watermark. Front layer.",
+  "reference": "griffin-storm.png",
+  "generator": "built-in image_gen",
+  "generatedOn": "2026-09-19",
+  "registration": {"scale": 1, "x": 0, "y": 0},
+  "canvas": {"width": 1225, "height": 1284},
+  "qa": {
+    "status": "accepted-for-current-base",
+    "method": "Fresh headless Edge full-canvas composition, individual layer and complete set",
+    "evidence": "../../../.superpowers/sdd/2026-09-19-avatar-shop/mystic-gear-evidence/griffin-storm-storm-body-front-composite.png",
+    "result": "The blue-steel plates follow the breast, shoulder and flank while both wings remain visible.",
+    "limits": "The armor is intentionally dense and covers much of the near shoulder feathers; it is accepted only for this base pose."
+  }
+}

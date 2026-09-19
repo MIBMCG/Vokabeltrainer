@@ -1,0 +1,23 @@
+{
+  "sourceFile": "dragon-crystal-adornment-front.png",
+  "reference": "dragon.png",
+  "prompt": "Create ONLY a transparent game equipment OVERLAY matching the attached dragon's two raised wings. Thin violet and cyan crystalline glowing ornament caps cover the OUTER wing tips and follow a few short outer wing edge segments, symmetrical visual theme but respecting this perspective. Both left and right caps at exact coordinates of the reference wing tips. Remove the entire dragon including wing membranes; output solely these separate luminous ornament pieces on the same transparent canvas. High detail fantasy painterly gemstone art. No creature, no center gem, no full wing shapes, no body parts, no scene. Keep reference image scale, location and canvas dimensions.",
+  "generator": "built-in image_gen",
+  "generatedOn": "2026-09-19",
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "canvas": {
+    "width": 1199,
+    "height": 1312
+  },
+  "qa": {
+    "status": "accepted-for-current-base",
+    "method": "Headless Edge full-canvas composition, individual layer and complete set",
+    "evidence": "../../../test-results/avatar-art/dragon-wolf-fit/dragon-complete.png",
+    "result": "Both ornaments follow the outer wing tips and remain clear of the head and torso.",
+    "limits": "The generated ornament decorates broad outer wing-edge sections rather than acting as a pixel-tight cap."
+  }
+}

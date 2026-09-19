@@ -1,0 +1,6 @@
+{
+  "prompt": "Edit this exact horse image into a transparent game sprite. Preserve the horse exactly, including every hair, pose, scale, facial expression and hoof. Remove ALL background pixels including the brown golden halo and glow around the horse. The entire background must be genuinely transparent alpha, not black, not white, not a checkerboard painted into the image. No shadow. Keep the same canvas dimensions and horse coordinates. Only remove the background; do not redraw the horse.",
+  "sourceFile": "horse.png",
+  "generator": "built-in image_gen",
+  "generatedOn": "2026-09-19"
+}

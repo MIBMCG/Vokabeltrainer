@@ -1,0 +1,44 @@
+{
+  "date": "2026-09-19",
+  "provenance": "Existing generated source reused without redrawing or resampling.",
+  "references": [
+    "../art-sources/avatar-hand-compass.png"
+  ],
+  "sourceSha256": "204be858011536743528a908cf0827bcc05c8a89eeba94cf602075d6a0eef0ba",
+  "copy": "byte-for-byte",
+  "figure": "explorer-girl",
+  "layer": "front",
+  "sourceCanvas": {
+    "width": 1086,
+    "height": 1448
+  },
+  "sourceBounds": {
+    "alphaThreshold": 16,
+    "x": 356,
+    "y": 672,
+    "width": 199,
+    "height": 278
+  },
+  "legacyTarget": {
+    "x": 735,
+    "y": 690,
+    "width": 170,
+    "height": 205
+  },
+  "registration": {
+    "scale": 0.737410071942446,
+    "x": 483.48201438848923,
+    "y": 194.46043165467626
+  },
+  "registeredBounds": {
+    "x": 746,
+    "y": 690,
+    "width": 147,
+    "height": 205
+  },
+  "canvas": {
+    "width": 1086,
+    "height": 1448
+  },
+  "qa": "Source composition inspected on 2026-09-19: all 48 skin/color combinations and all 20 human equipment previews. Neck/eyes remain visible; small original silhouette differences between skin variants remain."
+}

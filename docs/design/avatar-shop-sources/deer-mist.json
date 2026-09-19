@@ -1,0 +1,7 @@
+{
+  "sourceFile": "deer-mist.png",
+  "reference": "deer-mist-cropped-draft.png",
+  "prompt": "Fix only the cropped antlers of this friendly mystical stag game sprite. Place the entire complete animal, including EVERY branching antler tip, at 75 percent of the canvas height. Reconstruct any missing antler tips naturally. The entire deer must be comfortably centered with a large transparent empty border on all sides, especially above the antlers. Keep the same fur colors, friendly face, pose and style. Genuine transparent alpha background. No new accessory, scenery or shadow.",
+  "generator": "built-in image_gen",
+  "generatedOn": "2026-09-19"
+}

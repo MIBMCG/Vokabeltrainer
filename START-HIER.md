@@ -1,8 +1,8 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Aktive Umsetzung:** Der Gesamtentwurf ist mit „Ja, starte nun“ am 19.09.2026 ausdrücklich freigegeben. Die Umsetzung nach [Avatar-Shop-Plan](docs/superpowers/plans/2026-09-19-avatar-shop.md) läuft; keine erneute allgemeine Startfreigabe verlangen. Kaufprobe, reiner Katalog und Rasterquellen werden zuerst entwickelt. Der echte Drive-Nachweis steht noch aus; Käufe sind nicht aktiviert. Aktuelle [Avatar-Shop-Übergabe](docs/handoffs/2026-09-19-avatar-shop.md).
+**Aktive Umsetzung:** Der Gesamtentwurf ist mit „Ja, starte nun“ am 19.09.2026 ausdrücklich freigegeben. Die Umsetzung nach [Avatar-Shop-Plan](docs/superpowers/plans/2026-09-19-avatar-shop.md) läuft; keine erneute allgemeine Startfreigabe verlangen. Kaufprobe und Katalog sind implementiert und unabhängig geprüft. Die Halskorrektur ist im bisherigen Produkt umgesetzt; alle 13 neuen Figurenbilder und ihre Ausrüstung sind getrennt vorbereitet und geprüft. Der echte Drive-Nachweis steht noch aus; neue Figurenwahl und Käufe sind nicht aktiviert. Siehe [Bild- und Korrekturbericht](docs/reports/2026-09-19-avatar-shop-task3.md). Aktuelle [Avatar-Shop-Übergabe](docs/handoffs/2026-09-19-avatar-shop.md).
 
-**Aktuell zusätzlich in Klärung:** [Avatar-Erweiterung und Punkteshop](docs/design/2026-09-19-avatar-shop-entscheidungen.md), AV01–AV12 bestätigt, Offlinekauf ausgeschlossen. Der [Gesamtentwurf](docs/superpowers/specs/2026-09-19-avatar-shop-design.md) ist freigegeben; keine bereits bestätigten Einzelentscheidungen wiederholen. Produktshop noch nicht integriert.
+**Aktuell in Umsetzung:** [Avatar-Erweiterung und Punkteshop](docs/design/2026-09-19-avatar-shop-entscheidungen.md), AV01–AV12 bestätigt, Offlinekauf ausgeschlossen. Der [Gesamtentwurf](docs/superpowers/specs/2026-09-19-avatar-shop-design.md) ist freigegeben; keine bereits bestätigten Einzelentscheidungen wiederholen. Produktshop noch nicht integriert. Der nächste technische Nachweis ist die echte Google-Kaufprobe unter `/shop-probe/`; ein alter laufender Server muss dafür neu gestartet werden.
 
 **Neuer Auftrag vom 19.09.2026:** Die bisherige App wurde praktisch getestet. Der [Überarbeitungsentwurf](docs/design/2026-09-19-ueberarbeitung.md) für Gestaltung, Bedienung, Lernregeln und Diagramme ist ausdrücklich bestätigt. Der [Implementierungsplan](docs/superpowers/plans/2026-09-19-ueberarbeitung.md) ist mit Nutzerantwort A zur Umsetzung mit Aufgabenagenten und Einzelreviews bestätigt. A1–C1 sind unabhängig geprüft; C2 ist implementiert und vollständig automatisiert geprüft. Die unabhängige Gesamtprüfung samt Korrekturen ist abgeschlossen. Aktueller Fortschritt und Prüfbelege stehen im [zusammengeführten Bericht](docs/reports/2026-09-19-ueberarbeitung.md) und im Arbeitsstand. Vor Weiterarbeit den aktuellen Arbeitsstand lesen. Der unten dokumentierte v1-Abschluss ist der Ausgangsstand, keine Abnahme des neuen Pakets.
 
@@ -14,7 +14,7 @@ Reale Produktprüfungen mit Google Drive auf zwei physischen Geräten, Safari un
 
 1. [AGENTS.md](AGENTS.md)
 2. [ARBEITSSTAND.md](ARBEITSSTAND.md)
-3. [Aktuelle Übergabe](docs/handoffs/2026-09-19-ueberarbeitung.md)
+3. [Aktuelle Avatar-Shop-Übergabe](docs/handoffs/2026-09-19-avatar-shop.md); [A1–C2-Übergabe](docs/handoffs/2026-09-19-ueberarbeitung.md) als Vorgeschichte
 4. [Anforderungen und Entscheidungen](docs/ANFORDERUNGEN.md)
 5. [Architektur](docs/ARCHITEKTUR.md) und [Produkt-Datenvertrag](docs/PRODUKT-DATENFORMAT.md)
 6. [Bestätigter Überarbeitungsentwurf](docs/design/2026-09-19-ueberarbeitung.md) und [Umsetzungsplan A1–C2](docs/superpowers/plans/2026-09-19-ueberarbeitung.md); als Grundlage [Gesamtentwurf](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md) einschließlich E01–E10

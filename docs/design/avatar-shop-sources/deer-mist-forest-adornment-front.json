@@ -1,0 +1,16 @@
+{
+  "sourceFile": "deer-mist-forest-adornment-front.png",
+  "prompt": "Use case: stylized-concept\nAsset type: transparent game equipment layer\nInput image: deer-mist.png is a reference image for exact body pose, original 1145 x 1374 canvas, placement, scale, perspective, and painterly magical style.\nPrimary request: create only the Waldgeist set adornment called Waldgeist-Beinzier: refined silver-and-vine anklets with tiny mint crystals, rune beads and leaf motifs fitted around all four lower legs above the hooves, perspective matched to each leg.\nComposition/framing: preserve the exact 1145 x 1374 canvas coordinate system. Place each anklet at the exact coordinates of the four legs in the reference. Do not crop or rescale the canvas.\nStyle/medium: high-quality detailed magical game illustration matching the reference animal.\nConstraints: output only the four adornment pieces on a genuinely transparent background; no deer, no legs, no hooves, no fur, no scenery, no text, no watermark. Front layer.",
+  "reference": "deer-mist.png",
+  "generator": "built-in image_gen",
+  "generatedOn": "2026-09-19",
+  "registration": {"scale": 0.5, "x": 420, "y": 770},
+  "canvas": {"width": 1145, "height": 1374},
+  "qa": {
+    "status": "accepted-for-current-base",
+    "method": "Fresh headless Edge full-canvas composition, individual layer and complete set",
+    "evidence": "../../../.superpowers/sdd/2026-09-19-avatar-shop/mystic-gear-evidence/deer-mist-forest-adornment-front-composite.png",
+    "result": "All four vine-and-crystal pieces sit on the lower legs above the hooves.",
+    "limits": "The grouped source has long hanging charms, so small gaps remain visible between some cuffs and the narrow legs."
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "sourceFile": "phoenix-sun-head-front.png",
+  "prompt": "Use case: stylized-concept\nAsset type: transparent game equipment layer\nInput image: phoenix.png is a reference image for exact body pose, original 1024 x 1536 canvas, placement, scale, perspective, and painterly magical style. Ignore and remove its painted background from the output.\nPrimary request: create only the Sonne set head equipment called Sonnenkrone: a graceful open golden crown with sun-ray filigree, small ruby and amber crystals, fitted just above and around the phoenix's swept feather crest without covering the face.\nComposition/framing: preserve the exact 1024 x 1536 canvas coordinate system. Place the crown at the coordinates where it would fit the head in the reference. Do not crop or rescale the canvas.\nStyle/medium: high-quality detailed magical game illustration matching the fiery phoenix.\nConstraints: output only the crown on a genuinely transparent background; no phoenix, no feathers, no beak, no eyes, no wings, no painted background, no glow rectangle, no scenery, no text, no watermark. Front layer.",
+  "reference": "phoenix.png",
+  "generator": "built-in image_gen",
+  "generatedOn": "2026-09-19",
+  "registration": {"scale": 0.28, "x": 510, "y": 100},
+  "canvas": {"width": 1024, "height": 1536},
+  "qa": {
+    "status": "accepted-for-current-base",
+    "method": "Fresh headless Edge full-canvas composition, individual layer and complete set",
+    "evidence": "../../../.superpowers/sdd/2026-09-19-avatar-shop/mystic-gear-evidence/phoenix-sun-head-front-composite.png",
+    "result": "The sun crown frames the swept crest above the head and leaves eye and beak free.",
+    "limits": "Its flame-like gold silhouette visually blends with the crest at small sizes; the source uses soft partial-alpha glow."
+  }
+}

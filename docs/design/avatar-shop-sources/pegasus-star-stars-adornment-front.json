@@ -1,0 +1,45 @@
+{
+  "sourceFile": "pegasus-star-stars-adornment-front.png",
+  "prompt": "Use case: precise-object-edit\nAsset type: transparent equipment layer for a layered game avatar\nInput image: Image 1 is alignment and fit reference only for the exact horse rig.\nPrimary request: Create ONLY a comet-tail decoration for the horse's existing tail: only a narrow flowing blue-silver-violet ribbon that follows and overlays the reference tail, with several small attached magical stars and a short comet shimmer; adornment slot only, not a replacement tail.\nCanvas and placement: preserve the exact 1024 x 1536 canvas and position the equipment to fit Image 1 without moving, scaling, or redrawing the rig.\nStyle: premium magical children's adventure illustration, detailed blue, silver, and violet materials, polished painterly rendering matching the horse reference.\nTransparency: output a genuinely transparent background. The entire horse, its mane, tail, body, legs, hooves, eyes, and the brown backdrop must be absent and fully transparent. Include only the named equipment pixels in their aligned positions.\nConstraints: exactly one equipment concept and one slot; clean alpha edges; no labels, no text, no watermark.\nAvoid: horse or animal pixels, complete animal silhouette, background, landscape, pedestal, cast shadow, extra jewelry, extra tack, unrelated stars or loose decorative objects, duplicated parts, additional slot items. Do not generate a new tail or copy the horse tail; generate only the ribbon and its attached stars.",
+  "relativeReference": "horse.png",
+  "generator": "built-in image_gen",
+  "generatedOn": "2026-09-19",
+  "candidate": false,
+  "canvas": {
+    "width": 1024,
+    "height": 1536
+  },
+  "alphaBounds": {
+    "threshold": 16,
+    "x": 137,
+    "y": 175,
+    "width": 544,
+    "height": 1175
+  },
+  "registration": {
+    "scale": 0.55,
+    "x": 0,
+    "y": 560
+  },
+  "provenance": "Byte-for-byte copy of horse-stars-adornment-front.png with body-specific browser-verified affine registration; no redrawing or resampling.",
+  "sourceSha256": "cea5e2453635603fa0ce31d1f01dd88646da08977902a3d92bc2f5a1241ff5d3",
+  "figure": "pegasus-star",
+  "layer": "front",
+  "registeredBounds": {
+    "alphaThreshold": 16,
+    "x": 75.35,
+    "y": 656.25,
+    "width": 299.2,
+    "height": 646.25
+  },
+  "qa": {
+    "date": "2026-09-19",
+    "method": "Headless Edge composition on the exact 1024 x 1536 source canvas.",
+    "evidence": ".superpowers/avatar-shop-equine-qa/screens/pegasus-star-stars-adornment-front.png",
+    "setEvidence": ".superpowers/avatar-shop-equine-qa/screens/pegasus-star-set-stars.png",
+    "observedFit": "The equipment is visibly aligned with its intended slot; eyes and face remain readable, and the unicorn horn and pegasus wings remain unobscured."
+  },
+  "registrationReference": "pegasus-star.png",
+  "derivedFrom": "horse-stars-adornment-front.png",
+  "copy": "byte-for-byte"
+}

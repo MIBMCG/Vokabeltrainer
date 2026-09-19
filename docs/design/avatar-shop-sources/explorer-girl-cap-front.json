@@ -1,0 +1,44 @@
+{
+  "date": "2026-09-19",
+  "provenance": "Existing generated source reused without redrawing or resampling.",
+  "references": [
+    "../art-sources/avatar-head-cap.png"
+  ],
+  "sourceSha256": "3630bb444115296cc61ad914ec118754ca35ccc226b8e8487d6ff37f59448462",
+  "copy": "byte-for-byte",
+  "figure": "explorer-girl",
+  "layer": "front",
+  "sourceCanvas": {
+    "width": 1086,
+    "height": 1448
+  },
+  "sourceBounds": {
+    "alphaThreshold": 16,
+    "x": 311,
+    "y": 73,
+    "width": 425,
+    "height": 292
+  },
+  "legacyTarget": {
+    "x": 403,
+    "y": 0,
+    "width": 280,
+    "height": 170
+  },
+  "registration": {
+    "scale": 0.5821917808219178,
+    "x": 238.93835616438355,
+    "y": -42.5
+  },
+  "registeredBounds": {
+    "x": 420,
+    "y": 0,
+    "width": 247,
+    "height": 170
+  },
+  "canvas": {
+    "width": 1086,
+    "height": 1448
+  },
+  "qa": "Source composition inspected on 2026-09-19: all 48 skin/color combinations and all 20 human equipment previews. Neck/eyes remain visible; small original silhouette differences between skin variants remain."
+}

@@ -1,0 +1,17 @@
+{
+  "source": "explorer-boy-runes-head-front.png",
+  "reference": "explorer-boy-skin-0.png",
+  "prompt": "A small exquisite gold and silver rune medallion containing a brilliant turquoise gemstone, hanging from a short dark cord around the reference explorer's neck and resting on the upper chest below the shirt collar. The medallion is about one tenth of the shoulder width, subtle but highly detailed and magical. Use the attached human explorer only as a size and pose reference. Output ONLY the wearable item on the exact same 1086x1448 transparent canvas, at the intended body coordinates. Remove the entire person, all skin, hair and clothing. Do not enlarge or center the equipment as a product photo. Genuine transparent alpha background, no scenery, no text. Match the premium painterly adventure-game style.",
+  "generator": "OpenAI image generation tool",
+  "generatedAt": "2026-09-19",
+  "canvas": {
+    "width": 1086,
+    "height": 1448
+  },
+  "registration": {
+    "scale": 0.33,
+    "x": 375,
+    "y": 255
+  },
+  "qa": "Source composition inspected on 2026-09-19: all 48 skin/color combinations and all 20 human equipment previews. Neck/eyes remain visible; small original silhouette differences between skin variants remain."
+}

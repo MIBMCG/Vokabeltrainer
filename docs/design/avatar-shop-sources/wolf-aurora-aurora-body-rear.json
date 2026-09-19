@@ -1,0 +1,23 @@
+{
+  "sourceFile": "wolf-aurora-aurora-body-rear.png",
+  "reference": "wolf-aurora.png",
+  "prompt": "A magical emerald and blue aurora cloak draped elegantly from the reference wolf's shoulders, flowing down BEHIND its flank. The wearable cloak has silver embroidered northern star patterns. Only the CLOAK with an open neckline and unobtrusive silver clasp, not the wolf. It is designed as a rear overlay behind the body; enough fabric extends to the sides to remain visible. Use the attached wolf ONLY as a fitting reference. Output ONLY the accessory at its correct worn position and scale on the exact same canvas. Remove the entire animal including all fur, eyes and paws. All other pixels must be genuine transparent alpha. Premium detailed painterly fantasy game art, no text or scene. Do not enlarge or center the equipment as a product photo.",
+  "generator": "built-in image_gen",
+  "generatedOn": "2026-09-19",
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "canvas": {
+    "width": 1223,
+    "height": 1286
+  },
+  "qa": {
+    "status": "accepted-for-current-base",
+    "method": "Headless Edge rear-plane composition, individual layer and complete set",
+    "evidence": "../../../test-results/avatar-art/dragon-wolf-fit/wolf-aurora-complete.png",
+    "result": "The cloak remains visible around the flank and behind the tail while the body correctly conceals its central section.",
+    "limits": "The neckline and clasp are intentionally mostly hidden by the wolf because this is a rear layer."
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "sourceFile": "tiger-jungle-adornment-front.png",
+  "prompt": "Use case: stylized-concept\nAsset type: transparent game equipment layer\nInput image: tiger.png is a reference image for exact body pose, original 1223 x 1286 canvas, placement, scale, perspective, and painterly magical style.\nPrimary request: create only the Dschungel set adornment called Goldene Pfotenreifen: four slim engraved gold cuffs with small emerald leaf charms fitted around the wrists and ankles just above all four paws, perspective matched to each leg.\nComposition/framing: preserve the exact 1223 x 1286 canvas coordinate system. Place each cuff at the exact coordinates of the four paws in the reference. Do not crop or rescale the canvas.\nStyle/medium: high-quality detailed magical adventure game illustration matching the tiger.\nConstraints: output only the four paw cuffs on a genuinely transparent background; no tiger, no legs, no paws, no fur, no scenery, no text, no watermark. Front layer.",
+  "reference": "tiger.png",
+  "generator": "built-in image_gen",
+  "generatedOn": "2026-09-19",
+  "registration": {"scale": 1, "x": 0, "y": 0},
+  "canvas": {"width": 1223, "height": 1286},
+  "qa": {
+    "status": "accepted-for-current-base",
+    "method": "Fresh headless Edge full-canvas composition, individual layer and complete set",
+    "evidence": "../../../.superpowers/sdd/2026-09-19-avatar-shop/mystic-gear-evidence/tiger-jungle-adornment-front-composite.png",
+    "result": "All four gold cuffs sit immediately above the tiger paws.",
+    "limits": "The generated front cuffs are visually large and decorative; the source canvas differs by minus one pixel in width and plus one in height."
+  }
+}

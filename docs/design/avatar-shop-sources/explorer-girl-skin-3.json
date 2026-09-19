@@ -1,0 +1,15 @@
+{
+  "date": "2026-09-19",
+  "generator": "built-in image_gen",
+  "references": [
+    "explorer-girl-skin-0.png",
+    "../art-sources/avatar-skin-3.png"
+  ],
+  "prompt": "Use case: precise-object-edit\nAsset type: transparent full-body game avatar source raster\nInput images: Image 1 is the exact edit target, the new female explorer; Image 2 is skin-tone reference only.\nPrimary request: Change only the visible skin color in Image 1 to a dunkelbrauner Hautton entsprechend Bild 2.\nSubject areas to recolor only: face, ears, neck, visible arms, hands, and visible legs.\nStyle/medium: preserve the exact warm, friendly, polished children's adventure illustration style of Image 1.\nComposition/framing: preserve the exact 1086 x 1448 canvas, full-body pose, scale, placement, body coordinates, silhouette, and transparent margins of Image 1.\nConstraints: Keep every pixel-level design feature other than skin coloration as faithful as possible. Preserve the exact girl identity, face geometry, friendly expression, eyes, eyebrows, hair and braid, teal shirt, undershirt, belt, shorts, socks, hiking shoes, outlines, shading direction, lighting, hand pose, leg pose, and all contour positions. Preserve natural highlights and shadows while changing their skin-tone hue/value consistently. Keep a genuinely transparent background and clean alpha edges. No background.\nAvoid: any change to pose, anatomy, proportions, facial features, hair, clothing, accessories, crop, canvas size, alignment, coordinates, outlines, or transparency; no halo, glow, text, logo, watermark, added or removed objects.",
+  "registration": {
+    "scale": 0.97,
+    "x": 5,
+    "y": 15
+  },
+  "qa": "Source composition inspected on 2026-09-19: all 48 skin/color combinations and all 20 human equipment previews. Neck/eyes remain visible; small original silhouette differences between skin variants remain."
+}

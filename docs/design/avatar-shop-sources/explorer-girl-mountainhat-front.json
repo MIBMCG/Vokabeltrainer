@@ -1,0 +1,44 @@
+{
+  "date": "2026-09-19",
+  "provenance": "Existing generated source reused without redrawing or resampling.",
+  "references": [
+    "../art-sources/avatar-head-mountainhat.png"
+  ],
+  "sourceSha256": "82b3df329900ca5fb9d15f32766641cbcb7c3fc6be851a4da820c462b5424f1b",
+  "copy": "byte-for-byte",
+  "figure": "explorer-girl",
+  "layer": "front",
+  "sourceCanvas": {
+    "width": 1087,
+    "height": 1447
+  },
+  "sourceBounds": {
+    "alphaThreshold": 16,
+    "x": 356,
+    "y": 22,
+    "width": 374,
+    "height": 378
+  },
+  "legacyTarget": {
+    "x": 410,
+    "y": 0,
+    "width": 266,
+    "height": 175
+  },
+  "registration": {
+    "scale": 0.46296296296296297,
+    "x": 291.1851851851852,
+    "y": -10.185185185185185
+  },
+  "registeredBounds": {
+    "x": 456,
+    "y": 0,
+    "width": 173,
+    "height": 175
+  },
+  "canvas": {
+    "width": 1086,
+    "height": 1448
+  },
+  "qa": "Source composition inspected on 2026-09-19: all 48 skin/color combinations and all 20 human equipment previews. Neck/eyes remain visible; small original silhouette differences between skin variants remain."
+}

@@ -1,0 +1,13 @@
+{
+  "sourceFile": "explorer-girl-knight-clothing-front.png",
+  "reference": "explorer-boy-skin-0.png",
+  "prompt": "Create only an isolated wearable knight armor overlay to fit the exact explorer in the reference. Remove the entire person and all body/hair/skin/boots/shorts pixels; retain ONLY a magnificent fitted silver steel breastplate and two short shoulder guards replacing the shirt. The breastplate has tasteful teal blue inlay and a small gold sun emblem, friendly adventure-game equipment, no weapons, no helmet, no cape. Neck area must be a true open transparent hole so the character neck will show beneath, not filled by a metal bib up to the chin. Shape fits the existing relaxed shoulder pose, width and waist. Keep EXACT 1086x1448 canvas and original torso pixel coordinates, shoulder around y340, waist y650, no enlarging or centering as a product photo. Genuine transparent alpha background, high detail painterly style matching reference.",
+  "generator": "built-in image_gen",
+  "generatedOn": "2026-09-19",
+  "registration": {
+    "scale": 0.55,
+    "x": 249,
+    "y": 125
+  },
+  "qa": "Source composition inspected on 2026-09-19: all 48 skin/color combinations and all 20 human equipment previews. Neck/eyes remain visible; small original silhouette differences between skin variants remain."
+}
