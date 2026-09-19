@@ -28,7 +28,7 @@ node --test tests/browser/trainer.browser.mjs
 node --test tests/browser/overhaul.browser.mjs
 ```
 
-Die finalen synthetischen Ansichten liegen unter [`docs/design/2026-09-19-ueberarbeitung-app/`](../../docs/design/2026-09-19-ueberarbeitung-app/). Sie umfassen 1280×900, 390×844, 320×568 und 844×390, eine Schriftgröße von 200 Prozent sowie einen getrennten DPR-2-Kontext. Die Browserfälle prüfen dabei auch alle vier Hauttöne, sechs Kleidungsfarben und sechs sichtbaren Ausrüstungsoptionen samt verständlicher Sperren.
+Normale Läufe schreiben die 13 C2-Ansichten ausschließlich nach `test-results/overhaul-c2/`; dieser Ordner ist ignoriert und verändert den Checkout nicht. Die bewusst ausgewählten und geprüften Nachweise liegen versioniert unter [`docs/design/2026-09-19-ueberarbeitung-app/`](../../docs/design/2026-09-19-ueberarbeitung-app/). Nur für eine neue Veröffentlichung werden die gewünschten Laufzeitbilder nach Sichtprüfung ausdrücklich in diesen Dokumentationsordner übernommen. Die Matrix umfasst 1280×900, 390×844, 320×568 und 844×390, eine Schriftgröße von 200 Prozent sowie einen getrennten DPR-2-Kontext. Die Browserfälle prüfen dabei auch alle vier Hauttöne, sechs Kleidungsfarben und sechs sichtbaren Ausrüstungsoptionen samt verständlicher Sperren.
 
 ## Technische Google-Drive-Probe
 
@@ -52,4 +52,4 @@ Die Probe prüft Erstellen/Beitreten, einmalige Wertung, Offline-Neuladen, verlo
 
 Zwischenergebnisbilder entstehen unter `test-results/` und bleiben außerhalb von Git. Die oben verlinkten finalen C2-Bilder sind ausdrücklich ausgewählte synthetische Ansichten. Die Testskripte verändern keine persönlichen Browserprofile und kennen kein echtes Google-Konto. Der Server liefert weder Testdateien noch die C2-Bildnachweise aus; die Anwendung enthält keinen Simulationsmodus.
 
-Ein bestandener Trainer- oder Probelauf ersetzt weder die echte Google-Prüfung des Produktformats noch die Abnahme auf zwei physischen Geräten, in Safari oder als Home-Bildschirm-App. Der aktuelle Ergebnisstand und diese Grenzen stehen im [v1-Abschlussbericht](../../docs/reports/2026-09-18-vokabeltrainer-v1.md).
+Ein bestandener Trainer- oder Probelauf ersetzt weder die echte Google-Prüfung des Produktformats noch die Abnahme auf zwei physischen Geräten, in Safari oder als Home-Bildschirm-App. Der aktuelle Ergebnisstand und diese Grenzen stehen im [Abschlussbericht zur Überarbeitung](../../docs/reports/2026-09-19-ueberarbeitung.md); der [v1-Abschlussbericht](../../docs/reports/2026-09-18-vokabeltrainer-v1.md) bleibt der historische Ausgangsstand.

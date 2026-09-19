@@ -10,7 +10,7 @@ const a2ResultsDirectory = resolve('test-results', 'overhaul-a2');
 const a4ResultsDirectory = resolve('test-results', 'overhaul-a4');
 const b3ResultsDirectory = resolve('test-results', 'overhaul-b3');
 const c1ResultsDirectory = resolve('test-results', 'overhaul-c1');
-const c2EvidenceDirectory = resolve('docs', 'design', '2026-09-19-ueberarbeitung-app');
+const c2EvidenceDirectory = resolve('test-results', 'overhaul-c2');
 const preparedGoogleClientId = '329410329467-s8nevn4sqi7m3fmtq2tkbpj76b8osvhs.apps.googleusercontent.com';
 
 async function productState(page) {
