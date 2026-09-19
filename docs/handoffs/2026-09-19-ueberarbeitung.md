@@ -1,6 +1,6 @@
 # Übergabe: Überarbeitung nach Praxistest
 
-Stand: 19.09.2026. Branch: `codex/vokabeltrainer-v1`. Ausgangscommit des Entwurfs: `8948a3b`; veröffentlichter Entwurf: `e035093255fbf1b290223eef96a6e247a554e4f7`. Dieses Paket ergänzt die bestätigte Freigabe und konkrete Umsetzungspläne; keine neue Produktfunktion und keine neuen Produktprüfungen. Der zugehörige Planungscommit ist über die Dateihistorie dieser Übergabe nachvollziehbar; sein überprüfter Remote-Stand wird nach Push im Gespräch ausgegeben.
+Stand: 19.09.2026. Branch: `codex/vokabeltrainer-v1`. Ausgangscommit des Entwurfs: `8948a3b`; veröffentlichter Entwurf: `e035093255fbf1b290223eef96a6e247a554e4f7`; überprüfter Planungsstand auf GitHub: `9f809493e6e082183126654f1b1ab2d7c5945ebd`. Die Umsetzung ist freigegeben und läuft. Der aktuelle Paketstand und seine Prüfbelege stehen unten; ältere Planungsprüfungen bleiben ausdrücklich historisch.
 
 ## Nutzerauftrag
 
@@ -12,7 +12,7 @@ Optik wesentlich näher an das freigegebene Inselkonzept bringen, Avatar und Rei
 2. Lernregeln werden je Kind getrennt einstellbar, mit gemeinsamen Standardwerten als Ausgangspunkt.
 3. Der gesamte schriftliche Entwurf einschließlich Zahlenbereichen, Wirkung ab nächster neuer Runde, Wiederaktivierung, Bedienabläufen und Bildwelt ist durch „Ja, Freigabe erteilt“ bestätigt.
 
-Der [schriftliche Entwurf](../design/2026-09-19-ueberarbeitung.md) wird durch den [Umsetzungsplan](../superpowers/plans/2026-09-19-ueberarbeitung.md) mit drei Etappen und neun Aufgaben konkretisiert. Die Planprüfung und Wahl der Ausführung stehen noch aus; die Entwurfsfreigabe wird nicht erneut verlangt.
+Der [schriftliche Entwurf](../design/2026-09-19-ueberarbeitung.md) wird durch den [Umsetzungsplan](../superpowers/plans/2026-09-19-ueberarbeitung.md) mit drei Etappen und neun Aufgaben konkretisiert. Der Nutzer hat mit A die Planprüfung und Ausführung mit Aufgabenagenten/Einzelreviews bestätigt. Keine erneute Plan- oder Entwurfsfreigabe verlangen.
 
 ## Arbeit und Prüfung
 
@@ -24,9 +24,11 @@ Der [schriftliche Entwurf](../design/2026-09-19-ueberarbeitung.md) wird durch de
 - Historische Dokumentprüfung des Entwurfs: 177 Dateien, 78 Markdown-Dateien, 356 lokale Links; 0 Fehler. Aktuelle Planungsprüfung: `npm run check:docs` mit 181 Dateien, 82 Markdown-Dateien, 374 lokalen Links und 0 Fehlern; `git diff --check` ohne Befund. Nur Dokumente geändert, deshalb keine Produkt-Suites erneut ausgeführt.
 - Alte Testergebnisse aus dem v1-Abschluss wurden nicht als neue Prüfung wiederholt oder umetikettiert.
 
-## Technisch konkretisiert, noch nicht implementiert
+## Paketstand und verbleibende Umsetzung
 
-- A1–A4: Rasterwelt/Avatar, erklärte Moduswahl, vorbereitete öffentliche Google-ID, vier Hauptbereiche für Erwachsene mit Entwurfsschutz.
+A1 ist mit `0eb4099` implementiert und mit `004392c` nach der unabhängigen Review korrigiert. Die Nachprüfung bestätigt alle drei Korrekturen, keine wesentlichen Befunde bleiben offen. Alle 18 Grundbilder benötigen zusammen rund 321 KiB; größere Bilder werden bei Bedarf geladen. Kappe/Bergmütze und textlicher Sperrstatus der Etappen wurden gezielt korrigiert. Der Desktop-Reisescreenshot muss bei den nächsten Bildnachweisen ersetzt werden: er entstand vor dem vollständigen Laden der neuen Bildauflösung. [Implementierung und aktuelle Prüfungen](../reports/2026-09-19-a1-rasterwelt.md), [Review](../reports/2026-09-19-a1-review.md), [Quellen und Ansichten](../reports/2026-09-19-illustrationen.md).
+
+- A2–A4 bleiben offen: erklärte Moduswahl, vorbereitete öffentliche Google-ID, vier Hauptbereiche für Erwachsene mit Entwurfsschutz.
 - B1–B3: v1/v2-Leser erhalten alte Objekte und Hashwerte, atomare Migration mit lokaler Sicherung, eigene Wiederholungsprojektion, eingefrorene Policy und Wortgeneration, Regeln je Kind und „Wieder üben“.
 - C1–C2: Statistik aus denselben effektiven deduplizierten Antworten, reale Screenshotprüfung gegen das Konzept, Offline-/Update-/Migrationsprüfung und portable Übergabe.
 - Ein alter Offlineclient kann technisch weiterhin v1-Antworten hochladen. Diese werden übernommen; die neue App darf unbekannte Formate nicht als erfolgreich synchronisiert darstellen. Keine behauptete Fernsperre alter Programme.
@@ -34,6 +36,6 @@ Der [schriftliche Entwurf](../design/2026-09-19-ueberarbeitung.md) wird durch de
 
 ## Fortsetzung
 
-Den Umsetzungsplan zur Prüfung vorlegen und zwischen Umsetzung mit frischen Aufgabenagenten/Reviews oder direkter Umsetzung mit unabhängiger Abschlussreview wählen lassen. Das entspricht dem angeforderten Writing-Plans-Ablauf; keine allgemeine neue Startgenehmigung erfragen. Nach dieser Planprüfung mit A1 beginnen und die Aufgaben ohne weitere pauschale Freigabepausen fortlaufend bearbeiten. Bereits bestätigten Entwurf und Cloud-/Profilentscheidungen nicht erneut fragen. Die laufende App und persönliche Browserdaten bleiben während der Planung unverändert.
+Ausführung A ist bestätigt. A1 ist abgeschlossen; mit A2 fortfahren und die Aufgaben nach jeweiligem Review ohne weitere pauschale Freigabepausen fortlaufend bearbeiten. Frischer Ausgangstest: 277/277 bestanden auf Planungscommit `9f80949`; A1 danach 280/280, nach Reviewkorrektur 13/13 betroffene Node-Tests sowie je ein Reise- und Worker-Updatefall bestanden. Bereits bestätigten Entwurf und Cloud-/Profilentscheidungen nicht erneut fragen. Persönliche Browserdaten und der Server auf 4173 werden nicht als Testumgebung verwendet.
 
 Die vorangehende [v1-Übergabe](2026-09-18-vokabeltrainer-v1.md) dokumentiert den bestehenden Produktstand. Hosting, Kontenänderungen, Kosten und echte Apple-/Zwei-Geräte-Abnahme sind weiterhin getrennte Aufgaben.

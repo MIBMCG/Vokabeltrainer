@@ -10,7 +10,7 @@
 
 **Spec:** [Bestätigter Überarbeitungsentwurf](../../design/2026-09-19-ueberarbeitung.md).
 
-Stand: 19.09.2026. Der Nutzer hat den [schriftlichen Entwurf](../../design/2026-09-19-ueberarbeitung.md) mit „Ja, Freigabe erteilt“ bestätigt. Diese Pläne konkretisieren die Umsetzung; sie sind noch nicht ausgeführt.
+Stand: 19.09.2026. Der Nutzer hat den [schriftlichen Entwurf](../../design/2026-09-19-ueberarbeitung.md) mit „Ja, Freigabe erteilt“ bestätigt. Diese Pläne konkretisieren die Umsetzung. Nutzerantwort A bestätigt die Planprüfung und die Ausführung mit Aufgabenagenten und Einzelreviews; aktuelle abgeschlossene Aufgaben und Nachweise stehen in Arbeitsstand/Übergabe.
 
 ## Global Constraints
 

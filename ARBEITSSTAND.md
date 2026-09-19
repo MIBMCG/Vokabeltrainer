@@ -4,7 +4,14 @@ Stand: **19.09.2026**
 
 Aktuelle [Übergabe zur Überarbeitung](docs/handoffs/2026-09-19-ueberarbeitung.md).
 
-**Aktueller Auftrag:** Nach dem Praxistest hat der Nutzer eine Überarbeitung von Gestaltung, Avatar/Inselreise, Einrichtung, Moduswahl, Wiederholungsregeln, Vokabelverwaltung und Statistik beauftragt. Der [schriftliche Entwurf](docs/design/2026-09-19-ueberarbeitung.md) ist mit „Ja, Freigabe erteilt“ vollständig bestätigt. Der [Implementierungsplan in drei Etappen](docs/superpowers/plans/2026-09-19-ueberarbeitung.md) ist erstellt und selbstgeprüft; Planprüfung/Ausführungswahl sind noch offen. Noch keine Produktänderung dieses Pakets. Google Drive mit vorbereiteter App und Regeln je Kind bleiben beschlossen; kein Excel-Wechsel. Der nachfolgende v1-Abschluss bleibt als bisheriger Funktionsnachweis erhalten und ist keine visuelle Abnahme dieser Überarbeitung.
+**Aktueller Auftrag:** Nach dem Praxistest hat der Nutzer eine Überarbeitung von Gestaltung, Avatar/Inselreise, Einrichtung, Moduswahl, Wiederholungsregeln, Vokabelverwaltung und Statistik beauftragt. Der [schriftliche Entwurf](docs/design/2026-09-19-ueberarbeitung.md) ist mit „Ja, Freigabe erteilt“ vollständig bestätigt. Der [Implementierungsplan in drei Etappen](docs/superpowers/plans/2026-09-19-ueberarbeitung.md) ist erstellt, selbstgeprüft und mit Nutzerantwort A zur Ausführung mit Aufgabenagenten/Einzelreviews bestätigt. Aktueller Paketfortschritt steht unten. Google Drive mit vorbereiteter App und Regeln je Kind bleiben beschlossen; kein Excel-Wechsel. Der nachfolgende v1-Abschluss bleibt als bisheriger Funktionsnachweis erhalten und ist keine visuelle Abnahme dieser Überarbeitung.
+
+## Fortschritt der Überarbeitung
+
+- A1 ist in `0eb4099` implementiert, Reviewkorrekturen in `004392c`: Rasterwelt, geschichteter Avatar, responsive Bilder und kleiner Offline-Bildsatz. Die unabhängige Nachprüfung bestätigt alle drei Korrekturen; keine wesentlichen offenen Befunde. [Umsetzungsnachweis](docs/reports/2026-09-19-a1-rasterwelt.md), [Review](docs/reports/2026-09-19-a1-review.md), [Bildbericht](docs/reports/2026-09-19-illustrationen.md).
+- Auf dem A1-Ausgangscode bestanden 280/280 Node-Tests. Nach den Reviewkorrekturen bestanden 13/13 betroffene Node-Tests, 1/1 Reise-Browsertest und 1/1 Worker-Updatefall. Produktcache `v7`, synthetischer Updateworker `v8`.
+- A2 ist lesend vorbereitet; A2–C2 sind noch nicht implementiert. Nächster Produktschritt: erklärte Moduskarten und bildgestützte Übungsansicht. Ein kleiner Nachweisbefund bleibt für die nächsten Aufnahmen: der Desktop-Reisescreenshot entstand vor dem Laden der neuen Bildauflösung und muss ersetzt werden.
+- Alle Aufnahmen und Browsertests verwenden synthetische Daten in Chromium/Edge. Physische iOS- und Zwei-Geräte-Abnahmen bleiben offen.
 
 Die vollständige Version 1 gemäß [bestätigtem Gesamtentwurf](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md) und [Produkt-Datenvertrag](docs/PRODUKT-DATENFORMAT.md) ist auf `codex/vokabeltrainer-v1` implementiert. Task 13 schloss letzte Bedienungsbefunde, portable Browserwerkzeuge, vollständige Regression, visuelle Prüfung und die portable Dokumentation ab. Ausgangscode: `3b1d16d`; Reviewfix-1-Produktcode `11e3128` korrigiert zusätzlich die Profilweiterleitung. Der [Abschlussbericht](docs/reports/2026-09-18-vokabeltrainer-v1.md) enthält die vollständige Evidenz einschließlich der korrigierten Abschlussmatrix; die [Übergabe](docs/handoffs/2026-09-18-vokabeltrainer-v1.md) nennt den nächsten Schritt.
 
@@ -16,7 +23,7 @@ Die Anforderungen R01–R33, Entscheidungen Q1–Q14 und Entwurfsergänzungen E0
 
 Die Produktoberfläche liegt unter `/trainer/`; die technische Drive-Probe bleibt getrennt unter `/`. Persönliche Lerninhalte und Browserdaten gehören nicht ins Repository.
 
-## Aktueller Prüfstand
+## Bisheriger v1-Prüfstand
 
 Finaler Produktcode `cc079cb`: **277/277 Node- und 15/15 Trainer-Browsertests bestanden**, einschließlich vier neuer Regressionen zu PIN-Wiederherstellung, Verwaltungsentwürfen, erneutem Google-Verbinden und offenem Antworttext bei Wiederherstellungskonflikten. Produktcache `v5`, synthetischer Updateworker `v6`. [Fixbericht](docs/reports/2026-09-18-vokabeltrainer-v1-final-fixes.md) und [unabhängige Nachprüfung](docs/reports/2026-09-18-vokabeltrainer-v1-final-fix-review.md) belegen den Abschluss.
 
@@ -62,6 +69,6 @@ Keine dieser Grenzen ist eine neue Produktentscheidung. Hosting, Kontenänderung
 
 ## Nächster Schritt
 
-Den [Implementierungsplan](docs/superpowers/plans/2026-09-19-ueberarbeitung.md) vom Nutzer prüfen lassen und die Ausführungsart festhalten. Anschließend mit A1 beginnen und die freigegebenen Aufgaben ohne erneute pauschale Zwischenfreigaben bearbeiten. Der Entwurf einschließlich Google Drive, Regeln je Kind, Zahlenbereichen und Rundenwirkung ist bestätigt und wird nicht erneut abgefragt. Die [Geräte-Prüfliste](docs/GERAETE-ABNAHME.md) bleibt für spätere echte Tests gültig; eine dafür nötige HTTPS-Bereitstellung erfordert einen eigenen Auftrag.
+Den [Implementierungsplan](docs/superpowers/plans/2026-09-19-ueberarbeitung.md) in der bestätigten Ausführungsart A beim ersten noch offenen Paket fortsetzen; Fortschritt siehe oben. Die freigegebenen Aufgaben ohne erneute pauschale Zwischenfreigaben bearbeiten. Der Entwurf einschließlich Google Drive, Regeln je Kind, Zahlenbereichen und Rundenwirkung ist bestätigt und wird nicht erneut abgefragt. Die [Geräte-Prüfliste](docs/GERAETE-ABNAHME.md) bleibt für spätere echte Tests gültig; eine dafür nötige HTTPS-Bereitstellung erfordert einen eigenen Auftrag.
 
-Aktueller Branch: `codex/vokabeltrainer-v1`. Finaler Produktcode: `cc079cb`. Der Abschlussstand `a8842b7` wurde auf GitHub übertragen und mit dem lokalen Commit verglichen; siehe Empfangsbeleg in der Übergabe. Nachfolgende reine Dokumentationscommits sind in der Branchhistorie sichtbar.
+Aktueller Branch: `codex/vokabeltrainer-v1`. Letzter überprüfter GitHub-Stand vor der Umsetzung: `9f809493e6e082183126654f1b1ab2d7c5945ebd`. Die Überarbeitungscommits stehen oben; nach einem Push wird der Remote-Stand erneut verglichen. Der frühere v1-Produktcode bleibt über `cc079cb` nachvollziehbar.
