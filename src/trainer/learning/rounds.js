@@ -86,9 +86,10 @@ function modeWords(mode, projection, profileId) {
     });
 }
 
-function initialCandidates(mode, projection, profileId) {
+function initialCandidates(mode, projection, profileId, schedule) {
   return modeWords(mode, projection, profileId)
-    .map((entity) => ({wordId: entity.id, learningId: entity.value.learningId}));
+    .map((entity) => ({wordId: entity.id, learningId: entity.value.learningId,
+      ...(schedule === null ? {} : {schedulingGenerationId: scheduledWord(schedule, entity)?.generationId ?? null})}));
 }
 
 function currentWordEntity(projection, round, candidate) {
@@ -155,39 +156,43 @@ export function previewModes({projection, profileId, day, schedule = null}) {
   });
 }
 
-function candidateDetails(round, projection, day, candidate) {
+function candidateDetails(round, projection, day, candidate, schedule) {
   if (round.pausedWordIds.includes(candidate.wordId)) return null;
   const entity = currentWordEntity(projection, round, candidate);
   if (entity === null) return null;
-  const state = profileWord(projection, round.profileId, candidate.wordId);
-  if (!isDue(state, day)) return null;
-  return {candidate, entity, state};
+  const facts = profileWord(projection, round.profileId, candidate.wordId);
+  const state = schedule === null ? facts : scheduledWord(schedule, entity);
+  if (state?.excluded || !isDue(state, day)) return null;
+  // Scheduling decides eligibility; the established fact-based ordering stays
+  // independent of a parent's policy or generation changes.
+  return {candidate, entity, state: facts};
 }
 
-function eligibleCandidates(round, projection, day) {
+function eligibleCandidates(round, projection, day, schedule) {
   const eligible = [];
   for (const candidate of round.candidates) {
-    const details = candidateDetails(round, projection, day, candidate);
+    const details = candidateDetails(round, projection, day, candidate, schedule);
     if (details !== null) eligible.push(details);
   }
   return eligible;
 }
 
-function additionalCandidates(round, projection, day) {
+function additionalCandidates(round, projection, day, schedule) {
   if (round.expanded) return [];
   const selected = new Set(round.candidates.map(({wordId}) => wordId));
   const additional = [];
   for (const entity of activeWords(projection, round.profileId)) {
     if (selected.has(entity.id)) continue;
     const candidate = {wordId: entity.id, learningId: entity.value.learningId,
-      ...(round.schedulingMode?{schedulingGenerationId:null}:{})};
-    if (candidateDetails(round, projection, day, candidate) !== null) additional.push(candidate);
+      ...(round.schedulingMode || schedule !== null
+        ? {schedulingGenerationId:schedule === null ? null : scheduledWord(schedule,entity)?.generationId ?? null} : {})};
+    if (candidateDetails(round, projection, day, candidate, schedule) !== null) additional.push(candidate);
   }
   return additional;
 }
 
-function hasAdditionalCandidates(round, projection, day) {
-  return additionalCandidates(round, projection, day).length > 0;
+function hasAdditionalCandidates(round, projection, day, schedule) {
+  return additionalCandidates(round, projection, day, schedule).length > 0;
 }
 
 function priority(state) {
@@ -262,25 +267,26 @@ function currentTaskIsEligible(round, eligible) {
   if (details === undefined) return false;
   const current = taskFromDetails(details, round.current.ordinal);
   return current.revisionId === round.current.revisionId
-    && current.learningId === round.current.learningId;
+    && current.learningId === round.current.learningId
+    && current.schedulingGenerationId === round.current.schedulingGenerationId;
 }
 
-export function nextTask({round, projection, day}) {
+export function nextTask({round, projection, day, schedule = null}) {
   if (round.status === 'completed') return {kind: 'complete'};
   if (round.status === 'abandoned') return {kind: 'exhausted', canExpand: false};
   if (round.answeredIds.length >= round.size) return {kind: 'complete'};
-  const allowed = eligibleCandidates(round, projection, day);
+  const allowed = eligibleCandidates(round, projection, day, schedule);
   if (currentTaskIsEligible(round, allowed)) {
     return {kind: 'task', task: structuredClone(round.current)};
   }
   if (allowed.length === 0) {
-    return {kind: 'exhausted', canExpand: hasAdditionalCandidates(round, projection, day)};
+    return {kind: 'exhausted', canExpand: hasAdditionalCandidates(round, projection, day, schedule)};
   }
   return {kind: 'task', task: rankCandidates(allowed, round)[0]};
 }
 
-function moveToNext(round, projection, day) {
-  const next = nextTask({round, projection, day});
+function moveToNext(round, projection, day, schedule) {
+  const next = nextTask({round, projection, day, schedule});
   if (next.kind === 'task') {
     return {...round, current: next.task, feedback: null, status: 'asking'};
   }
@@ -290,7 +296,7 @@ function moveToNext(round, projection, day) {
   return {...round, current: null, feedback: null, status: 'asking'};
 }
 
-export function startRound({id, profileId, mode, size = 10, projection, day}) {
+export function startRound({id, profileId, mode, size = 10, projection, day, schedule = null}) {
   if (!MODES.has(mode)) invalid('Unsupported round mode');
   if (!SIZES.has(size)) invalid('Unsupported round size');
   if (!profileEntity(projection, profileId)) invalid('Round profile is unavailable');
@@ -303,7 +309,7 @@ export function startRound({id, profileId, mode, size = 10, projection, day}) {
     profileId,
     mode,
     size,
-    candidates: initialCandidates(mode, projection, profileId),
+    candidates: initialCandidates(mode, projection, profileId, schedule),
     expanded: false,
     pausedWordIds: [],
     answeredIds: [],
@@ -313,7 +319,7 @@ export function startRound({id, profileId, mode, size = 10, projection, day}) {
     feedback: null,
     status: 'asking',
   };
-  return moveToNext(round, projection, day);
+  return moveToNext(round, projection, day, schedule);
 }
 
 function validateAnswer(round, answer) {
@@ -328,7 +334,8 @@ function validateAnswer(round, answer) {
     || payload.wordId !== round.current.wordId
     || payload.revisionId !== round.current.revisionId
     || payload.learningId !== round.current.learningId
-    || payload.ordinal !== round.current.ordinal) {
+    || payload.ordinal !== round.current.ordinal
+    || (payload.schedulingGenerationId ?? null) !== (round.current.schedulingGenerationId ?? null)) {
     invalid('Answer does not match the displayed task');
   }
 }
@@ -337,7 +344,7 @@ function countedTotal(round) {
   return Object.values(round.wordCounts).reduce((sum, value) => sum + value, 0);
 }
 
-export function applyAnswer({round, answer, typed, solutions, projection}) {
+export function applyAnswer({round, answer, typed, solutions, projection, schedule = null}) {
   validateAnswer(round, answer);
   if (!Array.isArray(solutions)) invalid('Answer solutions must be an array');
   const assessment = assess(typed, {answers: solutions});
@@ -365,9 +372,11 @@ export function applyAnswer({round, answer, typed, solutions, projection}) {
   };
   next.status = 'feedback';
 
-  const state = profileWord(projection, round.profileId, answer.payload.wordId);
+  const state = schedule === null ? profileWord(projection, round.profileId, answer.payload.wordId)
+    : schedule.words.get(answer.payload.wordId)?.get(answer.payload.learningId);
   const correctlyPaused = answer.payload.correct
-    && state?.learningId === answer.payload.learningId
+    && (schedule !== null || state?.learningId === answer.payload.learningId)
+    && state !== undefined
     && state.intervalIndex >= 0
     && state.dueDay !== null
     && state.dueDay > answer.day;
@@ -377,7 +386,7 @@ export function applyAnswer({round, answer, typed, solutions, projection}) {
   return next;
 }
 
-export function advanceRound({round, projection, day}) {
+export function advanceRound({round, projection, day, schedule = null}) {
   if (round.status === 'completed' || round.status === 'abandoned') return structuredClone(round);
   const next = structuredClone(round);
   if (next.status === 'feedback' || next.status === 'exhausted') {
@@ -385,20 +394,20 @@ export function advanceRound({round, projection, day}) {
     next.feedback = null;
     next.status = 'asking';
   }
-  return moveToNext(next, projection, day);
+  return moveToNext(next, projection, day, schedule);
 }
 
-export function expandRound({round, projection, day}) {
+export function expandRound({round, projection, day, schedule = null}) {
   if (round.status === 'completed' || round.status === 'abandoned') return structuredClone(round);
-  const availability = nextTask({round, projection, day});
+  const availability = nextTask({round, projection, day, schedule});
   if (availability.kind !== 'exhausted') invalid('Only an exhausted round can be expanded');
   const next = structuredClone(round);
-  if (!next.expanded) next.candidates.push(...additionalCandidates(next, projection, day));
+  if (!next.expanded) next.candidates.push(...additionalCandidates(next, projection, day, schedule));
   next.expanded = true;
   next.current = null;
   next.feedback = null;
   next.status = 'asking';
-  return moveToNext(next, projection, day);
+  return moveToNext(next, projection, day, schedule);
 }
 
 export function completeRound({round, reason}) {

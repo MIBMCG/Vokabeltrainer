@@ -81,6 +81,8 @@ const ASSETS = new Map([
   ['/src/trainer/learning/answers.js', ['src/trainer/learning/answers.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/learning/calendar.js', ['src/trainer/learning/calendar.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/learning/progress.js', ['src/trainer/learning/progress.js', 'text/javascript; charset=utf-8']],
+  ['/src/trainer/learning/facts.js', ['src/trainer/learning/facts.js', 'text/javascript; charset=utf-8']],
+  ['/src/trainer/learning/schedule.js', ['src/trainer/learning/schedule.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/learning/rewards.js', ['src/trainer/learning/rewards.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/learning/rounds.js', ['src/trainer/learning/rounds.js', 'text/javascript; charset=utf-8']],
   ...ART_RENDITIONS.flatMap(([key, widths]) => widths.map((width) => [

@@ -14,6 +14,8 @@ import {
 } from '../../src/trainer/learning/rounds.js';
 import {project} from '../../src/trainer/learning/progress.js';
 import {createFixture} from './fixtures.js';
+import {projectSchedule} from '../../src/trainer/learning/schedule.js';
+import {DEFAULT_POLICY} from '../../src/trainer/model/policies.js';
 
 function setOwn(bucket, id, value) {
   Object.defineProperty(bucket, id, {
@@ -65,6 +67,20 @@ function clearCurrent(round, overrides = {}) {
 function setWordState(projection, profileId, wordId, overrides) {
   Object.assign(projection.profiles[profileId].words[wordId], overrides);
 }
+
+test('configurable eligibility keeps the existing fact-based ranking after reactivation', () => {
+  const f=createFixture({words:[['w1','Hund',['dog']],['w2','Katze',['cat']]]});
+  const reset=f.event('word.reactivated',{profileId:'p1',wordId:'w1',revisionId:'rev-w1',learningId:'learn-w1'},
+    {id:'reset',formatVersion:2,ruleVersion:2});
+  const ledger=f.withEvents(f.roundStarted,...[1,2,3].map(ordinal=>f.answer({id:`prior-${ordinal}`,ordinal})),reset);
+  const projection=project(ledger),day='2026-09-18';
+  const schedule=projectSchedule({ledger,profileId:'p1',policy:DEFAULT_POLICY,day});
+  assert.equal(schedule.words.get('w1').get('learn-w1').intervalIndex,-1);
+  assert.equal(projection.profiles.p1.words.w1.intervalIndex,0);
+  const round=startRound({id:'new',profileId:'p1',mode:'all',size:10,projection,day,schedule});
+  assert.equal(round.current.wordId,'w1');
+  assert.equal(round.current.schedulingGenerationId,'reset');
+});
 
 test('mode preview uses the same active assignments and due states as round selection', () => {
   const f = createFixture();

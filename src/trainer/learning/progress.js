@@ -2,18 +2,9 @@ import {resolveEpochs} from '../model/epochs.js';
 import {projectEntities} from '../model/revisions.js';
 import {addDays} from './calendar.js';
 import {rewardState} from './rewards.js';
+import {compareEvents, orderedUniqueEvents, uniqueAnswers} from './facts.js';
 
 const REVIEW_INTERVALS = [1, 3, 7, 14];
-
-function compareAscii(left, right) {
-  if (left === right) return 0;
-  return left < right ? -1 : 1;
-}
-
-function compareEvents(left, right) {
-  if (left.clock !== right.clock) return left.clock - right.clock;
-  return compareAscii(left.deviceId, right.deviceId) || compareAscii(left.id, right.id);
-}
 
 function setOwn(bucket, id, value) {
   Object.defineProperty(bucket, id, {
@@ -22,25 +13,6 @@ function setOwn(bucket, id, value) {
     writable: true,
     configurable: true,
   });
-}
-
-function orderedUniqueEvents(events) {
-  const byId = new Map();
-  for (const event of events) {
-    const previous = byId.get(event.id);
-    if (!previous || compareEvents(event, previous) < 0) byId.set(event.id, event);
-  }
-  return [...byId.values()].sort(compareEvents);
-}
-
-function uniqueAnswers(events) {
-  const answers = new Map();
-  for (const event of orderedUniqueEvents(events)) {
-    if (event.type !== 'answer.recorded') continue;
-    const key = `${event.payload.roundId}\u0000${event.payload.ordinal}`;
-    if (!answers.has(key)) answers.set(key, event);
-  }
-  return [...answers.values()];
 }
 
 function defaultLearningState() {

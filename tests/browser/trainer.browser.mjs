@@ -40,6 +40,49 @@ test('B1 browser migrates actual v1 feedback atomically and leaves unknown stora
   } finally {await harness.close();}
 });
 
+test('B2 browser continues frozen configurable policy and generation after reload', {timeout:60_000},async()=>{
+  const {createCommands}=await import('../../src/trainer/commands.js');
+  const {createFixture}=await import('../trainer/fixtures.js');
+  const {memoryStore,productState:makeState,sequenceIds}=await import('../trainer/backup-fixtures.js');
+  const harness=await createTrainerHarness(),{page}=await harness.newDevice();
+  const open=async(state,prefix)=>createCommands({store:memoryStore(state),deviceId:state.deviceId,
+    id:sequenceIds(prefix),now:()=>new Date(),onChange(){}});
+  try {
+    await page.goto(harness.baseUrl);await setupPractice(page);
+    const configured=await productState(page),initial=makeState(createFixture({words:[['w1','Hund',['dog']]]}).base,{deviceId:configured.deviceId});
+    initial.pinVerifier=configured.pinVerifier;
+    const commands=await open(initial,'b2-browser');
+    await commands.setLearningRules({profileId:'p1',expectedPolicyEventId:null,policy:{slowAfter:2,stopAfter:2,intervals:[1,3,7,14]}});
+    await commands.start({profileId:'p1',mode:'all',size:10});
+    await writeProductState(page,commands.getState());await page.reload();
+    await page.getByRole('button',{name:/Ada/}).first().click();
+    await page.getByRole('button',{name:'Fortsetzen',exact:true}).click();
+    await page.locator('#answer').fill('dog');await page.getByRole('button',{name:'Prüfen',exact:true}).click();
+    await page.getByRole('button',{name:'Weiter',exact:true}).waitFor();
+    const stored=await productState(page),round=stored.rounds.p1;
+    const edited=await open(stored,'b2-edited');
+    await edited.setLearningRules({profileId:'p1',expectedPolicyEventId:round.policyEventId,policy:{slowAfter:5,stopAfter:null,intervals:[2,4,8,16]}});
+    await edited.reactivateWord({profileId:'p1',wordId:'w1',learningId:'learn-w1',expectedGenerationId:null});
+    const generation=edited.getState().ledger.events.find(e=>e.type==='word.reactivated').id;
+    await writeProductState(page,edited.getState());await page.reload();
+    await page.getByText('Richtig!',{exact:true}).waitFor();
+    await page.getByRole('button',{name:'Weiter',exact:true}).click();
+    await page.locator('#answer').fill('dog');await page.getByRole('button',{name:'Prüfen',exact:true}).click();
+    await page.getByRole('button',{name:'Weiter',exact:true}).click();
+    await page.getByRole('button',{name:'Runde beenden',exact:true}).click();
+    await page.getByRole('heading',{name:'Runde geschafft!'}).waitFor();
+    const completed=await productState(page);
+    assert.equal(completed.rounds.p1.answeredIds.length,2);
+    assert.equal(completed.rounds.p1.policy.slowAfter,2);
+    assert.equal(completed.rounds.p1.schedulingMode,'configurable');
+    assert.equal(completed.ledger.events.filter(e=>e.type==='answer.recorded').at(-1).payload.schedulingGenerationId,null);
+    assert.equal(projectState(completed.ledger).profiles.p1.points,40);
+    await page.getByRole('button',{name:'Neue Runde',exact:true}).click();await startPracticeRound(page);
+    const next=(await productState(page)).rounds.p1;
+    assert.equal(next.policy.slowAfter,5);assert.equal(next.current.schedulingGenerationId,generation);
+  } finally {await harness.close();}
+});
+
 async function startPracticeRound(root, mode = 'Alle Vokabeln') {
   await root.getByRole('radio', {name: new RegExp(`^${mode}`, 'u')}).check();
   await root.getByRole('button', {name: 'Runde starten', exact: true}).click();
@@ -1971,7 +2014,7 @@ test('trainer offline update UI blocks typing and pending answers before control
   try {
     await page.goto(harness.baseUrl);
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null, null, {timeout: 10_000});
-    harness.setServiceWorkerVersion('v15', {activationDelayMs: 750});
+    harness.setServiceWorkerVersion('v16', {activationDelayMs: 750});
     await page.evaluate(async () => {
       const registration = await navigator.serviceWorker.getRegistration('./');
       await registration.update();
@@ -2029,8 +2072,8 @@ test('trainer offline update UI blocks typing and pending answers before control
     const beforeReload = await productState(page);
     assert.equal(beforeReload.ledger.events.some(({type}) => type === 'round.completed' || type === 'round.abandoned'), false);
     assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product:')).sort()), [
-      'vokabeltrainer-product:%2Ftrainer%2F:v14',
       'vokabeltrainer-product:%2Ftrainer%2F:v15',
+      'vokabeltrainer-product:%2Ftrainer%2F:v16',
     ]);
     const navigation = page.waitForNavigation();
     await updateButton.click();
@@ -2045,7 +2088,7 @@ test('trainer offline update UI blocks typing and pending answers before control
     await navigation;
     await page.getByText('Richtig!', {exact: true}).waitFor();
     assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product:')).sort()), [
-      'vokabeltrainer-product:%2Ftrainer%2F:v15',
+      'vokabeltrainer-product:%2Ftrainer%2F:v16',
     ]);
   } finally {
     await context.close();

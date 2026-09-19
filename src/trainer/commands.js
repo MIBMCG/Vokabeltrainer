@@ -2,8 +2,10 @@ import {assess} from './learning/answers.js';
 import {dayInZone} from './learning/calendar.js';
 import {pendingMilestones, project} from './learning/progress.js';
 import {rewardState} from './learning/rewards.js';
+import {projectSchedule} from './learning/schedule.js';
 import {
   abandonRound,
+  activeWords,
   advanceRound,
   applyAnswer,
   completeRound,
@@ -18,8 +20,8 @@ import {nextLearningId, revisionPayload} from './model/revisions.js';
 import {assertLedger, assertEpoch, assertSnapshot, assertEvent} from './model/schema.js';
 import {assertBackup} from './backup/format.js';
 import {CURRENT_VERSION as VERSION, assertContainedVersion, assertSupportedVersion, LEGACY_VERSION} from './model/versions.js';
-import {DEFAULT_POLICY, assertPolicy} from './model/policies.js';
-import {migrateProductStateV1, legacyRoundContract} from './storage/migrate.js';
+import {DEFAULT_POLICY, assertPolicy, currentPolicy, currentGenerations} from './model/policies.js';
+import {migrateProductStateV1} from './storage/migrate.js';
 import {validatePacket} from './sync/packets.js';
 
 const STATE_KEYS = [
@@ -428,7 +430,28 @@ function sameTask(left, right) {
     && left.wordId === right.wordId
     && left.revisionId === right.revisionId
     && left.learningId === right.learningId
-    && left.ordinal === right.ordinal;
+    && left.ordinal === right.ordinal
+    && left.schedulingGenerationId === right.schedulingGenerationId;
+}
+
+function scheduleForRound(state, round, day) {
+  if (round.schedulingMode === 'legacy') return null;
+  // Already selected candidates retain their generation. Newly available words
+  // (only used by explicit expansion) use the current generation and old policy.
+  const generations = currentGenerations(state.ledger, round.profileId)
+    .filter(entry => !round.candidates.some(candidate => candidate.wordId === entry.wordId
+      && candidate.learningId === entry.learningId));
+  generations.push(...round.candidates.map(({wordId, learningId, schedulingGenerationId}) =>
+    ({wordId, learningId, generationId: schedulingGenerationId})));
+  return projectSchedule({ledger: state.ledger, profileId: round.profileId, policy: round.policy, day, generations});
+}
+
+function learningProfile(state, profileId) {
+  const projection = project(state.ledger);
+  if (projection.epochConflict) fail('conflict', 'Die aktive Datensatzversion ist nicht eindeutig.');
+  if (projection.activeEpochId === null) fail('not-ready', 'Die aktive Datensatzversion ist unvollständig.');
+  if (!activeProfile(projection, profileId)) invalid('Das Profil ist nicht verfügbar.');
+  return projection;
 }
 
 export async function createCommands({store, now, id, deviceId, onChange}) {
@@ -541,7 +564,48 @@ export async function createCommands({store, now, id, deviceId, onChange}) {
       const current = requireState();
       const projection = project(current.ledger);
       const day = calendarDay(now(), current.ledger.descriptor.timeZone);
-      return previewModes({projection, profileId, day});
+      const {policy} = currentPolicy(current.ledger, profileId);
+      const schedule = projectSchedule({ledger: current.ledger, profileId, policy, day});
+      return previewModes({projection, profileId, day, schedule});
+    },
+
+    learningRulePreview({profileId, policy}) {
+      const current = requireState(), projection = learningProfile(current, profileId);
+      const day = calendarDay(now(), current.ledger.descriptor.timeZone);
+      const schedule = projectSchedule({ledger: current.ledger, profileId, policy, day});
+      const excludedCount = activeWords(projection, profileId).filter(word =>
+        schedule.words.get(word.id)?.get(word.value.learningId)?.excluded).length;
+      const dueCount = previewModes({projection, profileId, day, schedule}).find(mode => mode.mode === 'all').availableCount;
+      return {excludedCount, dueCount, policyEventId: currentPolicy(current.ledger, profileId).eventId};
+    },
+
+    setLearningRules({profileId, expectedPolicyEventId, policy}) {
+      return enqueue(async () => {
+        const next = newWorkingState();
+        learningProfile(next, profileId);
+        const rules = assertPolicy(policy);
+        if (currentPolicy(next.ledger, profileId).eventId !== expectedPolicyEventId) {
+          fail('conflict', 'Die Lernregeln wurden inzwischen geändert. Bitte den Entwurf erneut prüfen.');
+        }
+        appendLocalEvent(next, nextEvent(next, 'learning.rules.changed', {profileId, ...rules}));
+        await commit(next);
+      });
+    },
+
+    reactivateWord({profileId, wordId, learningId, expectedGenerationId}) {
+      return enqueue(async () => {
+        const next = newWorkingState(), projection = learningProfile(next, profileId);
+        const word = activeWords(projection, profileId).find(word => word.id === wordId);
+        if (!word) invalid('Das Wort ist für dieses Profil nicht verfügbar.');
+        if (word.value.learningId !== learningId) fail('conflict', 'Die Lernfassung des Wortes wurde inzwischen geändert.');
+        const current = currentGenerations(next.ledger, profileId)
+          .find(entry => entry.wordId === wordId && entry.learningId === learningId)?.generationId ?? null;
+        if (current !== expectedGenerationId) fail('conflict', 'Das Wort wurde inzwischen wieder zum Üben aufgenommen.');
+        appendLocalEvent(next, nextEvent(next, 'word.reactivated', {
+          profileId, wordId, learningId, revisionId: word.heads.at(-1),
+        }));
+        await commit(next);
+      });
     },
 
     roundAvailability({roundId}) {
@@ -549,7 +613,8 @@ export async function createCommands({store, now, id, deviceId, onChange}) {
       const found = findRound(current, roundId);
       const projection = project(current.ledger);
       const day = calendarDay(now(), current.ledger.descriptor.timeZone);
-      return structuredClone(nextTask({round: found.round, projection, day}));
+      return structuredClone(nextTask({round: found.round, projection, day,
+        schedule: scheduleForRound(current, found.round, day)}));
     },
 
     setup({name, timeZone}) {
@@ -656,8 +721,11 @@ export async function createCommands({store, now, id, deviceId, onChange}) {
         const projection = project(next.ledger);
         const roundId = id();
         const day = calendarDay(now(), next.ledger.descriptor.timeZone);
-        const round = legacyRoundContract(startRound({id: roundId, profileId, mode, size, projection, day}));
-        const event = nextEvent(next, 'round.started', {roundId, profileId, mode, size, policyEventId:null, policy:structuredClone(DEFAULT_POLICY)});
+        const {eventId: policyEventId, policy} = currentPolicy(next.ledger, profileId);
+        const schedule = projectSchedule({ledger: next.ledger, profileId, policy, day});
+        const round = {...startRound({id: roundId, profileId, mode, size, projection, day, schedule}),
+          policyEventId, policy, schedulingMode: 'configurable'};
+        const event = nextEvent(next, 'round.started', {roundId, profileId, mode, size, policyEventId, policy});
         appendLocalEvent(next, event);
         setOwn(next.rounds, profileId, round);
         reconcileMilestones(next);
@@ -674,7 +742,8 @@ export async function createCommands({store, now, id, deviceId, onChange}) {
         }
         const projectionBefore = project(current.ledger);
         const day = calendarDay(now(), current.ledger.descriptor.timeZone);
-        const available = nextTask({round: found.round, projection: projectionBefore, day});
+        const available = nextTask({round: found.round, projection: projectionBefore, day,
+          schedule: scheduleForRound(current, found.round, day)});
         if (available.kind !== 'task' || !sameTask(available.task, found.round.current)) {
           invalid('Die angezeigte Aufgabe ist nicht mehr zulässig.');
         }
@@ -702,6 +771,7 @@ export async function createCommands({store, now, id, deviceId, onChange}) {
           typed,
           solutions: checked.solutions,
           projection: projectionAfter,
+          schedule: scheduleForRound(next, nextFound.round, day),
         });
         setOwn(next.rounds, nextFound.profileId, updatedRound);
         reconcileMilestones(next);
@@ -717,9 +787,10 @@ export async function createCommands({store, now, id, deviceId, onChange}) {
         const before = JSON.stringify(found.round);
         const projection = project(next.ledger);
         const day = calendarDay(now(), next.ledger.descriptor.timeZone);
-        let updated = advanceRound({round: found.round, projection, day});
+        const schedule = scheduleForRound(next, found.round, day);
+        let updated = advanceRound({round: found.round, projection, day, schedule});
         let completionPayload = null;
-        if (nextTask({round: updated, projection, day}).kind === 'complete') {
+        if (nextTask({round: updated, projection, day, schedule}).kind === 'complete') {
           const completed = completeRound({round: updated, reason: 'full'});
           updated = completed.round;
           completionPayload = completed.payload;
@@ -743,7 +814,8 @@ export async function createCommands({store, now, id, deviceId, onChange}) {
         const found = findRound(next, roundId);
         const projection = project(next.ledger);
         const day = calendarDay(now(), next.ledger.descriptor.timeZone);
-        const updated = expandRound({round: found.round, projection, day});
+        const updated = expandRound({round: found.round, projection, day,
+          schedule: scheduleForRound(next, found.round, day)});
         setOwn(next.rounds, found.profileId, updated);
         await commit(next);
       });

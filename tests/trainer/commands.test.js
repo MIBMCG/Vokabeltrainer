@@ -7,6 +7,9 @@ import {
 } from '../../src/trainer/commands.js';
 import {project} from '../../src/trainer/learning/progress.js';
 import {createFixture} from './fixtures.js';
+import {currentPolicy, currentGenerations, DEFAULT_POLICY} from '../../src/trainer/model/policies.js';
+import {projectSchedule} from '../../src/trainer/learning/schedule.js';
+import {createCommands as createOldCommands} from '../compat/v1/src/trainer/commands.js';
 
 function sequenceIds(prefix = 'local') {
   let value = 0;
@@ -88,6 +91,117 @@ function solutionForCurrent(state, profileId = 'p1') {
   const revisionId = state.rounds[profileId].current.revisionId;
   return state.ledger.events.find(({id}) => id === revisionId).payload.value.answers[0];
 }
+
+test('learning rules preview is pure and serialized edits reject stale forms without changing rewards', async () => {
+  const f=createFixture(),ledger=f.withEvents(f.roundStarted,
+    f.answer({id:'a1'}),f.answer({id:'a2',ordinal:2}));
+  const {commands,store}=await harness({ledger}), before=commands.getState(), reward=project(before.ledger);
+  const rules={slowAfter:2,stopAfter:2,intervals:[1,3,7,14]};
+  assert.deepEqual(commands.learningRulePreview({profileId:'p1',policy:rules}),{excludedCount:1,dueCount:2,policyEventId:null});
+  assert.deepEqual(commands.getState(),before);
+  const results=await Promise.allSettled([
+    commands.setLearningRules({profileId:'p1',expectedPolicyEventId:null,policy:rules}),
+    commands.setLearningRules({profileId:'p1',expectedPolicyEventId:null,policy:{...rules,slowAfter:3,stopAfter:6}}),
+  ]);
+  assert.equal(results[0].status,'fulfilled');assert.equal(results[1].reason.code,'conflict');
+  assert.deepEqual(project(commands.getState().ledger),{...reward,effectiveEventIds:commands.getState().ledger.events.map(e=>e.id)});
+  assert.equal(commands.getState().ledger.events.filter(e=>e.type==='learning.rules.changed').length,1);
+  assert.equal(commands.practiceChoices({profileId:'p1'})[0].availableCount,2);
+  const current=currentPolicy(commands.getState().ledger,'p1');
+  store.failNextSave=true;
+  await assert.rejects(commands.setLearningRules({profileId:'p1',expectedPolicyEventId:current.eventId,policy:DEFAULT_POLICY}),{code:'storage'});
+  assert.deepEqual(currentPolicy(commands.getState().ledger,'p1'),current);
+  await assert.rejects(commands.setLearningRules({profileId:'missing',expectedPolicyEventId:null,policy:rules}),{code:'invalid'});
+});
+
+test('new configurable rounds retain their policy through edits, feedback and reopening', async () => {
+  const {commands,store}=await harness({ledger:createFixture({words:[['w1','Hund',['dog']]]}).base});
+  const rules={slowAfter:2,stopAfter:null,intervals:[1,1,1,1]};
+  await commands.setLearningRules({profileId:'p1',expectedPolicyEventId:null,policy:rules});
+  await commands.start({profileId:'p1',mode:'all',size:10});
+  const round=commands.getState().rounds.p1;
+  assert.equal(round.schedulingMode,'configurable');assert.deepEqual(round.policy,rules);
+  await commands.submit({roundId:round.id,typed:'dog'});
+  await commands.setLearningRules({profileId:'p1',expectedPolicyEventId:round.policyEventId,policy:{...rules,slowAfter:5}});
+  const reopened=await createCommands({store,now:()=>new Date('2026-09-17T10:00:00Z'),id:sequenceIds('reopen'),deviceId:'dev1',onChange:()=>{}});
+  assert.deepEqual(reopened.getState().rounds.p1.policy,rules);
+  await reopened.next({roundId:round.id});await reopened.submit({roundId:round.id,typed:'dog'});
+  await reopened.next({roundId:round.id});assert.equal(reopened.getState().rounds.p1.status,'exhausted');
+  await reopened.finish({roundId:round.id,reason:'exhausted'});
+  const reward=project(reopened.getState().ledger).profiles.p1;
+  assert.equal(reward.points,40);assert.equal(reward.completedRounds,1);
+  await reopened.start({profileId:'p1',mode:'all',size:10});
+  assert.equal(reopened.getState().rounds.p1.policy.slowAfter,5);
+  assert.equal(reopened.getState().rounds.p1.status,'asking');
+});
+
+test('expansion uses frozen policy and the current generation only for additional candidates', async () => {
+  const f=createFixture({words:[['w1','Hund',['dog']]]});
+  const lesson=f.event('entity.revised',{entityType:'lesson',entityId:'l2',parents:[],value:{name:'New',profileIds:['p1'],archived:false}},{id:'rev-l2'});
+  const w2=f.event('entity.revised',{entityType:'word',entityId:'w2',parents:[],value:{lessonId:'l2',german:'Katze',answers:['cat'],hint:'',archived:false,learningId:'learn-w2'}},{id:'rev-w2'});
+  const {commands,store}=await harness({ledger:f.withEvents(lesson,w2)});
+  const rules={slowAfter:2,stopAfter:2,intervals:[1,3,7,14]};
+  await commands.setLearningRules({profileId:'p1',expectedPolicyEventId:null,policy:rules});
+  await commands.start({profileId:'p1',mode:'latest',size:10});const round=commands.getState().rounds.p1;
+  for(let i=0;i<2;i++){await commands.submit({roundId:round.id,typed:'cat'});await commands.next({roundId:round.id});}
+  assert.equal(commands.getState().rounds.p1.status,'exhausted');
+  await commands.reactivateWord({profileId:'p1',wordId:'w1',learningId:'learn-w1',expectedGenerationId:null});
+  const generation=currentGenerations(commands.getState().ledger,'p1').find(e=>e.wordId==='w1').generationId;
+  await commands.setLearningRules({profileId:'p1',expectedPolicyEventId:round.policyEventId,policy:DEFAULT_POLICY});
+  await commands.expand({roundId:round.id});
+  assert.equal(commands.getState().rounds.p1.current.schedulingGenerationId,generation);
+  await commands.reactivateWord({profileId:'p1',wordId:'w1',learningId:'learn-w1',expectedGenerationId:generation});
+  await assert.rejects(commands.reactivateWord({profileId:'p1',wordId:'w1',learningId:'learn-w1',expectedGenerationId:generation}),{code:'conflict'});
+  const restarted=await harness({state:store.snapshot(),ids:sequenceIds('restarted')});
+  await restarted.commands.submit({roundId:round.id,typed:'dog'});
+  const answer=restarted.commands.getState().ledger.events.filter(e=>e.type==='answer.recorded').at(-1);
+  assert.equal(answer.payload.schedulingGenerationId,generation);
+  assert.deepEqual(restarted.commands.getState().rounds.p1.policy,rules);
+  const scheduling=projectSchedule({ledger:restarted.commands.getState().ledger,profileId:'p1',policy:rules,day:'2026-09-17'});
+  assert.equal(scheduling.words.get('w1').get('learn-w1').streak,0);
+  assert.equal(restarted.commands.practiceChoices({profileId:'p1'}).find(e=>e.mode==='new').totalCount,0);
+});
+
+test('migrated legacy rounds keep their three-answer scheduler after a policy change', async () => {
+  const store=makeMemoryStore(validProductState(createFixture({words:[['w1','Hund',['dog']]]}).base));
+  const dependencies={store,now:()=>new Date('2026-09-17T10:00:00Z'),deviceId:'dev1',onChange:()=>{}};
+  const old=await createOldCommands({...dependencies,id:sequenceIds('old')});
+  await old.start({profileId:'p1',mode:'all',size:10});
+  const commands=await createCommands({...dependencies,id:sequenceIds('new')});
+  await commands.setLearningRules({profileId:'p1',expectedPolicyEventId:null,policy:{slowAfter:2,stopAfter:2,intervals:[1,3,7,14]}});
+  const round=commands.getState().rounds.p1;
+  for(let i=0;i<2;i++){await commands.submit({roundId:round.id,typed:'dog'});await commands.next({roundId:round.id});}
+  assert.equal(commands.getState().rounds.p1.schedulingMode,'legacy');
+  assert.equal(commands.getState().rounds.p1.status,'asking');
+  await commands.submit({roundId:round.id,typed:'dog'});await commands.next({roundId:round.id});
+  assert.equal(commands.getState().rounds.p1.status,'exhausted');
+});
+
+test('parallel profiles keep independent policies and resets reject changed learning references', async () => {
+  const f=createFixture({words:[['w1','Hund',['dog']]]});
+  const p2=f.event('entity.revised',{entityType:'profile',entityId:'p2',parents:[],value:{name:'Ben',archived:false}},{id:'rev-p2'});
+  const shared=f.event('entity.revised',{entityType:'lesson',entityId:'l1',parents:['rev-l1'],value:{name:'Shared',archived:false,profileIds:['p1','p2']}},{id:'shared'});
+  const store=makeMemoryStore(validProductState(f.withEvents(p2,shared)));
+  const dependencies={store,now:()=>new Date('2026-09-17T10:00:00Z'),deviceId:'dev1',onChange:()=>{}};
+  const old=await createOldCommands({...dependencies,id:sequenceIds('old')});
+  await old.start({profileId:'p1',mode:'all',size:10});
+  const commands=await createCommands({...dependencies,id:sequenceIds('new')});
+  await commands.setLearningRules({profileId:'p2',expectedPolicyEventId:null,policy:{slowAfter:2,stopAfter:2,intervals:[1,3,7,14]}});
+  await commands.start({profileId:'p2',mode:'all',size:10});
+  for(const profileId of ['p1','p2']) for(let index=0;index<2;index++) {
+    const roundId=commands.getState().rounds[profileId].id;
+    await commands.submit({roundId,typed:'dog'});await commands.next({roundId});
+  }
+  assert.equal(commands.getState().rounds.p1.status,'asking');
+  assert.equal(commands.getState().rounds.p2.status,'exhausted');
+  const before=commands.getState().rounds.p1;
+  await commands.reactivateWord({profileId:'p2',wordId:'w1',learningId:'learn-w1',expectedGenerationId:null});
+  assert.deepEqual(commands.getState().rounds.p1,before);
+  assert.equal(currentGenerations(commands.getState().ledger,'p1').find(e=>e.wordId==='w1').generationId,null);
+  const unchanged=commands.getState();
+  await assert.rejects(commands.reactivateWord({profileId:'p2',wordId:'w1',learningId:'changed-learning',expectedGenerationId:null}),{code:'conflict'});
+  assert.deepEqual(commands.getState(),unchanged);
+});
 
 function addRoundAnswer(f, ledger, {roundId, answerId, clock, correct = true}) {
   const started = f.event('round.started', {

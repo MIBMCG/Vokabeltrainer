@@ -7,6 +7,9 @@ import {project} from '../../src/trainer/learning/progress.js';
 import {buildPackets} from '../../src/trainer/sync/packets.js';
 import {createProductSync} from '../../src/trainer/sync/drive.js';
 import {createFixture} from './fixtures.js';
+import {projectSchedule} from '../../src/trainer/learning/schedule.js';
+import {DEFAULT_POLICY} from '../../src/trainer/model/policies.js';
+import {buildPackets as oldPackets} from '../compat/v1/src/trainer/sync/packets.js';
 
 const VERSION = {format: 'vokabeltrainer-product', formatVersion: 1, ruleVersion: 1};
 
@@ -600,6 +603,26 @@ test('unbound discovery and interrupted setup retain actionable auth status afte
     assert.equal(sync.getStatus().phase, 'connect');
     sync.destroy();
   }
+});
+
+test('late v1 answers after a reset sync exactly once without changing the new generation', async () => {
+  const f=createFixture({words:[['w1','Hund',['dog']]]});
+  const ledger=f.withEvents(f.roundStarted,...[1,2,3].map(ordinal=>f.answer({id:`old-${ordinal}`,ordinal})));
+  const {commands,sync,drive}=await setupSyntheticSync({ledger});
+  await commands.reactivateWord({profileId:'p1',wordId:'w1',learningId:'learn-w1',expectedGenerationId:null});
+  await commands.start({profileId:'p1',mode:'all',size:10});
+  await commands.submit({roundId:commands.getState().rounds.p1.id,typed:'dog'});
+  const before=projectSchedule({ledger:commands.getState().ledger,profileId:'p1',policy:DEFAULT_POLICY,day:'2026-09-18'});
+  const late=f.answer({id:'late-v1',ordinal:4,clock:100,correct:false});
+  const packet=oldPackets({events:[late],datasetId:'d1',epochId:'e0',id:()=> 'late-v1-packet'})[0];
+  drive.addJson({id:'late-v1-file',parentId:commands.getState().binding.folderId,value:packet,
+    appProperties:{app:'vokabeltrainer-product',kind:'packet',datasetId:'d1',epochId:'e0',packetId:packet.packetId}});
+  await sync.sync();await sync.sync();
+  const state=commands.getState(),facts=project(state.ledger).profiles.p1;
+  assert.equal(state.ledger.events.filter(e=>e.id===late.id).length,1);
+  assert.equal(facts.points,40);assert.equal(facts.words.w1.attempts,5);
+  assert.deepEqual(projectSchedule({ledger:state.ledger,profileId:'p1',policy:DEFAULT_POLICY,day:'2026-09-18'}),before);
+  assert.equal(sync.getStatus().phase,'synced');sync.destroy();
 });
 
 test('uploads independent local packets before reporting a malformed remote packet', async () => {
