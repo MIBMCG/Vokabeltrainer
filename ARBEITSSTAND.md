@@ -1,6 +1,8 @@
 # Arbeitsstand
 
-**Neuer Folgeauftrag:** Mädchen-/Jungenfiguren, mystische Avatare und ein Punkteshop; Entscheidungen AV01–AV12 einschließlich Ausrüstung je Figurenart sind [dokumentiert](docs/design/2026-09-19-avatar-shop-entscheidungen.md). Der Halsfehler ist anhand der Bildlagen eingegrenzt, noch nicht behoben. Die Produktfragen sind geklärt: neue Käufe nur online nach erfolgreichem Abgleich. Der [Gesamtentwurf](docs/superpowers/specs/2026-09-19-avatar-shop-design.md) liegt zur Freigabe vor; die sichere Koordination paralleler Käufe ist als technischer Prüfauftrag vorgeschaltet. Der folgende Abschluss A1–C2 bleibt unverändert; die neue Erweiterung ist noch nicht implementiert.
+**Aktive Umsetzung:** Der Gesamtentwurf ist mit „Ja, starte nun“ am 19.09.2026 ausdrücklich freigegeben. Die Umsetzung nach [Avatar-Shop-Plan](docs/superpowers/plans/2026-09-19-avatar-shop.md) läuft; keine erneute allgemeine Startfreigabe verlangen. Kaufprobe, reiner Katalog und Rasterquellen werden zuerst entwickelt. Der echte Drive-Nachweis steht noch aus; Käufe sind nicht aktiviert. Aktuelle [Avatar-Shop-Übergabe](docs/handoffs/2026-09-19-avatar-shop.md).
+
+**Neuer Folgeauftrag:** Mädchen-/Jungenfiguren, mystische Avatare und ein Punkteshop; Entscheidungen AV01–AV12 einschließlich Ausrüstung je Figurenart sind [dokumentiert](docs/design/2026-09-19-avatar-shop-entscheidungen.md). Der Halsfehler ist anhand der Bildlagen eingegrenzt, noch nicht behoben. Die Produktfragen sind geklärt: neue Käufe nur online nach erfolgreichem Abgleich. Der [Gesamtentwurf](docs/superpowers/specs/2026-09-19-avatar-shop-design.md) ist freigegeben; die sichere Koordination paralleler Käufe bleibt als technischer Prüfauftrag vorgeschaltet. Der folgende Abschluss A1–C2 bleibt unverändert; die neue Erweiterung ist in Arbeit und noch nicht im Produkt integriert.
 
 Stand: **19.09.2026**
 

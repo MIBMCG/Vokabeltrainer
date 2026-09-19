@@ -1,6 +1,6 @@
 # Entwurf: Figurenwelt, Ausstattung und Punkteshop
 
-Stand: 19.09.2026. **Zur Gesamtfreigabe vorgelegt, noch nicht implementiert.** Die Produktentscheidungen AV01–AV12 sind bestätigt; konkrete Katalogwerte und technische Grenzen dieses Dokuments sind der daraus abgeleitete Vorschlag. Grundlage: [Entscheidungsprotokoll](../../design/2026-09-19-avatar-shop-entscheidungen.md), Produktstand `ce0cc34`, bestehender [Datenvertrag](../../PRODUKT-DATENFORMAT.md).
+Stand: 19.09.2026. **Gesamtentwurf mit „Ja, starte nun“ am 19.09.2026 freigegeben; Umsetzung begonnen, noch nicht abgeschlossen.** Die Produktentscheidungen AV01–AV12 sind bestätigt; konkrete Katalogwerte und technische Grenzen dieses Dokuments sind mit der Gesamtfreigabe bestätigt. Grundlage: [Entscheidungsprotokoll](../../design/2026-09-19-avatar-shop-entscheidungen.md), Produktstand `ce0cc34`, bestehender [Datenvertrag](../../PRODUKT-DATENFORMAT.md).
 
 ## 1. Ziel und Grenzen
 
@@ -115,4 +115,4 @@ Bei Authentifizierungs-, Netz-, Speicher- oder Versionsfehler bleiben Übungsdat
 5. Offline- und Updatefälle unter Wurzel/Unterpfad, fehlende Bilder und begrenzte Downloads prüfen. Den Produktcache bei geänderten Laufzeitdateien kontrolliert versionieren.
 6. Vollständige betroffene Regression, unabhängige Review, echte Screenshots, aktualisierte Bedienung/Übergabe und autorisierter Push auf `codex/vokabeltrainer-v1`. Physische iPhone-/iPad-Abnahme weiterhin separat nachweisen.
 
-Noch kein Implementierungsplan und keine Produktänderung. Nach Gesamtfreigabe dieses Entwurfs wird die technische Vorprüfung zuerst konkret geplant, danach die ausführbaren Pakete. Es ist keine weitere Abstimmung der bereits beantworteten Produktfragen nötig; neue technische Evidenz, die einen zugesagten Vertrag unmöglich macht, wird gezielt zurückgemeldet.
+Der [Implementierungsplan](../plans/2026-09-19-avatar-shop.md) beginnt mit technischer Vorprüfung und unabhängiger Katalog-/Bildarbeit; produktive Kaufverträge werden erst aus nachgewiesenen Transportgarantien abgeleitet. Es ist keine weitere Abstimmung der bereits beantworteten Produktfragen nötig; neue technische Evidenz, die einen zugesagten Vertrag unmöglich macht, wird gezielt zurückgemeldet.

@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Technische Shop-Probe</title><link rel="stylesheet" href="./styles.css"><script src="https://accounts.google.com/gsi/client" async defer></script><script type="module" src="../src/shop-probe/main.js"></script></head>
+<body><main><h1>Technische Shop-Probe</h1><p>Diese getrennte Probe prüft, ob Google Drive konkurrierende Schreibzugriffe sicher ablehnt. Sie schaltet keinen Produktshop frei.</p>
+<p>Nach deinem Start entstehen ausschließlich neue Dateien mit dem Namen <strong>SHOP-PROBE-…</strong> in einem eigenen synthetischen Probeordner. Vorhandene Lernstände werden nicht geöffnet. Die Testdateien bleiben zur Nachprüfung in Drive; diese Seite löscht nichts.</p>
+<p>Die Anmeldung nutzt die vorbereitete öffentliche App-ID und dieselbe Berechtigung <code>drive.file</code>. Die Sitzung bleibt nur im Arbeitsspeicher.</p>
+<div class="buttons"><button id="connect">Mit Google verbinden</button><button id="disconnect" disabled>Sitzung hier beenden</button></div>
+<label for="source">Versionsheader für JSON-Dateien</label><select id="source"><option value="media">Medienantwort (alt=media)</option><option value="metadata">Metadatenantwort</option></select>
+<p>Beide Varianten sind technische Kandidaten. Ein Fehlschlag wird sichtbar; die Probe wechselt die Variante nicht stillschweigend.</p>
+<label class="consent"><input id="consent" type="checkbox"> Ich möchte neue synthetische Probe-Dateien in meinem Drive anlegen und die beschriebenen Schreibtests starten.</label>
+<div class="buttons"><button id="start" disabled>Probe-Dateien anlegen und prüfen</button><button id="download" disabled>Bereinigten Bericht herunterladen</button></div>
+<p id="status" role="status" aria-live="polite">Noch nicht verbunden. Es wurden keine Probe-Dateien angelegt.</p><ol id="checks"></ol>
+<details><summary>Grenzen des Nachweises</summary><p>Zwei logische Clients laufen parallel in diesem Browser. Das ersetzt keinen Zwei-Geräte-Test. Antwortverlust wird durch lokales Verwerfen einer Erfolgsantwort nachgebildet. Produktmigration, alte Programme, echte Verbindungsabbrüche und reale iPhone-/iPad-Nutzung bleiben gesonderte Prüfungen.</p></details>
+</main></body></html>

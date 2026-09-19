@@ -21,6 +21,10 @@ const ART_RENDITIONS = [
 ];
 
 const ASSETS = new Map([
+  ['/shop-probe/', ['shop-probe/index.html', 'text/html; charset=utf-8']],
+  ['/shop-probe/index.html', ['shop-probe/index.html', 'text/html; charset=utf-8']],
+  ['/shop-probe/styles.css', ['shop-probe/styles.css', 'text/css; charset=utf-8']],
+  ...['main','transport','scenarios'].map(name=>[`/src/shop-probe/${name}.js`, [`src/shop-probe/${name}.js`, 'text/javascript; charset=utf-8']]),
   ['/', ['index.html', 'text/html; charset=utf-8']],
   ['/index.html', ['index.html', 'text/html; charset=utf-8']],
   ['/styles.css', ['styles.css', 'text/css; charset=utf-8']],

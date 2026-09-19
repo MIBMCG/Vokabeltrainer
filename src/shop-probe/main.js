@@ -1,0 +1,34 @@
+import {createTokenSession} from '../drive/auth.js';
+import {APP_CONFIG} from '../trainer/config.js';
+import {createProbeTransport} from './transport.js';
+import {runProbeScenarios} from './scenarios.js';
+const el=id=>document.getElementById(id);
+let session=null,connected=false,busy=false,report=null;
+function buttons(){el('connect').disabled=busy||connected;el('disconnect').disabled=busy||!connected;el('start').disabled=busy||!connected||!el('consent').checked;el('source').disabled=busy;el('consent').disabled=busy;el('download').disabled=!report||busy;}
+el('consent').addEventListener('change',buttons);
+el('connect').addEventListener('click',async()=>{
+  busy=true;buttons();el('status').textContent='Google-Anmeldung wird geöffnet.';
+  try{session??=createTokenSession({oauth2:globalThis.google?.accounts?.oauth2,clientId:APP_CONFIG.googleClientId});await session.connect();connected=true;el('status').textContent='Verbunden. Erst der ausdrückliche Probestart legt synthetische Dateien an.';}
+  catch{el('status').textContent='Anmeldung nicht abgeschlossen. Bitte Google-Verbindung und erlaubten App-Ursprung prüfen.';}
+  finally{busy=false;buttons();}
+});
+el('disconnect').addEventListener('click',()=>{session?.invalidate();connected=false;el('status').textContent='Lokale Sitzung beendet. Vorhandene Probe-Dateien bleiben in Drive.';buttons();});
+el('start').addEventListener('click',async()=>{
+  if(busy||!connected||!el('consent').checked)return;
+  busy=true;report=null;buttons();el('checks').replaceChildren();el('status').textContent='Synthetische Dateien werden angelegt und geprüft …';
+  const startedAt=new Date().toISOString(),etagSource=el('source').value;
+  try{
+    const result=await runProbeScenarios({transport:createProbeTransport({token:()=>session.getToken(),etagSource}),emit:check=>{
+      const item=document.createElement('li');item.textContent=`${check.passed?'Bestanden':check.status==='unsupported'?'Nicht nachgewiesen':'Fehlgeschlagen'}: ${check.expected} Ergebnis: ${typeof check.actual==='string'?check.actual:JSON.stringify(check.actual)}`;el('checks').append(item);
+    }});
+    report={kind:'synthetic-shop-probe',startedAt,completedAt:new Date().toISOString(),origin:location.origin,userAgent:navigator.userAgent,etagSource,
+      apiPaths:{read:'GET /drive/v3/files/{probeFileId}?alt=media',mediaUpdate:'PATCH /upload/drive/v3/files/{probeFileId}?uploadType=media',metadataUpdate:'PATCH /drive/v3/files/{probeFolderId}',condition:'If-Match'},...result};
+    el('status').textContent=result.passed?'Alle isolierten Probeszenarien bestanden. Produktshop bleibt gesperrt; weitere Nachweise stehen aus.':'Kaufkoordination nicht ausreichend nachgewiesen. Produktshop bleibt gesperrt.';
+  }catch{el('status').textContent='Probe unterbrochen. Kein vollständiger Nachweis; Produktshop bleibt gesperrt.';}
+  finally{busy=false;el('consent').checked=false;buttons();}
+});
+el('download').addEventListener('click',()=>{
+  if(!report)return;const url=URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json'}));
+  const link=document.createElement('a');link.href=url;link.download='shop-probe-bericht.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+});
+buttons();
