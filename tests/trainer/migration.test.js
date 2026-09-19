@@ -88,7 +88,7 @@ test('unknown remote packet and orphan snapshot part block new writes and remain
     const drive=new SyntheticDrive(),commands=await open(memoryStore(productState(createFixture().base)));
     const sync=syncFor(commands,drive);await sync.createDataset('Synthetic');
     await commands.setAnimations({profileId:'p1',animations:false});
-    const value={format:'vokabeltrainer-product',formatVersion:9,ruleVersion:9,kind,datasetId:'d1',snapshotId:'future'};
+    const value={format:'vokabeltrainer-product',formatVersion:9,ruleVersion:9,kind,datasetId:'d1',snapshotId:'future',futureField:true};
     drive.addJson({id:'future',parentId:commands.getState().binding.folderId,value,
       appProperties:{app:'vokabeltrainer-product',kind,datasetId:'d1',snapshotId:'future'}});
     const offset=drive.calls.length;const before=commands.getState();
@@ -98,6 +98,26 @@ test('unknown remote packet and orphan snapshot part block new writes and remain
     assert.deepEqual(commands.getState().pendingPackets,before.pendingPackets);
     assert.deepEqual(commands.getState().quarantinedFiles.find(q=>q.fileId==='future').value,value);
     assert.notEqual(sync.getStatus().phase,'synced');sync.destroy();
+  }
+});
+
+test('later unsupported event headers in packets and orphan parts still block all writes',async()=>{
+  for(const kind of ['packet','snapshot-part']) {
+    const drive=new SyntheticDrive(),commands=await open(memoryStore(productState(createFixture().base)));
+    const sync=syncFor(commands,drive);await sync.createDataset('Synthetic');
+    await commands.setAnimations({profileId:'p1',animations:false});
+    const future={...commands.getState().ledger.events[0],formatVersion:3,ruleVersion:3,futureField:true};
+    const header={format:'vokabeltrainer-product',formatVersion:2,ruleVersion:2,kind,datasetId:'d1'};
+    const value=kind==='packet'?{...header,epochId:'e0',packetId:'future-events',events:[null,future]}
+      :{...header,snapshotId:'future-events',index:0,events:[null,future],epochHistory:[]};
+    drive.addJson({id:'future-events',parentId:commands.getState().binding.folderId,value,
+      appProperties:{app:'vokabeltrainer-product',kind,datasetId:'d1',epochId:'e0',packetId:'future-events',snapshotId:'future-events'}});
+    const offset=drive.calls.length,before=commands.getState();
+    await assert.rejects(sync.sync(),{code:'version'});
+    assert.equal(drive.calls.slice(offset).some(([method])=>['putJson','generateId','createFolder'].includes(method)),false);
+    assert.deepEqual(commands.getState().outboxEventIds,before.outboxEventIds);
+    assert.deepEqual(commands.getState().quarantinedFiles.find(q=>q.fileId==='future-events').value,value);
+    sync.destroy();
   }
 });
 
@@ -189,7 +209,7 @@ test('unknown versions replacing known files also stop writes and retain the ins
     const drive=new SyntheticDrive(),commands=await open(memoryStore(productState(createFixture().base))),sync=syncFor(commands,drive);
     await sync.createDataset('Synthetic');
     const entry=[...drive.files.values()].find(f=>f.value?.kind===kind);
-    entry.value.formatVersion=3;entry.value.ruleVersion=3;entry.meta.version='2';
+    entry.value.formatVersion=3;entry.value.ruleVersion=3;entry.value.futureField=true;entry.meta.version='2';
     await commands.setAnimations({profileId:'p1',animations:false});const offset=drive.calls.length;
     await assert.rejects(sync.sync(),e=>e.code==='version');
     assert.equal(drive.calls.slice(offset).some(([method])=>method==='putJson'),false);

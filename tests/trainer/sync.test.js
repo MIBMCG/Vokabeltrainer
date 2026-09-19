@@ -622,6 +622,49 @@ test('uploads independent local packets before reporting a malformed remote pack
   assert.equal(sync.getStatus().phase, 'error');
 });
 
+test('malformed version headers quarantine as invalid and allow independent local upload', async (t) => {
+  const malformed = [null, {}, [], 'wrong', {...VERSION, format: 'other'},
+    {format: VERSION.format, formatVersion: 2}, {...VERSION, formatVersion: '2'},
+    {...VERSION, formatVersion: 0}, {...VERSION, ruleVersion: null},
+    {...VERSION, ruleVersion: 1.5}];
+  for (const [index, value] of malformed.entries()) await t.test(`header ${index}`, async () => {
+    const {sync, drive, commands} = await setupSyntheticSync({outbox: []});
+    await commands.setAnimations({profileId: 'p1', animations: false});
+    const eventId = commands.getState().outboxEventIds.at(-1);
+    drive.addJson({id: 'broken-header', parentId: commands.getState().binding.folderId, value,
+      appProperties: {app: 'vokabeltrainer-product', kind: 'packet', datasetId: 'd1', epochId: 'e0', packetId: 'broken-header'}});
+    const offset = drive.calls.length;
+    await assert.rejects(sync.sync(), {code: 'invalid'});
+    const after = commands.getState();
+    const quarantine = after.quarantinedFiles.find(q => q.fileId === 'broken-header');
+    assert.equal(quarantine.code, 'invalid');
+    assert.deepEqual(quarantine.value, value);
+    assert.equal(after.outboxEventIds.length, 0);
+    assert.equal(after.pendingPackets.length, 0);
+    assert.ok(drive.calls.slice(offset).some(([method]) => method === 'putJson'));
+    assert.ok([...drive.files.values()].some(file => file.value?.events?.some?.(event => event.id === eventId)));
+    assert.notEqual(sync.getStatus().phase, 'synced');
+    sync.destroy();
+  });
+});
+
+test('later future files block writes even after an ordinary malformed remote file', async () => {
+  const {sync, drive, commands} = await setupSyntheticSync({outbox: []});
+  await commands.setAnimations({profileId: 'p1', animations: false});
+  for (const [id, value] of [['broken-first', {}], ['future-later', {
+    format: VERSION.format, formatVersion: 3, ruleVersion: 3, futureField: {newSchema: true},
+  }]]) drive.addJson({id, parentId: commands.getState().binding.folderId, value,
+    appProperties: {app: 'vokabeltrainer-product', kind: 'packet', datasetId: 'd1', epochId: 'e0', packetId: id}});
+  const offset = drive.calls.length;
+  const pending = commands.getState().outboxEventIds;
+  await assert.rejects(sync.sync(), {code: 'version'});
+  assert.equal(drive.calls.slice(offset).some(([method]) => ['putJson', 'generateId', 'createFolder'].includes(method)), false);
+  assert.deepEqual(commands.getState().outboxEventIds, pending);
+  assert.equal(commands.getState().quarantinedFiles.find(q => q.fileId === 'broken-first').code, 'invalid');
+  assert.equal(commands.getState().quarantinedFiles.find(q => q.fileId === 'future-later').code, 'version');
+  sync.destroy();
+});
+
 test('quarantines a broken packet with its inspectable synthetic value', async () => {
   const {sync, drive, commands} = await setupSyntheticSync({outbox: []});
   const binding = commands.getState().binding;

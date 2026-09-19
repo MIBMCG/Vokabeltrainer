@@ -9,6 +9,25 @@ function ids(prefix) {
   return () => `${prefix}-${++value}`;
 }
 
+test('distinguishes malformed version headers from well-formed unsupported pairs before schema validation', () => {
+  const header = {format: 'vokabeltrainer-product', formatVersion: 2, ruleVersion: 2};
+  for (const value of [null, {}, [], 'wrong', {...header, format: 'other'},
+    {format: header.format, formatVersion: 2}, {...header, formatVersion: '2'},
+    {...header, formatVersion: -1}, {...header, ruleVersion: null}, {...header, ruleVersion: 1.5}]) {
+    assert.throws(() => validatePacket(value), {code: 'invalid'});
+  }
+  for (const [formatVersion, ruleVersion] of [[1, 2], [2, 1], [3, 3], [99, 7]]) {
+    assert.throws(() => validatePacket({...header, formatVersion, ruleVersion, futureField: true}), {code: 'version'});
+  }
+});
+
+test('an invalid earlier event does not hide a later unsupported event version', () => {
+  const f = createFixture();
+  const packet = buildPackets({events: f.base.events, datasetId: 'd1', epochId: 'e0', id: ids('versions')})[0];
+  packet.events = [null, {...packet.events[0], formatVersion: 3, ruleVersion: 3, futureField: true}];
+  assert.throws(() => validatePacket(packet), {code: 'version'});
+});
+
 test('splits 101 events into immutable packets of at most 100 events and 64 KiB', () => {
   const f = createFixture();
   const events = Array.from({length: 101}, (_, index) => f.event('preference.changed', {
