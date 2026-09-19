@@ -23,7 +23,7 @@
 
 ### Kompakte Verwaltung und Entwurfsgrenzen
 
-RED:
+RED (lokale Playwright-/Browser-Overrides gemäß [Browseranleitung](../../tests/browser/README.md); unten die tatsächlich ausgeführten Prüfkommandos ohne Arbeitsplatzpfade):
 
 ```text
 node --test --experimental-test-isolation=none --test-name-pattern='compact vocabulary management' tests/browser/overhaul.browser.mjs
@@ -103,11 +103,9 @@ Die vier PNGs wurden nach ihrer jeweiligen finalen Änderung tatsächlich geöff
 - Die Suche filtert vorhandene Zeilen direkt, ohne das fokussierte Suchfeld bei jedem Zeichen neu zu erzeugen.
 - Produktcache auf `v12`, synthetischer Updateworker auf `v13` erhöht.
 
-RED:
+RED der Fixrunde (dieselben lokalen Overrides gemäß [Browseranleitung](../../tests/browser/README.md), hier ohne Arbeitsplatzpfade):
 
 ```text
-$env:PLAYWRIGHT_MODULE='G:/Vokabeltrainer/.worktrees/drive-probe/.superpowers/sdd/2026-09-16-google-drive-probe/browser-runtime/node_modules/playwright/index.mjs'
-$env:BROWSER_EXECUTABLE='C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'
 node --test --experimental-test-isolation=none --test-name-pattern='vocabulary search keeps focus|table import treats target-only|table import revalidates' tests/browser/overhaul.browser.mjs
 0/3 bestanden.
 - Suche enthielt nach echter Eingabe von „Hun“ nur „H“.

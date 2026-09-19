@@ -15,11 +15,9 @@ Status: umgesetzt und lokal verifiziert am 19.09.2026.
 
 Die 18 PNG-Originale liegen in `docs/design/art-sources/`. Sie wurden mit dem eingebauten Bildwerkzeug anhand von `docs/design/2026-09-17-insel-konzept.png` erzeugt. Prompts, Maße und Zuordnung stehen in `docs/design/art-sources/prompts.md`; vollständige SHA-256-Werte und der visuelle Vergleich in `docs/reports/2026-09-19-illustrationen.md`. Es wurden keine externen Bildquellen verwendet.
 
-Der Build wurde mit dem vorhandenen, nur lesend genutzten Playwright-Runtime und lokalem Edge ausgeführt:
+Der Build wurde mit der vorhandenen, nur lesend genutzten Playwright-Runtime und lokalem Edge ausgeführt. Die arbeitsplatzabhängigen Umgebungsvariablen wurden gemäß [Browseranleitung](../../tests/browser/README.md) gesetzt; der tatsächlich ausgeführte Buildbefehl bleibt hier ohne lokale Pfadvorgabe erhalten:
 
 ```text
-$env:PLAYWRIGHT_MODULE='.../browser-runtime/node_modules/playwright/index.mjs'
-$env:BROWSER_EXECUTABLE='C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'
 node scripts/build-art.mjs
 Built 18 art assets with 54 renditions.
 ```
