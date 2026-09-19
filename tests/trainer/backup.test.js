@@ -20,7 +20,7 @@ test('portable backup includes pending facts but excludes all local transport an
 });
 test('invalid versions, unknown keys, hash damage and broken references reject the whole backup', async () => {
   const good = await exportBackup({ledger:createFixture().base,safetyCopies:[]}, time);
-  for (const damage of [b=>b.formatVersion=2, b=>b.token='secret', b=>b.snapshot.contentHash='0'.repeat(64),
+  for (const damage of [b=>b.formatVersion=99, b=>b.token='secret', b=>b.snapshot.contentHash='0'.repeat(64),
     b=>b.events.pop(), b=>b.events[0].payload.value.name='changed']) {
     const b = structuredClone(good); damage(b);
     await assert.rejects(parseBackup(JSON.stringify(b)));

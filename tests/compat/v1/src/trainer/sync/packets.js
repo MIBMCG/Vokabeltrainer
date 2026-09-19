@@ -1,7 +1,7 @@
 import {ProductError} from '../model/errors.js';
 import {assertEvent} from '../model/schema.js';
 
-import {CURRENT_VERSION as VERSION, assertSupportedVersion, assertContainedVersion, versionOf} from '../model/versions.js';
+const VERSION = {format: 'vokabeltrainer-product', formatVersion: 1, ruleVersion: 1};
 const ID_PATTERN = /^[A-Za-z0-9_-]{1,128}$/;
 const MAX_PACKET_BYTES = 64 * 1024;
 const MAX_PACKET_EVENTS = 100;
@@ -18,21 +18,23 @@ function packetBytes(packet) {
   return new TextEncoder().encode(JSON.stringify(packet)).byteLength;
 }
 
-function makePacket({events, datasetId, epochId, packetId}, version=VERSION) {
-  return {...version, kind: 'packet', datasetId, epochId, packetId, events};
+function makePacket({events, datasetId, epochId, packetId}) {
+  return {...VERSION, kind: 'packet', datasetId, epochId, packetId, events};
 }
 
 export function validatePacket(value) {
   if (value === null || typeof value !== 'object' || Array.isArray(value)) {
     invalid('Das Änderungspaket ist ungültig.');
   }
-  assertSupportedVersion(value);
   const expectedKeys = [
     'format', 'formatVersion', 'ruleVersion', 'kind', 'datasetId', 'epochId', 'packetId', 'events',
   ].sort();
   const keys = Object.keys(value).sort();
   if (keys.length !== expectedKeys.length || keys.some((key, index) => key !== expectedKeys[index])) {
     invalid('Das Änderungspaket ist ungültig.');
+  }
+  if (value.format !== VERSION.format || value.formatVersion !== 1 || value.ruleVersion !== 1) {
+    throw new ProductError('version', 'Diese Paketversion wird nicht unterstützt.');
   }
   if (value.kind !== 'packet') invalid('Das Änderungspaket ist ungültig.');
   assertId(value.datasetId, 'Die Datensatz-ID');
@@ -42,7 +44,6 @@ export function validatePacket(value) {
     || value.events.length > MAX_PACKET_EVENTS) {
     invalid('Ein Änderungspaket muss ein bis 100 Ereignisse enthalten.');
   }
-  assertContainedVersion(value,value.events);
   const events = value.events.map(assertEvent);
   if (events.some(({datasetId}) => datasetId !== value.datasetId)) {
     invalid('Ein Paketereignis gehört zu einem anderen Datensatz.');
@@ -55,7 +56,7 @@ export function validatePacket(value) {
     datasetId: value.datasetId,
     epochId: value.epochId,
     packetId: value.packetId,
-  }, versionOf(value));
+  });
   if (packetBytes(result) > MAX_PACKET_BYTES) {
     invalid('Das Änderungspaket überschreitet die zulässige Größe von 64 KiB.');
   }

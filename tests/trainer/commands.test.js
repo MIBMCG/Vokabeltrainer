@@ -71,6 +71,7 @@ test('practiceChoices previews without mutating state or consuming IDs', async (
   const ids = sequenceIds('choice');
   const {commands, store} = await harness({ids});
   const before = commands.getState();
+  const savesBefore=store.saves.length;
 
   assert.deepEqual(commands.practiceChoices({profileId: 'p1'}), [
     {mode: 'all', totalCount: 3, availableCount: 3, latestLessonName: null, reason: 'ready'},
@@ -78,7 +79,7 @@ test('practiceChoices previews without mutating state or consuming IDs', async (
     {mode: 'new', totalCount: 3, availableCount: 3, latestLessonName: null, reason: 'ready'},
   ]);
   assert.deepEqual(commands.getState(), before);
-  assert.equal(store.saves.length, 0);
+  assert.equal(store.saves.length, savesBefore);
   await commands.start({profileId: 'p1', mode: 'all', size: 10});
   assert.equal(commands.getState().rounds.p1.id, 'choice-1');
 });
@@ -123,7 +124,7 @@ test('normalizes legacy storage-version-one state with absent Task 9 transport i
   assert.deepEqual(commands.getState().packetIntegrity, []);
 });
 
-test('setup creates the version-one product state and publishes only its committed clone', async () => {
+test('setup creates the version-two product state and publishes only its committed clone', async () => {
   const store = makeMemoryStore(null);
   const changed = [];
   const commands = await createCommands({
@@ -137,7 +138,7 @@ test('setup creates the version-one product state and publishes only its committ
   await commands.setup({name: 'Familienwortschatz', timeZone: 'Europe/Berlin'});
 
   const state = commands.getState();
-  assert.equal(state.storageVersion, 1);
+  assert.equal(state.storageVersion, 2);
   assert.equal(state.deviceId, 'device-a');
   assert.equal(state.ledger.descriptor.name, 'Familienwortschatz');
   assert.equal(state.ledger.descriptor.timeZone, 'Europe/Berlin');

@@ -9,19 +9,20 @@ import {
   completeRound,
   expandRound,
   nextTask,
-  previewModes,
   startRound,
 } from './learning/rounds.js';
 import {canonical, digest} from './model/canonical.js';
 import {ProductError} from './model/errors.js';
 import {nextLearningId, revisionPayload} from './model/revisions.js';
-import {assertLedger, assertEpoch, assertSnapshot, assertEvent} from './model/schema.js';
+import {assertLedger, assertEpoch, assertSnapshot} from './model/schema.js';
 import {assertBackup} from './backup/format.js';
-import {CURRENT_VERSION as VERSION, assertContainedVersion, assertSupportedVersion, LEGACY_VERSION} from './model/versions.js';
-import {DEFAULT_POLICY, assertPolicy} from './model/policies.js';
-import {migrateProductStateV1, legacyRoundContract} from './storage/migrate.js';
 import {validatePacket} from './sync/packets.js';
 
+const VERSION = {
+  format: 'vokabeltrainer-product',
+  formatVersion: 1,
+  ruleVersion: 1,
+};
 const STATE_KEYS = [
   'storageVersion',
   'deviceId',
@@ -102,7 +103,7 @@ function assertRestoreRecords(state) {
   for (const copy of state.safetyCopies) {
     assertExactKeys(copy, ['id','createdAt','purpose','backup','hash','driveManifestFileId','verified']);
     assertId(copy.id); assertBackup(copy.backup);
-    if (copy.createdAt !== copy.backup.exportedAt || !['safety','restore','join',...(state.storageVersion===2?['format-migration']:[])].includes(copy.purpose)
+    if (copy.createdAt !== copy.backup.exportedAt || !['safety','restore','join'].includes(copy.purpose)
       || !HASH_PATTERN.test(copy.hash) || typeof copy.verified !== 'boolean') invalid('Die lokale Sicherheitskopie ist ungültig.');
     if (copy.driveManifestFileId !== null) assertId(copy.driveManifestFileId);
   }
@@ -120,13 +121,6 @@ function assertRestoreRecords(state) {
     for (const upload of job.uploads) {
       assertExactKeys(upload,['kind','logicalId','fileId','value','verified']);
       assertId(upload.logicalId); assertId(upload.fileId); canonical(upload.value);
-      assertSupportedVersion(upload.value);
-      if(upload.kind==='epoch')assertEpoch(upload.value);
-      if(upload.kind==='snapshot-part') {
-        if(!Array.isArray(upload.value.events))invalid('Die Snapshot-Ereignisse fehlen.');
-        assertContainedVersion(upload.value,upload.value.events);
-        upload.value.events.forEach(assertEvent);
-      }
       if (!['snapshot-part','snapshot-manifest','epoch'].includes(upload.kind)
         || upload.value?.kind !== upload.kind || typeof upload.verified !== 'boolean') invalid('Eine Wiederherstellungsdatei ist ungültig.');
     }
@@ -219,15 +213,8 @@ function cloneRoundMap(rounds) {
   return result;
 }
 
-function assertRound(round, profileId, storageVersion) {
-  const v2=storageVersion===2;
-  assertExactKeys(round, [...ROUND_KEYS,...(v2?['policy','policyEventId','schedulingMode']:[])], 'Eine lokale Runde ist ungültig.');
-  if(v2) {
-    assertPolicy(round.policy);
-    if(round.policyEventId!==null)assertId(round.policyEventId);
-    if(!['legacy','configurable'].includes(round.schedulingMode))invalid('Die Rundenplanung ist ungültig.');
-    if(round.policyEventId===null && canonical(round.policy)!==canonical(DEFAULT_POLICY))invalid('Die Standardregeln stimmen nicht.');
-  }
+function assertRound(round, profileId) {
+  assertExactKeys(round, ROUND_KEYS, 'Eine lokale Runde ist ungültig.');
   assertId(round.id);
   assertId(round.epochId);
   assertId(round.profileId);
@@ -239,10 +226,9 @@ function assertRound(round, profileId, storageVersion) {
     || !Array.isArray(round.answeredIds)) invalid('Die lokale Rundenauswahl ist ungültig.');
   const candidateWordIds = new Set();
   for (const candidate of round.candidates) {
-    assertExactKeys(candidate, ['wordId', 'learningId',...(v2?['schedulingGenerationId']:[])], 'Ein lokaler Rundenkandidat ist ungültig.');
+    assertExactKeys(candidate, ['wordId', 'learningId'], 'Ein lokaler Rundenkandidat ist ungültig.');
     assertId(candidate.wordId);
     assertId(candidate.learningId);
-    if(v2 && candidate.schedulingGenerationId!==null)assertId(candidate.schedulingGenerationId);
     if (candidateWordIds.has(candidate.wordId)) invalid('Eine lokale Runde enthält ein Wort mehrfach.');
     candidateWordIds.add(candidate.wordId);
   }
@@ -260,12 +246,11 @@ function assertRound(round, profileId, storageVersion) {
   if (counted !== round.answeredIds.length) invalid('Die lokalen Antwortzähler sind unvollständig.');
   if (round.lastWordId !== null) assertId(round.lastWordId);
   if (round.current !== null) {
-    assertExactKeys(round.current, ['wordId', 'revisionId', 'learningId', 'ordinal',...(v2?['schedulingGenerationId']:[])],
+    assertExactKeys(round.current, ['wordId', 'revisionId', 'learningId', 'ordinal'],
       'Die angezeigte Aufgabe ist ungültig.');
     assertId(round.current.wordId);
     assertId(round.current.revisionId);
     assertId(round.current.learningId);
-    if(v2 && round.current.schedulingGenerationId!==null)assertId(round.current.schedulingGenerationId);
     const expectedOrdinal = round.status === 'feedback'
       ? round.answeredIds.length
       : round.answeredIds.length + 1;
@@ -292,9 +277,9 @@ function assertRound(round, profileId, storageVersion) {
   }
 }
 
-export function assertProductState(value, expectedDeviceId = null) {
+function assertProductState(value, expectedDeviceId = null) {
   assertExactKeys(value, STATE_KEYS, 'Der lokale Produktzustand ist ungültig.');
-  if (![1,2].includes(value.storageVersion)) fail('version', 'Diese lokale Speicherversion wird nicht unterstützt.');
+  if (value.storageVersion !== 1) fail('version', 'Diese lokale Speicherversion wird nicht unterstützt.');
   assertId(value.deviceId, 'Die Geräte-ID ist ungültig.');
   if (expectedDeviceId !== null && value.deviceId !== expectedDeviceId) {
     invalid('Der lokale Produktzustand gehört zu einem anderen Gerät.');
@@ -312,7 +297,7 @@ export function assertProductState(value, expectedDeviceId = null) {
   const rounds = {};
   for (const profileId of Object.keys(value.rounds)) {
     assertId(profileId);
-    assertRound(value.rounds[profileId], profileId, value.storageVersion);
+    assertRound(value.rounds[profileId], profileId);
     setOwn(rounds, profileId, structuredClone(value.rounds[profileId]));
   }
   assertIdArray(value.outboxEventIds, 'Die Liste ausstehender Ereignisse ist ungültig.');
@@ -330,32 +315,6 @@ export function assertProductState(value, expectedDeviceId = null) {
   value.knownFiles.forEach(assertKnownFile);
   value.quarantinedFiles.forEach(assertQuarantine);
   assertRestoreRecords(value);
-  if(value.storageVersion===1) {
-    const objects=[ledger.descriptor,...ledger.events,...ledger.epochs,
-      ...value.pendingPackets.map(p=>p.packet),...value.safetyCopies.map(c=>c.backup),
-      ...value.restoreJobs.flatMap(j=>[j.backup,...j.uploads.map(u=>u.value),...(j.epoch?[j.epoch]:[])])];
-    assertContainedVersion(LEGACY_VERSION,objects);
-  }
-  if(value.storageVersion===2)for(const round of Object.values(rounds)) {
-    const start=ledger.events.find(e=>e.type==='round.started' && e.payload.roundId===round.id);
-    if(!start || start.payload.profileId!==round.profileId)invalid('Der lokale Rundenstart fehlt.');
-    const policy=start.formatVersion===1?DEFAULT_POLICY:start.payload.policy;
-    const policyEventId=start.formatVersion===1?null:start.payload.policyEventId;
-    if(canonical(round.policy)!==canonical(policy) || round.policyEventId!==policyEventId)invalid('Der lokale Rundenvertrag wurde verändert.');
-    if(round.current!==null) {
-      const candidate=round.candidates.find(c=>c.wordId===round.current.wordId && c.learningId===round.current.learningId);
-      if(!candidate || candidate.schedulingGenerationId!==round.current.schedulingGenerationId) {
-        invalid('Die angezeigte Wortgeneration passt nicht zur eingefrorenen Rundenauswahl.');
-      }
-    }
-    for(const candidate of [...round.candidates,...(round.current?[round.current]:[])]) {
-      if(candidate.schedulingGenerationId!==null) {
-        const reset=ledger.events.find(e=>e.id===candidate.schedulingGenerationId);
-        if(!reset || reset.type!=='word.reactivated' || reset.payload.profileId!==round.profileId
-          || reset.payload.wordId!==candidate.wordId || reset.payload.learningId!==candidate.learningId)invalid('Die lokale Wortgeneration ist unvollständig.');
-      }
-    }
-  }
   if (value.pinVerifier !== null) assertRecord(value.pinVerifier, 'Der lokale PIN-Prüfwert ist ungültig.');
   return {
     ...structuredClone(value),
@@ -441,12 +400,6 @@ export async function createCommands({store, now, id, deviceId, onChange}) {
   assertId(deviceId, 'Die Geräte-ID ist ungültig.');
   const loaded = await store.load();
   let state = loaded === null ? null : assertProductState(normalizeProductState(loaded), deviceId);
-  if(state?.storageVersion===1) {
-    const migrated=await migrateProductStateV1(state,{now});
-    try { await store.save(migrated); }
-    catch { throw new ProductError('storage','Die Formatumstellung konnte nicht gespeichert werden. Die bisherigen Daten bleiben erhalten.'); }
-    state=migrated;
-  }
   let mutationTail = Promise.resolve();
   const listeners = new Set();
 
@@ -537,13 +490,6 @@ export async function createCommands({store, now, id, deviceId, onChange}) {
       return () => listeners.delete(listener);
     },
 
-    practiceChoices({profileId}) {
-      const current = requireState();
-      const projection = project(current.ledger);
-      const day = calendarDay(now(), current.ledger.descriptor.timeZone);
-      return previewModes({projection, profileId, day});
-    },
-
     roundAvailability({roundId}) {
       const current = requireState();
       const found = findRound(current, roundId);
@@ -559,7 +505,7 @@ export async function createCommands({store, now, id, deviceId, onChange}) {
         const datasetId = id();
         const rootEpochId = id();
         const initial = {
-          storageVersion: 2,
+          storageVersion: 1,
           deviceId,
           clock: 0,
           ledger: {
@@ -656,8 +602,8 @@ export async function createCommands({store, now, id, deviceId, onChange}) {
         const projection = project(next.ledger);
         const roundId = id();
         const day = calendarDay(now(), next.ledger.descriptor.timeZone);
-        const round = legacyRoundContract(startRound({id: roundId, profileId, mode, size, projection, day}));
-        const event = nextEvent(next, 'round.started', {roundId, profileId, mode, size, policyEventId:null, policy:structuredClone(DEFAULT_POLICY)});
+        const round = startRound({id: roundId, profileId, mode, size, projection, day});
+        const event = nextEvent(next, 'round.started', {roundId, profileId, mode, size});
         appendLocalEvent(next, event);
         setOwn(next.rounds, profileId, round);
         reconcileMilestones(next);
@@ -692,7 +638,6 @@ export async function createCommands({store, now, id, deviceId, onChange}) {
           revisionId: nextFound.round.current.revisionId,
           learningId: nextFound.round.current.learningId,
           correct: checked.correct,
-          schedulingGenerationId: nextFound.round.current.schedulingGenerationId,
         });
         appendLocalEvent(next, answer);
         const projectionAfter = project(next.ledger);

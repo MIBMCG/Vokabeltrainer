@@ -110,7 +110,7 @@ export function createRestoreService({commands,store,sync,drive,now,id}) {
     }
     if(commands.getState().binding) {
       const datasetId=job.snapshot.datasetId;
-      const targetBackup={...job.backup,descriptor:commands.getState().ledger.descriptor,snapshot:job.snapshot,
+      const targetBackup={...job.backup,...VERSION,descriptor:commands.getState().ledger.descriptor,snapshot:job.snapshot,
         events:job.backup.events.map(e=>({...e,datasetId})),epochHistory:job.backup.epochHistory.map(e=>({...e,datasetId}))};
       // Foreign histories can have another root; include target ancestry for standalone validation.
       targetBackup.epochHistory=mergeById(targetBackup.epochHistory,commands.getState().ledger.epochs.map(({id,datasetId,parents,deviceId,clock,occurredAt})=>({id,datasetId,parents,deviceId,clock,occurredAt})));

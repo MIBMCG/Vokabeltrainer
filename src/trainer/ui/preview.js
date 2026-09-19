@@ -122,6 +122,11 @@ function eventPresentation(event, context) {
     const described = revisionPresentation(event, context);
     return `${described.title} geändert am ${day}`;
   }
+  if(event.type==='learning.rules.changed') {
+    const p=event.payload;
+    return `Lernregeln für ${context.name('profile',p.profileId)}: seltener ab ${p.slowAfter}, ${p.stopAfter===null?'weiter auffrischen':`ausnehmen ab ${p.stopAfter}`}, Abstände ${p.intervals.join('/')} Tage, am ${day}`;
+  }
+  if(event.type==='word.reactivated')return `${context.name('word',event.payload.wordId)} für ${context.name('profile',event.payload.profileId)} wieder ins Üben aufgenommen am ${day}`;
   if (event.type === 'word.milestone') return `Lernerfolg zu ${context.name('word', event.payload.wordId)} für ${context.name('profile', event.payload.profileId)} am ${day}`;
   if (event.type === 'avatar.changed') return `Avatar von ${context.name('profile', event.payload.profileId)} geändert am ${day}`;
   if (event.type === 'preference.changed') return `Bewegungseinstellung von ${context.name('profile', event.payload.profileId)} geändert am ${day}`;
@@ -199,6 +204,11 @@ export function previewSummaryNodes({summary, state, events = [], selectedEventI
     list.append(el('dt', {text: `Punkte · ${profileName}`}), el('dd', {text: `${progress.points.before} → ${progress.points.after}`}));
   }
   nodes.push(list);
+  for(const [key,label] of [['added','Zusätzliche Lernregeln und Wiederaktivierungen im aktiven Verlauf'],['removed','Lernregeln und Wiederaktivierungen künftig nur im alten Verlauf']]) {
+    const changes=summary.learningChanges?.[key] ?? [];
+    if(changes.length)nodes.push(el('section',{},[el('h4',{text:label}),
+      ...changes.map(event=>el('p',{text:eventPresentation(event,context)}))]));
+  }
 
   if (summary.contentChanges.length > 0) {
     const section = el('section', {attrs: {class: 'preview-content-changes'}}, [el('h4', {text: 'Inhaltliche Unterschiede'})]);

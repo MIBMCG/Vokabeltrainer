@@ -1,4 +1,3 @@
-import {assertSupportedVersion, assertContainedVersion, versionOf} from '../model/versions.js';
 import {digest} from '../model/canonical.js';
 import {productStateHash} from '../commands.js';
 import {assertSnapshot} from '../model/schema.js';
@@ -79,7 +78,6 @@ export async function uploadVerified(drive,binding,upload) {
 }
 export async function readSnapshot({drive,binding,fileId,descriptor}) {
   const manifest=await readVerifiedFile(drive,fileId,binding,'snapshot-manifest');
-  assertSupportedVersion(manifest);
   exact(manifest,[...Object.keys(VERSION),'kind','snapshotId','datasetId','purpose','snapshot','parts','totalHash','backupMetadata']);
   exact(manifest.backupMetadata,['exportedAt','safetyCopyIndex']);
   version(manifest,'snapshot-manifest');
@@ -93,8 +91,6 @@ export async function readSnapshot({drive,binding,fileId,descriptor}) {
     if(ref.index!==index || seen.has(ref.fileId) || !/^[0-9a-f]{64}$/.test(ref.hash))fail('invalid','Die Snapshot-Teile sind unvollständig oder doppelt.');
     seen.add(ref.fileId);
     const part=await readVerifiedFile(drive,ref.fileId,binding,'snapshot-part');
-    assertContainedVersion(manifest,[part]);
-    assertContainedVersion(part,part.events ?? []);
     exact(part,[...Object.keys(VERSION),'kind','snapshotId','datasetId','index','events','epochHistory']);version(part,'snapshot-part');
     if(bytes(part)>64*1024 || part.index!==index || part.snapshotId!==manifest.snapshotId || part.datasetId!==binding.datasetId
       || !Array.isArray(part.events) || !Array.isArray(part.epochHistory) || await digest(part)!==ref.hash) fail('invalid','Ein Snapshot-Teil ist beschädigt.');
@@ -104,7 +100,7 @@ export async function readSnapshot({drive,binding,fileId,descriptor}) {
   if(await digest({snapshot:manifest.snapshot,events:sorted(events),epochHistory:sorted(epochHistory),backupMetadata:manifest.backupMetadata})!==manifest.totalHash) {
     fail('invalid','Der vollständige Snapshot-Hash stimmt nicht.');
   }
-  const backup=await validateBackup({...versionOf(manifest),kind:'backup',descriptor,...manifest.backupMetadata,
+  const backup=await validateBackup({...VERSION,kind:'backup',descriptor,...manifest.backupMetadata,
     snapshot:manifest.snapshot,events,epochHistory});
   return {manifest,backup};
 }

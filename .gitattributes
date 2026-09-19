@@ -10,3 +10,5 @@
 *.yaml text eol=lf
 .gitignore text eol=lf
 .gitattributes text eol=lf
+# Historical compatibility fixtures must preserve the committed original bytes.
+tests/compat/v1/src/** -text

@@ -4,8 +4,7 @@ import {assertDescriptor, assertLedger, assertSnapshot, assertEpochHistory} from
 import {resolveEpochs} from '../model/epochs.js';
 import {project} from '../learning/progress.js';
 
-import {CURRENT_VERSION, assertSupportedVersion, assertContainedVersion, versionOf} from '../model/versions.js';
-export const VERSION = CURRENT_VERSION;
+export const VERSION = {format:'vokabeltrainer-product',formatVersion:1,ruleVersion:1};
 export const MAX_BACKUP_BYTES = 25 * 1024 * 1024;
 export const sorted = values => [...values].sort((a,b)=>a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
 export const fail = (code,message) => { throw new ProductError(code,message); };
@@ -18,7 +17,9 @@ export function exact(value, keys) {
   }
 }
 export function version(value,kind) {
-  assertSupportedVersion(value);
+  if (value.format!==VERSION.format || value.formatVersion!==1 || value.ruleVersion!==1) {
+    fail('version','Diese Sicherungsversion wird nicht unterstützt.');
+  }
   if(value.kind!==kind) fail('invalid','Der Sicherungsdatentyp ist ungültig.');
 }
 export function epochHistory(ledger) {
@@ -75,8 +76,6 @@ export function dependencies(events,selectedIds) {
         if(!start) fail('reference','Der historische Rundenstart fehlt.'); add(start.id);
       }
       if(p.revisionId) add(p.revisionId);
-      if(p.policyEventId) add(p.policyEventId);
-      if(p.schedulingGenerationId) add(p.schedulingGenerationId);
       for(const id of [...(p.answerIds??[]),...(p.evidenceAnswerIds??[]),...(p.eventIds??[]),...(p.supportEventIds??[])]) add(id);
     }
   }
@@ -89,19 +88,17 @@ export function backupLedger(backup) {
   let viewNumber=0,viewId='backup-view-0'; while(occupied.has(viewId)) viewId=`backup-view-${++viewNumber}`;
   return assertLedger({descriptor:backup.descriptor,events:backup.events,snapshots:[backup.snapshot],
     historicalEpochs:backup.epochHistory,epochs:[
-      {...versionOf(backup),kind:'epoch',...root,snapshotId:null,snapshotManifestFileId:null},
-      {...versionOf(backup),kind:'epoch',id:viewId,datasetId:backup.descriptor.datasetId,parents:[root.id],
+      {...VERSION,kind:'epoch',...root,snapshotId:null,snapshotManifestFileId:null},
+      {...VERSION,kind:'epoch',id:viewId,datasetId:backup.descriptor.datasetId,parents:[root.id],
         deviceId:root.deviceId,clock:root.clock,occurredAt:root.occurredAt,snapshotId:backup.snapshot.id,snapshotManifestFileId:null},
     ]});
 }
 export function assertBackup(value) {
-  assertSupportedVersion(value);
   exact(value,[...Object.keys(VERSION),'kind','exportedAt','descriptor','snapshot','events','epochHistory','safetyCopyIndex']);
   version(value,'backup');
   if(bytes(value)>MAX_BACKUP_BYTES || !Array.isArray(value.events) || value.events.length>100000) {
     fail('invalid','Eine Sicherung darf höchstens 25 MiB und 100.000 Ereignisse enthalten.');
   }
-  assertContainedVersion(value,[value.descriptor,...value.events]);
   assertDescriptor({...value.descriptor,createdAt:value.exportedAt});
   assertSnapshot(value.snapshot);
   if(!Array.isArray(value.epochHistory) || !Array.isArray(value.safetyCopyIndex)) fail('invalid','Die Sicherungslisten sind ungültig.');
@@ -110,7 +107,7 @@ export function assertBackup(value) {
   for(const item of value.safetyCopyIndex) {
     exact(item,['id','createdAt','purpose','hash']);
     if(!/^[A-Za-z0-9_-]{1,128}$/.test(item.id) || !/^[0-9a-f]{64}$/.test(item.hash)
-      || ![ 'restore','safety','join',...(value.formatVersion===2?['format-migration']:[])].includes(item.purpose) || seen.has(item.id)) fail('invalid','Der Sicherheitskopienindex ist ungültig.');
+      || !['restore','safety','join'].includes(item.purpose) || seen.has(item.id)) fail('invalid','Der Sicherheitskopienindex ist ungültig.');
     seen.add(item.id); assertDescriptor({...value.descriptor,createdAt:item.createdAt});
   }
   const ledger=backupLedger(value);
@@ -137,8 +134,7 @@ export async function parseBackup(text) {
   let value; try {value=JSON.parse(text);} catch {fail('invalid','Die Sicherung ist kein gültiges JSON.');}
   return validateBackup(value);
 }
-export async function exportBackup(state,exportedAt,{selectedEpochId,version:outputVersion=VERSION}={}) {
-  assertSupportedVersion(outputVersion);
+export async function exportBackup(state,exportedAt,{selectedEpochId}={}) {
   const ledger=assertLedger(state.ledger);
   let selection=ledger;
   if(selectedEpochId!==undefined) {
@@ -155,7 +151,7 @@ export async function exportBackup(state,exportedAt,{selectedEpochId,version:out
   const snapshot={id:'pending',datasetId:ledger.descriptor.datasetId,effectiveEventIds,supportEventIds,contentHash:''};
   snapshot.contentHash=await snapshotHash(snapshot,ledger.events);
   snapshot.id=`backup-${await digest({contentHash:snapshot.contentHash,events:sorted(ledger.events),epochHistory:epochHistory(ledger),exportedAt})}`;
-  return validateBackup({...versionOf(outputVersion),kind:'backup',exportedAt,descriptor:ledger.descriptor,snapshot,events:sorted(ledger.events),
+  return validateBackup({...VERSION,kind:'backup',exportedAt,descriptor:ledger.descriptor,snapshot,events:sorted(ledger.events),
     epochHistory:epochHistory(ledger),safetyCopyIndex:(state.safetyCopies??[]).map(({id,createdAt,purpose,hash})=>({id,createdAt,purpose,hash}))});
 }
 export function previewBackup({current,backup}) {
@@ -171,12 +167,8 @@ export function previewBackup({current,backup}) {
       if(canonical(left)!==canonical(right))contentChanges.push({entityType,entityId,before:left,after:right});
     }
   }
-  const learningEvents=ledger=>resolveEpochs(ledger).effectiveEvents.filter(e=>['learning.rules.changed','word.reactivated'].includes(e.type));
-  const priorRules=learningEvents(current.ledger),laterRules=learningEvents(backupLedger(backup));
-  const learningChanges={added:laterRules.filter(e=>!priorRules.some(p=>p.id===e.id)),
-    removed:priorRules.filter(e=>!laterRules.some(p=>p.id===e.id))};
   const countAnswers=ledger=>resolveEpochs(ledger).effectiveEvents.filter(e=>e.type==='answer.recorded').length;
-  return {learningChanges,profiles:{before:Object.keys(before.profiles).length,after:Object.keys(after.profiles).length},
+  return {profiles:{before:Object.keys(before.profiles).length,after:Object.keys(after.profiles).length},
     wordCount:{before:Object.keys(before.entities.words).length,after:Object.keys(after.entities.words).length},
     answerCount:{before:countAnswers(current.ledger),after:countAnswers(backupLedger(backup))},contentChanges,
     progressChanges:ids.map(profileId=>({profileId,points:{before:get(before,profileId)?.points??0,after:get(after,profileId)?.points??0},

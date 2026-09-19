@@ -1,9 +1,12 @@
 import {canonical} from './canonical.js';
 import {ProductError} from './errors.js';
-import {assertSupportedVersion} from './versions.js';
-import {assertPolicy, DEFAULT_POLICY} from './policies.js';
 
 const VERSION_KEYS = ['format', 'formatVersion', 'ruleVersion'];
+const VERSION = {
+  format: 'vokabeltrainer-product',
+  formatVersion: 1,
+  ruleVersion: 1,
+};
 const EVENT_KEYS = [
   ...VERSION_KEYS,
   'kind',
@@ -62,6 +65,14 @@ function assertArray(value, message = 'Eine Liste ist ungültig.') {
   const keys = Object.keys(value);
   if (keys.length !== value.length || keys.some((key, index) => key !== String(index))) {
     invalid(message);
+  }
+}
+
+function assertVersion(value) {
+  if (value.format !== VERSION.format
+    || value.formatVersion !== VERSION.formatVersion
+    || value.ruleVersion !== VERSION.ruleVersion) {
+    fail('version', 'Diese Datenversion wird nicht unterstützt.');
   }
 }
 
@@ -175,24 +186,18 @@ function assertEntityRevision(payload) {
   assertEntityValue(payload.entityType, payload.value);
 }
 
-function assertRoundStarted(payload, version) {
-  assertExactKeys(payload, ['roundId', 'profileId', 'mode', 'size', ...(version===2?['policyEventId','policy']:[])], 'Der Rundenstart ist ungültig.');
+function assertRoundStarted(payload) {
+  assertExactKeys(payload, ['roundId', 'profileId', 'mode', 'size'], 'Der Rundenstart ist ungültig.');
   assertId(payload.roundId);
   assertId(payload.profileId);
   assertEnum(payload.mode, ['all', 'latest', 'new'], 'Der Lernmodus ist ungültig.');
   assertEnum(payload.size, [10, 20, 30], 'Die Rundengröße ist ungültig.');
-  if(version===2) {
-    assertNullableId(payload.policyEventId); assertPolicy(payload.policy);
-    if(payload.policyEventId===null && canonical(payload.policy)!==canonical(DEFAULT_POLICY)) {
-      reference('Ohne Regelereignis gelten ausschließlich die Standardregeln.');
-    }
-  }
 }
 
-function assertAnswer(payload, version) {
+function assertAnswer(payload) {
   assertExactKeys(
     payload,
-    ['roundId', 'profileId', 'ordinal', 'wordId', 'revisionId', 'learningId', 'correct', ...(version===2?['schedulingGenerationId']:[])],
+    ['roundId', 'profileId', 'ordinal', 'wordId', 'revisionId', 'learningId', 'correct'],
     'Die Antwort ist ungültig.',
   );
   assertId(payload.roundId);
@@ -202,7 +207,6 @@ function assertAnswer(payload, version) {
   assertId(payload.revisionId);
   assertId(payload.learningId);
   assertBoolean(payload.correct);
-  if(version===2)assertNullableId(payload.schedulingGenerationId);
 }
 
 function assertRoundCompleted(payload) {
@@ -267,16 +271,6 @@ function assertAdopted(payload) {
   }
 }
 
-function assertRules(payload) {
-  assertExactKeys(payload,['profileId','slowAfter','stopAfter','intervals']);
-  assertId(payload.profileId);
-  const {profileId,...policy}=payload; assertPolicy(policy);
-}
-function assertReactivated(payload) {
-  assertExactKeys(payload,['profileId','wordId','revisionId','learningId']);
-  for(const key of Object.keys(payload))assertId(payload[key]);
-}
-
 const PAYLOAD_VALIDATORS = new Map([
   ['entity.revised', assertEntityRevision],
   ['round.started', assertRoundStarted],
@@ -287,8 +281,6 @@ const PAYLOAD_VALIDATORS = new Map([
   ['avatar.changed', assertAvatar],
   ['preference.changed', assertPreference],
   ['events.adopted', assertAdopted],
-  ['learning.rules.changed', assertRules],
-  ['word.reactivated', assertReactivated],
 ]);
 
 export function assertDescriptor(value) {
@@ -297,7 +289,7 @@ export function assertDescriptor(value) {
     [...VERSION_KEYS, 'kind', 'datasetId', 'name', 'timeZone', 'rootEpochId', 'createdAt'],
     'Die Datensatzbeschreibung ist ungültig.',
   );
-  assertSupportedVersion(value);
+  assertVersion(value);
   if (value.kind !== 'dataset') invalid('Die Datensatzbeschreibung ist ungültig.');
   assertId(value.datasetId);
   assertText(value.name, {minimum: 1, maximum: 80, message: 'Der Datensatzname ist ungültig.'});
@@ -309,7 +301,7 @@ export function assertDescriptor(value) {
 
 export function assertEvent(value) {
   assertExactKeys(value, EVENT_KEYS, 'Das Ereignis ist ungültig.');
-  assertSupportedVersion(value);
+  assertVersion(value);
   if (value.kind !== 'event') invalid('Das Ereignis ist ungültig.');
   assertId(value.id);
   assertId(value.datasetId);
@@ -320,10 +312,7 @@ export function assertEvent(value) {
   assertCalendarDay(value.day);
   const validatePayload = PAYLOAD_VALIDATORS.get(value.type);
   if (!validatePayload) invalid('Der Ereignistyp ist ungültig.');
-  if(value.formatVersion===1 && ['learning.rules.changed','word.reactivated'].includes(value.type)) {
-    invalid('Dieses Ereignis benötigt Datenversion 2.');
-  }
-  validatePayload(value.payload,value.formatVersion);
+  validatePayload(value.payload);
   if (new TextEncoder().encode(canonical(value)).byteLength > MAX_EVENT_BYTES) {
     invalid('Das Ereignis überschreitet die zulässige Größe von 16 KiB.');
   }
@@ -347,7 +336,7 @@ export function assertEpoch(value) {
     ],
     'Die Epoche ist ungültig.',
   );
-  assertSupportedVersion(value);
+  assertVersion(value);
   if (value.kind !== 'epoch') invalid('Die Epoche ist ungültig.');
   assertId(value.id);
   assertId(value.datasetId);
@@ -483,12 +472,6 @@ function validateRoundReferences(events, eventsById, entityIds) {
   for (const event of events.filter((entry) => entry.type === 'round.started')) {
     const {roundId, profileId} = event.payload;
     if (!entityIds.profile.has(profileId)) reference('Eine Runde verweist auf ein unbekanntes Profil.');
-    if(event.formatVersion===2 && event.payload.policyEventId!==null) {
-      const rule=eventsById.get(event.payload.policyEventId);
-      if(!rule || rule.type!=='learning.rules.changed' || rule.payload.profileId!==profileId) reference('Das passende Regelereignis fehlt.');
-      const {profileId:ignored,...policy}=rule.payload;
-      if(canonical(policy)!==canonical(event.payload.policy))reference('Der Rundenvertrag entspricht nicht seinem Regelereignis.');
-    }
     const previous = starts.get(roundId);
     if (previous && canonical(previous.payload) !== canonical(event.payload)) {
       collision('Eine Runden-ID enthält unterschiedliche Startdaten.');
@@ -509,13 +492,6 @@ function validateRoundReferences(events, eventsById, entityIds) {
       || revision.payload.entityId !== payload.wordId
       || revision.payload.value.learningId !== payload.learningId) {
       reference('Eine Antwort verweist nicht auf die passende Wortfassung.');
-    }
-    if(event.formatVersion===2 && payload.schedulingGenerationId!==null) {
-      const reset=eventsById.get(payload.schedulingGenerationId);
-      if(!reset || reset.type!=='word.reactivated' || reset.payload.profileId!==payload.profileId
-        || reset.payload.wordId!==payload.wordId || reset.payload.learningId!==payload.learningId) {
-        reference('Die Antwort verweist nicht auf die passende Wiederaktivierung.');
-      }
     }
     const slot = `${payload.roundId}\u0000${payload.ordinal}`;
     const previous = answerBySlot.get(slot);
@@ -565,16 +541,9 @@ function validateRoundReferences(events, eventsById, entityIds) {
 function validateProfileEvents(events, entityIds, answers) {
   for (const event of events) {
     const payload = event.payload;
-    if (['avatar.changed', 'preference.changed','learning.rules.changed','word.reactivated'].includes(event.type)
+    if (['avatar.changed', 'preference.changed'].includes(event.type)
       && !entityIds.profile.has(payload.profileId)) {
       reference('Ein Profilereignis verweist auf ein unbekanntes Profil.');
-    }
-    if(event.type==='word.reactivated') {
-      const revision=events.find(e=>e.id===payload.revisionId);
-      if(!revision || revision.type!=='entity.revised' || revision.payload.entityType!=='word'
-        || revision.payload.entityId!==payload.wordId || revision.payload.value.learningId!==payload.learningId) {
-        reference('Die Wiederaktivierung verweist nicht auf die passende Wortfassung.');
-      }
     }
     if (event.type !== 'word.milestone') continue;
     if (!entityIds.profile.has(payload.profileId) || !entityIds.word.has(payload.wordId)) {

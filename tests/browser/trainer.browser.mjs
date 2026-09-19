@@ -9,6 +9,37 @@ import {project as projectState} from '../../src/trainer/learning/progress.js';
 
 const resultsDirectory = resolve('test-results');
 
+test('B1 browser migrates actual v1 feedback atomically and leaves unknown storage visible', {timeout:60_000},async()=>{
+  const {createCommands:oldCommands}=await import('../compat/v1/src/trainer/commands.js');
+  const {createFixture}=await import('../trainer/fixtures.js');
+  const {memoryStore,productState:makeState,sequenceIds}=await import('../trainer/backup-fixtures.js');
+  const harness=await createTrainerHarness(),{page}=await harness.newDevice();
+  try {
+    await page.goto(harness.baseUrl);await setupPractice(page);
+    const configured=await productState(page),store=memoryStore(makeState(createFixture().base,{deviceId:configured.deviceId}));
+    const old=await oldCommands({store,deviceId:configured.deviceId,id:sequenceIds('old-browser'),now:()=>new Date(),onChange(){}});
+    await old.start({profileId:'p1',mode:'all',size:10});await old.submit({roundId:old.getState().rounds.p1.id,typed:'synthetic-wrong'});
+    const source=store.snapshot();source.pinVerifier=configured.pinVerifier;
+    await writeProductState(page,source);await page.reload();
+    await page.getByRole('button',{name:/Ada/}).first().waitFor();
+    const migrated=await productState(page);
+    assert.equal(migrated.storageVersion,2);assert.deepEqual(migrated.ledger,source.ledger);
+    assert.deepEqual(migrated.rounds.p1.feedback,source.rounds.p1.feedback);
+    assert.equal(migrated.safetyCopies.filter(c=>c.purpose==='format-migration' && c.verified).length,1);
+    await page.reload();await page.getByRole('button',{name:/Ada/}).first().waitFor();
+    assert.deepEqual(await productState(page),migrated);
+    await page.getByRole('button',{name:/Ada/}).first().click();
+    await page.getByRole('button',{name:'Fortsetzen',exact:true}).click();
+    await page.getByRole('button',{name:'Weiter',exact:true}).waitFor();
+    await page.getByRole('button',{name:'Weiter',exact:true}).click();
+    assert.equal((await productState(page)).rounds.p1.schedulingMode,'legacy');
+    const unknown={...await productState(page),storageVersion:99};
+    await writeProductState(page,unknown);await page.reload();
+    await page.getByText(/Speicherversion wird nicht unterstützt/).waitFor();
+    assert.deepEqual(await productState(page),unknown);
+  } finally {await harness.close();}
+});
+
 async function startPracticeRound(root, mode = 'Alle Vokabeln') {
   await root.getByRole('radio', {name: new RegExp(`^${mode}`, 'u')}).check();
   await root.getByRole('button', {name: 'Runde starten', exact: true}).click();
@@ -1381,7 +1412,7 @@ test('trainer sync and restore exposes deliberate Google, download and import fl
         events: [], epochHistory: [], safetyCopyIndex: [],
       })),
     });
-    await page.getByText(/Sicherungsversion wird nicht unterstützt/i).waitFor().catch(async (error) => {
+    await page.getByText(/benötigen eine neuere App-Version/i).waitFor().catch(async (error) => {
       error.message += `\nVisible page after future backup:\n${await page.locator('body').innerText()}`;
       throw error;
     });
@@ -1940,7 +1971,7 @@ test('trainer offline update UI blocks typing and pending answers before control
   try {
     await page.goto(harness.baseUrl);
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null, null, {timeout: 10_000});
-    harness.setServiceWorkerVersion('v13', {activationDelayMs: 750});
+    harness.setServiceWorkerVersion('v14', {activationDelayMs: 750});
     await page.evaluate(async () => {
       const registration = await navigator.serviceWorker.getRegistration('./');
       await registration.update();
@@ -1998,8 +2029,8 @@ test('trainer offline update UI blocks typing and pending answers before control
     const beforeReload = await productState(page);
     assert.equal(beforeReload.ledger.events.some(({type}) => type === 'round.completed' || type === 'round.abandoned'), false);
     assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product:')).sort()), [
-      'vokabeltrainer-product:%2Ftrainer%2F:v12',
       'vokabeltrainer-product:%2Ftrainer%2F:v13',
+      'vokabeltrainer-product:%2Ftrainer%2F:v14',
     ]);
     const navigation = page.waitForNavigation();
     await updateButton.click();
@@ -2014,7 +2045,7 @@ test('trainer offline update UI blocks typing and pending answers before control
     await navigation;
     await page.getByText('Richtig!', {exact: true}).waitFor();
     assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product:')).sort()), [
-      'vokabeltrainer-product:%2Ftrainer%2F:v13',
+      'vokabeltrainer-product:%2Ftrainer%2F:v14',
     ]);
   } finally {
     await context.close();

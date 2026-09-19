@@ -35,7 +35,7 @@ test('local offline restore preserves old facts, ends old rounds without bonus a
   assert.ok(state.ledger.events.some(e=>e.id==='recent'));
   assert.equal(state.rounds.p1.status,'abandoned');
   assert.equal(state.ledger.epochs.at(-1).snapshotManifestFileId,null);
-  const copies=await h.restore.listSafetyCopies();assert.equal(copies.length,1);
+  const copies=(await h.restore.listSafetyCopies()).filter(c=>c.purpose==='safety');assert.equal(copies.length,1);
   const copy=await h.restore.downloadSafetyCopy(copies[0].id);assert.ok(copy.events.some(e=>e.id==='recent'));
 });
 test('change after preview requires fresh explicit confirmation',async()=>{
@@ -188,7 +188,7 @@ test('a new device discovers and downloads the dated Drive safety backup without
   const a=await setupRestoreFixture(),p=await a.restore.prepare(a.olderBackup);await a.restore.confirm(p.previewId);
   const b=await setupRestoreFixture({connected:false,drive:a.drive});
   await b.sync.joinDataset((await b.sync.discover())[0],'confirm');await b.sync.sync();
-  const copies=await b.restore.listSafetyCopies();assert.equal(copies.length,1);
+  const copies=(await b.restore.listSafetyCopies()).filter(c=>c.driveManifestFileId!==null);assert.equal(copies.length,1);
   assert.equal(copies[0].createdAt,now().toISOString());
   const backup=await b.restore.downloadSafetyCopy(copies[0].id);
   assert.equal(backup.exportedAt,now().toISOString());assert.ok(backup.events.some(e=>e.id==='recent'));
@@ -254,7 +254,7 @@ test('failed local safety readback never offers a usable restore preview',async(
   h.store.load=async()=>{const state=await load();state.safetyCopies=[];return state;};
   await assert.rejects(h.restore.prepare(h.olderBackup),e=>e.code==='storage');
   assert.equal(h.commands.getState().ledger.epochs.length,1);
-  assert.equal(h.commands.getState().safetyCopies.some(c=>c.verified),false);
+  assert.equal(h.commands.getState().safetyCopies.some(c=>c.purpose!=='format-migration' && c.verified),false);
 });
 test('resuming a published job preserves a round already begun in its new epoch',async()=>{
   const h=await setupRestoreFixture(),p=await h.restore.prepare(h.olderBackup),save=h.store.save;let failed=false;

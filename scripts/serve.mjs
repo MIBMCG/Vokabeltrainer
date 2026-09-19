@@ -73,6 +73,10 @@ const ASSETS = new Map([
   ['/src/trainer/model/errors.js', ['src/trainer/model/errors.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/model/revisions.js', ['src/trainer/model/revisions.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/model/schema.js', ['src/trainer/model/schema.js', 'text/javascript; charset=utf-8']],
+  ['/src/trainer/model/versions.js', ['src/trainer/model/versions.js', 'text/javascript; charset=utf-8']],
+  ['/src/trainer/model/policies.js', ['src/trainer/model/policies.js', 'text/javascript; charset=utf-8']],
+  ['/src/trainer/storage/migrate.js', ['src/trainer/storage/migrate.js', 'text/javascript; charset=utf-8']],
+
   ['/src/trainer/model/epochs.js', ['src/trainer/model/epochs.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/learning/answers.js', ['src/trainer/learning/answers.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/learning/calendar.js', ['src/trainer/learning/calendar.js', 'text/javascript; charset=utf-8']],

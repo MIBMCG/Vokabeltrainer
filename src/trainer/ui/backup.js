@@ -236,7 +236,7 @@ export function renderBackup({root, state, restore, onDownload, isUnlocked = () 
   }));
   if (listedCopies.length === 0) copies.append(el('p', {text: 'Noch keine Sicherheitskopie vorhanden.', attrs: {class: 'hint'}}));
   for (const copy of listedCopies) {
-    const purpose = {restore: 'vor einer Wiederherstellung', safety: 'Sicherheitskopie', join: 'vor einem Datensatzwechsel'}[copy.purpose]
+    const purpose = {'format-migration':'vor der Formatumstellung', restore: 'vor einer Wiederherstellung', safety: 'Sicherheitskopie', join: 'vor einem Datensatzwechsel'}[copy.purpose]
       ?? 'Sicherheitskopie';
     copies.append(el('article', {attrs: {class: 'management-card'}}, [
       el('h4', {text: new Date(copy.createdAt).toLocaleString('de-DE')}),

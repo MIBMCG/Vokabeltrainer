@@ -1,4 +1,3 @@
-import {assertSupportedVersion, assertContainedVersion} from '../model/versions.js';
 import {digest} from '../model/canonical.js';
 import {ProductError} from '../model/errors.js';
 import {assertDescriptor, assertLedger, assertEpoch, mergeEvents} from '../model/schema.js';
@@ -275,8 +274,6 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
       meta = fresh;
     }
     const read = await readBracketed(meta);
-    try { assertSupportedVersion(read.value); }
-    catch(error) { error.inspectedValue=read.value; throw error; }
     if (known && known.contentHash !== read.hash) {
       const error = productError('collision', 'Eine bereits bekannte Drive-Datei wurde nachträglich verändert.');
       error.inspectedValue = read.value;
@@ -311,9 +308,7 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
       mimeType: JSON_MIME_TYPE,
     });
     const read = await readBracketed(meta);
-    let descriptor;
-    try { assertSupportedVersion(read.value); descriptor=assertDescriptor(read.value); }
-    catch(error) { error.inspectedValue=read.value; throw error; }
+    const descriptor = assertDescriptor(read.value);
     if (descriptor.datasetId !== datasetId) {
       throw productError('binding', 'Die Datensatzbeschreibung gehört zu einem anderen Datensatz.');
     }
@@ -678,15 +673,7 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
   async function download(binding) {
     await verifyAccount(binding);
     await verifyFolder(binding);
-    let descriptorRead;
-    try { descriptorRead=await readDescriptor(binding); }
-    catch(error) {
-      if(error.code==='version')await mutate(next=>{
-        next.quarantinedFiles=upsertQuarantine(next.quarantinedFiles,{fileId:binding.descriptorFileId,
-          code:'version',message:safeMessage(error),value:error.inspectedValue ?? null});
-      });
-      throw error;
-    }
+    const descriptorRead = await readDescriptor(binding);
     const before = commands.getState();
     if (await contentHash(before.ledger.descriptor) !== descriptorRead.hash) {
       throw productError('collision', 'Die gebundene Datensatzbeschreibung wurde verändert.');
@@ -731,7 +718,6 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
         }
         meta = read.metadata;
         inspectedValue = read.value;
-        assertSupportedVersion(read.value);
         if (kind === 'epoch') {
           const epoch=assertEpoch(read.value);
           if(meta.appProperties.epochId!==epoch.id || epoch.datasetId!==binding.datasetId) throw productError('binding','Die Epochenkennung stimmt nicht.');
@@ -749,8 +735,6 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
             if(!manifestGroups.has(snapshotId))manifestGroups.set(snapshotId,[]);
             manifestGroups.get(snapshotId).push({...checked,fileId:meta.id,hash:read.hash});
           } else {
-            if(!Array.isArray(read.value.events))throw productError('invalid','Die Snapshot-Ereignisse fehlen.');
-            assertContainedVersion(read.value,read.value.events);
             verifiedKnown.push({fileId:meta.id,contentHash:read.hash,kind});
           }
           continue;
@@ -1031,10 +1015,8 @@ export function createProductSync({drive, store, commands, now, id, onStatus} = 
       return getStatus();
     }
     publish('pending', 'Änderungen werden abgeglichen.');
-    const remoteProblem = await download(state.binding);
-    const versionProblem=commands.getState().quarantinedFiles.find(entry=>entry.code==='version');
-    if(versionProblem)throw productError('version',versionProblem.message);
     await publishLocalEpochs(state.binding);
+    const remoteProblem = await download(state.binding);
     await preparePackets(state.binding);
     await uploadPending(state.binding);
     const current = commands.getState();

@@ -17,3 +17,11 @@ test('late round abandonment and adoption use meaningful labels', () => {
   assert.equal(eventLabel(abandoned, state), 'Abgebrochene Runde von Ada am 17.09.2026');
   assert.equal(eventLabel(adopted, state), 'Ausgewählte alte Änderungen übernommen am 17.09.2026');
 });
+
+test('policy and reactivation adoption show their child and effect in readable labels',()=>{
+  const f=createFixture(),state={ledger:f.base};
+  const rules=f.event('learning.rules.changed',{profileId:'p1',slowAfter:5,stopAfter:8,intervals:[1,3,7,14]});
+  const reset=f.event('word.reactivated',{profileId:'p1',wordId:'w1',revisionId:'rev-w1',learningId:'learn-w1'});
+  assert.match(eventLabel(rules,state),/Lernregeln.*Ada.*5.*8/);
+  assert.match(eventLabel(reset,state),/Hund.*Ada.*wieder/);
+});
