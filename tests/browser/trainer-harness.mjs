@@ -18,15 +18,21 @@ export async function createTrainerHarness({basePath = ''} = {}) {
   const {chromium} = await import(moduleUrl());
   const server = createProbeServer({basePath});
   const productWorker = await readFile(new URL('../../trainer/sw.js', import.meta.url), 'utf8');
-  let workerVersion = 'v5';
+  let workerVersion = 'v6';
   let workerActivationDelayMs = 0;
+  let blockLargeArt = false;
   const originalRequest = server.listeners('request')[0];
   server.removeAllListeners('request');
   server.on('request', (request, response) => {
     const pathname = new URL(request.url, 'http://127.0.0.1').pathname;
-    if (pathname === `${basePath}/trainer/sw.js` && workerVersion !== 'v5') {
+    if (blockLargeArt && /\/trainer\/assets\/art\/.*-(?:512|768|960|1086|1440)\.webp$/u.test(pathname)) {
+      response.writeHead(503, {'Content-Type': 'text/plain; charset=utf-8'});
+      response.end('Synthetic large-art failure.');
+      return;
+    }
+    if (pathname === `${basePath}/trainer/sw.js` && workerVersion !== 'v6') {
       let source = productWorker.replace(
-        'const CACHE_NAME = `${CACHE_OWNER}v5`;',
+        'const CACHE_NAME = `${CACHE_OWNER}v6`;',
         `const CACHE_NAME = \`\${CACHE_OWNER}${workerVersion}\`;`,
       );
       if (source === productWorker) throw new Error('Synthetic worker version marker was not replaced.');
@@ -101,12 +107,15 @@ export async function createTrainerHarness({basePath = ''} = {}) {
     },
     stopServer,
     setServiceWorkerVersion(version, {activationDelayMs = 0} = {}) {
-      if (!/^v(?:[6-9]|[1-9][0-9]+)$/u.test(version)) throw new TypeError('Synthetic worker version must be v6 or later.');
+      if (!/^v(?:[7-9]|[1-9][0-9]+)$/u.test(version)) throw new TypeError('Synthetic worker version must be v7 or later.');
       if (!Number.isSafeInteger(activationDelayMs) || activationDelayMs < 0) {
         throw new TypeError('Synthetic activation delay must be a non-negative integer.');
       }
       workerVersion = version;
       workerActivationDelayMs = activationDelayMs;
+    },
+    blockLargeArt() {
+      blockLargeArt = true;
     },
     async close() {
       await Promise.allSettled([...contexts].map((context) => context.close()));

@@ -7,6 +7,19 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const HOST = '127.0.0.1';
 const PORT = 4173;
 
+const ART_RENDITIONS = [
+  ['island-beach', [480, 960, 1440]],
+  ['island-journey', [480, 960, 1086]],
+  ...Array.from({length: 4}, (_, index) => [`avatar-skin-${index}`, [256, 512, 768]]),
+  ...Array.from({length: 6}, (_, index) => [`avatar-clothing-${index}`, [256, 512, 768]]),
+  ['avatar-head-cap', [256, 512, 768]],
+  ['avatar-head-sunhat', [256, 512, 768]],
+  ['avatar-head-mountainhat', [256, 512, 768]],
+  ['avatar-back-backpack', [256, 512, 768]],
+  ['avatar-hand-binoculars', [256, 512, 768]],
+  ['avatar-hand-compass', [256, 512, 768]],
+];
+
 const ASSETS = new Map([
   ['/', ['index.html', 'text/html; charset=utf-8']],
   ['/index.html', ['index.html', 'text/html; charset=utf-8']],
@@ -32,6 +45,8 @@ const ASSETS = new Map([
   ['/src/trainer/main.js', ['src/trainer/main.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/updates.js', ['src/trainer/updates.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/ui/dom.js', ['src/trainer/ui/dom.js', 'text/javascript; charset=utf-8']],
+  ['/src/trainer/ui/art.js', ['src/trainer/ui/art.js', 'text/javascript; charset=utf-8']],
+  ['/src/trainer/ui/art-manifest.js', ['src/trainer/ui/art-manifest.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/ui/shell.js', ['src/trainer/ui/shell.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/ui/practice.js', ['src/trainer/ui/practice.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/ui/rewards.js', ['src/trainer/ui/rewards.js', 'text/javascript; charset=utf-8']],
@@ -60,6 +75,10 @@ const ASSETS = new Map([
   ['/src/trainer/learning/progress.js', ['src/trainer/learning/progress.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/learning/rewards.js', ['src/trainer/learning/rewards.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/learning/rounds.js', ['src/trainer/learning/rounds.js', 'text/javascript; charset=utf-8']],
+  ...ART_RENDITIONS.flatMap(([key, widths]) => widths.map((width) => [
+    `/trainer/assets/art/${key}-${width}.webp`,
+    [`trainer/assets/art/${key}-${width}.webp`, 'image/webp'],
+  ])),
 ]);
 
 const SECURITY_HEADERS = {

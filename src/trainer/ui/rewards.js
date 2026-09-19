@@ -1,8 +1,7 @@
 import {rewardState} from '../learning/rewards.js';
+import {avatarPicture, picture} from './art.js';
 import {el} from './dom.js';
 
-const ISLAND_ART = new URL('../../../trainer/assets/islands.svg', import.meta.url).href;
-const AVATAR_ART = new URL('../../../trainer/assets/avatar.svg', import.meta.url).href;
 const BADGE_ART = new URL('../../../trainer/assets/badges.svg', import.meta.url).href;
 
 const ISLANDS = [
@@ -80,9 +79,15 @@ function levelCard(profile, state) {
   ]);
 }
 
-function stageList(island, completedStages) {
-  const list = el('ol', {attrs: {class: 'stage-path', 'aria-label': `Etappen auf der ${island.name}`}});
-  for (let stage = island.first; stage <= island.last; stage += 1) {
+const STAGE_POINTS = [
+  [48, 87], [67, 78], [39, 71], [66, 64], [34, 58],
+  [63, 52], [35, 46], [61, 40], [43, 34], [65, 29],
+  [47, 24], [61, 19], [45, 15], [56, 11], [50, 7],
+];
+
+function stageList(completedStages) {
+  const list = el('ol', {attrs: {class: 'stage-path', 'aria-label': '15 Etappen auf der Inselreise'}});
+  for (let stage = 1; stage <= 15; stage += 1) {
     const completed = stage <= completedStages;
     const current = stage === completedStages + 1;
     const item = el('li', {attrs: {
@@ -90,6 +95,8 @@ function stageList(island, completedStages) {
       'data-state': completed ? 'complete' : current ? 'current' : 'upcoming',
       'aria-current': current ? 'step' : null,
     }});
+    item.style.setProperty('--stage-x', `${STAGE_POINTS[stage - 1][0]}%`);
+    item.style.setProperty('--stage-y', `${STAGE_POINTS[stage - 1][1]}%`);
     item.append(
       el('span', {text: completed ? '✓' : String(stage), attrs: {class: 'stage-marker', 'aria-hidden': 'true'}}),
       el('span', {text: `Etappe ${stage}`, attrs: {class: 'stage-label'}}),
@@ -135,29 +142,6 @@ export function avatarParts(profile) {
   };
 }
 
-function avatarPicture(parts, animations) {
-  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svg.setAttribute('viewBox', '0 0 320 360');
-  svg.setAttribute('class', 'avatar-art');
-  svg.setAttribute('aria-hidden', 'true');
-  svg.setAttribute('focusable', 'false');
-  svg.dataset.animate = String(animations !== false);
-  const symbols = [
-    'avatar-shadow',
-    parts.back ? `back-${parts.back}` : null,
-    `skin-${parts.skin}`,
-    `clothing-${parts.clothing}`,
-    parts.head ? `head-${parts.head}` : 'head-hair',
-    parts.hand ? `hand-${parts.hand}` : null,
-  ].filter(Boolean);
-  for (const symbol of symbols) {
-    const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
-    use.setAttribute('href', `${AVATAR_ART}#${symbol}`);
-    svg.append(use);
-  }
-  return svg;
-}
-
 function radioChoice({name, value, label, checked, disabled = false, dataOption, icon = null}) {
   const input = el('input', {attrs: {
     type: 'radio', name, value, checked, disabled,
@@ -166,7 +150,7 @@ function radioChoice({name, value, label, checked, disabled = false, dataOption,
   if (disabled) attrs['data-locked'] = 'true';
   return el('label', {attrs}, [
     input,
-    icon ? illustration(AVATAR_ART, icon, 'choice-icon') : null,
+    icon ? picture(`avatar-${icon}`, {className: 'choice-icon', sizes: '48px'}) : null,
     el('span', {text: label}),
   ]);
 }
@@ -206,21 +190,22 @@ function equipmentChoices(parts, state) {
 
 export function renderJourney({root, profile}) {
   const state = stateFor(profile);
-  const map = el('div', {attrs: {class: 'journey-map'}});
+  const zones = el('div', {attrs: {class: 'journey-zones'}});
   for (const island of ISLANDS) {
     const unlocked = state.journey.islands.find(({id}) => id === island.id)?.unlocked === true;
-    map.append(el('section', {attrs: {
-      class: 'island-card', 'data-island': island.id, 'data-unlocked': String(unlocked),
+    zones.append(el('section', {attrs: {
+      class: 'journey-zone', 'data-island': island.id, 'data-unlocked': String(unlocked),
       'aria-labelledby': `${island.id}-heading`,
     }}, [
-      el('div', {attrs: {class: 'island-copy'}}, [
-        el('p', {text: unlocked ? 'Erreicht' : `Ab Level ${island.level}`, attrs: {class: 'island-status'}}),
-        el('h2', {text: island.name, attrs: {id: `${island.id}-heading`}}),
-        stageList(island, state.journey.completedStages),
-      ]),
-      illustration(ISLAND_ART, island.symbol, 'island-art'),
+      el('h2', {text: island.name, attrs: {id: `${island.id}-heading`}}),
+      el('p', {text: unlocked ? 'Erreicht' : `Gesperrt – ab Level ${island.level}`, attrs: {class: 'island-status'}}),
     ]));
   }
+  const map = el('div', {attrs: {class: 'journey-map'}}, [
+    picture('island-journey', {alt: '', className: 'journey-art', sizes: '(max-width: 700px) 94vw, 760px', loading: 'eager'}),
+    zones,
+    stageList(state.journey.completedStages),
+  ]);
   root.replaceChildren(el('section', {attrs: {class: 'reward-screen journey-screen'}}, [
     el('header', {attrs: {class: 'reward-header'}}, [
       el('p', {text: 'Dein Fortschritt', attrs: {class: 'eyebrow'}}),
@@ -228,7 +213,7 @@ export function renderJourney({root, profile}) {
       el('p', {text: `${state.journey.completedStages} von 15 Etappen`, attrs: {'data-journey-progress': '', class: 'journey-summary'}}),
     ]),
     levelCard(profile, state),
-    map,
+    el('div', {attrs: {class: 'journey-map-scroll', tabindex: '0', 'aria-label': 'Illustrierte Inselkarte – horizontal verschiebbar'}}, [map]),
     badgeShelf(profile),
   ]));
 }
@@ -299,7 +284,7 @@ export function renderAvatar({root, profile, profileId, commands}) {
     ]),
     el('div', {attrs: {class: 'avatar-layout'}}, [
       el('section', {attrs: {class: 'avatar-preview', 'aria-label': 'Vorschau des Avatars'}}, [
-        avatarPicture(parts, profile.animations),
+        avatarPicture(parts, {sizes: '(max-width: 700px) 86vw, 360px', animations: profile.animations}),
         el('p', {text: `Entdecker auf Level ${state.level}`}),
         motion,
       ]),

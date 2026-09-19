@@ -1,5 +1,7 @@
 import {project} from '../learning/progress.js';
+import {avatarPicture, picture} from './art.js';
 import {el, button, message} from './dom.js';
+import {avatarParts} from './rewards.js';
 
 const uiByRoot = new WeakMap();
 
@@ -110,6 +112,7 @@ function modeCard(label, description, onStart) {
 
 function renderLanding({root, state, commands, profileId, onNavigate, projection, round, ui}) {
   const profile = projection.entities.profiles[profileId];
+  const progress = projection.profiles[profileId];
   let size = 10;
   const section = el('section', {attrs: {class: 'practice-home'}});
   section.append(
@@ -118,6 +121,10 @@ function renderLanding({root, state, commands, profileId, onNavigate, projection
       el('p', {text: 'Insel-Abenteuer', attrs: {class: 'eyebrow'}}),
       el('h1', {text: `Hallo, ${profile.value.name}!`}),
       el('p', {text: 'Welche Vokabeln möchtest du heute entdecken?'}),
+    ]),
+    el('div', {attrs: {class: 'practice-art', 'aria-hidden': 'true'}}, [
+      picture('island-beach', {className: 'practice-beach-art', sizes: '(max-width: 700px) 94vw, 720px', loading: 'eager'}),
+      avatarPicture(avatarParts(progress), {className: 'practice-avatar', sizes: '(max-width: 700px) 112px, 150px'}),
     ]),
   );
   if (ui.notice) section.append(message(ui.notice));
@@ -229,6 +236,7 @@ function practiceFrame({round, word, profile, points, onNavigate}, children) {
       word.value.hint ? el('p', {text: `Hinweis: ${word.value.hint}`, attrs: {class: 'word-hint'}}) : null,
       ...children,
     ]),
+    picture('island-beach', {alt: '', className: 'practice-screen-art', sizes: '(max-width: 700px) 100vw, 900px'}),
   ]);
 }
 

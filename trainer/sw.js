@@ -1,6 +1,6 @@
 const SCOPE = self.registration.scope;
 const CACHE_OWNER = `vokabeltrainer-product:${encodeURIComponent(new URL(SCOPE).pathname)}:`;
-const CACHE_NAME = `${CACHE_OWNER}v5`;
+const CACHE_NAME = `${CACHE_OWNER}v6`;
 const APP_ASSETS = [
   './',
   './index.html',
@@ -11,11 +11,31 @@ const APP_ASSETS = [
   './assets/islands.svg',
   './assets/avatar.svg',
   './assets/badges.svg',
+  './assets/art/island-beach-480.webp',
+  './assets/art/island-journey-480.webp',
+  './assets/art/avatar-skin-0-256.webp',
+  './assets/art/avatar-skin-1-256.webp',
+  './assets/art/avatar-skin-2-256.webp',
+  './assets/art/avatar-skin-3-256.webp',
+  './assets/art/avatar-clothing-0-256.webp',
+  './assets/art/avatar-clothing-1-256.webp',
+  './assets/art/avatar-clothing-2-256.webp',
+  './assets/art/avatar-clothing-3-256.webp',
+  './assets/art/avatar-clothing-4-256.webp',
+  './assets/art/avatar-clothing-5-256.webp',
+  './assets/art/avatar-head-cap-256.webp',
+  './assets/art/avatar-head-sunhat-256.webp',
+  './assets/art/avatar-head-mountainhat-256.webp',
+  './assets/art/avatar-back-backpack-256.webp',
+  './assets/art/avatar-hand-binoculars-256.webp',
+  './assets/art/avatar-hand-compass-256.webp',
   '../src/drive/auth.js',
   '../src/drive/client.js',
   '../src/trainer/main.js',
   '../src/trainer/updates.js',
   '../src/trainer/ui/dom.js',
+  '../src/trainer/ui/art.js',
+  '../src/trainer/ui/art-manifest.js',
   '../src/trainer/ui/shell.js',
   '../src/trainer/ui/practice.js',
   '../src/trainer/ui/rewards.js',
@@ -45,10 +65,18 @@ const APP_ASSETS = [
   '../src/trainer/learning/rewards.js',
   '../src/trainer/learning/rounds.js',
 ];
-const ASSET_URLS = new Set(APP_ASSETS.map((path) => new URL(path, SCOPE).href));
+const ON_DEMAND_ART = [
+  './assets/art/island-beach-960.webp', './assets/art/island-beach-1440.webp',
+  './assets/art/island-journey-960.webp', './assets/art/island-journey-1086.webp',
+  ...['skin-0', 'skin-1', 'skin-2', 'skin-3', 'clothing-0', 'clothing-1', 'clothing-2', 'clothing-3', 'clothing-4', 'clothing-5', 'head-cap', 'head-sunhat', 'head-mountainhat', 'back-backpack', 'hand-binoculars', 'hand-compass']
+    .flatMap((key) => [512, 768].map((width) => `./assets/art/avatar-${key}-${width}.webp`)),
+];
+const PRECACHE_URLS = new Set(APP_ASSETS.map((path) => new URL(path, SCOPE).href));
+const ON_DEMAND_URLS = new Set(ON_DEMAND_ART.map((path) => new URL(path, SCOPE).href));
+const ASSET_URLS = new Set([...PRECACHE_URLS, ...ON_DEMAND_URLS]);
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll([...ASSET_URLS])));
+  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll([...PRECACHE_URLS])));
 });
 
 self.addEventListener('activate', (event) => {
@@ -69,7 +97,10 @@ self.addEventListener('fetch', (event) => {
   event.respondWith((async () => {
     const cache = await caches.open(CACHE_NAME);
     const hit = await cache.match(request);
-    return hit || fetch(request);
+    if (hit) return hit;
+    const response = await fetch(request);
+    if (ON_DEMAND_URLS.has(url.href) && response.ok) await cache.put(request, response.clone());
+    return response;
   })());
 });
 

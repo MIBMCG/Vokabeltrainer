@@ -48,6 +48,9 @@ async function loadWorker({failInstall = false, currentCache = false, workerScop
         async match(request) {
           return store.get(typeof request === 'string' ? request : request.url);
         },
+        async put(request, response) {
+          store.set(typeof request === 'string' ? request : request.url, response);
+        },
       };
     },
     async keys() { return [...stores.keys()]; },
@@ -88,10 +91,14 @@ test('worker installs the complete scoped trainer app without Google or personal
   for (const expected of [
     `${scope}index.html`, `${scope}styles.css`, `${scope}manifest.webmanifest`, `${scope}sw.js`,
     `${scope}assets/app-icon.svg`, 'https://example.test/repo/src/trainer/main.js',
+    `${scope}assets/art/island-beach-480.webp`, `${scope}assets/art/avatar-skin-0-256.webp`,
+    'https://example.test/repo/src/trainer/ui/art.js',
     'https://example.test/repo/src/trainer/ui/preview.js',
     'https://example.test/repo/src/trainer/ui/status.js',
     'https://example.test/repo/src/drive/auth.js',
   ]) assert.ok(installed.includes(expected), expected);
+  assert.equal(installed.filter((url) => url.includes('/assets/art/')).length, 18);
+  assert.equal(installed.some((url) => /\/assets\/art\/.*-(?:512|768|960|1086|1440)\.webp$/u.test(url)), false);
   assert.equal(installed.some((url) => /accounts\.google|googleapis|\.json(?:$|\?)/u.test(url)), false);
 });
 
@@ -144,6 +151,20 @@ test('fetch serves only exact same-origin app assets from the product cache', as
     });
     assert.equal(intercepted, false, url);
   }
+});
+
+test('fetch caches a successful higher art rendition only when requested', async () => {
+  const worker = await loadWorker();
+  await dispatchExtendable(worker.listeners.get('install'));
+  const highUrl = `${scope}assets/art/avatar-skin-0-768.webp`;
+  assert.equal([...worker.stores.values()].some((store) => store.has(highUrl)), false);
+  let response;
+  worker.listeners.get('fetch')({
+    request: new Request(highUrl),
+    respondWith(value) { response = Promise.resolve(value); },
+  });
+  assert.equal(await (await response).text(), `network:${highUrl}`);
+  assert.equal([...worker.stores.values()].some((store) => store.has(highUrl)), true);
 });
 
 test('active worker relays activation only for the current controlled scoped client', async () => {
