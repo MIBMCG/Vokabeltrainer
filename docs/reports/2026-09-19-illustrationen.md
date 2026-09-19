@@ -25,7 +25,7 @@ Die Originale wurden mit dem eingebauten Bildwerkzeug erzeugt. Referenz, Prompts
 | `avatar-clothing-3.png` | 1086×1448 | `4909aafae08dbcb4dded45621ab3daa0974a5aaae8efa2cb08bdf417a856b7f3` |
 | `avatar-clothing-4.png` | 1086×1448 | `c8a86e1abde8d42cd2921af2b17ddc89d679777bbda0f3e2c341ffb2a2a378ba` |
 | `avatar-clothing-5.png` | 1087×1447 | `36dbaa333be83e7c87a8193941709b450596200fc9143df4bea09d4cd41a40c1` |
-| `avatar-hand-binoculars.png` | 1086×1449 | `5da75c3f6ef178e38b64f02c8c8ee520b11c3e76e85ddc57fcb31001bcab4fc` |
+| `avatar-hand-binoculars.png` | 1086×1449 | `5da75c3f6ef178e38b64f02c8c8ee520b11cc3e76e85ddc57fcb31001bcab4fc` |
 | `avatar-hand-compass.png` | 1086×1448 | `204be858011536743528a908cf0827bcc05c8a89eeba94cf602075d6a0eef0ba` |
 | `avatar-head-cap.png` | 1086×1448 | `3630bb444115296cc61ad914ec118754ca35ccc226b8e8487d6ff37f59448462` |
 | `avatar-head-mountainhat.png` | 1087×1447 | `82b3df329900ca5fb9d15f32766641cbcb7c3fc6be851a4da820c462b5424f1b` |

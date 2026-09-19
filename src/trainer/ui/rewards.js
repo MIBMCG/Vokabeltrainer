@@ -90,16 +90,22 @@ function stageList(completedStages) {
   for (let stage = 1; stage <= 15; stage += 1) {
     const completed = stage <= completedStages;
     const current = stage === completedStages + 1;
+    const status = completed
+      ? 'abgeschlossen'
+      : current
+        ? 'aktuell'
+        : `gesperrt – ab Level ${stage}`;
     const item = el('li', {attrs: {
       'data-stage': String(stage),
       'data-state': completed ? 'complete' : current ? 'current' : 'upcoming',
+      'data-unlock-level': !completed && !current ? String(stage) : null,
       'aria-current': current ? 'step' : null,
     }});
     item.style.setProperty('--stage-x', `${STAGE_POINTS[stage - 1][0]}%`);
     item.style.setProperty('--stage-y', `${STAGE_POINTS[stage - 1][1]}%`);
     item.append(
       el('span', {text: completed ? '✓' : String(stage), attrs: {class: 'stage-marker', 'aria-hidden': 'true'}}),
-      el('span', {text: `Etappe ${stage}`, attrs: {class: 'stage-label'}}),
+      el('span', {text: `Etappe ${stage}: ${status}`, attrs: {class: 'stage-label'}}),
     );
     list.append(item);
   }
@@ -213,6 +219,7 @@ export function renderJourney({root, profile}) {
       el('p', {text: `${state.journey.completedStages} von 15 Etappen`, attrs: {'data-journey-progress': '', class: 'journey-summary'}}),
     ]),
     levelCard(profile, state),
+    el('p', {text: '🔒 Gesperrt: Zahl = benötigtes Level', attrs: {class: 'journey-lock-key'}}),
     el('div', {attrs: {class: 'journey-map-scroll', tabindex: '0', 'aria-label': 'Illustrierte Inselkarte – horizontal verschiebbar'}}, [map]),
     badgeShelf(profile),
   ]));

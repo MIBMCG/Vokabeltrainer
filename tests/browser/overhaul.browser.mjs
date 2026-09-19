@@ -43,6 +43,16 @@ test('illustrated journey and layered avatar render responsively with real raste
     assert.equal(await page.locator('[data-art-key="island-journey"] img').evaluate((image) => image.naturalWidth > 0), true);
     assert.equal(await page.locator('[data-stage]').count(), 15);
     assert.equal(await page.locator('[data-island]').count(), 3);
+    assert.equal(await page.getByText('🔒 Gesperrt: Zahl = benötigtes Level', {exact: true}).isVisible(), true);
+    const lockedStages = await page.locator('[data-stage][data-state="upcoming"]').evaluateAll((nodes) => nodes.map((node) => ({
+      stage: Number(node.dataset.stage),
+      unlockLevel: Number(node.dataset.unlockLevel),
+      label: node.textContent,
+    })));
+    assert.equal(lockedStages.length, 14);
+    assert.equal(lockedStages.every(({stage, unlockLevel, label}) => (
+      unlockLevel === stage && label.includes(`Etappe ${stage}: gesperrt – ab Level ${stage}`)
+    )), true, JSON.stringify(lockedStages));
     await page.screenshot({path: resolve(resultsDirectory, 'journey-390.png'), fullPage: true});
     await page.setViewportSize({width: 1024, height: 768});
     await page.screenshot({path: resolve(resultsDirectory, 'journey-1024.png'), fullPage: true});

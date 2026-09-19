@@ -350,6 +350,7 @@ th:first-child { position: sticky; left: 0; background: #fff; }
 .level-card p { grid-column: 1 / -1; margin: 0; color: #48636a; }
 
 .journey-map-scroll { max-width: 100%; overflow-x: auto; overscroll-behavior-inline: contain; border-radius: 1.4rem; }
+.journey-lock-key { width: fit-content; margin: -0.2rem 0 0.55rem auto; color: #48636a; font-size: 0.9rem; font-weight: 750; }
 .journey-map {
   position: relative;
   width: min(760px, 100%);

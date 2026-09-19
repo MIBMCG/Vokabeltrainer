@@ -82,3 +82,26 @@ Neu sind die Bildquellen und -renditions, `scripts/build-art.mjs`, `src/trainer/
 ## Grenzen
 
 Die Sichtprüfung lief mit synthetischen Daten in Edge/Chromium. Sie ersetzt keine Abnahme auf einem echten iPhone oder iPad. Es wurden keine persönliche Browsersitzung, Google-Daten, Cloudänderung oder Veröffentlichung verwendet.
+
+## Reviewkorrekturen Runde 1
+
+Die unabhängige Prüfung auf Basis `0eb4099` meldete drei konkrete Befunde. Sie wurden gemeinsam korrigiert:
+
+- Die normierten Zielboxen für Kappe und Bergmütze wurden verkleinert und oberhalb der Augen zentriert. `build-art.mjs` erzeugte anschließend alle 54 Renditions neu. Die frische Diagnoseaufnahme mit sechs gemischten Kombinationen zeigt bei allen Figuren freie Augen und erkennbare Gesichter; alle Kopf-, Rück- und Handebenen bleiben ausgerichtet.
+- Die Reise zeigt nun die kompakte Legende „🔒 Gesperrt: Zahl = benötigtes Level“. Jede kommende Etappe enthält zusätzlich den vollständigen DOM-Text `Etappe N: gesperrt – ab Level N` und `data-unlock-level`. Dadurch bleibt die Karte frei von vierzehn großen Zusatzschildern und der konkrete Zustand ist trotzdem für assistive Technik verfügbar.
+- Die dokumentierte SHA-256-Prüfsumme für `avatar-hand-binoculars.png` wurde auf den tatsächlich erneut gelesenen 64-stelligen Wert `5da75c3f6ef178e38b64f02c8c8ee520b11cc3e76e85ddc57fcb31001bcab4fc` korrigiert.
+
+Der fokussierte Browserfall wurde vor der Etappenkorrektur rot (`false !== true`) und danach grün ausgeführt:
+
+```text
+node --test --test-reporter spec --test-name-pattern='illustrated journey' tests/browser/overhaul.browser.mjs
+1 Test, 1 bestanden, 0 fehlgeschlagen
+
+node --test --experimental-test-isolation=none tests/trainer/art.test.js tests/trainer/reward-view.test.js tests/trainer/sw.test.js
+13 Tests, 13 bestanden, 0 fehlgeschlagen
+
+node --test --test-reporter spec --test-name-pattern='trainer offline update UI blocks typing' tests/browser/trainer.browser.mjs
+1 Test, 1 bestanden, 0 fehlgeschlagen (Produktcache v7, synthetische Aktualisierung v8)
+```
+
+Aktualisierte Nachweise: `docs/reports/assets/2026-09-19-a1-avatar-composite-diagnostic.png`, `2026-09-19-a1-journey-mobile.png` und `2026-09-19-a1-journey-desktop.png`. Da die korrigierten Renditions dieselben endlichen URLs ersetzen, wurde der Produktcache von v6 auf v7 erhöht; bestehende Installationen erhalten dadurch die neue Bildversion kontrolliert über den vorhandenen Aktualisierungsablauf.
