@@ -18,21 +18,28 @@ export async function createTrainerHarness({basePath = ''} = {}) {
   const {chromium} = await import(moduleUrl());
   const server = createProbeServer({basePath});
   const productWorker = await readFile(new URL('../../trainer/sw.js', import.meta.url), 'utf8');
-  let workerVersion = 'v18';
+  let workerVersion = 'v19';
   let workerActivationDelayMs = 0;
   let blockLargeArt = false;
+  let failPrecacheAssetPath = null;
   const originalRequest = server.listeners('request')[0];
   server.removeAllListeners('request');
   server.on('request', (request, response) => {
     const pathname = new URL(request.url, 'http://127.0.0.1').pathname;
+    if (failPrecacheAssetPath && pathname === failPrecacheAssetPath) {
+      failPrecacheAssetPath = null;
+      response.writeHead(503, {'Content-Type': 'text/plain; charset=utf-8'});
+      response.end('Synthetic required precache failure.');
+      return;
+    }
     if (blockLargeArt && /\/trainer\/assets\/art\/.*-(?:512|768|960|1086|1440)\.webp$/u.test(pathname)) {
       response.writeHead(503, {'Content-Type': 'text/plain; charset=utf-8'});
       response.end('Synthetic large-art failure.');
       return;
     }
-    if (pathname === `${basePath}/trainer/sw.js` && workerVersion !== 'v18') {
+    if (pathname === `${basePath}/trainer/sw.js` && workerVersion !== 'v19') {
       let source = productWorker.replace(
-        'const CACHE_NAME = `${CACHE_OWNER}v18`;',
+        'const CACHE_NAME = `${CACHE_OWNER}v19`;',
         `const CACHE_NAME = \`\${CACHE_OWNER}${workerVersion}\`;`,
       );
       if (source === productWorker) throw new Error('Synthetic worker version marker was not replaced.');
@@ -85,18 +92,19 @@ export async function createTrainerHarness({basePath = ''} = {}) {
     baseUrl,
     browser,
     google,
-    async newDevice({viewport = {width: 390, height: 844}} = {}) {
-      const context = await browser.newContext({viewport});
+    async newDevice({viewport = {width: 390, height: 844}, deviceScaleFactor = 1} = {}) {
+      const context = await browser.newContext({viewport, deviceScaleFactor});
       contexts.add(context);
       const controls = await google.attach(context);
       const page = await context.newPage();
       return {context, page, controls};
     },
-    async newPersistentDevice({userDataDir, viewport = {width: 390, height: 844}}) {
+    async newPersistentDevice({userDataDir, viewport = {width: 390, height: 844}, deviceScaleFactor = 1}) {
       const context = await chromium.launchPersistentContext(userDataDir, {
         headless: true,
         ...(executablePath ? {executablePath} : {}),
         viewport,
+        deviceScaleFactor,
         ignoreDefaultArgs: ['--disable-back-forward-cache'],
       });
       contexts.add(context);
@@ -107,8 +115,8 @@ export async function createTrainerHarness({basePath = ''} = {}) {
     },
     stopServer,
     setServiceWorkerVersion(version, {activationDelayMs = 0} = {}) {
-      if (!/^v(?:19|[2-9][0-9]|[1-9][0-9]{2,})$/u.test(version)) {
-        throw new TypeError('Synthetic worker version must be v19 or later.');
+      if (!/^v(?:2[0-9]|[3-9][0-9]|[1-9][0-9]{2,})$/u.test(version)) {
+        throw new TypeError('Synthetic worker version must be v20 or later.');
       }
       if (!Number.isSafeInteger(activationDelayMs) || activationDelayMs < 0) {
         throw new TypeError('Synthetic activation delay must be a non-negative integer.');
@@ -118,6 +126,12 @@ export async function createTrainerHarness({basePath = ''} = {}) {
     },
     blockLargeArt() {
       blockLargeArt = true;
+    },
+    failNextPrecacheAsset(relativePath) {
+      if (typeof relativePath !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9._/-]*$/u.test(relativePath)) {
+        throw new TypeError('Synthetic precache path must be a safe relative path.');
+      }
+      failPrecacheAssetPath = `${basePath}/trainer/${relativePath}`;
     },
     async close() {
       await Promise.allSettled([...contexts].map((context) => context.close()));

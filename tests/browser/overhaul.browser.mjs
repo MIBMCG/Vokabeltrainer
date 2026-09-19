@@ -10,6 +10,7 @@ const a2ResultsDirectory = resolve('test-results', 'overhaul-a2');
 const a4ResultsDirectory = resolve('test-results', 'overhaul-a4');
 const b3ResultsDirectory = resolve('test-results', 'overhaul-b3');
 const c1ResultsDirectory = resolve('test-results', 'overhaul-c1');
+const c2EvidenceDirectory = resolve('docs', 'design', '2026-09-19-ueberarbeitung-app');
 const preparedGoogleClientId = '329410329467-s8nevn4sqi7m3fmtq2tkbpj76b8osvhs.apps.googleusercontent.com';
 
 async function productState(page) {
@@ -945,12 +946,20 @@ test('precache keeps unseen avatar fallbacks available when large renditions and
     await page.waitForFunction(() => document.activeElement?.matches('input[name="clothing"][value="4"]:checked'));
     await page.evaluate(async () => {
       const {avatarPicture} = await import('/src/trainer/ui/art.js');
-      document.querySelector('.avatar-preview').append(avatarPicture({
+      document.querySelector('.qa-offline-fixture')?.remove();
+      const fixture = document.createElement('section');
+      fixture.className = 'qa-offline-fixture';
+      fixture.hidden = true;
+      fixture.append(avatarPicture({
         skin: 1, clothing: 4, head: 'mountainhat', back: 'backpack', hand: 'binoculars',
       }, {className: 'qa-offline-unseen', sizes: '768px'}));
+      document.body.append(fixture);
     });
     const images = page.locator('.qa-offline-unseen [data-art-key] img');
-    await page.waitForTimeout(700);
+    await page.waitForFunction(() => {
+      const nodes = [...document.querySelectorAll('.qa-offline-unseen [data-art-key] img')];
+      return nodes.length === 5 && nodes.every((image) => image.complete && image.naturalWidth > 0);
+    });
     assert.equal(await images.count(), 5);
     const sources = await images.evaluateAll((nodes) => nodes.map((image) => ({
       currentSrc: image.currentSrc,
@@ -962,7 +971,7 @@ test('precache keeps unseen avatar fallbacks available when large renditions and
       currentSrc.endsWith('-256.webp') || fallback === 'true'
     )), true, JSON.stringify(sources));
 
-    await page.locator('.qa-offline-unseen').evaluate((node) => node.remove());
+    await page.locator('.qa-offline-fixture').evaluate((node) => node.remove());
     await harness.stopServer();
     await context.setOffline(true);
     await page.getByRole('radio', {name: 'Hautfarbe 3', exact: true}).check();
@@ -971,16 +980,167 @@ test('precache keeps unseen avatar fallbacks available when large renditions and
     await page.waitForFunction(() => document.activeElement?.matches('input[name="clothing"][value="3"]:checked'));
     await page.evaluate(async () => {
       const {avatarPicture} = await import('/src/trainer/ui/art.js');
-      document.body.append(avatarPicture({
+      const fixture = document.createElement('section');
+      fixture.className = 'qa-offline-fixture';
+      fixture.hidden = true;
+      fixture.append(avatarPicture({
         skin: 2, clothing: 3, head: 'cap', back: 'backpack', hand: 'compass',
       }, {className: 'qa-offline-second', sizes: '768px'}));
+      document.body.append(fixture);
     });
-    await page.waitForTimeout(700);
+    await page.waitForFunction(() => {
+      const nodes = [...document.querySelectorAll('.qa-offline-second [data-art-key] img')];
+      return nodes.length === 5 && nodes.every((image) => image.complete && image.naturalWidth > 0);
+    });
     const offlineSources = await page.locator('.qa-offline-second [data-art-key] img').evaluateAll((nodes) => (
       nodes.map((image) => ({currentSrc: image.currentSrc, fallback: image.dataset.fallback ?? '', naturalWidth: image.naturalWidth}))
     ));
     assert.equal(offlineSources.length, 5);
     assert.equal(offlineSources.every(({naturalWidth}) => naturalWidth > 0), true, JSON.stringify(offlineSources));
+  } finally {
+    await harness.close();
+  }
+});
+
+test('C2 final views cover the responsive matrix, readable zoom and all avatar options', {timeout: 180_000}, async () => {
+  const harness = await createTrainerHarness();
+  const standard = await harness.newDevice({viewport: {width: 390, height: 844}});
+  const highDpr = await harness.newDevice({viewport: {width: 390, height: 844}, deviceScaleFactor: 2});
+  await mkdir(c2EvidenceDirectory, {recursive: true});
+  try {
+    await standard.page.goto(harness.baseUrl);
+    await setupPractice(standard.page);
+    await loadedArt(standard.page);
+    await standard.page.screenshot({path: resolve(c2EvidenceDirectory, 'start-mobile-390.png'), fullPage: true});
+
+    await standard.page.getByRole('button', {name: 'Inselreise', exact: true}).click();
+    await loadedArt(standard.page);
+    await standard.page.screenshot({path: resolve(c2EvidenceDirectory, 'journey-mobile-390.png'), fullPage: true});
+    await standard.page.getByRole('button', {name: 'Üben', exact: true}).click();
+    await standard.page.getByRole('button', {name: 'Runde starten', exact: true}).click();
+    await standard.page.setViewportSize({width: 320, height: 568});
+    await standard.page.getByRole('button', {name: 'Prüfen', exact: true}).scrollIntoViewIfNeeded();
+    assert.equal(await standard.page.getByRole('button', {name: 'Prüfen', exact: true}).isVisible(), true);
+    assert.equal(await standard.page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), true);
+    await standard.page.screenshot({path: resolve(c2EvidenceDirectory, 'practice-narrow-320.png'), fullPage: true});
+    await standard.page.setViewportSize({width: 390, height: 844});
+    await standard.page.evaluate(() => { document.documentElement.style.fontSize = '32px'; });
+    await standard.page.getByRole('button', {name: 'Prüfen', exact: true}).scrollIntoViewIfNeeded();
+    assert.equal(await standard.page.getByRole('button', {name: 'Prüfen', exact: true}).isVisible(), true);
+    const zoomLayout = await standard.page.evaluate(() => ({
+      fits: document.documentElement.scrollWidth <= innerWidth + 1,
+      page: {scrollWidth: document.documentElement.scrollWidth, innerWidth},
+      overflowers: [...document.querySelectorAll('body *')].flatMap((node) => {
+        const box = node.getBoundingClientRect();
+        return box.right > innerWidth + 1 || box.left < -1
+          ? [{tag: node.tagName, className: node.className, text: node.textContent?.trim().slice(0, 80),
+              box: {left: box.left, right: box.right, width: box.width}}]
+          : [];
+      }).slice(0, 12),
+    }));
+    assert.equal(zoomLayout.fits, true, JSON.stringify(zoomLayout));
+    await standard.page.screenshot({path: resolve(c2EvidenceDirectory, 'practice-font-200-mobile-390.png'), fullPage: true});
+    await standard.page.setViewportSize({width: 320, height: 568});
+    await settleLayout(standard.page);
+    const narrowZoomLayout = await standard.page.evaluate(() => ({
+      fits: document.documentElement.scrollWidth <= innerWidth + 1,
+      page: {scrollWidth: document.documentElement.scrollWidth, innerWidth},
+      overflowers: [...document.querySelectorAll('body *')].flatMap((node) => {
+        const box = node.getBoundingClientRect();
+        return box.right > innerWidth + 1 || box.left < -1
+          ? [{tag: node.tagName, className: node.className, text: node.textContent?.trim().slice(0, 80),
+              box: {left: box.left, right: box.right, width: box.width}}]
+          : [];
+      }).slice(0, 12),
+    }));
+    assert.equal(narrowZoomLayout.fits, true, JSON.stringify(narrowZoomLayout));
+    const narrowZoomAction = await visibleControlsFit(standard.page, '#practice-submit', {scroll: true});
+    assert.equal(narrowZoomAction.fits, true, JSON.stringify(narrowZoomAction));
+    await standard.page.screenshot({path: resolve(c2EvidenceDirectory, 'practice-narrow-320-font-200.png')});
+    await standard.page.evaluate(() => { document.documentElement.style.fontSize = ''; });
+    await standard.page.setViewportSize({width: 844, height: 390});
+    await standard.page.getByLabel('Englische Übersetzung').fill('synthetisch falsch');
+    await standard.page.getByRole('button', {name: 'Prüfen', exact: true}).click();
+    await standard.page.getByText('Noch nicht ganz', {exact: true}).waitFor();
+    await standard.page.getByRole('button', {name: 'Weiter', exact: true}).scrollIntoViewIfNeeded();
+    assert.equal(await standard.page.getByRole('button', {name: 'Weiter', exact: true}).isVisible(), true);
+    await standard.page.screenshot({path: resolve(c2EvidenceDirectory, 'feedback-landscape-844x390.png'), fullPage: true});
+    await standard.page.getByRole('button', {name: 'Weiter', exact: true}).click();
+    const next = await productState(standard.page);
+    const round = next.rounds[Object.keys(next.rounds)[0]];
+    const answer = next.ledger.events.find(({id}) => id === round.current.revisionId).payload.value.answers[0];
+    await standard.page.getByLabel('Englische Übersetzung').fill(answer);
+    await standard.page.getByRole('button', {name: 'Prüfen', exact: true}).click();
+    await standard.page.getByText('Richtig!', {exact: true}).waitFor();
+    await standard.page.setViewportSize({width: 390, height: 844});
+    await standard.page.screenshot({path: resolve(c2EvidenceDirectory, 'feedback-correct-mobile-390.png'), fullPage: true});
+
+    await openAdult(standard.page);
+    await standard.page.screenshot({path: resolve(c2EvidenceDirectory, 'vocabulary-mobile-390.png'), fullPage: true});
+    await standard.page.getByRole('button', {name: 'Lernregeln', exact: true}).click();
+    await standard.page.screenshot({path: resolve(c2EvidenceDirectory, 'learning-rules-mobile-390.png'), fullPage: true});
+    await standard.page.getByRole('button', {name: 'Lernstand', exact: true}).click();
+    await standard.page.getByText('Wortdetails (2)', {exact: true}).click();
+    await standard.page.screenshot({path: resolve(c2EvidenceDirectory, 'statistics-mobile-390.png'), fullPage: true});
+    await standard.page.setViewportSize({width: 1280, height: 900});
+    assert.equal(await standard.page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), true);
+    await standard.page.screenshot({path: resolve(c2EvidenceDirectory, 'statistics-desktop-1280.png'), fullPage: true});
+    await standard.page.evaluate(async () => {
+      const {avatarPicture} = await import('/src/trainer/ui/art.js');
+      const combinations = [
+        [{skin: 0, clothing: 5, head: 'cap', back: 'backpack', hand: 'compass'}, 'Haut 1 · Koralle · Kappe · Rucksack · Kompass'],
+        [{skin: 1, clothing: 4, head: 'sunhat', back: 'backpack', hand: 'binoculars'}, 'Haut 2 · Violett · Sonnenhut · Rucksack · Fernglas'],
+        [{skin: 2, clothing: 3, head: 'mountainhat', back: 'backpack', hand: 'compass'}, 'Haut 3 · Himmelblau · Bergmütze · Rucksack · Kompass'],
+        [{skin: 3, clothing: 2, head: 'cap', back: 'backpack', hand: 'binoculars'}, 'Haut 4 · Sonnengelb · Kappe · Rucksack · Fernglas'],
+        [{skin: 0, clothing: 1, head: 'sunhat', back: 'backpack', hand: 'compass'}, 'Haut 1 · Waldgrün · Sonnenhut · Rucksack · Kompass'],
+        [{skin: 3, clothing: 0, head: 'mountainhat', back: 'backpack', hand: 'binoculars'}, 'Haut 4 · Türkis · Bergmütze · Rucksack · Fernglas'],
+      ];
+      document.querySelector('#app').hidden = true;
+      const host = document.createElement('main');
+      host.className = 'qa-c2-avatar-matrix';
+      Object.assign(host.style, {padding: '24px', background: '#f7f4e8', color: '#123b4b'});
+      const heading = document.createElement('h1');
+      heading.textContent = 'Avatar-Kombinationen der ersten Version';
+      const copy = document.createElement('p');
+      copy.textContent = 'Vier Hauttöne, sechs Kleidungsfarben und alle sechs Ausrüstungsteile in finalen Rasterkombinationen.';
+      const grid = document.createElement('section');
+      grid.className = 'qa-c2-avatar-grid';
+      Object.assign(grid.style, {display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '16px'});
+      combinations.forEach(([parts, label]) => {
+        const card = document.createElement('article');
+        Object.assign(card.style, {padding: '12px', border: '2px solid #9fc8bf', borderRadius: '16px', background: '#fff'});
+        const composite = avatarPicture(parts, {className: 'qa-c2-avatar', sizes: '230px'});
+        composite.setAttribute('aria-label', label);
+        const caption = document.createElement('p');
+        caption.textContent = label;
+        caption.style.fontWeight = '800';
+        card.append(composite, caption);
+        grid.append(card);
+      });
+      host.append(heading, copy, grid);
+      document.body.append(host);
+    });
+    assert.equal(await loadedArt(standard.page, '.qa-c2-avatar [data-art-key] img'), 30);
+    assert.deepEqual(await standard.page.locator('.qa-c2-avatar [data-art-key]').evaluateAll((nodes) => (
+      [...new Set(nodes.map((node) => node.dataset.artKey))].sort()
+    )), [
+      'avatar-back-backpack', 'avatar-clothing-0', 'avatar-clothing-1', 'avatar-clothing-2',
+      'avatar-clothing-3', 'avatar-clothing-4', 'avatar-clothing-5', 'avatar-hand-binoculars',
+      'avatar-hand-compass', 'avatar-head-cap', 'avatar-head-mountainhat', 'avatar-head-sunhat',
+      'avatar-skin-0', 'avatar-skin-1', 'avatar-skin-2', 'avatar-skin-3',
+    ]);
+    await standard.page.screenshot({path: resolve(c2EvidenceDirectory, 'avatar-combinations-desktop-1280.png'), fullPage: true});
+
+    await highDpr.page.goto(harness.baseUrl);
+    await setupPractice(highDpr.page);
+    assert.equal(await highDpr.page.evaluate(() => devicePixelRatio), 2);
+    await highDpr.page.getByRole('button', {name: 'Mein Avatar', exact: true}).click();
+    assert.equal(await highDpr.page.getByRole('group', {name: 'Hautfarbe'}).getByRole('radio').count(), 4);
+    assert.equal(await highDpr.page.getByRole('group', {name: 'Kleidungsfarbe'}).getByRole('radio').count(), 6);
+    assert.equal(await highDpr.page.locator('.equipment-group input[type="radio"]').count(), 9);
+    assert.equal(await highDpr.page.locator('.equipment-group input:disabled').count(), 6);
+    await loadedArt(highDpr.page);
+    await highDpr.page.screenshot({path: resolve(c2EvidenceDirectory, 'avatar-mobile-390-dpr2.png'), fullPage: true});
   } finally {
     await harness.close();
   }

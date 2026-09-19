@@ -21,6 +21,15 @@ Playwright wird standardmäßig aus dem Projekt importiert und startet sein inst
 
 Der Lauf prüft unter anderem Einrichtung, Üben und Fortsetzen, Inselreise und Avatar, Erwachsenenbereich, Abgleich, Konflikte, Sicherung/Wiederherstellung, isolierten Offline-Start unter `/trainer/` und einem Repository-Unterpfad sowie einen kontrollierten Service-Worker-Wechsel. Seine eigenen persistenten Testprofile liegen ausschließlich unter `test-results/` und werden wieder entfernt. Ein laufender persönlicher Server auf Port 4173 wird nicht verwendet, beendet oder umgeschaltet.
 
+Die Abschlussprüfung der Überarbeitung verteilt ihre Browserfälle auf `trainer.browser.mjs` und `overhaul.browser.mjs`. Sie verwendet echte isolierte IndexedDB-Zustände und getrennte Browserkontexte für simulierte Geräte. Das Harness kann außerdem je Kontext einen tatsächlichen `deviceScaleFactor` setzen und genau einen angeforderten Pflicht-Precache-Download fehlschlagen lassen. Damit werden hochauflösende Darstellung und ein fehlgeschlagener Workerwechsel geprüft, ohne Testschalter in die Anwendung einzubauen.
+
+```sh
+node --test tests/browser/trainer.browser.mjs
+node --test tests/browser/overhaul.browser.mjs
+```
+
+Die finalen synthetischen Ansichten liegen unter [`docs/design/2026-09-19-ueberarbeitung-app/`](../../docs/design/2026-09-19-ueberarbeitung-app/). Sie umfassen 1280×900, 390×844, 320×568 und 844×390, eine Schriftgröße von 200 Prozent sowie einen getrennten DPR-2-Kontext. Die Browserfälle prüfen dabei auch alle vier Hauttöne, sechs Kleidungsfarben und sechs sichtbaren Ausrüstungsoptionen samt verständlicher Sperren.
+
 ## Technische Google-Drive-Probe
 
 Die ältere Probe bleibt separat erhalten. Dafür in einem Terminal den lokalen Server starten:
@@ -41,6 +50,6 @@ Die Probe prüft Erstellen/Beitreten, einmalige Wertung, Offline-Neuladen, verlo
 
 ## Ergebnisgrenzen
 
-Ergebnisbilder entstehen unter `test-results/` und bleiben außerhalb von Git, sofern ein Abschlussbericht nicht ausdrücklich ausgewählte synthetische Ansichten unter `docs/reports/assets/` übernimmt. Die Testskripte verändern keine persönlichen Browserprofile und kennen kein echtes Google-Konto. Der Server liefert die Testdateien nicht aus; die Anwendung enthält keinen Simulationsmodus.
+Zwischenergebnisbilder entstehen unter `test-results/` und bleiben außerhalb von Git. Die oben verlinkten finalen C2-Bilder sind ausdrücklich ausgewählte synthetische Ansichten. Die Testskripte verändern keine persönlichen Browserprofile und kennen kein echtes Google-Konto. Der Server liefert weder Testdateien noch die C2-Bildnachweise aus; die Anwendung enthält keinen Simulationsmodus.
 
 Ein bestandener Trainer- oder Probelauf ersetzt weder die echte Google-Prüfung des Produktformats noch die Abnahme auf zwei physischen Geräten, in Safari oder als Home-Bildschirm-App. Der aktuelle Ergebnisstand und diese Grenzen stehen im [v1-Abschlussbericht](../../docs/reports/2026-09-18-vokabeltrainer-v1.md).

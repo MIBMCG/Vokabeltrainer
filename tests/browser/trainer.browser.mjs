@@ -11,6 +11,7 @@ const resultsDirectory = resolve('test-results');
 
 test('B1 browser migrates actual v1 feedback atomically and leaves unknown storage visible', {timeout:60_000},async()=>{
   const {createCommands:oldCommands}=await import('../compat/v1/src/trainer/commands.js');
+  const {buildPackets:buildOldPackets}=await import('../compat/v1/src/trainer/sync/packets.js');
   const {createFixture}=await import('../trainer/fixtures.js');
   const {memoryStore,productState:makeState,sequenceIds}=await import('../trainer/backup-fixtures.js');
   const harness=await createTrainerHarness(),{page}=await harness.newDevice();
@@ -20,11 +21,16 @@ test('B1 browser migrates actual v1 feedback atomically and leaves unknown stora
     const old=await oldCommands({store,deviceId:configured.deviceId,id:sequenceIds('old-browser'),now:()=>new Date(),onChange(){}});
     await old.start({profileId:'p1',mode:'all',size:10});await old.submit({roundId:old.getState().rounds.p1.id,typed:'synthetic-wrong'});
     const source=store.snapshot();source.pinVerifier=configured.pinVerifier;
+    const pendingEvent=source.ledger.events.at(-1);
+    const [pendingPacket]=buildOldPackets({events:[pendingEvent],datasetId:pendingEvent.datasetId,
+      epochId:pendingEvent.epochId,id:()=> 'c2-v1-pending'});
+    source.pendingPackets.push({packet:pendingPacket,driveFileId:null,confirmed:false});
     await writeProductState(page,source);await page.reload();
     await page.getByRole('button',{name:/Ada/}).first().waitFor();
     const migrated=await productState(page);
     assert.equal(migrated.storageVersion,2);assert.deepEqual(migrated.ledger,source.ledger);
     assert.deepEqual(migrated.rounds.p1.feedback,source.rounds.p1.feedback);
+    assert.deepEqual(migrated.pendingPackets,source.pendingPackets);
     assert.equal(migrated.safetyCopies.filter(c=>c.purpose==='format-migration' && c.verified).length,1);
     await page.reload();await page.getByRole('button',{name:/Ada/}).first().waitFor();
     assert.deepEqual(await productState(page),migrated);
@@ -38,6 +44,36 @@ test('B1 browser migrates actual v1 feedback atomically and leaves unknown stora
     await page.getByText(/Speicherversion wird nicht unterstützt/).waitFor();
     assert.deepEqual(await productState(page),unknown);
   } finally {await harness.close();}
+});
+
+test('C2 rejected required precache install keeps the active offline app and foreign caches', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page, context} = await harness.newDevice({deviceScaleFactor: 2});
+  try {
+    await page.goto(harness.baseUrl);
+    await setupPractice(page);
+    assert.equal(await page.evaluate(() => devicePixelRatio), 2);
+    await page.waitForFunction(() => navigator.serviceWorker.controller !== null, null, {timeout: 10_000});
+    await page.evaluate(async () => { await caches.open('synthetic-foreign-cache'); });
+    harness.setServiceWorkerVersion('v20');
+    harness.failNextPrecacheAsset('styles.css');
+    await page.evaluate(async () => {
+      const registration = await navigator.serviceWorker.getRegistration('./');
+      await registration.update();
+    });
+    await page.waitForFunction(async () => {
+      const registration = await navigator.serviceWorker.getRegistration('./');
+      return registration?.installing === null && registration?.waiting === null;
+    });
+    const cacheNames = await page.evaluate(async () => (await caches.keys()).sort());
+    assert.equal(cacheNames.includes('synthetic-foreign-cache'), true, JSON.stringify(cacheNames));
+    assert.equal(cacheNames.includes('vokabeltrainer-product:%2Ftrainer%2F:v19'), true, JSON.stringify(cacheNames));
+    await context.setOffline(true);
+    await page.reload({waitUntil: 'domcontentloaded'});
+    await page.locator('#profile-list').waitFor();
+  } finally {
+    await harness.close();
+  }
 });
 
 test('B2 browser continues frozen configurable policy and generation after reload', {timeout:60_000},async()=>{
@@ -2015,7 +2051,7 @@ test('trainer offline update UI blocks typing and pending answers before control
   try {
     await page.goto(harness.baseUrl);
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null, null, {timeout: 10_000});
-    harness.setServiceWorkerVersion('v19', {activationDelayMs: 750});
+    harness.setServiceWorkerVersion('v20', {activationDelayMs: 750});
     await page.evaluate(async () => {
       const registration = await navigator.serviceWorker.getRegistration('./');
       await registration.update();
@@ -2073,8 +2109,8 @@ test('trainer offline update UI blocks typing and pending answers before control
     const beforeReload = await productState(page);
     assert.equal(beforeReload.ledger.events.some(({type}) => type === 'round.completed' || type === 'round.abandoned'), false);
     assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product:')).sort()), [
-      'vokabeltrainer-product:%2Ftrainer%2F:v18',
       'vokabeltrainer-product:%2Ftrainer%2F:v19',
+      'vokabeltrainer-product:%2Ftrainer%2F:v20',
     ]);
     const navigation = page.waitForNavigation();
     await updateButton.click();
@@ -2089,7 +2125,7 @@ test('trainer offline update UI blocks typing and pending answers before control
     await navigation;
     await page.getByText('Richtig!', {exact: true}).waitFor();
     assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product:')).sort()), [
-      'vokabeltrainer-product:%2Ftrainer%2F:v19',
+      'vokabeltrainer-product:%2Ftrainer%2F:v20',
     ]);
   } finally {
     await context.close();

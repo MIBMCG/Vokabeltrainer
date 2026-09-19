@@ -593,8 +593,10 @@ th:first-child { position: sticky; left: 0; background: #fff; }
   .site-shell { padding-right: 0.75rem; padding-left: 0.75rem; }
   .practice-header { align-items: flex-start; flex-direction: column; }
   .practice-header button { width: 100%; }
-  .practice-screen .practice-header { align-items: center; flex-direction: row; }
+  .practice-screen .practice-header { align-items: center; flex-flow: row wrap; }
   .practice-screen .practice-header button { width: auto; }
+  .practice-screen .practice-progress { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .practice-screen .practice-progress span:last-child { text-align: right; }
   .word-card { padding: 1rem 0.8rem; }
   .choice-tile { flex-basis: 100%; }
 }
