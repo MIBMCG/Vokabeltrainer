@@ -1,0 +1,98 @@
+{
+  "revision": "cc079cbea31d6d834b7d8eba1920486daddb4e90",
+  "fileCount": 15,
+  "totalBytes": 173568,
+  "result": "all frozen sources match independently prepared controller manifest",
+  "files": [
+    {
+      "path": "tests/compat/v1/src/trainer/backup/format.js",
+      "original": "src/trainer/backup/format.js",
+      "bytes": 11253,
+      "sha256": "fe9c3190248709b731c55b4131061a48493ec6de9a6a6500de4ee0a22eb9e406"
+    },
+    {
+      "path": "tests/compat/v1/src/trainer/backup/transport.js",
+      "original": "src/trainer/backup/transport.js",
+      "bytes": 7461,
+      "sha256": "a463475044b025cbffea59b50f3d25137f3a51dc2e29fb823f83a1765727d99a"
+    },
+    {
+      "path": "tests/compat/v1/src/trainer/commands.js",
+      "original": "src/trainer/commands.js",
+      "bytes": 31108,
+      "sha256": "a1fc6c6e37dc98d148988a03d90e22962d559771d3a2cf1bf65bd3a1c82f0d90"
+    },
+    {
+      "path": "tests/compat/v1/src/trainer/learning/answers.js",
+      "original": "src/trainer/learning/answers.js",
+      "bytes": 382,
+      "sha256": "61c705d77977457a1291e78c93a6e907368eee660f839db9ba8137ab0e2652eb"
+    },
+    {
+      "path": "tests/compat/v1/src/trainer/learning/calendar.js",
+      "original": "src/trainer/learning/calendar.js",
+      "bytes": 915,
+      "sha256": "cbf7150afb8f24ddd118d3d94c2d6d25d5a0e95062685cdde02174165307dbc0"
+    },
+    {
+      "path": "tests/compat/v1/src/trainer/learning/progress.js",
+      "original": "src/trainer/learning/progress.js",
+      "bytes": 15105,
+      "sha256": "0945d7e3e99cd49e7cd8b7bb2640d140c5696618968fc8c53adc58e897a63128"
+    },
+    {
+      "path": "tests/compat/v1/src/trainer/learning/rewards.js",
+      "original": "src/trainer/learning/rewards.js",
+      "bytes": 1590,
+      "sha256": "c39411630ddea3782bbb7f54c75a3f1d880da41b267d7ef3702fb8a451ae6a64"
+    },
+    {
+      "path": "tests/compat/v1/src/trainer/learning/rounds.js",
+      "original": "src/trainer/learning/rounds.js",
+      "bytes": 13921,
+      "sha256": "35ab3d99becc39c506a5444de56016ad954278ab83395ce9bb6dd4aca1d694fa"
+    },
+    {
+      "path": "tests/compat/v1/src/trainer/model/canonical.js",
+      "original": "src/trainer/model/canonical.js",
+      "bytes": 2115,
+      "sha256": "cc07a92d2c1dd665c329587e214ec66bf78fd9e5f2940110308d97675a9972ff"
+    },
+    {
+      "path": "tests/compat/v1/src/trainer/model/epochs.js",
+      "original": "src/trainer/model/epochs.js",
+      "bytes": 2906,
+      "sha256": "a8565a50ae257535bf02415e3574cd2f5b8919bc759b6ca7487851bd40a9e1a6"
+    },
+    {
+      "path": "tests/compat/v1/src/trainer/model/errors.js",
+      "original": "src/trainer/model/errors.js",
+      "bytes": 153,
+      "sha256": "b0cd812fc10b03524fe5dfce1c57553e84f7602a897987f6d8df61dcd00fab2c"
+    },
+    {
+      "path": "tests/compat/v1/src/trainer/model/revisions.js",
+      "original": "src/trainer/model/revisions.js",
+      "bytes": 5246,
+      "sha256": "5bbf5900763cacc5ca8e1e710fb6c80ea6d759fd8798134db01fc33c187708b7"
+    },
+    {
+      "path": "tests/compat/v1/src/trainer/model/schema.js",
+      "original": "src/trainer/model/schema.js",
+      "bytes": 26918,
+      "sha256": "adcb4bf93b9cd436d367dcd9235d10ce32083d00895bbeb17faef96a8b93563a"
+    },
+    {
+      "path": "tests/compat/v1/src/trainer/sync/drive.js",
+      "original": "src/trainer/sync/drive.js",
+      "bytes": 50290,
+      "sha256": "720cf720a1cc4affe1b14220b717c1c4787dc72866bfe89b199939f1dda55abb"
+    },
+    {
+      "path": "tests/compat/v1/src/trainer/sync/packets.js",
+      "original": "src/trainer/sync/packets.js",
+      "bytes": 4205,
+      "sha256": "6e403a799cc752a1aace07a28c2e47e5c19dedf27f8f3a971fab661d3db228b8"
+    }
+  ]
+}
