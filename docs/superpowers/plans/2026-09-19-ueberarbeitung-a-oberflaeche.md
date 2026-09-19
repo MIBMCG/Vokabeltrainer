@@ -108,7 +108,7 @@ Bildwelt, helle Wortkarte und Türkisaktionen dem Konzept angleichen. Responsive
 
 **Interfaces:** `APP_CONFIG` aus `src/trainer/config.js` mit `googleClientId:string`. Reine `selectGoogleConfig({configuredId,storedId,bound}) -> {clientId,source,requiresDecision}` aus `auth-config.js`. `auth.clientId()` bleibt bestehen; `auth.connect()` darf ohne Argument die ausgewählte ID verwenden. Bestehende `onConnected`-/PIN-Prüfungen und Scheduler-Anbindung erhalten.
 
-- [ ] **1. Konfigurationsentscheidungen als RED testen.** Vollständig neue `tests/trainer/auth-config.test.js` mit `node:test`/`assert/strict` und obigem Import anlegen. Testkern:
+- [x] **1. Konfigurationsentscheidungen als RED testen.** Vollständig neue `tests/trainer/auth-config.test.js` mit `node:test`/`assert/strict` und obigem Import anlegen. Testkern:
 
 ```js
 assert.deepEqual(selectGoogleConfig({configuredId:'app.apps.googleusercontent.com',storedId:'',bound:false}),
@@ -118,8 +118,8 @@ assert.deepEqual(selectGoogleConfig({configuredId:'new.apps.googleusercontent.co
 ```
 
 Zusätzlich beide leer, identisch, ungültige/abgeschnittene ID, ungebundene alte Browser-ID prüfen. Eine abweichende gespeicherte ID bleibt auch ungebunden erhalten, bis bewusst gewechselt wird; eine vorhandene Bindung verbietet den schnellen ID-Wechsel. Ungültige Werte sind kein nutzbarer Fallback.
-- [ ] **2. Öffentliche Konfiguration verifizieren.** Bereits im Gespräch/autorisiertem lokalen Einrichtungsstand angegebene öffentliche Client-ID auf vollständige Schreibweise und vorhandene echte Verbindungsbelege abgleichen. Keine Tokens/PINs auslesen, keine Google-Kontenänderung durchführen. Den belegten öffentlichen Wert in `APP_CONFIG` eintragen. Kann er nicht eindeutig festgestellt werden, exakt diesen fehlenden Wert beim Nutzer erfragen; nicht durch einen Dummy ersetzte Cloudfunktion als fertig melden.
-- [ ] **3. Hauptpfad vereinfachen.** Eltern sehen einen Verbindungsbutton und nach bewusster Anmeldung die zwei klaren Bestandsaktionen. Die wiedererkennbare bestehende Datensatzliste und die sichere Beitrittsvorschau nutzen. Konfigurationsdetails nur aufklappbar unter Einstellungen; fehlende Betreiberkonfiguration in normaler Ansicht verständlich melden, lokales Üben weiter anbieten. Keine automatische Erzeugung/Bindung nach Google-Anmeldung. Bestehende lokale Einrichtungsdaten, PIN und Inhalte werden nicht überschrieben. Kern der Konfigurationsauswahl:
+- [x] **2. Öffentliche Konfiguration verifizieren.** Bereits im Gespräch/autorisiertem lokalen Einrichtungsstand angegebene öffentliche Client-ID auf vollständige Schreibweise und vorhandene echte Verbindungsbelege abgleichen. Keine Tokens/PINs auslesen, keine Google-Kontenänderung durchführen. Den belegten öffentlichen Wert in `APP_CONFIG` eintragen. Kann er nicht eindeutig festgestellt werden, exakt diesen fehlenden Wert beim Nutzer erfragen; nicht durch einen Dummy ersetzte Cloudfunktion als fertig melden.
+- [x] **3. Hauptpfad vereinfachen.** Eltern sehen einen Verbindungsbutton und nach bewusster Anmeldung die zwei klaren Bestandsaktionen. Die wiedererkennbare bestehende Datensatzliste und die sichere Beitrittsvorschau nutzen. Konfigurationsdetails nur aufklappbar unter Einstellungen; fehlende Betreiberkonfiguration in normaler Ansicht verständlich melden, lokales Üben weiter anbieten. Keine automatische Erzeugung/Bindung nach Google-Anmeldung. Bestehende lokale Einrichtungsdaten, PIN und Inhalte werden nicht überschrieben. Kern der Konfigurationsauswahl:
 
 ```js
 const stored = validId(storedId) ? storedId.trim() : '';
@@ -129,8 +129,8 @@ return {clientId: stored || configured, source: stored ? 'browser' : configured 
 ```
 
 `validId` als privater Helper prüft nichtleeren vollständigen OAuth-Web-Client-ID-Text mit `.apps.googleusercontent.com`, ohne zu behaupten, Syntax belege eine aktive Google-Registrierung. `bound` wird für das angebotene Wechselverhalten der UI benötigt; keine stillschweigende Änderung der gespeicherten ID.
-- [ ] **4. Browserfälle:** frische Seite ohne ID-Eingabe; Google-Abbruch; 401→bewusstes Verbinden→automatischer Upload; Hintergrund/PIN-Sperre während Anmeldung; Alt-ID ≠ App-ID mit bestehender Bindung; vorhandenen statt neuen Bestand auswählen. Abgleichen erfolgt gegen synthetisches GIS/Drive. Bestehende persönliche Konsole/Anmeldung unangetastet lassen.
-- [ ] **5. Dokumentation/Commit:** Betreiber- und Familienanleitung in `docs/GOOGLE-DRIVE-EINRICHTUNG.md`/`docs/BENUTZUNG.md` trennen; `npm test`, betroffene Browserfälle, Workerupdate prüfen. Commit `feat: preconfigure Google access and simplify family setup`.
+- [x] **4. Browserfälle:** frische Seite ohne ID-Eingabe; Google-Abbruch; 401→bewusstes Verbinden→automatischer Upload; Hintergrund/PIN-Sperre während Anmeldung; Alt-ID ≠ App-ID mit bestehender Bindung; vorhandenen statt neuen Bestand auswählen. Abgleichen erfolgt gegen synthetisches GIS/Drive. Bestehende persönliche Konsole/Anmeldung unangetastet lassen.
+- [x] **5. Dokumentation/Commit:** Betreiber- und Familienanleitung in `docs/GOOGLE-DRIVE-EINRICHTUNG.md`/`docs/BENUTZUNG.md` trennen; `npm test`, betroffene Browserfälle, Workerupdate prüfen. Commit `feat: preconfigure Google access and simplify family setup`.
 
 ### A4: Kompakte Vokabelverwaltung mit sicherem Bearbeiten
 
