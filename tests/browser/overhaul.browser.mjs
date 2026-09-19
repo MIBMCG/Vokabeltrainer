@@ -8,6 +8,7 @@ import {createTrainerHarness} from './trainer-harness.mjs';
 const resultsDirectory = resolve('test-results', 'overhaul-a1');
 const a2ResultsDirectory = resolve('test-results', 'overhaul-a2');
 const a4ResultsDirectory = resolve('test-results', 'overhaul-a4');
+const b3ResultsDirectory = resolve('test-results', 'overhaul-b3');
 const preparedGoogleClientId = '329410329467-s8nevn4sqi7m3fmtq2tkbpj76b8osvhs.apps.googleusercontent.com';
 
 async function productState(page) {
@@ -407,7 +408,7 @@ test('compact vocabulary management opens editors deliberately and preserves the
     await page.getByRole('button', {name: 'Lernregeln', exact: true}).click();
     await page.getByRole('button', {name: 'Speichern', exact: true}).click();
     await page.getByRole('heading', {name: 'Lernregeln', exact: true}).waitFor();
-    assert.equal(await page.locator('input[type="range"], input[type="checkbox"]').count(), 0);
+    assert.equal(await page.locator('form.rules-form').count(), 1);
     assert.deepEqual((await productState(page)).ledger.events.at(-1).payload.value.answers, ['hound', 'dog']);
 
     await page.getByRole('button', {name: 'Vokabeln', exact: true}).click();
@@ -535,6 +536,203 @@ test('table import revalidates its preview against the currently selected target
     assert.equal(await page.locator('#import-apply').isEnabled(), true);
     await page.locator('#import-text').fill('Katze\tcat');
     assert.equal(await page.locator('#import-apply').isDisabled(), true);
+  } finally {
+    await harness.close();
+  }
+});
+
+test('learning rules stay separate per child and save only after an explicit submit', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page} = await harness.newDevice({viewport: {width: 390, height: 844}});
+  await mkdir(b3ResultsDirectory, {recursive: true});
+  try {
+    await page.goto(harness.baseUrl);
+    await setupPractice(page);
+    await openAdult(page);
+    await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
+    const addChild = page.locator('details').filter({has: page.getByText('Kind hinzufügen', {exact: true})});
+    await addChild.locator('summary').click();
+    await addChild.getByLabel('Name', {exact: true}).fill('Ben');
+    await addChild.getByRole('button', {name: 'Kind hinzufügen', exact: true}).click();
+
+    await page.getByRole('button', {name: 'Lernregeln', exact: true}).click();
+    await page.getByRole('heading', {name: 'Lernregeln', exact: true}).waitFor();
+    await page.getByLabel('Kind für Lernregeln').selectOption({label: 'Ada'});
+    assert.equal(await page.getByLabel('Kind für Lernregeln').inputValue(), await page.getByLabel('Kind für Lernregeln').locator('option', {hasText: 'Ada'}).getAttribute('value'));
+    assert.equal(await page.getByLabel('Ab wie vielen richtigen Antworten hintereinander seltener?').inputValue(), '3');
+    assert.equal(await page.getByRole('checkbox', {name: 'Gelernte Wörter weiter auffrischen', exact: true}).isChecked(), true);
+    assert.equal(await page.getByLabel('Nach wie vielen richtigen Antworten nicht mehr automatisch abfragen?').isVisible(), false);
+    assert.deepEqual(await page.locator('[data-rule-interval]').evaluateAll((inputs) => inputs.map(({value}) => value)), ['1', '3', '7', '14']);
+
+    await page.getByText('Wiederholungsabstände', {exact: true}).click();
+    await page.locator('[data-rule-interval]').nth(0).fill('4');
+    await page.locator('[data-rule-interval]').nth(1).fill('3');
+    await page.getByRole('button', {name: 'Lernregeln speichern', exact: true}).click();
+    await page.getByText('Die Lernregeln sind ungültig.', {exact: true}).waitFor();
+    assert.deepEqual(await page.locator('[data-rule-interval]').evaluateAll((inputs) => inputs.map(({value}) => value)), ['4', '3', '7', '14']);
+    assert.equal((await productState(page)).ledger.events.filter(({type}) => type === 'learning.rules.changed').length, 0);
+    await page.locator('[data-rule-interval]').nth(0).fill('1');
+
+    await page.getByLabel('Ab wie vielen richtigen Antworten hintereinander seltener?').selectOption('5');
+    await page.getByRole('checkbox', {name: 'Gelernte Wörter weiter auffrischen', exact: true}).uncheck();
+    await page.getByLabel('Nach wie vielen richtigen Antworten nicht mehr automatisch abfragen?').fill('6');
+    for (const [index, value] of ['2', '4', '8', '16'].entries()) {
+      await page.locator('[data-rule-interval]').nth(index).fill(value);
+    }
+    const before = await productState(page);
+    await page.getByRole('button', {name: 'Auswirkung prüfen', exact: true}).click();
+    await page.getByText(/Wörter werden in neuen Runden nicht mehr automatisch abgefragt/).waitFor();
+    assert.equal((await productState(page)).ledger.events.filter(({type}) => type === 'learning.rules.changed').length, 0);
+    await page.getByRole('button', {name: 'Lernregeln speichern', exact: true}).click();
+    await page.getByText('Die Lernregeln für Ada wurden gespeichert.', {exact: true}).waitFor();
+    const saved = await productState(page);
+    assert.equal(saved.ledger.events.filter(({type}) => type === 'learning.rules.changed').length, 1);
+    assert.deepEqual(saved.ledger.events.filter(({type}) => type === 'learning.rules.changed').at(-1).payload,
+      {profileId: before.ledger.events.find(({type, payload}) => type === 'entity.revised' && payload.entityType === 'profile').payload.entityId,
+        slowAfter: 5, stopAfter: 6, intervals: [2, 4, 8, 16]});
+
+    await page.reload();
+    await openAdult(page);
+    await page.getByRole('button', {name: 'Lernregeln', exact: true}).click();
+    await page.getByLabel('Kind für Lernregeln').selectOption({label: 'Ada'});
+    assert.equal(await page.getByLabel('Ab wie vielen richtigen Antworten hintereinander seltener?').inputValue(), '5');
+    assert.deepEqual(await page.locator('[data-rule-interval]').evaluateAll((inputs) => inputs.map(({value}) => value)), ['2', '4', '8', '16']);
+
+    await page.getByLabel('Kind für Lernregeln').selectOption({label: 'Ben'});
+    assert.equal(await page.getByLabel('Ab wie vielen richtigen Antworten hintereinander seltener?').inputValue(), '3');
+    assert.equal(await page.getByRole('checkbox', {name: 'Gelernte Wörter weiter auffrischen', exact: true}).isChecked(), true);
+    await page.getByLabel('Kind für Lernregeln').selectOption({label: 'Ada'});
+    assert.equal(await page.getByLabel('Ab wie vielen richtigen Antworten hintereinander seltener?').inputValue(), '5');
+    await page.getByRole('button', {name: 'Standardwerte einsetzen', exact: true}).click();
+    assert.equal(await page.getByLabel('Ab wie vielen richtigen Antworten hintereinander seltener?').inputValue(), '3');
+    assert.equal((await productState(page)).ledger.events.filter(({type}) => type === 'learning.rules.changed').length, 1);
+    await page.getByRole('button', {name: 'Vokabeln', exact: true}).click();
+    await page.getByRole('button', {name: 'Lernregeln', exact: true}).click();
+    assert.equal(await page.getByLabel('Ab wie vielen richtigen Antworten hintereinander seltener?').inputValue(), '3');
+    await page.screenshot({path: resolve(b3ResultsDirectory, 'learning-rules-mobile-390.png'), fullPage: true});
+
+    await page.getByRole('button', {name: 'Zur Profilauswahl', exact: true}).click();
+    await page.getByRole('button', {name: /^Ada/}).click();
+    await page.getByRole('button', {name: 'Runde starten', exact: true}).click();
+    assert.deepEqual((await productState(page)).rounds[Object.keys((await productState(page)).rounds)[0]].policy,
+      {slowAfter: 5, stopAfter: 6, intervals: [2, 4, 8, 16]});
+  } finally {
+    await harness.close();
+  }
+});
+
+test('learning rule previews keep the original form head and preserve a stale draft', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page} = await harness.newDevice();
+  try {
+    await page.goto(harness.baseUrl);
+    await setupPractice(page);
+    const state = await productState(page);
+    await page.evaluate(async (initial) => {
+      const {renderLearningRules} = await import('/src/trainer/ui/learning-rules.js');
+      const {createCommands} = await import('/src/trainer/commands.js');
+      const {project} = await import('/src/trainer/learning/progress.js');
+      document.querySelector('#app').hidden = true;
+      const host = document.createElement('main');
+      host.id = 'rules-contract';
+      document.body.append(host);
+      window.__rulesContract = {submitted: null};
+      let stored = structuredClone(initial);
+      const foreign = await createCommands({
+        store: {load: async () => structuredClone(stored), save: async (next) => { stored = structuredClone(next); }},
+        deviceId: initial.deviceId,
+        now: () => new Date('2026-09-19T12:00:00.000Z'),
+        id: () => crypto.randomUUID(),
+        onChange() {},
+      });
+      const profileId = Object.values(project(initial.ledger).entities.profiles).find(({value}) => value && !value.archived).id;
+      await foreign.setLearningRules({
+        profileId, expectedPolicyEventId: null,
+        policy: {slowAfter: 4, stopAfter: 8, intervals: [2, 5, 10, 20]},
+      });
+      const commands = {
+          getState: () => foreign.getState(),
+          learningRulePreview: () => ({excludedCount: 2, dueCount: 0, policyEventId: 'new-background-head'}),
+          setLearningRules: async (input) => {
+            window.__rulesContract.submitted = structuredClone(input);
+            const error = new Error('Die Lernregeln wurden inzwischen geändert. Bitte den Entwurf erneut prüfen.');
+            error.code = 'conflict';
+            throw error;
+          },
+        };
+      const render = () => {
+        host.replaceChildren();
+        renderLearningRules({root: host, state: initial, commands, profileId: null, onRefresh: render});
+      };
+      render();
+    }, state);
+    const host = page.locator('#rules-contract');
+    await host.getByLabel('Ab wie vielen richtigen Antworten hintereinander seltener?').selectOption('5');
+    await host.getByRole('button', {name: 'Auswirkung prüfen', exact: true}).click();
+    await host.getByRole('button', {name: 'Lernregeln speichern', exact: true}).click();
+    await host.getByText(/inzwischen geändert/).waitFor();
+    assert.equal(await host.getByLabel('Ab wie vielen richtigen Antworten hintereinander seltener?').inputValue(), '5');
+    assert.equal((await page.evaluate(() => window.__rulesContract.submitted.expectedPolicyEventId)), null);
+    await host.getByRole('button', {name: 'Gespeicherte Regeln neu laden', exact: true}).click();
+    assert.equal(await host.getByLabel('Ab wie vielen richtigen Antworten hintereinander seltener?').inputValue(), '4');
+  } finally {
+    await harness.close();
+  }
+});
+
+test('excluded current word generations can be deliberately returned to practice', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page} = await harness.newDevice();
+  try {
+    await page.goto(harness.baseUrl);
+    await setupPractice(page);
+    await openAdult(page);
+    await page.getByRole('button', {name: 'Lernregeln', exact: true}).click();
+    await page.getByLabel('Ab wie vielen richtigen Antworten hintereinander seltener?').selectOption('2');
+    await page.getByRole('checkbox', {name: 'Gelernte Wörter weiter auffrischen', exact: true}).uncheck();
+    await page.getByLabel('Nach wie vielen richtigen Antworten nicht mehr automatisch abfragen?').fill('2');
+    await page.getByRole('button', {name: 'Lernregeln speichern', exact: true}).click();
+    await page.getByText('Die Lernregeln für Ada wurden gespeichert.', {exact: true}).waitFor();
+    await page.getByRole('button', {name: 'Zur Profilauswahl', exact: true}).click();
+    await page.getByRole('button', {name: /^Ada/}).click();
+    await page.getByRole('button', {name: 'Runde starten', exact: true}).click();
+    for (let index = 0; index < 4; index += 1) {
+      const state = await productState(page);
+      const round = state.rounds[Object.keys(state.rounds)[0]];
+      const solution = state.ledger.events.find(({id}) => id === round.current.revisionId).payload.value.answers[0];
+      await page.getByLabel('Englische Übersetzung').fill(solution);
+      await page.getByRole('button', {name: 'Prüfen', exact: true}).click();
+      await page.getByText('Richtig!', {exact: true}).waitFor();
+      await page.getByRole('button', {name: 'Weiter', exact: true}).click();
+    }
+    const excluded = await page.evaluate(async () => {
+      const state = await new Promise((resolveState, reject) => {
+        const request = indexedDB.open('vokabeltrainer-product-v1', 1);
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => {
+          const database = request.result;
+          const get = database.transaction('product-state').objectStore('product-state').get('current');
+          get.onerror = () => reject(get.error);
+          get.onsuccess = () => resolveState(get.result);
+        };
+      });
+      const {currentPolicy} = await import('/src/trainer/model/policies.js');
+      const {projectSchedule} = await import('/src/trainer/learning/schedule.js');
+      const profileId = Object.keys(state.rounds)[0];
+      const {policy} = currentPolicy(state.ledger, profileId);
+      const schedule = projectSchedule({ledger: state.ledger, profileId, policy, day: '2026-09-19'});
+      return [...schedule.words].flatMap(([wordId, versions]) => [...versions]
+        .filter(([, value]) => value.excluded).map(([learningId]) => ({wordId, learningId})));
+    });
+    assert.equal(excluded.length, 2, JSON.stringify(excluded));
+    await openAdult(page);
+    await page.getByRole('button', {name: 'Vokabeln', exact: true}).click();
+    const hund = page.locator('[data-word-german="Hund"]');
+    await hund.getByText('Aus dem automatischen Üben genommen', {exact: true}).waitFor();
+    await hund.getByRole('button', {name: 'Wieder üben', exact: true}).click();
+    await page.getByText('Hund wird für Ada wieder geübt. Bisherige Punkte und Antworten bleiben erhalten.', {exact: true}).waitFor();
+    assert.equal((await productState(page)).ledger.events.filter(({type}) => type === 'word.reactivated').length, 1);
+    assert.equal(await hund.getByRole('button', {name: 'Wieder üben', exact: true}).count(), 0);
   } finally {
     await harness.close();
   }

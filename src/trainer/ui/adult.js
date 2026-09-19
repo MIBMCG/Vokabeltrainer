@@ -1,6 +1,7 @@
 import {project} from '../learning/progress.js';
 import {el, button, message} from './dom.js';
 import {pinResetForm, renderSettings} from './settings.js';
+import {discardLearningRuleDraft, renderLearningRules} from './learning-rules.js';
 import {
   discardVocabularyDraft,
   renderVocabulary,
@@ -25,6 +26,7 @@ export function adultStateChanged(root, state) {
     el('p', {text: 'Im Hintergrund wurde der Datenstand geändert. Ihre offenen Eingaben bleiben erhalten. Veraltete Bearbeitungen werden beim Speichern geprüft.'}),
     button('Ansicht neu laden (Eingaben verwerfen)', () => {
       discardVocabularyDraft(root);
+      discardLearningRuleDraft(root);
       ui.refresh();
     }, {class: 'secondary'}),
   ]);
@@ -72,21 +74,6 @@ function renderProgress(container, projection) {
     section.append(wrapper);
   }
   container.append(section);
-}
-
-function renderRules(container) {
-  container.append(el('section', {attrs: {'aria-labelledby': 'rules-title'}}, [
-    el('h1', {text: 'Lernregeln', attrs: {id: 'rules-title'}}),
-    el('p', {text: 'Diese Regeln gelten für alle Kinder und können in dieser Version noch nicht geändert werden.'}),
-    el('dl', {attrs: {class: 'rules-summary'}}, [
-      el('dt', {text: 'Punkte'}),
-      el('dd', {text: '10 Punkte je richtiger Antwort, 20 Punkte für eine abgeschlossene Runde.'}),
-      el('dt', {text: 'Wiederholen'}),
-      el('dd', {text: 'Fehler erscheinen häufiger. Nach drei richtigen Antworten pausiert das Wort für den Rest der Runde.'}),
-      el('dt', {text: 'Lernabstände'}),
-      el('dd', {text: 'Richtige Antworten verlängern den Abstand bis zur nächsten Wiederholung.'}),
-    ]),
-  ]));
 }
 
 export {pinResetForm};
@@ -139,7 +126,9 @@ export function renderAdult({root, state, commands, pinGate, onNavigate, sync, r
   if (ui.section === 'vocabulary') {
     renderVocabulary({root, state, commands, profileId: null, onRefresh: rerender});
   } else if (ui.section === 'progress') renderProgress(content, projection);
-  else if (ui.section === 'rules') renderRules(content);
+  else if (ui.section === 'rules') renderLearningRules({
+    root, state, commands, profileId: null, onRefresh: rerender,
+  });
   else renderSettings({
     root, state, commands, pinGate, sync, restore, auth, onRefresh: rerender,
     onConnected, onDownload, ui,

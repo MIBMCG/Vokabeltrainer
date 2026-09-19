@@ -50,6 +50,16 @@ Die Erwachsenenansicht zeigt je Kind und Wort Versuche, richtige und falsche Ant
 
 Eine inhaltliche Änderung von Wort, Hinweis oder erlaubten Lösungen beginnt eine neue Übungsserie für dieses Wort. Die Oberfläche kündigt das an; bisherige Antworten und Punkte bleiben erhalten. Eine reine Änderung der Zuordnung oder Groß-/Kleinschreibung löscht den Lernstand nicht.
 
+Unter **Lernregeln** wählen Erwachsene zuerst ein Kind. Für jedes Kind lassen sich getrennt festlegen:
+
+- nach wie vielen richtigen Antworten ein Wort seltener kommt (2 bis 10, Standard 3),
+- ob gelernte Wörter weiter aufgefrischt oder ab einer wählbaren Serie nicht mehr automatisch abgefragt werden,
+- die vier Wiederholungsabstände in Tagen (Standard 1, 3, 7 und 14).
+
+**Auswirkung prüfen** zeigt die gemeinsame Vorschau der Lernplanung. Änderungen werden erst mit **Lernregeln speichern** übernommen und gelten ab der nächsten neuen Runde; eine bereits begonnene Runde behält ihre bisherigen Regeln. **Standardwerte einsetzen** füllt das Formular nur aus und speichert noch nichts. Falls zwischenzeitlich auf einem anderen Gerät Regeln geändert wurden, bleibt der eigene Entwurf stehen und muss nach bewusstem Neuladen erneut geprüft werden.
+
+Wörter, die für das ausgewählte Kind nicht mehr automatisch abgefragt werden, bleiben unter **Vokabeln** sichtbar. **Wieder üben** beginnt nur deren Wiederholungsplanung für dieses Kind neu. Bisherige Antworten, Punkte und Abzeichen bleiben erhalten.
+
 Die Erwachsenenansicht sperrt beim Verlassen, Neuladen und Wechsel in den Hintergrund. „PIN vergessen“ setzt nur die lokale PIN zurück: den Bestätigungstext „PIN zurücksetzen“ ausschreiben und die neue PIN zweimal eingeben. Lernstände werden dabei nicht gelöscht.
 
 ## Google Drive und Offlinebetrieb

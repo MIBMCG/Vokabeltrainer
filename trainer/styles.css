@@ -325,6 +325,13 @@ h2 { margin-top: 0; font-size: 1.7rem; }
 .vocabulary-row > div { flex: 1 1 12rem; }
 .vocabulary-row h3, .vocabulary-row p { margin-bottom: 0.25rem; }
 .vocabulary-editor { padding: 1rem; border: 1px solid var(--line); border-radius: 1rem; background: rgb(255 255 255 / 82%); box-shadow: var(--shadow); }
+.rules-form { max-width: 46rem; padding: 1rem; border: 1px solid var(--line); border-radius: 1rem; background: rgb(255 255 255 / 82%); box-shadow: var(--shadow); }
+.rules-form [hidden] { display: none; }
+.rule-toggle { display: flex; align-items: center; min-height: 44px; }
+.rule-details { padding: 0.2rem 0.8rem 0.8rem; border: 1px solid var(--line); border-radius: 0.8rem; background: #f7fbf5; }
+.rule-details label { margin-top: 0.7rem; }
+.rules-explanation { margin: 0; color: #234f58; font-weight: 700; }
+.rules-effect { margin: 0; }
 .lesson-target { padding: 0.75rem; border: 1px solid var(--line); border-radius: 0.8rem; background: #f7fbf5; }
 #adult-unsaved-dialog { width: min(34rem, calc(100% - 2rem)); border: 1px solid var(--line); border-radius: 1.2rem; padding: 1.25rem; color: inherit; background: var(--sand); box-shadow: 0 18px 70px rgb(23 57 67 / 32%); }
 #adult-unsaved-dialog::backdrop { background: rgb(12 38 45 / 58%); }

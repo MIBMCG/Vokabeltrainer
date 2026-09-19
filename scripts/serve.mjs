@@ -53,6 +53,7 @@ const ASSETS = new Map([
   ['/src/trainer/ui/practice.js', ['src/trainer/ui/practice.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/ui/rewards.js', ['src/trainer/ui/rewards.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/ui/adult.js', ['src/trainer/ui/adult.js', 'text/javascript; charset=utf-8']],
+  ['/src/trainer/ui/learning-rules.js', ['src/trainer/ui/learning-rules.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/ui/vocabulary.js', ['src/trainer/ui/vocabulary.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/ui/settings.js', ['src/trainer/ui/settings.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/ui/sync.js', ['src/trainer/ui/sync.js', 'text/javascript; charset=utf-8']],

@@ -1,5 +1,8 @@
 import {applyRows, parseTable, validateRows} from '../adult/import.js';
 import {project} from '../learning/progress.js';
+import {dayInZone} from '../learning/calendar.js';
+import {projectSchedule} from '../learning/schedule.js';
+import {currentGenerations, currentPolicy} from '../model/policies.js';
 import {semanticWord} from '../model/revisions.js';
 import {el, field, button, message} from './dom.js';
 
@@ -439,6 +442,14 @@ export function renderVocabulary({root, state, commands, profileId, onRefresh}) 
     ui.lessonId = availableLessons.find((lesson) => !lesson.value.archived)?.id ?? availableLessons[0]?.id ?? null;
   }
   const selectedLesson = projection.entities.lessons[ui.lessonId];
+  const policy = ui.profileId === null ? null : currentPolicy(state.ledger, ui.profileId).policy;
+  const schedule = policy === null ? null : projectSchedule({
+    ledger: state.ledger,
+    profileId: ui.profileId,
+    policy,
+    day: dayInZone(new Date(), state.ledger.descriptor.timeZone),
+  });
+  const generations = ui.profileId === null ? [] : currentGenerations(state.ledger, ui.profileId);
 
   const heading = el('header', {attrs: {class: 'section-heading'}}, [
     el('h1', {text: 'Vokabeln'}),
@@ -557,6 +568,32 @@ export function renderVocabulary({root, state, commands, profileId, onRefresh}) 
           onRefresh();
         }, {class: 'secondary'}),
       );
+      const assigned = !word.value.archived && selectedLesson?.value !== null
+        && !selectedLesson?.value?.archived
+        && selectedLesson?.value?.profileIds.includes(ui.profileId);
+      const scheduled = schedule?.words.get(word.id)?.get(word.value.learningId);
+      if (assigned && scheduled?.excluded) {
+        const generationId = generations.find((entry) => entry.wordId === word.id
+          && entry.learningId === word.value.learningId)?.generationId ?? null;
+        card.querySelector('div').append(
+          el('p', {text: 'Aus dem automatischen Üben genommen', attrs: {class: 'status-chip'}}),
+          el('p', {text: 'Beginnt die Wiederholung neu; deine bisherigen Punkte und Antworten bleiben.'}),
+        );
+        card.append(button('Wieder üben', async () => {
+          try {
+            await commands.reactivateWord({
+              profileId: ui.profileId,
+              wordId: word.id,
+              learningId: word.value.learningId,
+              expectedGenerationId: generationId,
+            });
+            report(ui, `${word.value.german} wird für ${profiles.find(({id}) => id === ui.profileId)?.value.name} wieder geübt. Bisherige Punkte und Antworten bleiben erhalten.`);
+          } catch (error) {
+            report(ui, error.message, 'error');
+          }
+          onRefresh();
+        }, {class: 'secondary'}));
+      }
       list.append(card);
     }
     const empty = message('Für diese Auswahl wurden keine Vokabeln gefunden.');
