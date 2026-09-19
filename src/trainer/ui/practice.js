@@ -245,6 +245,7 @@ function renderLanding({root, state, commands, profileId, onNavigate, projection
     } catch (error) {
       ui.busy = false;
       onNavigate('practice-landing', {render: false});
+      updateSummary();
       root.append(message(error?.message || 'Die Runde konnte nicht gestartet werden.', 'error'));
     }
   };

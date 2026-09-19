@@ -168,6 +168,25 @@ test('explained mode selection starts once and keeps the learning controls usabl
     assert.equal((await productState(page)).ledger.events.filter(({type}) => type === 'round.started').length, beforeStarts);
     await page.screenshot({path: resolve(a2ResultsDirectory, 'round-start-390.png'), fullPage: true});
 
+    await page.evaluate(() => {
+      const original = IDBObjectStore.prototype.put;
+      let failNext = true;
+      IDBObjectStore.prototype.put = function put(...args) {
+        if (failNext) {
+          failNext = false;
+          throw new DOMException('synthetic full storage', 'QuotaExceededError');
+        }
+        return original.apply(this, args);
+      };
+    });
+    const startButton = page.getByRole('button', {name: 'Runde starten', exact: true});
+    await startButton.click();
+    await page.getByText('Die lokalen Produktdaten konnten nicht gespeichert werden.', {exact: true}).waitFor();
+    assert.equal(await startButton.isEnabled(), true);
+    assert.equal(await page.getByRole('radio', {name: /Letzte Vokabeln/}).isChecked(), true);
+    assert.equal(await page.getByRole('radio', {name: /20 Antworten/}).isChecked(), true);
+    assert.equal((await productState(page)).ledger.events.filter(({type}) => type === 'round.started').length, beforeStarts);
+
     await page.locator('.practice-start-form').evaluate((form) => {
       form.dispatchEvent(new SubmitEvent('submit', {bubbles: true, cancelable: true}));
       form.dispatchEvent(new SubmitEvent('submit', {bubbles: true, cancelable: true}));
