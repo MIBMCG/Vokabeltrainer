@@ -1,12 +1,18 @@
 # Vokabeltrainer benutzen
 
-**Entwicklungsstand:** Diese Anleitung beschreibt die implementierte und automatisiert geprüfte Version einschließlich des vorbereiteten Google-Zugangs. Der [Abschlussbericht der Version 1](reports/2026-09-18-vokabeltrainer-v1.md) nennt die bisherigen Nachweise und Grenzen. Reale Produktprüfungen mit Google Drive auf zwei physischen Geräten sowie iPhone/iPad folgen getrennt.
+**Stand: 19.09.2026.** Diese Anleitung beschreibt die überarbeitete App einschließlich vorbereitetem Google-Zugang, Lernregeln je Kind und Statistiken. Aktuelle Prüfbelege stehen im [Arbeitsstand](../ARBEITSSTAND.md). Reale Produktprüfungen mit Google Drive auf zwei physischen Geräten sowie iPhone/iPad folgen getrennt.
+
+## Lokal starten
+
+Auf dem Entwicklungszweig `codex/vokabeltrainer-v1` im Projektordner `npm start` ausführen (Node.js ab 22.8). Danach `http://localhost:4173/trainer/` öffnen. Die Adresse ohne `/trainer/` führt zur technischen Verbindungsprobe. Einrichtung auf einem neuen Rechner: [README](../README.md#repository-auf-einem-neuen-system-öffnen).
 
 ## Einrichten
 
 Erwachsene legen den gemeinsamen Datenbestand und auf jedem Gerät eine vierstellige PIN an. Die PIN schützt vor versehentlichen Änderungen; sie ist keine getrennte Benutzeranmeldung. Anschließend ein oder mehrere Kinderprofile mit Anzeigenamen anlegen. Vollständige Namen und Geburtstage sind nicht nötig.
 
 Eine Lektion erhält einen Namen, zum Beispiel „Unit 1“, und wird den gewünschten Kindern zugeordnet. Vokabeln bestehen aus deutschem Wort und mindestens einer englischen Lösung. Ein Hinweis hilft bei Mehrdeutigkeiten, etwa „Bank — Sitzplatz“. Mehrere Lösungen wie `bicycle` und `bike` sind möglich.
+
+Unter **Für Erwachsene** stehen vier Bereiche bereit: **Vokabeln**, **Lernstand**, **Lernregeln** und **Einstellungen**. Vokabeln lassen sich nach Kind und Lektion filtern, suchen und zwischen aktiven und archivierten Einträgen umschalten. Neue Wörter, Lektionen und Tabellenimport öffnen gezielte Formulare. Kinder, PIN, Google-Abgleich und Sicherung liegen unter **Einstellungen**. Ungespeicherte Wort-/Importentwürfe werden beim Verlassen ausdrücklich behandelt.
 
 ## Wörter aus einer Tabelle übernehmen
 
@@ -28,7 +34,7 @@ Nach der Auswahl eines Kinderprofils stehen drei Modi bereit:
 | Letzte Vokabeln | Die zuletzt angelegte zugeordnete Lektion |
 | Neue Vokabeln | Wörter, die dieses Kind noch nie geübt hat |
 
-Eine Runde enthält normalerweise zehn Antworten; zwanzig oder dreißig sind ebenfalls möglich. Das deutsche Wort lesen, die englische Übersetzung eingeben und „Prüfen“ wählen. Enter funktioniert ebenfalls. Die Rückmeldung zeigt die richtige Schreibweise. Erst mit „Weiter“ oder einem weiteren bewussten Enter geht es zur nächsten Aufgabe.
+Die Auswahlkarten erklären jeden Modus und zeigen den aktuell verfügbaren Wortumfang. Eine leere Auswahl erklärt ihren Grund, etwa fehlende Zuordnung oder derzeit pausierte Wörter. Modus wählen, zehn, zwanzig oder dreißig Antworten auswählen und **Runde starten** drücken. Das deutsche Wort lesen, die englische Übersetzung eingeben und „Prüfen“ wählen. Enter funktioniert ebenfalls. Die Rückmeldung zeigt die richtige Schreibweise. Erst mit „Weiter“ oder einem weiteren bewussten Enter geht es zur nächsten Aufgabe.
 
 Leere Eingaben zählen nicht. Groß-/Kleinschreibung und Leerzeichen am Anfang oder Ende werden ignoriert. Echte Schreibfehler zählen als falsch. Es gibt keinen Zeitdruck und keine Punktabzüge.
 
@@ -68,7 +74,7 @@ Die Erwachsenenansicht sperrt beim Verlassen, Neuladen und Wechsel in den Hinter
 
 Für beide Geräte denselben von Erwachsenen eingerichteten Google-Zugang verwenden. Familien müssen im normalen Ablauf keine technische Client-ID eintragen:
 
-1. In der Erwachsenenansicht **Abgleich** und danach **Mit Google verbinden** wählen.
+1. In der Erwachsenenansicht **Einstellungen** öffnen, dann im Abschnitt **Abgleich** auf **Mit Google verbinden** klicken.
 2. Auf dem ersten Gerät **Neuen Lernbereich anlegen** wählen.
 3. Auf dem zweiten Gerät **Vorhandenen Lernbereich verwenden**, den richtigen Eintrag prüfen und bewusst bestätigen.
 

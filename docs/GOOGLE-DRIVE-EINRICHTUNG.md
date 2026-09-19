@@ -2,21 +2,21 @@
 
 Stand: 19.09.2026. **Einrichtung für die lokale Probe erfolgt: Projekt, Web-OAuth-Client, Testnutzer und echter Drive-Abgleich sind durch Nutzerangaben/Screenshots bestätigt.** Die öffentliche Web-Client-ID ist jetzt in der Produkt-App vorbereitet. Die Produkt-App ist mit simulierter Google-Grenze automatisiert geprüft. Realer Produktabgleich über zwei physische Geräte und die Apple-Geräteabnahme bleiben offen. Die genauen Google-Einstellungsnamen können sich ändern; maßgeblich sind die verlinkten offiziellen Anleitungen.
 
-Der Gesamtentwurf ist bestätigt. Konkrete Start-/Registrierungsschritte und der Prüfablauf des ersten Entwicklungspakets stehen in [GOOGLE-DRIVE-PROBE.md](GOOGLE-DRIVE-PROBE.md). Entwicklungsursprung der Probe: `http://localhost:4173`. Eine tatsächliche Registrierung ist damit nicht behauptet.
+Die historischen Start-/Registrierungsschritte und der Prüfablauf der bestätigten lokalen Probe stehen in [GOOGLE-DRIVE-PROBE.md](GOOGLE-DRIVE-PROBE.md). Ihr Entwicklungsursprung ist `http://localhost:4173`. Die damalige Registrierung ist bestätigt; daraus folgt keine bereits registrierte oder bereitgestellte öffentliche HTTPS-Adresse für die Produkt-App.
 
 ## Ziel und Voraussetzungen
 
 - Ein gemeinsames Google-Konto wird durch die Eltern auf beiden Geräten für den Trainer verbunden.
-- Die Anwendung wird als HTTPS-Web-App bereitgestellt; ein lokaler Entwicklungsserver ist zusätzlich möglich.
+- Für den späteren Gerätebetrieb wird eine HTTPS-Web-App benötigt; derzeit ist ein lokaler Entwicklungsserver vorhanden, keine veröffentlichte Trainer-URL.
 - Dieselbe OAuth-Anwendung und derselbe Trainerdatensatz werden auf beiden Geräten verwendet.
 - Die vorhandene Drive-Kapazität reicht für die vorgesehenen kleinen Textdaten. Kein zusätzlicher kostenpflichtiger Dienst ist beauftragt.
-- Die konkrete technische Probe wird vor der Einrichtung beschrieben; der Nutzer nimmt die notwendigen Anmeldungen und Kontobestätigungen selbst vor.
+- Die notwendige Anmeldung und Kontobestätigungen nimmt der Nutzer selbst vor; die technische Probe ist bereits dokumentiert.
 
 ## Einrichtung durch Familien
 
 Familien benötigen kein eigenes Google-Cloud-Projekt und tragen im normalen Ablauf keine Client-ID ein.
 
-1. In der Erwachsenenansicht **Abgleich** öffnen und **Mit Google verbinden** wählen.
+1. In der Erwachsenenansicht **Einstellungen** öffnen und im Abschnitt **Abgleich** auf **Mit Google verbinden** klicken.
 2. Das gemeinsame Google-Konto der Familie bewusst bestätigen.
 3. Auf dem ersten Gerät **Neuen Lernbereich anlegen** wählen. Auf weiteren Geräten **Vorhandenen Lernbereich verwenden**, den passenden Eintrag prüfen und erst danach bestätigen.
 
@@ -42,7 +42,7 @@ Quellen: [Zugangsdaten erstellen](https://developers.google.com/workspace/guides
 
 ## Berechtigungen und Trainerdateien
 
-Vorgeschlagen ist `https://www.googleapis.com/auth/drive.file`. Dieser Zugriff ist auf von der App erstellte oder vom Nutzer ausdrücklich mit der App geöffnete/ausgewählte Dateien begrenzt. Eine Ordnerauswahl erteilt keinen pauschalen Vollzugriff auf alle beliebigen Bestandsdateien darin.
+Implementiert ist `https://www.googleapis.com/auth/drive.file`. Dieser Zugriff ist auf von der App erstellte oder vom Nutzer ausdrücklich mit der App geöffnete/ausgewählte Dateien begrenzt. Eine Ordnerauswahl erteilt keinen pauschalen Vollzugriff auf alle beliebigen Bestandsdateien darin.
 
 Die technische Probe verwendet einen sichtbaren, ausdrücklich markierten Probeordner mit unveränderlichen synthetischen JSON-Dateien. Das begrenzte Schema steht in [PROBE-DATENFORMAT.md](PROBE-DATENFORMAT.md). Das Produkt verwendet sein getrenntes [Produkt-Datenformat](PRODUKT-DATENFORMAT.md). Wiederfinden und Abgleich des Produktbestands auf einem zweiten realen Gerät müssen noch geprüft werden. Der versteckte `appDataFolder` darf nicht mit einem normalen Drive-Ordner verwechselt werden.
 
@@ -82,6 +82,10 @@ In einem Prüfbericht ohne Zugangsdaten dokumentieren:
 - Ergebnis auf dem zweiten Gerät erscheint nach dem Abgleich auf dem ersten.
 - Offlineantworten, Netzwechsel, abgebrochene Anmeldung und abgelaufener Zugriff verursachen keinen Verlust.
 - Wiederholtes Hochladen zählt keine Antwort doppelt.
-- Parallel bearbeitete Inhalte und paralleles Üben werden nach der noch festzulegenden Konfliktregel erhalten.
+- Parallel bearbeitete Inhalte bleiben nach dem implementierten unveränderlichen Ereignisprotokoll erhalten; widersprüchliche Wortfassungen werden bewusst ausgewählt, Antwortslots nur einmal gewertet.
 
 Die vollständige Matrix steht in [QUALITAET-UND-ABNAHME.md](QUALITAET-UND-ABNAHME.md).
+
+## Gemeinsame App-Version
+
+Alle Geräte sollten den aktuellen v2-fähigen Trainer verwenden. Die neue App liest unveränderte v1-Historie; neue Regel- und Wiederaktivierungsereignisse erfordern v2. Ein altes offline gebliebenes Programm lässt sich nicht aus der Ferne sperren und kann weiterhin alte Antworten hochladen. Die neue App erhält sie einmalig, ohne dadurch eine zurückgesetzte Wiederholungsserie wiederherzustellen. Alte Reader lehnen das neue Format ab; es wird keine vollständige Vorwärtskompatibilität behauptet. Der [Datenvertrag](PRODUKT-DATENFORMAT.md) und die [B1-Prüfung](reports/2026-09-19-b1-datenuebergang.md) beschreiben Migration, Sicherung und Versionsbarriere.

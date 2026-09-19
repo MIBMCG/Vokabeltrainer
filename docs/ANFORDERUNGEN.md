@@ -10,9 +10,22 @@ Der Nutzer hat den gesamten schriftlichen Überarbeitungsentwurf mit „Ja, Frei
 
 **Bestätigte Lernregelentscheidung vom 19.09.2026:** Wiederholungsregeln sind je Kind getrennt einstellbar, mit gemeinsamen Standardwerten als Ausgangspunkt. Änderungen an einem Kind verändern nicht die Regeln anderer Profile. Die Freigabe umfasst die Zahlenbereiche, Gültigkeit ab nächster neuer Runde und manuelle Wiederaktivierung des schriftlichen Entwurfs. Bestehende Runden behalten ihre Regeln; bisher erworbene Punkte und Antworten bleiben erhalten.
 
+### Umsetzung und Nachweis getrennt von der Entscheidung
+
+Die Einzelpakete A1–C1 sind unabhängig geprüft. C2 ist implementiert und vollständig automatisiert geprüft; die unabhängige Gesamtprüfung steht noch aus. [Aktuelle Gesamtbelege](reports/2026-09-19-ueberarbeitung.md). Physische Apple-Abnahme, reale Produkt-Synchronisation auf zwei Geräten und öffentliche Bereitstellung bleiben offen.
+
+| Anforderung | Implementierung und Einzelbeleg |
+| --- | --- |
+| U01/U02: Konzeptnähe und Rasterbilder | [Illustrationen und Bildableitung](reports/2026-09-19-illustrationen.md), [Start-/Reiseansichten](reports/2026-09-19-a4-verwaltung.md) |
+| U03: Vorbereiteter Google-Zugang | [Einrichtung und Erhalt bestehender Bindungen](reports/2026-09-19-a3-einrichtung.md) |
+| U04: Erklärte Modi | [Gemeinsame Vorschau und einzelner Start](reports/2026-09-19-a2-rundenstart.md) |
+| U05: Regeln je Kind | [Migration](reports/2026-09-19-b1-datenuebergang.md), [Planung](reports/2026-09-19-b2-lernplanung.md), [Elternregler](reports/2026-09-19-b3-elternregler.md) |
+| U06: Einfache Wortverwaltung | [Vier Bereiche, Suche, Import und Entwurfsschutz](reports/2026-09-19-a4-verwaltung.md) |
+| U07: Grafischer Lernstand | [Statistik und erhaltene Wortdetails](reports/2026-09-19-c1-statistik.md) |
+
 Änderung der Prüfungsreihenfolge am 17.09.2026: Der Nutzer beauftragt ausdrücklich, zuerst die vollständige App gemäß bestätigtem Gesamtentwurf umzusetzen und erst danach beim Freund auf iPhone/iPad zu testen. Die bisherige Geräteprüfung vor umfangreicher Lernoberfläche ist damit als Entwicklungssperre aufgehoben. Reale Geräteabnahme bleibt offen und darf nicht als bestanden gelten. Bereits bestätigte manuelle Google-/Drive-Tests in zwei Browsern gelten weiter. Keine neue pauschale Startfreigabe verlangen; Hosting/Veröffentlichung und Kostenmodell werden dadurch nicht automatisch geändert.
 
-Stand: 16.09.2026. Dieses Dokument ist die zentrale Quelle für den Produktumfang. „Bestätigt“ bedeutet eine ausdrückliche Nutzerangabe oder Auswahl im bisherigen Gespräch. Vorschläge müssen als solche erhalten bleiben, bis sie abgestimmt wurden.
+Grundentscheidungen vom 16.09.2026, ergänzt bis 19.09.2026. R08/R19 gelten als Standardwerte, soweit keine bestätigte Regeländerung je Kind vorliegt. Dieses Dokument ist die zentrale Quelle für den Produktumfang. „Bestätigt“ bedeutet eine ausdrückliche Nutzerangabe oder Auswahl im bisherigen Gespräch. Vorschläge müssen als solche erhalten bleiben, bis sie abgestimmt wurden.
 
 ## Bestätigte Anforderungen
 

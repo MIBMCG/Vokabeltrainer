@@ -27,6 +27,11 @@ Keine E-Mail-Adressen, echte PIN, Tokens oder persönlichen Lernstände in diese
 - [ ] Profil wechseln und Runde fortsetzen; Fortschritte bleiben getrennt.
 - [ ] Inselreise und Avatar bedienen; gesperrte Ausstattung ist erklärt, freigeschaltete Auswahl bleibt erhalten.
 - [ ] Hoch-/Querformat, größere Schrift und reduzierte Bewegung prüfen; alles bleibt lesbar und erreichbar.
+- [ ] Rasterbilder nach Hoch-/Querformatwechsel und offline prüfen; Avatarteile passen bei allen Haut-/Kleidungsfarben zusammen, auch auf hochauflösendem Display.
+- [ ] Vier Elternbereiche bedienen: Wörter suchen/filtern, Importvorschau korrigieren und ungespeicherte Entwürfe bewusst verwerfen oder erhalten.
+- [ ] Regeln für zwei Kinder unterschiedlich speichern. Vorschau verändert nichts; eine laufende Runde behält ihre vorherigen Regeln.
+- [ ] Ausgenommenes Wort mit „Wieder üben“ aufnehmen; Antworten, Punkte und Abzeichen bleiben erhalten.
+- [ ] Lernstand zwischen Kind und 14/30 Tagen wechseln; Diagramm, Zahlen und Tabellen stimmen überein, jüngste Tage und Wortdetails sind erreichbar.
 
 ## Google und zwei echte Geräte
 
@@ -41,6 +46,8 @@ Auf beiden Geräten dieselbe öffentliche App-Konfiguration und denselben einger
 - [ ] Google-Verbindung beenden und erneut verbinden. Lokale Antworten bleiben erhalten.
 - [ ] Abgebrochene oder verweigerte Anmeldung zeigt eine verständliche Meldung; Offlineüben bleibt möglich.
 - [ ] Nach Ablauf des Zugriffs wird eine erneute Verbindung angeboten. Tatsächliche Häufigkeit und Bedienkomfort notieren.
+- [ ] Vorbereitete App-Konfiguration auf beiden Geräten ohne manuelle Client-ID nutzen. Beide Geräte verwenden den aktuellen v2-fähigen Trainer.
+- [ ] Auf A Regeln ändern oder ein Wort wieder aufnehmen, während auf B eine Runde offen ist. B beendet sie unter ihren alten Regeln; nach wiederholtem Abgleich stimmen Punkte und neue Wiederholungsplanung überein.
 
 ## Offline und Home-Bildschirm
 
@@ -54,6 +61,7 @@ Jeden Schritt getrennt in Safari und in der zum Home-Bildschirm hinzugefügten A
 - [ ] App in den Hintergrund legen; bei Rückkehr ist die Erwachsenenansicht gesperrt.
 - [ ] Zweiten Tab derselben App öffnen; der Speicherschutz führt nicht zu konkurrierenden Schreibvorgängen und erklärt den Zustand.
 - [ ] Eine Programmaktualisierung überschreibt keine gerade eingegebene Antwort; angebotene Pause/Übernahme funktioniert.
+- [ ] Update auch bei offener Rückmeldung, einem Elternentwurf und gesperrter PIN-Ansicht prüfen; keine Eingaben verlieren.
 
 ## Sicherung und Wiederherstellung
 

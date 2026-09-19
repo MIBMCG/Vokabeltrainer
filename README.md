@@ -2,11 +2,11 @@
 
 Ein Deutsch-Englisch-Vokabeltrainer für Kinder von **10 bis 13 Jahren, Klasse 4 bis 7**. Die Web-App ist für Smartphones, Tablets und Computer gestaltet; **iPhone und iPad haben Vorrang**.
 
-**Stand: 18. September 2026 — Version 1 ist implementiert, automatisiert geprüft und unabhängig nachgeprüft.** Aktueller Produktcode `cc079cb`: 277/277 Node-Tests und 15/15 Trainer-Browserprüfungen bestanden. Die [finale Nachprüfung](docs/reports/2026-09-18-vokabeltrainer-v1-final-fix-review.md) schließt alle vier Befunde der Gesamtprüfung. Lernkern, lokale Speicherung, Erwachsenenverwaltung, Übungsbildschirm, Inselreise, Avatar, unveränderlicher Drive-Abgleich, Sicherung/Wiederherstellung und Offline-PWA sind vorhanden. Der [v1-Abschlussbericht](docs/reports/2026-09-18-vokabeltrainer-v1.md) trennt automatisierte Nachweise von den noch offenen echten Prüfungen mit Produktdatenformat, zwei physischen Geräten, Safari/Home-Bildschirm und einer später autorisierten HTTPS-Bereitstellung. Es gibt weiterhin keine veröffentlichte Trainer-URL. Details stehen in [ARBEITSSTAND.md](ARBEITSSTAND.md).
+**Stand: 19. September 2026 — die Überarbeitung ist implementiert und vollständig automatisiert geprüft; die unabhängige Gesamtprüfung steht noch aus.** Rasterillustrationen, erklärte Moduswahl, vorbereiteter Google-Zugang, einfachere Wortverwaltung, Lernregeln je Kind und grafische Statistiken ergänzen die Offline-App. Frische Abschlussläufe: 343/343 Kernprüfungen, 18/18 Trainer- und 15/15 Überarbeitungs-Browserprüfungen bestanden. [Abschlussnachweise und echte Ansichten](docs/reports/2026-09-19-ueberarbeitung.md). Aktuelle Belege und Grenzen stehen in [ARBEITSSTAND.md](ARBEITSSTAND.md) und der [Übergabe](docs/handoffs/2026-09-19-ueberarbeitung.md). Reales Produkt-Google auf zwei physischen Geräten, Safari/Home-Bildschirm auf iPhone/iPad und HTTPS-Bereitstellung bleiben offen. Es gibt noch keine veröffentlichte Trainer-URL.
 
-Eine [Gestaltungsvorschau mit Startseite, Übung und Inselreise](docs/design/2026-09-17-insel-konzept.md) zeigt die vorgeschlagene Optik. Das Bild ist kein Screenshot einer fertigen App.
+Das [bestätigte Inselkonzept](docs/design/2026-09-17-insel-konzept.md) bleibt als Gestaltungsvorlage erhalten. Tatsächliche neue App-Ansichten zeigen den [Rundenstart und die Reise](docs/reports/2026-09-19-a4-verwaltung.md), die [Lernregeln](docs/reports/2026-09-19-b3-elternregler.md) und die [Statistik](docs/reports/2026-09-19-c1-statistik.md).
 
-Die inzwischen implementierte Inselreise und den Avatar zeigen die [tatsächlichen Browseransichten vom 18.09.2026](docs/reports/2026-09-18-inselreise-avatar.md).
+Der frühere [v1-Abschluss](docs/reports/2026-09-18-vokabeltrainer-v1.md) dokumentiert den Ausgangsstand `cc079cb`, nicht die aktuelle Überarbeitung.
 
 ## Lernablauf
 
@@ -14,7 +14,7 @@ Die inzwischen implementierte Inselreise und den Avatar zeigen die [tatsächlich
 2. Das Kind schreibt die englische Übersetzung.
 3. Die App zeigt bei einer richtigen Antwort ✅, bei einer falschen Antwort ❌ und die richtige Schreibweise.
 4. Mit „Weiter“ folgt das nächste Wort.
-5. Nach einem Fehler wird das Wort nach zwei anderen Aufgaben erneut abgefragt. Endet die Runde vorher, bleibt die Wiederholung für später vorgemerkt. Nach drei richtigen Antworten hintereinander pausiert ein Wort für den Rest der laufenden Runde.
+5. Nach einem Fehler wird das Wort nach zwei anderen Aufgaben erneut abgefragt. Endet die Runde vorher, bleibt die Wiederholung für später vorgemerkt. Mit den Standardregeln pausiert ein Wort nach drei richtigen Antworten hintereinander für den Rest der laufenden Runde; Eltern können diese Schwelle je Kind anpassen.
 
 Die Auswahlmodi sind „Alle Vokabeln“, „Letzte Vokabeln“ (zuletzt hinzugefügte Lektion) und „Neue Vokabeln“ (vom ausgewählten Kind noch nie geübte Wörter). Die erste Version verbindet Lernreise/Landkarte, Punkte/Level/Abzeichen und einen einfachen gestaltbaren Avatar mit wenigen Farben und Zubehörteilen. Thema ist ein Insel-Abenteuer mit Wäldern, Stränden und Bergen. Drei Inseln, 200 Punkte je Level sowie konkrete Abzeichen und Zubehör sind umgesetzt.
 
@@ -30,7 +30,7 @@ Ist vorher keine passende Aufgabe mehr verfügbar, kann das Kind die Runde beend
 
 Die Serie richtiger Antworten wird je Wort und Kind über mehrere Runden gespeichert. Ein Fehler bei diesem Wort setzt dessen Serie auf null; Antworten auf andere Wörter verändern sie nicht.
 
-Nach der Dreierserie ist die erste Wiederholung frühestens am nächsten Tag vorgesehen. Bei weiteren richtigen Antworten folgen Abstände von 3, 7 und 14 Tagen, danach jeweils 14 Tage. Bei einem Fehler wird das Wort wieder häufiger geübt.
+Standardmäßig ist nach der Dreierserie die erste Wiederholung frühestens am nächsten Tag vorgesehen. Weitere Abstände sind 3, 7 und 14 Tage, danach jeweils 14 Tage. Unter „Für Erwachsene → Lernregeln“ lassen sich je Kind die Schwelle, die vier Abstände und ein optionaler vollständiger Ausschluss einstellen. Änderungen gelten für die nächste neue Runde; eine laufende Runde behält ihre Regeln. „Wieder üben“ nimmt ausgeschlossene Wörter erneut auf, ohne Antworten oder Punkte zu löschen.
 
 Bei der Bewertung werden Groß-/Kleinschreibung und äußere Leerzeichen ignoriert. Echte Buchstabenfehler bleiben falsch; die korrekte Schreibweise wird angezeigt.
 
@@ -38,7 +38,7 @@ Eltern oder Lehrkräfte können pro Vokabel mehrere gültige Antworten eintragen
 
 Neue Wörter lassen sich einzeln eingeben oder als Tabellenzeilen mit den Spalten Deutsch und Englisch kopieren und einfügen, beispielsweise aus Excel. Sie werden einer vorhandenen oder neu angelegten Lektion zugeordnet. Ein direkter Excel-/CSV-Dateiimport ist für die erste Version nicht vorgesehen.
 
-Erwachsene ordnen jede Lektion einem oder mehreren Kindern zu. Alle drei Übungsmodi berücksichtigen nur die dem jeweiligen Kind zugeordneten Lektionen. Auch beim Fortsetzen mit zusätzlichem Wortschatz gilt diese Zuordnung. Lernstände, Punkte und Avatar bleiben pro Kind getrennt.
+Erwachsene ordnen jede Lektion einem oder mehreren Kindern zu. Alle drei Übungsmodi berücksichtigen nur die dem jeweiligen Kind zugeordneten Lektionen. Auch beim Fortsetzen mit zusätzlichem Wortschatz gilt diese Zuordnung. Lernstände, Punkte und Avatar bleiben pro Kind getrennt. Die vier Elternbereiche sind „Vokabeln“, „Lernstand“, „Lernregeln“ und „Einstellungen“. Der Lernstand zeigt Kennzahlen und Tagesbalken für 14 oder 30 Tage sowie die aktuelle Wortverteilung; Tabellen und einzelne Wortdetails ergänzen die Diagramme.
 
 Im Erwachsenenbereich ist eine vollständige Sicherung als JSON-Datei umgesetzt: Wortschatz, Lektionen, Zuordnungen, Profile, Lernstände und Belohnungsfortschritt lassen sich herunterladen und bei Bedarf wiederherstellen. Vor der Wiederherstellung werden eine Vorschau und Bestätigung angezeigt.
 
@@ -60,6 +60,8 @@ Die vollständige Unterscheidung zwischen Nutzerentscheidungen, Vorschlägen und
 ## Was „automatisch“ bedeutet
 
 Die App führt bei geöffneter App, vorhandener Internetverbindung und gültigem Google-Zugriff einen selbstständigen Datenabgleich aus. Eine lokale Datei aus der iOS-Dateien-App auszuwählen ersetzt diese Verbindung nicht.
+
+Der öffentliche Google-Zugang ist zentral in der App vorbereitet. Familien melden sich bei Google an und wählen ihren vorhandenen Trainerbestand; einen neuen Bestand legen sie bewusst an. Eine eigene Client-ID oder Cloud-Console-Einrichtung ist im normalen Familienablauf nicht nötig. Eine bereits gespeicherte Konfiguration und Bestandsbindung werden erhalten. Betreiberaufgaben für eine spätere öffentliche App-Adresse stehen getrennt in der [Google-Anleitung](docs/GOOGLE-DRIVE-EINRICHTUNG.md).
 
 Erneutes Verbinden mit Google bei Bedarf ist grundsätzlich akzeptiert. Währenddessen soll mit bereits gespeicherten Vokabeln offline weitergeübt werden können; die Ergebnisse werden lokal erhalten und nach erneuter Verbindung automatisch abgeglichen.
 
@@ -88,7 +90,7 @@ Weitere Dokumente:
 - [Qualität und Abnahme](docs/QUALITAET-UND-ABNAHME.md)
 - [Technische Quellen](docs/QUELLEN.md)
 - [Datenformat der technischen Probe](docs/PROBE-DATENFORMAT.md)
-- [Aktuelle v1-Übergabe](docs/handoffs/2026-09-18-vokabeltrainer-v1.md)
+- [Aktuelle Übergabe](docs/handoffs/2026-09-19-ueberarbeitung.md)
 - [Prüfbericht der Verbindungsprobe](docs/reports/2026-09-17-google-drive-probe.md)
 - [Prüfbericht der Dokumentation](docs/reports/2026-09-16-dokumentation.md)
 - [Prüfbericht zum Gesamtentwurf](docs/reports/2026-09-16-gesamtentwurf.md)
@@ -111,7 +113,9 @@ git switch codex/vokabeltrainer-v1
 npm test
 ```
 
-Die Node-Tests benötigen weder npm-Zusatzpakete noch ein Google-Konto oder Internetzugriff. Danach startet `npm start` den lokalen Server auf `http://localhost:4173`: die technische Probe liegt unter `/`, der Trainer unter `/trainer/`. Ein Buildschritt oder Laufzeitpakete sind nicht nötig. Anschließend [START-HIER.md](START-HIER.md) und die [aktuelle Übergabe](docs/handoffs/2026-09-18-vokabeltrainer-v1.md) lesen. Die zusätzliche Browserprüfung und ihre einmalige Playwright-Einrichtung sind in [tests/browser/README.md](tests/browser/README.md) beschrieben.
+Die Node-Tests benötigen weder npm-Zusatzpakete noch ein Google-Konto oder Internetzugriff. Danach startet `npm start` den lokalen Server auf `http://localhost:4173`: die technische Probe liegt unter `/`, der Trainer unter `/trainer/`. Ein Buildschritt oder Laufzeitpakete sind nicht nötig. Anschließend [START-HIER.md](START-HIER.md) und die [aktuelle Übergabe](docs/handoffs/2026-09-19-ueberarbeitung.md) lesen. Die zusätzliche Browserprüfung und ihre einmalige Playwright-Einrichtung sind in [tests/browser/README.md](tests/browser/README.md) beschrieben.
+
+Vorhandene v1-Lernstände werden geprüft, separat im bisherigen Format gesichert und atomar auf den lokalen v2-Stand übernommen. Historische Ereignisse und bereits vorbereitete Uploads behalten ihren Inhalt und ihre Prüfsummen. Danach auf allen Geräten die aktuelle App verwenden: alte Programme verstehen neue Lernregeln nicht. Git überträgt Programmdateien und Dokumentation, keine Browserdaten oder Google-Anmeldungen.
 
 ## Bereitstellung und Kosten
 

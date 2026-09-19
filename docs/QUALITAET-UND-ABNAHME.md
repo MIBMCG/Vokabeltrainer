@@ -1,6 +1,6 @@
 # Qualität und Abnahme
 
-Stand: 18.09.2026. **Prüfmatrix für Version 1.** Der Task-13-Ausgangscode bestand 277 Node-Tests sowie elf Trainer-Browsertests; die getrennte Drive-Probe bestand zwölf Browser-Szenarien. Nach Navigation und finaler Integrationskorrektur bestand Produktcode `cc079cb` 277/277 Node- und 15/15 Trainer-Browsertests. Die [unabhängige finale Nachprüfung](reports/2026-09-18-vokabeltrainer-v1-final-fix-review.md) schließt alle vier Gesamtprüfungsbefunde. Details und Anforderungszuordnung stehen im [Abschlussbericht](reports/2026-09-18-vokabeltrainer-v1.md). Reale Produkt-Google-, Zwei-Geräte- und iOS-/iPadOS-Abnahme fehlen weiterhin.
+Stand: 19.09.2026. **Prüfmatrix für die überarbeitete App.** Frische vollständige C2-Läufe: 343/343 Node-, 18/18 Trainer- und 15/15 Überarbeitungs-Browserprüfungen bestanden. Die unabhängige Gesamtprüfung steht noch aus; [aktuelle Gesamtbelege](reports/2026-09-19-ueberarbeitung.md). Der frühere [v1-Abschluss](reports/2026-09-18-vokabeltrainer-v1.md) mit Produktcode `cc079cb` (277/277 Node, 15/15 Browser) bleibt historische Grundlage. Reale Produkt-Google-, Zwei-Geräte- und iOS-/iPadOS-Abnahme fehlen weiterhin.
 
 ## Nachweisstufen
 
@@ -14,7 +14,7 @@ Eine Stufe ersetzt nicht automatisch die nächste. Für jeden Bericht Datum, Com
 
 ## Prüfmatrix
 
-Die folgenden Bereiche sind automatisiert mit synthetischen Daten geprüft, soweit der [Abschlussbericht](reports/2026-09-18-vokabeltrainer-v1.md) sie belegt. Fälle mit realem Google Drive, zwei physischen Geräten oder Apple-Hardware bleiben offen; ein automatisierter Browsernachweis ersetzt diese Abnahme nicht.
+Die folgenden Bereiche sind automatisiert mit synthetischen Daten geprüft, soweit die im [Arbeitsstand](../ARBEITSSTAND.md) verlinkten Berichte sie belegen. Fälle mit realem Google Drive, zwei physischen Geräten oder Apple-Hardware bleiben offen; ein automatisierter Browsernachweis ersetzt diese Abnahme nicht.
 
 | Bereich | Relevante Fälle | Bezug |
 | --- | --- | --- |
@@ -37,6 +37,13 @@ Die folgenden Bereiche sind automatisiert mit synthetischen Daten geprüft, sowe
 | Gamification | Belohnungen nur nach festgelegten Regeln, keine Verdopplung beim erneuten Laden/Sync | R11, Q6 |
 | Updates | Neue App-Version während einer Übung; keine verlorenen Ergebnisse oder gemischten Datenformate | PWA-Entwurf |
 | Sicherung | Vollständige JSON-Sicherung; Format-/Versionsprüfung, Vorschau und Bestätigung; automatische separate Sicherheitskopie vor Rücksetzung, Übernahme auf verbundenen Geräten und Rückweg zum vorherigen Stand; keine doppelte Wertung | R30/R33, Q11b/Q14 |
+| Rasterbilder | Alle Varianten, ausgerichtete Avatarteile, Offlinegrundlage, große Bilder auf Abruf, einmaliger Fallback und fremde Caches | U01/U02 |
+| Einfache Einrichtung | Vorbereitete ID, bewusste Bestandswahl, Alt-ID/Bindung erhalten, Abbruch und Wiederverbinden | U03 |
+| Moduserklärung | Gemeinsame Verfügbarkeitszahlen, leere Zustände, eine Startaktion, Wiederholen nach Speicherfehler | U04 |
+| Regeln je Kind | Entwurf/Originalkopf erhalten, reine Vorschau, eingefrorene Runden, Wiederaktivierung ohne Punktverlust | U05 |
+| Versionsübergang | Echter v1-Reader, unveränderte Hashes/Uploadkörper, atomare Sicherung/Migration, Fehler erhält Original, frühe Versionsbarriere | U05/B1 |
+| Verwaltung | Suche mit Fokus, vier Bereiche, Importziel und korrigierbarer Entwurf, ursprüngliche Bearbeitungsbasis erhalten | U06 |
+| Statistiken | Effektive Antwortslots, fachlicher Lerntag, 14/30 Tage, getrennte Gruppen, Nullwerte, historische Antworten, Tabellen/Wortdetails | U07 |
 
 Die zusätzlichen Abnahmefälle aus Abschnitt 10 des [Gesamtentwurfs](superpowers/specs/2026-09-16-vokabeltrainer-design.md) sind Bestandteil der automatisierten Matrix. Ausgeschöpfte Aufgabenmenge, Lernrevisionen, konkurrierende Wiederherstellungen und verspätete Offlineereignisse sind synthetisch geprüft; ihre geräteübergreifende Realabnahme bleibt offen.
 
@@ -72,4 +79,4 @@ Für jeden Abschlussstand sind zu prüfen:
 - Nur beabsichtigte Dateien werden committed; Git-Whitespaceprüfung ist sauber.
 - Nach einem autorisierten Push stimmt der dokumentierte Remote-Branch mit dem lokalen Commit überein; eine Integration nach `main` ist separat zu beauftragen.
 
-Die aktuellen Ergebnisse stehen im [v1-Abschlussbericht](reports/2026-09-18-vokabeltrainer-v1.md). Historische Grundlagen stehen im [ursprünglichen Dokumentationsbericht](reports/2026-09-16-dokumentation.md), im [Prüfbericht zum Gesamtentwurf](reports/2026-09-16-gesamtentwurf.md) und im [Prüfbericht der lokalen Verbindungsprobe](reports/2026-09-17-google-drive-probe.md).
+Die aktuellen Ergebnisse stehen im [Gesamtbericht](reports/2026-09-19-ueberarbeitung.md). Der [v1-Abschlussbericht](reports/2026-09-18-vokabeltrainer-v1.md) ist die historische Grundlage. Historische Grundlagen stehen im [ursprünglichen Dokumentationsbericht](reports/2026-09-16-dokumentation.md), im [Prüfbericht zum Gesamtentwurf](reports/2026-09-16-gesamtentwurf.md) und im [Prüfbericht der lokalen Verbindungsprobe](reports/2026-09-17-google-drive-probe.md).
