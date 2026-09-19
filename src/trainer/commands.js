@@ -9,6 +9,7 @@ import {
   completeRound,
   expandRound,
   nextTask,
+  previewModes,
   startRound,
 } from './learning/rounds.js';
 import {canonical, digest} from './model/canonical.js';
@@ -488,6 +489,13 @@ export async function createCommands({store, now, id, deviceId, onChange}) {
       if (typeof listener !== 'function') invalid('Der Änderungsbeobachter ist ungültig.');
       listeners.add(listener);
       return () => listeners.delete(listener);
+    },
+
+    practiceChoices({profileId}) {
+      const current = requireState();
+      const projection = project(current.ledger);
+      const day = calendarDay(now(), current.ledger.descriptor.timeZone);
+      return previewModes({projection, profileId, day});
     },
 
     roundAvailability({roundId}) {

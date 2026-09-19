@@ -60,7 +60,7 @@ function latestLessonId(projection, profileId) {
   return lessons.at(-1)?.id ?? null;
 }
 
-function activeWords(projection, profileId) {
+export function activeWords(projection, profileId) {
   if (!profileEntity(projection, profileId)) return [];
   const lessonIds = new Set(assignedLessons(projection, profileId).map(({id}) => id));
   return Object.values(projection.entities.words)
@@ -76,14 +76,18 @@ function profileWord(projection, profileId, wordId) {
   return own(words, wordId) ? words[wordId] : null;
 }
 
-function initialCandidates(mode, projection, profileId) {
+function modeWords(mode, projection, profileId) {
   const latestId = mode === 'latest' ? latestLessonId(projection, profileId) : null;
   return activeWords(projection, profileId)
     .filter((entity) => {
       if (mode === 'latest') return entity.value.lessonId === latestId;
       if (mode !== 'new') return true;
       return !(profileWord(projection, profileId, entity.id)?.everPracticed ?? false);
-    })
+    });
+}
+
+function initialCandidates(mode, projection, profileId) {
+  return modeWords(mode, projection, profileId)
     .map((entity) => ({wordId: entity.id, learningId: entity.value.learningId}));
 }
 
@@ -107,6 +111,48 @@ function isDue(state, day) {
   if (state.retryPending) return state.errorGap === 0;
   if (state.intervalIndex >= 0) return state.dueDay !== null && state.dueDay <= day;
   return true;
+}
+
+function scheduledWord(schedule, entity) {
+  if (schedule === null) return null;
+  return schedule.words?.get(entity.id)?.get(entity.value.learningId) ?? null;
+}
+
+function modeReason({mode, profile, conflict, totalCount, availableCount}) {
+  if (conflict) return 'conflict';
+  if (!profile) return 'no-profile';
+  if (totalCount === 0) return mode === 'new' ? 'no-new' : 'no-words';
+  if (availableCount === 0) return 'not-due';
+  return 'ready';
+}
+
+export function previewModes({projection, profileId, day, schedule = null}) {
+  const profile = profileEntity(projection, profileId);
+  const conflict = Boolean(projection?.epochConflict || schedule?.epochConflict);
+  return ['all', 'latest', 'new'].map((mode) => {
+    const words = profile === null ? [] : modeWords(mode, projection, profileId);
+    const availableCount = conflict ? 0 : words.filter((entity) => {
+      const state = schedule === null
+        ? profileWord(projection, profileId, entity.id)
+        : scheduledWord(schedule, entity);
+      return !state?.excluded && isDue(state, day);
+    }).length;
+    const lessonId = mode === 'latest' && profile !== null
+      ? latestLessonId(projection, profileId)
+      : null;
+    return {
+      mode,
+      totalCount: words.length,
+      availableCount,
+      latestLessonName: lessonId === null
+        ? null
+        : (projection.entities.lessons[lessonId]?.value?.name ?? null),
+      reason: modeReason({
+        mode, profile: profile !== null, conflict,
+        totalCount: words.length, availableCount,
+      }),
+    };
+  });
 }
 
 function candidateDetails(round, projection, day, candidate) {

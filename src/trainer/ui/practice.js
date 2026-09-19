@@ -7,7 +7,13 @@ const uiByRoot = new WeakMap();
 
 function uiState(root) {
   if (!uiByRoot.has(root)) {
-    uiByRoot.set(root, {busy: false, notice: '', invalidating: null});
+    uiByRoot.set(root, {
+      busy: false,
+      notice: '',
+      invalidating: null,
+      selectedMode: 'all',
+      size: 10,
+    });
   }
   return uiByRoot.get(root);
 }
@@ -103,17 +109,76 @@ function profileHeader(profileName, points, onNavigate) {
   ]);
 }
 
-function modeCard(label, description, onStart) {
-  return el('article', {attrs: {class: 'mode-card'}}, [
-    el('div', {}, [el('h2', {text: label}), el('p', {text: description, attrs: {class: 'hint'}})]),
-    button(label, onStart, {class: 'primary'}),
+const MODE_LABELS = {
+  all: 'Alle Vokabeln',
+  latest: 'Letzte Vokabeln',
+  new: 'Neue Vokabeln',
+};
+
+function modeDescription(choice) {
+  if (choice.mode === 'all') {
+    return 'Aus allen deinen Lektionen – wir wählen die Wörter, die jetzt zum Üben dran sind.';
+  }
+  if (choice.mode === 'latest') {
+    return choice.latestLessonName
+      ? `Aus deiner zuletzt hinzugefügten Lektion: ${choice.latestLessonName}.`
+      : 'Aus deiner zuletzt hinzugefügten Lektion.';
+  }
+  return 'Wörter, die du mit diesem Profil noch nicht beantwortet hast.';
+}
+
+function choiceStatus(choice, alternative) {
+  if (choice.reason === 'ready') {
+    return `${choice.availableCount} ${choice.availableCount === 1 ? 'Wort ist' : 'Wörter sind'} jetzt verfügbar.`;
+  }
+  if (choice.reason === 'no-profile') return 'Dieses Lernprofil ist nicht verfügbar.';
+  if (choice.reason === 'conflict') {
+    return 'Die Auswahl ist erst möglich, wenn der Datenkonflikt in der Erwachsenenansicht geklärt ist.';
+  }
+  if (choice.reason === 'no-new') {
+    return alternative
+      ? `Du hast alle zugeordneten Wörter schon mindestens einmal beantwortet. Wähle ${alternative}.`
+      : 'Du hast alle zugeordneten Wörter schon mindestens einmal beantwortet.';
+  }
+  if (choice.reason === 'not-due') {
+    return alternative
+      ? `Heute ist hier kein Wort fällig. Wähle ${alternative}.`
+      : 'Heute ist in dieser Auswahl kein Wort fällig.';
+  }
+  return alternative
+    ? `Hier sind keine aktiven Vokabeln verfügbar. Wähle ${alternative}.`
+    : 'Hier sind keine aktiven Vokabeln verfügbar.';
+}
+
+function modeCard(choice, selected, alternative, onSelect) {
+  const id = `practice-mode-${choice.mode}`;
+  const input = el('input', {attrs: {
+    id,
+    type: 'radio',
+    name: 'practice-mode',
+    value: choice.mode,
+    checked: selected,
+    disabled: choice.availableCount === 0,
+  }});
+  input.addEventListener('change', () => onSelect(choice.mode));
+  return el('label', {attrs: {
+    class: 'mode-card',
+    for: id,
+    'data-mode': choice.mode,
+    'data-available': choice.availableCount > 0,
+  }}, [
+    input,
+    el('span', {attrs: {class: 'mode-card-copy'}}, [
+      el('strong', {text: MODE_LABELS[choice.mode], attrs: {class: 'mode-title'}}),
+      el('span', {text: modeDescription(choice), attrs: {class: 'hint'}}),
+      el('span', {text: choiceStatus(choice, alternative), attrs: {class: 'mode-status'}}),
+    ]),
   ]);
 }
 
 function renderLanding({root, state, commands, profileId, onNavigate, projection, round, ui}) {
   const profile = projection.entities.profiles[profileId];
   const progress = projection.profiles[profileId];
-  let size = 10;
   const section = el('section', {attrs: {class: 'practice-home'}});
   section.append(
     profileHeader(profile.value.name, projection.profiles[profileId]?.points ?? 0, onNavigate),
@@ -150,21 +215,32 @@ function renderLanding({root, state, commands, profileId, onNavigate, projection
     root.replaceChildren(section);
     return;
   }
+  const choices = commands.practiceChoices({profileId});
+  const readyChoices = choices.filter(({availableCount}) => availableCount > 0);
+  if (!choices.some(({mode, availableCount}) => mode === ui.selectedMode && availableCount > 0)) {
+    ui.selectedMode = readyChoices[0]?.mode ?? ui.selectedMode;
+  }
   const sizes = el('fieldset', {attrs: {class: 'round-sizes'}}, [el('legend', {text: 'Antworten pro Runde'})]);
   for (const value of [10, 20, 30]) {
     const input = el('input', {attrs: {
       type: 'radio', name: 'round-size', id: `round-size-${value}`, value,
-      checked: value === 10,
+      checked: value === ui.size,
     }});
-    input.addEventListener('change', () => { size = value; });
+    input.addEventListener('change', () => {
+      ui.size = value;
+      updateSummary();
+    });
     sizes.append(el('label', {text: `${value} Antworten`}, [input]));
   }
-  const start = async (mode) => {
+  const start = async () => {
     if (ui.busy) return;
+    const choice = choices.find(({mode}) => mode === ui.selectedMode);
+    if (!choice || choice.availableCount === 0) return;
     ui.busy = true;
+    startButton.disabled = true;
     onNavigate('practice-active', {render: false});
     try {
-      await commands.start({profileId, mode, size});
+      await commands.start({profileId, mode: ui.selectedMode, size: ui.size});
       ui.busy = false;
     } catch (error) {
       ui.busy = false;
@@ -172,15 +248,45 @@ function renderLanding({root, state, commands, profileId, onNavigate, projection
       root.append(message(error?.message || 'Die Runde konnte nicht gestartet werden.', 'error'));
     }
   };
-  section.append(
-    sizes,
-    el('div', {attrs: {class: 'mode-grid'}}, [
-      modeCard('Alle Vokabeln', 'Quer durch deinen Wortschatz.', () => start('all')),
-      modeCard('Letzte Vokabeln', 'Aus deiner zuletzt angelegten Lektion.', () => start('latest')),
-      modeCard('Neue Vokabeln', 'Wörter, die du noch nicht geübt hast.', () => start('new')),
-    ]),
-  );
+  const form = el('form', {attrs: {class: 'practice-start-form'}});
+  const modeGrid = el('fieldset', {attrs: {class: 'mode-grid'}}, [
+    el('legend', {text: 'Was möchtest du üben?'}),
+  ]);
+  const alternativeChoice = readyChoices[0] ?? null;
+  const updateSummary = () => {
+    const choice = choices.find(({mode}) => mode === ui.selectedMode);
+    const ready = choice?.availableCount > 0;
+    startButton.disabled = ui.busy || !ready;
+    if (!choice) {
+      summary.textContent = 'Wähle zuerst eine verfügbare Übungsart.';
+      return;
+    }
+    summary.textContent = ready
+      ? `${MODE_LABELS[choice.mode]}: ${ui.size} Antworten. Dafür stehen gerade ${choice.availableCount} verschiedene ${choice.availableCount === 1 ? 'Wort' : 'Wörter'} bereit. Wörter können wiederholt werden; Wiederholungen zählen als Antworten mit.`
+      : choiceStatus(choice, alternativeChoice ? `„${MODE_LABELS[alternativeChoice.mode]}“` : null);
+  };
+  const selectMode = (mode) => {
+    ui.selectedMode = mode;
+    updateSummary();
+  };
+  for (const choice of choices) {
+    const alternative = alternativeChoice?.mode === choice.mode
+      ? null
+      : (alternativeChoice ? `„${MODE_LABELS[alternativeChoice.mode]}“` : null);
+    modeGrid.append(modeCard(choice, choice.mode === ui.selectedMode, alternative, selectMode));
+  }
+  const summary = el('p', {attrs: {class: 'practice-choice-summary', 'aria-live': 'polite'}});
+  const startButton = el('button', {text: 'Runde starten', attrs: {
+    type: 'submit', class: 'primary practice-start', disabled: true,
+  }});
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    if (!startButton.disabled) void start();
+  });
+  form.append(modeGrid, sizes, summary, startButton);
+  section.append(form);
   root.replaceChildren(section);
+  updateSummary();
 }
 
 function renderFeedback({root, round, word, profile, points, commands, onNavigate, ui}) {

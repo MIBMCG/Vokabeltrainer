@@ -9,6 +9,11 @@ import {project as projectState} from '../../src/trainer/learning/progress.js';
 
 const resultsDirectory = resolve('test-results');
 
+async function startPracticeRound(root, mode = 'Alle Vokabeln') {
+  await root.getByRole('radio', {name: new RegExp(`^${mode}`, 'u')}).check();
+  await root.getByRole('button', {name: 'Runde starten', exact: true}).click();
+}
+
 // A separate synthetic store allows background commits while a real DOM editor
 // remains focused. All mutations still use the production Commands/Sync services.
 async function mountFixIntegration(page, initial) {
@@ -33,6 +38,7 @@ async function mountFixIntegration(page, initial) {
     document.querySelector('#app').hidden = true;
     const root = document.createElement('main');
     root.id = 'fix-app';
+    root.className = 'site-shell';
     document.body.append(root);
     let unlocked = true;
     const pinGate = {isUnlocked: () => unlocked, lock: () => { unlocked = false; }};
@@ -192,7 +198,7 @@ test('final I4 restore conflict preserves an open answer until adult resolution 
     await page.evaluate(() => window.__fix.shell.show('profiles'));
     const root = page.locator('#fix-app');
     await root.getByRole('button', {name: /^Ada/}).click();
-    await root.getByRole('button', {name: 'Alle Vokabeln', exact: true}).click();
+    await startPracticeRound(root);
     await root.locator('#answer').fill('unsubmitted answer');
     await page.evaluate(async () => {
       const {commands, productStateHash} = window.__fix;
@@ -587,12 +593,13 @@ test('trainer practice is resumable, single-submit safe and completes an exhaust
     await setupPractice(page);
     await addSecondProfile(page);
     await page.getByRole('button', {name: /^Ada/}).click();
-    assert.equal(await page.getByRole('button', {name: 'Alle Vokabeln', exact: true}).count(), 1);
-    assert.equal(await page.getByRole('button', {name: 'Letzte Vokabeln', exact: true}).count(), 1);
-    assert.equal(await page.getByRole('button', {name: 'Neue Vokabeln', exact: true}).count(), 1);
+    assert.equal(await page.getByRole('radio', {name: /^Alle Vokabeln/u}).count(), 1);
+    assert.equal(await page.getByRole('radio', {name: /^Letzte Vokabeln/u}).count(), 1);
+    assert.equal(await page.getByRole('radio', {name: /^Neue Vokabeln/u}).count(), 1);
+    assert.equal(await page.getByRole('button', {name: 'Runde starten', exact: true}).count(), 1);
     await page.getByLabel('20 Antworten').check();
     await page.getByLabel('10 Antworten').check();
-    await page.getByRole('button', {name: 'Alle Vokabeln', exact: true}).click();
+    await startPracticeRound(page);
 
     const answer = page.getByLabel('Englische Übersetzung');
     await answer.fill('   ');
@@ -665,12 +672,10 @@ test('trainer practice is resumable, single-submit safe and completes an exhaust
 
     const expectedPoints = ((expectedAnswers - 1) * 10) + 20;
     await page.getByRole('button', {name: 'Neue Runde', exact: true}).click();
-    await page.getByRole('button', {name: 'Neue Vokabeln', exact: true}).click();
-    await page.getByRole('heading', {name: 'Hier gibt es gerade keine Vokabeln'}).waitFor();
+    assert.equal(await page.getByRole('radio', {name: /^Neue Vokabeln/u}).isDisabled(), true);
+    await page.getByText(/schon mindestens einmal beantwortet/i).waitFor();
     assert.equal(await page.getByRole('heading', {name: 'Runde geschafft!'}).count(), 0);
-    await page.getByRole('button', {name: 'Andere Auswahl', exact: true}).click();
-    await page.getByRole('button', {name: 'Neue Runde', exact: true}).click();
-    await page.getByRole('button', {name: 'Alle Vokabeln', exact: true}).waitFor();
+    await page.getByRole('radio', {name: /^Alle Vokabeln/u}).waitFor();
     await page.getByRole('button', {name: 'Profil wechseln', exact: true}).click();
     await page.locator('#adult-entry').click();
     await page.locator('#adult-pin').fill('1234');
@@ -685,7 +690,7 @@ test('trainer practice is resumable, single-submit safe and completes an exhaust
     await page.getByRole('button', {name: 'Zur Profilauswahl', exact: true}).click();
     await page.getByRole('button', {name: /^Ada/}).click();
     assert.match(await page.locator('.practice-points').textContent(), new RegExp(`${expectedPoints} Punkte`));
-    await page.getByRole('button', {name: 'Alle Vokabeln', exact: true}).click();
+    await startPracticeRound(page);
     assert.match(await page.locator('.practice-points').textContent(), new RegExp(`${expectedPoints} Punkte`));
 
     const preserved = await page.evaluate(async (initialState) => {
@@ -791,7 +796,7 @@ test('trainer practice reacts to background profile invalidation without scoring
     await page.goto(harness.baseUrl);
     await setupPractice(page, {first: ['Hund', 'dog'], second: ['Katze', 'cat']});
     await page.getByRole('button', {name: /^Ada/}).click();
-    await page.getByRole('button', {name: 'Alle Vokabeln', exact: true}).click();
+    await startPracticeRound(page);
 
     const result = await page.evaluate(async (initialState) => {
       const {mountShell} = await import('../src/trainer/ui/shell.js');
@@ -1353,7 +1358,7 @@ test('trainer sync and restore exposes deliberate Google, download and import fl
     controls.rejectNextAbout401 = true;
     await page.getByRole('button', {name: 'Zur Profilauswahl', exact: true}).click();
     await page.getByRole('button', {name: /^Ada/}).click();
-    await page.getByRole('button', {name: 'Alle Vokabeln', exact: true}).click();
+    await startPracticeRound(page);
     const preservedAnswer = page.getByLabel('Englische Übersetzung');
     await preservedAnswer.fill('unfinished answer');
     await preservedAnswer.focus();
@@ -1667,7 +1672,7 @@ test('trainer sync and restore keeps concurrent word versions until an adult res
 
     await second.page.getByRole('button', {name: 'Zur Profilauswahl', exact: true}).click();
     await second.page.getByRole('button', {name: /^Ada/}).click();
-    await second.page.getByRole('button', {name: 'Alle Vokabeln', exact: true}).click();
+    await startPracticeRound(second.page);
     await second.page.getByRole('heading', {name: 'Tier', exact: true}).waitFor();
     assert.equal(await second.page.getByRole('heading', {name: 'Hund', exact: true}).count(), 0);
     await second.page.getByRole('button', {name: 'Profil wechseln', exact: true}).click();
@@ -1704,7 +1709,7 @@ test('trainer sync and restore keeps concurrent word versions until an adult res
     await second.page.getByRole('button', {name: 'Zur Profilauswahl', exact: true}).click();
     await second.page.getByRole('button', {name: /^Ada/}).click();
     await second.page.getByRole('button', {name: 'Neue Runde', exact: true}).click();
-    await second.page.getByRole('button', {name: 'Alle Vokabeln', exact: true}).click();
+    await startPracticeRound(second.page);
 
     await first.page.locator('#backup-file').setInputFiles({
       name: 'restore-before-offline-answer.json',
@@ -1919,7 +1924,7 @@ test('trainer offline starts in a new tab and after a persistent browser restart
         throw error;
       });
       await offlineTab.getByRole('button', {name: /^Ada/}).click();
-      await offlineTab.getByRole('button', {name: 'Alle Vokabeln', exact: true}).click();
+      await startPracticeRound(offlineTab);
       await offlineTab.getByLabel('Englische Übersetzung').fill('dog');
       await offlineTab.getByRole('button', {name: 'Prüfen', exact: true}).click();
       await offlineTab.getByText('Richtig!', {exact: true}).waitFor();
@@ -1949,7 +1954,7 @@ test('trainer offline update UI blocks typing and pending answers before control
   try {
     await page.goto(harness.baseUrl);
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null, null, {timeout: 10_000});
-    harness.setServiceWorkerVersion('v8', {activationDelayMs: 750});
+    harness.setServiceWorkerVersion('v9', {activationDelayMs: 750});
     await page.evaluate(async () => {
       const registration = await navigator.serviceWorker.getRegistration('./');
       await registration.update();
@@ -1986,7 +1991,7 @@ test('trainer offline update UI blocks typing and pending answers before control
     await page.getByRole('button', {name: 'Zur Profilauswahl', exact: true}).click();
 
     await page.getByRole('button', {name: /^Ada/}).click();
-    await page.getByRole('button', {name: 'Alle Vokabeln', exact: true}).click();
+    await startPracticeRound(page);
     await page.getByLabel('Englische Übersetzung').waitFor();
     assert.equal(await updateButton.textContent(), 'Runde pausieren und aktualisieren');
 
@@ -2007,8 +2012,8 @@ test('trainer offline update UI blocks typing and pending answers before control
     const beforeReload = await productState(page);
     assert.equal(beforeReload.ledger.events.some(({type}) => type === 'round.completed' || type === 'round.abandoned'), false);
     assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product:')).sort()), [
-      'vokabeltrainer-product:%2Ftrainer%2F:v7',
       'vokabeltrainer-product:%2Ftrainer%2F:v8',
+      'vokabeltrainer-product:%2Ftrainer%2F:v9',
     ]);
     const navigation = page.waitForNavigation();
     await updateButton.click();
@@ -2023,7 +2028,7 @@ test('trainer offline update UI blocks typing and pending answers before control
     await navigation;
     await page.getByText('Richtig!', {exact: true}).waitFor();
     assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product:')).sort()), [
-      'vokabeltrainer-product:%2Ftrainer%2F:v8',
+      'vokabeltrainer-product:%2Ftrainer%2F:v9',
     ]);
   } finally {
     await context.close();

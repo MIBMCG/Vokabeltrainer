@@ -67,6 +67,22 @@ async function harness({ledger, state, ids = sequenceIds(), onChange = () => {}}
   return {store, commands};
 }
 
+test('practiceChoices previews without mutating state or consuming IDs', async () => {
+  const ids = sequenceIds('choice');
+  const {commands, store} = await harness({ids});
+  const before = commands.getState();
+
+  assert.deepEqual(commands.practiceChoices({profileId: 'p1'}), [
+    {mode: 'all', totalCount: 3, availableCount: 3, latestLessonName: null, reason: 'ready'},
+    {mode: 'latest', totalCount: 3, availableCount: 3, latestLessonName: 'Unit 1', reason: 'ready'},
+    {mode: 'new', totalCount: 3, availableCount: 3, latestLessonName: null, reason: 'ready'},
+  ]);
+  assert.deepEqual(commands.getState(), before);
+  assert.equal(store.saves.length, 0);
+  await commands.start({profileId: 'p1', mode: 'all', size: 10});
+  assert.equal(commands.getState().rounds.p1.id, 'choice-1');
+});
+
 function solutionForCurrent(state, profileId = 'p1') {
   const revisionId = state.rounds[profileId].current.revisionId;
   return state.ledger.events.find(({id}) => id === revisionId).payload.value.answers[0];

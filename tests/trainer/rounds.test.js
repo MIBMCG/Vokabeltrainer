@@ -2,12 +2,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
+  activeWords,
   abandonRound,
   advanceRound,
   applyAnswer,
   completeRound,
   expandRound,
   nextTask,
+  previewModes,
   startRound,
 } from '../../src/trainer/learning/rounds.js';
 import {project} from '../../src/trainer/learning/progress.js';
@@ -63,6 +65,90 @@ function clearCurrent(round, overrides = {}) {
 function setWordState(projection, profileId, wordId, overrides) {
   Object.assign(projection.profiles[profileId].words[wordId], overrides);
 }
+
+test('mode preview uses the same active assignments and due states as round selection', () => {
+  const f = createFixture();
+  const choices = previewModes({
+    projection: project(f.base), profileId: 'p1', day: '2026-09-19',
+  });
+
+  assert.deepEqual(choices, [
+    {mode: 'all', totalCount: 3, availableCount: 3, latestLessonName: null, reason: 'ready'},
+    {mode: 'latest', totalCount: 3, availableCount: 3, latestLessonName: 'Unit 1', reason: 'ready'},
+    {mode: 'new', totalCount: 3, availableCount: 3, latestLessonName: null, reason: 'ready'},
+  ]);
+  assert.deepEqual(activeWords(project(f.base), 'p1').map(({id}) => id), ['w1', 'w2', 'w3']);
+});
+
+test('mode preview excludes archived and unassigned words and distinguishes total from due', () => {
+  const f = createFixture();
+  const l2 = lessonRevision(f, {id: 'rev-l2', lessonId: 'l2', name: 'Farben'});
+  const w4 = wordRevision(f, {id: 'rev-w4', wordId: 'w4', lessonId: 'l2'});
+  const foreignLesson = lessonRevision(f, {
+    id: 'rev-foreign', lessonId: 'foreign', name: 'Nicht für Ada', profileIds: ['p2'],
+  });
+  const foreignWord = wordRevision(f, {
+    id: 'rev-w5', wordId: 'w5', lessonId: 'foreign', learningId: 'learn-w5',
+  });
+  const archived = wordRevision(f, {
+    id: 'archive-w3', wordId: 'w3', parents: ['rev-w3'], archived: true,
+  });
+  const answers = [
+    f.answer({id: 'w1-practiced', roundId: 'practice-w1', wordId: 'w1'}),
+    f.answer({id: 'w2-1', roundId: 'practice-w2-a', wordId: 'w2'}),
+    f.answer({id: 'w2-2', roundId: 'practice-w2-b', wordId: 'w2'}),
+    f.answer({id: 'w2-3', roundId: 'practice-w2-c', wordId: 'w2'}),
+  ];
+  const projection = project(f.withEvents(
+    l2, w4, foreignLesson, foreignWord, archived, ...answers,
+  ));
+
+  assert.deepEqual(previewModes({projection, profileId: 'p1', day: '2026-09-17'}), [
+    {mode: 'all', totalCount: 3, availableCount: 2, latestLessonName: null, reason: 'ready'},
+    {mode: 'latest', totalCount: 1, availableCount: 1, latestLessonName: 'Farben', reason: 'ready'},
+    {mode: 'new', totalCount: 1, availableCount: 1, latestLessonName: null, reason: 'ready'},
+  ]);
+});
+
+test('mode preview explains missing profiles, empty sets, no new words, not due and conflicts', () => {
+  const empty = project(createFixture({words: []}).base);
+  assert.deepEqual(previewModes({projection: empty, profileId: 'p1', day: '2026-09-17'})
+    .map(({reason}) => reason), ['no-words', 'no-words', 'no-new']);
+
+  const f = createFixture({words: [['w1', 'Hund', ['dog']]]});
+  const practiced = project(f.withEvents(
+    f.answer({id: 'a1', roundId: 'r-a'}),
+    f.answer({id: 'a2', roundId: 'r-b'}),
+    f.answer({id: 'a3', roundId: 'r-c'}),
+  ));
+  assert.deepEqual(previewModes({projection: practiced, profileId: 'p1', day: '2026-09-17'})
+    .map(({reason}) => reason), ['not-due', 'not-due', 'no-new']);
+  assert.deepEqual(previewModes({projection: practiced, profileId: 'missing', day: '2026-09-17'})
+    .map(({reason}) => reason), ['no-profile', 'no-profile', 'no-profile']);
+
+  const conflicted = {...structuredClone(practiced), epochConflict: true};
+  assert.deepEqual(previewModes({projection: conflicted, profileId: 'p1', day: '2026-09-17'})
+    .map(({reason}) => reason), ['conflict', 'conflict', 'conflict']);
+});
+
+test('mode preview accepts the future nested scheduling map without duplicating selection logic', () => {
+  const projection = project(createFixture().base);
+  const schedule = {
+    epochConflict: false,
+    words: new Map([
+      ['w1', new Map([['learn-w1', {intervalIndex: 0, dueDay: '2026-09-20', retryPending: false, errorGap: 0, excluded: false}]])],
+      ['w2', new Map([['learn-w2', {intervalIndex: -1, dueDay: null, retryPending: false, errorGap: 0, excluded: true}]])],
+      ['w3', new Map([['learn-w3', {intervalIndex: -1, dueDay: null, retryPending: false, errorGap: 0, excluded: false}]])],
+    ]),
+  };
+
+  assert.deepEqual(previewModes({projection, profileId: 'p1', day: '2026-09-19', schedule})
+    .map(({totalCount, availableCount, reason}) => ({totalCount, availableCount, reason})), [
+    {totalCount: 3, availableCount: 1, reason: 'ready'},
+    {totalCount: 3, availableCount: 1, reason: 'ready'},
+    {totalCount: 3, availableCount: 1, reason: 'ready'},
+  ]);
+});
 
 test('new selection stays frozen and failed single word cannot bypass gap', () => {
   const f = createFixture({words: [['w1', 'Hund', ['dog']]]});
