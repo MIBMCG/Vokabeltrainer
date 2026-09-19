@@ -7,6 +7,7 @@ import {createTrainerHarness} from './trainer-harness.mjs';
 
 const resultsDirectory = resolve('test-results', 'overhaul-a1');
 const a2ResultsDirectory = resolve('test-results', 'overhaul-a2');
+const a4ResultsDirectory = resolve('test-results', 'overhaul-a4');
 const preparedGoogleClientId = '329410329467-s8nevn4sqi7m3fmtq2tkbpj76b8osvhs.apps.googleusercontent.com';
 
 async function productState(page) {
@@ -65,7 +66,18 @@ async function openSync(page) {
     await page.locator('#adult-pin').fill('1234');
     await page.locator('#adult-unlock').click();
   }
-  await page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+  await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
+}
+
+async function openAdult(page) {
+  const profileSwitch = page.getByRole('button', {name: 'Profil wechseln', exact: true});
+  if (await profileSwitch.count()) await profileSwitch.click();
+  await page.locator('#adult-entry').click();
+  if (await page.locator('#adult-pin').count()) {
+    await page.locator('#adult-pin').fill('1234');
+    await page.locator('#adult-unlock').click();
+  }
+  await page.locator('#adult-nav').waitFor();
 }
 
 async function loadedArt(page, selector = '[data-art-key] img') {
@@ -91,12 +103,37 @@ test('illustrated journey and layered avatar render responsively with real raste
     await page.goto(harness.baseUrl);
     await setupPractice(page);
     assert.ok(await loadedArt(page) >= 3);
+    assert.equal(await page.locator('.practice-home .level-card').count(), 1);
+    assert.equal(await page.locator('.practice-home .level-card .level-avatar').count(), 1);
+    assert.equal(await page.locator('.practice-art .practice-avatar').count(), 0);
     await page.screenshot({path: resolve(resultsDirectory, 'start-390.png'), fullPage: true});
 
     await page.getByRole('button', {name: 'Inselreise', exact: true}).click();
     assert.equal(await page.locator('[data-art-key="island-journey"] img').evaluate((image) => image.naturalWidth > 0), true);
     assert.equal(await page.locator('[data-stage]').count(), 15);
     assert.equal(await page.locator('[data-island]').count(), 3);
+    assert.equal(await page.locator('.journey-map').evaluate((map) => {
+      const boundary = map.getBoundingClientRect();
+      return [...map.querySelectorAll('[data-stage]')].every((stage) => {
+        const box = stage.getBoundingClientRect();
+        return box.left >= boundary.left && box.right <= boundary.right
+          && box.left >= 0 && box.right <= innerWidth;
+      });
+    }), true);
+    assert.equal(await page.locator('[data-island="mountain"]').evaluate((card) => {
+      const cardBox = card.getBoundingClientRect();
+      return ['14', '15'].every((stage) => {
+        const markerBox = document.querySelector(`[data-stage="${stage}"] .stage-marker`).getBoundingClientRect();
+        return cardBox.right <= markerBox.left || cardBox.left >= markerBox.right
+          || cardBox.bottom <= markerBox.top || cardBox.top >= markerBox.bottom;
+      });
+    }), true);
+    const levelTrack = await page.locator('.level-card .level-progress-track').evaluate((track) => ({
+      background: getComputedStyle(track).backgroundColor,
+      fill: getComputedStyle(track.querySelector('.level-progress-fill')).backgroundImage,
+    }));
+    assert.notEqual(levelTrack.background, 'rgb(0, 0, 0)');
+    assert.match(levelTrack.fill, /gradient/i);
     assert.equal(await page.getByText('🔒 Gesperrt: Zahl = benötigtes Level', {exact: true}).isVisible(), true);
     const lockedStages = await page.locator('[data-stage][data-state="upcoming"]').evaluateAll((nodes) => nodes.map((node) => ({
       stage: Number(node.dataset.stage),
@@ -312,6 +349,109 @@ test('prepared Google access connects without family configuration and waits for
     assert.equal(harness.google.writes.length, 0);
     await page.getByRole('button', {name: 'Neuen Lernbereich anlegen', exact: true}).waitFor();
     await page.getByRole('button', {name: 'Vorhandenen Lernbereich verwenden', exact: true}).waitFor();
+  } finally {
+    await harness.close();
+  }
+});
+
+test('compact vocabulary management opens editors deliberately and preserves their revision context', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page} = await harness.newDevice({viewport: {width: 390, height: 844}});
+  await mkdir(a4ResultsDirectory, {recursive: true});
+  try {
+    await page.goto(harness.baseUrl);
+    await setupPractice(page);
+    await openAdult(page);
+
+    assert.deepEqual(await page.locator('#adult-nav button').allTextContents(), [
+      'Vokabeln', 'Lernstand', 'Lernregeln', 'Einstellungen',
+    ]);
+    assert.equal(await page.locator('#adult-nav button').evaluateAll((buttons) => (
+      buttons.every((item) => item.getBoundingClientRect().right <= innerWidth)
+    )), true);
+    assert.equal(await page.locator('[data-word-german] form').count(), 0);
+    assert.equal(await page.getByRole('button', {name: 'Wort hinzufügen', exact: true}).count(), 1);
+    assert.equal(await page.getByRole('button', {name: 'Mehrere Wörter einfügen', exact: true}).count(), 1);
+
+    await page.getByLabel('Vokabeln suchen').fill('Hund');
+    assert.equal(await page.locator('[data-word-german="Hund"]').count(), 1);
+    assert.equal(await page.locator('[data-word-german="Fahrrad"]').count(), 0);
+    await page.getByLabel('Vokabeln suchen').fill('');
+
+    await page.locator('[data-word-german="Hund"]').getByRole('button', {name: 'Bearbeiten', exact: true}).click();
+    const editor = page.locator('form').filter({has: page.getByRole('heading', {name: 'Hund bearbeiten', exact: true})});
+    await editor.getByRole('textbox', {name: /Englische Lösungen/}).fill('hound | dog');
+    const before = await productState(page);
+    await page.evaluate((current) => {
+      const changed = structuredClone(current);
+      changed.ledger.events.push({
+        schemaVersion: 1, compatibilityVersion: 1, kind: 'event', id: 'a4-background',
+        datasetId: changed.ledger.descriptor.datasetId, epochId: changed.ledger.epochs[0].id,
+        deviceId: 'synthetic-a4', clock: 999, occurredAt: '2026-09-19T12:00:00.000Z',
+        type: 'entity.revised', payload: {
+          entityType: 'profile', entityId: 'synthetic-profile', parents: [],
+          value: {name: 'Hintergrund', archived: true},
+        },
+      });
+      return import('/src/trainer/ui/adult.js').then(({adultStateChanged}) => {
+        adultStateChanged(document.querySelector('#app'), changed);
+      });
+    }, before);
+    await page.locator('#adult-background-notice').waitFor();
+    assert.equal(await editor.getByRole('textbox', {name: /Englische Lösungen/}).inputValue(), 'hound | dog');
+
+    await page.getByRole('button', {name: 'Lernregeln', exact: true}).click();
+    await page.getByRole('dialog', {name: 'Ungespeicherte Eingaben'}).waitFor();
+    await page.getByRole('button', {name: 'Weiterbearbeiten', exact: true}).click();
+    assert.equal(await editor.getByRole('textbox', {name: /Englische Lösungen/}).inputValue(), 'hound | dog');
+    await page.getByRole('button', {name: 'Lernregeln', exact: true}).click();
+    await page.getByRole('button', {name: 'Speichern', exact: true}).click();
+    await page.getByRole('heading', {name: 'Lernregeln', exact: true}).waitFor();
+    assert.equal(await page.locator('input[type="range"], input[type="checkbox"]').count(), 0);
+    assert.deepEqual((await productState(page)).ledger.events.at(-1).payload.value.answers, ['hound', 'dog']);
+
+    await page.getByRole('button', {name: 'Vokabeln', exact: true}).click();
+    await page.locator('[data-word-german="Hund"]').getByRole('button', {name: 'Bearbeiten', exact: true}).click();
+    await page.locator('form.vocabulary-editor').getByRole('textbox', {name: /Englische Lösungen/}).fill('verwerfen');
+    await page.getByRole('button', {name: 'Lernregeln', exact: true}).click();
+    await page.getByRole('button', {name: 'Verwerfen', exact: true}).click();
+    await page.getByRole('button', {name: 'Vokabeln', exact: true}).click();
+    await page.getByRole('button', {name: 'Wort hinzufügen', exact: true}).click();
+    assert.equal(await page.getByRole('button', {name: 'Mehrere Wörter einfügen', exact: true}).count(), 0);
+    await page.getByLabel('Deutsches Wort').fill('Boot');
+    await page.getByLabel(/Englische Lösungen/).fill('boat | vessel');
+    await page.getByLabel('Lektion', {exact: true}).selectOption('__new__');
+    await page.getByLabel('Neue Lektion', {exact: true}).fill('Meer');
+    await page.getByRole('checkbox', {name: 'Ada', exact: true}).check();
+    await page.getByRole('button', {name: 'Vokabel hinzufügen', exact: true}).click();
+    await page.locator('[data-word-german="Boot"]').waitFor();
+
+    await page.getByRole('button', {name: 'Mehrere Wörter einfügen', exact: true}).click();
+    await page.getByLabel('Lektion', {exact: true}).selectOption('__new__');
+    await page.getByLabel('Neue Lektion', {exact: true}).fill('Reise');
+    await page.getByRole('checkbox', {name: 'Ada', exact: true}).check();
+    await page.locator('#import-text').fill('Bank\tbench\nBank\tbank');
+    await page.locator('#import-preview').click();
+    assert.equal(await page.locator('#import-apply').isDisabled(), true);
+    await page.locator('[data-import-row="row-2"] select').selectOption('separate');
+    assert.equal(await page.locator('#import-apply').isEnabled(), true);
+    await page.locator('#import-apply').click();
+    await page.getByText('Die geprüften Tabellenzeilen wurden übernommen.', {exact: true}).waitFor();
+
+    await page.getByLabel('Lektion auswählen').selectOption({label: 'Inselwörter'});
+    const hund = page.locator('[data-word-german="Hund"]');
+    await hund.getByRole('button', {name: 'Archivieren', exact: true}).click();
+    await page.getByRole('button', {name: 'Archiviert', exact: true}).click();
+    await page.locator('[data-word-german="Hund"]').getByRole('button', {name: 'Reaktivieren', exact: true}).click();
+    await page.getByRole('button', {name: 'Aktiv', exact: true}).click();
+    assert.equal(await page.locator('.vocabulary-filters .active').textContent(), 'Aktiv');
+    assert.ok(await page.locator('.lesson-actions').evaluate((node) => Number.parseFloat(getComputedStyle(node).gap) >= 8));
+
+    await page.screenshot({path: resolve(a4ResultsDirectory, 'vocabulary-mobile-390.png'), fullPage: true});
+    await page.setViewportSize({width: 1280, height: 900});
+    await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
+    await page.getByRole('heading', {name: 'Einstellungen', exact: true}).waitFor();
+    await page.screenshot({path: resolve(a4ResultsDirectory, 'settings-desktop-1280.png'), fullPage: true});
   } finally {
     await harness.close();
   }

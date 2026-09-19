@@ -60,22 +60,30 @@ function illustration(asset, symbol, className) {
   return svg;
 }
 
-function levelCard(profile, state) {
+export function levelCard(profile, state = stateFor(profile)) {
   const complete = state.journey.completedStages === 15;
   const levelProgress = profile.points % 200;
-  const progress = el('progress', {attrs: {max: 200, value: levelProgress, 'aria-label': 'Fortschritt zum nächsten Level'}});
+  const progress = el('div', {attrs: {
+    class: 'level-progress-track', role: 'progressbar',
+    'aria-label': 'Fortschritt zum nächsten Level',
+    'aria-valuemin': '0', 'aria-valuemax': '200', 'aria-valuenow': String(levelProgress),
+  }}, [el('span', {attrs: {class: 'level-progress-fill'}})]);
+  progress.firstElementChild.style.width = `${levelProgress / 2}%`;
   return el('section', {attrs: {class: 'level-card', 'aria-label': 'Punkte und Level'}}, [
-    el('div', {}, [
-      el('strong', {text: `Level ${state.level}`, attrs: {'data-level': ''}}),
-      el('span', {text: `${profile.points} Punkte`}),
+    avatarPicture(avatarParts(profile), {className: 'level-avatar', sizes: '76px', animations: false}),
+    el('div', {attrs: {class: 'level-card-copy'}}, [
+      el('div', {attrs: {class: 'level-card-title'}}, [
+        el('strong', {text: `Level ${state.level}`, attrs: {'data-level': ''}}),
+        el('span', {text: `${profile.points} Punkte`}),
+      ]),
+      progress,
+      complete
+        ? el('p', {}, [
+          el('strong', {text: 'Reise geschafft!'}),
+          ' Du kannst weiter Punkte und Level sammeln.',
+        ])
+        : el('p', {text: `Noch ${200 - levelProgress} Punkte bis Level ${state.level + 1}`}),
     ]),
-    progress,
-    complete
-      ? el('p', {}, [
-        el('strong', {text: 'Reise geschafft!'}),
-        ' Du kannst weiter Punkte und Level sammeln.',
-      ])
-      : el('p', {text: `Noch ${200 - levelProgress} Punkte bis Level ${state.level + 1}`}),
   ]);
 }
 

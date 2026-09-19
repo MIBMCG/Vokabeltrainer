@@ -59,6 +59,8 @@ test('serves only named probe and trainer assets with correct MIME types', async
       ['/src/trainer/ui/art.js', 'text/javascript; charset=utf-8'],
       ['/src/trainer/ui/art-manifest.js', 'text/javascript; charset=utf-8'],
       ['/src/trainer/ui/adult.js', 'text/javascript; charset=utf-8'],
+      ['/src/trainer/ui/vocabulary.js', 'text/javascript; charset=utf-8'],
+      ['/src/trainer/ui/settings.js', 'text/javascript; charset=utf-8'],
       ['/src/trainer/ui/sync.js', 'text/javascript; charset=utf-8'],
       ['/src/trainer/ui/backup.js', 'text/javascript; charset=utf-8'],
       ['/src/trainer/ui/preview.js', 'text/javascript; charset=utf-8'],

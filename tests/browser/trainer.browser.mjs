@@ -85,39 +85,16 @@ test('final I2 adult drafts retain focus and original revision heads across unch
     await setupPractice(page);
     await mountFixIntegration(page, await productState(page));
     const root = page.locator('#fix-app');
-    const name = root.locator('form').first().locator('[name="name"]');
-    await name.fill('Noch nicht gespeichert');
-    const profileEditor = root.locator('.management-card details');
-    await profileEditor.locator('summary').click();
-    await profileEditor.locator('[name="name"]').fill('Ada Entwurf');
-    const pinChange = root.locator('details').filter({has: page.getByText('PIN ändern', {exact: true})}).last();
-    await pinChange.locator('summary').click();
-    await pinChange.locator('[name="next"]').fill('5678');
-    await name.focus();
-    await page.evaluate(() => window.__fix.sync.sync());
-    assert.equal(await name.inputValue(), 'Noch nicht gespeichert');
-    assert.equal(await profileEditor.locator('[name="name"]').inputValue(), 'Ada Entwurf');
-    assert.equal(await pinChange.locator('[name="next"]').inputValue(), '5678');
-    assert.equal(await name.evaluate((node) => document.activeElement === node), true);
-    await root.getByRole('button', {name: 'Lektionen', exact: true}).click();
-    const lessonForm = root.locator('.lesson-detail > form');
-    await lessonForm.locator('[name="name"]').fill('Lektionsentwurf');
-    await lessonForm.locator('[name="profileIds"]').uncheck();
     const card = root.locator('[data-word-german="Hund"]');
-    await card.locator('summary').click();
-    const answer = card.locator('[name="answers"]');
+    await card.getByRole('button', {name: 'Bearbeiten', exact: true}).click();
+    const editor = root.locator('form.vocabulary-editor');
+    const answer = editor.locator('[name="answers"]');
     await answer.fill('local draft');
-    const table = root.locator('#import-text');
-    await table.fill('Katze\tcat');
     await answer.focus();
     const before = await page.evaluate(() => window.__fix.commands.getState());
     await page.evaluate(() => window.__fix.sync.sync());
     assert.equal(await answer.inputValue(), 'local draft');
     assert.equal(await answer.evaluate((node) => document.activeElement === node), true);
-    assert.equal(await card.locator('details').evaluate((node) => node.open), true);
-    assert.equal(await table.inputValue(), 'Katze\tcat');
-    assert.equal(await lessonForm.locator('[name="name"]').inputValue(), 'Lektionsentwurf');
-    assert.equal(await lessonForm.locator('[name="profileIds"]').isChecked(), false);
     const original = before.ledger.events.find((event) => event.payload?.value?.german === 'Hund');
     const foreign = {...structuredClone(original), id: 'foreign-editor-revision', deviceId: 'foreign-device', clock: before.clock + 1,
       payload: {...structuredClone(original.payload), parents: [original.id], value: {...original.payload.value, hint: 'Foreign hint'}}};
@@ -126,22 +103,21 @@ test('final I2 adult drafts retain focus and original revision heads across unch
     harness.google.files.set('foreign-editor-file', {metadata: {id: 'foreign-editor-file', name: 'foreign.json', mimeType: 'application/json',
       parents: [before.binding.folderId], trashed: false, appProperties: {app: 'vokabeltrainer-product', kind: 'packet', datasetId: foreign.datasetId,
         epochId: packet.epochId, packetId: packet.packetId}}, value: packet});
-    await table.focus();
+    await answer.focus();
     await page.evaluate(() => window.__fix.sync.sync());
     assert.equal(await answer.inputValue(), 'local draft');
-    assert.equal(await table.inputValue(), 'Katze\tcat');
-    assert.equal(await table.evaluate((node) => document.activeElement === node), true);
-    assert.equal(await card.locator('details').evaluate((node) => node.open), true);
+    assert.equal(await answer.evaluate((node) => document.activeElement === node), true);
     assert.ok((await page.evaluate(() => window.__fix.commands.getState())).ledger.events.some(({id}) => id === foreign.id));
-    await card.getByRole('button', {name: 'Änderung speichern'}).click();
+    await editor.getByRole('button', {name: 'Änderung speichern'}).click();
     await root.getByRole('alert').filter({hasText: /inzwischen geändert/}).waitFor();
     const after = await page.evaluate(() => window.__fix.commands.getState());
     assert.equal(after.ledger.events.length, before.ledger.events.length + 1, 'stale draft must not silently rebase');
     assert.equal(await answer.inputValue(), 'local draft');
     await root.getByRole('button', {name: 'Ansicht neu laden (Eingaben verwerfen)'}).click();
-    assert.equal(await answer.inputValue(), 'dog | hound');
-    assert.equal(await card.locator('[name="hint"]').inputValue(), 'Foreign hint');
-    assert.equal(await table.inputValue(), '');
+    await root.locator('[data-word-german="Hund"]').getByRole('button', {name: 'Bearbeiten', exact: true}).click();
+    const refreshed = root.locator('form.vocabulary-editor');
+    assert.equal(await refreshed.locator('[name="answers"]').inputValue(), 'dog | hound');
+    assert.equal(await refreshed.locator('[name="hint"]').inputValue(), 'Foreign hint');
     await page.evaluate(() => { window.__fix.pinGate.lock(); window.__fix.shell.stateChanged(); });
     assert.equal(await root.locator('#adult-nav').count(), 0);
     assert.equal(await root.locator('#adult-pin').count(), 1);
@@ -156,17 +132,18 @@ test('final I3 deliberate reconnect wakes pending bound sync without another lif
     await page.goto(harness.baseUrl);
     await setupPractice(page);
     await page.locator('#adult-entry').click();
-    await page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
     await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
     await page.getByRole('button', {name: 'Neuen Lernbereich anlegen'}).click();
     await page.getByText('Abgeglichen', {exact: true}).waitFor();
-    await page.getByRole('button', {name: 'Kinder', exact: true}).click();
-    const form = page.locator('#adult-content form').first();
+    await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
+    await page.locator('summary').filter({hasText: 'Kind hinzufügen'}).click();
+    const form = page.locator('#adult-content form').filter({has: page.getByRole('button', {name: 'Kind hinzufügen'})});
     await form.locator('[name="name"]').fill('Bea');
     await form.getByRole('button', {name: 'Kind hinzufügen'}).click();
     await page.getByText('Das Kind wurde hinzugefügt.', {exact: true}).waitFor();
     controls.rejectNextAbout401 = true;
-    await page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
     await page.locator('[data-sync-status]').filter({hasText: 'Mit Google verbinden'}).waitFor({timeout: 15_000});
     const pending = (await productState(page)).outboxEventIds;
     assert.ok(pending.length > 0);
@@ -245,7 +222,7 @@ test('final I4 restore conflict preserves an open answer until adult resolution 
     assert.equal(retainedBlocker, 'typed-answer-present');
     await root.getByRole('button', {name: 'Für Erwachsene', exact: true}).click();
     await page.evaluate(() => { window.__fix.pinGate.isUnlocked = () => true; window.__fix.shell.render(); });
-    await root.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    await root.getByRole('button', {name: 'Einstellungen', exact: true}).click();
     await root.getByRole('button', {name: /Datenstand 1 .* prüfen/}).click();
     await root.getByRole('button', {name: 'Datenstand gemeinsam übernehmen'}).click();
     await page.waitForFunction(() => !window.__fix.project(window.__fix.commands.getState().ledger).epochConflict);
@@ -679,8 +656,9 @@ test('trainer practice is resumable, single-submit safe and completes an exhaust
     await page.locator('#adult-entry').click();
     await page.locator('#adult-pin').fill('1234');
     await page.locator('#adult-unlock').click();
-    await page.getByRole('button', {name: 'Lektionen'}).click();
-    await page.locator('[data-lesson-name="Unit 1"]').click();
+    await page.getByRole('button', {name: 'Vokabeln', exact: true}).click();
+    await page.getByLabel('Lektion auswählen').selectOption({label: 'Unit 1'});
+    await page.getByRole('button', {name: 'Wort hinzufügen', exact: true}).click();
     const addWord = page.locator('form').filter({has: page.getByRole('button', {name: 'Vokabel hinzufügen', exact: true})});
     await addWord.locator('input[name="german"]').fill('Schiff');
     await addWord.locator('input[name="answers"]').fill('ship');
@@ -766,12 +744,13 @@ test('trainer practice is resumable, single-submit safe and completes an exhaust
     await page.locator('#adult-entry').click();
     await page.locator('#adult-pin').fill('1234');
     await page.locator('#adult-unlock').click();
-    await page.getByRole('button', {name: 'Lektionen'}).click();
-    await page.locator('[data-lesson-name="Unit 1"]').click();
+    await page.getByRole('button', {name: 'Vokabeln', exact: true}).click();
+    await page.getByLabel('Lektion auswählen').selectOption({label: 'Unit 1'});
     const staleCard = page.locator(`[data-word-german="${staleGerman}"]`);
-    await staleCard.locator('summary', {hasText: 'Bearbeiten'}).click();
-    await staleCard.locator('input[name="answers"]').fill('changed-answer');
-    await staleCard.getByRole('button', {name: 'Änderung speichern', exact: true}).click();
+    await staleCard.getByRole('button', {name: 'Bearbeiten', exact: true}).click();
+    const staleEditor = page.locator('form.vocabulary-editor');
+    await staleEditor.locator('input[name="answers"]').fill('changed-answer');
+    await staleEditor.getByRole('button', {name: 'Änderung speichern', exact: true}).click();
     await page.getByText('Die Vokabel wurde gespeichert.', {exact: true}).waitFor();
     await page.getByRole('button', {name: 'Zur Profilauswahl', exact: true}).click();
     await page.getByRole('button', {name: /^Ada/}).click();
@@ -1007,28 +986,33 @@ test('trainer setup, adult decisions, persistence and BFCache lifecycle', {timeo
     await page.locator('#adult-unlock').click();
     await page.locator('#adult-nav').waitFor();
 
-    await page.getByRole('button', {name: 'Lektionen'}).click();
-    await page.locator('[data-lesson-name="Unit 1"]').click();
+    await page.getByRole('button', {name: 'Vokabeln', exact: true}).click();
+    await page.getByLabel('Lektion auswählen').selectOption({label: 'Unit 1'});
+    await page.getByRole('button', {name: 'Lektion bearbeiten', exact: true}).click();
     const lessonForm = page.locator('form').filter({has: page.getByRole('heading', {name: 'Lektion bearbeiten'})});
     const assignment = lessonForm.getByRole('checkbox', {name: 'Ada'});
     await assignment.uncheck();
     await lessonForm.getByRole('button', {name: 'Speichern'}).click();
     await page.getByText('Lektion und Zuordnung wurden gespeichert.', {exact: true}).waitFor();
     assert.equal((await productState(page)).ledger.events.filter(({type}) => type === 'entity.revised').length, 5);
+    await page.getByRole('button', {name: 'Lektion bearbeiten', exact: true}).click();
     const refreshedLessonForm = page.locator('form').filter({has: page.getByRole('heading', {name: 'Lektion bearbeiten'})});
     await refreshedLessonForm.getByRole('checkbox', {name: 'Ada'}).check();
     await refreshedLessonForm.getByRole('button', {name: 'Speichern'}).click();
     await page.getByText('Lektion und Zuordnung wurden gespeichert.', {exact: true}).waitFor();
 
-    const editWord = page.locator('[data-word-german="Hund"] details');
-    await editWord.locator('summary').click();
+    await page.locator('[data-word-german="Hund"]').getByRole('button', {name: 'Bearbeiten', exact: true}).click();
+    const editWord = page.locator('form.vocabulary-editor');
     assert.ok(await editWord.locator('input[name="answers"]').evaluate(
       (input, requiredLength) => input.maxLength >= requiredLength,
       longAnswers.length,
     ));
     await editWord.locator('input[name="answers"]').fill('hound');
     assert.match(await editWord.locator('[data-revision-preview]').textContent(), /Serie beginnt/);
+    await editWord.getByRole('button', {name: 'Abbrechen', exact: true}).click();
+    await page.getByRole('button', {name: 'Verwerfen', exact: true}).click();
 
+    await page.getByRole('button', {name: 'Mehrere Wörter einfügen', exact: true}).click();
     await page.locator('#import-text').fill('Bank\tbench\tSitzplatz\textra');
     await page.locator('#import-preview').click();
     await page.getByText(/Rohzeile:.*Sitzplatz.*extra/).waitFor();
@@ -1042,6 +1026,7 @@ test('trainer setup, adult decisions, persistence and BFCache lifecycle', {timeo
     await page.locator('#import-apply').click();
     await page.getByText('Sitzbank', {exact: true}).waitFor();
 
+    await page.getByRole('button', {name: 'Mehrere Wörter einfügen', exact: true}).click();
     await page.locator('#import-text').fill('"mehr\tdeutig"\tanswer');
     await page.locator('#import-preview').click();
     await page.getByText(/Rohzeile:.*"mehr.*deutig".*answer/).waitFor();
@@ -1053,6 +1038,7 @@ test('trainer setup, adult decisions, persistence and BFCache lifecycle', {timeo
     assert.equal(await page.locator('#import-apply').isEnabled(), true);
     await page.locator('#import-apply').click();
 
+    await page.getByRole('button', {name: 'Mehrere Wörter einfügen', exact: true}).click();
     await page.locator('#import-text').fill(`Langform\t${longAnswers}`);
     await page.locator('#import-preview').click();
     assert.equal(await page.locator('[data-import-row="row-1"] input[name="answers"]').inputValue(), longAnswers);
@@ -1063,6 +1049,7 @@ test('trainer setup, adult decisions, persistence and BFCache lifecycle', {timeo
     await page.locator('#import-apply').click();
     await page.getByText('Langform', {exact: true}).waitFor();
 
+    await page.getByRole('button', {name: 'Mehrere Wörter einfügen', exact: true}).click();
     await page.locator('#import-text').fill('Pflichtfeld fehlt\t');
     await page.locator('#import-preview').click();
     assert.equal(await page.locator('#import-apply').isDisabled(), true);
@@ -1081,11 +1068,12 @@ test('trainer setup, adult decisions, persistence and BFCache lifecycle', {timeo
     await page.locator('#adult-entry').click();
     await page.locator('#adult-pin').fill('1234');
     await page.locator('#adult-unlock').click();
-    await page.getByRole('button', {name: 'Lektionen'}).click();
-    await page.locator('[data-lesson-name="Unit 1"]').click();
+    await page.getByRole('button', {name: 'Vokabeln', exact: true}).click();
+    await page.getByLabel('Lektion auswählen').selectOption({label: 'Unit 1'});
     await page.getByText('<img onerror=window.__xss=1>', {exact: true}).waitFor();
     const hundRow = page.locator('[data-word-german="Hund"]');
     await hundRow.getByRole('button', {name: 'Archivieren'}).click();
+    await page.getByRole('button', {name: 'Archiviert', exact: true}).click();
     await page.locator('[data-word-german="Hund"]').getByRole('button', {name: 'Reaktivieren'}).click();
     await page.getByRole('button', {name: 'Lernstand'}).click();
     const progressRow = page.locator('[data-progress-word="Hund"]');
@@ -1096,7 +1084,7 @@ test('trainer setup, adult decisions, persistence and BFCache lifecycle', {timeo
     await page.screenshot({path: resolve(resultsDirectory, 'trainer-adult-desktop.png'), fullPage: true});
     const resumableState = await productState(page);
 
-    await page.getByRole('button', {name: 'Kinder'}).click();
+    await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
     const changePin = page.locator('details').filter({has: page.locator('summary', {hasText: 'PIN ändern'})});
     await changePin.locator('summary').click();
     await changePin.locator('input[name="current"]').fill('1234');
@@ -1114,7 +1102,7 @@ test('trainer setup, adult decisions, persistence and BFCache lifecycle', {timeo
     await page.locator('#adult-unlock').click();
     await page.locator('#adult-nav').waitFor();
 
-    await page.getByRole('button', {name: 'Kinder'}).click();
+    await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
     const resetPin = page.locator('details').filter({has: page.locator('summary', {hasText: 'PIN vergessen'})});
     await resetPin.locator('summary').click();
     await resetPin.locator('input[name="confirmation"]').fill('PIN zurücksetzen');
@@ -1337,7 +1325,7 @@ test('trainer sync and restore exposes deliberate Google, download and import fl
       await page.locator('#adult-pin').fill('1234');
       await page.locator('#adult-unlock').click();
     }
-    await page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
 
     await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
     await page.getByText('Google ist für diese Sitzung verbunden.', {exact: true}).waitFor({timeout: 5_000}).catch(async (error) => {
@@ -1368,12 +1356,12 @@ test('trainer sync and restore exposes deliberate Google, download and import fl
     await page.locator('#adult-pin').fill('1234');
     await page.locator('#adult-unlock').click();
     assert.equal(await page.getByRole('main').count(), 1);
-    await page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
     await page.locator('[data-sync-status]').filter({hasText: 'Mit Google verbinden'}).waitFor();
     await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
     await page.getByText('Google ist für diese Sitzung verbunden.', {exact: true}).waitFor();
 
-    await page.getByRole('button', {name: 'Sicherung', exact: true}).click();
+    await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
     const downloading = page.waitForEvent('download');
     await page.getByRole('button', {name: 'Sicherung herunterladen', exact: true}).click();
     const download = await downloading;
@@ -1424,15 +1412,17 @@ test('trainer sync and restore exposes deliberate Google, download and import fl
     await page.getByRole('dialog', {name: 'Wiederherstellung prüfen'}).waitFor();
     const eventsBeforeStaleChange = (await productState(page)).ledger.events.length;
     await page.evaluate(() => {
-      [...document.querySelectorAll('#adult-nav button')].find((node) => node.textContent === 'Lektionen').click();
+      [...document.querySelectorAll('#adult-nav button')].find((node) => node.textContent === 'Vokabeln').click();
     });
-    await page.locator('[data-word-german="Hund"] details').waitFor();
-    await page.locator('[data-word-german="Hund"] details').evaluate((details) => { details.open = true; });
-    await page.locator('[data-word-german="Hund"] input[name="answers"]').evaluate((input) => {
+    await page.locator('[data-word-german="Hund"]').waitFor();
+    await page.locator('[data-word-german="Hund"]').evaluate((row) => {
+      [...row.querySelectorAll('button')].find((node) => node.textContent === 'Bearbeiten').click();
+    });
+    await page.locator('form.vocabulary-editor input[name="answers"]').evaluate((input) => {
       input.value = 'dog | hound | canine';
       input.dispatchEvent(new Event('input', {bubbles: true}));
     });
-    await page.locator('[data-word-german="Hund"] details form').evaluate((form) => {
+    await page.locator('form.vocabulary-editor').evaluate((form) => {
       form.dispatchEvent(new Event('submit', {bubbles: true, cancelable: true}));
     });
     await page.waitForFunction(async (count) => new Promise((resolveState) => {
@@ -1456,7 +1446,7 @@ test('trainer sync and restore exposes deliberate Google, download and import fl
     await page.getByRole('dialog').getByRole('button', {name: 'Abbrechen'}).click();
     assert.ok((await productState(page)).ledger.events.length > eventsBeforeStaleChange);
 
-    await page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
     controls.rejectNextAbout401 = true;
     await page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).click();
     await page.locator('[data-sync-status]').filter({hasText: 'Mit Google verbinden'}).waitFor();
@@ -1487,7 +1477,7 @@ test('trainer sync and restore exposes deliberate Google, download and import fl
     await page.locator('#adult-entry').click();
     await page.locator('#adult-pin').fill('1234');
     await page.locator('#adult-unlock').click();
-    await page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
     const afterLockedPopup = await page.evaluate(() => window.__syntheticOauthRequests);
     await page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).click();
     await page.locator('[data-sync-status]').filter({hasText: 'Mit Google verbinden'}).waitFor();
@@ -1518,7 +1508,7 @@ test('trainer unbound discovery, create and join require an explicit reconnect a
       await page.locator('#adult-pin').fill('1234');
       await page.locator('#adult-unlock').click();
     }
-    await page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
   };
   const reconnect = async ({page}) => {
     await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
@@ -1587,16 +1577,16 @@ test('trainer sync and restore keeps concurrent word versions until an adult res
     await page.locator('#adult-nav').waitFor();
   };
   const connect = async (page) => {
-    await page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
     await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
     await page.getByText('Google ist für diese Sitzung verbunden.', {exact: true}).waitFor();
   };
   const reviseHund = async (page, answer) => {
-    await page.getByRole('button', {name: 'Lektionen', exact: true}).click();
-    const details = page.locator('[data-word-german="Hund"] details');
-    await details.locator('summary').click();
-    await details.locator('input[name="answers"]').fill(answer);
-    await details.getByRole('button', {name: 'Speichern'}).click();
+    await page.getByRole('button', {name: 'Vokabeln', exact: true}).click();
+    await page.locator('[data-word-german="Hund"]').getByRole('button', {name: 'Bearbeiten', exact: true}).click();
+    const editor = page.locator('form.vocabulary-editor');
+    await editor.locator('input[name="answers"]').fill(answer);
+    await editor.getByRole('button', {name: 'Änderung speichern', exact: true}).click();
     await page.getByText('Die Vokabel wurde gespeichert.', {exact: true}).waitFor({timeout: 5_000}).catch(async (error) => {
       error.message += `\nVisible page after revising ${answer}:\n${await page.locator('body').innerText()}`;
       throw error;
@@ -1639,9 +1629,9 @@ test('trainer sync and restore keeps concurrent word versions until an adult res
     first.controls.offline = false;
     second.controls.offline = false;
 
-    await first.page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    await first.page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
     await first.page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).click();
-    await second.page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    await second.page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
     await second.page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).click();
     await second.page.getByRole('heading', {name: 'Inhaltskonflikte'}).waitFor();
     await second.page.getByText(/pooch/).waitFor();
@@ -1650,7 +1640,7 @@ test('trainer sync and restore keeps concurrent word versions until an adult res
       const {exportBackup} = await import('/src/trainer/backup/format.js');
       return exportBackup(current, '2026-09-18T13:30:00.000Z');
     }, await productState(second.page));
-    await second.page.getByRole('button', {name: 'Sicherung', exact: true}).click();
+    await second.page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
     await second.page.locator('#backup-file').setInputFiles({
       name: 'unambiguous-target.json',
       mimeType: 'application/json',
@@ -1663,7 +1653,7 @@ test('trainer sync and restore keeps concurrent word versions until an adult res
     await currentConflictPreview.getByText('Vorher · Englisch: dog / hound / canine', {exact: true}).waitFor();
     await currentConflictPreview.getByText('Nachher: dog / hound', {exact: true}).waitFor();
     await currentConflictPreview.getByRole('button', {name: 'Abbrechen'}).click();
-    await second.page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    await second.page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
     await second.page.screenshot({path: resolve(resultsDirectory, 'trainer-revision-conflict-mobile.png'), fullPage: true});
 
     await second.page.getByRole('button', {name: 'Zur Profilauswahl', exact: true}).click();
@@ -1673,7 +1663,7 @@ test('trainer sync and restore keeps concurrent word versions until an adult res
     assert.equal(await second.page.getByRole('heading', {name: 'Hund', exact: true}).count(), 0);
     await second.page.getByRole('button', {name: 'Profil wechseln', exact: true}).click();
     await openAdult(second.page);
-    await second.page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    await second.page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
     const versions = second.page.getByRole('button', {name: 'Diese Fassung übernehmen', exact: true});
     assert.equal(await versions.count(), 2);
     await versions.first().click();
@@ -1684,7 +1674,7 @@ test('trainer sync and restore keeps concurrent word versions until an adult res
     await second.page.getByText('Abgeglichen', {exact: true}).waitFor();
     await first.page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).click();
     await first.page.getByText('Abgeglichen', {exact: true}).waitFor();
-    await first.page.getByRole('button', {name: 'Sicherung', exact: true}).click();
+    await first.page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
     await first.page.locator('#backup-file').setInputFiles({
       name: 'conflicting-words.json',
       mimeType: 'application/json',
@@ -1723,7 +1713,7 @@ test('trainer sync and restore keeps concurrent word versions until an adult res
     await first.page.locator('#profile-list').waitFor();
     await openAdult(first.page);
     await connect(first.page);
-    await first.page.getByRole('button', {name: 'Sicherung', exact: true}).click();
+    await first.page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
     await first.page.getByRole('button', {name: 'Bestätigte Wiederherstellung fortsetzen', exact: true}).click();
     await first.page.getByText('Die bestätigte Wiederherstellung wurde fortgesetzt.', {exact: true}).waitFor();
     assert.ok(await first.page.getByRole('button', {name: 'Sicherheitskopie herunterladen', exact: true}).count() >= 1);
@@ -1732,12 +1722,12 @@ test('trainer sync and restore keeps concurrent word versions until an adult res
     await second.page.getByRole('button', {name: 'Prüfen', exact: true}).click();
     await second.page.getByText('Richtig!', {exact: true}).waitFor();
     second.controls.offline = false;
-    await first.page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    await first.page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
     await first.page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).click();
 
     await second.page.getByRole('button', {name: 'Profil wechseln', exact: true}).click();
     await openAdult(second.page);
-    await second.page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    await second.page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
     await second.page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).click();
     await second.page.getByRole('heading', {name: 'Alte Änderungen getrennt erhalten'}).waitFor();
     await second.page.getByText(/^\d+ alte Änderungen bleiben getrennt erhalten\.$/).waitFor();
@@ -1816,12 +1806,12 @@ test('trainer sync and restore renders a mobile epoch conflict without choosing 
     await page.locator('#adult-entry').click();
     await page.locator('#adult-pin').fill('1234');
     await page.locator('#adult-unlock').click();
-    await page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
     await page.getByRole('heading', {name: 'Konflikt zwischen Wiederherstellungen'}).waitFor();
     assert.equal(await page.getByRole('button', {name: /Datenstand .* prüfen/}).count(), 2);
     assert.equal(await page.getByText(/browser-restore|browser-snapshot/).count(), 0);
     await page.screenshot({path: resolve(resultsDirectory, 'trainer-epoch-conflict-mobile.png'), fullPage: true});
-    await page.getByRole('button', {name: 'Sicherung', exact: true}).click();
+    await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
     const epochOptions = page.locator('#backup-epoch option');
     assert.equal(await epochOptions.count(), 3);
     assert.equal(await page.getByText(/browser-restore|browser-snapshot/).count(), 0);
@@ -1881,7 +1871,7 @@ test('trainer sync and restore describes archive and assignment conflict choices
     await page.locator('#adult-entry').click();
     await page.locator('#adult-pin').fill('1234');
     await page.locator('#adult-unlock').click();
-    await page.getByRole('button', {name: 'Abgleich', exact: true}).click();
+    await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
     await page.getByRole('heading', {name: 'Inhaltskonflikte'}).waitFor();
     await page.getByText('Kind: Ada', {exact: true}).first().waitFor();
     await page.getByText('Status: Aktiv', {exact: true}).first().waitFor();
@@ -1950,7 +1940,7 @@ test('trainer offline update UI blocks typing and pending answers before control
   try {
     await page.goto(harness.baseUrl);
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null, null, {timeout: 10_000});
-    harness.setServiceWorkerVersion('v11', {activationDelayMs: 750});
+    harness.setServiceWorkerVersion('v12', {activationDelayMs: 750});
     await page.evaluate(async () => {
       const registration = await navigator.serviceWorker.getRegistration('./');
       await registration.update();
@@ -2008,8 +1998,8 @@ test('trainer offline update UI blocks typing and pending answers before control
     const beforeReload = await productState(page);
     assert.equal(beforeReload.ledger.events.some(({type}) => type === 'round.completed' || type === 'round.abandoned'), false);
     assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product:')).sort()), [
-      'vokabeltrainer-product:%2Ftrainer%2F:v10',
       'vokabeltrainer-product:%2Ftrainer%2F:v11',
+      'vokabeltrainer-product:%2Ftrainer%2F:v12',
     ]);
     const navigation = page.waitForNavigation();
     await updateButton.click();
@@ -2024,7 +2014,7 @@ test('trainer offline update UI blocks typing and pending answers before control
     await navigation;
     await page.getByText('Richtig!', {exact: true}).waitFor();
     assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product:')).sort()), [
-      'vokabeltrainer-product:%2Ftrainer%2F:v11',
+      'vokabeltrainer-product:%2Ftrainer%2F:v12',
     ]);
   } finally {
     await context.close();

@@ -1,7 +1,7 @@
 import {project} from '../learning/progress.js';
-import {avatarPicture, picture} from './art.js';
+import {picture} from './art.js';
 import {el, button, message} from './dom.js';
-import {avatarParts} from './rewards.js';
+import {avatarParts, levelCard} from './rewards.js';
 
 const uiByRoot = new WeakMap();
 
@@ -187,9 +187,9 @@ function renderLanding({root, state, commands, profileId, onNavigate, projection
       el('h1', {text: `Hallo, ${profile.value.name}!`}),
       el('p', {text: 'Welche Vokabeln möchtest du heute entdecken?'}),
     ]),
+    levelCard(progress),
     el('div', {attrs: {class: 'practice-art', 'aria-hidden': 'true'}}, [
       picture('island-beach', {className: 'practice-beach-art', sizes: '(max-width: 700px) 94vw, 720px', loading: 'eager'}),
-      avatarPicture(avatarParts(progress), {className: 'practice-avatar', sizes: '(max-width: 700px) 112px, 150px'}),
     ]),
   );
   if (ui.notice) section.append(message(ui.notice));
