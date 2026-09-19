@@ -321,6 +321,7 @@ h2 { margin-top: 0; font-size: 1.7rem; }
 .vocabulary-filters label { flex: 1 1 15rem; }
 .vocabulary-filters .active { color: #fff; border-color: var(--teal); background: var(--teal); }
 .vocabulary-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.65rem; }
+.vocabulary-row[hidden] { display: none; }
 .vocabulary-row > div { flex: 1 1 12rem; }
 .vocabulary-row h3, .vocabulary-row p { margin-bottom: 0.25rem; }
 .vocabulary-editor { padding: 1rem; border: 1px solid var(--line); border-radius: 1rem; background: rgb(255 255 255 / 82%); box-shadow: var(--shadow); }

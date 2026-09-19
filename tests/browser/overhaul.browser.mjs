@@ -457,6 +457,89 @@ test('compact vocabulary management opens editors deliberately and preserves the
   }
 });
 
+test('vocabulary search keeps focus during real character-by-character typing', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page} = await harness.newDevice({viewport: {width: 390, height: 844}});
+  try {
+    await page.goto(harness.baseUrl);
+    await setupPractice(page);
+    await openAdult(page);
+
+    const search = page.getByLabel('Vokabeln suchen');
+    await search.click();
+    await page.keyboard.type('Hun', {delay: 20});
+    assert.equal(await search.inputValue(), 'Hun');
+    assert.equal(await search.evaluate((node) => document.activeElement === node), true);
+    await page.keyboard.type('d', {delay: 20});
+    assert.equal(await search.inputValue(), 'Hund');
+    assert.equal(await page.locator('[data-word-german="Hund"]').isVisible(), true);
+    assert.equal(await page.locator('[data-word-german="Katze"]').isVisible(), false);
+  } finally {
+    await harness.close();
+  }
+});
+
+test('table import treats target-only changes as a protected draft', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page} = await harness.newDevice();
+  try {
+    await page.goto(harness.baseUrl);
+    await setupPractice(page);
+    await openAdult(page);
+
+    await page.getByRole('button', {name: 'Mehrere Wörter einfügen', exact: true}).click();
+    await page.getByLabel('Lektion', {exact: true}).selectOption('__new__');
+    await page.getByLabel('Neue Lektion', {exact: true}).fill('Reise');
+    await page.getByRole('checkbox', {name: 'Ada', exact: true}).uncheck();
+    await page.getByRole('button', {name: 'Lernregeln', exact: true}).click();
+    await page.getByRole('dialog', {name: 'Ungespeicherte Eingaben'}).waitFor();
+    await page.getByRole('button', {name: 'Weiterbearbeiten', exact: true}).click();
+    assert.equal(await page.getByLabel('Lektion', {exact: true}).inputValue(), '__new__');
+    assert.equal(await page.getByLabel('Neue Lektion', {exact: true}).inputValue(), 'Reise');
+    assert.equal(await page.getByRole('checkbox', {name: 'Ada', exact: true}).isChecked(), false);
+  } finally {
+    await harness.close();
+  }
+});
+
+test('table import revalidates its preview against the currently selected target lesson', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page} = await harness.newDevice();
+  try {
+    await page.goto(harness.baseUrl);
+    await setupPractice(page);
+    await openAdult(page);
+
+    await page.getByRole('button', {name: 'Wort hinzufügen', exact: true}).click();
+    await page.getByLabel('Deutsches Wort').fill('Boot');
+    await page.getByLabel(/Englische Lösungen/).fill('boat');
+    await page.getByLabel('Lektion', {exact: true}).selectOption('__new__');
+    await page.getByLabel('Neue Lektion', {exact: true}).fill('Meer');
+    await page.getByRole('button', {name: 'Vokabel hinzufügen', exact: true}).click();
+    await page.locator('[data-word-german="Boot"]').waitFor();
+
+    await page.getByRole('button', {name: 'Mehrere Wörter einfügen', exact: true}).click();
+    await page.getByLabel('Lektion', {exact: true}).selectOption({label: 'Inselwörter'});
+    await page.locator('#import-text').fill('Boot\tboat');
+    await page.locator('#import-preview').click();
+    assert.equal(await page.locator('#import-apply').isEnabled(), true);
+
+    await page.getByLabel('Lektion', {exact: true}).selectOption({label: 'Meer'});
+    assert.equal(await page.locator('#import-apply').isDisabled(), true);
+    await page.locator('[data-import-row="row-1"] input[name="hint"]').fill('bereits vorhanden');
+    await page.locator('[data-import-row="row-1"] input[name="hint"]').blur();
+    assert.equal(await page.getByLabel('Lektion', {exact: true}).inputValue(), await page.getByLabel('Lektion', {exact: true}).locator('option', {hasText: 'Meer'}).getAttribute('value'));
+    assert.equal(await page.locator('#import-apply').isDisabled(), true);
+
+    await page.getByLabel('Lektion', {exact: true}).selectOption({label: 'Inselwörter'});
+    assert.equal(await page.locator('#import-apply').isEnabled(), true);
+    await page.locator('#import-text').fill('Katze\tcat');
+    assert.equal(await page.locator('#import-apply').isDisabled(), true);
+  } finally {
+    await harness.close();
+  }
+});
+
 test('a differing browser client stays explicit and a bound learning area cannot quick-switch it', {timeout: 90_000}, async () => {
   const harness = await createTrainerHarness();
   const oldClientId = '123456-old.apps.googleusercontent.com';

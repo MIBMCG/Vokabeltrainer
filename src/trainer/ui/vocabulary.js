@@ -114,7 +114,27 @@ function lessonFields({profiles, lessons, selectedLessonId, profileId}) {
   select.addEventListener('change', update);
   update();
   wrapper.append(field('Lektion', select), newFields);
-  return {wrapper, select, newLesson, assignments};
+  return {wrapper, select, newLesson, assignments, update};
+}
+
+function readImportDraft(fields, text) {
+  return {
+    lessonId: fields.select.value,
+    newLessonName: fields.newLesson.value,
+    profileIds: [...fields.assignments.querySelectorAll('input:checked')]
+      .map(({value}) => value).sort(),
+    text: text.value,
+  };
+}
+
+function restoreImportDraft(fields, text, draft) {
+  fields.select.value = draft.lessonId;
+  fields.update();
+  fields.newLesson.value = draft.newLessonName;
+  for (const checkbox of fields.assignments.querySelectorAll('input')) {
+    checkbox.checked = draft.profileIds.includes(checkbox.value);
+  }
+  text.value = draft.text;
 }
 
 async function resolveLesson({fields, commands}) {
@@ -274,31 +294,41 @@ function renderImport({root, container, ui, projection, commands, onRefresh}) {
   const lessons = values(projection.entities.lessons);
   const target = lessonFields({profiles, lessons, selectedLessonId: ui.openEditor.lessonId, profileId: ui.openEditor.profileId});
   const text = el('textarea', {attrs: {id: 'import-text', rows: '6', 'aria-label': 'Tabellenzeilen'}});
+  let apply;
+  if (ui.openEditor.importDraft) restoreImportDraft(target, text, ui.openEditor.importDraft);
+  else {
+    ui.openEditor.importDraft = readImportDraft(target, text);
+    ui.openEditor.initialImportDraft = JSON.stringify(ui.openEditor.importDraft);
+  }
+  const updateDraft = () => {
+    ui.openEditor.importDraft = readImportDraft(target, text);
+  };
+  text.addEventListener('input', () => {
+    updateDraft();
+    if (ui.importRows !== null && apply) apply.disabled = true;
+  });
+  target.newLesson.addEventListener('input', updateDraft);
+  for (const checkbox of target.assignments.querySelectorAll('input')) {
+    checkbox.addEventListener('change', updateDraft);
+  }
+  target.select.addEventListener('change', () => {
+    updateDraft();
+    if (ui.importRows !== null) onRefresh();
+  });
   panel.append(target.wrapper, field('Tabellenzeilen', text));
   panel.append(button('Vorschau prüfen', () => {
-    const parsed = parseTable(text.value);
+    updateDraft();
+    const parsed = parseTable(ui.openEditor.importDraft.text);
     ui.importRows = parsed.rows;
     ui.importIssues = parsed.issues;
-    ui.openEditor.importTarget = {
-      lessonId: target.select.value,
-      newLessonName: target.newLesson.value,
-      profileIds: [...target.assignments.querySelectorAll('input:checked')].map(({value}) => value),
-    };
+    ui.openEditor.previewText = ui.openEditor.importDraft.text;
     onRefresh();
   }, {id: 'import-preview', class: 'secondary'}));
 
-  if (ui.openEditor.importTarget) {
-    target.select.value = ui.openEditor.importTarget.lessonId;
-    target.select.dispatchEvent(new Event('change'));
-    target.newLesson.value = ui.openEditor.importTarget.newLessonName;
-    for (const checkbox of target.assignments.querySelectorAll('input')) {
-      checkbox.checked = ui.openEditor.importTarget.profileIds.includes(checkbox.value);
-    }
-  }
-  const selectedLessonId = target.select.value;
-  const activeWords = values(projection.entities.words).filter((word) => (
-    !word.value.archived && selectedLessonId !== NEW_LESSON && word.value.lessonId === selectedLessonId
+  const activeWordsFor = (lessonId) => values(projection.entities.words).filter((word) => (
+    !word.value.archived && lessonId !== NEW_LESSON && word.value.lessonId === lessonId
   ));
+  const activeWords = activeWordsFor(ui.openEditor.importDraft.lessonId);
   let allIssues = [];
   let validated = {rows: [], issues: []};
   if (ui.importRows !== null) {
@@ -341,11 +371,15 @@ function renderImport({root, container, ui, projection, commands, onRefresh}) {
     }
     panel.append(preview);
   }
-  let apply;
   const save = async () => {
     apply.disabled = true;
     try {
-      const currentValidation = validateRows(ui.importRows ?? [], activeWords.map(({value}) => value));
+      updateDraft();
+      if (ui.importRows === null || ui.openEditor.previewText !== ui.openEditor.importDraft.text) {
+        throw new Error('Bitte prüfen Sie zuerst die aktuelle Vorschau.');
+      }
+      const currentWords = activeWordsFor(ui.openEditor.importDraft.lessonId);
+      const currentValidation = validateRows(ui.importRows, currentWords.map(({value}) => value));
       if (ui.importIssues.length || currentValidation.issues.length) throw new Error('Bitte klären Sie zuerst alle Importhinweise.');
       const lessonId = await resolveLesson({fields: target, commands});
       await applyRows(currentValidation.rows, async (row) => {
@@ -375,7 +409,11 @@ function renderImport({root, container, ui, projection, commands, onRefresh}) {
     onRefresh();
   }), {class: 'secondary'}));
   ui.draft = {
-    isDirty: () => text.value.trim() !== '' || ui.importRows !== null,
+    isDirty: () => {
+      updateDraft();
+      return JSON.stringify(ui.openEditor.importDraft) !== ui.openEditor.initialImportDraft
+        || ui.importRows !== null;
+    },
     save,
     discard: () => { ui.openEditor = null; ui.importRows = null; ui.importIssues = []; },
   };
@@ -486,20 +524,18 @@ export function renderVocabulary({root, state, commands, profileId, onRefresh}) 
       button('Archiviert', () => { ui.filter = 'archived'; onRefresh(); }, {class: ui.filter === 'archived' ? 'active' : ''}),
     ]);
     const search = filters.querySelector('input');
-    search.addEventListener('input', () => { ui.search = search.value; onRefresh(); });
     container.append(actions, filters);
-    const query = ui.search.trim().toLocaleLowerCase('de');
     const words = values(projection.entities.words).filter((word) => (
       word.value.lessonId === ui.lessonId
       && (ui.filter === 'archived' ? word.value.archived : !word.value.archived)
-      && (!query || [word.value.german, ...word.value.answers, word.value.hint]
-        .join(' ').toLocaleLowerCase('de').includes(query))
     ));
     const list = el('div', {attrs: {class: 'management-list vocabulary-list'}});
     for (const word of words) {
       const card = el('article', {attrs: {class: 'management-card vocabulary-row', 'data-word-german': word.value.german}}, [
         el('div', {}, [el('h3', {text: word.value.german}), el('p', {text: word.value.answers.join(' · ')})]),
       ]);
+      card.dataset.search = [word.value.german, ...word.value.answers, word.value.hint]
+        .join(' ').toLocaleLowerCase('de');
       card.append(
         button('Bearbeiten', () => {
           ui.openEditor = {
@@ -523,7 +559,20 @@ export function renderVocabulary({root, state, commands, profileId, onRefresh}) 
       );
       list.append(card);
     }
-    if (!words.length) list.append(message('Für diese Auswahl wurden keine Vokabeln gefunden.'));
+    const empty = message('Für diese Auswahl wurden keine Vokabeln gefunden.');
+    list.append(empty);
+    const filterWords = () => {
+      ui.search = search.value;
+      const query = ui.search.trim().toLocaleLowerCase('de');
+      let visible = 0;
+      for (const card of list.querySelectorAll('[data-word-german]')) {
+        card.hidden = Boolean(query) && !card.dataset.search.includes(query);
+        if (!card.hidden) visible += 1;
+      }
+      empty.hidden = visible > 0;
+    };
+    search.addEventListener('input', filterWords);
+    filterWords();
     container.append(list);
   }
 }

@@ -18,7 +18,7 @@ export async function createTrainerHarness({basePath = ''} = {}) {
   const {chromium} = await import(moduleUrl());
   const server = createProbeServer({basePath});
   const productWorker = await readFile(new URL('../../trainer/sw.js', import.meta.url), 'utf8');
-  let workerVersion = 'v11';
+  let workerVersion = 'v12';
   let workerActivationDelayMs = 0;
   let blockLargeArt = false;
   const originalRequest = server.listeners('request')[0];
@@ -30,9 +30,9 @@ export async function createTrainerHarness({basePath = ''} = {}) {
       response.end('Synthetic large-art failure.');
       return;
     }
-    if (pathname === `${basePath}/trainer/sw.js` && workerVersion !== 'v11') {
+    if (pathname === `${basePath}/trainer/sw.js` && workerVersion !== 'v12') {
       let source = productWorker.replace(
-        'const CACHE_NAME = `${CACHE_OWNER}v11`;',
+        'const CACHE_NAME = `${CACHE_OWNER}v12`;',
         `const CACHE_NAME = \`\${CACHE_OWNER}${workerVersion}\`;`,
       );
       if (source === productWorker) throw new Error('Synthetic worker version marker was not replaced.');
@@ -107,8 +107,8 @@ export async function createTrainerHarness({basePath = ''} = {}) {
     },
     stopServer,
     setServiceWorkerVersion(version, {activationDelayMs = 0} = {}) {
-      if (!/^v(?:1[2-9]|[2-9][0-9]|[1-9][0-9]{2,})$/u.test(version)) {
-        throw new TypeError('Synthetic worker version must be v12 or later.');
+      if (!/^v(?:1[3-9]|[2-9][0-9]|[1-9][0-9]{2,})$/u.test(version)) {
+        throw new TypeError('Synthetic worker version must be v13 or later.');
       }
       if (!Number.isSafeInteger(activationDelayMs) || activationDelayMs < 0) {
         throw new TypeError('Synthetic activation delay must be a non-negative integer.');
