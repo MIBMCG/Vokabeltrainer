@@ -143,8 +143,8 @@ Die Intervall-/Fehlerlogik ergänzt diesen Kern gemäß oben festgelegter Semant
 
 **Files:** Neu `src/trainer/ui/learning-rules.js`, Änderung `ui/adult.js`, `ui/vocabulary.js`, `trainer/styles.css`, `tests/browser/overhaul.browser.mjs`, `docs/BENUTZUNG.md`. **Interfaces:** `renderLearningRules({root,state,commands,profileId,onRefresh})`; nutzt B2-Commands, keine eigene Schwellen-/Fälligkeitsberechnung.
 
-- [ ] **1. Browser-RED:** „Für Erwachsene“→„Lernregeln“→Kind wählen; bisherige Standards lesen; slowAfter5/stopAfter6 und Abstände ändern; nächste Runde sieht neue Regel. Eine zweite Kinderauswahl zeigt weiterhin Standard. Der bisherige Nur-Lese-Bereich A4 darf diesen Test nicht erfüllen.
-- [ ] **2. Form implementieren.** Direkt sichtbares Kind, Zahlenwahl 2–10, Toggle „Gelernte Wörter weiter auffrischen“, optionaler Stopwert bis20, Details mit vier Tageswerten. Erklärung als vollständiger Satz plus Auswirkungsvorschau. Kern:
+- [x] **1. Browser-RED:** „Für Erwachsene“→„Lernregeln“→Kind wählen; bisherige Standards lesen; slowAfter5/stopAfter6 und Abstände ändern; nächste Runde sieht neue Regel. Eine zweite Kinderauswahl zeigt weiterhin Standard. Der bisherige Nur-Lese-Bereich A4 darf diesen Test nicht erfüllen.
+- [x] **2. Form implementieren.** Direkt sichtbares Kind, Zahlenwahl 2–10, Toggle „Gelernte Wörter weiter auffrischen“, optionaler Stopwert bis20, Details mit vier Tageswerten. Erklärung als vollständiger Satz plus Auswirkungsvorschau. Kern:
 
 ```js
 const policy = {slowAfter:Number(slow.value), stopAfter:refresh.checked ? null : Number(stop.value),
@@ -155,9 +155,9 @@ await commands.setLearningRules({profileId,expectedPolicyEventId:openedPolicyEve
 ```
 
 Dies gehört in validierte Vorschau-/Submitpfade, nicht einen Inputhandler, der sofort speichert. Werte im Formular bei Validierungsfehler erhalten; nicht eigenmächtig umsortieren oder runden. Standardbutton zeigt Werte zuerst im Formular und speichert erst nach bewusstem Submit.
-- [ ] **3. „Wieder üben“ integrieren.** Ausgenommene Wörter in Vokabel-/Lernstandsansicht für genau dieses Kind mit nachvollziehbarem Status zeigen. Aktion ruft `reactivateWord` mit gelesener Lernfassung/Generation auf; Text erklärt „Beginnt die Wiederholung neu; deine bisherigen Punkte und Antworten bleiben.“ Keine automatische Rücksetzung aller Kinder.
-- [ ] **4. Grenzen prüfen:** PIN sperrt während Submit; Fremdänderung nach Vorschau erhält Entwurf und meldet Konflikt; Profilwechsel keine Fehlzuordnung; negative/leere/nicht ganze/fallende Abstände werden abgewiesen; Browserneustart/Drive/Backup erhält Regeln; aktive Runde bleibt unverändert. Verspätete unbekannte Formate zeigen Updatebedarf, nicht „Abgeglichen“.
-- [ ] **5. Commit:** betroffene Node-/Browserprüfungen, Cachekennung/Route prüfen, Anleitung aktualisieren, `feat: expose clear learning controls for each child`.
+- [x] **3. „Wieder üben“ integrieren.** Ausgenommene Wörter in Vokabel-/Lernstandsansicht für genau dieses Kind mit nachvollziehbarem Status zeigen. Aktion ruft `reactivateWord` mit gelesener Lernfassung/Generation auf; Text erklärt „Beginnt die Wiederholung neu; deine bisherigen Punkte und Antworten bleiben.“ Keine automatische Rücksetzung aller Kinder.
+- [x] **4. Grenzen prüfen:** PIN sperrt während Submit; Fremdänderung nach Vorschau erhält Entwurf und meldet Konflikt; Profilwechsel keine Fehlzuordnung; negative/leere/nicht ganze/fallende Abstände werden abgewiesen; Browserneustart/Drive/Backup erhält Regeln; aktive Runde bleibt unverändert. Verspätete unbekannte Formate zeigen Updatebedarf, nicht „Abgeglichen“.
+- [x] **5. Commit:** betroffene Node-/Browserprüfungen, Cachekennung/Route prüfen, Anleitung aktualisieren, `feat: expose clear learning controls for each child`.
 
 ### B1 implementation clarification: conflicting epoch heads
 
