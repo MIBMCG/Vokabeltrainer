@@ -1,6 +1,6 @@
 # Statistik und Abschluss Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Verständliche, fachlich richtige Lernstatistiken anzeigen und die gesamte Überarbeitung am laufenden Programm prüfen und übergeben.
 
@@ -44,7 +44,7 @@
 
 Antwortsummen und Tagesbalken beziehen sich dagegen auf alle effektiven, deduplizierten Antworten dieses Kindes innerhalb `[addDays(day,1-days), day]`, einschließlich inzwischen archivierter/nicht mehr zugeordneter Wörter. Diese Abweichung vom aktuellen Wortbestand direkt erklären. Unterstützende und nicht übernommene alte Epochenereignisse zählen nicht. Bei Epochenkonflikt keine scheinbar gültige Gesamtstatistik anzeigen, sondern dieselbe Konfliktklärung wie im Produkt. Bei konfliktbehafteten Wortfassungen erklären, dass sie nicht im aktuellen Wortbestand enthalten sind.
 
-- [ ] **1. RED der Null-/Zählfälle schreiben.** Neue Tests verwenden `createFixture` und neue imports, darunter:
+- [x] **1. RED der Null-/Zählfälle schreiben.** Neue Tests verwenden `createFixture` und neue imports, darunter:
 
 ```js
 const f = createFixture();
@@ -62,7 +62,7 @@ assert.equal(Object.values(result.buckets).reduce((a,b)=>a+b,0),result.wordCount
 ```
 
 `node --test tests/trainer/statistics.test.js` ausführen und fachlich fehlende Implementierung als RED festhalten.
-- [ ] **2. Reine Projektion implementieren.** Aktuellen Wortbestand aus gemeinsamen Helfern, Scheduling aus aktueller Policy und Antwortdaten aus effectiveAnswers bilden. Tagesreihe vorab mit addDays füllen und über Map nach Lerntag zuordnen. Kein `new Date(event.occurredAt).getDate()` zur Balkenzuordnung. Kern der Aggregation:
+- [x] **2. Reine Projektion implementieren.** Aktuellen Wortbestand aus gemeinsamen Helfern, Scheduling aus aktueller Policy und Antwortdaten aus effectiveAnswers bilden. Tagesreihe vorab mit addDays füllen und über Map nach Lerntag zuordnen. Kein `new Date(event.occurredAt).getDate()` zur Balkenzuordnung. Kern der Aggregation:
 
 ```js
 for (const event of effectiveAnswers(ledger)) {
@@ -76,9 +76,9 @@ const accuracy = attempts === 0 ? null : 100 * correct / attempts;
 ```
 
 Das Prozentformat wird erst in der Ansicht gerundet. Summen müssen mit der zugänglichen Tabelle exakt übereinstimmen.
-- [ ] **3. Randfälle GREEN prüfen.** Gleiche IDs/wiederholte Übertragung und konkurrierende gleiche Antwortslots mit unterschiedlichem correct, anderes Profil, gestern/heute/außerhalb des Zeitraums, gespeicherter Lerntag abweichend vom UTC-Datum, Archivierung, Entzug der Zuordnung, neue Lernfassung, Reaktivierung, Support-only-Snapshot und nicht übernommene alte Antworten. Bestehende Restorefixtures verwenden, keine handgebauten ungültigen Ledgerobjekte als scheinbaren Erfolgsfall. Regeln speichern verändert keine Versuchs-/Punktsumme. Alle vier Statusgruppen in einem synthetischen Bestand prüfen; nicht endlos kreisende 0/0-Werte.
-- [ ] **4. Ansicht implementieren.** Kind/Zeitraum sichtbar, drei Kennzahlen „Antworten“, „Richtig“, „Trefferquote“, Ring mit direkt beschrifteten Gruppen und gestapelte Tagesbalken richtig/falsch. SVG darf Diagramme zeichnen; keine Diagrammbibliothek. Jeder Balken erhält textliche Werte, darunter aufklappbare echte Tabelle mit th/caption. Leere Statistik erklärt „Noch keine Antworten in diesem Zeitraum“; 0 wird nicht versteckt. Profil-/Lektionstexte ausschließlich als textContent einsetzen. Keine Lernzeit-Kennzahl. Ein fester Bildbereich verhindert Layoutsprünge, lange Beschriftungen umbrechen.
-- [ ] **5. Browserprüfung und Commit.** Neuer Browserfall wechselt Kind und 14/30 Tage, vergleicht Kennzahlen/Legende/Tabelle mit synthetischen Antworten, bedient per Tastatur und prüft schmale Ansicht. `node --test tests/trainer/statistics.test.js` und passende Fälle aus `tests/browser/overhaul.browser.mjs` GREEN. Route/Offlineassets ergänzen. Commit `feat: add accessible learning statistics from effective answers`.
+- [x] **3. Randfälle GREEN prüfen.** Gleiche IDs/wiederholte Übertragung und konkurrierende gleiche Antwortslots mit unterschiedlichem correct, anderes Profil, gestern/heute/außerhalb des Zeitraums, gespeicherter Lerntag abweichend vom UTC-Datum, Archivierung, Entzug der Zuordnung, neue Lernfassung, Reaktivierung, Support-only-Snapshot und nicht übernommene alte Antworten. Bestehende Restorefixtures verwenden, keine handgebauten ungültigen Ledgerobjekte als scheinbaren Erfolgsfall. Regeln speichern verändert keine Versuchs-/Punktsumme. Alle vier Statusgruppen in einem synthetischen Bestand prüfen; nicht endlos kreisende 0/0-Werte.
+- [x] **4. Ansicht implementieren.** Kind/Zeitraum sichtbar, drei Kennzahlen „Antworten“, „Richtig“, „Trefferquote“, Ring mit direkt beschrifteten Gruppen und gestapelte Tagesbalken richtig/falsch. SVG darf Diagramme zeichnen; keine Diagrammbibliothek. Jeder Balken erhält textliche Werte, darunter aufklappbare echte Tabelle mit th/caption. Leere Statistik erklärt „Noch keine Antworten in diesem Zeitraum“; 0 wird nicht versteckt. Profil-/Lektionstexte ausschließlich als textContent einsetzen. Keine Lernzeit-Kennzahl. Ein fester Bildbereich verhindert Layoutsprünge, lange Beschriftungen umbrechen.
+- [x] **5. Browserprüfung und Commit.** Neuer Browserfall wechselt Kind und 14/30 Tage, vergleicht Kennzahlen/Legende/Tabelle mit synthetischen Antworten, bedient per Tastatur und prüft schmale Ansicht. `node --test tests/trainer/statistics.test.js` und passende Fälle aus `tests/browser/overhaul.browser.mjs` GREEN. Route/Offlineassets ergänzen. Commit `feat: add accessible learning statistics from effective answers`.
 
 Erhaltung bestehender Funktionen: Die bisherige Lernstandsansicht enthält Angaben je Vokabel. Diese Übersicht durch Diagramme ergänzen, nicht still entfernen. Für das ausgewählte Kind eine kompakte, gegebenenfalls aufklappbare Worttabelle erhalten: Versuche, richtig/falsch, letzte Übung sowie aktuelle Wiederholungsserie/Fälligkeit oder Ausschlussstatus aus den gemeinsamen Projektionen. Ausgenommene Wörter bleiben so auch einzeln im Lernstand sichtbar, wie im Entwurf festgelegt. „Wieder üben“ kann in der bestehenden Vokabelverwaltung bleiben; die Detailansicht verweist verständlich darauf. Keine zusätzliche eigene Schedulingberechnung oder neue Analysefunktion.
 
