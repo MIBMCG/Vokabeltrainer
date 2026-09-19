@@ -54,6 +54,7 @@ const ASSETS = new Map([
   ['/src/trainer/ui/rewards.js', ['src/trainer/ui/rewards.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/ui/adult.js', ['src/trainer/ui/adult.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/ui/learning-rules.js', ['src/trainer/ui/learning-rules.js', 'text/javascript; charset=utf-8']],
+  ['/src/trainer/ui/statistics.js', ['src/trainer/ui/statistics.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/ui/vocabulary.js', ['src/trainer/ui/vocabulary.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/ui/settings.js', ['src/trainer/ui/settings.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/ui/sync.js', ['src/trainer/ui/sync.js', 'text/javascript; charset=utf-8']],
@@ -84,6 +85,7 @@ const ASSETS = new Map([
   ['/src/trainer/learning/progress.js', ['src/trainer/learning/progress.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/learning/facts.js', ['src/trainer/learning/facts.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/learning/schedule.js', ['src/trainer/learning/schedule.js', 'text/javascript; charset=utf-8']],
+  ['/src/trainer/learning/statistics.js', ['src/trainer/learning/statistics.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/learning/rewards.js', ['src/trainer/learning/rewards.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/learning/rounds.js', ['src/trainer/learning/rounds.js', 'text/javascript; charset=utf-8']],
   ...ART_RENDITIONS.flatMap(([key, widths]) => widths.map((width) => [

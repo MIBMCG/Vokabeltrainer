@@ -2,6 +2,7 @@ import {project} from '../learning/progress.js';
 import {el, button, message} from './dom.js';
 import {pinResetForm, renderSettings} from './settings.js';
 import {discardLearningRuleDraft, renderLearningRules} from './learning-rules.js';
+import {renderStatistics} from './statistics.js';
 import {
   discardVocabularyDraft,
   renderVocabulary,
@@ -31,49 +32,6 @@ export function adultStateChanged(root, state) {
     }, {class: 'secondary'}),
   ]);
   root.querySelector('.adult-header')?.after(notice);
-}
-
-function values(bucket) {
-  return Object.values(bucket).filter((entity) => entity.value !== null);
-}
-
-function formatDate(value) {
-  if (!value) return '—';
-  return value.slice(0, 10);
-}
-
-function renderProgress(container, projection) {
-  const section = el('section', {attrs: {'aria-labelledby': 'progress-title'}}, [
-    el('h1', {text: 'Lernstand', attrs: {id: 'progress-title'}}),
-    el('p', {text: 'Die Werte gehören jeweils nur zum ausgewählten Kind.'}),
-  ]);
-  for (const profile of values(projection.entities.profiles)) {
-    const profileProgress = projection.profiles[profile.id];
-    section.append(el('h2', {text: profile.value.name}));
-    const wrapper = el('div', {attrs: {class: 'table-scroll'}});
-    const table = el('table', {}, [el('thead', {}, [el('tr', {}, [
-      'Vokabel', 'Versuche', 'Richtig', 'Falsch', 'Serie', 'Letzte Übung', 'Fälligkeit',
-    ].map((label) => el('th', {text: label, attrs: {scope: 'col'}})))])]);
-    const body = el('tbody');
-    for (const word of values(projection.entities.words)) {
-      const stats = profileProgress?.words[word.id] ?? {
-        attempts: 0, correct: 0, wrong: 0, streak: 0, lastPracticedAt: null, dueDay: null,
-      };
-      body.append(el('tr', {attrs: {'data-progress-word': word.value.german}}, [
-        el('th', {text: word.value.german, attrs: {scope: 'row'}}),
-        el('td', {text: stats.attempts, attrs: {'data-stat': 'attempts'}}),
-        el('td', {text: stats.correct, attrs: {'data-stat': 'correct'}}),
-        el('td', {text: stats.wrong, attrs: {'data-stat': 'wrong'}}),
-        el('td', {text: stats.streak, attrs: {'data-stat': 'streak'}}),
-        el('td', {text: formatDate(stats.lastPracticedAt)}),
-        el('td', {text: stats.dueDay ?? '—'}),
-      ]));
-    }
-    table.append(body);
-    wrapper.append(table);
-    section.append(wrapper);
-  }
-  container.append(section);
 }
 
 export {pinResetForm};
@@ -125,7 +83,9 @@ export function renderAdult({root, state, commands, pinGate, onNavigate, sync, r
   }
   if (ui.section === 'vocabulary') {
     renderVocabulary({root, state, commands, profileId: null, onRefresh: rerender});
-  } else if (ui.section === 'progress') renderProgress(content, projection);
+  } else if (ui.section === 'progress') renderStatistics({
+    root, state, commands, profileId: null, onRefresh: rerender,
+  });
   else if (ui.section === 'rules') renderLearningRules({
     root, state, commands, profileId: null, onRefresh: rerender,
   });

@@ -3,6 +3,7 @@ import {dayInZone} from './learning/calendar.js';
 import {pendingMilestones, project} from './learning/progress.js';
 import {rewardState} from './learning/rewards.js';
 import {projectSchedule} from './learning/schedule.js';
+import {learningStatistics} from './learning/statistics.js';
 import {
   abandonRound,
   activeWords,
@@ -567,6 +568,12 @@ export async function createCommands({store, now, id, deviceId, onChange}) {
       const {policy} = currentPolicy(current.ledger, profileId);
       const schedule = projectSchedule({ledger: current.ledger, profileId, policy, day});
       return previewModes({projection, profileId, day, schedule});
+    },
+
+    statistics({profileId, days = 14}) {
+      const current = requireState();
+      const day = calendarDay(now(), current.ledger.descriptor.timeZone);
+      return learningStatistics({ledger: current.ledger, profileId, day, days});
     },
 
     learningRulePreview({profileId, policy}) {

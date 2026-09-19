@@ -1,6 +1,6 @@
 const SCOPE = self.registration.scope;
 const CACHE_OWNER = `vokabeltrainer-product:${encodeURIComponent(new URL(SCOPE).pathname)}:`;
-const CACHE_NAME = `${CACHE_OWNER}v17`;
+const CACHE_NAME = `${CACHE_OWNER}v18`;
 const APP_ASSETS = [
   './',
   './index.html',
@@ -43,6 +43,7 @@ const APP_ASSETS = [
   '../src/trainer/ui/rewards.js',
   '../src/trainer/ui/adult.js',
   '../src/trainer/ui/learning-rules.js',
+  '../src/trainer/ui/statistics.js',
   '../src/trainer/ui/vocabulary.js',
   '../src/trainer/ui/settings.js',
   '../src/trainer/ui/sync.js',
@@ -72,6 +73,7 @@ const APP_ASSETS = [
   '../src/trainer/learning/progress.js',
   '../src/trainer/learning/facts.js',
   '../src/trainer/learning/schedule.js',
+  '../src/trainer/learning/statistics.js',
   '../src/trainer/learning/rewards.js',
   '../src/trainer/learning/rounds.js',
 ];

@@ -332,6 +332,40 @@ h2 { margin-top: 0; font-size: 1.7rem; }
 .rule-details label { margin-top: 0.7rem; }
 .rules-explanation { margin: 0; color: #234f58; font-weight: 700; }
 .rules-effect { margin: 0; }
+.statistics-controls { display: flex; flex-wrap: wrap; gap: 0.8rem; }
+.statistics-view, .statistics-table, .statistics-word-details { min-width: 0; max-width: 100%; }
+.statistics-table .table-scroll, .statistics-word-details .table-scroll { width: 100%; max-width: 100%; }
+.statistics-controls label { flex: 1 1 12rem; }
+.statistics-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem; }
+.statistics-cards article { display: grid; gap: 0.3rem; padding: 1rem; border: 1px solid var(--line); border-radius: 1rem; background: #fff; box-shadow: var(--shadow); }
+.statistics-cards span { color: #48636a; font-weight: 750; }
+.statistics-cards strong { color: var(--teal-dark); font-family: Georgia, serif; font-size: clamp(1.65rem, 5vw, 2.35rem); }
+.statistics-explanation { max-width: 62rem; color: #48636a; }
+.statistics-figure { margin: 0; padding: clamp(0.85rem, 3vw, 1.25rem); overflow: hidden; border: 1px solid var(--line); border-radius: 1rem; background: rgb(255 255 255 / 88%); box-shadow: var(--shadow); }
+.statistics-figure h2 { margin: 0 0 0.35rem; }
+.statistics-figure > p { margin: 0 0 0.75rem; }
+.chart-summary { color: #48636a; font-weight: 750; }
+.word-ring-layout { display: grid; grid-template-columns: minmax(10rem, 14rem) minmax(14rem, 1fr); align-items: center; gap: 1rem; }
+.word-ring-layout svg { display: block; width: 100%; max-height: 15rem; }
+.ring-total { fill: #123b4b; font-size: 1.5rem; font-weight: 850; }
+.ring-label { fill: #48636a; font-size: 0.65rem; font-weight: 750; }
+.chart-key { display: grid; gap: 0.65rem; margin: 0; padding: 0; list-style: none; }
+.chart-key li { display: grid; grid-template-columns: 1rem minmax(0, 1fr) auto; align-items: center; gap: 0.55rem; }
+.chart-swatch { width: 0.9rem; height: 0.9rem; border-radius: 50%; background: #69a7c2; }
+.chart-swatch[data-swatch="learning"] { background: #e0a33c; }
+.chart-swatch[data-swatch="review"] { background: #0aa6a4; }
+.chart-swatch[data-swatch="excluded"] { background: #8063a8; }
+.chart-scroll { max-width: 100%; overflow-x: auto; padding-bottom: 0.3rem; }
+.chart-scroll-hint { color: #48636a; font-size: 0.9rem; font-weight: 700; }
+.chart-scroll svg { display: block; min-width: 32rem; max-width: none; }
+.bar-value { fill: #234f58; font-size: 10px; font-weight: 800; }
+.bar-day { fill: #48636a; font-size: 9px; }
+.bar-key { display: flex; flex-wrap: wrap; gap: 1rem; font-weight: 750; }
+.bar-key span::before { display: inline-block; width: 0.8rem; height: 0.8rem; margin-right: 0.35rem; border-radius: 0.2rem; vertical-align: -0.05rem; content: ""; }
+.key-correct::before { background: #0aa6a4; }
+.key-wrong::before { background: #d48922; }
+.statistics-table, .statistics-word-details { padding: 0.2rem 0.8rem 0.8rem; border: 1px solid var(--line); border-radius: 0.9rem; background: #f7fbf5; }
+.statistics-table caption, .statistics-word-details caption { padding: 0.7rem; font-weight: 750; text-align: left; }
 .lesson-target { padding: 0.75rem; border: 1px solid var(--line); border-radius: 0.8rem; background: #f7fbf5; }
 #adult-unsaved-dialog { width: min(34rem, calc(100% - 2rem)); border: 1px solid var(--line); border-radius: 1.2rem; padding: 1.25rem; color: inherit; background: var(--sand); box-shadow: 0 18px 70px rgb(23 57 67 / 32%); }
 #adult-unsaved-dialog::backdrop { background: rgb(12 38 45 / 58%); }
@@ -512,6 +546,9 @@ th:first-child { position: sticky; left: 0; background: #fff; }
   .adult-nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); overflow: visible; }
   .adult-nav button { width: 100%; min-width: 0; padding-right: 0.35rem; padding-left: 0.35rem; }
   .vocabulary-selectors { grid-template-columns: 1fr; }
+  .statistics-cards { grid-template-columns: 1fr; }
+  .word-ring-layout { grid-template-columns: 1fr; }
+  .word-ring-layout svg { width: min(14rem, 100%); margin: 0 auto; }
   .import-row { grid-template-columns: 1fr; }
   .management-list { grid-template-columns: 1fr; }
   .mode-grid { grid-template-columns: 1fr; }

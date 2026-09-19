@@ -9,6 +9,7 @@ const resultsDirectory = resolve('test-results', 'overhaul-a1');
 const a2ResultsDirectory = resolve('test-results', 'overhaul-a2');
 const a4ResultsDirectory = resolve('test-results', 'overhaul-a4');
 const b3ResultsDirectory = resolve('test-results', 'overhaul-b3');
+const c1ResultsDirectory = resolve('test-results', 'overhaul-c1');
 const preparedGoogleClientId = '329410329467-s8nevn4sqi7m3fmtq2tkbpj76b8osvhs.apps.googleusercontent.com';
 
 async function productState(page) {
@@ -774,6 +775,82 @@ test('excluded current word generations can be deliberately returned to practice
     await page.getByText('Hund wird für Ada wieder geübt. Bisherige Punkte und Antworten bleiben erhalten.', {exact: true}).waitFor();
     assert.equal((await productState(page)).ledger.events.filter(({type}) => type === 'word.reactivated').length, 1);
     assert.equal(await hund.getByRole('button', {name: 'Wieder üben', exact: true}).count(), 0);
+  } finally {
+    await harness.close();
+  }
+});
+
+test('learning statistics stay per child, expose accessible 14 and 30 day facts, and preserve drafts', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page} = await harness.newDevice({viewport: {width: 390, height: 844}});
+  await mkdir(c1ResultsDirectory, {recursive: true});
+  try {
+    await page.goto(harness.baseUrl);
+    await setupPractice(page);
+    await page.getByRole('button', {name: 'Runde starten', exact: true}).click();
+    await page.getByLabel('Englische Übersetzung').fill('synthetisch falsch');
+    await page.getByRole('button', {name: 'Prüfen', exact: true}).click();
+    await page.getByText('Noch nicht ganz', {exact: true}).waitFor();
+    await page.getByRole('button', {name: 'Weiter', exact: true}).click();
+    const state = await productState(page);
+    const round = state.rounds[Object.keys(state.rounds)[0]];
+    const answer = state.ledger.events.find(({id}) => id === round.current.revisionId).payload.value.answers[0];
+    await page.getByLabel('Englische Übersetzung').fill(answer);
+    await page.getByRole('button', {name: 'Prüfen', exact: true}).click();
+    await page.getByText('Richtig!', {exact: true}).waitFor();
+
+    await openAdult(page);
+    await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
+    const addChild = page.locator('details').filter({has: page.getByText('Kind hinzufügen', {exact: true})});
+    await addChild.locator('summary').click();
+    await addChild.getByLabel('Name', {exact: true}).fill('Ben');
+    await addChild.getByRole('button', {name: 'Kind hinzufügen', exact: true}).click();
+
+    await page.getByRole('button', {name: 'Lernregeln', exact: true}).click();
+    await page.getByLabel('Kind für Lernregeln').selectOption({label: 'Ada'});
+    await page.getByLabel('Ab wie vielen richtigen Antworten hintereinander seltener?').selectOption('5');
+    await page.getByRole('button', {name: 'Lernstand', exact: true}).click();
+    await page.getByLabel('Kind für Lernstand').selectOption({label: 'Ada'});
+    assert.equal(await page.getByLabel('Kind für Lernstand').inputValue(), await page.getByLabel('Kind für Lernstand').locator('option', {hasText: 'Ada'}).getAttribute('value'));
+    assert.equal(await page.locator('[data-statistic="attempts"]').textContent(), '2');
+    assert.equal(await page.locator('[data-statistic="correct"]').textContent(), '1');
+    assert.equal(await page.locator('[data-statistic="accuracy"]').textContent(), '50 %');
+    assert.equal(await page.locator('[data-statistics-day]').count(), 14);
+    const today = page.locator('[data-statistics-day]').last();
+    assert.equal(await today.locator('[data-daily="correct"]').textContent(), '1');
+    assert.equal(await today.locator('[data-daily="wrong"]').textContent(), '1');
+    assert.equal(await page.locator('[data-bucket]').count(), 4);
+    assert.equal(await page.locator('[data-bucket]').evaluateAll((nodes) => nodes.reduce((sum, node) => sum + Number(node.textContent), 0)), 2);
+
+    await page.getByText('Wortdetails (2)', {exact: true}).click();
+    assert.equal(await page.locator('[data-statistics-word]').count(), 2);
+    assert.equal(await page.locator('[data-word-stat="attempts"]').evaluateAll((nodes) => nodes.reduce((sum, node) => sum + Number(node.textContent), 0)), 2);
+    const eventsBeforeStatisticsControls = (await productState(page)).ledger.events.length;
+    await page.getByLabel('Zeitraum für Lernstand').focus();
+    await page.getByLabel('Zeitraum für Lernstand').press('End');
+    assert.equal(await page.getByLabel('Zeitraum für Lernstand').inputValue(), '30');
+    assert.equal(await page.locator('[data-statistics-day]').count(), 30);
+
+    await page.getByLabel('Kind für Lernstand').selectOption({label: 'Ben'});
+    assert.equal(await page.locator('[data-statistic="attempts"]').textContent(), '0');
+    await page.getByText('Noch keine Antworten in diesem Zeitraum.', {exact: true}).waitFor();
+    await page.getByLabel('Kind für Lernstand').selectOption({label: 'Ada'});
+    assert.equal((await productState(page)).ledger.events.length, eventsBeforeStatisticsControls);
+    await page.getByRole('button', {name: 'Lernregeln', exact: true}).click();
+    assert.equal(await page.getByLabel('Ab wie vielen richtigen Antworten hintereinander seltener?').inputValue(), '5');
+    await page.getByRole('button', {name: 'Lernstand', exact: true}).click();
+    await page.waitForFunction(() => {
+      const scroll = document.querySelector('.chart-scroll');
+      return scroll && scroll.scrollLeft + scroll.clientWidth >= scroll.scrollWidth - 1;
+    });
+    const latestDay = await page.locator('[data-statistics-day]').last().getAttribute('data-statistics-day');
+    assert.equal(await page.locator('[data-stat-day]').last().getAttribute('aria-label'), `${latestDay}: 1 richtig, 1 falsch`);
+    await page.getByText('Wortdetails (2)', {exact: true}).click();
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), true);
+    await page.screenshot({path: resolve(c1ResultsDirectory, 'statistics-mobile-390.png'), fullPage: true});
+    await page.setViewportSize({width: 1280, height: 900});
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), true);
+    await page.screenshot({path: resolve(c1ResultsDirectory, 'statistics-desktop-1280.png'), fullPage: true});
   } finally {
     await harness.close();
   }

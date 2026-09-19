@@ -46,7 +46,9 @@ Im Avatarbereich stehen vier Hauttöne und sechs Kleidungsfarben zur Wahl. Mit h
 
 ## Lernstand und Änderungen
 
-Die Erwachsenenansicht zeigt je Kind und Wort Versuche, richtige und falsche Antworten, aktuelle Serie, letzte Übung und Fälligkeit. Punkte und Antworten anderer Kinder bleiben getrennt.
+Unter **Lernstand** wählen Erwachsene ein Kind sowie 14 oder 30 Tage. Die Ansicht zeigt Antworten, richtige Antworten und Trefferquote, die vier aktuellen Wortgruppen „Noch neu“, „In Übung“, „Zur Auffrischung“ und „Aus dem Üben genommen“ sowie die jetzt verfügbaren Wörter. Das Tagesdiagramm nennt richtige und falsche Antworten; dieselben Werte stehen zusätzlich in einer aufklappbaren Tabelle. Die aktuelle Wortverteilung zählt nur aktive, zugeordnete Wörter. Die Zeitraumwerte behalten dagegen auch frühere Antworten auf inzwischen archivierte oder nicht mehr zugeordnete Wörter.
+
+Die aufklappbaren Wortdetails erhalten die bisherige Übersicht: Versuche, richtige und falsche Antworten, aktuelle Serie nach den geltenden Lernregeln, Status oder Fälligkeit und letzte Übung. Ausgenommene Wörter bleiben einzeln sichtbar; **Wieder üben** steht weiterhin unter **Vokabeln** bereit. Punkte und Antworten anderer Kinder bleiben getrennt.
 
 Eine inhaltliche Änderung von Wort, Hinweis oder erlaubten Lösungen beginnt eine neue Übungsserie für dieses Wort. Die Oberfläche kündigt das an; bisherige Antworten und Punkte bleiben erhalten. Eine reine Änderung der Zuordnung oder Groß-/Kleinschreibung löscht den Lernstand nicht.
 
