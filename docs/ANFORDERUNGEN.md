@@ -1,5 +1,15 @@
 # Anforderungen und Entscheidungen
 
+## Neuer Auftrag vom 19.09.2026
+
+Nach eigenem Test beauftragt der Nutzer eine größere Überarbeitung: bessere Nähe zum Inselkonzept, illustrierte Rasterbilder für Avatar und Reise in passenden Auflösungen, einfachere Cloud-Einrichtung, verständlich erklärte Übungsmodi, leicht zugängliche Wiederholungseinstellungen einschließlich Ausschluss gelernter Wörter, einfachere Vokabelverwaltung und grafische Lernstatistiken. Diese Anforderungen sind im [Arbeitsentwurf U01–U07](design/2026-09-19-ueberarbeitung.md) vollständig festgehalten.
+
+Der Auftrag zur Verbesserung ist erteilt. Der neue Lernregelvertrag wird noch konkretisiert. Die folgenden v1-Entscheidungen bleiben als Ausgangspunkt erhalten; insbesondere R08/R19 beschreiben bis zur abgestimmten Erweiterung die bisherigen Standardwerte. Die optische Qualität der bisherigen Umsetzung ist durch den Praxistest ausdrücklich als unzureichend zurückgemeldet, unabhängig von bestandenen Funktionstests.
+
+**Bestätigte Einrichtungsentscheidung vom 19.09.2026:** Automatischer Abgleich bleibt bei Google Drive. Die vorhandene Google-Konfiguration wird einmal zentral in der App vorbereitet; Eltern melden sich nur noch bei Google an und wählen den gemeinsamen Bestand. Keine eigene Cloud-Console-/Client-ID-Einrichtung für jede Familie. Die zuvor erwogene Excel-Alternative wird nicht als Synchronisationsspeicher umgesetzt. Neue App-Ursprünge und gegebenenfalls Testnutzer bleiben einmalige Einrichtungsaufgaben der Projektverantwortlichen.
+
+**Bestätigte Lernregelentscheidung vom 19.09.2026:** Wiederholungsregeln sind je Kind getrennt einstellbar, mit gemeinsamen Standardwerten als Ausgangspunkt. Änderungen an einem Kind verändern nicht die Regeln anderer Profile. Zahlenbereiche, genaue zeitliche Wirkung und Wiederaktivierung sind im schriftlichen Entwurf vorgeschlagen und noch nicht als bestätigt zu behandeln.
+
 Änderung der Prüfungsreihenfolge am 17.09.2026: Der Nutzer beauftragt ausdrücklich, zuerst die vollständige App gemäß bestätigtem Gesamtentwurf umzusetzen und erst danach beim Freund auf iPhone/iPad zu testen. Die bisherige Geräteprüfung vor umfangreicher Lernoberfläche ist damit als Entwicklungssperre aufgehoben. Reale Geräteabnahme bleibt offen und darf nicht als bestanden gelten. Bereits bestätigte manuelle Google-/Drive-Tests in zwei Browsern gelten weiter. Keine neue pauschale Startfreigabe verlangen; Hosting/Veröffentlichung und Kostenmodell werden dadurch nicht automatisch geändert.
 
 Stand: 16.09.2026. Dieses Dokument ist die zentrale Quelle für den Produktumfang. „Bestätigt“ bedeutet eine ausdrückliche Nutzerangabe oder Auswahl im bisherigen Gespräch. Vorschläge müssen als solche erhalten bleiben, bis sie abgestimmt wurden.

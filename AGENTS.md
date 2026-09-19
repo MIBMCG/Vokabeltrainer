@@ -22,7 +22,7 @@ Die statische Produkt-App liegt unter `trainer/`; die technische Drive-Probe ble
 
 Die Einzelfragen Q1–Q14 sowie der [Gesamtentwurf](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md) einschließlich E01–E10 sind bestätigt (Nutzerantwort A vom 16.09.2026). Die Entwicklung beginnt nach dem [Plan zur Google-Drive-Probe](docs/superpowers/plans/2026-09-16-google-drive-probe.md). Keine erneute Entwurfs- oder pauschale Startfreigabe einholen. Reale Google-/Geräteprüfungen bleiben gesonderte Nachweise. Die frühe Verbindungsprobe wurde durchgeführt. Die restliche echte Geräteprüfung erfolgt auf Nutzerwunsch erst nach Umsetzung der vollständigen App.
 
-Aktuelle Steuerung: Tasks 1–13 und Abschlussreview sind abgeschlossen. Nächster Schritt ist die dokumentierte reale Geräteabnahme; notwendiges Hosting separat abstimmen. Ältere Pausen- und Zwischenstandsnotizen sind historische Vorgeschichte. Keine erneute pauschale Startfreigabe verlangen.
+Aktuelle Steuerung vom 19.09.2026: Tasks 1–13 und Abschlussreview der bisherigen Version sind abgeschlossen. Der Nutzer hat nach eigenem Test eine größere Überarbeitung beauftragt; siehe [Arbeitsentwurf](docs/design/2026-09-19-ueberarbeitung.md) und aktuellen Arbeitsstand. Gestaltung näher am Konzept, Rasterillustrationen, einfachere Einrichtung und Verwaltung, erklärte Modi, einstellbare Lernregeln und Statistiken bearbeiten. Cloudalternative und neue Lernregel-Semantik vor der davon abhängigen Umsetzung klären; kein stiller Formatwechsel zu Excel. Ältere Pausen- und Zwischenstandsnotizen sind historische Vorgeschichte. Keine erneute pauschale Startfreigabe verlangen.
 
 ## Feste Leitplanken
 

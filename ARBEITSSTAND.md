@@ -1,6 +1,10 @@
 # Arbeitsstand
 
-Stand: **18.09.2026**
+Stand: **19.09.2026**
+
+Aktuelle [Übergabe zur Überarbeitung](docs/handoffs/2026-09-19-ueberarbeitung.md).
+
+**Aktueller Auftrag:** Nach dem Praxistest hat der Nutzer eine Überarbeitung von Gestaltung, Avatar/Inselreise, Einrichtung, Moduswahl, Wiederholungsregeln, Vokabelverwaltung und Statistik beauftragt. [Anforderungen und schriftlicher Entwurf](docs/design/2026-09-19-ueberarbeitung.md) sind dokumentiert. Noch keine Produktänderung dieses neuen Pakets. Bestätigt sind die zentral vorbereitete Google-Konfiguration mit automatischem Drive-Abgleich sowie getrennte Lernregeln je Kind mit gemeinsamen Ausgangswerten. Kein Excel-Wechsel. Nächster Schritt ist die Prüfung des konkreten Entwurfs, anschließend der Implementierungsplan. Der nachfolgende v1-Abschluss bleibt als bisheriger Funktionsnachweis erhalten und ist keine visuelle Abnahme dieser Überarbeitung.
 
 Die vollständige Version 1 gemäß [bestätigtem Gesamtentwurf](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md) und [Produkt-Datenvertrag](docs/PRODUKT-DATENFORMAT.md) ist auf `codex/vokabeltrainer-v1` implementiert. Task 13 schloss letzte Bedienungsbefunde, portable Browserwerkzeuge, vollständige Regression, visuelle Prüfung und die portable Dokumentation ab. Ausgangscode: `3b1d16d`; Reviewfix-1-Produktcode `11e3128` korrigiert zusätzlich die Profilweiterleitung. Der [Abschlussbericht](docs/reports/2026-09-18-vokabeltrainer-v1.md) enthält die vollständige Evidenz einschließlich der korrigierten Abschlussmatrix; die [Übergabe](docs/handoffs/2026-09-18-vokabeltrainer-v1.md) nennt den nächsten Schritt.
 
@@ -58,6 +62,6 @@ Keine dieser Grenzen ist eine neue Produktentscheidung. Hosting, Kontenänderung
 
 ## Nächster Schritt
 
-Die technische Umsetzung und unabhängige Prüfung sind abgeschlossen. Als Nächstes können die Schritte aus der [Geräte-Prüfliste](docs/GERAETE-ABNAHME.md) mit synthetischen Daten auf den Geräten des Freundes vorbereitet werden; eine dafür nötige HTTPS-Bereitstellung erfordert einen eigenen Auftrag.
+Den [Überarbeitungsentwurf](docs/design/2026-09-19-ueberarbeitung.md) vom Nutzer prüfen lassen, anschließend den Implementierungsplan erstellen. Google Drive mit vorbereiteter App und Regeln je Kind sind bereits bestätigt und werden nicht erneut abgefragt. Die [Geräte-Prüfliste](docs/GERAETE-ABNAHME.md) bleibt für spätere echte Tests gültig; eine dafür nötige HTTPS-Bereitstellung erfordert einen eigenen Auftrag.
 
 Aktueller Branch: `codex/vokabeltrainer-v1`. Finaler Produktcode: `cc079cb`. Der Abschlussstand `a8842b7` wurde auf GitHub übertragen und mit dem lokalen Commit verglichen; siehe Empfangsbeleg in der Übergabe. Nachfolgende reine Dokumentationscommits sind in der Branchhistorie sichtbar.
