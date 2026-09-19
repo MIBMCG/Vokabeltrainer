@@ -1,5 +1,9 @@
 # Anforderungen und Entscheidungen
 
+## Neuer Auftrag: Avatare und Punkteshop (19.09.2026)
+
+Die [bestätigten Entscheidungen AV01–AV11](design/2026-09-19-avatar-shop-entscheidungen.md) erweitern den bisherigen Umfang: Mädchen-/Jungenfiguren, Tiere und mystische Avatare, passende Ausstattung je Figurenart, kostenlose Levelbelohnungen und ein Shop mit erspieltem Guthaben. Der Nutzer hat R24/Q6d ausdrücklich geändert: Der frühere Ausschluss eines Münzladens gilt für diese Erweiterung nicht mehr. Gesamte Lernpunkte und ausgebbares Guthaben werden getrennt; bisherige Punkte zählen vollständig als Startguthaben. Noch offen ist O-AV01 zum Offlinekauf. Das Paket ist noch nicht implementiert; die abgeschlossene Überarbeitung U01–U07 bleibt davon getrennt.
+
 ## Neuer Auftrag vom 19.09.2026
 
 Nach eigenem Test beauftragt der Nutzer eine größere Überarbeitung: bessere Nähe zum Inselkonzept, illustrierte Rasterbilder für Avatar und Reise in passenden Auflösungen, einfachere Cloud-Einrichtung, verständlich erklärte Übungsmodi, leicht zugängliche Wiederholungseinstellungen einschließlich Ausschluss gelernter Wörter, einfachere Vokabelverwaltung und grafische Lernstatistiken. Diese Anforderungen sind im [bestätigten Entwurf U01–U07](design/2026-09-19-ueberarbeitung.md) vollständig festgehalten.
