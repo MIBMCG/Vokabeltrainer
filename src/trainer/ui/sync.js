@@ -10,7 +10,7 @@ function uiState(root, auth) {
   const owner = root.closest?.('#app') ?? root;
   if (!stateByRoot.has(owner)) {
     stateByRoot.set(owner, {
-      clientId: auth.clientId?.() ?? '',
+      manualClientId: auth.clientId?.() ?? '',
       folderName: 'Vokabeltrainer',
       connected: false,
       datasets: [],
@@ -39,6 +39,9 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
   const projection = project(state.ledger);
   const resolved = resolveEpochs(state.ledger);
   const status = sync.getStatus();
+  const configuration = auth.configuration?.(Boolean(state.binding)) ?? {
+    clientId: auth.clientId?.() ?? '', source: 'browser', requiresDecision: false,
+  };
   const rerender = () => renderSync({
     root, state: commands.getState(), sync, restore, auth, commands, isUnlocked, onRefresh, onConnected,
   });
@@ -76,32 +79,71 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
   if (status.lateCount > 0) section.append(message(`${status.lateCount} alte Änderung${status.lateCount === 1 ? ' bleibt' : 'en bleiben'} getrennt erhalten.`));
   if (ui.notice) section.append(message(ui.notice, ui.tone));
 
+  const markConnected = () => {
+    ui.connected = true;
+    ui.notice = 'Google ist für diese Sitzung verbunden.';
+    ui.tone = 'info';
+    ui.manualClientId = auth.clientId?.() ?? ui.manualClientId;
+    onConnected?.();
+  };
   const connection = el('form', {attrs: {class: 'subpanel stack compact'}});
-  const clientId = el('input', {attrs: {id: 'google-client-id', name: 'clientId', value: ui.clientId, autocomplete: 'off'}});
-  clientId.addEventListener('input', () => { ui.clientId = clientId.value; });
   connection.append(
     el('h3', {text: 'Google Drive verbinden'}),
-    el('p', {text: 'Die öffentliche Web-Client-ID wird nur in diesem Browser gespeichert. Zugriffstokens bleiben im Arbeitsspeicher.'}),
-    field('Öffentliche Google-Web-Client-ID', clientId),
-    el('button', {text: 'Mit Google verbinden', attrs: {type: 'submit', class: 'primary', disabled: ui.busy}}),
+    el('p', {text: configuration.source === 'missing'
+      ? 'Der Google-Zugang ist noch nicht vorbereitet. Lokal üben und speichern ist weiterhin möglich.'
+      : 'Verbinden Sie das gemeinsame Google-Konto der Familie. Danach wählen Sie bewusst einen neuen oder vorhandenen Lernbereich.'}),
+    el('button', {text: 'Mit Google verbinden', attrs: {
+      type: 'submit', class: 'primary', disabled: ui.busy || configuration.source === 'missing',
+    }}),
   );
   connection.addEventListener('submit', (event) => {
     event.preventDefault();
-    void run(() => auth.connect(ui.clientId), {after: async () => {
-      ui.connected = true;
-      ui.notice = 'Google ist für diese Sitzung verbunden.';
-      ui.tone = 'info';
-      onConnected?.();
-    }});
+    void run(() => auth.connect(), {after: markConnected});
   });
   section.append(connection);
+
+  const advanced = el('details', {attrs: {class: 'subpanel stack compact'}}, [
+    el('summary', {text: 'Erweiterte Einstellungen'}),
+    el('p', {text: 'Diese Angaben sind nur für Projektverantwortliche. Familien benötigen normalerweise keine eigene Client-ID.'}),
+  ]);
+  if (configuration.requiresDecision) {
+    advanced.append(message(state.binding
+      ? 'In diesem Browser ist eine andere Client-ID gespeichert. Der bestehende Lernbereich behält seine bisherige Verbindung; ein schneller Wechsel wird deshalb nicht angeboten.'
+      : 'In diesem Browser ist eine andere Client-ID gespeichert. Sie bleibt aktiv, bis Sie bewusst den vorbereiteten Zugang wählen.'));
+    if (!state.binding) {
+      advanced.append(button('Vorbereiteten Zugang verwenden und verbinden', () => run(
+        () => auth.connect(auth.preparedClientId()), {after: markConnected},
+      ), {class: 'secondary', disabled: ui.busy}));
+    }
+  }
+  if (state.binding) {
+    advanced.append(el('p', {text: 'Für einen bereits verbundenen Lernbereich kann die Client-ID hier nicht gewechselt werden.'}));
+  } else {
+    const manual = el('form', {attrs: {class: 'stack compact'}});
+    const manualClientId = el('input', {attrs: {
+      id: 'google-client-id', name: 'clientId', value: ui.manualClientId, autocomplete: 'off',
+    }});
+    manualClientId.addEventListener('input', () => { ui.manualClientId = manualClientId.value; });
+    manual.append(
+      field('Öffentliche Google-Web-Client-ID', manualClientId),
+      el('button', {text: 'Eigene Client-ID verwenden und verbinden', attrs: {
+        type: 'submit', class: 'secondary', disabled: ui.busy,
+      }}),
+    );
+    manual.addEventListener('submit', (event) => {
+      event.preventDefault();
+      void run(() => auth.connect(ui.manualClientId), {after: markConnected});
+    });
+    advanced.append(manual);
+  }
+  section.append(advanced);
 
   if (ui.connected) {
     const controls = el('div', {attrs: {class: 'subpanel stack compact'}});
     const folderName = el('input', {attrs: {id: 'drive-folder-name', value: ui.folderName, maxlength: 80}});
     folderName.addEventListener('input', () => { ui.folderName = folderName.value; });
     controls.append(
-      el('h3', {text: state.binding ? 'Verbundener Datensatz' : 'Datensatz auswählen'}),
+      el('h3', {text: state.binding ? 'Verbundener Lernbereich' : 'Lernbereich auswählen'}),
       button('Jetzt abgleichen', () => run(() => sync.retry(), {after: () => {
         ui.notice = 'Der Abgleich wurde ausgeführt.';
         ui.tone = 'info';
@@ -116,14 +158,14 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
     );
     if (!state.binding) {
       controls.append(
-        field('Name des Drive-Ordners', folderName),
-        button('Neuen Drive-Datensatz anlegen', () => run(() => sync.createDataset(ui.folderName), {after: () => {
-          ui.notice = 'Der Drive-Datensatz wurde angelegt.';
+        field('Name des Lernbereichs', folderName),
+        button('Neuen Lernbereich anlegen', () => run(() => sync.createDataset(ui.folderName), {after: () => {
+          ui.notice = 'Der Lernbereich wurde angelegt.';
           ui.tone = 'info';
         }}), {class: 'primary', disabled: ui.busy}),
-        button('Vorhandene Datensätze suchen', () => run(() => sync.discover(), {after: (datasets) => {
+        button('Vorhandenen Lernbereich verwenden', () => run(() => sync.discover(), {after: (datasets) => {
           ui.datasets = datasets;
-          ui.notice = datasets.length ? '' : 'In diesem Google-Konto wurde kein passender Datensatz gefunden.';
+          ui.notice = datasets.length ? '' : 'In diesem Google-Konto wurde kein passender Lernbereich gefunden.';
           ui.tone = 'info';
         }}), {class: 'secondary', disabled: ui.busy}),
       );
@@ -133,12 +175,12 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
 
   if (ui.datasets.length > 0 && !state.binding) {
     const datasets = el('section', {attrs: {class: 'subpanel', 'aria-labelledby': 'datasets-title'}}, [
-      el('h3', {text: 'Gefundene Datensätze', attrs: {id: 'datasets-title'}}),
+      el('h3', {text: 'Gefundene Lernbereiche', attrs: {id: 'datasets-title'}}),
     ]);
     for (const dataset of ui.datasets) {
       datasets.append(el('article', {attrs: {class: 'management-card'}}, [
         el('h4', {text: dataset.descriptor.name}),
-        button('Diesen Datensatz prüfen', () => run(
+        button('Diesen Lernbereich prüfen', () => run(
           () => sync.joinDataset(dataset, 'preview'),
           {after: (preview) => { ui.joinPreview = {dataset, preview}; }},
         ), {class: 'secondary', disabled: ui.busy}),
@@ -150,12 +192,12 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
   if (ui.joinPreview) {
     const {dataset, preview} = ui.joinPreview;
     const join = el('section', {attrs: {class: 'subpanel', 'aria-labelledby': 'join-title'}}, [
-      el('h3', {text: 'Datensatzwechsel prüfen', attrs: {id: 'join-title'}}),
+      el('h3', {text: 'Lernbereich prüfen', attrs: {id: 'join-title'}}),
       el('p', {text: preview.requiresSafetyCopy
         ? `Der lokale Stand wird als geprüfte Sicherheitskopie erhalten. Danach wird „${preview.name}“ verwendet.`
         : `„${preview.name}“ kann verbunden werden.`}),
       el('p', {text: `${preview.localEventCount} lokale und ${preview.remoteBootstrapEventCount} geladene Ereignisse.`}),
-      button('Datensatzwechsel bestätigen', () => run(() => sync.joinDataset({
+      button('Lernbereich verwenden', () => run(() => sync.joinDataset({
         ...dataset, previewId: preview.previewId, safetyCopyId: preview.safetyCopyId,
       }, 'confirm'), {after: () => { ui.joinPreview = null; }}), {class: 'primary', disabled: ui.busy}),
       button('Abbrechen', () => { ui.joinPreview = null; rerender(); }, {class: 'secondary'}),

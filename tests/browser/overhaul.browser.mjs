@@ -7,6 +7,7 @@ import {createTrainerHarness} from './trainer-harness.mjs';
 
 const resultsDirectory = resolve('test-results', 'overhaul-a1');
 const a2ResultsDirectory = resolve('test-results', 'overhaul-a2');
+const preparedGoogleClientId = '329410329467-s8nevn4sqi7m3fmtq2tkbpj76b8osvhs.apps.googleusercontent.com';
 
 async function productState(page) {
   return page.evaluate(() => new Promise((resolveState, reject) => {
@@ -54,6 +55,17 @@ async function setupPractice(page) {
   await page.locator('#profile-list').waitFor();
   await page.getByRole('button', {name: /^Ada/}).click();
   await page.getByRole('heading', {name: 'Hallo, Ada!'}).waitFor();
+}
+
+async function openSync(page) {
+  const profileSwitch = page.getByRole('button', {name: 'Profil wechseln', exact: true});
+  if (await profileSwitch.count()) await profileSwitch.click();
+  await page.locator('#adult-entry').click();
+  if (await page.locator('#adult-pin').count()) {
+    await page.locator('#adult-pin').fill('1234');
+    await page.locator('#adult-unlock').click();
+  }
+  await page.getByRole('button', {name: 'Abgleich', exact: true}).click();
 }
 
 async function loadedArt(page, selector = '[data-art-key] img') {
@@ -274,6 +286,74 @@ test('explained mode selection starts once and keeps the learning controls usabl
     assert.match(reasons.empty, /keine aktiven Vokabeln/i);
     assert.match(reasons.conflict, /Datenkonflikt/i);
   } finally {
+    await harness.close();
+  }
+});
+
+test('prepared Google access connects without family configuration and waits for a deliberate dataset action', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page, controls} = await harness.newDevice();
+  try {
+    await page.goto(harness.baseUrl);
+    await setupPractice(page);
+    await openSync(page);
+
+    assert.equal(await page.getByLabel('Öffentliche Google-Web-Client-ID').isVisible(), false);
+    controls.cancelNextOauth = true;
+    await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
+    await page.getByText('Google-Anmeldefenster wurde nicht geöffnet oder geschlossen.', {exact: true}).waitFor();
+    assert.equal((await productState(page)).binding, null);
+    assert.equal(harness.google.writes.length, 0);
+
+    await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
+    await page.getByText('Google ist für diese Sitzung verbunden.', {exact: true}).waitFor();
+    assert.deepEqual(controls.oauthClientIds, [preparedGoogleClientId, preparedGoogleClientId]);
+    assert.equal((await productState(page)).binding, null);
+    assert.equal(harness.google.writes.length, 0);
+    await page.getByRole('button', {name: 'Neuen Lernbereich anlegen', exact: true}).waitFor();
+    await page.getByRole('button', {name: 'Vorhandenen Lernbereich verwenden', exact: true}).waitFor();
+  } finally {
+    await harness.close();
+  }
+});
+
+test('a differing browser client stays explicit and a bound learning area cannot quick-switch it', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const oldClientId = '123456-old.apps.googleusercontent.com';
+  const unbound = await harness.newDevice();
+  const bound = await harness.newDevice();
+  try {
+    await unbound.page.addInitScript((value) => {
+      localStorage.setItem('vokabeltrainer-google-client-id', value);
+    }, oldClientId);
+    await unbound.page.goto(harness.baseUrl);
+    await setupPractice(unbound.page);
+    await openSync(unbound.page);
+    await unbound.page.getByText('Erweiterte Einstellungen', {exact: true}).click();
+    await unbound.page.getByText(/andere Client-ID gespeichert/i).waitFor();
+    await unbound.page.getByRole('button', {name: 'Vorbereiteten Zugang verwenden und verbinden', exact: true}).click();
+    await unbound.page.getByText('Google ist für diese Sitzung verbunden.', {exact: true}).waitFor();
+    assert.deepEqual(unbound.controls.oauthClientIds, [preparedGoogleClientId]);
+    assert.equal(await unbound.page.evaluate(() => localStorage.getItem('vokabeltrainer-google-client-id')), preparedGoogleClientId);
+    assert.equal((await productState(unbound.page)).binding, null);
+
+    await bound.page.addInitScript((value) => {
+      localStorage.setItem('vokabeltrainer-google-client-id', value);
+    }, oldClientId);
+    await bound.page.goto(harness.baseUrl);
+    await setupPractice(bound.page);
+    await openSync(bound.page);
+    await bound.page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
+    await bound.page.getByText('Google ist für diese Sitzung verbunden.', {exact: true}).waitFor();
+    await bound.page.getByRole('button', {name: 'Neuen Lernbereich anlegen', exact: true}).click();
+    await bound.page.getByText('Abgeglichen', {exact: true}).waitFor();
+    await bound.page.getByText('Erweiterte Einstellungen', {exact: true}).click();
+    await bound.page.getByText(/bestehende Lernbereich behält seine bisherige Verbindung/i).waitFor();
+    assert.equal(await bound.page.getByRole('button', {name: /Vorbereiteten Zugang verwenden/}).count(), 0);
+    assert.deepEqual(bound.controls.oauthClientIds, [oldClientId]);
+    assert.equal(await bound.page.evaluate(() => localStorage.getItem('vokabeltrainer-google-client-id')), oldClientId);
+  } finally {
+    await Promise.allSettled([unbound.context.close(), bound.context.close()]);
     await harness.close();
   }
 });

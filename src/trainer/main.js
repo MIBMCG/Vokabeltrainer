@@ -8,6 +8,8 @@ import {createProductSync} from './sync/drive.js';
 import {createSyncScheduler} from './sync/scheduler.js';
 import {createUpdateController} from './updates.js';
 import {mountShell} from './ui/shell.js';
+import {APP_CONFIG} from './config.js';
+import {selectGoogleConfig} from './auth-config.js';
 
 const root = document.querySelector('#app');
 const CLIENT_ID_KEY = 'vokabeltrainer-google-client-id';
@@ -81,12 +83,25 @@ function createProductAuth() {
   let sessionClientId = '';
 
   return {
+    configuration(bound = false) {
+      return selectGoogleConfig({
+        configuredId: APP_CONFIG.googleClientId,
+        storedId: localStorage.getItem(CLIENT_ID_KEY) ?? '',
+        bound,
+      });
+    },
     clientId() {
-      return localStorage.getItem(CLIENT_ID_KEY) ?? '';
+      return this.configuration(false).clientId;
+    },
+    preparedClientId() {
+      return APP_CONFIG.googleClientId;
     },
     async connect(requestedClientId) {
-      const clientId = String(requestedClientId ?? this.clientId()).trim();
-      if (clientId === '') throw new DriveError('invalid', 'Bitte die öffentliche Google-Web-Client-ID eintragen.');
+      const requested = String(requestedClientId ?? this.clientId()).trim();
+      const clientId = selectGoogleConfig({configuredId: '', storedId: requested, bound: false}).clientId;
+      if (clientId === '') {
+        throw new DriveError('invalid', 'Eine vollständige öffentliche Google-Web-Client-ID ist erforderlich.');
+      }
       if (session === null || sessionClientId !== clientId) {
         session?.disconnect();
         session = createTokenSession({oauth2: await loadGoogleIdentity(), clientId});

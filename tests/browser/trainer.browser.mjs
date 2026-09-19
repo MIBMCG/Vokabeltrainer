@@ -157,9 +157,8 @@ test('final I3 deliberate reconnect wakes pending bound sync without another lif
     await setupPractice(page);
     await page.locator('#adult-entry').click();
     await page.getByRole('button', {name: 'Abgleich', exact: true}).click();
-    await page.locator('#google-client-id').fill('synthetic-client-id');
     await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
-    await page.getByRole('button', {name: 'Neuen Drive-Datensatz anlegen'}).click();
+    await page.getByRole('button', {name: 'Neuen Lernbereich anlegen'}).click();
     await page.getByText('Abgeglichen', {exact: true}).waitFor();
     await page.getByRole('button', {name: 'Kinder', exact: true}).click();
     const form = page.locator('#adult-content form').first();
@@ -1340,7 +1339,6 @@ test('trainer sync and restore exposes deliberate Google, download and import fl
     }
     await page.getByRole('button', {name: 'Abgleich', exact: true}).click();
 
-    await page.getByLabel('Öffentliche Google-Web-Client-ID').fill('synthetic-client-id');
     await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
     await page.getByText('Google ist für diese Sitzung verbunden.', {exact: true}).waitFor({timeout: 5_000}).catch(async (error) => {
       const diagnostics = await page.evaluate(() => ({
@@ -1351,8 +1349,8 @@ test('trainer sync and restore exposes deliberate Google, download and import fl
       error.message += `\nGoogle diagnostics: ${JSON.stringify(diagnostics)}\nVisible page after Google connect:\n${await page.locator('body').innerText()}`;
       throw error;
     });
-    await page.getByLabel('Name des Drive-Ordners').fill('Familienwortschatz');
-    await page.getByRole('button', {name: 'Neuen Drive-Datensatz anlegen', exact: true}).click();
+    await page.getByLabel('Name des Lernbereichs').fill('Familienwortschatz');
+    await page.getByRole('button', {name: 'Neuen Lernbereich anlegen', exact: true}).click();
     await page.getByText('Abgeglichen', {exact: true}).waitFor();
 
     controls.rejectNextAbout401 = true;
@@ -1523,7 +1521,6 @@ test('trainer unbound discovery, create and join require an explicit reconnect a
     await page.getByRole('button', {name: 'Abgleich', exact: true}).click();
   };
   const reconnect = async ({page}) => {
-    await page.getByLabel('Öffentliche Google-Web-Client-ID').fill('synthetic-client-id');
     await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
     await page.getByText('Google ist für diese Sitzung verbunden.', {exact: true}).waitFor();
   };
@@ -1533,7 +1530,7 @@ test('trainer unbound discovery, create and join require an explicit reconnect a
     await setupPractice(creator.page, {profile: 'Ada'});
     await openSync(creator);
     await reconnect(creator);
-    await creator.page.getByRole('button', {name: 'Neuen Drive-Datensatz anlegen', exact: true}).click();
+    await creator.page.getByRole('button', {name: 'Neuen Lernbereich anlegen', exact: true}).click();
     await creator.page.getByText('Abgeglichen', {exact: true}).waitFor();
 
     await joining.page.goto(harness.baseUrl);
@@ -1541,28 +1538,28 @@ test('trainer unbound discovery, create and join require an explicit reconnect a
     await openSync(joining);
     await reconnect(joining);
     joining.controls.rejectNextAbout401 = true;
-    await joining.page.getByRole('button', {name: 'Vorhandene Datensätze suchen', exact: true}).click();
+    await joining.page.getByRole('button', {name: 'Vorhandenen Lernbereich verwenden', exact: true}).click();
     await joining.page.locator('[data-sync-status]').filter({hasText: 'Mit Google verbinden'}).waitFor();
     await reconnect(joining);
-    await joining.page.getByRole('button', {name: 'Vorhandene Datensätze suchen', exact: true}).click();
-    await joining.page.getByRole('button', {name: 'Diesen Datensatz prüfen', exact: true}).waitFor();
+    await joining.page.getByRole('button', {name: 'Vorhandenen Lernbereich verwenden', exact: true}).click();
+    await joining.page.getByRole('button', {name: 'Diesen Lernbereich prüfen', exact: true}).waitFor();
 
     joining.controls.rejectNextAbout401 = true;
-    await joining.page.getByRole('button', {name: 'Diesen Datensatz prüfen', exact: true}).click();
+    await joining.page.getByRole('button', {name: 'Diesen Lernbereich prüfen', exact: true}).click();
     await joining.page.locator('[data-sync-status]').filter({hasText: 'Mit Google verbinden'}).waitFor();
     await reconnect(joining);
-    await joining.page.getByRole('button', {name: 'Diesen Datensatz prüfen', exact: true}).click();
-    await joining.page.getByRole('heading', {name: 'Datensatzwechsel prüfen'}).waitFor();
+    await joining.page.getByRole('button', {name: 'Diesen Lernbereich prüfen', exact: true}).click();
+    await joining.page.getByRole('heading', {name: 'Lernbereich prüfen'}).waitFor();
 
     await creating.page.goto(harness.baseUrl);
     await setupPractice(creating.page, {profile: 'Cem'});
     await openSync(creating);
     await reconnect(creating);
     creating.controls.rejectNextAbout401 = true;
-    await creating.page.getByRole('button', {name: 'Neuen Drive-Datensatz anlegen', exact: true}).click();
+    await creating.page.getByRole('button', {name: 'Neuen Lernbereich anlegen', exact: true}).click();
     await creating.page.locator('[data-sync-status]').filter({hasText: 'Mit Google verbinden'}).waitFor();
     await reconnect(creating);
-    await creating.page.getByRole('button', {name: 'Neuen Drive-Datensatz anlegen', exact: true}).click();
+    await creating.page.getByRole('button', {name: 'Neuen Lernbereich anlegen', exact: true}).click();
     await creating.page.getByText('Abgeglichen', {exact: true}).waitFor();
 
     assert.deepEqual(errors, []);
@@ -1591,7 +1588,6 @@ test('trainer sync and restore keeps concurrent word versions until an adult res
   };
   const connect = async (page) => {
     await page.getByRole('button', {name: 'Abgleich', exact: true}).click();
-    await page.getByLabel('Öffentliche Google-Web-Client-ID').fill('synthetic-client-id');
     await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
     await page.getByText('Google ist für diese Sitzung verbunden.', {exact: true}).waitFor();
   };
@@ -1613,22 +1609,22 @@ test('trainer sync and restore keeps concurrent word versions until an adult res
     await setupPractice(first.page);
     await openAdult(first.page);
     await connect(first.page);
-    await first.page.getByLabel('Name des Drive-Ordners').fill('Gemeinsame Lerninsel');
-    await first.page.getByRole('button', {name: 'Neuen Drive-Datensatz anlegen', exact: true}).click();
+    await first.page.getByLabel('Name des Lernbereichs').fill('Gemeinsame Lerninsel');
+    await first.page.getByRole('button', {name: 'Neuen Lernbereich anlegen', exact: true}).click();
     await first.page.getByText('Abgeglichen', {exact: true}).waitFor();
 
     await second.page.goto(harness.baseUrl);
     await setupPractice(second.page);
     await openAdult(second.page);
     await connect(second.page);
-    await second.page.getByRole('button', {name: 'Vorhandene Datensätze suchen', exact: true}).click();
-    await second.page.getByText('Gefundene Datensätze', {exact: true}).waitFor();
-    await second.page.getByRole('button', {name: 'Diesen Datensatz prüfen', exact: true}).click();
-    await second.page.getByRole('heading', {name: 'Datensatzwechsel prüfen'}).waitFor({timeout: 5_000}).catch(async (error) => {
+    await second.page.getByRole('button', {name: 'Vorhandenen Lernbereich verwenden', exact: true}).click();
+    await second.page.getByText('Gefundene Lernbereiche', {exact: true}).waitFor();
+    await second.page.getByRole('button', {name: 'Diesen Lernbereich prüfen', exact: true}).click();
+    await second.page.getByRole('heading', {name: 'Lernbereich prüfen'}).waitFor({timeout: 5_000}).catch(async (error) => {
       error.message += `\nVisible join page:\n${await second.page.locator('body').innerText()}`;
       throw error;
     });
-    await second.page.getByRole('button', {name: 'Datensatzwechsel bestätigen', exact: true}).click();
+    await second.page.getByRole('button', {name: 'Lernbereich verwenden', exact: true}).click();
     await second.page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).click();
     await second.page.getByText('Abgeglichen', {exact: true}).waitFor();
     const unambiguousBackup = await second.page.evaluate(async (current) => {
@@ -1954,7 +1950,7 @@ test('trainer offline update UI blocks typing and pending answers before control
   try {
     await page.goto(harness.baseUrl);
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null, null, {timeout: 10_000});
-    harness.setServiceWorkerVersion('v10', {activationDelayMs: 750});
+    harness.setServiceWorkerVersion('v11', {activationDelayMs: 750});
     await page.evaluate(async () => {
       const registration = await navigator.serviceWorker.getRegistration('./');
       await registration.update();
@@ -2013,7 +2009,7 @@ test('trainer offline update UI blocks typing and pending answers before control
     assert.equal(beforeReload.ledger.events.some(({type}) => type === 'round.completed' || type === 'round.abandoned'), false);
     assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product:')).sort()), [
       'vokabeltrainer-product:%2Ftrainer%2F:v10',
-      'vokabeltrainer-product:%2Ftrainer%2F:v9',
+      'vokabeltrainer-product:%2Ftrainer%2F:v11',
     ]);
     const navigation = page.waitForNavigation();
     await updateButton.click();
@@ -2028,7 +2024,7 @@ test('trainer offline update UI blocks typing and pending answers before control
     await navigation;
     await page.getByText('Richtig!', {exact: true}).waitFor();
     assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product:')).sort()), [
-      'vokabeltrainer-product:%2Ftrainer%2F:v10',
+      'vokabeltrainer-product:%2Ftrainer%2F:v11',
     ]);
   } finally {
     await context.close();

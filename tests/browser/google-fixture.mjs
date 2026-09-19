@@ -16,7 +16,15 @@ export function createGoogleFixture() {
       account: 'synthetic-account',
       loseNextUpload: false,
       rejectNextAbout401: false,
+      cancelNextOauth: false,
+      oauthClientIds: [],
     };
+    await context.exposeFunction('__syntheticOauthDecision', (clientId) => {
+      controls.oauthClientIds.push(clientId);
+      const cancel = controls.cancelNextOauth;
+      controls.cancelNextOauth = false;
+      return {cancel};
+    });
     await context.route('**/*', async (route) => {
       if (['localhost', '127.0.0.1'].includes(new URL(route.request().url()).hostname)) {
         return route.continue();
@@ -42,10 +50,14 @@ export function createGoogleFixture() {
               const token = 'synthetic-browser-token-' + window.__syntheticOauthRequests;
               const finish = () => queueMicrotask(() => options.callback({access_token:token,
                 scope:${JSON.stringify(scope)}, expires_in:Number(window.__syntheticExpiresIn || 3600)}));
-              if (window.__holdSyntheticOauth) {
-                window.__syntheticOauthStarted = true;
-                Promise.resolve(window.__syntheticOauthGate).then(finish);
-              } else finish();
+              window.__syntheticOauthDecision(options.client_id).then(({cancel}) => {
+                if (cancel) {
+                  queueMicrotask(() => options.error_callback({type: 'popup_closed'}));
+                } else if (window.__holdSyntheticOauth) {
+                  window.__syntheticOauthStarted = true;
+                  Promise.resolve(window.__syntheticOauthGate).then(finish);
+                } else finish();
+              });
             }};
           },
           revoke(token, done) { done(); }

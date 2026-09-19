@@ -1,6 +1,6 @@
 # Vokabeltrainer benutzen
 
-**Entwicklungsstand:** Diese Anleitung beschreibt die implementierte und automatisiert geprüfte Version 1. Der [Abschlussbericht](reports/2026-09-18-vokabeltrainer-v1.md) nennt die Nachweise und Grenzen. Reale Produktprüfungen mit Google Drive auf zwei physischen Geräten sowie iPhone/iPad folgen getrennt.
+**Entwicklungsstand:** Diese Anleitung beschreibt die implementierte und automatisiert geprüfte Version einschließlich des vorbereiteten Google-Zugangs. Der [Abschlussbericht der Version 1](reports/2026-09-18-vokabeltrainer-v1.md) nennt die bisherigen Nachweise und Grenzen. Reale Produktprüfungen mit Google Drive auf zwei physischen Geräten sowie iPhone/iPad folgen getrennt.
 
 ## Einrichten
 
@@ -54,9 +54,15 @@ Die Erwachsenenansicht sperrt beim Verlassen, Neuladen und Wechsel in den Hinter
 
 ## Google Drive und Offlinebetrieb
 
-Für beide Geräte denselben von Erwachsenen eingerichteten Google-Zugang und dieselbe App-Konfiguration verwenden. Auf dem ersten Gerät bewusst einen Trainerbestand erstellen; auf dem zweiten den vorhandenen Bestand suchen und auswählen. Gleichnamige Ordner sind nicht automatisch derselbe Bestand.
+Für beide Geräte denselben von Erwachsenen eingerichteten Google-Zugang verwenden. Familien müssen im normalen Ablauf keine technische Client-ID eintragen:
 
-Die [Google-Einrichtung](GOOGLE-DRIVE-EINRICHTUNG.md) beschreibt die technischen Voraussetzungen. Die Probe ist ein separater Testbestand und wird nicht automatisch in den Trainer übernommen. Es ist kein zusätzliches kostenpflichtiges Cloudabo vorgesehen.
+1. In der Erwachsenenansicht **Abgleich** und danach **Mit Google verbinden** wählen.
+2. Auf dem ersten Gerät **Neuen Lernbereich anlegen** wählen.
+3. Auf dem zweiten Gerät **Vorhandenen Lernbereich verwenden**, den richtigen Eintrag prüfen und bewusst bestätigen.
+
+Die Google-Anmeldung allein erstellt oder verbindet noch keinen Lernbereich. Gleichnamige Ordner sind nicht automatisch derselbe Bestand. Wird der Anmeldedialog abgebrochen, bleiben die lokalen Daten und das Offlineüben erhalten.
+
+Die [Google-Einrichtung](GOOGLE-DRIVE-EINRICHTUNG.md) trennt diesen Familienablauf von der einmaligen Vorbereitung durch Projektverantwortliche. Technische Angaben und eine abweichende Betreiber-Client-ID liegen nur unter **Erweiterte Einstellungen**. Eine bestehende Verbindung wird bei einer abweichenden alten Browserkonfiguration nicht still umgestellt. Die Probe ist ein separater Testbestand und wird nicht automatisch in den Trainer übernommen. Es ist kein zusätzliches kostenpflichtiges Cloudabo vorgesehen.
 
 Die Anzeige unterscheidet:
 

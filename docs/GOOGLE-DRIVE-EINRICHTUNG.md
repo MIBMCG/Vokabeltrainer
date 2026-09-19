@@ -1,6 +1,6 @@
 # Google Drive: Einrichtung und Prüfungen
 
-Stand: 18.09.2026. **Einrichtung für die lokale Probe erfolgt: Projekt, Web-OAuth-Client, Testnutzer und echter Drive-Abgleich sind durch Nutzerangaben/Screenshots bestätigt.** Die Produkt-App ist mit simulierter Google-Grenze automatisiert geprüft. Realer Produktabgleich über zwei physische Geräte und die Apple-Geräteabnahme bleiben offen. Die genauen Google-Einstellungsnamen können sich ändern; maßgeblich sind die verlinkten offiziellen Anleitungen.
+Stand: 19.09.2026. **Einrichtung für die lokale Probe erfolgt: Projekt, Web-OAuth-Client, Testnutzer und echter Drive-Abgleich sind durch Nutzerangaben/Screenshots bestätigt.** Die öffentliche Web-Client-ID ist jetzt in der Produkt-App vorbereitet. Die Produkt-App ist mit simulierter Google-Grenze automatisiert geprüft. Realer Produktabgleich über zwei physische Geräte und die Apple-Geräteabnahme bleiben offen. Die genauen Google-Einstellungsnamen können sich ändern; maßgeblich sind die verlinkten offiziellen Anleitungen.
 
 Der Gesamtentwurf ist bestätigt. Konkrete Start-/Registrierungsschritte und der Prüfablauf des ersten Entwicklungspakets stehen in [GOOGLE-DRIVE-PROBE.md](GOOGLE-DRIVE-PROBE.md). Entwicklungsursprung der Probe: `http://localhost:4173`. Eine tatsächliche Registrierung ist damit nicht behauptet.
 
@@ -12,6 +12,18 @@ Der Gesamtentwurf ist bestätigt. Konkrete Start-/Registrierungsschritte und der
 - Die vorhandene Drive-Kapazität reicht für die vorgesehenen kleinen Textdaten. Kein zusätzlicher kostenpflichtiger Dienst ist beauftragt.
 - Die konkrete technische Probe wird vor der Einrichtung beschrieben; der Nutzer nimmt die notwendigen Anmeldungen und Kontobestätigungen selbst vor.
 
+## Einrichtung durch Familien
+
+Familien benötigen kein eigenes Google-Cloud-Projekt und tragen im normalen Ablauf keine Client-ID ein.
+
+1. In der Erwachsenenansicht **Abgleich** öffnen und **Mit Google verbinden** wählen.
+2. Das gemeinsame Google-Konto der Familie bewusst bestätigen.
+3. Auf dem ersten Gerät **Neuen Lernbereich anlegen** wählen. Auf weiteren Geräten **Vorhandenen Lernbereich verwenden**, den passenden Eintrag prüfen und erst danach bestätigen.
+
+Die Anmeldung allein legt keinen Lernbereich an und verbindet keinen vorhandenen Bestand automatisch. Wird der Google-Dialog abgebrochen, bleiben die lokalen Lerndaten unverändert nutzbar. Nach Ablauf des Zugriffs erneut **Mit Google verbinden** wählen; ausstehende Änderungen werden bei geöffnetem Trainer anschließend automatisch abgeglichen.
+
+Eine früher in diesem Browser gespeicherte gültige Client-ID bleibt zunächst erhalten. Weicht sie von der vorbereiteten App-Konfiguration ab, erklärt der erweiterte Bereich die Abweichung. Ohne verbundene Drive-Daten kann dort bewusst auf den vorbereiteten Zugang gewechselt werden. Ein bereits verbundener Lernbereich behält seine bisherige Client-ID; die Oberfläche bietet dafür keinen schnellen Wechsel an.
+
 ## Einmalige Vorbereitung durch Projektverantwortliche
 
 1. In der Google Cloud Console ein Projekt für den Vokabeltrainer anlegen oder ein geeignetes bestehendes Projekt auswählen. Das registriert die App bei Google; es ist noch kein gemieteter Server.
@@ -22,7 +34,9 @@ Der Gesamtentwurf ist bestätigt. Konkrete Start-/Registrierungsschritte und der
 6. Die tatsächlich verwendeten JavaScript-Ursprünge eintragen. Beim vorgeschlagenen GitHub-Pages-Hosting wäre der Ursprung `https://mibmcg.github.io` — ohne den Projektpfad. Der Projektpfad für diese App wäre `/Vokabeltrainer/`; die Website existiert derzeit noch nicht.
 7. Für die lokale Probe `http://localhost` und `http://localhost:4173` als autorisierte JavaScript-Ursprünge eintragen. Die Probe selbst unter `http://localhost:4173` öffnen. Keinen fiktiven Callback als bereits eingerichtet dokumentieren.
 8. Redirect-URIs nur für den tatsächlich gewählten Ablauf einrichten und exakt mit der Implementierung abstimmen. Das implementierte GIS-Tokenmodell nutzt einen Browserdialog.
-9. Die öffentliche OAuth-Client-ID in der lokalen Erwachsenenansicht des Trainers hinterlegen. Falls Picker einen Browser-API-Key benötigt, dessen API- und Websiteeinschränkungen passend setzen. **Kein Client-Secret, Passwort oder Service-Account-Schlüssel gehört in die statische App.**
+9. Die öffentliche OAuth-Web-Client-ID in `src/trainer/config.js` für die ausgelieferte App hinterlegen. Die verifizierte ID ist öffentlich und kein Geheimnis. Für abweichende lokale Betreiberkonfigurationen steht die manuelle Eingabe ausschließlich unter **Erweiterte Einstellungen** bereit. Falls Picker einen Browser-API-Key benötigt, dessen API- und Websiteeinschränkungen passend setzen. **Kein Client-Secret, Passwort oder Service-Account-Schlüssel gehört in die statische App.**
+
+Die vorbereitete ID ersetzt diese Betreiberaufgaben nicht: Jeder tatsächlich verwendete Ursprung, beispielsweise eine spätere HTTPS-Adresse, muss in der Google-Konfiguration zugelassen sein. Testnutzer- und Veröffentlichungsstatus müssen zur konkreten Nutzung passen. In dieser Überarbeitung wurden weder Google-Konto noch Projekt, Ursprünge oder Testnutzer verändert.
 
 Quellen: [Zugangsdaten erstellen](https://developers.google.com/workspace/guides/create-credentials), [OAuth-Konfiguration](https://developers.google.com/workspace/guides/configure-oauth-consent), [OAuth-Clienttypen](https://developers.google.com/identity/protocols/oauth2).
 
