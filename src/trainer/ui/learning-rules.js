@@ -136,7 +136,7 @@ export function renderLearningRules({root, state, commands, profileId, onRefresh
   };
   for (const control of [slow, refresh, stop, ...intervals]) {
     control.addEventListener(control === refresh ? 'change' : 'input', () => {
-      if (control === refresh && !refresh.checked && !stop.value) {
+      if (control === refresh && !refresh.checked) {
         stop.value = String(Math.max(6, Number(slow.value) || 6));
       }
       updateDraft();

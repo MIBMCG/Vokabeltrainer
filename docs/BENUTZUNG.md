@@ -32,7 +32,7 @@ Eine Runde enthält normalerweise zehn Antworten; zwanzig oder dreißig sind ebe
 
 Leere Eingaben zählen nicht. Groß-/Kleinschreibung und Leerzeichen am Anfang oder Ende werden ignoriert. Echte Schreibfehler zählen als falsch. Es gibt keinen Zeitdruck und keine Punktabzüge.
 
-Fehlerwörter werden nach zwei anderen Antworten erneut angeboten. Drei richtige Antworten in Folge pausieren das Wort für den Rest der Runde. Die nächsten Wiederholungen folgen nach einem, drei, sieben und danach jeweils vierzehn Tagen. Die Serie bleibt über Runden hinweg erhalten. Eine falsche Antwort startet den Aufbau neu.
+Fehlerwörter werden nach zwei anderen Antworten erneut angeboten. Standardmäßig pausieren drei richtige Antworten in Folge das Wort für den Rest der Runde; die nächsten Wiederholungen folgen standardmäßig nach einem, drei, sieben und danach jeweils vierzehn Tagen. Eltern können diese Standardwerte für jedes Kind unter „Lernregeln“ ändern. Die Serie bleibt über Runden hinweg erhalten. Eine falsche Antwort startet den Aufbau neu.
 
 Falls die passende Auswahl vorzeitig erschöpft ist, kann das Kind beenden oder mit weiterem zugeordnetem Wortschatz fortsetzen. Die gewählte Rundengröße wird dabei nicht erhöht. Eine begonnene Runde lässt sich auf demselben Gerät fortsetzen, auch nach dem Schließen der App.
 

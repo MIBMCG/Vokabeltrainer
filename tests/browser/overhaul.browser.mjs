@@ -621,6 +621,47 @@ test('learning rules stay separate per child and save only after an explicit sub
   }
 });
 
+test('learning rule stop suggestion follows the slow threshold only when exclusion is enabled', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page} = await harness.newDevice();
+  try {
+    await page.goto(harness.baseUrl);
+    await setupPractice(page);
+    await openAdult(page);
+    await page.getByRole('button', {name: 'Lernregeln', exact: true}).click();
+    const slow = page.getByLabel('Ab wie vielen richtigen Antworten hintereinander seltener?');
+    const refresh = page.getByRole('checkbox', {name: 'Gelernte Wörter weiter auffrischen', exact: true});
+    const stop = page.getByLabel('Nach wie vielen richtigen Antworten nicht mehr automatisch abfragen?');
+
+    await slow.selectOption('10');
+    await refresh.uncheck();
+    assert.equal(await stop.inputValue(), '10');
+    await page.getByRole('button', {name: 'Lernregeln speichern', exact: true}).click();
+    await page.getByText('Die Lernregeln für Ada wurden gespeichert.', {exact: true}).waitFor();
+    const saved = (await productState(page)).ledger.events.filter(({type}) => type === 'learning.rules.changed').at(-1);
+    assert.deepEqual(saved.payload, {
+      profileId: saved.payload.profileId,
+      slowAfter: 10,
+      stopAfter: 10,
+      intervals: [1, 3, 7, 14],
+    });
+
+    await page.getByRole('button', {name: 'Standardwerte einsetzen', exact: true}).click();
+    await slow.selectOption('2');
+    await refresh.uncheck();
+    assert.equal(await stop.inputValue(), '6');
+    await stop.fill('9');
+    await slow.selectOption('3');
+    assert.equal(await stop.inputValue(), '9');
+    await refresh.check();
+    await slow.selectOption('10');
+    await refresh.uncheck();
+    assert.equal(await stop.inputValue(), '10');
+  } finally {
+    await harness.close();
+  }
+});
+
 test('learning rule previews keep the original form head and preserve a stale draft', {timeout: 90_000}, async () => {
   const harness = await createTrainerHarness();
   const {page} = await harness.newDevice();
