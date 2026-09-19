@@ -12,7 +12,7 @@ Der Nutzer hat den gesamten schriftlichen Überarbeitungsentwurf mit „Ja, Frei
 
 ### Umsetzung und Nachweis getrennt von der Entscheidung
 
-Die Einzelpakete A1–C1 sind unabhängig geprüft. C2 ist implementiert und vollständig automatisiert geprüft; die unabhängige Gesamtprüfung steht noch aus. [Aktuelle Gesamtbelege](reports/2026-09-19-ueberarbeitung.md). Physische Apple-Abnahme, reale Produkt-Synchronisation auf zwei Geräten und öffentliche Bereitstellung bleiben offen.
+Die Einzelpakete A1–C1 sind unabhängig geprüft. C2 ist implementiert und vollständig automatisiert geprüft; unabhängige Gesamtprüfung und Nachprüfung sind ohne offene Befunde abgeschlossen. [Aktuelle Gesamtbelege](reports/2026-09-19-ueberarbeitung.md). Physische Apple-Abnahme, reale Produkt-Synchronisation auf zwei Geräten und öffentliche Bereitstellung bleiben offen.
 
 | Anforderung | Implementierung und Einzelbeleg |
 | --- | --- |

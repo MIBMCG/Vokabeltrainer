@@ -1,6 +1,6 @@
 # C2: Gesamtprüfung und Bildnachweise
 
-Umsetzung: GPT-5.6 Sol / high. Die unten aufgeführten Befehle wurden mit den lokalen Playwright-/Edge-Overrides gemäß [Browseranleitung](../../tests/browser/README.md) ausgeführt. Arbeitsplatzpfade sind hier für portable Weiterarbeit ausgelassen. Die unabhängige Gesamtprüfung ist noch offen.
+Umsetzung: GPT-5.6 Sol / high. Die unten aufgeführten Befehle wurden mit den lokalen Playwright-/Edge-Overrides gemäß [Browseranleitung](../../tests/browser/README.md) ausgeführt. Arbeitsplatzpfade sind hier für portable Weiterarbeit ausgelassen. Die [unabhängige Gesamtprüfung samt Nachprüfung](2026-09-19-abschlussreview.md) ist abgeschlossen. Der [gezielte Prüfwerkzeugfix](2026-09-19-c2-fix1.md) trennt normale Laufzeitbilder von veröffentlichten Nachweisen.
 
 ## Stand
 

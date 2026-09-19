@@ -1,6 +1,6 @@
 # Qualität und Abnahme
 
-Stand: 19.09.2026. **Prüfmatrix für die überarbeitete App.** Frische vollständige C2-Läufe: 343/343 Node-, 18/18 Trainer- und 15/15 Überarbeitungs-Browserprüfungen bestanden. Die unabhängige Gesamtprüfung steht noch aus; [aktuelle Gesamtbelege](reports/2026-09-19-ueberarbeitung.md). Der frühere [v1-Abschluss](reports/2026-09-18-vokabeltrainer-v1.md) mit Produktcode `cc079cb` (277/277 Node, 15/15 Browser) bleibt historische Grundlage. Reale Produkt-Google-, Zwei-Geräte- und iOS-/iPadOS-Abnahme fehlen weiterhin.
+Stand: 19.09.2026. **Prüfmatrix für die überarbeitete App.** Frische vollständige C2-Läufe: 343/343 Node-, 18/18 Trainer- und 15/15 Überarbeitungs-Browserprüfungen bestanden. Unabhängige Gesamtprüfung und Nachprüfung sind ohne offene Befunde abgeschlossen; [aktuelle Gesamtbelege](reports/2026-09-19-ueberarbeitung.md). Der frühere [v1-Abschluss](reports/2026-09-18-vokabeltrainer-v1.md) mit Produktcode `cc079cb` (277/277 Node, 15/15 Browser) bleibt historische Grundlage. Reale Produkt-Google-, Zwei-Geräte- und iOS-/iPadOS-Abnahme fehlen weiterhin.
 
 ## Nachweisstufen
 

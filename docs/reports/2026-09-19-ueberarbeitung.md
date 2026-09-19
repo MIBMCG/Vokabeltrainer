@@ -1,6 +1,6 @@
 # Überarbeitung: Umsetzung und Gesamtprüfung
 
-Stand: 19.09.2026. Branch `codex/vokabeltrainer-v1`, Gesamtbasis `9f809493e6e082183126654f1b1ab2d7c5945ebd`, letzter Produktcommit `6ffcdfa8d97adcb0ad021b60c2bfce0f0499e59d`. A1–C1 sind unabhängig geprüft; C2-Integration und frische vollständige Tests sind abgeschlossen, die unabhängige Gesamtprüfung steht noch aus. Die [bestätigte Spezifikation](../design/2026-09-19-ueberarbeitung.md) und der [Plan](../superpowers/plans/2026-09-19-ueberarbeitung.md) bestimmen den Umfang.
+Stand: 19.09.2026. Branch `codex/vokabeltrainer-v1`, Gesamtbasis `9f809493e6e082183126654f1b1ab2d7c5945ebd`, letzter Produktcommit `6ffcdfa8d97adcb0ad021b60c2bfce0f0499e59d`. A1–C2 einschließlich frischer vollständiger Tests, unabhängiger Gesamtprüfung und gezielter Nachprüfung sind abgeschlossen. Keine offenen Reviewbefunde. Letzter Prüfwerkzeugfix: `7ef2bb4a6b6bcdaa3acc80edb3cfad9a9883ba8d`. Die [bestätigte Spezifikation](../design/2026-09-19-ueberarbeitung.md) und der [Plan](../superpowers/plans/2026-09-19-ueberarbeitung.md) bestimmen den Umfang.
 
 ## Ergebnis der Implementierung
 
@@ -70,7 +70,9 @@ Der B3-Lauf mit 11/12 bestandenen Überarbeitungsfällen bleibt in seinem [Beric
 
 Oberfläche, Bilderintegration, Verwaltung, Elternregler, Statistik und C2: GPT-5.6 Sol / high. Datenübergang und Wiederholungsplanung B1/B2: GPT-6 Astra / high. Unabhängige Einzelreviews: separater GPT-5.6 Sol / high; die eng begrenzte A2-Korrekturreview verwendete Sol / medium. Der Controller übernimmt Integration und öffentliche Dokumentation. Der verfügbare unabhängige Sol-Reviewer führt auch die Gesamtprüfung durch. [Ausführungsentscheidungen](2026-09-19-ausfuehrungsentscheidungen.md) erklären Werkzeugabweichungen, Agentenlimit und die Aufgabenteilung.
 
-Einzelreviews: [A1](2026-09-19-a1-review.md), [A2](2026-09-19-a2-review.md), [A3](2026-09-19-a3-review.md), [A4](2026-09-19-a4-review.md), [B1](2026-09-19-b1-review.md), [B2](2026-09-19-b2-review.md), [B3](2026-09-19-b3-review.md), [C1](2026-09-19-c1-review.md). Die Gesamtprüfung ist noch nicht abgeschlossen.
+Einzelreviews: [A1](2026-09-19-a1-review.md), [A2](2026-09-19-a2-review.md), [A3](2026-09-19-a3-review.md), [A4](2026-09-19-a4-review.md), [B1](2026-09-19-b1-review.md), [B2](2026-09-19-b2-review.md), [B3](2026-09-19-b3-review.md), [C1](2026-09-19-c1-review.md). Die [unabhängige Gesamtprüfung und Nachprüfung](2026-09-19-abschlussreview.md) bestätigen Spec PASS und Quality APPROVED. Der [abschließende Prüfwerkzeugfix](2026-09-19-c2-fix1.md) bestand gezielt 1/1 und erneut vollständig 15/15 Überarbeitungsfälle; alle 13 versionierten Bild-Hashes blieben unverändert. Produktcode und Cache änderten sich dabei nicht.
+
+Die abschließende Dokumentprüfung nach Eintrag des Reviewurteils bestand mit 348 Dateien, 106 Markdown-Dateien, 533 lokalen Links und null Fehlern. Die Git-Prüfung auf Formatierungsfehler blieb ohne Befund. Seit dem letzten geprüften Produktstand wurden nur Prüfwerkzeuge und Dokumentation geändert.
 
 ## Grenzen und Fortsetzung
 
