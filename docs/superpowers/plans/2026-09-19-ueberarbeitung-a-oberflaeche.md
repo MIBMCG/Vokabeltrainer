@@ -78,7 +78,7 @@ Layerreihenfolge: Hintergrund/Schatten, Rückenzubehör, vollständig bekleidete
 
 **Interfaces:** Neu in `src/trainer/learning/rounds.js`: `previewModes({projection,profileId,day,schedule=null}) -> Array<{mode,totalCount,availableCount,latestLessonName,reason}>`, Reihenfolge all/latest/new, `reason` in `ready|no-profile|no-words|no-new|not-due|conflict`. Nutzt die vorhandenen Kandidaten-/Fälligkeitshelfer, keine zweite Lernlogik. Den vorhandenen Helfer `activeWords(projection,profileId) -> Entity[]` zusätzlich exportieren; C1 nutzt dieselbe Auswahl. Neu in Commands: `practiceChoices({profileId})`, benutzt die bestehende injizierte Uhr/Datensatzzeitzone und ruft `previewModes` auf. A verwendet schedule=null und den bisherigen Scheduler; B2 liefert die Schedulingprojektion `{words:Map,epochConflict}` mit den dort definierten Wortzuständen. Rückgabe und UI-Verbraucher ändern sich dadurch nicht. totalCount zählt zugeordnete aktive Wörter des Modus, availableCount nur aktuell auswählbare; latestLessonName ist außerhalb latest null.
 
-- [ ] **1. Fachliches RED schreiben.** In `tests/trainer/rounds.test.js` mit `createFixture` die einfache Auswahl belegen und archivierte, nicht zugeordnete, neue, letzte und noch nicht fällige Fälle hinzufügen. Minimalfall:
+- [x] **1. Fachliches RED schreiben.** In `tests/trainer/rounds.test.js` mit `createFixture` die einfache Auswahl belegen und archivierte, nicht zugeordnete, neue, letzte und noch nicht fällige Fälle hinzufügen. Minimalfall:
 
 ```js
 const f = createFixture();
@@ -88,8 +88,8 @@ assert.equal(choices.find(x => x.mode === 'new').availableCount, 3);
 assert.equal(choices.find(x => x.mode === 'latest').latestLessonName, 'Unit 1');
 ```
 
-- [ ] **2. RED laufen lassen:** `node --test tests/trainer/rounds.test.js tests/trainer/practice.test.js`; tatsächliches Fehlen der API, nicht kaputte Fixtures, dokumentieren.
-- [ ] **3. Auswahl und Oberfläche umsetzen.** `modeCard` wird ein beschriftetes Radioelement statt Startbutton. Alle drei erklärenden Texte aus dem Entwurf verwenden. `ui.selectedMode` und `ui.size` behalten Auswahl bei erneutem Rendern; nur ein Submit startet. Aktuelle Wörterzahl ist keine versprochene Antwortzahl. Nicht verfügbare Auswahl mit Grund und sinnvollem Alternativmodus; bestehende Fortsetzen-Ansicht bleibt. Kern:
+- [x] **2. RED laufen lassen:** `node --test tests/trainer/rounds.test.js tests/trainer/practice.test.js`; tatsächliches Fehlen der API, nicht kaputte Fixtures, dokumentieren.
+- [x] **3. Auswahl und Oberfläche umsetzen.** `modeCard` wird ein beschriftetes Radioelement statt Startbutton. Alle drei erklärenden Texte aus dem Entwurf verwenden. `ui.selectedMode` und `ui.size` behalten Auswahl bei erneutem Rendern; nur ein Submit startet. Aktuelle Wörterzahl ist keine versprochene Antwortzahl. Nicht verfügbare Auswahl mit Grund und sinnvollem Alternativmodus; bestehende Fortsetzen-Ansicht bleibt. Kern:
 
 ```js
 const choice = commands.practiceChoices({profileId}).find(x => x.mode === ui.selectedMode);
@@ -101,8 +101,8 @@ form.addEventListener('submit', event => {
 ```
 
 Bildwelt, helle Wortkarte und Türkisaktionen dem Konzept angleichen. Responsives CSS über Viewporthöhe, `min-height:0`, Safe-Area und vorhandenes `100dvh`; Desktop nicht nur eine schmale Handyspalte. Persönliche Adresse/Profilnamen immer als Text einsetzen. Eingabe/Feedbackstatus, Fokus nach Antwort/Weiter und Schutz beim Hintergrundabgleich behalten.
-- [ ] **4. Browser-GREEN belegen.** Neue Fälle: Moduswahl allein erzeugt kein Rundenereignis; ein Start nach Wahl 20 erzeugt genau eine Runde; erneutes Tippen/Enter wertet nicht doppelt; konkrete neueste Lektion sichtbar; leere/neue/konfliktbehaftete Auswahl erklärbar. Ansichten 320×568, 390×844, 844×390 und 1024×768 sowie 200 % Schrift prüfen; geringe Höhe als synthetische Tastatursituation kennzeichnen, nicht als echten iOS-Tastaturnachweis.
-- [ ] **5. Commit nach passenden Node-/Browserprüfungen:** `feat: clarify practice modes and align learning screens with concept`. Worker/Serverliste wie in den globalen Regeln prüfen.
+- [x] **4. Browser-GREEN belegen.** Neue Fälle: Moduswahl allein erzeugt kein Rundenereignis; ein Start nach Wahl 20 erzeugt genau eine Runde; erneutes Tippen/Enter wertet nicht doppelt; konkrete neueste Lektion sichtbar; leere/neue/konfliktbehaftete Auswahl erklärbar. Ansichten 320×568, 390×844, 844×390 und 1024×768 sowie 200 % Schrift prüfen; geringe Höhe als synthetische Tastatursituation kennzeichnen, nicht als echten iOS-Tastaturnachweis.
+- [x] **5. Commit nach passenden Node-/Browserprüfungen:** `feat: clarify practice modes and align learning screens with concept`. Worker/Serverliste wie in den globalen Regeln prüfen.
 
 ### A3: Vorbereiteter Google-Zugang und geführte Einrichtung
 
