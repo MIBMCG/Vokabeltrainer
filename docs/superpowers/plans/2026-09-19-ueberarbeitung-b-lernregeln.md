@@ -112,7 +112,7 @@ Eine korrekte Antwort erhöht die ungedeckelte Scheduling-Serie. Bei `slowAfter`
 
 Reset: neue Generation beginnt mit Serie 0, ohne Intervall, sofort fällig. Neue Runden wählen sie; bestehende Runden behalten ihre Kandidatengenerationen. Erweiterung um vorher noch nicht enthaltene Kandidaten verwendet deren aktuelle Generation, aber dieselbe eingefrorene Rundenpolicy. Ein v2-Answer referenziert seine Kandidatengeneration; v1-Answer bedeutet null. Alte/unterlegene Generationen zählen weiter für Versuche, Punkte und Statistik, nicht für die neue Scheduling-Serie. „Neue Vokabeln“ bleibt an jemals geübt gebunden.
 
-- [ ] **1. RED mit wirksamen Ereignissen schreiben.** Ein gültiges Fixture enthält zwei korrekt beantwortete Slots unter slowAfter=2; dafür keine Antwortbewertung nach neuer Policy erfinden:
+- [x] **1. RED mit wirksamen Ereignissen schreiben.** Ein gültiges Fixture enthält zwei korrekt beantwortete Slots unter slowAfter=2; dafür keine Antwortbewertung nach neuer Policy erfinden:
 
 ```js
 const f = createFixture();
@@ -126,7 +126,7 @@ assert.equal(project(ledger).profiles.p1.points, 20);
 ```
 
 Weitere feste Fälle: Schwelle 5 bei vier Richtigen noch nicht verlangsamt, Fehler setzt Serie zurück, 10/20 Grenzwerte, vier gleiche Abstände erlaubt, Intervall nur einmal/Runde, keine rückwirkenden Abzeichen. `node --test tests/trainer/schedule.test.js` als RED ausführen.
-- [ ] **2. Fakten und Scheduler implementieren.** Bisherige Deduplikation fachlich unverändert auslagern. Neue Zustände per Generation falten. Kern des Stopkriteriums:
+- [x] **2. Fakten und Scheduler implementieren.** Bisherige Deduplikation fachlich unverändert auslagern. Neue Zustände per Generation falten. Kern des Stopkriteriums:
 
 ```js
 state.streak = correct ? state.streak + 1 : 0;
@@ -134,10 +134,10 @@ state.excluded = policy.stopAfter !== null && state.streak >= policy.stopAfter;
 ```
 
 Die Intervall-/Fehlerlogik ergänzt diesen Kern gemäß oben festgelegter Semantik; sie wird nicht in UI oder Statistik nochmals implementiert. Schedule-Neuberechnung verändert keine Ereignisse. Ein Reset mit unterstützendem, aber nicht effektivem Status ist lediglich referenzierbar, kein neuer aktueller Reset.
-- [ ] **3. Runden/Commands anbinden.** Neue starts speichern `policyEventId`/`policy` im Ereignis und lokalen Vertrag, Kandidaten/current deren Generation. Die bestehenden Objektparameter von `startRound`, `nextTask`, `applyAnswer`, `advanceRound`, `expandRound` bekommen zusätzlich `schedule=null`; Rückgabetypen bleiben bestehen. Commands erzeugt die Projektion aus round.policy und den Kandidatengenerationen, bei neuem Start aus aktueller Policy/Generation. Kandidatenprüfung liest Schedulingfelder daraus; everPracticed/lastPracticedAt und Ranking stammen weiter aus der bisherigen Faktenprojektion. Legacy-Runden reichen schedule=null weiter. `practiceChoices` ruft `previewModes({projection,profileId,day,schedule})` aus A2 mit aktueller Policy und derselben Verfügbarkeitsentscheidung wie ein neuer Start auf. In Commands zur Vorschau nie Events oder Geräteuhren außerhalb der injizierten Uhr verändern.
-- [ ] **4. Mutationen prüfen und veröffentlichen.** Ganze Policies gemäß B1 validieren, aktives Profil/kein Epochenkonflikt prüfen, erwartete aktuelle Policy-ID vergleichen; dann genau ein `learning.rules.changed` in derselben atomaren Mutation. `reactivateWord` prüft aktuellen Lernbezug und Generation, erzeugt genau ein Resetereignis. Kein Löschen alter Antworten, keine neue Wortrevision als Abkürzung. Bestehende PIN-Grenze bleibt beim Adult-Aufrufer.
-- [ ] **5. Integrationstests GREEN.** Alte und neue Runde laufen parallel; Änderung der Policy beeinflusst nur neue Runde. Erhöhen/Senken mit vorhandener Serie, Wechsel ohne Ausschluss, Reaktivierung→verspätete alte Antwort, zwei konkurrierende Regeln/Resets in umgekehrter Ankunftsreihenfolge, neue Wort-Lernfassung, Selective Adoption/Snapshot-Support und alte Offlineantworten prüfen. `project().points`, Meilensteine und ausgeschüttete Boni vor/nach reiner Regeländerung exakt vergleichen. Leerraumantwort/Doppelsubmit und ausgeschöpfte Runde bleiben bestehend geprüft.
-- [ ] **6. Commit:** `npm test` und betreffende Browserintegration mit eingefrorenen Runden; Server/Workerlisten ergänzen; Commit `feat: add per-child scheduling without changing earned rewards`.
+- [x] **3. Runden/Commands anbinden.** Neue starts speichern `policyEventId`/`policy` im Ereignis und lokalen Vertrag, Kandidaten/current deren Generation. Die bestehenden Objektparameter von `startRound`, `nextTask`, `applyAnswer`, `advanceRound`, `expandRound` bekommen zusätzlich `schedule=null`; Rückgabetypen bleiben bestehen. Commands erzeugt die Projektion aus round.policy und den Kandidatengenerationen, bei neuem Start aus aktueller Policy/Generation. Kandidatenprüfung liest Schedulingfelder daraus; everPracticed/lastPracticedAt und Ranking stammen weiter aus der bisherigen Faktenprojektion. Legacy-Runden reichen schedule=null weiter. `practiceChoices` ruft `previewModes({projection,profileId,day,schedule})` aus A2 mit aktueller Policy und derselben Verfügbarkeitsentscheidung wie ein neuer Start auf. In Commands zur Vorschau nie Events oder Geräteuhren außerhalb der injizierten Uhr verändern.
+- [x] **4. Mutationen prüfen und veröffentlichen.** Ganze Policies gemäß B1 validieren, aktives Profil/kein Epochenkonflikt prüfen, erwartete aktuelle Policy-ID vergleichen; dann genau ein `learning.rules.changed` in derselben atomaren Mutation. `reactivateWord` prüft aktuellen Lernbezug und Generation, erzeugt genau ein Resetereignis. Kein Löschen alter Antworten, keine neue Wortrevision als Abkürzung. Bestehende PIN-Grenze bleibt beim Adult-Aufrufer.
+- [x] **5. Integrationstests GREEN.** Alte und neue Runde laufen parallel; Änderung der Policy beeinflusst nur neue Runde. Erhöhen/Senken mit vorhandener Serie, Wechsel ohne Ausschluss, Reaktivierung→verspätete alte Antwort, zwei konkurrierende Regeln/Resets in umgekehrter Ankunftsreihenfolge, neue Wort-Lernfassung, Selective Adoption/Snapshot-Support und alte Offlineantworten prüfen. `project().points`, Meilensteine und ausgeschüttete Boni vor/nach reiner Regeländerung exakt vergleichen. Leerraumantwort/Doppelsubmit und ausgeschöpfte Runde bleiben bestehend geprüft.
+- [x] **6. Commit:** `npm test` und betreffende Browserintegration mit eingefrorenen Runden; Server/Workerlisten ergänzen; Commit `feat: add per-child scheduling without changing earned rewards`.
 
 ## B3: Eltern können Regeln verstehen, speichern und zurücknehmen
 
