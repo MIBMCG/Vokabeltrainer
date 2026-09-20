@@ -42,6 +42,24 @@ function invalidTokenFake({writeOutcome='stale',writeStatus=412,readback='unchan
   };
   return {transport,counts:()=>({creates,reads,writes})};
 }
+
+const stableReadObservation=()=>({
+  cacheMode:'no-store',complete:true,
+  comparisons:[
+    {window:'metadata-control',version:'same',etag:'same',contentChecksum:'same',headRevision:'same',modifiedDate:'same',viewedDate:'unavailable',fileSize:'same'},
+    {window:'media-window',version:'same',etag:'same',contentChecksum:'same',headRevision:'same',modifiedDate:'same',viewedDate:'unavailable',fileSize:'same'},
+  ],
+  media:{outcome:'success',httpStatus:200,redirected:false,contentMatchesFixture:true},
+});
+
+function readObservationFake({observation=stableReadObservation(),error=null}={}){
+  let creates=0,observations=0,updates=0;
+  return {transport:{
+    async create(){creates++;return {id:'folder'};},
+    async observeReadStability(){observations++;if(error)throw error;return structuredClone(observation);},
+    async updateIfUnchanged(){updates++;},
+  },counts:()=>({creates,observations,updates})};
+}
 test('capability scenarios include purchases, initialization, retries and reset with honest boundary',async()=>{
   const result=await runProbeScenarios({transport:fake()});assert.equal(result.passed,true);
   for(const id of ['stale-write','invalid-token','initialization','two-purchases','response-loss','duplicate-operation','reset-race','create-conflict','conflict-credit'])assert.ok(result.checks.some(c=>c.id===id&&c.passed),id);
@@ -160,6 +178,82 @@ test('unknown probe scope stops before creating or reading anything',async()=>{
   const transport={create:async()=>{calls++;},read:async()=>{calls++;},updateIfUnchanged:async()=>{calls++;}};
   await assert.rejects(()=>runProbeScenarios({transport,probeScope:'private-scope'}));
   assert.equal(calls,0);
+});
+
+test('read-stability scope runs only the folder and pure observation checks',async()=>{
+  const {transport,counts}=readObservationFake();
+  const result=await runProbeScenarios({transport,probeScope:'read-stability'});
+  assert.deepEqual(result.checks.map(check=>check.id),['fixture','read-stability']);
+  assert.equal(result.passed,true);assert.equal(result.productReady,false);
+  assert.deepEqual(result.checks[1].actual,{checkpoint:'read-stability-observation',...stableReadObservation()});
+  assert.deepEqual(counts(),{creates:1,observations:1,updates:0});
+});
+
+for(const [label,mutate] of [
+  ['version change',observation=>{observation.comparisons[0].version='increased';}],
+  ['version representation change',observation=>{observation.comparisons[0].version='representation-changed';}],
+  ['ETag change',observation=>{observation.comparisons[1].etag='changed';}],
+  ['content mismatch',observation=>{observation.media.contentMatchesFixture=false;}],
+  ['missing no-store cache mode',observation=>{delete observation.cacheMode;}],
+  ['wrong cache mode',observation=>{observation.cacheMode='default';}],
+  ['error phase despite completeness',observation=>{observation.errorPhase='metadata-3';}],
+  ['missing comparison state',observation=>{delete observation.comparisons[1].viewedDate;}],
+])test(`read-stability scope fails on ${label} without enabling writes`,async()=>{
+  const observation=stableReadObservation();mutate(observation);
+  const {transport,counts}=readObservationFake({observation});
+  const result=await runProbeScenarios({transport,probeScope:'read-stability'}),check=result.checks[1];
+  assert.equal(check.passed,false);assert.equal(result.passed,false);
+  assert.equal(check.evidence.checkpoint,'read-stability-observation');
+  assert.deepEqual(counts(),{creates:1,observations:1,updates:0});
+});
+
+test('read-stability scope preserves sanitized partial evidence after a later transport failure',async()=>{
+  const partial=stableReadObservation();partial.complete=false;partial.comparisons=partial.comparisons.slice(0,1);partial.errorPhase='metadata-3';partial.privateMarker='private-marker';partial.media.privateMarker='private-marker';
+  const {transport}=readObservationFake({error:{code:'network',status:503,message:'private-marker',observation:partial}});
+  const check=(await runProbeScenarios({transport,probeScope:'read-stability'})).checks[1];
+  assert.equal(check.actual,'network');assert.equal(check.httpStatus,503);
+  assert.equal(check.evidence.errorPhase,'metadata-3');assert.equal(check.evidence.complete,false);
+  assert.equal(check.evidence.comparisons.length,1);assert.equal(check.evidence.media.outcome,'success');
+  assert.equal(JSON.stringify(check).includes('private-marker'),false);
+});
+
+test('read-stability scope rejects an unsupported transport before creating the folder',async()=>{
+  let calls=0;const transport={create:async()=>{calls++;}};
+  await assert.rejects(()=>runProbeScenarios({transport,probeScope:'read-stability'}));
+  assert.equal(calls,0);
+});
+
+test('read-stability evidence drops private fields, invalid enums, duplicate windows and invalid numbers',async()=>{
+  const observation={cacheMode:'no-store',complete:true,privateMarker:'private-marker',comparisons:[
+    {window:'metadata-control',version:'same',etag:'same',contentChecksum:'same',headRevision:'same',modifiedDate:'same',viewedDate:'same',fileSize:'same',privateMarker:'private-marker'},
+    {window:'metadata-control',version:'private-version',etag:'changed'},
+    {window:'private-window',version:'same',etag:'same'},
+  ],media:{outcome:'private-outcome',httpStatus:999,redirected:'private-marker',contentMatchesFixture:'private-marker',headers:'private-marker'},errorPhase:'private-phase'};
+  const {transport}=readObservationFake({observation});
+  const check=(await runProbeScenarios({transport,probeScope:'read-stability'})).checks[1];
+  assert.deepEqual(check.evidence,{checkpoint:'read-stability-observation',cacheMode:'no-store',complete:true,media:{outcome:'unexpected'}});
+  assert.equal(JSON.stringify(check).includes('private-marker'),false);
+});
+
+test('read-stability evidence keeps each known comparison window at most once',async()=>{
+  const observation={cacheMode:'no-store',complete:false,comparisons:[
+    {window:'metadata-control',version:'same',etag:'same'},
+    {window:'metadata-control',version:'increased',etag:'changed'},
+  ],media:{outcome:'not-reached'}};
+  const {transport}=readObservationFake({observation});
+  const evidence=(await runProbeScenarios({transport,probeScope:'read-stability'})).checks[1].evidence;
+  assert.deepEqual(evidence.comparisons,[{window:'metadata-control',version:'same',etag:'same'}]);
+});
+
+test('read-stability evidence drops unknown windows and fields with foreign enum values',async()=>{
+  const observation={cacheMode:'no-store',complete:false,comparisons:[
+    {window:'private-window',version:'same',etag:'same'},
+    {window:'media-window',version:'private-version',etag:'changed',contentChecksum:'private-state',headRevision:'same',privateMarker:'private-marker'},
+  ],media:{outcome:'not-reached'}};
+  const {transport}=readObservationFake({observation});
+  const evidence=(await runProbeScenarios({transport,probeScope:'read-stability'})).checks[1].evidence;
+  assert.deepEqual(evidence.comparisons,[{window:'media-window',etag:'changed',headRevision:'same'}]);
+  assert.equal(JSON.stringify(evidence).includes('private'),false);
 });
 
 for(const [label,options,expected] of [

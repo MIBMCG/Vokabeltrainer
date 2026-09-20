@@ -1,5 +1,7 @@
 # Übergabe: C gewählt, direkte Drive-Diagnose gezielt fortführen
 
+**Historischer Zwischenstand:** Bericht 7 liegt inzwischen vor und scheitert bereits vor dem bedingten Schreibversuch. Maßgeblich ist die [aktuelle Auswertung und Übergabe zur Lesekontrolle](2026-09-20-shop-v7-auswertung-und-leseprobe.md); die unten stehende Aufforderung zum 7er-Lauf nicht nochmals ausführen.
+
 Stand: 20.09.2026. Branch `codex/vokabeltrainer-v1`, Ausgangspunkt `9106c6091bfc42b067262160e722804e50ed264a`, Arbeitsbaum zu Beginn sauber. Der Nutzer antwortete auf die Richtungsfrage mit **c**.
 
 ## Gesicherter Stand

@@ -27,7 +27,7 @@ export function v2CoherentDriveFixture({
   async function fetch(url,init={}){
     const parsed=new URL(url),method=init.method??'GET';
     const headers={...init.headers};
-    calls.push({url:parsed.href,method,headers,body:init.body});
+    calls.push({url:parsed.href,method,headers,body:init.body,cache:init.cache});
     if(parsed.pathname.endsWith('/drive/v3/files/generateIds'))return response({ids:[`test-${++serial}`]});
 
     if(method==='POST'&&parsed.pathname.includes('/drive/v3/files')){

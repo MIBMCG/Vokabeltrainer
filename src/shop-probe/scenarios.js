@@ -22,9 +22,32 @@ function concurrentEvidence(results){
 
 // The exported evidence has no raw result objects, errors, identifiers or ETags.
 function safeEvidence(value){
-  const checkpoints=['concurrent-writes','initialization-readback','purchase-readback','response-loss-receipt','response-loss-idempotency','old-token-retry','response-loss-balance','invalid-token-observation'];
+  const checkpoints=['concurrent-writes','initialization-readback','purchase-readback','response-loss-receipt','response-loss-idempotency','old-token-retry','response-loss-balance','invalid-token-observation','read-stability-observation'];
   if(!value||!checkpoints.includes(value.checkpoint))return null;
   const result={checkpoint:value.checkpoint};
+  if(value.checkpoint==='read-stability-observation'){
+    if(value.cacheMode==='no-store')result.cacheMode=value.cacheMode;
+    if(typeof value.complete==='boolean')result.complete=value.complete;
+    if(Array.isArray(value.comparisons)&&value.comparisons.length<=2){
+      const states=['same','changed','unavailable'],versions=['same','increased','decreased','representation-changed'],windows=['metadata-control','media-window'],seen=new Set();
+      result.comparisons=[];
+      for(const item of value.comparisons){
+        if(!item||!windows.includes(item.window)||seen.has(item.window))continue;
+        seen.add(item.window);const comparison={window:item.window};
+        if(versions.includes(item.version))comparison.version=item.version;
+        for(const key of ['etag','contentChecksum','headRevision','modifiedDate','viewedDate','fileSize'])if(states.includes(item[key]))comparison[key]=item[key];
+        result.comparisons.push(comparison);
+      }
+    }
+    if(value.media&&typeof value.media==='object'){
+      const media={outcome:['success','not-reached','unexpected',...errorClasses].includes(value.media.outcome)?value.media.outcome:'unexpected'};
+      if(Number.isInteger(value.media.httpStatus)&&value.media.httpStatus>=100&&value.media.httpStatus<=599)media.httpStatus=value.media.httpStatus;
+      for(const key of ['redirected','contentMatchesFixture'])if(typeof value.media[key]==='boolean')media[key]=value.media[key];
+      result.media=media;
+    }
+    if(['creation-response','metadata-1','metadata-2','media','metadata-3'].includes(value.errorPhase))result.errorPhase=value.errorPhase;
+    return result;
+  }
   for(const key of ['accepted','stale','other'])if(Number.isInteger(value[key])&&value[key]>=0&&value[key]<=2)result[key]=value[key];
   if(Array.isArray(value.rejections)&&value.rejections.length<=2)result.rejections=value.rejections.map(code=>errorClasses.includes(code)?code:'unexpected');
   if(['fulfilled','unexpected',...errorClasses].includes(value.outcome))result.outcome=value.outcome;
@@ -56,7 +79,8 @@ export function purchase(state,{id,article,price,epoch=state.epoch,conflicted=fa
   next.operations.push({kind:'purchase',id,article,price,epoch});return next;
 }
 export async function runProbeScenarios({transport,emit=()=>{},probeScope='full'}) {
-  if(!['full','invalid-token'].includes(probeScope))throw new TypeError('Unknown probe scope');
+  if(!['full','invalid-token','read-stability'].includes(probeScope))throw new TypeError('Unknown probe scope');
+  if(probeScope==='read-stability'&&typeof transport?.observeReadStability!=='function')throw new TypeError('Unsupported probe scope');
   const checks=[];
   async function read(id,scenarioStage='post-write-read'){
     try{return await transport.read(id);}
@@ -73,6 +97,23 @@ export async function runProbeScenarios({transport,emit=()=>{},probeScope='full'
   let folder;
   await check('fixture','Eigener synthetischer Probeordner angelegt.',async()=>{folder=await transport.create({folder:true,name:'SYNTHETISCH'});});
   if(!folder)return summarize(checks);
+  if(probeScope==='read-stability'){
+    await check('read-stability','Kontrolllesen und Medienfenster vollständig und stabil beobachtet.',async()=>{
+      let observation;
+      try{observation=await transport.observeReadStability({parentId:folder.id,value:initial()});}
+      catch(error){const evidence=safeEvidence({...error?.observation,checkpoint:'read-stability-observation'});throw {code:error?.code,status:error?.status,evidence};}
+      const evidence=safeEvidence({...observation,checkpoint:'read-stability-observation'});
+      const comparisons=evidence?.comparisons;
+      const comparisonStates=['contentChecksum','headRevision','modifiedDate','viewedDate','fileSize'];
+      const stable=evidence?.cacheMode==='no-store'&&evidence.complete===true&&evidence.errorPhase===undefined
+        &&Array.isArray(comparisons)&&comparisons.length===2
+        &&comparisons[0].window==='metadata-control'&&comparisons[1].window==='media-window'
+        &&comparisons.every(item=>item.version==='same'&&item.etag==='same'&&comparisonStates.every(key=>Object.hasOwn(item,key)))
+        &&evidence.media?.outcome==='success'&&evidence.media.contentMatchesFixture===true;
+      assert(stable,evidence);return evidence;
+    });
+    return summarize(checks);
+  }
   async function fixture(name){const file=await transport.create({parentId:folder.id,name,value:initial()});return read(file.id,'fixture-read');}
   if(probeScope==='full')await check('version-token','Starke Versionskennung im Browser lesbar.',async()=>{const file=await fixture('token');return file.observation??'Versionskennung lesbar.';});
   await check('invalid-token','Falsches If-Match ergibt 412; Inhalt bleibt unverändert.',async()=>{

@@ -11,6 +11,7 @@ const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 const observationState=(before,after)=>typeof before==='string'&&before.length>0&&typeof after==='string'&&after.length>0
   ?before===after?'same':'changed'
   :'unavailable';
+const versionDirection=(before,after)=>before===after?'same':BigInt(after)>BigInt(before)?'increased':BigInt(after)<BigInt(before)?'decreased':'representation-changed';
 const etagState=value=>value===null||value===undefined?'absent':typeof value==='string'&&/^"[\x21\x23-\x7E\x80-\xFF]+"$/.test(value)?'strong':typeof value==='string'&&/^W\/"[\x21\x23-\x7E\x80-\xFF]+"$/.test(value)?'weak':'malformed';
 const strongEtag=value=>etagState(value)==='strong';
 
@@ -63,9 +64,9 @@ export function createV2CoherentProbeTransport({fetch:fetchImpl=globalThis.fetch
     return entries.sort(([a],[b])=>a.localeCompare(b)).map(([key,value])=>({key,value,visibility:'PRIVATE'}));
   }
 
-  async function readV2Metadata(id){
+  async function readV2Metadata(id,init={}){
     const expected=owned(id);
-    const value=await json(await request(`${API_V2}/${id}?fields=${V2_FIELDS}`));
+    const value=await json(await request(`${API_V2}/${id}?fields=${V2_FIELDS}`,init));
     const parents=normalizeParents(value.parents),properties=normalizePrivateProperties(value.properties);
     if(expected.parentId){if(!same(parents,[expected.parentId]))fail('binding');}
     else if(expected.boundRootParents){if(!same(parents,expected.boundRootParents))fail('binding');}
@@ -103,6 +104,21 @@ export function createV2CoherentProbeTransport({fetch:fetchImpl=globalThis.fetch
 
   async function read(id){return readSnapshot(id,'snapshot-read');}
 
+  function compareObservation(window,before,after){
+    return {window,version:versionDirection(before.version,after.version),etag:observationState(before.etag,after.etag),
+      contentChecksum:observationState(before.md5Checksum,after.md5Checksum),
+      headRevision:observationState(before.headRevisionId,after.headRevisionId),
+      modifiedDate:observationState(before.modifiedDate,after.modifiedDate),
+      viewedDate:observationState(before.lastViewedByMeDate,after.lastViewedByMeDate),
+      fileSize:observationState(before.fileSize,after.fileSize)};
+  }
+
+  function throwObservation(error,errorPhase,observation){
+    const wrapped=error instanceof V2ProbeError?error:new V2ProbeError('unexpected');
+    wrapped.observation=structuredClone({...observation,complete:false,errorPhase});
+    throw wrapped;
+  }
+
   async function post(id,value){
     const record=owned(id),metadata={id,name:record.name,mimeType:record.mimeType,appProperties:{app:APP,runId},...(record.parentId?{parents:[record.parentId]}:{})};
     if(record.folder)return request(`${API_V3}?fields=id`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(metadata)},[409]);
@@ -125,6 +141,45 @@ export function createV2CoherentProbeTransport({fetch:fetchImpl=globalThis.fetch
     return {id};
   }
 
+  async function observeReadStability({parentId,value}={}){
+    if(!parentId||!owned(parentId).folder)fail('binding');
+    const observation={cacheMode:'no-store',complete:false,comparisons:[],media:{outcome:'not-reached'}};
+    let id;
+    try{
+      const generated=await json(await request(`${API_V3}/generateIds?count=1&space=drive&type=files`));
+      id=generated.ids?.[0];
+      if(!/^[A-Za-z0-9_-]+$/.test(id??''))fail('invalid');
+      files.set(id,{folder:false,parentId,name:`SHOP-PROBE-read-stability-${runId.slice(0,8)}`,mimeType:JSON_MIME});
+      const response=await post(id,value);
+      if(response.status===409)fail('collision');
+      const created=await json(response);
+      if(created.id!==id)fail('binding');
+    }catch(error){throwObservation(error,'creation-response',observation);}
+
+    let m1,m2,m3;
+    try{m1=await readV2Metadata(id,{cache:'no-store'});}catch(error){throwObservation(error,'metadata-1',observation);}
+    try{m2=await readV2Metadata(id,{cache:'no-store'});}catch(error){throwObservation(error,'metadata-2',observation);}
+    observation.comparisons.push(compareObservation('metadata-control',m1,m2));
+
+    let mediaResponse;
+    try{
+      mediaResponse=await request(`${API_V2}/${id}?alt=media`,{cache:'no-store'});
+      const actual=await json(mediaResponse);
+      observation.media={outcome:'success',httpStatus:mediaResponse.status,
+        ...(typeof mediaResponse.redirected==='boolean'?{redirected:mediaResponse.redirected}:{}),contentMatchesFixture:same(actual,value)};
+    }catch(error){
+      observation.media={outcome:error?.code??'unexpected',
+        ...(Number.isInteger(error?.status)?{httpStatus:error.status}:{}),
+        ...(mediaResponse&&typeof mediaResponse.redirected==='boolean'?{redirected:mediaResponse.redirected}:{})};
+      throwObservation(error,'media',observation);
+    }
+
+    try{m3=await readV2Metadata(id,{cache:'no-store'});}catch(error){throwObservation(error,'metadata-3',observation);}
+    observation.comparisons.push(compareObservation('media-window',m2,m3));
+    observation.complete=true;
+    return structuredClone(observation);
+  }
+
   async function retryCreate(id,value){
     owned(id);
     await post(id,value);
@@ -144,5 +199,5 @@ export function createV2CoherentProbeTransport({fetch:fetchImpl=globalThis.fetch
     return {id:before.id,status:response.status};
   }
 
-  return {create,read,retryCreate,updateIfUnchanged};
+  return {create,read,retryCreate,updateIfUnchanged,observeReadStability};
 }

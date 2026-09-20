@@ -230,4 +230,117 @@ test('diagnostic 6 adds no HTTP request to a stable snapshot',async()=>{
   assert.equal(calls.length,3);
   assert.equal(calls.filter(call=>call.method==='GET'&&call.url.includes('/drive/v2/files/')).length,3);
   assert.equal(new URL(calls[0].url).searchParams.get('fields'),'id,title,mimeType,parents,properties,labels,version,etag,md5Checksum,headRevisionId,modifiedDate,lastViewedByMeDate,fileSize');
+  assert.equal(calls.every(call=>call.cache===undefined),true);
+});
+
+const unavailableComparison=window=>({window,version:'same',etag:'same',contentChecksum:'unavailable',headRevision:'unavailable',modifiedDate:'unavailable',viewedDate:'unavailable',fileSize:'unavailable'});
+
+test('diagnostic 8 observes exactly M1 M2 media M3 with no-store and no conditional write',async()=>{
+  const fixture=v2CoherentDriveFixture(),transport=makeTransport(fixture),folder=await transport.create({folder:true,name:'folder'});
+  const before=fixture.calls.length;
+  const observation=await transport.observeReadStability({parentId:folder.id,value:{probe:true}});
+  assert.deepEqual(observation,{
+    cacheMode:'no-store',complete:true,
+    comparisons:[unavailableComparison('metadata-control'),unavailableComparison('media-window')],
+    media:{outcome:'success',httpStatus:200,redirected:false,contentMatchesFixture:true},
+  });
+  assert.equal(Object.hasOwn(observation,'id'),false);
+  const calls=fixture.calls.slice(before),diagnosticGets=calls.filter(call=>call.method==='GET'&&call.url.includes('/drive/v2/files/'));
+  assert.deepEqual(calls.map(call=>call.method),['GET','POST','GET','GET','GET','GET']);
+  assert.equal(diagnosticGets.length,4);
+  assert.equal(diagnosticGets.every(call=>call.cache==='no-store'),true);
+  assert.equal(diagnosticGets.filter(call=>new URL(call.url).searchParams.get('alt')==='media').length,1);
+  assert.equal(calls.some(call=>call.method==='PUT'),false);
+});
+
+for(const [after,changedWindow] of [[0,'metadata-control'],[1,'media-window']]){
+  test(`diagnostic 8 separates a pure version increase in ${changedWindow}`,async()=>{
+    const fixture=v2CoherentDriveFixture({mutateDuringRead:{field:'version',after,filesOnly:true}}),transport=makeTransport(fixture),folder=await transport.create({folder:true});
+    const observation=await transport.observeReadStability({parentId:folder.id,value:{probe:true}});
+    assert.equal(observation.comparisons.find(item=>item.window===changedWindow).version,'increased');
+    assert.equal(observation.comparisons.find(item=>item.window!==changedWindow).version,'same');
+    assert.equal(observation.media.contentMatchesFixture,true);
+    assert.equal(fixture.calls.some(call=>call.method==='PUT'),false);
+  });
+}
+
+test('diagnostic 8 compares large versions with BigInt in both directions',async()=>{
+  const fixture=v2CoherentDriveFixture({metadataOverride:(metadata,{record,count})=>record.mimeType==='application/json'?{...metadata,version:count===1?'900719925474099312345':count===2?'900719925474099312346':'900719925474099312344'}:metadata});
+  const transport=makeTransport(fixture),folder=await transport.create({folder:true});
+  const observation=await transport.observeReadStability({parentId:folder.id,value:{probe:true}});
+  assert.deepEqual(observation.comparisons.map(item=>item.version),['increased','decreased']);
+});
+
+test('diagnostic 8 treats numerically equal but differently represented versions as changed',async()=>{
+  const fixture=v2CoherentDriveFixture({metadataOverride:(metadata,{record,count})=>record.mimeType==='application/json'?{...metadata,version:count===1?'01':'1'}:metadata});
+  const transport=makeTransport(fixture),folder=await transport.create({folder:true});
+  const observation=await transport.observeReadStability({parentId:folder.id,value:{probe:true}});
+  assert.equal(observation.comparisons[0].version,'representation-changed');
+  assert.equal(observation.comparisons[1].version,'same');
+});
+
+test('diagnostic 8 rejects a mismatched v3 creation response before observation GETs',async()=>{
+  const fixture=v2CoherentDriveFixture();
+  const transport=createProbeTransport({token:()=> 'secret',etagSource:'v2-coherent',fetch:async(url,init)=>{
+    if((init?.method??'GET')==='POST'&&new URL(url).pathname.includes('/upload/drive/v3/files'))return new Response(JSON.stringify({id:'foreign-id'}),{status:200,headers:{'Content-Type':'application/json'}});
+    return fixture.fetch(url,init);
+  }});
+  const folder=await transport.create({folder:true});
+  await assert.rejects(()=>transport.observeReadStability({parentId:folder.id,value:{probe:true}}),error=>{
+    assert.equal(error.code,'binding');
+    assert.deepEqual(error.observation,{cacheMode:'no-store',complete:false,comparisons:[],media:{outcome:'not-reached'},errorPhase:'creation-response'});
+    return true;
+  });
+  assert.equal(fixture.calls.some(call=>call.method==='PUT'),false);
+});
+
+function observationFailureTransport({phase,kind}){
+  const fixture=v2CoherentDriveFixture();let metadataReads=0;
+  const fetch=async(url,init)=>{
+    const parsed=new URL(url),method=init?.method??'GET',isObservationFile=parsed.pathname.endsWith('/test-2');
+    if(phase==='creation-response'&&method==='POST'&&parsed.pathname.includes('/upload/drive/v3/files')){
+      if(kind==='parse')return new Response('{',{status:200,headers:{'Content-Type':'application/json'}});
+      if(kind==='http')return new Response('{}',{status:500,headers:{'Content-Type':'application/json'}});
+      throw new Error('private-network-message');
+    }
+    if(isObservationFile&&method==='GET'&&parsed.pathname.includes('/drive/v2/files/')&&parsed.searchParams.get('alt')!=='media'){
+      metadataReads++;
+      if((phase==='metadata-1'&&metadataReads===1)||(phase==='metadata-2'&&metadataReads===2)||(phase==='metadata-3'&&metadataReads===3)){
+        if(kind==='binding'){
+          const response=await fixture.fetch(url,init),value=await response.json();value.id='private-foreign-id';
+          return new Response(JSON.stringify(value),{status:200,headers:{'Content-Type':'application/json'}});
+        }
+        if(kind==='parse')return new Response('{',{status:200,headers:{'Content-Type':'application/json'}});
+        if(kind==='http')return new Response('{}',{status:500,headers:{'Content-Type':'application/json'}});
+        throw new Error('private-network-message');
+      }
+    }
+    if(isObservationFile&&method==='GET'&&parsed.searchParams.get('alt')==='media'&&phase==='media'){
+      if(kind==='parse')return new Response('{',{status:200,headers:{'Content-Type':'application/json'}});
+      if(kind==='http')return new Response('{}',{status:503,headers:{'Content-Type':'application/json'}});
+      throw new Error('private-network-message');
+    }
+    return fixture.fetch(url,init);
+  };
+  return {fixture,transport:createProbeTransport({fetch,token:()=> 'secret',etagSource:'v2-coherent'})};
+}
+
+for(const [phase,kind,code] of [
+  ['creation-response','parse','invalid'],
+  ['metadata-1','binding','binding'],
+  ['metadata-2','parse','invalid'],
+  ['media','http','http'],
+  ['metadata-3','network','network'],
+])test(`diagnostic 8 preserves bounded partial evidence for ${kind} at ${phase}`,async()=>{
+  const {fixture,transport}=observationFailureTransport({phase,kind}),folder=await transport.create({folder:true});
+  await assert.rejects(()=>transport.observeReadStability({parentId:folder.id,value:{probe:true}}),error=>{
+    assert.equal(error.code,code);assert.equal(error.observation.errorPhase,phase);assert.equal(error.observation.complete,false);
+    assert.equal(error.observation.comparisons.length,phase==='media'||phase==='metadata-3'?1:0);
+    assert.equal(error.observation.media.outcome,phase==='media'?'http':phase==='metadata-3'?'success':'not-reached');
+    if(phase==='media')assert.equal(error.observation.media.httpStatus,503);
+    if(phase==='metadata-3')assert.equal(error.observation.media.contentMatchesFixture,true);
+    assert.equal(JSON.stringify(error.observation).includes('private-'),false);
+    return true;
+  });
+  assert.equal(fixture.calls.some(call=>call.method==='PUT'),false);
 });
