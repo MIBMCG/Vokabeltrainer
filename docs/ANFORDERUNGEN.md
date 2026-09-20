@@ -2,7 +2,7 @@
 
 ## Bestätigter Richtungswechsel: Avatar-Entwicklungsstufen (20.09.2026)
 
-**EV01 mit a bestätigt:** Das Kind spart Guthaben an und schaltet die nächste Entwicklungsstufe mit einem bewussten Kauf vollständig frei. Keine Teilbeträge pro Avatar. Konkrete Preise sind noch offen; [laufende Entscheidungen EV01/EV02](design/2026-09-20-avatar-entwicklungsstufen.md).
+**EV01 mit a und EV02 mit A bestätigt:** Das Kind spart Guthaben an und schaltet die nächste Entwicklungsstufe mit einem bewussten Kauf vollständig frei. Keine Teilbeträge pro Avatar. Einheitliche Einzelpreise je Aufstieg: **200 / 400 / 800 Punkte**, insgesamt 1.400 ab vorhandener Grundform, zusätzlich zu einem etwaigen Kaufpreis der Grundfigur. [Laufende Entscheidungen](design/2026-09-20-avatar-entwicklungsstufen.md); EV03 zu menschlichen Haut-/Kleidungsvarianten ist noch offen.
 
 Der Nutzer hat die Empfehlung „vier vollständig gerenderte Entwicklungsformen je Figur einschließlich Grundform“ mit „so machen wir das“ bestätigt. Erspielte Punkte können in die Entwicklung des eigenen Avatars investiert werden; Level und Lernfortschritt bleiben unverändert. Ein sichtbarer Fortschrittsbalken kündigt die nächste Form an, und bereits freigeschaltete Formen bleiben dauerhaft auswählbar. Zuerst wird nur eine vierstufige Drachenreihe gemeinsam beurteilt. [Bestätigte Richtung und Grenzen](design/2026-09-20-avatar-entwicklungsstufen.md).
 

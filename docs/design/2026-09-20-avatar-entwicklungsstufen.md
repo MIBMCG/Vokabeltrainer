@@ -30,11 +30,14 @@ Diese Namen sind Teil des Bild- und Textvorschlags, keine bestätigten Produktna
 
 Nutzerantwort **a** vom 20.09.2026: Eine ganze Entwicklungsstufe auf einmal freischalten. Das Kind spart sein verfügbares Guthaben an, sieht die neue Form und den Preis und löst den vollständigen Kauf bewusst aus. Keine Teilbeträge einem Avatar zuweisen und keine automatische Verwandlung durch solche Teilbeträge. Die nächste Stufe wird vollständig bezahlt; Gesamtpunkte, Level und Lernfortschritt bleiben erhalten. Diese Entscheidung ist dokumentiert, noch nicht implementiert.
 
+## Bestätigte Preise EV02
+
+Nutzerantwort **A** vom 20.09.2026: Einheitliche Preise für alle Avatare. Der Aufstieg von Stufe 1 auf 2 kostet **200 Punkte**, von 2 auf 3 **400 Punkte**, von 3 auf 4 **800 Punkte**. Das sind zusätzliche Einzelpreise, keine kumulierten Schwellen: insgesamt **1.400 Punkte** ab vorhandener Grundform. Ein etwaiger Kaufpreis der Grundfigur kommt separat hinzu. Grundlage bleiben 10 Punkte je richtiger Antwort plus 20 je gewerteter abgeschlossener Runde. Preise sind bestätigt, noch nicht im Produkt umgesetzt.
+
 ## Noch nicht entschieden oder umgesetzt
 
-**Nächste Frage EV02, noch offen:** Einheitliche Preise je Aufstieg für alle Avatare. A (Empfehlung): 200 / 400 / 800 Punkte; B (schneller): 120 / 240 / 480 Punkte; C (längerfristig): 300 / 600 / 1.200 Punkte. Gemeint sind jeweils zusätzliche Einzelpreise für 1→2, 2→3 und 3→4, keine kumulierten Schwellen. Gesamt ab vorhandener Grundform: 1.400 / 840 / 2.100 Punkte. Ein etwaiger Kaufpreis der Grundfigur kommt separat hinzu. Grundlage bleiben 10 Punkte je richtiger Antwort plus 20 je gewerteter abgeschlossener Runde. Noch keine Preisvariante als bestätigt behandeln.
+**Nächste Frage EV03, noch offen:** Gestaltung der menschlichen Figuren bei vollständigen Stufenbildern. A (Empfehlung): Mädchen und Junge behalten jeweils vier Hauttöne; Kleidung/Rüstung ist innerhalb jeder Stufe fest gestaltet. B: zusätzlich die bisherigen sechs Kleidungsfarben für jede Stufe erhalten. Vier Hauttöne bleiben in beiden Varianten kostenlos. A würde bei 13 Figuren rechnerisch 32 menschliche plus 44 Tier-/Fantasie-Motive ergeben; B bis zu 192 menschliche plus 44 übrige Motive. Unterschiedliche Auflösungen zählen dabei nicht als neue Motive. Keine Variante ist bereits bestätigt; die bisherige freie Farbwahl nicht stillschweigend entfernen.
 
-- konkrete Punktpreise oder Freischaltschwellen der vier Formen,
 - genaue Berechnung und Speicherung des Entwicklungsfortschritts,
 - Verhalten bei gleichzeitigem Kauf auf mehreren Geräten,
 - genaue Texte, Bedienfolge und Darstellung in der Produktoberfläche,
