@@ -1,0 +1,27 @@
+{
+  "kind": "avatar-evolution-concept",
+  "version": 2,
+  "createdOn": "2026-09-20",
+  "generator": "built-in image_gen",
+  "model": "not exposed by tool",
+  "sourceFile": "dragon-stages-concept-v2.png",
+  "sha256": "2d2d088a8243ea18b61a657913ca2e8e8ea13d41b1260850383a87a270b224a8",
+  "width": 1942,
+  "height": 809,
+  "colorMode": "RGB",
+  "reference": "dragon-stages-concept-v1.png",
+  "referenceRole": "edit target; strengthen only the fourth form",
+  "stages": [
+    "Abenteuerdrache",
+    "Runendrache",
+    "Kristallwächter",
+    "Runenlegende"
+  ],
+  "status": "user-approved visual direction; concept board, not production sprite sheet",
+  "personalApproval": true,
+  "approval": "User on 2026-09-20 after viewing v2: ja, viel besser",
+  "changes": "Fourth form: sweeping golden antler-like crown, luminous mane, celestial constellation wings, fitted ceremonial armour and magical plumed tail.",
+  "scope": "One four-panel comparison board, no product integration, no all-avatar batch",
+  "preservationCheck": "First three forms retained visually; generated images are not pixel-identical in the first-three-panel region.",
+  "prompt": "Edit this exact four-panel German dragon evolution concept board. Input image 1 is the EDIT TARGET. Change ONLY the dragon artwork and small atmosphere inside the FOURTH, RIGHTMOST panel. Preserve the first THREE panels pixel-identically, and preserve the page title, cream background, panel frames and ALL German text, their placement, font and spelling. Do not redesign the board. Same landscape aspect ratio and composition.\n\nThe user wants a much more dramatic, EPIC and MYTHICAL transformation from stage 3 to stage 4. The current stage 4 is too similar to stage 3. Redesign the final form \"Runenlegende\" as a legendary CELESTIAL EMERALD GUARDIAN with a clearly different silhouette and spiritual majesty, recognizable even in a small thumbnail. It must feel like a true metamorphosis rather than simply an extra armour upgrade.\n\nKeep recognizable character identity: warm amber eyes, friendly wise face, emerald/turquoise scales, gold chest, FOUR legs and TWO wings, one long tail. Transformation details:\n- Tall elegantly sweeping GOLDEN ANTLER-LIKE HORNS forming a spectacular integrated natural crown, very different from the short crystal-spike crest of stage 3. Not a floating ornament.\n- A luminous flowing turquoise-and-gold energy MANE growing naturally from the nape and following the neck and upper back, a noble ancient spirit-dragon.\n- Two grand upward-swept wings with ethereal semi-transparent deep teal, sapphire and pale gold membranes containing readable constellations and luminous flowing rune veins. Elegant long flame-like tips, not additional wings. Fully contained within this panel.\n- A proud, elongated noble neck and upright heroic stance; fitted antique-gold ceremonial chest/shoulder armour shaped with the dragon, larger meaningful surfaces, less tiny clutter.\n- A glowing rune at the sternum, controlled celestial radiance around the upper silhouette and a few sparkling motes. The magic must strengthen silhouette and depth, never obscure the anatomy or turn into a bright indistinct blob.\n- A graceful longer tail ending in a luminous teal plume that clearly differs from the simple stage-3 tail.\n\nMake the change in silhouette, horn shape, flowing mane, wing shape and tail the main source of the epic effect. Do not rely only on brighter glow or more jewellery. Same premium painterly fantasy style, coherent perspective, correct occlusion, beautiful contact shadows. Magical, awe-inspiring and protective for ages 10–13, no aggression or horror. It is the same dragon's legendary final form, not a new unrelated species. No extra legs, no floating armour, no detached rings or straps. Keep all feet, horns, wings and tail visible, with breathing room inside the rightmost panel. Do not let it overlap other panels or text. Exact bottom labels remain \"STUFE 4\" and \"Runenlegende\". First three forms absolutely unchanged."
+}

@@ -6,15 +6,19 @@ Stand: 20.09.2026. Branch `codex/vokabeltrainer-v1`, dokumentierter Ausgangscomm
 
 Der Nutzer hat die empfohlene Umstellung auf vier vollständig gerenderte Entwicklungsformen je Figur mit „so machen wir das“ bestätigt. Erspielte Punkte sollen in die Entwicklung des eigenen Avatars fließen; Level und Lernfortschritt bleiben unverändert. Ein Fortschrittsbalken zeigt die nächste Form. Freigeschaltete Formen bleiben dauerhaft erhalten und frei auswählbar.
 
+Für den Bildprototyp hat der Nutzer anschließend präzisiert: Der Unterschied von Stufe 3 zu Stufe 4 muss deutlicher, epischer und mythischer sein. Eine Endstufe, die hauptsächlich mehr Rüstung trägt, erfüllt dieses Kriterium nicht.
+
 Für die künftige Erweiterung ersetzt dies die modulare Ausrüstung nach AV02/AV11. Bestehende Bildquellen und Passformnachweise bleiben als historische Artefakte erhalten. Die Produktoberfläche verwendet weiterhin den bisherigen Stand.
 
 Verbindliche Grenzen und offene Details stehen im [Entscheidungsdokument](../design/2026-09-20-avatar-entwicklungsstufen.md). Insbesondere sind konkrete Preise, technische Speicherung, Shopintegration, endgültige Namen und die Produktion aller 52 Stufenbilder nicht Teil dieser Prototypentscheidung; dafür fehlt noch das Detaildesign. Die bereits bestätigte allgemeine Entwicklungsfreigabe und die übrigen Produktentscheidungen bleiben bestehen.
 
 ## Erster Prüfgegenstand
 
-Der [Konzeptbogen mit vier Drachenformen](../design/avatar-evolution/dragon-stages-concept-v1.png) ist erstellt. Er erhält die grün-goldene Identität derselben Figur und steigert Rüstung, Kristallformen und Leuchteffekte von Stufe zu Stufe; sichtbare Ausstattung ist körpergerecht in die vollständigen Figuren gemalt. Die Arbeitsnamen Abenteuerdrache, Runendrache, Kristallwächter und Runenlegende sind weiterhin nur ein Gestaltungsvorschlag. [Prompt, Referenzrolle und vollständige Erzeugungsnotiz](../design/avatar-evolution/dragon-stages-concept-v1.json) sind dokumentiert.
+Der [Konzeptbogen v1](../design/avatar-evolution/dragon-stages-concept-v1.png) ist als historischer Zwischenstand erhalten. Der Nutzer nahm ihn nicht ab, weil Stufe 4 gegenüber Stufe 3 noch nicht deutlich genug als epische, mythische Endverwandlung lesbar war.
 
-Der aktuelle Stand ist eine vierteilige Gesamtvorschau mit 1942 × 809 Pixeln im RGB-Farbraum, kein Produktions-Sprite-Sheet. Vier freigestellte Einzelgrafiken, Transparenz, Handy-Einzelkarten und die Darstellung in der App wurden noch nicht erzeugt oder geprüft. Die persönliche Nutzerabnahme ist offen. Erst danach darf der Prototyp als Vorlage für weitere Figuren dienen.
+Der [überarbeitete Konzeptbogen v2](../design/avatar-evolution/dragon-stages-concept-v2.png) behält die visuelle Entwicklung der ersten drei Stufen bei und verstärkt die Endstufe mit großer goldener Geweih-Hornkrone, türkis-goldener Energiemähne, kosmischen Sternbildflügeln, Runensternum und ausgeprägterem Federschweif. Der Nutzer hat v2 mit „ja, viel besser“ persönlich bestätigt. Diese Drachenbildrichtung mit klar epischer Finalstufe dient damit als Stilvorlage und braucht keine erneute Bildfreigabe. Die Arbeitsnamen Abenteuerdrache, Runendrache, Kristallwächter und Runenlegende bleiben Gestaltungsvorschläge. [Prompt, Referenzrolle und Erzeugungsnotiz zu v2](../design/avatar-evolution/dragon-stages-concept-v2.json) sind dokumentiert.
+
+Der bestätigte Stand ist eine vierteilige Gesamtvorschau, kein Produktions-Sprite-Sheet. Vier freigestellte Einzelgrafiken, Transparenz, Handy-Einzelkarten und die Darstellung in der App wurden noch nicht erzeugt oder geprüft. Die persönliche Bestätigung gilt für die Stilrichtung, nicht als Produktionsnachweis für diese noch fehlenden Ausgaben oder für weitere Figuren.
 
 ## Technischer Shopstand
 
@@ -24,7 +28,8 @@ Keine weitere unveränderte Wiederholung derselben Probe anfordern. Ein spätere
 
 ## Nächster Schritt
 
-1. Persönliche Beurteilung des gezeigten Drachenbogens aufnehmen. Root hat den generierten Bogen tatsächlich geöffnet und Stufenfolge, vollständige Figuren, Beschriftungen und zusammenhängende Ausrüstung geprüft; das ersetzt die persönliche Stilentscheidung nicht.
-2. Erst nach dieser Beurteilung Detailentscheidungen und gegebenenfalls einen Implementierungsplan für Daten, Preise, Oberfläche und weitere Figuren ausarbeiten.
+1. Die noch offenen Details der Punkteinvestition einzeln klären, beginnend mit Schwellen beziehungsweise Preisen und dem sichtbaren Investitionsablauf.
+2. Danach Datenvertrag und Oberfläche konkretisieren; die bestätigte Vier-Stufen- und Bildrichtung nicht erneut abstimmen.
+3. Die Produktion weiterer Figuren erst im daraus abgeleiteten Umfang planen; kein unbestätigter 52-Bilder-Gesamtlauf.
 
-Prüfung dieses Dokumentations-/Konzeptpakets: PNG erfolgreich gelesen (1942 × 809, RGB), SHA-256 im Sidecar festgehalten; Dokumentationslinks und Diff geprüft. Keine Produktdateien geändert, deshalb keine neuen Funktionstests ausgeführt. Implementierungsstand weiterhin `33c7274`; die Paket-SHA ist über den Commit dieser Übergabe auffindbar. Lokalen und entfernten Branch vor einer Fortsetzung frisch vergleichen.
+Beide PNGs wurden erfolgreich gelesen (je 1942 × 809 Pixel, RGB); die SHA-256-Prüfsummen sind in den jeweiligen Sidecars festgehalten. Root hat v2 tatsächlich visuell geprüft; Stufen 1–3 sind visuell erhalten, aber nicht pixelidentisch. Dokumentationslinks und Diff sind geprüft. Keine Produktdateien geändert, deshalb keine neuen Funktionstests ausgeführt. Implementierungsstand weiterhin `33c7274`; der erste Prototypstand liegt in `89f0260`, v2 und Bestätigung im Folgecommit dieser Übergabe. Lokalen und entfernten Branch vor einer Fortsetzung frisch vergleichen. Die bereits gestellte Bedienungsfrage EV01 (ganze Stufe oder Teilbeträge) ist noch offen; bis zur Antwort keine Variante als beschlossen ausgeben.
