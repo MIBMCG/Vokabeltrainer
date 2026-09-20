@@ -1,0 +1,103 @@
+{
+  "kind": "synthetic-shop-probe",
+  "startedAt": "2026-09-20T07:07:48.201Z",
+  "completedAt": "2026-09-20T07:08:25.820Z",
+  "origin": "http://localhost:4173",
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0",
+  "etagSource": "media",
+  "apiPaths": {
+    "read": "GET /drive/v3/files/{probeFileId}?alt=media",
+    "mediaUpdate": "PATCH /upload/drive/v3/files/{probeFileId}?uploadType=media",
+    "metadataUpdate": "PATCH /drive/v3/files/{probeFolderId}",
+    "condition": "If-Match"
+  },
+  "passed": false,
+  "failed": 2,
+  "unsupported": 7,
+  "checks": [
+    {
+      "id": "fixture",
+      "expected": "Eigener synthetischer Probeordner angelegt.",
+      "passed": true,
+      "status": "passed",
+      "actual": "Erwartete Wirkung nach erneutem Lesen bestätigt."
+    },
+    {
+      "id": "version-token",
+      "expected": "Starker Versionsheader im Browser lesbar.",
+      "passed": false,
+      "status": "failed",
+      "actual": "stale"
+    },
+    {
+      "id": "invalid-token",
+      "expected": "Falsches If-Match ergibt 412; Inhalt bleibt unverändert.",
+      "passed": false,
+      "status": "unsupported",
+      "actual": "unsupported"
+    },
+    {
+      "id": "stale-write",
+      "expected": "Verbrauchtes If-Match ergibt 412; erster Inhalt bleibt.",
+      "passed": false,
+      "status": "unsupported",
+      "actual": "unsupported"
+    },
+    {
+      "id": "initialization",
+      "expected": "Zwei Initialisierer: genau eine verbindliche Ordnerbindung.",
+      "passed": false,
+      "status": "unsupported",
+      "actual": "unsupported"
+    },
+    {
+      "id": "two-purchases",
+      "expected": "Zwei Käufe zu 800 bei 1000 Guthaben: genau einer, Rest 200.",
+      "passed": false,
+      "status": "failed",
+      "actual": "stale"
+    },
+    {
+      "id": "response-loss",
+      "expected": "Absichtlich verworfene Erfolgsantwort: Beleg mit gleicher ID gefunden, keine zweite Ausgabe.",
+      "passed": false,
+      "status": "unsupported",
+      "actual": "unsupported"
+    },
+    {
+      "id": "duplicate-operation",
+      "expected": "Vorgang und vorhandener Besitz erzeugen keine zweite Ausgabe.",
+      "passed": false,
+      "status": "unsupported",
+      "actual": "unsupported"
+    },
+    {
+      "id": "reset-race",
+      "expected": "Kauf und Epochenwechsel teilen dieselbe Schreibgrenze; beide Gewinnerreihenfolgen.",
+      "passed": false,
+      "status": "unsupported",
+      "actual": "unsupported"
+    },
+    {
+      "id": "create-conflict",
+      "expected": "Erneutes Create prüft identischen Inhalt; abweichender Inhalt wird abgewiesen.",
+      "passed": false,
+      "status": "unsupported",
+      "actual": "unsupported"
+    },
+    {
+      "id": "conflict-credit",
+      "expected": "Konfliktbehaftete Grundlage kann keine synthetische Ausgabe auslösen.",
+      "passed": true,
+      "status": "passed",
+      "actual": "Lokale Proberegel geprüft; Produktledger/Quarantäne noch nicht integriert."
+    }
+  ],
+  "productReady": false,
+  "limitations": [
+    "Zwei logische Clients im selben Browser; keine Zwei-Geräte-Abnahme.",
+    "Antwortverlust durch lokales Verwerfen einer Erfolgsantwort; kein echter Leitungsabbruch.",
+    "Keine Produktdaten-, Altclient-, Backup- oder Epochenmigration geprüft.",
+    "Ein Probe-Erfolg ersetzt keine dokumentierte Servergarantie."
+  ]
+}

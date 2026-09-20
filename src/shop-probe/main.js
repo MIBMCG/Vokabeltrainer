@@ -4,6 +4,11 @@ import {createProbeTransport} from './transport.js';
 import {runProbeScenarios} from './scenarios.js';
 const el=id=>document.getElementById(id);
 let session=null,connected=false,busy=false,report=null;
+const diagnosticMessages={
+  'missing-file-version':'Die Antwort enthält keine gültige Dateiversion.',
+  'changed-during-read':'Die Dateiversion oder die technische Versionskennung unterscheiden sich zwischen zwei Leseantworten. Eine abgelehnte Schreibanfrage ist damit noch nicht nachgewiesen.',
+  'missing-strong-etag':'Eine starke Versionskennung fehlt oder ist für den Browser nicht verwendbar.',
+};
 function buttons(){el('connect').disabled=busy||connected;el('disconnect').disabled=busy||!connected;el('start').disabled=busy||!connected||!el('consent').checked;el('source').disabled=busy;el('consent').disabled=busy;el('download').disabled=!report||busy;}
 el('consent').addEventListener('change',buttons);
 el('connect').addEventListener('click',async()=>{
@@ -19,9 +24,11 @@ el('start').addEventListener('click',async()=>{
   const startedAt=new Date().toISOString(),etagSource=el('source').value;
   try{
     const result=await runProbeScenarios({transport:createProbeTransport({token:()=>session.getToken(),etagSource}),emit:check=>{
-      const item=document.createElement('li');item.textContent=`${check.passed?'Bestanden':check.status==='unsupported'?'Nicht nachgewiesen':'Fehlgeschlagen'}: ${check.expected} Ergebnis: ${typeof check.actual==='string'?check.actual:JSON.stringify(check.actual)}`;el('checks').append(item);
+      const item=document.createElement('li');item.textContent=`${check.passed?'Bestanden':check.status==='unsupported'?'Nicht nachgewiesen':'Fehlgeschlagen'}: ${check.expected} Ergebnis: ${typeof check.actual==='string'?check.actual:JSON.stringify(check.actual)}`;
+      if(check.diagnostic){const message=diagnosticMessages[check.diagnostic.reason];if(message)item.append(document.createTextNode(` ${message} Details: ${JSON.stringify(check.diagnostic)}`));}
+      el('checks').append(item);
     }});
-    report={kind:'synthetic-shop-probe',startedAt,completedAt:new Date().toISOString(),origin:location.origin,userAgent:navigator.userAgent,etagSource,
+    report={kind:'synthetic-shop-probe',diagnosticVersion:2,startedAt,completedAt:new Date().toISOString(),origin:location.origin,userAgent:navigator.userAgent,etagSource,
       apiPaths:{read:'GET /drive/v3/files/{probeFileId}?alt=media',mediaUpdate:'PATCH /upload/drive/v3/files/{probeFileId}?uploadType=media',metadataUpdate:'PATCH /drive/v3/files/{probeFolderId}',condition:'If-Match'},...result};
     el('status').textContent=result.passed?'Alle isolierten Probeszenarien bestanden. Produktshop bleibt gesperrt; weitere Nachweise stehen aus.':'Kaufkoordination nicht ausreichend nachgewiesen. Produktshop bleibt gesperrt.';
   }catch{el('status').textContent='Probe unterbrochen. Kein vollständiger Nachweis; Produktshop bleibt gesperrt.';}

@@ -27,3 +27,13 @@ test('ignoring folder metadata condition cannot pass initialization',async()=>{
 test('missing browser-visible version token is unsupported',async()=>{
   const result=await runProbeScenarios({transport:fake({missing:true})});assert.equal(result.passed,false);assert.ok(result.unsupported>0);
 });
+
+test('error diagnostics keep only known classifications and boolean observations',async()=>{
+  const transport=fake();
+  transport.read=async()=>{throw Object.assign(new Error('private-marker'),{code:'stale',diagnostic:{phase:'read-stability',reason:'changed-during-read',etagSource:'media',versionChanged:true,metadataEtagChanged:'private-marker',metadataEtagState:'strong',mediaEtagState:'private-marker',token:'private-marker',fileId:'private-marker'}});};
+  const result=await runProbeScenarios({transport});
+  const check=result.checks.find(check=>check.id==='version-token');
+  assert.equal(check.scenarioStage,'fixture-read');
+  assert.deepEqual(check.diagnostic,{phase:'read-stability',reason:'changed-during-read',etagSource:'media',versionChanged:true,metadataEtagState:'strong'});
+  assert.equal(JSON.stringify(result).includes('private-marker'),false);
+});

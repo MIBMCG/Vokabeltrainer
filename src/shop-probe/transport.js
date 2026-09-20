@@ -4,13 +4,14 @@ const UPLOAD='https://www.googleapis.com/upload/drive/v3/files';
 const FIELDS='id,name,mimeType,parents,appProperties,trashed,version';
 const APP='vokabeltrainer-shop-probe';
 const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+const etagState=value=>value===null?'absent':typeof value==='string'&&/^"[^"\r\n]+"$/.test(value)?'strong':typeof value==='string'&&/^W\/"[^"\r\n]+"$/.test(value)?'weak':'malformed';
 export class ProbeError extends Error {
-  constructor(code,status=null){super(`Probe: ${code}`);this.code=code;this.status=status;}
+  constructor(code,status=null,diagnostic=null){super(`Probe: ${code}`);this.code=code;this.status=status;if(diagnostic)this.diagnostic=diagnostic;}
 }
 export function createProbeTransport({fetch:fetchImpl=globalThis.fetch,token,etagSource='media'}={}) {
   if(typeof fetchImpl!=='function'||typeof token!=='function'||!['media','metadata'].includes(etagSource))throw new ProbeError('invalid');
   const runId=globalThis.crypto.randomUUID(),files=new Map();
-  const fail=code=>{throw new ProbeError(code);};
+  const fail=(code,diagnostic)=>{throw new ProbeError(code,null,diagnostic);};
   const owned=id=>files.get(id)??fail('binding');
   async function request(url,init={},allowed=[]) {
     let credential;try{credential=token();}catch{throw new ProbeError('auth');}
@@ -24,16 +25,18 @@ export function createProbeTransport({fetch:fetchImpl=globalThis.fetch,token,eta
     const expected=owned(id),response=await request(`${API}/${id}?fields=${FIELDS}`),value=await json(response);
     if(value.id!==id||value.trashed!==false||value.appProperties?.app!==APP||value.appProperties?.runId!==runId||value.mimeType!==expected.mimeType
       ||(expected.parentId&&(!Array.isArray(value.parents)||value.parents.length!==1||value.parents[0]!==expected.parentId)))fail('binding');
-    if(typeof value.version!=='string'||!/^\d+$/.test(value.version))fail('unsupported');
+    if(typeof value.version!=='string'||!/^\d+$/.test(value.version))fail('unsupported',{phase:'metadata',reason:'missing-file-version'});
     return {value,etag:response.headers.get('ETag')};
   }
   async function read(id) {
     const expected=owned(id),before=await metadata(id);let value={},mediaEtag=null;
     if(!expected.folder){const response=await request(`${API}/${id}?alt=media`);mediaEtag=response.headers.get('ETag');value=await json(response);}
     const after=await metadata(id);
-    if(before.value.version!==after.value.version||before.etag!==after.etag)fail('stale');
+    const observation={etagSource:expected.folder?'metadata':etagSource,metadataEtagState:etagState(after.etag),mediaEtagState:expected.folder?'not-requested':etagState(mediaEtag)};
+    const versionChanged=before.value.version!==after.value.version,metadataEtagChanged=before.etag!==after.etag;
+    if(versionChanged||metadataEtagChanged)fail('stale',{phase:'read-stability',reason:'changed-during-read',...observation,versionChanged,metadataEtagChanged});
     const etag=expected.folder||etagSource==='metadata'?after.etag:mediaEtag;
-    if(typeof etag!=='string'||!/^"[^"\r\n]+"$/.test(etag))fail('unsupported');
+    if(etagState(etag)!=='strong')fail('unsupported',{phase:'read-token',reason:'missing-strong-etag',...observation});
     return {id,value,version:after.value.version,etag,properties:after.value.appProperties,
       observation:{metadataEtagReadable:!!after.etag,mediaEtagReadable:!!mediaEtag,etagSource:expected.folder?'metadata':etagSource}};
   }
@@ -61,7 +64,7 @@ export function createProbeTransport({fetch:fetchImpl=globalThis.fetch,token,eta
   }
   async function updateIfUnchanged(before,value,{metadata:metadataOnly=false}={}) {
     const record=owned(before.id);
-    if(typeof before.etag!=='string'||!/^"[^"\r\n]+"$/.test(before.etag))fail('unsupported');
+    if(etagState(before.etag)!=='strong')fail('unsupported',{phase:'write-token',reason:'missing-strong-etag'});
     if(metadataOnly!==record.folder)fail('binding');
     const body=metadataOnly?{appProperties:{...value,app:APP,runId}}:value;
     await request(metadataOnly?`${API}/${before.id}?fields=id,version`:`${UPLOAD}/${before.id}?uploadType=media&fields=id,version`,{

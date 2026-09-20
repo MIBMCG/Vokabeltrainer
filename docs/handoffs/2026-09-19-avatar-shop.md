@@ -18,8 +18,10 @@ Der Nutzer hat den [Gesamtentwurf](../superpowers/specs/2026-09-19-avatar-shop-d
 
 ## Nächste Schritte und Grenzen
 
+**Aktualisierung 20.09.2026:** Der Nutzer hat die echte Probe ausgeführt und den Bericht geliefert. Der Medienlauf ist nicht bestanden; siehe [Auswertung und Diagnoseversion 2](../reports/2026-09-20-shop-diagnose.md). Anmeldung und Serverneustart sind damit keine ungeklärte frühere Voraussetzung mehr. Außerdem meldet der Nutzer fehlerhafte Ausrüstungspositionen und verdeckte Bildteile. Die damaligen Gestaltungsgrenzen gelten dafür nicht als Akzeptanz; die visuelle Korrektur ist offen.
+
 1. Probe und Katalog nicht erneut implementieren; ihre unabhängige Prüfung ist abgeschlossen.
-2. Reale Probe unter einem bereits zugelassenen Google-Ursprung ausführen. Die neue Route `/shop-probe/` verlangt einen neu gestarteten lokalen Server. Der Nutzer wurde um Neustart und Anmeldung gebeten; eine Bestätigung steht noch aus. Persönlichen Server 4173 und Browserdaten nicht ungefragt für automatisierte Prüfungen ersetzen. Anmeldung bleibt ausdrücklich beim Nutzer.
+2. Ersten realen Medienbericht nicht als Erfolg ausgeben. Erweiterten Bericht mit Diagnoseversion 2 auswerten und die konkrete fehlende Voraussetzung ermitteln. Persönlichen Server 4173 und Browserdaten nicht ungefragt für automatisierte Prüfungen ersetzen. Anmeldung bleibt ausdrücklich beim Nutzer.
 3. Die Bildvorbereitung nicht neu beginnen: 62 kompatible Figur-/Ausrüstungspaare, vollständige Sets und 48 menschliche Haut-/Farbkombinationen sind geprüft. Die Gesamtvorschau zeigt tatsächlich gerenderte Bilder, noch keine integrierte Shopoberfläche.
 4. Erst nach belastbarem Koordinationsnachweis Kaufvertrag/Migration konkretisieren und integrieren; unabhängige Galeriearbeit fortsetzen.
 5. Frische Regression, unabhängige Review, Bedienung und GitHub-Abgleich durchführen.

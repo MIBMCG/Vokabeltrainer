@@ -36,3 +36,61 @@ test('a 412 that still overwrites data cannot pass the readback gate',async()=>{
   const fixture=driveFixture({mutateBefore412:true});const result=await runProbeScenarios({transport:createProbeTransport({fetch:fixture.fetch,token:()=> 'secret'})});
   assert.equal(result.passed,false);assert.ok(result.checks.some(c=>c.id==='stale-write'&&!c.passed));
 });
+
+test('changed read and unavailable ETag are distinguishable without exporting raw values',async()=>{
+  for(const change of ['version','etag']){
+    const fixture=driveFixture();const reads=new Map();
+    const transport=createProbeTransport({token:()=> 'secret',fetch:async(url,init)=>{
+      const response=await fixture.fetch(url,init),u=new URL(url);
+      if((init?.method??'GET')!=='GET'||!u.searchParams.has('fields'))return response;
+      const value=await response.json();
+      const count=(reads.get(value.id)??0)+1;reads.set(value.id,count);
+      const headers=new Headers(response.headers);
+      if(count===3){if(change==='version')value.version='987654321';else headers.set('ETag','"private-etag-marker"');}
+      return new Response(JSON.stringify(value),{status:response.status,headers});
+    }});
+    const file=await transport.create({value:{}});
+    await assert.rejects(()=>transport.read(file.id),error=>{
+      assert.equal(error.code,'stale');assert.equal(error.status,null);
+      assert.equal(error.diagnostic?.reason,'changed-during-read');
+      assert.equal(error.diagnostic.versionChanged,change==='version');
+      assert.equal(error.diagnostic.metadataEtagChanged,change==='etag');
+      assert.ok(!JSON.stringify(error).includes('private-etag-marker'));
+      assert.ok(!JSON.stringify(error).includes('987654321'));
+      return true;
+    });
+    assert.equal(fixture.calls.some(call=>call.method==='PATCH'),false);
+  }
+});
+
+test('report diagnoses missing, weak and malformed selected headers before any conditional write',async()=>{
+  for(const [header,state] of [[null,'absent'],['W/"private-etag-marker"','weak'],['private-etag-marker','malformed']]){
+    const fixture=driveFixture();
+    const transport=createProbeTransport({token:()=> 'secret',fetch:async(url,init)=>{
+      const response=await fixture.fetch(url,init);
+      if(new URL(url).searchParams.get('alt')!=='media')return response;
+      const headers=new Headers(response.headers);headers.delete('ETag');if(header)headers.set('ETag',header);
+      return new Response(await response.text(),{status:response.status,headers});
+    }});
+    const result=await runProbeScenarios({transport});
+    const check=result.checks.find(check=>check.id==='version-token');
+    assert.equal(check.status,'unsupported');
+    assert.deepEqual(check.diagnostic,{phase:'read-token',reason:'missing-strong-etag',etagSource:'media',metadataEtagState:'strong',mediaEtagState:state});
+    assert.equal(result.passed,false);
+    assert.equal(fixture.calls.some(call=>call.method==='PATCH'&&call.url.includes('/upload/')),false);
+    assert.ok(!JSON.stringify(result).includes('private-etag-marker'));
+  }
+});
+
+test('missing file version is reported separately from an unreadable ETag',async()=>{
+  const fixture=driveFixture();
+  const transport=createProbeTransport({token:()=> 'secret',fetch:async(url,init)=>{
+    const response=await fixture.fetch(url,init);
+    if((init?.method??'GET')!=='GET'||!new URL(url).searchParams.has('fields'))return response;
+    const value=await response.json();delete value.version;
+    return new Response(JSON.stringify(value),{headers:response.headers});
+  }});
+  const result=await runProbeScenarios({transport});
+  assert.equal(result.checks[0].status,'unsupported');
+  assert.deepEqual(result.checks[0].diagnostic,{phase:'metadata',reason:'missing-file-version'});
+});
