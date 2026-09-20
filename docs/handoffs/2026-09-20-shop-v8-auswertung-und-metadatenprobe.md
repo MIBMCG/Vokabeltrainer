@@ -2,6 +2,8 @@
 
 Stand: 20.09.2026. Branch `codex/vokabeltrainer-v1`, Ausgangspunkt `85ee32a9edcaa4bdd97653945161fb5556053ff9`, Arbeitsbaum zu Beginn sauber. Nutzer hat `shop-probe-bericht8.json` übergeben; C und die Entwicklungsfreigabe gelten fort. Raw-JSON außerhalb des Repositorys erhalten.
 
+**Gesicherter Code- und Dokumentationsstand:** `9eeb36bc89ef3cfa02ab9c1d8591ddaf520fdb4f` ist auf `origin/codex/vokabeltrainer-v1` veröffentlicht. Lokales HEAD und der anschließend mit `git ls-remote` gelesene Remote-Branch stimmten exakt überein; Arbeitsbaum sauber. Diese nachträgliche Dokumentation des Nachweises ändert keinen geprüften Code. Die abschließende Dokumentprüfung meldete 1113 Dateien, 176 Markdown-Dateien und 841 lokale Links ohne Fehler; `git diff --check` war ohne Befund.
+
 ## Tatsächlicher Befund
 
 **1 bestanden, 1 fehlgeschlagen**, aber Lesemessung vollständig: Die beiden Kontrollabrufe vor dem Inhalt sind stabil. Erst im Medienfenster steigt die Version; ETag, Prüfsumme, Head-Revision, Änderungszeit und Größe bleiben gleich. Letzte Ansichtszeit nicht verfügbar. Medienabruf HTTP 200, keine Weiterleitung, Inhalt korrekt; alle vier Diagnose-GETs mit `no-store`.

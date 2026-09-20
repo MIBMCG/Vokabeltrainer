@@ -63,7 +63,7 @@ assert.equal(requests.some(({url}) => url.includes('alt=media') || url.includes(
 - [x] **Browser:** Auswahl **Ordner-Koordination gezielt prüfen**, benötigt `v2-coherent`. Falsche Kombination vor Dateianlage erklären, keine automatische Quellenänderung. Sichtbar Diagnose 9, Export `shop-probe-bericht9.json`, `diagnosticVersion:9`. Ergebnistext und Berichtslimits benennen reine Metadatenprobe und weiterhin fehlende Kauf-/Zwei-Geräte-Garantie. Alter vollständiger Lauf 11, alte Teilumfänge jeweils 2 Checks. Während Lauf alle Auswahlen gesperrt.
 - [x] **GREEN-Verifikation:** `npm run test:shop-probe`, `npm run test:shop-probe:browser` auf finalem Code, Rohlogs ignoriert. `npm run check:docs`, `git diff --check`. Keine unveränderte Trainer-Gesamtregression.
 - [x] **Review:** Unabhängige Spezifikations-/Codeprüfung anhand Diff, Plan und Testbericht; gezielte Fixes erneut prüfen.
-- [ ] **Abschluss:** Root aktualisiert Einstieg/Übergabe, commit/push im beauftragten Umfang, Remotevergleich. Bericht 8 abgeschlossen; keinen identischen 8er-Lauf erneut anfordern.
+- [x] **Abschluss:** Root aktualisiert Einstieg/Übergabe; Code-/Dokumentationscommit `9eeb36bc89ef3cfa02ab9c1d8591ddaf520fdb4f` ist veröffentlicht, Remotevergleich identisch und Arbeitsbaum sauber. Bericht 8 abgeschlossen; keinen identischen 8er-Lauf erneut anfordern. Diese anschließende Nachweisdokumentation verändert keinen getesteten Code.
 
 ## Grenzen und nächster echter Lauf
 
