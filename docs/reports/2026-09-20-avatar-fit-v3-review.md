@@ -1,6 +1,6 @@
 # Unabhängige visuelle Prüfung: Avatar-Passform v3
 
-Stand: 20.09.2026  
+Stand: 20.09.2026
 Umfang: alle 62 kompatiblen Figur-/Artikelpaare der aktuellen Passform-Nacharbeit. Diese Prüfung bewertet die tatsächlich gerenderten Bilder; sie ist keine persönliche Nutzerabnahme.
 
 ## Ergebnis

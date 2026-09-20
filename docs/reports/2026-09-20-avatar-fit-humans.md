@@ -1,7 +1,8 @@
 # Passformkorrektur der menschlichen Avatare
 
-Stand: 20.09.2026  
-Figuren: `explorer-girl`, `explorer-boy`  
+Stand: 20.09.2026
+
+Figuren: `explorer-girl`, `explorer-boy`
 Umfang: zehn kompatible Ausrüstungsartikel je Figur, insgesamt 20 Paare
 
 ## Ergebnis

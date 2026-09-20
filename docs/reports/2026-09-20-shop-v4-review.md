@@ -1,6 +1,6 @@
 # Unabhängige Review der Shop-Diagnose v4
 
-Stand: 20.09.2026  
+Stand: 20.09.2026
 Gegenstand: ausschließlich die Diagnoseerweiterung in `src/shop-probe/scenarios.js`, `src/shop-probe/main.js`, `shop-probe/index.html` sowie den zugehörigen Tests.
 
 ## Ergebnis

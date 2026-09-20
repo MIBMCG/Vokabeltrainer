@@ -1,7 +1,8 @@
 # Quadrupeden: klassische Passform-Reparatur v3
 
-Stand: 20.09.2026  
-Figuren: `tiger`, `wolf-aurora`, `deer-mist`, `panther-shadow`  
+Stand: 20.09.2026
+
+Figuren: `tiger`, `wolf-aurora`, `deer-mist`, `panther-shadow`
 Unveraenderliche Quelle: Git-Revision `24ce5a38b561c6012d7307603fc378ca339ab58c`
 
 ## Umfang und Verfahren
