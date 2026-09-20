@@ -1,0 +1,28 @@
+{
+  "figure": "panther-shadow",
+  "sourceRevision": "24ce5a38b561c6012d7307603fc378ca339ab58c",
+  "head": {
+    "sourceBox": [249, 238, 576, 604],
+    "center": [388, 390],
+    "scale": [0.66, 0.68],
+    "angle": 0,
+    "rearChainFraction": 0.54,
+    "frontPendantBoxFraction": [0.28, 0.34, 0.72, 1.0]
+  },
+  "body": {
+    "rearShapes": [],
+    "frontShapes": [
+      {"type": "ellipse", "box": [330, 425, 655, 745]},
+      {"type": "polygon", "points": [[500, 405], [835, 405], [1030, 565], [930, 730], [700, 690], [525, 620]]}
+    ],
+    "feather": 4
+  },
+  "adornment": {
+    "parts": [
+      {"crop": [95, 910, 285, 1080], "frontRimEllipse": [190, 963, 73, 17], "centerWidthAngle": [203, 1010, 125, 2]},
+      {"crop": [275, 935, 515, 1130], "frontRimEllipse": [395, 998, 92, 19], "centerWidthAngle": [376, 1070, 158, -2]},
+      {"crop": [655, 895, 835, 1065], "frontRimEllipse": [745, 949, 68, 17], "centerWidthAngle": [751, 1000, 108, -8]},
+      {"crop": [1020, 915, 1200, 1090], "frontRimEllipse": [1110, 971, 68, 17], "centerWidthAngle": [1082, 1040, 100, 7]}
+    ]
+  }
+}

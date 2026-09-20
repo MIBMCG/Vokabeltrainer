@@ -1,0 +1,31 @@
+{
+  "sourceFile": "griffin-storm-storm-body-rear.png",
+  "reference": "griffin-storm.png",
+  "generator": "classical-raster-edit/pillow-numpy",
+  "editedOn": "2026-09-20",
+  "provenance": "Classical alpha-mask edit of griffin-storm-storm-body-front.png, captured byte-for-byte from Git revision 24ce5a3; no generated or repainted pixels.",
+  "inputSourceFile": "griffin-storm-storm-body-front.png",
+  "sourceRevision": "24ce5a3",
+  "sourceSha256": "bd269851f17ed838e4aa3d34ec8a173b95d3fb0be41c2179d145f47473a48433",
+  "baseSourceSha256": "9824b0ed7141d278a057f48d22620a5c2239027855f3b980d2d4105ecad7fd63",
+  "recipe": "../avatar-fit-recipes/wings/griffin-storm.json",
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "canvas": {
+    "width": 1225,
+    "height": 1284
+  },
+  "qa": {
+    "status": "fit-pass-complete-pending-user-acceptance",
+    "method": "Full-resolution light-background composition, item detail pair, complete set and 256 px card inspected from immutable original inputs.",
+    "evidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/wings/griffin-storm-body-before-after.png",
+    "detailEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/wings/griffin-storm-body-detail-before-after.png",
+    "result": "The near wing occludes the upper flank armor, and the lower belly strap now passes behind the body without a floating span; attached buckles remain visible.",
+    "limits": "Internal visual fit pass only; personal user acceptance and product WebP build remain separate."
+  },
+  "plane": "rear",
+  "outputSha256": "04f696bfded5489d9cef4fa8c25367fe313b057db8cc62d1231fae32063d95b3"
+}

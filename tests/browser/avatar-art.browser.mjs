@@ -71,6 +71,15 @@ test('animal cloaks remain visibly worn over the body instead of disappearing be
     await page.goto(`${harness.baseUrl}/fixture.html`);
     const samples = await page.evaluate(async () => {
       const {figurePicture} = await import('/src/trainer/avatar/art.js');
+      // Fixed anatomical neck/shoulder regions, independent of the equipment
+      // pixels. A small clasp is valid; total covered body area is not a fit test.
+      const regions = {
+        horse: [0.38, 0.27, 0.70, 0.52],
+        'unicorn-moon': [0.38, 0.25, 0.72, 0.52],
+        'pegasus-star': [0.38, 0.30, 0.75, 0.58],
+        'wolf-aurora': [0.23, 0.29, 0.55, 0.56],
+        'deer-mist': [0.28, 0.37, 0.60, 0.59],
+      };
       const pairs = [['horse','moon-body'],['unicorn-moon','moon-body'],['pegasus-star','moon-body'],['wolf-aurora','aurora-body'],['deer-mist','forest-body']];
       const root = document.querySelector('#fixture');
       root.style.cssText = 'display:flex;gap:20px;padding:20px;font:16px system-ui;background:#eaf0e8';
@@ -92,14 +101,25 @@ test('animal cloaks remain visibly worn over the body instead of disappearing be
           for(const image of images)context.drawImage(image,0,0,canvas.width,canvas.height);
           return context.getImageData(0,0,canvas.width,canvas.height).data;
         }
-        const bare=pixels([body]),dressed=pixels(pictures.map(picture=>picture.querySelector('img')));
-        let bodyPixels=0,visiblyClothedPixels=0;
-        for(let i=0;i<bare.length;i+=4){
-          if(bare[i+3]<240)continue;
-          bodyPixels++;
-          if(Math.abs(bare[i]-dressed[i])+Math.abs(bare[i+1]-dressed[i+1])+Math.abs(bare[i+2]-dressed[i+2])>=45)visiblyClothedPixels++;
+        const images=pictures.map(picture=>picture.querySelector('img'));
+        const bare=pixels([body]),dressed=pixels(images);
+        // Negative control reproduces the original regression: put every cloak
+        // part behind the opaque animal. It must fail the same attachment check.
+        const hidden=pixels([...images.filter(image=>image!==body),body]);
+        const height=bare.length/4/256;
+        const region=regions[avatar.dataset.figureId];
+        let regionBodyPixels=0,visibleAttachmentPixels=0,hiddenAttachmentPixels=0;
+        for(let y=Math.floor(region[1]*height);y<Math.ceil(region[3]*height);y++){
+          for(let x=Math.floor(region[0]*256);x<Math.ceil(region[2]*256);x++){
+            const i=(y*256+x)*4;
+            if(bare[i+3]<240)continue;
+            regionBodyPixels++;
+            const changed=sample=>Math.abs(bare[i]-sample[i])+Math.abs(bare[i+1]-sample[i+1])+Math.abs(bare[i+2]-sample[i+2])>=45;
+            if(changed(dressed))visibleAttachmentPixels++;
+            if(changed(hidden))hiddenAttachmentPixels++;
+          }
         }
-        return {figureId:avatar.dataset.figureId,itemId:avatar.dataset.fitItem,bodyPixels,visiblyClothedPixels,visibleBodyFraction:visiblyClothedPixels/bodyPixels};
+        return {figureId:avatar.dataset.figureId,itemId:avatar.dataset.fitItem,regionBodyPixels,visibleAttachmentPixels,hiddenAttachmentPixels};
       });
     });
     await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
@@ -108,10 +128,10 @@ test('animal cloaks remain visibly worn over the body instead of disappearing be
     await page.screenshot({path:resolve(`test-results/avatar-fit/cloaks-${phase}.png`),fullPage:true});
     await writeFile(resolve(`test-results/avatar-fit/visibility-${phase}.json`),JSON.stringify(samples,null,2)+'\n');
     for (const sample of samples) {
-      assert.ok(sample.bodyPixels > 0, `${sample.figureId} must have a visible opaque body to compare`);
+      assert.ok(sample.regionBodyPixels > 0, `${sample.figureId} must have opaque pixels in the neck/shoulder region`);
+      assert.ok(sample.hiddenAttachmentPixels < 16, `${sample.figureId}: negative control must detect an attachment hidden behind the body`);
+      assert.ok(sample.visibleAttachmentPixels >= 16, `${sample.figureId}: attachment must be visible at 256px: ${JSON.stringify(sample)}`);
     }
-    const hidden=samples.filter(sample=>sample.visibleBodyFraction<0.025);
-    assert.deepEqual(hidden,[],`Cloaks must have a visible attachment or drape on the body: ${JSON.stringify(hidden)}`);
   } finally {
     await browser.close();await harness.close();
   }
@@ -253,8 +273,9 @@ test('figurePicture keeps fixed layer coordinates and falls back once when a lar
     assert.equal(await page.locator('#knight-art picture[data-plane="front"]').getAttribute('data-art-key'), 'item-knight-clothing-explorer-boy-front');
     await page.waitForFunction(() => [...document.querySelectorAll('#legacy-art img')]
       .every((image) => image.complete && image.naturalWidth > 0));
-    assert.equal(await page.locator('#legacy-art img').count(), 4);
-    assert.deepEqual(await page.locator('#legacy-art picture').evaluateAll((pictures) => pictures.map((node) => node.dataset.plane)), ['rear', 'base', 'clothing', 'front']);
+    assert.equal(await page.locator('#legacy-art img').count(), 5);
+    assert.deepEqual(await page.locator('#legacy-art picture').evaluateAll((pictures) => pictures.map((node) => node.dataset.plane)), ['rear', 'base', 'clothing', 'front', 'front']);
+    assert.equal(await page.locator('#legacy-art picture[data-art-key="item-backpack-explorer-boy-front"]').count(), 1);
     assert.equal(await page.locator('#invalid-art img').count(), 0);
     assert.equal(await page.locator('#invalid-art .avatar-shop-placeholder').textContent(), 'Bild folgt');
     assert.equal(await page.locator('#horse-art').getAttribute('data-animate'), 'false');

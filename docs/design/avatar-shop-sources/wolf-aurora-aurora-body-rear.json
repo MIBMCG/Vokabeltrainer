@@ -1,28 +1,67 @@
 {
   "sourceFile": "wolf-aurora-aurora-body-rear.png",
+  "figure": "wolf-aurora",
+  "item": "aurora-body",
+  "layer": "rear",
   "reference": "wolf-aurora.png",
-  "prompt": "A magical emerald and blue aurora cloak draped elegantly from the reference wolf's shoulders, flowing down BEHIND its flank. The wearable cloak has silver embroidered northern star patterns. Only the CLOAK with an open neckline and unobtrusive silver clasp, not the wolf. It is designed as a rear overlay behind the body; enough fabric extends to the sides to remain visible. Use the attached wolf ONLY as a fitting reference. Output ONLY the accessory at its correct worn position and scale on the exact same canvas. Remove the entire animal including all fur, eyes and paws. All other pixels must be genuine transparent alpha. Premium detailed painterly fantasy game art, no text or scene. Do not enlarge or center the equipment as a product photo.",
-  "generator": "built-in image_gen",
-  "generatedOn": "2026-09-19",
-  "sourceSha256": "40d885581855d0d3e3a32259a95958463e7e04c51497c2fd723499e2790e4d8e",
-  "registration": {
-    "scale": 1,
-    "x": 0,
-    "y": 0
+  "generator": "Classical raster editing (Pillow/NumPy), explicitly authorized 2026-09-20",
+  "provenance": "Body-specific silhouette mask removes detached loops, oversized collar sections and straps through limbs while retaining the original painted material.",
+  "originalCommit": "24ce5a38b561c6012d7307603fc378ca339ab58c",
+  "originalSources": [
+    {
+      "path": "wolf-aurora-aurora-body-rear.png",
+      "sha256": "40d885581855d0d3e3a32259a95958463e7e04c51497c2fd723499e2790e4d8e"
+    }
+  ],
+  "repairScript": "../../../scripts/avatar-fit/quadrupeds.py",
+  "recipeFile": "../avatar-fit-recipes/quadrupeds/wolf-aurora.json",
+  "recipe": {
+    "retainOriginalRear": true,
+    "frontShapes": [
+      {
+        "type": "ellipse",
+        "box": [
+          292,
+          386,
+          410,
+          514
+        ]
+      },
+      {
+        "type": "ellipse",
+        "box": [
+          190,
+          375,
+          282,
+          452
+        ]
+      },
+      {
+        "type": "ellipse",
+        "box": [
+          420,
+          375,
+          510,
+          452
+        ]
+      }
+    ],
+    "feather": 3
   },
   "canvas": {
     "width": 1223,
     "height": 1286
   },
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "sourceSha256": "e1c9b5b2a7203e1564fd8ff6ef046300e3c0d085159596939a4a2ac61a182706",
   "qa": {
-    "status": "verified-as-paired-rear-drapery",
-    "method": "The unchanged original rear drapery was composed in isolated Headless Edge with the unchanged wolf base and body-specific front attachment, then inspected at full resolution and as a 320 px card.",
-    "evidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit/mystic/mystic-composites-320.png",
-    "detailEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit/mystic/wolf-composite.png",
-    "metrics": "../../../.superpowers/sdd/2026-09-20-avatar-fit/mystic/metrics.json",
-    "result": "The rear layer supplies the long fabric over and behind the flank; the paired front layer restores the visible collar, clasp and shoulder connection.",
-    "limits": "This rear layer is intentionally occluded through the centre by the wolf body and is not accepted as a readable cloak without its paired front layer.",
-    "publicEvidence": "../2026-09-20-avatar-passform.png",
-    "publicReport": "../../reports/2026-09-20-avatar-passform.md"
+    "status": "internal-fit-review-pending",
+    "personalAcceptance": false,
+    "comparisonSheet": "../avatar-fit-v3/quadrupeds/wolf-aurora-pairs-256.png",
+    "largeEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/quadrupeds/wolf-aurora-body-before-after-large.png"
   }
 }

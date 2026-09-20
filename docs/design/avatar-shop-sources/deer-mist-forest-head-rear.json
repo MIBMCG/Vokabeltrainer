@@ -1,0 +1,134 @@
+{
+  "sourceFile": "deer-mist-forest-head-rear.png",
+  "figure": "deer-mist",
+  "item": "forest-head",
+  "layer": "rear",
+  "reference": "deer-mist.png",
+  "generator": "Classical raster editing (Pillow/NumPy), explicitly authorized 2026-09-20",
+  "provenance": "Body-specific depth split: chain or antler mounting sits behind fur/antler; only the restrained pendant or crystal faces remain in front.",
+  "originalCommit": "24ce5a38b561c6012d7307603fc378ca339ab58c",
+  "originalSources": [
+    {
+      "path": "deer-mist-forest-head-front.png",
+      "sha256": "57a14a871eaf870ca9cd5b975b39ad1e707f27c72b841ac01d97d7cbf650ad56"
+    }
+  ],
+  "repairScript": "../../../scripts/avatar-fit/quadrupeds.py",
+  "recipeFile": "../avatar-fit-recipes/quadrupeds/deer-mist.json",
+  "recipe": {
+    "rearShapes": [
+      {
+        "type": "rectangle",
+        "box": [
+          70,
+          50,
+          390,
+          430
+        ]
+      },
+      {
+        "type": "polygon",
+        "points": [
+          [
+            600,
+            50
+          ],
+          [
+            810,
+            50
+          ],
+          [
+            810,
+            450
+          ],
+          [
+            650,
+            450
+          ],
+          [
+            600,
+            350
+          ]
+        ]
+      }
+    ],
+    "frontShapes": [
+      {
+        "type": "ellipse",
+        "box": [
+          200,
+          70,
+          285,
+          165
+        ]
+      },
+      {
+        "type": "ellipse",
+        "box": [
+          555,
+          70,
+          650,
+          175
+        ]
+      },
+      {
+        "type": "polygon",
+        "points": [
+          [
+            380,
+            410
+          ],
+          [
+            406,
+            430
+          ],
+          [
+            427,
+            415
+          ],
+          [
+            453,
+            437
+          ],
+          [
+            467,
+            422
+          ],
+          [
+            468,
+            486
+          ],
+          [
+            438,
+            522
+          ],
+          [
+            414,
+            503
+          ],
+          [
+            397,
+            470
+          ]
+        ]
+      }
+    ],
+    "feather": 2
+  },
+  "canvas": {
+    "width": 1145,
+    "height": 1374
+  },
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "sourceSha256": "904d2fe78a91fa15f804388c2f41736f1dc3d47e04394cb9dcacd0392568f2b7",
+  "qa": {
+    "status": "internal-fit-review-pending",
+    "personalAcceptance": false,
+    "comparisonSheet": "../avatar-fit-v3/quadrupeds/deer-mist-pairs-256.png",
+    "largeEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/quadrupeds/deer-mist-head-before-after-large.png"
+  }
+}

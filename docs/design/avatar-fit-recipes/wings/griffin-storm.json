@@ -1,0 +1,299 @@
+{
+  "schema": "avatar-classical-fit-recipe-v1",
+  "figure": "griffin-storm",
+  "set": "storm",
+  "sourceRevision": "24ce5a3",
+  "sourceCapture": "git show <sourceRevision>:<path> with binary stdout capture",
+  "base": {
+    "path": "docs/design/avatar-shop-sources/griffin-storm.png",
+    "sha256": "9824b0ed7141d278a057f48d22620a5c2239027855f3b980d2d4105ecad7fd63",
+    "unchangedByteForByte": true,
+    "canvas": {
+      "width": 1225,
+      "height": 1284
+    }
+  },
+  "method": "Pillow and NumPy alpha masks; original equipment pixels only; no generative image step",
+  "items": {
+    "head": {
+      "input": {
+        "path": "docs/design/avatar-shop-sources/griffin-storm-storm-head-front.png",
+        "sha256": "bbc4c3352551e78988c759eea5f39065a47c12ca59bd1144b5b385e3c25708be",
+        "registration": {
+          "scale": 0.42,
+          "x": 80,
+          "y": 190
+        }
+      },
+      "operations": {
+        "allowed": [
+          [
+            [
+              245,
+              355
+            ],
+            [
+              525,
+              345
+            ],
+            [
+              535,
+              515
+            ],
+            [
+              445,
+              675
+            ],
+            [
+              245,
+              680
+            ],
+            [
+              235,
+              475
+            ]
+          ]
+        ],
+        "rear": [
+          [
+            [
+              245,
+              355
+            ],
+            [
+              310,
+              330
+            ],
+            [
+              350,
+              405
+            ],
+            [
+              305,
+              445
+            ]
+          ],
+          [
+            [
+              440,
+              335
+            ],
+            [
+              520,
+              315
+            ],
+            [
+              550,
+              405
+            ],
+            [
+              480,
+              445
+            ]
+          ]
+        ]
+      },
+      "outputs": {
+        "rear": {
+          "path": "docs/design/avatar-shop-sources/griffin-storm-storm-head-rear.png",
+          "sha256": "9ed29754b2d5c9453c8001d32a3533237154094483c81a81c63dea6bca143ed7"
+        },
+        "front": {
+          "path": "docs/design/avatar-shop-sources/griffin-storm-storm-head-front.png",
+          "sha256": "a975866b7fc433099d8ed93c5d5a0e73f7e80dace2958f3c0921e5019e58e85e"
+        }
+      }
+    },
+    "body": {
+      "input": {
+        "path": "docs/design/avatar-shop-sources/griffin-storm-storm-body-front.png",
+        "sha256": "bd269851f17ed838e4aa3d34ec8a173b95d3fb0be41c2179d145f47473a48433",
+        "registration": {
+          "scale": 1,
+          "x": 0,
+          "y": 0
+        }
+      },
+      "operations": {
+        "rear": [
+          [
+            [
+              455,
+              165
+            ],
+            [
+              1190,
+              80
+            ],
+            [
+              1180,
+              550
+            ],
+            [
+              1080,
+              585
+            ],
+            [
+              980,
+              620
+            ],
+            [
+              865,
+              650
+            ],
+            [
+              755,
+              680
+            ],
+            [
+              650,
+              690
+            ],
+            [
+              570,
+              645
+            ],
+            [
+              520,
+              570
+            ],
+            [
+              480,
+              450
+            ]
+          ]
+        ],
+        "rearOccluded": [
+          [
+            [
+              538,
+              938
+            ],
+            [
+              653,
+              905
+            ],
+            [
+              668,
+              949
+            ],
+            [
+              542,
+              980
+            ]
+          ],
+          [
+            [
+              534,
+              929
+            ],
+            [
+              542,
+              929
+            ],
+            [
+              542,
+              968
+            ],
+            [
+              534,
+              968
+            ]
+          ]
+        ]
+      },
+      "outputs": {
+        "rear": {
+          "path": "docs/design/avatar-shop-sources/griffin-storm-storm-body-rear.png",
+          "sha256": "04f696bfded5489d9cef4fa8c25367fe313b057db8cc62d1231fae32063d95b3"
+        },
+        "front": {
+          "path": "docs/design/avatar-shop-sources/griffin-storm-storm-body-front.png",
+          "sha256": "f7c4ef950b01fa47e67599d86d019890586784a3b117eab291b76a0cfb2629cf"
+        }
+      }
+    },
+    "adornment": {
+      "input": {
+        "path": "docs/design/avatar-shop-sources/griffin-storm-storm-adornment-front.png",
+        "sha256": "653e47d4bdc4589aa5c79d78cbeebbea217e25e21808ea99b5bbc44114abf6b1",
+        "registration": {
+          "scale": 0.75,
+          "x": 290,
+          "y": -20
+        }
+      },
+      "operations": {
+        "discard": [
+          [
+            [
+              250,
+              520
+            ],
+            [
+              760,
+              520
+            ],
+            [
+              800,
+              1284
+            ],
+            [
+              250,
+              1284
+            ]
+          ],
+          [
+            [
+              780,
+              650
+            ],
+            [
+              1225,
+              650
+            ],
+            [
+              1225,
+              1284
+            ],
+            [
+              780,
+              1284
+            ]
+          ]
+        ],
+        "discardHard": [
+          [
+            [
+              994,
+              344
+            ],
+            [
+              1016,
+              344
+            ],
+            [
+              1016,
+              371
+            ],
+            [
+              994,
+              371
+            ]
+          ]
+        ],
+        "edge": 31
+      },
+      "outputs": {
+        "rear": {
+          "path": "docs/design/avatar-shop-sources/griffin-storm-storm-adornment-rear.png",
+          "sha256": "7551bc801a4ef843e82c282baf346072f4438629852301e5db276655314d1b7b"
+        },
+        "front": {
+          "path": "docs/design/avatar-shop-sources/griffin-storm-storm-adornment-front.png",
+          "sha256": "86c048378bad1cfea7e56d3816fbaab36dcce62949de0b611c870ecb433e2f9f"
+        }
+      }
+    }
+  }
+}

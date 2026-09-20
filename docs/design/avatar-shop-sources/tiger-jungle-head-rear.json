@@ -1,0 +1,58 @@
+{
+  "sourceFile": "tiger-jungle-head-rear.png",
+  "figure": "tiger",
+  "item": "jungle-head",
+  "layer": "rear",
+  "reference": "tiger.png",
+  "generator": "Classical raster editing (Pillow/NumPy), explicitly authorized 2026-09-20",
+  "provenance": "Body-specific depth split: chain or antler mounting sits behind fur/antler; only the restrained pendant or crystal faces remain in front.",
+  "originalCommit": "24ce5a38b561c6012d7307603fc378ca339ab58c",
+  "originalSources": [
+    {
+      "path": "tiger-jungle-head-front.png",
+      "sha256": "c6ddd5a9025bb388578577e532d0a673bd2e76eaad957e08df3ca97bb8a4b728"
+    }
+  ],
+  "repairScript": "../../../scripts/avatar-fit/quadrupeds.py",
+  "recipeFile": "../avatar-fit-recipes/quadrupeds/tiger.json",
+  "recipe": {
+    "sourceBox": [
+      170,
+      204,
+      566,
+      588
+    ],
+    "center": [
+      344,
+      378
+    ],
+    "scale": [
+      0.7,
+      0.72
+    ],
+    "angle": 0,
+    "rearChainFraction": 0.57,
+    "frontPendantBoxFraction": [
+      0.29,
+      0.34,
+      0.71,
+      1.0
+    ]
+  },
+  "canvas": {
+    "width": 1223,
+    "height": 1286
+  },
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "sourceSha256": "81447c76c114a2ef34bce876df1ab469dcff17b19d26b0f41e8e44052b5e3143",
+  "qa": {
+    "status": "internal-fit-review-pending",
+    "personalAcceptance": false,
+    "comparisonSheet": "../avatar-fit-v3/quadrupeds/tiger-pairs-256.png",
+    "largeEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/quadrupeds/tiger-head-before-after-large.png"
+  }
+}

@@ -1,23 +1,31 @@
 {
   "sourceFile": "dragon-crystal-crystal-body-front.png",
-  "reference": "dragon.png",
-  "prompt": "Using the attached friendly dragon ONLY as a fitting reference, create an isolated transparent equipment layer for a magnificent crystal chest armor and shoulder guards. Silver filigree and cobalt blue faceted crystals with violet runes, premium painterly fantasy game art. The fitted chest armor covers only the lower golden chest and upper shoulders, leaves long neck, head, wings, legs and belly-tip free. Remove the entire dragon completely: output ONLY the wearable armor at the EXACT intended worn location, scale and angle on the same reference canvas. All other pixels genuine transparent alpha. Do NOT center/enlarge as a product photo. No wings, creature, weapons or background.",
-  "generator": "built-in image_gen",
-  "generatedOn": "2026-09-19",
+  "reference": "dragon-crystal.png",
+  "generator": "classical-raster-edit/pillow-numpy",
+  "editedOn": "2026-09-20",
+  "provenance": "Classical alpha-mask edit of dragon-crystal-crystal-body-front.png, captured byte-for-byte from Git revision 24ce5a3; no generated or repainted pixels.",
+  "inputSourceFile": "dragon-crystal-crystal-body-front.png",
+  "sourceRevision": "24ce5a3",
+  "sourceSha256": "8da74ce5145588d1ec1717ea8435fd435d1b58edcecd59c9bf7439170e86f0dc",
+  "baseSourceSha256": "21650fcf744d1b000d17d21036ce895f8aad610f69789719d48bb44821bfb862",
+  "recipe": "../avatar-fit-recipes/wings/dragon-crystal.json",
   "registration": {
-    "scale": 0.55,
-    "x": 175,
-    "y": 260
+    "scale": 1,
+    "x": 0,
+    "y": 0
   },
   "canvas": {
     "width": 1199,
     "height": 1312
   },
   "qa": {
-    "status": "accepted-for-current-base",
-    "method": "Headless Edge full-canvas composition, individual layer and complete set",
-    "evidence": "../../../test-results/avatar-art/dragon-wolf-fit/dragon-crystal-complete.png",
-    "result": "Armor follows the shoulders and lower chest instead of floating beside the belly.",
-    "limits": "The source was generated against dragon.png and is visually busy on the crystal body, but its silhouette and attachment remain legible."
-  }
+    "status": "fit-pass-complete-pending-user-acceptance",
+    "method": "Full-resolution light-background composition, item detail pair, complete set and 256 px card inspected from immutable original inputs.",
+    "evidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/wings/dragon-crystal-body-before-after.png",
+    "detailEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/wings/dragon-crystal-body-detail-before-after.png",
+    "result": "Both forelegs locally occlude the lower shoulder plates, while the linked central plate and dark under-straps remain attached to the breast.",
+    "limits": "Internal visual fit pass only; personal user acceptance and product WebP build remain separate."
+  },
+  "plane": "front",
+  "outputSha256": "7e9a04806bd0d5ad09d79c570e41458b78b1d284988d6a2ad888ea361e37dfe1"
 }

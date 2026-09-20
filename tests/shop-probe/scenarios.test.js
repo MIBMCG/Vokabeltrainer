@@ -46,3 +46,26 @@ test('v2 JSON diagnostics preserve only token classifications and change boolean
   assert.deepEqual(check.diagnostic,{phase:'read-stability',reason:'changed-during-read',etagSource:'v2-json',metadataEtagState:'absent',mediaEtagState:'absent',jsonEtagState:'strong',versionChanged:false,metadataEtagChanged:false,jsonEtagChanged:true});
   assert.equal(JSON.stringify(result).includes('private-json-marker'),false);
 });
+
+test('concurrent write failure reports bounded counts for data and folder writes',async()=>{
+  const result=await runProbeScenarios({transport:fake({ignore:true,metadataIgnore:true})});
+  for(const id of ['two-purchases','initialization']){
+    assert.deepEqual(result.checks.find(c=>c.id===id).evidence,{checkpoint:'concurrent-writes',accepted:2,stale:0,other:0,rejections:[]});
+  }
+  assert.deepEqual(result.checks.find(c=>c.id==='response-loss').evidence,{checkpoint:'old-token-retry',outcome:'fulfilled'});
+});
+
+test('concurrent request failures remain classified without leaking raw error fields',async()=>{
+  const transport=fake();transport.updateIfUnchanged=async()=>{throw {code:'network',message:'private-marker',token:'private-marker',status:503};};
+  const result=await runProbeScenarios({transport});
+  assert.deepEqual(result.checks.find(c=>c.id==='initialization').evidence,{checkpoint:'concurrent-writes',accepted:0,stale:0,other:2,rejections:['network','network']});
+  assert.equal(JSON.stringify(result).includes('private-marker'),false);
+});
+
+test('read-back assertion identifies its checkpoint and does not include file identifiers',async()=>{
+  const transport=fake();const update=transport.updateIfUnchanged.bind(transport);
+  transport.updateIfUnchanged=(before,value,options)=>update(before,options?.metadata?{...value,coordinator:'private-marker'}:value,options);
+  const result=await runProbeScenarios({transport});
+  assert.deepEqual(result.checks.find(c=>c.id==='initialization').evidence,{checkpoint:'initialization-readback'});
+  assert.equal(JSON.stringify(result).includes('private-marker'),false);
+});

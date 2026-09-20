@@ -1,16 +1,31 @@
 {
   "sourceFile": "griffin-storm-storm-adornment-front.png",
-  "prompt": "Use case: stylized-concept\nAsset type: transparent game equipment layer\nInput image: griffin-storm.png is a reference image for exact body pose, original 1225 x 1284 canvas, placement, scale, perspective, and painterly magical style.\nPrimary request: create only the Sturm set adornment called Goldene Federzier: elegant polished-gold feather caps, fine gold chains and small blue crystal accents fitted along the outer tips and lower edges of both wings without replacing any feathers.\nComposition/framing: preserve the exact 1225 x 1284 canvas coordinate system. Place ornaments at the exact wing-tip coordinates in the reference. Do not crop or rescale the canvas.\nStyle/medium: high-quality detailed magical game illustration matching the storm griffin.\nConstraints: output only the wing ornaments on a genuinely transparent background; no griffin, no feathers, no wings, no beak, no body, no scenery, no text, no watermark. Front layer.",
   "reference": "griffin-storm.png",
-  "generator": "built-in image_gen",
-  "generatedOn": "2026-09-19",
-  "registration": {"scale": 0.75, "x": 290, "y": -20},
-  "canvas": {"width": 1225, "height": 1284},
+  "generator": "classical-raster-edit/pillow-numpy",
+  "editedOn": "2026-09-20",
+  "provenance": "Classical alpha-mask edit of griffin-storm-storm-adornment-front.png, captured byte-for-byte from Git revision 24ce5a3; no generated or repainted pixels.",
+  "inputSourceFile": "griffin-storm-storm-adornment-front.png",
+  "sourceRevision": "24ce5a3",
+  "sourceSha256": "653e47d4bdc4589aa5c79d78cbeebbea217e25e21808ea99b5bbc44114abf6b1",
+  "baseSourceSha256": "9824b0ed7141d278a057f48d22620a5c2239027855f3b980d2d4105ecad7fd63",
+  "recipe": "../avatar-fit-recipes/wings/griffin-storm.json",
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "canvas": {
+    "width": 1225,
+    "height": 1284
+  },
   "qa": {
-    "status": "accepted-for-current-base",
-    "method": "Fresh headless Edge full-canvas composition, individual layer and complete set",
-    "evidence": "../../../.superpowers/sdd/2026-09-19-avatar-shop/mystic-gear-evidence/griffin-storm-storm-adornment-front-composite.png",
-    "result": "The gold feather ornaments follow the raised wing edges and do not float beside the animal.",
-    "limits": "The generated near-wing branch also decorates the feather crest and shoulder; the single front layer cannot pass behind individual feathers."
-  }
+    "status": "fit-pass-complete-pending-user-acceptance",
+    "method": "Full-resolution light-background composition, item detail pair, complete set and 256 px card inspected from immutable original inputs.",
+    "evidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/wings/griffin-storm-adornment-before-after.png",
+    "detailEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/wings/griffin-storm-adornment-detail-before-after.png",
+    "result": "Lower chains crossing the torso and hindquarters and one isolated gold fragment were removed; the remaining caps and jewels follow the wing-tip groups.",
+    "limits": "Internal visual fit pass only; personal user acceptance and product WebP build remain separate."
+  },
+  "plane": "front",
+  "outputSha256": "86c048378bad1cfea7e56d3816fbaab36dcce62949de0b611c870ecb433e2f9f"
 }

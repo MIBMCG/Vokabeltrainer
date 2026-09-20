@@ -1,0 +1,31 @@
+{
+  "sourceFile": "dragon-crystal-crystal-body-rear.png",
+  "reference": "dragon-crystal.png",
+  "generator": "classical-raster-edit/pillow-numpy",
+  "editedOn": "2026-09-20",
+  "provenance": "Classical alpha-mask edit of dragon-crystal-crystal-body-front.png, captured byte-for-byte from Git revision 24ce5a3; no generated or repainted pixels.",
+  "inputSourceFile": "dragon-crystal-crystal-body-front.png",
+  "sourceRevision": "24ce5a3",
+  "sourceSha256": "8da74ce5145588d1ec1717ea8435fd435d1b58edcecd59c9bf7439170e86f0dc",
+  "baseSourceSha256": "21650fcf744d1b000d17d21036ce895f8aad610f69789719d48bb44821bfb862",
+  "recipe": "../avatar-fit-recipes/wings/dragon-crystal.json",
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "canvas": {
+    "width": 1199,
+    "height": 1312
+  },
+  "qa": {
+    "status": "fit-pass-complete-pending-user-acceptance",
+    "method": "Full-resolution light-background composition, item detail pair, complete set and 256 px card inspected from immutable original inputs.",
+    "evidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/wings/dragon-crystal-body-before-after.png",
+    "detailEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/wings/dragon-crystal-body-detail-before-after.png",
+    "result": "Both forelegs locally occlude the lower shoulder plates, while the linked central plate and dark under-straps remain attached to the breast.",
+    "limits": "Internal visual fit pass only; personal user acceptance and product WebP build remain separate."
+  },
+  "plane": "rear",
+  "outputSha256": "9d365c75c6c18963ed7722569eed71f7e7015639c363695d0fbb02167985685d"
+}

@@ -1,0 +1,9 @@
+{
+  "figures": 13,
+  "pairs": 62,
+  "errors": [],
+  "renderer": "src/trainer/avatar/art.js",
+  "source": "generated WebP assets",
+  "cardWidth": 256,
+  "personalAcceptance": false
+}

@@ -1,0 +1,29 @@
+{
+  "date": "2026-09-20",
+  "sourceFile": "explorer-boy-backpack-front.png",
+  "reference": "explorer-boy-skin-0.png",
+  "provenance": "Classical raster editing explicitly approved by the user on 2026-09-20; deterministic Pillow compositing and masks cut from original painted material; no image generation.",
+  "derivedFrom": {
+    "revision": "24ce5a3",
+    "png": "explorer-boy-backpack-rear.png",
+    "pngSha256": "6b9bbe7512cfbb586b5cf88b7fab4fe8d4bfbed83df0bc4fb622aec7befc4843",
+    "metadata": "explorer-boy-backpack-rear.json",
+    "metadataSha256": "c38c3e0cf5b5dc724f9e027bc7552009298f7ef225fb937b74e7eafc71edf6b0"
+  },
+  "recipe": "../avatar-fit-recipes/humans/recipes.json",
+  "script": "../../../scripts/avatar-fit/humans.py",
+  "item": "backpack",
+  "figure": "explorer-boy",
+  "layer": "front",
+  "sourceSha256": "7d00620554f6cbbfcfee43c35e7f36fb109cfdcc56d34e8d83eea23346cbc86a",
+  "canvas": {
+    "width": 1086,
+    "height": 1448
+  },
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "qa": "Internally inspected at full canvas and 256-pixel card size on a light background; all four skin variants and all six clothing colors rendered. Personal user acceptance remains open."
+}

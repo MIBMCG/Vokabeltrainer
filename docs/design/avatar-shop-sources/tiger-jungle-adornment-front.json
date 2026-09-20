@@ -1,29 +1,118 @@
 {
   "sourceFile": "tiger-jungle-adornment-front.png",
-  "prompt": "Use case: precise-object-edit\nAsset type: body-specific transparent front equipment layer for a layered children's game avatar\nInput image: tiger.png is the exact body, pose and 1223 x 1286 coordinate reference only. It must not appear in the output.\nPrimary request: create ONLY four separate slim engraved gold paw rings with one small flush emerald inset per ring. Fit one ring closely around each lower leg immediately above its paw at these exact body anchors: front-left centered x=190 y=1110, width about 140 px, height about 55 px; front-right centered x=400 y=1140, width about 135 px, height about 55 px; rear-inner gray leg centered x=690 y=1000, width about 105 px, height about 45 px and perspective matched to that slanted leg; rear-right orange leg centered x=955 y=1060, width about 105 px, height about 45 px and perspective matched to that leg. Each band must cross its leg centerline and extend approximately equally to both sides. Preserve the 1223 x 1286 body coordinate system with transparent margins.\nStyle: slim premium painterly gold rings matching the tiger illustration, restrained leaf engraving, one small flush emerald inset, no hanging parts.\nTransparency: output only the four cuffs on genuine transparent alpha.\nAvoid: tiger pixels, fur, legs, paws, body, face, tail, background, scene, shadow, text, watermark, large bangles, dangling pendants, leaf clusters, extra jewelry, fifth cuff, floating cuff.",
-  "previousPrompt": "Earlier 20 September built-in edits were rejected when at least one cuff remained detached, too decorative, or a targeted edit changed protected cuffs. The final selected source was freshly generated against four explicit body anchors using only tiger.png as the alignment reference.",
+  "figure": "tiger",
+  "item": "jungle-adornment",
+  "layer": "front",
   "reference": "tiger.png",
-  "generator": "built-in image_gen",
-  "generatedOn": "2026-09-20",
-  "sourceSha256": "1fc832c08831d48c74a2a705d2b8f82830c516f7ace2c0cca4ded1bf2977b986",
-  "registration": {
-    "scale": 1,
-    "x": 0,
-    "y": 0
+  "generator": "Classical raster editing (Pillow/NumPy), explicitly authorized 2026-09-20",
+  "provenance": "Four original ornaments isolated and fitted independently; only the curved front band remains, with dark opening, rear crown and dangling gaps removed.",
+  "originalCommit": "24ce5a38b561c6012d7307603fc378ca339ab58c",
+  "originalSources": [
+    {
+      "path": "tiger-jungle-adornment-front.png",
+      "sha256": "1fc832c08831d48c74a2a705d2b8f82830c516f7ace2c0cca4ded1bf2977b986"
+    }
+  ],
+  "repairScript": "../../../scripts/avatar-fit/quadrupeds.py",
+  "recipeFile": "../avatar-fit-recipes/quadrupeds/tiger.json",
+  "recipe": {
+    "parts": [
+      {
+        "crop": [
+          92,
+          1000,
+          272,
+          1112
+        ],
+        "frontRimEllipse": [
+          182,
+          1028,
+          72,
+          14
+        ],
+        "centerWidthAngle": [
+          211,
+          1060,
+          104,
+          1
+        ]
+      },
+      {
+        "crop": [
+          341,
+          1048,
+          520,
+          1151
+        ],
+        "frontRimEllipse": [
+          430,
+          1072,
+          72,
+          13
+        ],
+        "centerWidthAngle": [
+          397,
+          1100,
+          112,
+          -2
+        ]
+      },
+      {
+        "crop": [
+          623,
+          888,
+          770,
+          990
+        ],
+        "frontRimEllipse": [
+          696,
+          914,
+          58,
+          11
+        ],
+        "centerWidthAngle": [
+          711,
+          942,
+          92,
+          -7
+        ]
+      },
+      {
+        "crop": [
+          916,
+          968,
+          1058,
+          1067
+        ],
+        "frontRimEllipse": [
+          986,
+          993,
+          56,
+          11
+        ],
+        "centerWidthAngle": [
+          960,
+          1022,
+          98,
+          4
+        ]
+      }
+    ]
   },
   "canvas": {
     "width": 1223,
     "height": 1286
   },
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "sourceSha256": "33a363c4e7dc368413a313b04db19e78d0b3ebd20f26bdc27793948ca5b00a52",
   "qa": {
-    "status": "verified-after-fit-repair",
-    "method": "Isolated Headless Edge composition of the selected built-in edit against the unchanged tiger.png base, inspected at full source resolution and as a 320 px card; all four horizontal components were measured against body alpha.",
-    "evidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit/mystic/mystic-composites-320.png",
-    "detailEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit/mystic/tiger-composite.png",
-    "metrics": "../../../.superpowers/sdd/2026-09-20-avatar-fit/mystic/metrics.json",
-    "result": "Exactly four close-fitting bands remain. Their body-overlap ratios in front-left, front-right, rear-inner and rear-right order are 68.1%, 73.2%, 86.9% and 66.5%; every band crosses its associated leg centreline and remains visible at 320 px.",
-    "limits": "The selected built-in image is already on the exact 1223 x 1286 canonical canvas. The pipeline applies only the declared identity registration and does not move individual parts.",
-    "publicEvidence": "../2026-09-20-avatar-passform.png",
-    "publicReport": "../../reports/2026-09-20-avatar-passform.md"
+    "status": "internal-fit-review-pending",
+    "personalAcceptance": false,
+    "comparisonSheet": "../avatar-fit-v3/quadrupeds/tiger-pairs-256.png",
+    "largeEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/quadrupeds/tiger-adornment-before-after-large.png"
   }
 }

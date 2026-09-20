@@ -1,16 +1,31 @@
 {
   "sourceFile": "griffin-storm-storm-head-front.png",
-  "prompt": "Use case: stylized-concept\nAsset type: transparent game equipment layer\nInput image: griffin-storm.png is a reference image for exact body pose, original 1225 x 1284 canvas, placement, scale, perspective, and painterly magical style.\nPrimary request: create only the Sturm set head equipment called Runen-Amulett: a storm-blue sapphire pendant engraved with a silver lightning rune on a short gold-and-silver chain, fitted around the griffin's feathered neck and resting high on the chest.\nComposition/framing: preserve the exact 1225 x 1284 canvas coordinate system. Place the necklace at the coordinates where it would be worn in the reference. Do not crop or rescale the canvas.\nStyle/medium: high-quality detailed magical game illustration matching the storm griffin.\nConstraints: output only the necklace and pendant on a genuinely transparent background; no griffin, no beak, no feathers, no wings, no paws, no scenery, no text, no watermark. Front layer.",
   "reference": "griffin-storm.png",
-  "generator": "built-in image_gen",
-  "generatedOn": "2026-09-19",
-  "registration": {"scale": 0.42, "x": 80, "y": 190},
-  "canvas": {"width": 1225, "height": 1284},
+  "generator": "classical-raster-edit/pillow-numpy",
+  "editedOn": "2026-09-20",
+  "provenance": "Classical alpha-mask edit of griffin-storm-storm-head-front.png, captured byte-for-byte from Git revision 24ce5a3; no generated or repainted pixels.",
+  "inputSourceFile": "griffin-storm-storm-head-front.png",
+  "sourceRevision": "24ce5a3",
+  "sourceSha256": "bbc4c3352551e78988c759eea5f39065a47c12ca59bd1144b5b385e3c25708be",
+  "baseSourceSha256": "9824b0ed7141d278a057f48d22620a5c2239027855f3b980d2d4105ecad7fd63",
+  "recipe": "../avatar-fit-recipes/wings/griffin-storm.json",
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "canvas": {
+    "width": 1225,
+    "height": 1284
+  },
   "qa": {
-    "status": "accepted-for-current-base",
-    "method": "Fresh headless Edge full-canvas composition, individual layer and complete set",
-    "evidence": "../../../.superpowers/sdd/2026-09-19-avatar-shop/mystic-gear-evidence/griffin-storm-storm-head-front-composite.png",
-    "result": "The chain follows the feathered neck and the lightning pendant rests on the upper breast.",
-    "limits": "The upper chain crosses the edge of the near wing feathers but leaves the beak and eye readable."
-  }
+    "status": "fit-pass-complete-pending-user-acceptance",
+    "method": "Full-resolution light-background composition, item detail pair, complete set and 256 px card inspected from immutable original inputs.",
+    "evidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/wings/griffin-storm-head-before-after.png",
+    "detailEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/wings/griffin-storm-head-detail-before-after.png",
+    "result": "The forehead loop was removed; the necklace now begins at the feathered neck and terminates in one breast pendant.",
+    "limits": "Internal visual fit pass only; personal user acceptance and product WebP build remain separate."
+  },
+  "plane": "front",
+  "outputSha256": "a975866b7fc433099d8ed93c5d5a0e73f7e80dace2958f3c0921e5019e58e85e"
 }

@@ -1,27 +1,67 @@
 {
   "sourceFile": "deer-mist-forest-body-front.png",
+  "figure": "deer-mist",
+  "item": "forest-body",
+  "layer": "front",
   "reference": "deer-mist.png",
-  "rearReference": "deer-mist-forest-body-rear.png",
-  "prompt": "Use case: precise-object-edit\nAsset type: transparent FRONT equipment layer for a layered children's game avatar\nInput images: deer-mist-forest-body-rear.png is the existing forest rune cloak rear layer; deer-mist.png is the exact mystical deer body and pose used only for anatomical alignment.\nPrimary request: create ONLY the compact front attachment for the rear cloak: a fitted open deep-forest/mist-teal leaf collar at the lower neck, one subtle pale crystal clasp at the upper chest, and two short leaf-edged shoulder tabs that visibly connect toward the rear cloak. The attachment must follow the deer's narrow upright neck and sloping shoulders. It must not resemble a tail or a whole cloak.\nCanvas and placement: preserve the exact 1145 x 1374 coordinate system and transparent margins. Align to deer-mist.png around x=430-610 and y=560-850. The collar and clasp must read as attached to the rear drapery already shown in deer-mist-forest-body-rear.png.\nStyle/medium: high-quality detailed magical painterly game illustration matching the rear cloak's deep green, mist teal, silver runes and leaf edging.\nTransparency: output a genuinely transparent PNG. Every pixel except this compact collar/clasp/shoulder attachment must be transparent.\nConstraints: front layer only; compact wearable attachment, clearly visible at 320px; no full cloak and no animal pixels.\nAvoid: deer, antlers, fur, eyes, face, muzzle, legs, hooves, body silhouette, large bib, breastplate, long hanging fabric, tail-like fabric, background, scene, shadow, text, watermark, unrelated jewelry.",
-  "generator": "built-in image_gen",
-  "generatedOn": "2026-09-20",
-  "sourceSha256": "c687f487fe8f51b199f62497d056991f507c29ea407b21c6ac09d91790e0822c",
-  "registration": {
-    "scale": 0.36,
-    "x": 274,
-    "y": 468
+  "generator": "Classical raster editing (Pillow/NumPy), explicitly authorized 2026-09-20",
+  "provenance": "Body-specific silhouette mask removes detached loops, oversized collar sections and straps through limbs while retaining the original painted material.",
+  "originalCommit": "24ce5a38b561c6012d7307603fc378ca339ab58c",
+  "originalSources": [
+    {
+      "path": "deer-mist-forest-body-front.png",
+      "sha256": "c687f487fe8f51b199f62497d056991f507c29ea407b21c6ac09d91790e0822c"
+    }
+  ],
+  "repairScript": "../../../scripts/avatar-fit/quadrupeds.py",
+  "recipeFile": "../avatar-fit-recipes/quadrupeds/deer-mist.json",
+  "recipe": {
+    "retainOriginalRear": true,
+    "frontShapes": [
+      {
+        "type": "ellipse",
+        "box": [
+          430,
+          653,
+          545,
+          795
+        ]
+      },
+      {
+        "type": "ellipse",
+        "box": [
+          278,
+          666,
+          410,
+          780
+        ]
+      },
+      {
+        "type": "ellipse",
+        "box": [
+          545,
+          664,
+          680,
+          780
+        ]
+      }
+    ],
+    "feather": 3
   },
   "canvas": {
     "width": 1145,
     "height": 1374
   },
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "sourceSha256": "33d7709a573da92b874013442de66fcb7496924543bc06c26ee89b123db9ff67",
   "qa": {
-    "status": "verified-after-fit-repair",
-    "method": "Isolated browser composition of rear, unchanged base and front attachment on the declared registration.",
-    "evidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit/deer-rear/deer-fullset-320.png",
-    "result": "The compact front attachment is visibly worn at the lower neck in the complete forest set. The separately registered rear layer hides its old clasp, leaving only this front clasp visible; antlers, face and legs stay free.",
-    "limits": "The front attachment deliberately stays clear of antlers, eyes, muzzle and legs; it does not replace or repaint the deer base.",
-    "publicEvidence": "../2026-09-20-avatar-passform.png",
-    "publicReport": "../../reports/2026-09-20-avatar-passform.md"
+    "status": "internal-fit-review-pending",
+    "personalAcceptance": false,
+    "comparisonSheet": "../avatar-fit-v3/quadrupeds/deer-mist-pairs-256.png",
+    "largeEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/quadrupeds/deer-mist-body-before-after-large.png"
   }
 }

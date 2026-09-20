@@ -1,16 +1,142 @@
 {
   "sourceFile": "tiger-jungle-body-front.png",
-  "prompt": "Use case: stylized-concept\nAsset type: transparent game equipment layer\nInput image: tiger.png is a reference image for exact body pose, original 1223 x 1286 canvas, placement, scale, perspective, and painterly magical style.\nPrimary request: create only the Dschungel set body equipment called Entdecker-Geschirr: a refined practical forest-green leather exploration harness across chest and upper back with brass buckles, woven straps, a tiny leaf insignia and compact magical map case, fitted precisely to the tiger.\nComposition/framing: preserve the exact 1223 x 1286 canvas coordinate system. Place the harness pieces where they would fit the reference tiger. Do not crop or rescale the canvas.\nStyle/medium: high-quality detailed magical adventure game illustration matching the tiger.\nConstraints: output only the harness and attached case on a genuinely transparent background; no tiger, no fur, no eyes, no paws, no scenery, no text, no watermark. Front layer.",
+  "figure": "tiger",
+  "item": "jungle-body",
+  "layer": "front",
   "reference": "tiger.png",
-  "generator": "built-in image_gen",
-  "generatedOn": "2026-09-19",
-  "registration": {"scale": 1, "x": 0, "y": 0},
-  "canvas": {"width": 1223, "height": 1286},
+  "generator": "Classical raster editing (Pillow/NumPy), explicitly authorized 2026-09-20",
+  "provenance": "Body-specific silhouette mask removes detached loops, oversized collar sections and straps through limbs while retaining the original painted material.",
+  "originalCommit": "24ce5a38b561c6012d7307603fc378ca339ab58c",
+  "originalSources": [
+    {
+      "path": "tiger-jungle-body-front.png",
+      "sha256": "41dd05b76fd066781c11493c10a09f9dea3268f97662e9f0f1cd4f87c86d49a7"
+    }
+  ],
+  "repairScript": "../../../scripts/avatar-fit/quadrupeds.py",
+  "recipeFile": "../avatar-fit-recipes/quadrupeds/tiger.json",
+  "recipe": {
+    "frontShapes": [
+      {
+        "type": "ellipse",
+        "box": [
+          65,
+          330,
+          565,
+          865
+        ]
+      },
+      {
+        "type": "polygon",
+        "points": [
+          [
+            425,
+            320
+          ],
+          [
+            895,
+            355
+          ],
+          [
+            1010,
+            520
+          ],
+          [
+            900,
+            555
+          ],
+          [
+            485,
+            510
+          ]
+        ]
+      },
+      {
+        "type": "polygon",
+        "points": [
+          [
+            700,
+            405
+          ],
+          [
+            1205,
+            470
+          ],
+          [
+            1205,
+            700
+          ],
+          [
+            1175,
+            700
+          ],
+          [
+            1160,
+            722
+          ],
+          [
+            1132,
+            741
+          ],
+          [
+            1080,
+            751
+          ],
+          [
+            1000,
+            749
+          ],
+          [
+            930,
+            747
+          ],
+          [
+            860,
+            750
+          ],
+          [
+            817,
+            742
+          ],
+          [
+            788,
+            722
+          ],
+          [
+            765,
+            690
+          ],
+          [
+            742,
+            679
+          ],
+          [
+            715,
+            650
+          ],
+          [
+            700,
+            590
+          ]
+        ]
+      }
+    ],
+    "feather": 3
+  },
+  "canvas": {
+    "width": 1223,
+    "height": 1286
+  },
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "sourceSha256": "3c24e29baec1bd112f264de55b6b486d24960c6edf93d1444517436dbdcd5439",
   "qa": {
-    "status": "accepted-for-current-base",
-    "method": "Fresh headless Edge full-canvas composition, individual layer and complete set",
-    "evidence": "../../../.superpowers/sdd/2026-09-19-avatar-shop/mystic-gear-evidence/tiger-jungle-body-front-composite.png",
-    "result": "Chest straps, back strap and map case follow the torso and leave head and paws free.",
-    "limits": "The map case is intentionally broad and the lower rear straps overlap part of the hind leg in the front-only source."
+    "status": "internal-fit-review-pending",
+    "personalAcceptance": false,
+    "comparisonSheet": "../avatar-fit-v3/quadrupeds/tiger-pairs-256.png",
+    "largeEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/quadrupeds/tiger-body-before-after-large.png"
   }
 }

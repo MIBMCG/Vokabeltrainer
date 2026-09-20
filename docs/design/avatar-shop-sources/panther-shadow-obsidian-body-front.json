@@ -1,16 +1,78 @@
 {
   "sourceFile": "panther-shadow-obsidian-body-front.png",
-  "prompt": "Use case: stylized-concept\nAsset type: transparent game equipment layer\nInput image: panther-shadow.png is a reference image for exact body pose, original 1223 x 1286 canvas, placement, scale, perspective, and painterly magical style.\nPrimary request: create only the Obsidian set body equipment called Violette Runenrüstung: sleek dark obsidian armor plates edged in antique silver, with restrained violet luminous runes, fitted over shoulders, chest flanks and upper back while leaving legs and head free.\nComposition/framing: preserve the exact 1223 x 1286 canvas coordinate system. Place armor pieces at the coordinates where they would fit the reference panther. Do not crop or rescale the canvas.\nStyle/medium: high-quality detailed magical game illustration matching the shadow-panther palette.\nConstraints: output only the armor on a genuinely transparent background; no panther, no fur, no eyes, no paws, no scenery, no text, no watermark. Front layer.",
+  "figure": "panther-shadow",
+  "item": "obsidian-body",
+  "layer": "front",
   "reference": "panther-shadow.png",
-  "generator": "built-in image_gen",
-  "generatedOn": "2026-09-19",
-  "registration": {"scale": 0.88, "x": 80, "y": 65},
-  "canvas": {"width": 1223, "height": 1286},
+  "generator": "Classical raster editing (Pillow/NumPy), explicitly authorized 2026-09-20",
+  "provenance": "Body-specific silhouette mask removes detached loops, oversized collar sections and straps through limbs while retaining the original painted material.",
+  "originalCommit": "24ce5a38b561c6012d7307603fc378ca339ab58c",
+  "originalSources": [
+    {
+      "path": "panther-shadow-obsidian-body-front.png",
+      "sha256": "8adae0695745067f36271ba87c10d24471e5d1dc45b9437b4b227d2d4c97d8d8"
+    }
+  ],
+  "repairScript": "../../../scripts/avatar-fit/quadrupeds.py",
+  "recipeFile": "../avatar-fit-recipes/quadrupeds/panther-shadow.json",
+  "recipe": {
+    "rearShapes": [],
+    "frontShapes": [
+      {
+        "type": "ellipse",
+        "box": [
+          330,
+          425,
+          655,
+          745
+        ]
+      },
+      {
+        "type": "polygon",
+        "points": [
+          [
+            500,
+            405
+          ],
+          [
+            835,
+            405
+          ],
+          [
+            1030,
+            565
+          ],
+          [
+            930,
+            730
+          ],
+          [
+            700,
+            690
+          ],
+          [
+            525,
+            620
+          ]
+        ]
+      }
+    ],
+    "feather": 4
+  },
+  "canvas": {
+    "width": 1223,
+    "height": 1286
+  },
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "sourceSha256": "e7d580d11ba7e12da13186e90af2cd8804e4dcad1770ecbd119bc332446462cb",
   "qa": {
-    "status": "accepted-for-current-base",
-    "method": "Fresh headless Edge full-canvas composition, individual layer and complete set",
-    "evidence": "../../../.superpowers/sdd/2026-09-19-avatar-shop/mystic-gear-evidence/panther-shadow-obsidian-body-front-composite.png",
-    "result": "The armor follows shoulders, chest and flank instead of floating beside the body.",
-    "limits": "The 1119 x 1405 generated source is registered onto the 1223 x 1286 logical canvas; the ornate breastplate intentionally covers much of the upper torso."
+    "status": "internal-fit-review-pending",
+    "personalAcceptance": false,
+    "comparisonSheet": "../avatar-fit-v3/quadrupeds/panther-shadow-pairs-256.png",
+    "largeEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/quadrupeds/panther-shadow-body-before-after-large.png"
   }
 }

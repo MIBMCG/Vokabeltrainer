@@ -1,0 +1,31 @@
+{
+  "sourceFile": "griffin-storm-storm-adornment-rear.png",
+  "reference": "griffin-storm.png",
+  "generator": "classical-raster-edit/pillow-numpy",
+  "editedOn": "2026-09-20",
+  "provenance": "Classical alpha-mask edit of griffin-storm-storm-adornment-front.png, captured byte-for-byte from Git revision 24ce5a3; no generated or repainted pixels.",
+  "inputSourceFile": "griffin-storm-storm-adornment-front.png",
+  "sourceRevision": "24ce5a3",
+  "sourceSha256": "653e47d4bdc4589aa5c79d78cbeebbea217e25e21808ea99b5bbc44114abf6b1",
+  "baseSourceSha256": "9824b0ed7141d278a057f48d22620a5c2239027855f3b980d2d4105ecad7fd63",
+  "recipe": "../avatar-fit-recipes/wings/griffin-storm.json",
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "canvas": {
+    "width": 1225,
+    "height": 1284
+  },
+  "qa": {
+    "status": "fit-pass-complete-pending-user-acceptance",
+    "method": "Full-resolution light-background composition, item detail pair, complete set and 256 px card inspected from immutable original inputs.",
+    "evidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/wings/griffin-storm-adornment-before-after.png",
+    "detailEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/wings/griffin-storm-adornment-detail-before-after.png",
+    "result": "Lower chains crossing the torso and hindquarters and one isolated gold fragment were removed; the remaining caps and jewels follow the wing-tip groups.",
+    "limits": "Internal visual fit pass only; personal user acceptance and product WebP build remain separate."
+  },
+  "plane": "rear",
+  "outputSha256": "7551bc801a4ef843e82c282baf346072f4438629852301e5db276655314d1b7b"
+}

@@ -1,0 +1,76 @@
+{
+  "sourceRevision": "24ce5a3",
+  "canvas": {"width": 1086, "height": 1448},
+  "alphaCutoff": 16,
+  "items": {
+    "cap": {"source": "cap-front", "front": "copy"},
+    "backpack": {"source": "backpack-rear", "rear": "copy", "front": "painted-straps"},
+    "sunhat": {"source": "sunhat-front", "front": "copy"},
+    "knight-clothing": {"source": "knight-clothing-front", "front": "copy"},
+    "binoculars": {
+      "source": "binoculars-front",
+      "front": "copy",
+      "transform": {"sourceBounds": [710, 665, 930, 886], "targetBounds": [740, 835, 872, 968]}
+    },
+    "mountainhat": {"source": "mountainhat-front", "front": "copy"},
+    "compass": {
+      "source": "compass-front",
+      "front": "copy",
+      "transform": {"sourceBounds": [746, 689, 893, 895], "targetBounds": [744, 840, 835, 968]}
+    },
+    "runes-head": {"source": "runes-head-front", "front": "copy"},
+    "runes-back": {
+      "source": "runes-back-rear",
+      "rear": "copy",
+      "front": "painted-collar",
+      "transform": {"sourceBounds": [135, 318, 1018, 1185], "targetBounds": [198, 318, 887, 1012]}
+    },
+    "runes-hand": {"source": "runes-hand-front", "front": "translated-copy", "offset": [-10, 0]}
+  },
+  "figures": {
+    "explorer-girl": {
+      "paintedStraps": [
+        {
+          "polygon": [[411, 366], [454, 365], [461, 535], [455, 560], [455, 652], [430, 682], [405, 660], [408, 560], [395, 540]],
+          "crop": [390, 355, 470, 695], "size": [45, 200], "angle": -5, "paste": [420, 360]
+        },
+        {
+          "polygon": [[640, 365], [681, 366], [697, 540], [682, 560], [685, 660], [660, 685], [638, 660], [637, 560], [625, 540]],
+          "crop": [620, 355, 705, 695], "size": [45, 200], "angle": 5, "paste": [625, 360]
+        }
+      ],
+      "paintedCollar": {
+        "polygons": [
+          [[393, 344], [459, 318], [502, 344], [491, 384], [412, 392]],
+          [[643, 344], [576, 318], [533, 344], [545, 384], [623, 392]]
+        ],
+        "ellipses": [[483, 361, 569, 417]]
+        ,"holes": [
+          [[468, 318], [588, 318], [575, 360], [557, 384], [510, 384], [490, 360]]
+        ]
+      }
+    },
+    "explorer-boy": {
+      "paintedStraps": [
+        {
+          "polygon": [[411, 366], [454, 365], [461, 535], [455, 560], [455, 652], [430, 682], [405, 660], [408, 560], [395, 540]],
+          "crop": [390, 355, 470, 695], "size": [45, 200], "angle": -5, "paste": [420, 360]
+        },
+        {
+          "polygon": [[640, 365], [681, 366], [697, 540], [682, 560], [685, 660], [660, 685], [638, 660], [637, 560], [625, 540]],
+          "crop": [620, 355, 705, 695], "size": [45, 200], "angle": 5, "paste": [625, 360]
+        }
+      ],
+      "paintedCollar": {
+        "polygons": [
+          [[393, 344], [459, 318], [502, 344], [491, 384], [412, 392]],
+          [[643, 344], [576, 318], [533, 344], [545, 384], [623, 392]]
+        ],
+        "ellipses": [[483, 361, 569, 417]]
+        ,"holes": [
+          [[468, 318], [588, 318], [575, 360], [557, 384], [510, 384], [490, 360]]
+        ]
+      }
+    }
+  }
+}

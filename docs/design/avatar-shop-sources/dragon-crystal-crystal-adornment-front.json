@@ -1,9 +1,14 @@
 {
   "sourceFile": "dragon-crystal-crystal-adornment-front.png",
-  "reference": "dragon.png",
-  "prompt": "Create ONLY a transparent game equipment OVERLAY matching the attached dragon's two raised wings. Thin violet and cyan crystalline glowing ornament caps cover the OUTER wing tips and follow a few short outer wing edge segments, symmetrical visual theme but respecting this perspective. Both left and right caps at exact coordinates of the reference wing tips. Remove the entire dragon including wing membranes; output solely these separate luminous ornament pieces on the same transparent canvas. High detail fantasy painterly gemstone art. No creature, no center gem, no full wing shapes, no body parts, no scene. Keep reference image scale, location and canvas dimensions.",
-  "generator": "built-in image_gen",
-  "generatedOn": "2026-09-19",
+  "reference": "dragon-crystal.png",
+  "generator": "classical-raster-edit/pillow-numpy",
+  "editedOn": "2026-09-20",
+  "provenance": "Classical alpha-mask edit of dragon-crystal-crystal-adornment-front.png, captured byte-for-byte from Git revision 24ce5a3; no generated or repainted pixels.",
+  "inputSourceFile": "dragon-crystal-crystal-adornment-front.png",
+  "sourceRevision": "24ce5a3",
+  "sourceSha256": "036c2d65d8e37b0a96c884bad4f1afacae51d3de192318f30b66d74185a1f5cd",
+  "baseSourceSha256": "21650fcf744d1b000d17d21036ce895f8aad610f69789719d48bb44821bfb862",
+  "recipe": "../avatar-fit-recipes/wings/dragon-crystal.json",
   "registration": {
     "scale": 1,
     "x": 0,
@@ -14,10 +19,13 @@
     "height": 1312
   },
   "qa": {
-    "status": "accepted-for-current-base",
-    "method": "Headless Edge full-canvas composition, individual layer and complete set",
-    "evidence": "../../../test-results/avatar-art/dragon-wolf-fit/dragon-crystal-complete.png",
-    "result": "Both ornaments follow the outer wing tips without covering the head or torso.",
-    "limits": "The ornament blends strongly with the crystal dragon's existing violet wings; silhouette remains visible but contrast is lower than on dragon.png."
-  }
+    "status": "fit-pass-complete-pending-user-acceptance",
+    "method": "Full-resolution light-background composition, item detail pair, complete set and 256 px card inspected from immutable original inputs.",
+    "evidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/wings/dragon-crystal-adornment-before-after.png",
+    "detailEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/wings/dragon-crystal-adornment-detail-before-after.png",
+    "result": "Deep ornament pixels pass behind the luminous membranes; only contour caps and crystals remain in front along both wing edges.",
+    "limits": "Internal visual fit pass only; personal user acceptance and product WebP build remain separate."
+  },
+  "plane": "front",
+  "outputSha256": "ca0a85b3cbfbf022e246bb531b5fac1f5c346f13ef628bcd1a18594159c6b9e2"
 }

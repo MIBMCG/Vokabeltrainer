@@ -1,16 +1,118 @@
 {
   "sourceFile": "panther-shadow-obsidian-adornment-front.png",
-  "prompt": "Use case: stylized-concept\nAsset type: transparent game equipment layer\nInput image: panther-shadow.png is a reference image for exact body pose, original 1223 x 1286 canvas, placement, scale, perspective, and painterly magical style.\nPrimary request: create only the Obsidian set adornment called Sternenpfoten: four elegant dark-silver paw cuffs and small star-shaped violet crystal ornaments fitted around the wrists and ankles just above all four paws, perspective matched to each leg.\nComposition/framing: preserve the exact 1223 x 1286 canvas coordinate system. Place each adornment at the exact coordinates of the four paws in the reference. Do not crop or rescale the canvas.\nStyle/medium: high-quality detailed magical game illustration matching the shadow-panther palette.\nConstraints: output only the four paw adornments on a genuinely transparent background; no panther, no legs, no paws, no fur, no scenery, no text, no watermark. Front layer.",
+  "figure": "panther-shadow",
+  "item": "obsidian-adornment",
+  "layer": "front",
   "reference": "panther-shadow.png",
-  "generator": "built-in image_gen",
-  "generatedOn": "2026-09-19",
-  "registration": {"scale": 1, "x": 0, "y": 0},
-  "canvas": {"width": 1223, "height": 1286},
+  "generator": "Classical raster editing (Pillow/NumPy), explicitly authorized 2026-09-20",
+  "provenance": "Four original ornaments isolated and fitted independently; only the curved front band remains, with dark opening, rear crown and dangling gaps removed.",
+  "originalCommit": "24ce5a38b561c6012d7307603fc378ca339ab58c",
+  "originalSources": [
+    {
+      "path": "panther-shadow-obsidian-adornment-front.png",
+      "sha256": "38ff23417610ba26261ea94abcc4a409d232f47370f961959ed270073c815a6a"
+    }
+  ],
+  "repairScript": "../../../scripts/avatar-fit/quadrupeds.py",
+  "recipeFile": "../avatar-fit-recipes/quadrupeds/panther-shadow.json",
+  "recipe": {
+    "parts": [
+      {
+        "crop": [
+          95,
+          910,
+          285,
+          1080
+        ],
+        "frontRimEllipse": [
+          190,
+          963,
+          73,
+          17
+        ],
+        "centerWidthAngle": [
+          203,
+          1010,
+          125,
+          2
+        ]
+      },
+      {
+        "crop": [
+          275,
+          935,
+          515,
+          1130
+        ],
+        "frontRimEllipse": [
+          395,
+          998,
+          92,
+          19
+        ],
+        "centerWidthAngle": [
+          376,
+          1070,
+          158,
+          -2
+        ]
+      },
+      {
+        "crop": [
+          655,
+          895,
+          835,
+          1065
+        ],
+        "frontRimEllipse": [
+          745,
+          949,
+          68,
+          17
+        ],
+        "centerWidthAngle": [
+          751,
+          1000,
+          108,
+          -8
+        ]
+      },
+      {
+        "crop": [
+          1020,
+          915,
+          1200,
+          1090
+        ],
+        "frontRimEllipse": [
+          1110,
+          971,
+          68,
+          17
+        ],
+        "centerWidthAngle": [
+          1082,
+          1040,
+          100,
+          7
+        ]
+      }
+    ]
+  },
+  "canvas": {
+    "width": 1223,
+    "height": 1286
+  },
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "sourceSha256": "c2115d38b0271a86113e39c6a7db6ef39f1fdaf97463402ec2a380178b478156",
   "qa": {
-    "status": "accepted-for-current-base",
-    "method": "Fresh headless Edge full-canvas composition, individual layer and complete set",
-    "evidence": "../../../.superpowers/sdd/2026-09-19-avatar-shop/mystic-gear-evidence/panther-shadow-obsidian-adornment-front-composite.png",
-    "result": "Four star cuffs meet the four paw positions and retain the reference perspective.",
-    "limits": "The nearest foreground cuff is deliberately larger than the rear cuffs; the source canvas differs by minus one pixel in width and plus one in height."
+    "status": "internal-fit-review-pending",
+    "personalAcceptance": false,
+    "comparisonSheet": "../avatar-fit-v3/quadrupeds/panther-shadow-pairs-256.png",
+    "largeEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/quadrupeds/panther-shadow-adornment-before-after-large.png"
   }
 }

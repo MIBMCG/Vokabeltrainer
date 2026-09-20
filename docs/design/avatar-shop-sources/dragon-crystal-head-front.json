@@ -1,23 +1,31 @@
 {
   "sourceFile": "dragon-crystal-head-front.png",
   "reference": "dragon.png",
-  "prompt": "Using the attached dragon ONLY as a fitting reference, create a transparent equipment layer containing ONLY a magnificent magical rune amulet on a short silver chain, sized and positioned to hang on this dragon's upper golden chest below its long neck. Violet crystal at the center with engraved silver runes, premium painterly fantasy game art. Remove the entire dragon and leave all body, head, wings, legs and background genuinely alpha-transparent. Keep the exact reference canvas dimensions and amulet at its intended worn position; do NOT center or enlarge the amulet as a product photo. One wearable amulet, no text, no other equipment.",
-  "generator": "built-in image_gen",
-  "generatedOn": "2026-09-19",
+  "generator": "classical-raster-edit/pillow-numpy",
+  "editedOn": "2026-09-20",
+  "provenance": "Classical alpha-mask edit of dragon-crystal-head-front.png, captured byte-for-byte from Git revision 24ce5a3; no generated or repainted pixels.",
+  "inputSourceFile": "dragon-crystal-head-front.png",
+  "sourceRevision": "24ce5a3",
+  "sourceSha256": "ee0273a140f94ae81d380108411585072430db3ebf21ec46f12e72894e4b1ca7",
+  "baseSourceSha256": "305f541b09a1a7da241491056697cadeaf1e8677b1943618580f9287d2abc9fb",
+  "recipe": "../avatar-fit-recipes/wings/dragon.json",
   "registration": {
-    "scale": 0.55,
-    "x": 200,
-    "y": 150
+    "scale": 1,
+    "x": 0,
+    "y": 0
   },
   "canvas": {
     "width": 1199,
     "height": 1312
   },
   "qa": {
-    "status": "accepted-for-current-base",
-    "method": "Headless Edge full-canvas composition, individual layer and complete set",
-    "evidence": "../../../test-results/avatar-art/dragon-wolf-fit/dragon-complete.png",
-    "result": "Chain and pendant sit on the upper golden chest below the long neck without covering the face.",
-    "limits": "Accepted only for dragon.png at the recorded canvas and transform."
-  }
+    "status": "fit-pass-complete-pending-user-acceptance",
+    "method": "Full-resolution light-background composition, item detail pair, complete set and 256 px card inspected from immutable original inputs.",
+    "evidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/wings/dragon-head-before-after.png",
+    "detailEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/wings/dragon-head-detail-before-after.png",
+    "result": "The side chain now passes behind the neck scales while the central rune pendant remains on the upper breast.",
+    "limits": "Internal visual fit pass only; personal user acceptance and product WebP build remain separate."
+  },
+  "plane": "front",
+  "outputSha256": "0651fc727cfe15262ff19ff1d180f9101b322e9209787a9ecf5a909f6b86c4f4"
 }

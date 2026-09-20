@@ -1,0 +1,29 @@
+{
+  "date": "2026-09-20",
+  "sourceFile": "explorer-boy-runes-back-front.png",
+  "reference": "explorer-boy-skin-0.png",
+  "provenance": "Classical raster editing explicitly approved by the user on 2026-09-20; deterministic Pillow compositing and masks cut from original painted material; no image generation.",
+  "derivedFrom": {
+    "revision": "24ce5a3",
+    "png": "explorer-boy-runes-back-rear.png",
+    "pngSha256": "a2340ff214a43ae16081ade2df497d565aadef534d3c6cb9001e8125cf89190b",
+    "metadata": "explorer-boy-runes-back-rear.json",
+    "metadataSha256": "7d6f44c4ad4c1acdb7b0b0129972ed69575a60583a2c8cdaf9cc80ceb7f9300c"
+  },
+  "recipe": "../avatar-fit-recipes/humans/recipes.json",
+  "script": "../../../scripts/avatar-fit/humans.py",
+  "item": "runes-back",
+  "figure": "explorer-boy",
+  "layer": "front",
+  "sourceSha256": "93b3487166f49c421eaa3789c2d857a3eb8ab8a345a53f7a19039638816e04ce",
+  "canvas": {
+    "width": 1086,
+    "height": 1448
+  },
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "qa": "Internally inspected at full canvas and 256-pixel card size on a light background; all four skin variants and all six clothing colors rendered. Personal user acceptance remains open."
+}

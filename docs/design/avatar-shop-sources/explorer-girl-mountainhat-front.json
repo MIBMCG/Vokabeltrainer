@@ -1,44 +1,29 @@
 {
-  "date": "2026-09-19",
-  "provenance": "Existing generated source reused without redrawing or resampling.",
-  "references": [
-    "../art-sources/avatar-head-mountainhat.png"
-  ],
-  "sourceSha256": "82b3df329900ca5fb9d15f32766641cbcb7c3fc6be851a4da820c462b5424f1b",
-  "copy": "byte-for-byte",
+  "date": "2026-09-20",
+  "sourceFile": "explorer-girl-mountainhat-front.png",
+  "reference": "explorer-girl-skin-0.png",
+  "provenance": "Classical raster editing explicitly approved by the user on 2026-09-20; deterministic Pillow compositing and masks cut from original painted material; no image generation.",
+  "derivedFrom": {
+    "revision": "24ce5a3",
+    "png": "explorer-girl-mountainhat-front.png",
+    "pngSha256": "82b3df329900ca5fb9d15f32766641cbcb7c3fc6be851a4da820c462b5424f1b",
+    "metadata": "explorer-girl-mountainhat-front.json",
+    "metadataSha256": "2745cf07a6ecdc046af24ae8b634b1dc2631f38dd9dc836541cb1f5eaba1a6b8"
+  },
+  "recipe": "../avatar-fit-recipes/humans/recipes.json",
+  "script": "../../../scripts/avatar-fit/humans.py",
+  "item": "mountainhat",
   "figure": "explorer-girl",
   "layer": "front",
-  "sourceCanvas": {
-    "width": 1087,
-    "height": 1447
-  },
-  "sourceBounds": {
-    "alphaThreshold": 16,
-    "x": 356,
-    "y": 22,
-    "width": 374,
-    "height": 378
-  },
-  "legacyTarget": {
-    "x": 410,
-    "y": 0,
-    "width": 266,
-    "height": 175
-  },
-  "registration": {
-    "scale": 0.46296296296296297,
-    "x": 291.1851851851852,
-    "y": -10.185185185185185
-  },
-  "registeredBounds": {
-    "x": 456,
-    "y": 0,
-    "width": 173,
-    "height": 175
-  },
+  "sourceSha256": "58920e7fd3eb2a98cd924761ca52c6b7a529824bbc1411d66e1ff4dc8f3802eb",
   "canvas": {
     "width": 1086,
     "height": 1448
   },
-  "qa": "Source composition inspected on 2026-09-19: all 48 skin/color combinations and all 20 human equipment previews. Neck/eyes remain visible; small original silhouette differences between skin variants remain."
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "qa": "Internally inspected at full canvas and 256-pixel card size on a light background; all four skin variants and all six clothing colors rendered. Personal user acceptance remains open."
 }

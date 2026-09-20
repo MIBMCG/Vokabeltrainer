@@ -1,16 +1,31 @@
 {
   "sourceFile": "phoenix-sun-body-front.png",
-  "prompt": "Use case: stylized-concept\nAsset type: transparent game equipment layer\nInput image: phoenix.png is a reference image for exact body pose, original 1024 x 1536 canvas, placement, scale, perspective, and painterly magical style. Ignore and remove its painted background from the output.\nPrimary request: create only the Sonne set body equipment called Magischer Brustschmuck: an elegant articulated gold breast ornament with sunburst filigree, a central glowing amber crystal and fine ruby accents, fitted over the upper chest while preserving the neck and wings.\nComposition/framing: preserve the exact 1024 x 1536 canvas coordinate system. Place the ornament at the coordinates where it would sit on the phoenix in the reference. Do not crop or rescale the canvas.\nStyle/medium: high-quality detailed magical game illustration matching the fiery phoenix.\nConstraints: output only the breast ornament on a genuinely transparent background; no phoenix, no feathers, no beak, no eyes, no wings, no painted background, no glow rectangle, no scenery, no text, no watermark. Front layer.",
   "reference": "phoenix.png",
-  "generator": "built-in image_gen",
-  "generatedOn": "2026-09-19",
-  "registration": {"scale": 0.4, "x": 370, "y": 330},
-  "canvas": {"width": 1024, "height": 1536},
+  "generator": "classical-raster-edit/pillow-numpy",
+  "editedOn": "2026-09-20",
+  "provenance": "Classical alpha-mask edit of phoenix-sun-body-front.png, captured byte-for-byte from Git revision 24ce5a3; no generated or repainted pixels.",
+  "inputSourceFile": "phoenix-sun-body-front.png",
+  "sourceRevision": "24ce5a3",
+  "sourceSha256": "9b012de196c40fea56c3d7441b805724874fcd704967c0d24f3033107b027384",
+  "baseSourceSha256": "5bf95178a98bb9c8f0b79f2d1d9c98c1be186b0cdd9562fae40da13563055b3c",
+  "recipe": "../avatar-fit-recipes/wings/phoenix.json",
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "canvas": {
+    "width": 1024,
+    "height": 1536
+  },
   "qa": {
-    "status": "accepted-for-current-base",
-    "method": "Fresh headless Edge full-canvas composition, individual layer and complete set",
-    "evidence": "../../../.superpowers/sdd/2026-09-19-avatar-shop/mystic-gear-evidence/phoenix-sun-body-front-composite.png",
-    "result": "The central amber ornament sits on the breast and its gold branches meet the two wing roots.",
-    "limits": "The generated breast piece is broad and ornamental rather than a compact pendant; its glow uses partial alpha."
-  }
+    "status": "fit-pass-complete-pending-user-acceptance",
+    "method": "Full-resolution light-background composition, item detail pair, complete set and 256 px card inspected from immutable original inputs.",
+    "evidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/wings/phoenix-body-before-after.png",
+    "detailEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/wings/phoenix-body-detail-before-after.png",
+    "result": "Side branches pass behind selected breast and wing-root feathers while the central sun jewel remains attached on the breast.",
+    "limits": "Internal visual fit pass only; personal user acceptance and product WebP build remain separate."
+  },
+  "plane": "front",
+  "outputSha256": "4e0ee962191dfafb2c5f2e15159cd908f3e9a3cf411e1030b0291b538178b20f"
 }

@@ -1,44 +1,29 @@
 {
-  "date": "2026-09-19",
-  "provenance": "Existing generated source reused without redrawing or resampling.",
-  "references": [
-    "../art-sources/avatar-hand-compass.png"
-  ],
-  "sourceSha256": "204be858011536743528a908cf0827bcc05c8a89eeba94cf602075d6a0eef0ba",
-  "copy": "byte-for-byte",
+  "date": "2026-09-20",
+  "sourceFile": "explorer-boy-compass-front.png",
+  "reference": "explorer-boy-skin-0.png",
+  "provenance": "Classical raster editing explicitly approved by the user on 2026-09-20; deterministic Pillow compositing and masks cut from original painted material; no image generation.",
+  "derivedFrom": {
+    "revision": "24ce5a3",
+    "png": "explorer-boy-compass-front.png",
+    "pngSha256": "204be858011536743528a908cf0827bcc05c8a89eeba94cf602075d6a0eef0ba",
+    "metadata": "explorer-boy-compass-front.json",
+    "metadataSha256": "00dd6efc7ad5ec49e6ceedfb95e06cfbbb03b11e20a2553e795f3aa95b622a1d"
+  },
+  "recipe": "../avatar-fit-recipes/humans/recipes.json",
+  "script": "../../../scripts/avatar-fit/humans.py",
+  "item": "compass",
   "figure": "explorer-boy",
   "layer": "front",
-  "sourceCanvas": {
-    "width": 1086,
-    "height": 1448
-  },
-  "sourceBounds": {
-    "alphaThreshold": 16,
-    "x": 356,
-    "y": 672,
-    "width": 199,
-    "height": 278
-  },
-  "legacyTarget": {
-    "x": 735,
-    "y": 690,
-    "width": 170,
-    "height": 205
-  },
-  "registration": {
-    "scale": 0.737410071942446,
-    "x": 483.48201438848923,
-    "y": 194.46043165467626
-  },
-  "registeredBounds": {
-    "x": 746,
-    "y": 690,
-    "width": 147,
-    "height": 205
-  },
+  "sourceSha256": "c155643b40aa743074ea430c04469afc1f2f080eb74522a1274781f2265af023",
   "canvas": {
     "width": 1086,
     "height": 1448
   },
-  "qa": "Source composition inspected on 2026-09-19: all 48 skin/color combinations and all 20 human equipment previews. Neck/eyes remain visible; small original silhouette differences between skin variants remain."
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "qa": "Internally inspected at full canvas and 256-pixel card size on a light background; all four skin variants and all six clothing colors rendered. Personal user acceptance remains open."
 }

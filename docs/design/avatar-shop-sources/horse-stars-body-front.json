@@ -1,43 +1,104 @@
 {
   "sourceFile": "horse-stars-body-front.png",
-  "prompt": "Use case: precise-object-edit\nAsset type: transparent equipment layer for a layered game avatar\nInput image: Image 1 is alignment and fit reference only for the exact horse rig.\nPrimary request: Create ONLY a premium cloud saddle: one elegant fitted saddle positioned on the horse's back, sculpted like soft silver-blue clouds with violet trim, subtle constellation stitching, and practical saddle contours; front body layer only.\nCanvas and placement: preserve the exact 1024 x 1536 canvas and position the equipment to fit Image 1 without moving, scaling, or redrawing the rig.\nStyle: premium magical children's adventure illustration, detailed blue, silver, and violet materials, polished painterly rendering matching the horse reference.\nTransparency: output a genuinely transparent background. The entire horse, its mane, tail, body, legs, hooves, eyes, and the brown backdrop must be absent and fully transparent. Include only the named equipment pixels in their aligned positions.\nConstraints: exactly one equipment concept and one slot; clean alpha edges; no labels, no text, no watermark.\nAvoid: horse or animal pixels, complete animal silhouette, background, landscape, pedestal, cast shadow, extra jewelry, extra tack, unrelated stars or loose decorative objects, duplicated parts, additional slot items.",
-  "relativeReference": "horse.png",
-  "generator": "built-in image_gen",
-  "generatedOn": "2026-09-19",
-  "candidate": false,
+  "figure": "horse",
+  "layer": "front",
+  "generator": "Classical raster editing (Pillow/NumPy), explicitly authorized 2026-09-20",
+  "provenance": "Distant stirrup hidden behind torso; original near stirrup and painted saddle contours retained. Pegasus saddle raised onto back; local foreground mane exposed.",
+  "originalCommit": "24ce5a38b561c6012d7307603fc378ca339ab58c",
+  "originalSources": [
+    {
+      "path": "horse-stars-body-front.png",
+      "sha256": "d56220768f5484be5697b5f99e747ae93719ce1424d11179812b9096538db76a"
+    }
+  ],
+  "repairScript": "../../../scripts/avatar-fit/equines.py",
+  "recipe": {
+    "originalRegistration": {
+      "scale": 0.42,
+      "x": 170,
+      "y": 400
+    },
+    "hiddenStirrupPolygon": [
+      [
+        296.0,
+        684.0
+      ],
+      [
+        337.0,
+        686.0
+      ],
+      [
+        326.0,
+        778.0
+      ],
+      [
+        348.0,
+        849.0
+      ],
+      [
+        344.0,
+        914.0
+      ],
+      [
+        242.0,
+        914.0
+      ],
+      [
+        252.0,
+        831.0
+      ],
+      [
+        280.0,
+        786.0
+      ]
+    ],
+    "shift": [
+      0,
+      0
+    ],
+    "maneOcclusionPolygon": [
+      [
+        479,
+        500
+      ],
+      [
+        561,
+        489
+      ],
+      [
+        533,
+        611
+      ],
+      [
+        492,
+        675
+      ],
+      [
+        454,
+        709
+      ],
+      [
+        424,
+        688
+      ],
+      [
+        442,
+        618
+      ]
+    ]
+  },
   "canvas": {
     "width": 1024,
     "height": 1536
   },
-  "alphaBounds": {
-    "threshold": 16,
-    "x": 160,
-    "y": 270,
-    "width": 744,
-    "height": 991
-  },
   "registration": {
-    "scale": 0.42,
-    "x": 170,
-    "y": 400
+    "scale": 1,
+    "x": 0,
+    "y": 0
   },
-  "provenance": "Original built-in image_gen equipment source with body-specific browser-verified affine registration.",
-  "sourceSha256": "d56220768f5484be5697b5f99e747ae93719ce1424d11179812b9096538db76a",
-  "figure": "horse",
-  "layer": "front",
-  "registeredBounds": {
-    "alphaThreshold": 16,
-    "x": 237.2,
-    "y": 513.4,
-    "width": 312.48,
-    "height": 416.22
-  },
+  "sourceSha256": "a4f60ce46bf575708525d70fb6d8de596abe05680c9447e31170fffe9d1be12d",
   "qa": {
-    "date": "2026-09-19",
-    "method": "Headless Edge composition on the exact 1024 x 1536 source canvas.",
-    "evidence": ".superpowers/avatar-shop-equine-qa/screens/horse-stars-body-front.png",
-    "setEvidence": ".superpowers/avatar-shop-equine-qa/screens/horse-set-stars.png",
-    "observedFit": "The saddle seat rests over the back and rump instead of the shoulder or chest."
-  },
-  "registrationReference": "horse.png"
+    "status": "internal-fit-review-pending",
+    "personalAcceptance": false
+  }
 }

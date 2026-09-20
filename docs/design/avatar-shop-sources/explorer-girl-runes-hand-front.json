@@ -1,17 +1,29 @@
 {
-  "source": "explorer-girl-runes-hand-front.png",
-  "reference": "explorer-boy-skin-0.png",
-  "prompt": "An ornate handheld magical crystal compass on a short leather wrist loop to hang from the reference explorer's RIGHT hand (viewer's right, around x790 y820 on the 1086x1448 canvas). Silver and gold engraved frame, luminous violet crystal needle and cyan compass face, delicate runes, visibly more special than a simple brass compass. Item about 130 pixels wide, small and wearable. No hand or arm in output. Use the attached human explorer only as a size and pose reference. Output ONLY the wearable item on the exact same 1086x1448 transparent canvas, at the intended body coordinates. Remove the entire person, all skin, hair and clothing. Do not enlarge or center the equipment as a product photo. Genuine transparent alpha background, no scenery, no text. Match the premium painterly adventure-game style.",
-  "generator": "OpenAI image generation tool",
-  "generatedAt": "2026-09-19",
+  "date": "2026-09-20",
+  "sourceFile": "explorer-girl-runes-hand-front.png",
+  "reference": "explorer-girl-skin-0.png",
+  "provenance": "Classical raster editing explicitly approved by the user on 2026-09-20; deterministic Pillow compositing and masks cut from original painted material; no image generation.",
+  "derivedFrom": {
+    "revision": "24ce5a3",
+    "png": "explorer-girl-runes-hand-front.png",
+    "pngSha256": "b38469b6e4a2a9963690503d6399330b83422fdede011d6a98e92f0fc3473388",
+    "metadata": "explorer-girl-runes-hand-front.json",
+    "metadataSha256": "b8a6b26fa5e3740e61277f565d1fc736534ee0e5e1bdb5c7ee8b14917eadc2ce"
+  },
+  "recipe": "../avatar-fit-recipes/humans/recipes.json",
+  "script": "../../../scripts/avatar-fit/humans.py",
+  "item": "runes-hand",
+  "figure": "explorer-girl",
+  "layer": "front",
+  "sourceSha256": "eda0fbb8322f20507f0227d6e419792b6a93ccd22a7398f671258bf336e76a54",
   "canvas": {
     "width": 1086,
     "height": 1448
   },
   "registration": {
-    "scale": 0.45,
-    "x": 430,
-    "y": 575
+    "scale": 1,
+    "x": 0,
+    "y": 0
   },
-  "qa": "Source composition inspected on 2026-09-19: all 48 skin/color combinations and all 20 human equipment previews. Neck/eyes remain visible; small original silhouette differences between skin variants remain."
+  "qa": "Internally inspected at full canvas and 256-pixel card size on a light background; all four skin variants and all six clothing colors rendered. Personal user acceptance remains open."
 }

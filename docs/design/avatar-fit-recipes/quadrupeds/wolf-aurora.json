@@ -1,0 +1,29 @@
+{
+  "figure": "wolf-aurora",
+  "sourceRevision": "24ce5a38b561c6012d7307603fc378ca339ab58c",
+  "head": {
+    "sourceBox": [208, 397, 518, 789],
+    "center": [365, 540],
+    "scale": [0.7, 0.68],
+    "angle": 0,
+    "rearChainFraction": 0.48,
+    "frontPendantBoxFraction": [0.27, 0.31, 0.73, 1.0]
+  },
+  "body": {
+    "retainOriginalRear": true,
+    "frontShapes": [
+      {"type": "ellipse", "box": [292, 386, 410, 514]},
+      {"type": "ellipse", "box": [190, 375, 282, 452]},
+      {"type": "ellipse", "box": [420, 375, 510, 452]}
+    ],
+    "feather": 3
+  },
+  "adornment": {
+    "parts": [
+      {"crop": [130, 900, 302, 1070], "frontRimEllipse": [216, 956, 66, 18], "centerWidthAngle": [239, 1010, 92, 2]},
+      {"crop": [325, 945, 530, 1100], "frontRimEllipse": [427, 995, 78, 17], "centerWidthAngle": [419, 1060, 113, -1]},
+      {"crop": [605, 875, 785, 1035], "frontRimEllipse": [695, 928, 68, 16], "centerWidthAngle": [694, 1000, 84, -6]},
+      {"crop": [815, 900, 1035, 1075], "frontRimEllipse": [925, 955, 82, 18], "centerWidthAngle": [888, 1020, 84, 5]}
+    ]
+  }
+}

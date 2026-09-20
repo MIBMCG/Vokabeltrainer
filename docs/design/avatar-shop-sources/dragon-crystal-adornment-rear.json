@@ -1,0 +1,31 @@
+{
+  "sourceFile": "dragon-crystal-adornment-rear.png",
+  "reference": "dragon.png",
+  "generator": "classical-raster-edit/pillow-numpy",
+  "editedOn": "2026-09-20",
+  "provenance": "Classical alpha-mask edit of dragon-crystal-adornment-front.png, captured byte-for-byte from Git revision 24ce5a3; no generated or repainted pixels.",
+  "inputSourceFile": "dragon-crystal-adornment-front.png",
+  "sourceRevision": "24ce5a3",
+  "sourceSha256": "036c2d65d8e37b0a96c884bad4f1afacae51d3de192318f30b66d74185a1f5cd",
+  "baseSourceSha256": "305f541b09a1a7da241491056697cadeaf1e8677b1943618580f9287d2abc9fb",
+  "recipe": "../avatar-fit-recipes/wings/dragon.json",
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "canvas": {
+    "width": 1199,
+    "height": 1312
+  },
+  "qa": {
+    "status": "fit-pass-complete-pending-user-acceptance",
+    "method": "Full-resolution light-background composition, item detail pair, complete set and 256 px card inspected from immutable original inputs.",
+    "evidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/wings/dragon-adornment-before-after.png",
+    "detailEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/wings/dragon-adornment-detail-before-after.png",
+    "result": "Deep ornament pixels pass behind the wing membranes; only contour caps and crystals remain in front along both wing edges.",
+    "limits": "Internal visual fit pass only; personal user acceptance and product WebP build remain separate."
+  },
+  "plane": "rear",
+  "outputSha256": "2195fc67de5b9717200f3ff4470371b1660b98169cf64c34a3eb6823922b5d00"
+}

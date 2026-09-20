@@ -1,8 +1,8 @@
 # Körperbezogene Ausrüstung: Reparaturansatz nach dem Zweitaudit
 
-Stand: 20.09.2026. Die Korrektur der vorhandenen Figurenwelt ist beauftragt. Dieser Ansatz beantwortet die erneute Nutzerkritik; er erweitert weder Katalog noch Preise, Freischaltungen oder Figurenumfang. Die konkrete Freigabe zur klassischen Bearbeitung vorhandener Bilder ist im Gespräch angefragt und noch nicht erteilt. Bis zur Antwort werden keine entsprechenden Bildänderungen vorgenommen.
+Stand: 20.09.2026. Die Korrektur der vorhandenen Figurenwelt ist beauftragt. Dieser Ansatz beantwortet die erneute Nutzerkritik; er erweitert weder Katalog noch Preise, Freischaltungen oder Figurenumfang. Die klassische Bearbeitung ist inzwischen ausdrücklich freigegeben: „Ja, du darfst die Bildbearbeitung dafür verwenden“. [Ausführungsplan](../superpowers/plans/2026-09-20-avatar-fit-v3.md).
 
-Ergänzende Nutzersteuerung: Die zuletzt gezeigten alten Bilder passen weiterhin nicht; insbesondere ragen die Umhänge bei Pferden/Einhörnern über, und vollständig sichtbare Ringe wirken vor den Avatar gehängt. **Alle Figuren und Ausrüstungsteile müssen nachgearbeitet werden.** Pferd/Tiger sind nur die erste Methodenprobe. Die erneute Kritik ist keine Abnahme und keine Antwort auf die noch offene Frage nach klassischer Bildbearbeitung.
+Ergänzende Nutzersteuerung: Die zuletzt gezeigten alten Bilder passen weiterhin nicht; insbesondere ragen die Umhänge bei Pferden/Einhörnern über, und vollständig sichtbare Ringe wirken vor den Avatar gehängt. **Alle Figuren und Ausrüstungsteile müssen nachgearbeitet werden.** Pferd/Tiger waren nur die erste Methodenprobe. Die Methodenfreigabe liegt inzwischen ausdrücklich vor; eine persönliche visuelle Abnahme wurde dadurch nicht erteilt.
 
 ## Konkretes sichtbares Ziel
 

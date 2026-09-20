@@ -1,16 +1,118 @@
 {
   "sourceFile": "deer-mist-forest-adornment-front.png",
-  "prompt": "Use case: stylized-concept\nAsset type: transparent game equipment layer\nInput image: deer-mist.png is a reference image for exact body pose, original 1145 x 1374 canvas, placement, scale, perspective, and painterly magical style.\nPrimary request: create only the Waldgeist set adornment called Waldgeist-Beinzier: refined silver-and-vine anklets with tiny mint crystals, rune beads and leaf motifs fitted around all four lower legs above the hooves, perspective matched to each leg.\nComposition/framing: preserve the exact 1145 x 1374 canvas coordinate system. Place each anklet at the exact coordinates of the four legs in the reference. Do not crop or rescale the canvas.\nStyle/medium: high-quality detailed magical game illustration matching the reference animal.\nConstraints: output only the four adornment pieces on a genuinely transparent background; no deer, no legs, no hooves, no fur, no scenery, no text, no watermark. Front layer.",
+  "figure": "deer-mist",
+  "item": "forest-adornment",
+  "layer": "front",
   "reference": "deer-mist.png",
-  "generator": "built-in image_gen",
-  "generatedOn": "2026-09-19",
-  "registration": {"scale": 0.5, "x": 420, "y": 770},
-  "canvas": {"width": 1145, "height": 1374},
+  "generator": "Classical raster editing (Pillow/NumPy), explicitly authorized 2026-09-20",
+  "provenance": "Four original ornaments isolated and fitted independently; only the curved front band remains, with dark opening, rear crown and dangling gaps removed.",
+  "originalCommit": "24ce5a38b561c6012d7307603fc378ca339ab58c",
+  "originalSources": [
+    {
+      "path": "deer-mist-forest-adornment-front.png",
+      "sha256": "e07befda7c364e7073867341ed1051cb133655f4c972f938d7f7cee84a5608dd"
+    }
+  ],
+  "repairScript": "../../../scripts/avatar-fit/quadrupeds.py",
+  "recipeFile": "../avatar-fit-recipes/quadrupeds/deer-mist.json",
+  "recipe": {
+    "parts": [
+      {
+        "crop": [
+          452,
+          1030,
+          585,
+          1175
+        ],
+        "frontRimEllipse": [
+          518,
+          1082,
+          47,
+          15
+        ],
+        "centerWidthAngle": [
+          475,
+          1135,
+          55,
+          3
+        ]
+      },
+      {
+        "crop": [
+          580,
+          1028,
+          720,
+          1175
+        ],
+        "frontRimEllipse": [
+          650,
+          1080,
+          50,
+          15
+        ],
+        "centerWidthAngle": [
+          539,
+          1148,
+          45,
+          -2
+        ]
+      },
+      {
+        "crop": [
+          750,
+          1040,
+          855,
+          1170
+        ],
+        "frontRimEllipse": [
+          803,
+          1085,
+          38,
+          13
+        ],
+        "centerWidthAngle": [
+          789,
+          1142,
+          42,
+          -9
+        ]
+      },
+      {
+        "crop": [
+          858,
+          1040,
+          965,
+          1170
+        ],
+        "frontRimEllipse": [
+          911,
+          1085,
+          39,
+          13
+        ],
+        "centerWidthAngle": [
+          938,
+          1155,
+          38,
+          8
+        ]
+      }
+    ]
+  },
+  "canvas": {
+    "width": 1145,
+    "height": 1374
+  },
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "sourceSha256": "c2119b1a286e8b048c35f82579477ef9f34b7f01679d488bb8007bdec30fb399",
   "qa": {
-    "status": "accepted-for-current-base",
-    "method": "Fresh headless Edge full-canvas composition, individual layer and complete set",
-    "evidence": "../../../.superpowers/sdd/2026-09-19-avatar-shop/mystic-gear-evidence/deer-mist-forest-adornment-front-composite.png",
-    "result": "All four vine-and-crystal pieces sit on the lower legs above the hooves.",
-    "limits": "The grouped source has long hanging charms, so small gaps remain visible between some cuffs and the narrow legs."
+    "status": "internal-fit-review-pending",
+    "personalAcceptance": false,
+    "comparisonSheet": "../avatar-fit-v3/quadrupeds/deer-mist-pairs-256.png",
+    "largeEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/quadrupeds/deer-mist-adornment-before-after-large.png"
   }
 }

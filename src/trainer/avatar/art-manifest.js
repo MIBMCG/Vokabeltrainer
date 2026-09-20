@@ -568,24 +568,24 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1448,
       "canvasWidth": 1086,
       "canvasHeight": 1448,
-      "sourceBytes": 212050,
-      "sourceSha256": "3630bb444115296cc61ad914ec118754ca35ccc226b8e8487d6ff37f59448462",
+      "sourceBytes": 76389,
+      "sourceSha256": "dcf83b39347c2d9e9343cc6ea90abfa6528b420866eb97a5fd6cad2ea55e4d74",
       "metadataName": "explorer-girl-cap-front.json",
-      "metadataBytes": 1069,
-      "metadataSha256": "61aa0f92092292a487f7f768796833ba289fed88f952d2cf34ff79a36e44bb0b",
+      "metadataBytes": 1200,
+      "metadataSha256": "a29c47ddbeba09cddb9b538818c8174e8014f1969c77cfda7fbf3d2c3cdfca80",
       "registration": {
-        "scale": 0.5821917808219178,
-        "x": 238.93835616438355,
-        "y": -42.5
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 238.93835616438355,
-        "top": -42.5,
-        "right": 871.1986301369863,
-        "bottom": 800.513698630137
+        "left": 0,
+        "top": 0,
+        "right": 1086,
+        "bottom": 1448
       },
-      "derivationSha256": "5fdf43aa74a3ab9207c51965ee4bc847f83cd432980208525150310183bd3274",
+      "derivationSha256": "6abc0061ea94278ea037c940a27cad437088855cccdeff693d577c0a5a20f793",
       "width": 768,
       "height": 1024,
       "variants": [
@@ -593,26 +593,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 341,
           "url": "../../../trainer/assets/avatar-shop/item-cap-explorer-girl-front-256.webp",
-          "bytes": 2730,
-          "sha256": "63b8b71c61d946d9b9f1da905bf242aec0520e1053508cfe6ff3e0b02d44adc3"
+          "bytes": 2682,
+          "sha256": "fcb0b228d94c75e95c6a8c7e0f1d0f8c0c1048fab08dd5b3929bb3380c579783"
         },
         {
           "width": 512,
           "height": 683,
           "url": "../../../trainer/assets/avatar-shop/item-cap-explorer-girl-front-512.webp",
-          "bytes": 5714,
-          "sha256": "421dbd7c15cea7165e280afe5a0701a72052e0584e880768d9932a9586946eae"
+          "bytes": 5570,
+          "sha256": "045f7f9d84b30f85a09e9f1838c6074fceced1059be9dd8949c807112c2a9591"
         },
         {
           "width": 768,
           "height": 1024,
           "url": "../../../trainer/assets/avatar-shop/item-cap-explorer-girl-front-768.webp",
-          "bytes": 10048,
-          "sha256": "fed2b3723fe7129c1b06ec721514c1c36809b4b4b470a241542ee4f07c675477"
+          "bytes": 9470,
+          "sha256": "5f941fb7329f247e643e932c09c014a8feac5a3af4ec774e90c5e217cd975d74"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-cap-explorer-girl-front-256.webp",
-      "outputBytes": 18492
+      "outputBytes": 17722
     },
     "item-backpack-explorer-girl-rear": {
       "key": "item-backpack-explorer-girl-rear",
@@ -623,24 +623,24 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1448,
       "canvasWidth": 1086,
       "canvasHeight": 1448,
-      "sourceBytes": 430624,
-      "sourceSha256": "6b9bbe7512cfbb586b5cf88b7fab4fe8d4bfbed83df0bc4fb622aec7befc4843",
+      "sourceBytes": 450373,
+      "sourceSha256": "03ae83d36e9f7b7e0b5553c675601baf68d01571ec78bb2b74be7e8e445e4bd5",
       "metadataName": "explorer-girl-backpack-rear.json",
-      "metadataBytes": 1091,
-      "metadataSha256": "fd648d4e73af760d7c57e08dac6776501c14ef1f516bf7fb2609d64f8262d9bd",
+      "metadataBytes": 1216,
+      "metadataSha256": "f20ee8425531fbf1a2abc9a5ca6ecdaed80e26683bea83185366606b087929eb",
       "registration": {
-        "scale": 1.0714285714285714,
-        "x": -34.28571428571428,
-        "y": -78.57142857142856
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": -34.28571428571428,
-        "top": -78.57142857142856,
-        "right": 1129.2857142857142,
-        "bottom": 1472.8571428571427
+        "left": 0,
+        "top": 0,
+        "right": 1086,
+        "bottom": 1448
       },
-      "derivationSha256": "d7fa5b9fca3381f3f1e3fcf3e6bc6bc353febfabcde0139d4153b800ef50e922",
+      "derivationSha256": "88f9687d5bc899df5c9dd1e83d80aea1e0dc6b86f9e8d1f572abfee737858a4e",
       "width": 768,
       "height": 1024,
       "variants": [
@@ -648,26 +648,81 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 341,
           "url": "../../../trainer/assets/avatar-shop/item-backpack-explorer-girl-rear-256.webp",
-          "bytes": 8596,
-          "sha256": "9414faaf5ea478a7690cef6b2ef381683deda649ab210c71e7b76b307a415e7c"
+          "bytes": 8072,
+          "sha256": "3e9762c0346307713b4fb045ca3316e05e63374c4e187b305a631ca3ed9b82ae"
         },
         {
           "width": 512,
           "height": 683,
           "url": "../../../trainer/assets/avatar-shop/item-backpack-explorer-girl-rear-512.webp",
-          "bytes": 21030,
-          "sha256": "69cf41331798e1d659b176fa2bd36ac7b6d9af33e4c57e16ee42984b8049a169"
+          "bytes": 20100,
+          "sha256": "feb19012a389b419cad5c21e69882bf1ab3da7190fce17392e0ccfa170a369d1"
         },
         {
           "width": 768,
           "height": 1024,
           "url": "../../../trainer/assets/avatar-shop/item-backpack-explorer-girl-rear-768.webp",
-          "bytes": 37856,
-          "sha256": "74131d5e45e491318e04281e154a6a0464e5d8d2a94e2b28012ccc1b5e859614"
+          "bytes": 36312,
+          "sha256": "1eb9d8fddd8e35909cd239308989032399cd06972cf5a7452c70bf0e096a8f0d"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-backpack-explorer-girl-rear-256.webp",
-      "outputBytes": 67482
+      "outputBytes": 64484
+    },
+    "item-backpack-explorer-girl-front": {
+      "key": "item-backpack-explorer-girl-front",
+      "figureId": "explorer-girl",
+      "plane": "front",
+      "sourceName": "explorer-girl-backpack-front.png",
+      "sourceWidth": 1086,
+      "sourceHeight": 1448,
+      "canvasWidth": 1086,
+      "canvasHeight": 1448,
+      "sourceBytes": 39790,
+      "sourceSha256": "7d00620554f6cbbfcfee43c35e7f36fb109cfdcc56d34e8d83eea23346cbc86a",
+      "metadataName": "explorer-girl-backpack-front.json",
+      "metadataBytes": 1218,
+      "metadataSha256": "98f77549374ed998c8e1b2409f630e684bcedef9a5785d2165a88dd327401567",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1086,
+        "bottom": 1448
+      },
+      "derivationSha256": "9c708049fa68b061005bc613752d99535c97c684b1ff8aec84d735481f37861b",
+      "width": 768,
+      "height": 1024,
+      "variants": [
+        {
+          "width": 256,
+          "height": 341,
+          "url": "../../../trainer/assets/avatar-shop/item-backpack-explorer-girl-front-256.webp",
+          "bytes": 2150,
+          "sha256": "4edfa775dd7a11efa94db70dc5330782c03f07479637a3c79e2c5129ac3944be"
+        },
+        {
+          "width": 512,
+          "height": 683,
+          "url": "../../../trainer/assets/avatar-shop/item-backpack-explorer-girl-front-512.webp",
+          "bytes": 4642,
+          "sha256": "cf125d73c676107d8bad3ab9e8e1304d2d329be610c87006340cbd57e7efc5a1"
+        },
+        {
+          "width": 768,
+          "height": 1024,
+          "url": "../../../trainer/assets/avatar-shop/item-backpack-explorer-girl-front-768.webp",
+          "bytes": 8066,
+          "sha256": "86abd45967e6b33b7b33f84dbb3db0ff30786a94ef6d47376c1a9c8ddf5baf3b"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-backpack-explorer-girl-front-256.webp",
+      "outputBytes": 14858
     },
     "item-sunhat-explorer-girl-front": {
       "key": "item-sunhat-explorer-girl-front",
@@ -678,24 +733,24 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1448,
       "canvasWidth": 1086,
       "canvasHeight": 1448,
-      "sourceBytes": 286395,
-      "sourceSha256": "0ace139465638c1f4d3811083870200bf5bd6100a9c3c24aa3a26ae5f9066732",
+      "sourceBytes": 140959,
+      "sourceSha256": "a10f18b6343d5256f7d31402660045c4a8db7bb285b091af2fdc53f1a1d749ec",
       "metadataName": "explorer-girl-sunhat-front.json",
-      "metadataBytes": 1087,
-      "metadataSha256": "430408996d3e262a794f0db92d1863c4065053af7f41d82369181b99dd1355a6",
+      "metadataBytes": 1212,
+      "metadataSha256": "b99cdd7c4cb309c90023678da592dc30185017bfa40b973e16d0740be782cc68",
       "registration": {
-        "scale": 0.706408345752608,
-        "x": 156.9478390461997,
-        "y": -40.375558867362145
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 156.9478390461997,
-        "top": -40.375558867362145,
-        "right": 924.107302533532,
-        "bottom": 982.5037257824142
+        "left": 0,
+        "top": 0,
+        "right": 1086,
+        "bottom": 1448
       },
-      "derivationSha256": "534224448bc68c902b69436d5e4d333f1a453ecc12edd90eaaaa91b5479ecb05",
+      "derivationSha256": "bbf912040d8772672db0899a2709edb9e436f3665a1b677c97fd53d0deca9a15",
       "width": 768,
       "height": 1024,
       "variants": [
@@ -703,26 +758,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 341,
           "url": "../../../trainer/assets/avatar-shop/item-sunhat-explorer-girl-front-256.webp",
-          "bytes": 3796,
-          "sha256": "69c3ca88058ce97f7558904c7e7afb70cda9a05e2e5161e746633b88c82d2948"
+          "bytes": 3744,
+          "sha256": "1f37cf84ee637e77f2d535de33f4d609aa121a657c10ba52c8ce4d42071c842c"
         },
         {
           "width": 512,
           "height": 683,
           "url": "../../../trainer/assets/avatar-shop/item-sunhat-explorer-girl-front-512.webp",
-          "bytes": 8836,
-          "sha256": "094be8e4a21bc567ac95997e02c4ab117a88386210c27ac140feb4fc261d540e"
+          "bytes": 8576,
+          "sha256": "ae83c4df765b2b6a044cfe12aa38ce84da55f4cf4a6306db2954f418cf18cc63"
         },
         {
           "width": 768,
           "height": 1024,
           "url": "../../../trainer/assets/avatar-shop/item-sunhat-explorer-girl-front-768.webp",
-          "bytes": 15954,
-          "sha256": "8ce6e0ee24e146e9cdfc08b440e2e59beffa9b562b61bbd46723369b0fd57c86"
+          "bytes": 14936,
+          "sha256": "f774be21fe6a990a6e150a57c1ab8f9af1ed6816f1881cf700d93b6612dc8058"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-sunhat-explorer-girl-front-256.webp",
-      "outputBytes": 28586
+      "outputBytes": 27256
     },
     "item-knight-clothing-explorer-girl-front": {
       "key": "item-knight-clothing-explorer-girl-front",
@@ -733,24 +788,24 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1448,
       "canvasWidth": 1086,
       "canvasHeight": 1448,
-      "sourceBytes": 900809,
-      "sourceSha256": "71c30a4642c1aeb2a4e4c743b486cdafdac5cc46a3c85cd8a4e9129b3286f7f6",
+      "sourceBytes": 306215,
+      "sourceSha256": "7b58e65ce8d8d63cc8e3b2415662bdaa53f56240807b2b1e35ece3adaaf9e6c8",
       "metadataName": "explorer-girl-knight-clothing-front.json",
-      "metadataBytes": 1318,
-      "metadataSha256": "9bb5395c784c1c182b8d8db17413bfc7ccbf1b265002359242de1ded0719d771",
+      "metadataBytes": 1248,
+      "metadataSha256": "9ae7325cba94e2f27091c9e823381ee761f3c5393622c76879f40eb6bca90c03",
       "registration": {
-        "scale": 0.55,
-        "x": 249,
-        "y": 125
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 249,
-        "top": 125,
-        "right": 846.3000000000001,
-        "bottom": 921.4000000000001
+        "left": 0,
+        "top": 0,
+        "right": 1086,
+        "bottom": 1448
       },
-      "derivationSha256": "eaaa283fc6a1822e00d947e58b59601ff29d155b2ab70596ec828534a3e81232",
+      "derivationSha256": "033a4c0546b76a7100c65d739180fd036a9530da1a0657ef286b05425adc358e",
       "width": 768,
       "height": 1024,
       "variants": [
@@ -758,26 +813,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 341,
           "url": "../../../trainer/assets/avatar-shop/item-knight-clothing-explorer-girl-front-256.webp",
-          "bytes": 6272,
-          "sha256": "ed77cb7a27919f0d0e9d1b07c77db89a915583f42f0ef85211efa1ac08580aee"
+          "bytes": 6240,
+          "sha256": "7e4f44b6033857a2b001e6215c1491b59f1cd1b48a67391e8961d8a42cee0df5"
         },
         {
           "width": 512,
           "height": 683,
           "url": "../../../trainer/assets/avatar-shop/item-knight-clothing-explorer-girl-front-512.webp",
-          "bytes": 16268,
-          "sha256": "e2097f02617070e45ac4d96222a54477b2159ecb5c80edffb4228e58248c19bf"
+          "bytes": 16000,
+          "sha256": "6e31152c260b7c7c2647fd5d7d4c98711298f03db83f2a1853d7a049a52e6b1b"
         },
         {
           "width": 768,
           "height": 1024,
           "url": "../../../trainer/assets/avatar-shop/item-knight-clothing-explorer-girl-front-768.webp",
-          "bytes": 31728,
-          "sha256": "c3fb9913e28f96a4f58f86d295ccac60fb12b9ea253d0f789bd078a93f79a4f9"
+          "bytes": 30736,
+          "sha256": "6d1072ac56b43c9ac2a470d0b0f52c63dd383636beefae3c6dd26ff7c6c5de22"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-knight-clothing-explorer-girl-front-256.webp",
-      "outputBytes": 54268
+      "outputBytes": 52976
     },
     "item-binoculars-explorer-girl-front": {
       "key": "item-binoculars-explorer-girl-front",
@@ -785,27 +840,27 @@ export const AVATAR_ART = deepFreeze({
       "plane": "front",
       "sourceName": "explorer-girl-binoculars-front.png",
       "sourceWidth": 1086,
-      "sourceHeight": 1449,
+      "sourceHeight": 1448,
       "canvasWidth": 1086,
       "canvasHeight": 1448,
-      "sourceBytes": 207626,
-      "sourceSha256": "5da75c3f6ef178e38b64f02c8c8ee520b11cc3e76e85ddc57fcb31001bcab4fc",
+      "sourceBytes": 38840,
+      "sourceSha256": "f0406bbb54700f4577598151ae93f2ebff9e76388b64196f535dc1106c6fb238",
       "metadataName": "explorer-girl-binoculars-front.json",
-      "metadataBytes": 1092,
-      "metadataSha256": "587411512c47740e731bab1aad593b4570d5b5b2d664b5a9dd81c9448926d6d3",
+      "metadataBytes": 1228,
+      "metadataSha256": "d34da9f91e80d402b7efe1028b5bbf5b6851d810f345c7321ae4c38bb6a58784",
       "registration": {
-        "scale": 0.6027397260273972,
-        "x": 599.0958904109589,
-        "y": 295.5205479452055
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 599.0958904109589,
-        "top": 295.5205479452055,
-        "right": 1253.671232876712,
-        "bottom": 1168.890410958904
+        "left": 0,
+        "top": 0,
+        "right": 1086,
+        "bottom": 1448
       },
-      "derivationSha256": "2602718796cd82796d1e43bdc204e3824555ca7935342bb769b6f4930fc3bc21",
+      "derivationSha256": "55155d96c30696aac3b8f4d2377f218e31b80664bce8a4f2ec9448f81116d3f4",
       "width": 768,
       "height": 1024,
       "variants": [
@@ -813,54 +868,54 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 341,
           "url": "../../../trainer/assets/avatar-shop/item-binoculars-explorer-girl-front-256.webp",
-          "bytes": 2688,
-          "sha256": "75f67c2c662779d165e0fba8e8cf791b96c5124f8517c2b302484c0e11981f04"
+          "bytes": 1814,
+          "sha256": "f96029af868d9b91e5897d5316bb5d1f8544260da9e0c6be8ba824ae7e14d54c"
         },
         {
           "width": 512,
           "height": 683,
           "url": "../../../trainer/assets/avatar-shop/item-binoculars-explorer-girl-front-512.webp",
-          "bytes": 6530,
-          "sha256": "0078f227a4262c75ec456a5a3f739df5a2ed4587ebcc8d557586630c019b037f"
+          "bytes": 3872,
+          "sha256": "60ea1635a7728269819b4196d88d5d132029155e5254d39f60ec0d391d8c9182"
         },
         {
           "width": 768,
           "height": 1024,
           "url": "../../../trainer/assets/avatar-shop/item-binoculars-explorer-girl-front-768.webp",
-          "bytes": 11664,
-          "sha256": "b9e565ba08bde880fe4797b5d953c7a40327c097d6a007f4645dae14c6406d57"
+          "bytes": 7018,
+          "sha256": "a6b320ff54a311d81776b484d23a5f1fea36765f6f70074c4d6f0c8d530386c9"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-binoculars-explorer-girl-front-256.webp",
-      "outputBytes": 20882
+      "outputBytes": 12704
     },
     "item-mountainhat-explorer-girl-front": {
       "key": "item-mountainhat-explorer-girl-front",
       "figureId": "explorer-girl",
       "plane": "front",
       "sourceName": "explorer-girl-mountainhat-front.png",
-      "sourceWidth": 1087,
-      "sourceHeight": 1447,
+      "sourceWidth": 1086,
+      "sourceHeight": 1448,
       "canvasWidth": 1086,
       "canvasHeight": 1448,
-      "sourceBytes": 239793,
-      "sourceSha256": "82b3df329900ca5fb9d15f32766641cbcb7c3fc6be851a4da820c462b5424f1b",
+      "sourceBytes": 58751,
+      "sourceSha256": "58920e7fd3eb2a98cd924761ca52c6b7a529824bbc1411d66e1ff4dc8f3802eb",
       "metadataName": "explorer-girl-mountainhat-front.json",
-      "metadataBytes": 1091,
-      "metadataSha256": "2745cf07a6ecdc046af24ae8b634b1dc2631f38dd9dc836541cb1f5eaba1a6b8",
+      "metadataBytes": 1232,
+      "metadataSha256": "48a7b9af47b12d01409bb066a49450a051456f275f903921cf183556894fa358",
       "registration": {
-        "scale": 0.46296296296296297,
-        "x": 291.1851851851852,
-        "y": -10.185185185185185
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 291.1851851851852,
-        "top": -10.185185185185185,
-        "right": 794.425925925926,
-        "bottom": 659.7222222222222
+        "left": 0,
+        "top": 0,
+        "right": 1086,
+        "bottom": 1448
       },
-      "derivationSha256": "e147aeb60bce63ed1100d46cbe57768dca10d6249cbb34f4f9a92089b9ffc445",
+      "derivationSha256": "3ad72b545618fb3315985c2069a9b93a5480f986b1f1fc7a5ae0b828509b9bb4",
       "width": 768,
       "height": 1024,
       "variants": [
@@ -868,26 +923,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 341,
           "url": "../../../trainer/assets/avatar-shop/item-mountainhat-explorer-girl-front-256.webp",
-          "bytes": 2166,
-          "sha256": "3fe781b62130ddcfd33f362dc847c97ee730ca251ea0e898a6e84de4b8fe2bdf"
+          "bytes": 2146,
+          "sha256": "4a133a70e175d457a8597731eff5915f1d50754925c9fbfd5de2735b51e6be21"
         },
         {
           "width": 512,
           "height": 683,
           "url": "../../../trainer/assets/avatar-shop/item-mountainhat-explorer-girl-front-512.webp",
-          "bytes": 4690,
-          "sha256": "c19f7761d24a79363dc8e32fcf315f14be5e5cd2c0989264a2e9c167d81d9266"
+          "bytes": 4602,
+          "sha256": "0a2d3664e9fc5393fe1090b32b8baf18ff6e96c0b66f5312c5dda94b0c23d145"
         },
         {
           "width": 768,
           "height": 1024,
           "url": "../../../trainer/assets/avatar-shop/item-mountainhat-explorer-girl-front-768.webp",
-          "bytes": 8130,
-          "sha256": "9803af7be1ebdebfad5494ff9fed0708203ac213e602e6484e5225c695f1d21a"
+          "bytes": 8020,
+          "sha256": "9f399dcf0a479f6d42a0cde8a04a0b18cf190eab4411138a7aadfcb09065c6b5"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-mountainhat-explorer-girl-front-256.webp",
-      "outputBytes": 14986
+      "outputBytes": 14768
     },
     "item-compass-explorer-girl-front": {
       "key": "item-compass-explorer-girl-front",
@@ -898,24 +953,24 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1448,
       "canvasWidth": 1086,
       "canvasHeight": 1448,
-      "sourceBytes": 127997,
-      "sourceSha256": "204be858011536743528a908cf0827bcc05c8a89eeba94cf602075d6a0eef0ba",
+      "sourceBytes": 33022,
+      "sourceSha256": "c155643b40aa743074ea430c04469afc1f2f080eb74522a1274781f2265af023",
       "metadataName": "explorer-girl-compass-front.json",
-      "metadataBytes": 1090,
-      "metadataSha256": "af6028105ccec4a67f2489f0967ad1963df8f4d3af7c79f8ea46dcded1742632",
+      "metadataBytes": 1216,
+      "metadataSha256": "9e471ffeb9caeab9f508ae1c1ca641fe59483b104a366a0daffadb400248259b",
       "registration": {
-        "scale": 0.737410071942446,
-        "x": 483.48201438848923,
-        "y": 194.46043165467626
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 483.48201438848923,
-        "top": 194.46043165467626,
-        "right": 1284.3093525179856,
-        "bottom": 1262.230215827338
+        "left": 0,
+        "top": 0,
+        "right": 1086,
+        "bottom": 1448
       },
-      "derivationSha256": "a85f4f24767129f9e96f6a8c84257d5e4d1a96b3a3a46b96448cfa8f04e717da",
+      "derivationSha256": "b4b84074322d2613a8c1a44cb26aae2b28c145965b5fcb769b177aafc52d45a6",
       "width": 768,
       "height": 1024,
       "variants": [
@@ -923,26 +978,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 341,
           "url": "../../../trainer/assets/avatar-shop/item-compass-explorer-girl-front-256.webp",
-          "bytes": 2538,
-          "sha256": "7ebbd861ed62b4ccd688fc928ea22723654c3cb37af7d63ab06077c0e23a57b0"
+          "bytes": 1738,
+          "sha256": "36b6bcd8f7901ade468b777d35afa67a7b65af2710c2b76af8ca647b1d92e6b1"
         },
         {
           "width": 512,
           "height": 683,
           "url": "../../../trainer/assets/avatar-shop/item-compass-explorer-girl-front-512.webp",
-          "bytes": 5624,
-          "sha256": "8e96532e3ad0203d8f823e6d0052edc425ca29be887d34ebe39f1ce25faf5827"
+          "bytes": 3666,
+          "sha256": "dcc4ea7cc7e1f861e5f5cd26a79f05351ce68add761b927714bafcffac777d46"
         },
         {
           "width": 768,
           "height": 1024,
           "url": "../../../trainer/assets/avatar-shop/item-compass-explorer-girl-front-768.webp",
-          "bytes": 10148,
-          "sha256": "b5cc4237919a222d441871c6e7013461132b2e055bd4e9416b3c6e348b628b4c"
+          "bytes": 6352,
+          "sha256": "319e592b28bb05df679d7f7862f2785442710641c9fa31eaae5491a9ffb9879d"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-compass-explorer-girl-front-256.webp",
-      "outputBytes": 18310
+      "outputBytes": 11756
     },
     "item-runes-head-explorer-girl-front": {
       "key": "item-runes-head-explorer-girl-front",
@@ -953,24 +1008,24 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1448,
       "canvasWidth": 1086,
       "canvasHeight": 1448,
-      "sourceBytes": 103075,
-      "sourceSha256": "6e573d93a93ef81f69e0367337d8e8a0f2dfa73d0992404fba3344c50e196673",
+      "sourceBytes": 17068,
+      "sourceSha256": "a8361d69c363db589e96178c866b4678293a6bdea69e57241c76566cc29cd8e7",
       "metadataName": "explorer-girl-runes-head-front.json",
-      "metadataBytes": 1246,
-      "metadataSha256": "b2b44f1be821949066461e0a65d2ae51edb2da76bab4c5de76716cc2ca8e00bc",
+      "metadataBytes": 1228,
+      "metadataSha256": "0b2a16afbb150b2caf3ed54b290e446e9f5f76885f4e792e368f082d98e6276c",
       "registration": {
-        "scale": 0.33,
-        "x": 375,
-        "y": 255
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 375,
-        "top": 255,
-        "right": 733.38,
-        "bottom": 732.84
+        "left": 0,
+        "top": 0,
+        "right": 1086,
+        "bottom": 1448
       },
-      "derivationSha256": "0e6fe21e103b453d23180d72faa055a069e858678ca835d5367592afa21721c7",
+      "derivationSha256": "58fa1c19c8f6570b33ed9d04305d8fd7b9ee087b9e531800ad542521fe72a3be",
       "width": 768,
       "height": 1024,
       "variants": [
@@ -978,54 +1033,54 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 341,
           "url": "../../../trainer/assets/avatar-shop/item-runes-head-explorer-girl-front-256.webp",
-          "bytes": 1370,
-          "sha256": "46b68dc08e4d9bc360292c8199b25fb51c91626d7baa43cce638ccc78cb65429"
+          "bytes": 1328,
+          "sha256": "df4e5c97be325d4b6d2995054b868887f6788bd28cc0672cdedf121fe1c8323b"
         },
         {
           "width": 512,
           "height": 683,
           "url": "../../../trainer/assets/avatar-shop/item-runes-head-explorer-girl-front-512.webp",
-          "bytes": 2774,
-          "sha256": "1a4e4349dd3f245235c4979d39e4e8a55b56ba3099265111658a1846285c64cc"
+          "bytes": 2766,
+          "sha256": "33451a6cf80f4641bc2d3b0ed65df0e07688cc902111b502df4986fb63e87c0a"
         },
         {
           "width": 768,
           "height": 1024,
           "url": "../../../trainer/assets/avatar-shop/item-runes-head-explorer-girl-front-768.webp",
-          "bytes": 4688,
-          "sha256": "1bfb22a452bb97fc81dd09d9b5531ae52aca0c870e818c43f504f49f60b5afb6"
+          "bytes": 4472,
+          "sha256": "e9d437080902e3336863da8a5e588ff1ff3946c55aff1782b4c0a09923416efb"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-runes-head-explorer-girl-front-256.webp",
-      "outputBytes": 8832
+      "outputBytes": 8566
     },
     "item-runes-back-explorer-girl-rear": {
       "key": "item-runes-back-explorer-girl-rear",
       "figureId": "explorer-girl",
       "plane": "rear",
       "sourceName": "explorer-girl-runes-back-rear.png",
-      "sourceWidth": 1087,
-      "sourceHeight": 1447,
+      "sourceWidth": 1086,
+      "sourceHeight": 1448,
       "canvasWidth": 1086,
       "canvasHeight": 1448,
-      "sourceBytes": 1131321,
-      "sourceSha256": "a2340ff214a43ae16081ade2df497d565aadef534d3c6cb9001e8125cf89190b",
+      "sourceBytes": 607760,
+      "sourceSha256": "0768d9b9951a2813d087682a39d27be9988a82f53d977442dc162a8d81855b60",
       "metadataName": "explorer-girl-runes-back-rear.json",
-      "metadataBytes": 1336,
-      "metadataSha256": "9b7ff2c90f83e76b0d330e59f0491afb8706e8545669848c304783cae4728f10",
+      "metadataBytes": 1224,
+      "metadataSha256": "029d281b1496fc72ef8543ad2b7579a078fa103dae067e38071e05b4020bb649",
       "registration": {
-        "scale": 0.9,
-        "x": 50,
-        "y": 120
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 50,
-        "top": 120,
-        "right": 1028.3000000000002,
-        "bottom": 1422.3
+        "left": 0,
+        "top": 0,
+        "right": 1086,
+        "bottom": 1448
       },
-      "derivationSha256": "085f2f175ae0cf08f6e833b25491e41d7666cd496145a9bece71307bd4f0da05",
+      "derivationSha256": "43bf3ef89531da5889363f513bdda83f50b0a31a65caf1cd18de77bf092cee8e",
       "width": 768,
       "height": 1024,
       "variants": [
@@ -1033,26 +1088,81 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 341,
           "url": "../../../trainer/assets/avatar-shop/item-runes-back-explorer-girl-rear-256.webp",
-          "bytes": 14098,
-          "sha256": "7abc409c7e35533a2ae390abe357f62030f5362c4210be818098daca39e95f71"
+          "bytes": 10246,
+          "sha256": "31cdc9637976c68096e9fa8d1836ac2ada2c06412304db044fb4d7fa798d907f"
         },
         {
           "width": 512,
           "height": 683,
           "url": "../../../trainer/assets/avatar-shop/item-runes-back-explorer-girl-rear-512.webp",
-          "bytes": 36602,
-          "sha256": "f8237531aa9193250038506d01661e8e66da82ce232882ea731f5f2b3c4f196a"
+          "bytes": 26422,
+          "sha256": "2e07c9665ffe4834f777f9a93cc612be0a35b461d012dee73844a84424a015a5"
         },
         {
           "width": 768,
           "height": 1024,
           "url": "../../../trainer/assets/avatar-shop/item-runes-back-explorer-girl-rear-768.webp",
-          "bytes": 73570,
-          "sha256": "9b87e3600f36a98f264a89711c02a7b12c8664e87feb5a1ce00564b411386ffc"
+          "bytes": 53762,
+          "sha256": "caeb2e1454d093562d95d4f841ca42b8d6e4607c79719cc02d2c35cb0029f2d1"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-runes-back-explorer-girl-rear-256.webp",
-      "outputBytes": 124270
+      "outputBytes": 90430
+    },
+    "item-runes-back-explorer-girl-front": {
+      "key": "item-runes-back-explorer-girl-front",
+      "figureId": "explorer-girl",
+      "plane": "front",
+      "sourceName": "explorer-girl-runes-back-front.png",
+      "sourceWidth": 1086,
+      "sourceHeight": 1448,
+      "canvasWidth": 1086,
+      "canvasHeight": 1448,
+      "sourceBytes": 595386,
+      "sourceSha256": "93b3487166f49c421eaa3789c2d857a3eb8ab8a345a53f7a19039638816e04ce",
+      "metadataName": "explorer-girl-runes-back-front.json",
+      "metadataBytes": 1226,
+      "metadataSha256": "2b3fb50dd7d67df9e5e9aaa25d5fd3cde363d82d62d2c03d8cb4dbce00456da3",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1086,
+        "bottom": 1448
+      },
+      "derivationSha256": "1e816d955bd435470f3672af9406f144e4a78f03be64a6d59542df28f549c56f",
+      "width": 768,
+      "height": 1024,
+      "variants": [
+        {
+          "width": 256,
+          "height": 341,
+          "url": "../../../trainer/assets/avatar-shop/item-runes-back-explorer-girl-front-256.webp",
+          "bytes": 2106,
+          "sha256": "eb6f384314cd618d9cbb9eaf16d602e6340ebd87ec5ff41f85ffdc6dda2a4680"
+        },
+        {
+          "width": 512,
+          "height": 683,
+          "url": "../../../trainer/assets/avatar-shop/item-runes-back-explorer-girl-front-512.webp",
+          "bytes": 4510,
+          "sha256": "13dba363aa16ea16636f8191478005fbbef72c4ad78d8df3daabed7d8caf9785"
+        },
+        {
+          "width": 768,
+          "height": 1024,
+          "url": "../../../trainer/assets/avatar-shop/item-runes-back-explorer-girl-front-768.webp",
+          "bytes": 8092,
+          "sha256": "9f0e0f967091647ed437e32083edadf3dfffd3f82101d81ffec2bd07e7658025"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-runes-back-explorer-girl-front-256.webp",
+      "outputBytes": 14708
     },
     "item-runes-hand-explorer-girl-front": {
       "key": "item-runes-hand-explorer-girl-front",
@@ -1063,24 +1173,24 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1448,
       "canvasWidth": 1086,
       "canvasHeight": 1448,
-      "sourceBytes": 305277,
-      "sourceSha256": "b38469b6e4a2a9963690503d6399330b83422fdede011d6a98e92f0fc3473388",
+      "sourceBytes": 69067,
+      "sourceSha256": "eda0fbb8322f20507f0227d6e419792b6a93ccd22a7398f671258bf336e76a54",
       "metadataName": "explorer-girl-runes-hand-front.json",
-      "metadataBytes": 1343,
-      "metadataSha256": "b8a6b26fa5e3740e61277f565d1fc736534ee0e5e1bdb5c7ee8b14917eadc2ce",
+      "metadataBytes": 1228,
+      "metadataSha256": "50bb188410329fb65fc548b2abeb8e3d0abb09c76fd9c4b8365cd253ecc8aced",
       "registration": {
-        "scale": 0.45,
-        "x": 430,
-        "y": 575
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 430,
-        "top": 575,
-        "right": 918.7,
-        "bottom": 1226.6
+        "left": 0,
+        "top": 0,
+        "right": 1086,
+        "bottom": 1448
       },
-      "derivationSha256": "1499da11a9f61857320deb728846bad0602d5f560cccd140dff9f79a7200c5be",
+      "derivationSha256": "d3e2e8b45141773d2bbc6d91312bd7aad738625f090e4008e89fa0ba67ea2fd1",
       "width": 768,
       "height": 1024,
       "variants": [
@@ -1088,26 +1198,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 341,
           "url": "../../../trainer/assets/avatar-shop/item-runes-hand-explorer-girl-front-256.webp",
-          "bytes": 2844,
-          "sha256": "17c18d9343d818acacbcc9802ce9170b55013f7fdf5c43574233919c51097e1c"
+          "bytes": 2830,
+          "sha256": "bdd2ee4f5c47b086224878f1c5c5ff57cb90704ebfed600b6e9cbf90bc3528ad"
         },
         {
           "width": 512,
           "height": 683,
           "url": "../../../trainer/assets/avatar-shop/item-runes-hand-explorer-girl-front-512.webp",
-          "bytes": 6434,
-          "sha256": "a5e64e04b587177893da68e674651cf12b42d377dc093a703baa627dae689890"
+          "bytes": 6234,
+          "sha256": "663fe257a8ec21cf9526cd1f496a655b1c51d401c45651ae13bb3133abb33ff2"
         },
         {
           "width": 768,
           "height": 1024,
           "url": "../../../trainer/assets/avatar-shop/item-runes-hand-explorer-girl-front-768.webp",
-          "bytes": 11690,
-          "sha256": "376f21ce40f1c8daf4e6c0de71a73977b3da006b3a03b02ae32c7c067e85e2cc"
+          "bytes": 11450,
+          "sha256": "64d5f713fe9c084309462ffd5530fd78b42c894e94c25eed65a9bcbdc74e7490"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-runes-hand-explorer-girl-front-256.webp",
-      "outputBytes": 20968
+      "outputBytes": 20514
     },
     "figure-explorer-boy-skin-0": {
       "key": "figure-explorer-boy-skin-0",
@@ -1668,24 +1778,24 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1448,
       "canvasWidth": 1086,
       "canvasHeight": 1448,
-      "sourceBytes": 212050,
-      "sourceSha256": "3630bb444115296cc61ad914ec118754ca35ccc226b8e8487d6ff37f59448462",
+      "sourceBytes": 76389,
+      "sourceSha256": "dcf83b39347c2d9e9343cc6ea90abfa6528b420866eb97a5fd6cad2ea55e4d74",
       "metadataName": "explorer-boy-cap-front.json",
-      "metadataBytes": 1068,
-      "metadataSha256": "92ee2d68408faec554d980bfe44972b8c0a12acab74ae4d194720f4df27c84fd",
+      "metadataBytes": 1195,
+      "metadataSha256": "149a5ae8503ba52aa72f070335996f1ab97c3b907387db25696a1b57edfba89b",
       "registration": {
-        "scale": 0.5821917808219178,
-        "x": 238.93835616438355,
-        "y": -42.5
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 238.93835616438355,
-        "top": -42.5,
-        "right": 871.1986301369863,
-        "bottom": 800.513698630137
+        "left": 0,
+        "top": 0,
+        "right": 1086,
+        "bottom": 1448
       },
-      "derivationSha256": "5fdf43aa74a3ab9207c51965ee4bc847f83cd432980208525150310183bd3274",
+      "derivationSha256": "6abc0061ea94278ea037c940a27cad437088855cccdeff693d577c0a5a20f793",
       "width": 768,
       "height": 1024,
       "variants": [
@@ -1693,26 +1803,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 341,
           "url": "../../../trainer/assets/avatar-shop/item-cap-explorer-boy-front-256.webp",
-          "bytes": 2730,
-          "sha256": "63b8b71c61d946d9b9f1da905bf242aec0520e1053508cfe6ff3e0b02d44adc3"
+          "bytes": 2682,
+          "sha256": "fcb0b228d94c75e95c6a8c7e0f1d0f8c0c1048fab08dd5b3929bb3380c579783"
         },
         {
           "width": 512,
           "height": 683,
           "url": "../../../trainer/assets/avatar-shop/item-cap-explorer-boy-front-512.webp",
-          "bytes": 5714,
-          "sha256": "421dbd7c15cea7165e280afe5a0701a72052e0584e880768d9932a9586946eae"
+          "bytes": 5570,
+          "sha256": "045f7f9d84b30f85a09e9f1838c6074fceced1059be9dd8949c807112c2a9591"
         },
         {
           "width": 768,
           "height": 1024,
           "url": "../../../trainer/assets/avatar-shop/item-cap-explorer-boy-front-768.webp",
-          "bytes": 10048,
-          "sha256": "fed2b3723fe7129c1b06ec721514c1c36809b4b4b470a241542ee4f07c675477"
+          "bytes": 9470,
+          "sha256": "5f941fb7329f247e643e932c09c014a8feac5a3af4ec774e90c5e217cd975d74"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-cap-explorer-boy-front-256.webp",
-      "outputBytes": 18492
+      "outputBytes": 17722
     },
     "item-backpack-explorer-boy-rear": {
       "key": "item-backpack-explorer-boy-rear",
@@ -1723,24 +1833,24 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1448,
       "canvasWidth": 1086,
       "canvasHeight": 1448,
-      "sourceBytes": 430624,
-      "sourceSha256": "6b9bbe7512cfbb586b5cf88b7fab4fe8d4bfbed83df0bc4fb622aec7befc4843",
+      "sourceBytes": 450373,
+      "sourceSha256": "03ae83d36e9f7b7e0b5553c675601baf68d01571ec78bb2b74be7e8e445e4bd5",
       "metadataName": "explorer-boy-backpack-rear.json",
-      "metadataBytes": 1090,
-      "metadataSha256": "c38c3e0cf5b5dc724f9e027bc7552009298f7ef225fb937b74e7eafc71edf6b0",
+      "metadataBytes": 1211,
+      "metadataSha256": "768465e932435718f2fad7f44a688b5f4986f4d64ebe688f347f6bbfcfe01ee3",
       "registration": {
-        "scale": 1.0714285714285714,
-        "x": -34.28571428571428,
-        "y": -78.57142857142856
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": -34.28571428571428,
-        "top": -78.57142857142856,
-        "right": 1129.2857142857142,
-        "bottom": 1472.8571428571427
+        "left": 0,
+        "top": 0,
+        "right": 1086,
+        "bottom": 1448
       },
-      "derivationSha256": "d7fa5b9fca3381f3f1e3fcf3e6bc6bc353febfabcde0139d4153b800ef50e922",
+      "derivationSha256": "88f9687d5bc899df5c9dd1e83d80aea1e0dc6b86f9e8d1f572abfee737858a4e",
       "width": 768,
       "height": 1024,
       "variants": [
@@ -1748,26 +1858,81 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 341,
           "url": "../../../trainer/assets/avatar-shop/item-backpack-explorer-boy-rear-256.webp",
-          "bytes": 8596,
-          "sha256": "9414faaf5ea478a7690cef6b2ef381683deda649ab210c71e7b76b307a415e7c"
+          "bytes": 8072,
+          "sha256": "3e9762c0346307713b4fb045ca3316e05e63374c4e187b305a631ca3ed9b82ae"
         },
         {
           "width": 512,
           "height": 683,
           "url": "../../../trainer/assets/avatar-shop/item-backpack-explorer-boy-rear-512.webp",
-          "bytes": 21030,
-          "sha256": "69cf41331798e1d659b176fa2bd36ac7b6d9af33e4c57e16ee42984b8049a169"
+          "bytes": 20100,
+          "sha256": "feb19012a389b419cad5c21e69882bf1ab3da7190fce17392e0ccfa170a369d1"
         },
         {
           "width": 768,
           "height": 1024,
           "url": "../../../trainer/assets/avatar-shop/item-backpack-explorer-boy-rear-768.webp",
-          "bytes": 37856,
-          "sha256": "74131d5e45e491318e04281e154a6a0464e5d8d2a94e2b28012ccc1b5e859614"
+          "bytes": 36312,
+          "sha256": "1eb9d8fddd8e35909cd239308989032399cd06972cf5a7452c70bf0e096a8f0d"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-backpack-explorer-boy-rear-256.webp",
-      "outputBytes": 67482
+      "outputBytes": 64484
+    },
+    "item-backpack-explorer-boy-front": {
+      "key": "item-backpack-explorer-boy-front",
+      "figureId": "explorer-boy",
+      "plane": "front",
+      "sourceName": "explorer-boy-backpack-front.png",
+      "sourceWidth": 1086,
+      "sourceHeight": 1448,
+      "canvasWidth": 1086,
+      "canvasHeight": 1448,
+      "sourceBytes": 39790,
+      "sourceSha256": "7d00620554f6cbbfcfee43c35e7f36fb109cfdcc56d34e8d83eea23346cbc86a",
+      "metadataName": "explorer-boy-backpack-front.json",
+      "metadataBytes": 1213,
+      "metadataSha256": "f9232f7801d48efb98187caec19c59aa19ec135d3fde302502a2c499d4c3a474",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1086,
+        "bottom": 1448
+      },
+      "derivationSha256": "9c708049fa68b061005bc613752d99535c97c684b1ff8aec84d735481f37861b",
+      "width": 768,
+      "height": 1024,
+      "variants": [
+        {
+          "width": 256,
+          "height": 341,
+          "url": "../../../trainer/assets/avatar-shop/item-backpack-explorer-boy-front-256.webp",
+          "bytes": 2150,
+          "sha256": "4edfa775dd7a11efa94db70dc5330782c03f07479637a3c79e2c5129ac3944be"
+        },
+        {
+          "width": 512,
+          "height": 683,
+          "url": "../../../trainer/assets/avatar-shop/item-backpack-explorer-boy-front-512.webp",
+          "bytes": 4642,
+          "sha256": "cf125d73c676107d8bad3ab9e8e1304d2d329be610c87006340cbd57e7efc5a1"
+        },
+        {
+          "width": 768,
+          "height": 1024,
+          "url": "../../../trainer/assets/avatar-shop/item-backpack-explorer-boy-front-768.webp",
+          "bytes": 8066,
+          "sha256": "86abd45967e6b33b7b33f84dbb3db0ff30786a94ef6d47376c1a9c8ddf5baf3b"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-backpack-explorer-boy-front-256.webp",
+      "outputBytes": 14858
     },
     "item-sunhat-explorer-boy-front": {
       "key": "item-sunhat-explorer-boy-front",
@@ -1778,24 +1943,24 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1448,
       "canvasWidth": 1086,
       "canvasHeight": 1448,
-      "sourceBytes": 286395,
-      "sourceSha256": "0ace139465638c1f4d3811083870200bf5bd6100a9c3c24aa3a26ae5f9066732",
+      "sourceBytes": 140959,
+      "sourceSha256": "a10f18b6343d5256f7d31402660045c4a8db7bb285b091af2fdc53f1a1d749ec",
       "metadataName": "explorer-boy-sunhat-front.json",
-      "metadataBytes": 1086,
-      "metadataSha256": "eefa246db18c6cf1cf0678de6532bb1f3fc92065fabe878e11c721b6af4721da",
+      "metadataBytes": 1207,
+      "metadataSha256": "48b383d027dbba96ddd2513df35517d984adee1294ac1b49926385bda6e33f47",
       "registration": {
-        "scale": 0.706408345752608,
-        "x": 156.9478390461997,
-        "y": -40.375558867362145
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 156.9478390461997,
-        "top": -40.375558867362145,
-        "right": 924.107302533532,
-        "bottom": 982.5037257824142
+        "left": 0,
+        "top": 0,
+        "right": 1086,
+        "bottom": 1448
       },
-      "derivationSha256": "534224448bc68c902b69436d5e4d333f1a453ecc12edd90eaaaa91b5479ecb05",
+      "derivationSha256": "bbf912040d8772672db0899a2709edb9e436f3665a1b677c97fd53d0deca9a15",
       "width": 768,
       "height": 1024,
       "variants": [
@@ -1803,26 +1968,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 341,
           "url": "../../../trainer/assets/avatar-shop/item-sunhat-explorer-boy-front-256.webp",
-          "bytes": 3796,
-          "sha256": "69c3ca88058ce97f7558904c7e7afb70cda9a05e2e5161e746633b88c82d2948"
+          "bytes": 3744,
+          "sha256": "1f37cf84ee637e77f2d535de33f4d609aa121a657c10ba52c8ce4d42071c842c"
         },
         {
           "width": 512,
           "height": 683,
           "url": "../../../trainer/assets/avatar-shop/item-sunhat-explorer-boy-front-512.webp",
-          "bytes": 8836,
-          "sha256": "094be8e4a21bc567ac95997e02c4ab117a88386210c27ac140feb4fc261d540e"
+          "bytes": 8576,
+          "sha256": "ae83c4df765b2b6a044cfe12aa38ce84da55f4cf4a6306db2954f418cf18cc63"
         },
         {
           "width": 768,
           "height": 1024,
           "url": "../../../trainer/assets/avatar-shop/item-sunhat-explorer-boy-front-768.webp",
-          "bytes": 15954,
-          "sha256": "8ce6e0ee24e146e9cdfc08b440e2e59beffa9b562b61bbd46723369b0fd57c86"
+          "bytes": 14936,
+          "sha256": "f774be21fe6a990a6e150a57c1ab8f9af1ed6816f1881cf700d93b6612dc8058"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-sunhat-explorer-boy-front-256.webp",
-      "outputBytes": 28586
+      "outputBytes": 27256
     },
     "item-knight-clothing-explorer-boy-front": {
       "key": "item-knight-clothing-explorer-boy-front",
@@ -1833,24 +1998,24 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1448,
       "canvasWidth": 1086,
       "canvasHeight": 1448,
-      "sourceBytes": 900809,
-      "sourceSha256": "71c30a4642c1aeb2a4e4c743b486cdafdac5cc46a3c85cd8a4e9129b3286f7f6",
+      "sourceBytes": 306215,
+      "sourceSha256": "7b58e65ce8d8d63cc8e3b2415662bdaa53f56240807b2b1e35ece3adaaf9e6c8",
       "metadataName": "explorer-boy-knight-clothing-front.json",
-      "metadataBytes": 1317,
-      "metadataSha256": "6155bd2c918323f2da1249885a46b68bdb737a8f52dc437c405c11a815d77f13",
+      "metadataBytes": 1243,
+      "metadataSha256": "d9a297d754d9aef320cc15161f789469a015753aecc8815ca6e08fbe33e01fd3",
       "registration": {
-        "scale": 0.55,
-        "x": 249,
-        "y": 125
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 249,
-        "top": 125,
-        "right": 846.3000000000001,
-        "bottom": 921.4000000000001
+        "left": 0,
+        "top": 0,
+        "right": 1086,
+        "bottom": 1448
       },
-      "derivationSha256": "eaaa283fc6a1822e00d947e58b59601ff29d155b2ab70596ec828534a3e81232",
+      "derivationSha256": "033a4c0546b76a7100c65d739180fd036a9530da1a0657ef286b05425adc358e",
       "width": 768,
       "height": 1024,
       "variants": [
@@ -1858,26 +2023,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 341,
           "url": "../../../trainer/assets/avatar-shop/item-knight-clothing-explorer-boy-front-256.webp",
-          "bytes": 6272,
-          "sha256": "ed77cb7a27919f0d0e9d1b07c77db89a915583f42f0ef85211efa1ac08580aee"
+          "bytes": 6240,
+          "sha256": "7e4f44b6033857a2b001e6215c1491b59f1cd1b48a67391e8961d8a42cee0df5"
         },
         {
           "width": 512,
           "height": 683,
           "url": "../../../trainer/assets/avatar-shop/item-knight-clothing-explorer-boy-front-512.webp",
-          "bytes": 16268,
-          "sha256": "e2097f02617070e45ac4d96222a54477b2159ecb5c80edffb4228e58248c19bf"
+          "bytes": 16000,
+          "sha256": "6e31152c260b7c7c2647fd5d7d4c98711298f03db83f2a1853d7a049a52e6b1b"
         },
         {
           "width": 768,
           "height": 1024,
           "url": "../../../trainer/assets/avatar-shop/item-knight-clothing-explorer-boy-front-768.webp",
-          "bytes": 31728,
-          "sha256": "c3fb9913e28f96a4f58f86d295ccac60fb12b9ea253d0f789bd078a93f79a4f9"
+          "bytes": 30736,
+          "sha256": "6d1072ac56b43c9ac2a470d0b0f52c63dd383636beefae3c6dd26ff7c6c5de22"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-knight-clothing-explorer-boy-front-256.webp",
-      "outputBytes": 54268
+      "outputBytes": 52976
     },
     "item-binoculars-explorer-boy-front": {
       "key": "item-binoculars-explorer-boy-front",
@@ -1885,27 +2050,27 @@ export const AVATAR_ART = deepFreeze({
       "plane": "front",
       "sourceName": "explorer-boy-binoculars-front.png",
       "sourceWidth": 1086,
-      "sourceHeight": 1449,
+      "sourceHeight": 1448,
       "canvasWidth": 1086,
       "canvasHeight": 1448,
-      "sourceBytes": 207626,
-      "sourceSha256": "5da75c3f6ef178e38b64f02c8c8ee520b11cc3e76e85ddc57fcb31001bcab4fc",
+      "sourceBytes": 38840,
+      "sourceSha256": "f0406bbb54700f4577598151ae93f2ebff9e76388b64196f535dc1106c6fb238",
       "metadataName": "explorer-boy-binoculars-front.json",
-      "metadataBytes": 1091,
-      "metadataSha256": "9cc87b39147737fa4fc8309f87d84193ff6ec03407f6582fc493fe5f4b39ec3e",
+      "metadataBytes": 1223,
+      "metadataSha256": "caa98c23993baf98810ac5996d3ce87e8bac51914c650972d48ba19b42ad1b95",
       "registration": {
-        "scale": 0.6027397260273972,
-        "x": 599.0958904109589,
-        "y": 295.5205479452055
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 599.0958904109589,
-        "top": 295.5205479452055,
-        "right": 1253.671232876712,
-        "bottom": 1168.890410958904
+        "left": 0,
+        "top": 0,
+        "right": 1086,
+        "bottom": 1448
       },
-      "derivationSha256": "2602718796cd82796d1e43bdc204e3824555ca7935342bb769b6f4930fc3bc21",
+      "derivationSha256": "55155d96c30696aac3b8f4d2377f218e31b80664bce8a4f2ec9448f81116d3f4",
       "width": 768,
       "height": 1024,
       "variants": [
@@ -1913,54 +2078,54 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 341,
           "url": "../../../trainer/assets/avatar-shop/item-binoculars-explorer-boy-front-256.webp",
-          "bytes": 2688,
-          "sha256": "75f67c2c662779d165e0fba8e8cf791b96c5124f8517c2b302484c0e11981f04"
+          "bytes": 1814,
+          "sha256": "f96029af868d9b91e5897d5316bb5d1f8544260da9e0c6be8ba824ae7e14d54c"
         },
         {
           "width": 512,
           "height": 683,
           "url": "../../../trainer/assets/avatar-shop/item-binoculars-explorer-boy-front-512.webp",
-          "bytes": 6530,
-          "sha256": "0078f227a4262c75ec456a5a3f739df5a2ed4587ebcc8d557586630c019b037f"
+          "bytes": 3872,
+          "sha256": "60ea1635a7728269819b4196d88d5d132029155e5254d39f60ec0d391d8c9182"
         },
         {
           "width": 768,
           "height": 1024,
           "url": "../../../trainer/assets/avatar-shop/item-binoculars-explorer-boy-front-768.webp",
-          "bytes": 11664,
-          "sha256": "b9e565ba08bde880fe4797b5d953c7a40327c097d6a007f4645dae14c6406d57"
+          "bytes": 7018,
+          "sha256": "a6b320ff54a311d81776b484d23a5f1fea36765f6f70074c4d6f0c8d530386c9"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-binoculars-explorer-boy-front-256.webp",
-      "outputBytes": 20882
+      "outputBytes": 12704
     },
     "item-mountainhat-explorer-boy-front": {
       "key": "item-mountainhat-explorer-boy-front",
       "figureId": "explorer-boy",
       "plane": "front",
       "sourceName": "explorer-boy-mountainhat-front.png",
-      "sourceWidth": 1087,
-      "sourceHeight": 1447,
+      "sourceWidth": 1086,
+      "sourceHeight": 1448,
       "canvasWidth": 1086,
       "canvasHeight": 1448,
-      "sourceBytes": 239793,
-      "sourceSha256": "82b3df329900ca5fb9d15f32766641cbcb7c3fc6be851a4da820c462b5424f1b",
+      "sourceBytes": 58751,
+      "sourceSha256": "58920e7fd3eb2a98cd924761ca52c6b7a529824bbc1411d66e1ff4dc8f3802eb",
       "metadataName": "explorer-boy-mountainhat-front.json",
-      "metadataBytes": 1090,
-      "metadataSha256": "d124a9e0645150e1ebd8bc48380bef5bbb37c02b02f135e7a57845613b6be3b1",
+      "metadataBytes": 1227,
+      "metadataSha256": "7fa752849c7a7246c5b33cf20aa469dcb0dd9ace3b81d8de2b6fccc49172422b",
       "registration": {
-        "scale": 0.46296296296296297,
-        "x": 291.1851851851852,
-        "y": -10.185185185185185
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 291.1851851851852,
-        "top": -10.185185185185185,
-        "right": 794.425925925926,
-        "bottom": 659.7222222222222
+        "left": 0,
+        "top": 0,
+        "right": 1086,
+        "bottom": 1448
       },
-      "derivationSha256": "e147aeb60bce63ed1100d46cbe57768dca10d6249cbb34f4f9a92089b9ffc445",
+      "derivationSha256": "3ad72b545618fb3315985c2069a9b93a5480f986b1f1fc7a5ae0b828509b9bb4",
       "width": 768,
       "height": 1024,
       "variants": [
@@ -1968,26 +2133,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 341,
           "url": "../../../trainer/assets/avatar-shop/item-mountainhat-explorer-boy-front-256.webp",
-          "bytes": 2166,
-          "sha256": "3fe781b62130ddcfd33f362dc847c97ee730ca251ea0e898a6e84de4b8fe2bdf"
+          "bytes": 2146,
+          "sha256": "4a133a70e175d457a8597731eff5915f1d50754925c9fbfd5de2735b51e6be21"
         },
         {
           "width": 512,
           "height": 683,
           "url": "../../../trainer/assets/avatar-shop/item-mountainhat-explorer-boy-front-512.webp",
-          "bytes": 4690,
-          "sha256": "c19f7761d24a79363dc8e32fcf315f14be5e5cd2c0989264a2e9c167d81d9266"
+          "bytes": 4602,
+          "sha256": "0a2d3664e9fc5393fe1090b32b8baf18ff6e96c0b66f5312c5dda94b0c23d145"
         },
         {
           "width": 768,
           "height": 1024,
           "url": "../../../trainer/assets/avatar-shop/item-mountainhat-explorer-boy-front-768.webp",
-          "bytes": 8130,
-          "sha256": "9803af7be1ebdebfad5494ff9fed0708203ac213e602e6484e5225c695f1d21a"
+          "bytes": 8020,
+          "sha256": "9f399dcf0a479f6d42a0cde8a04a0b18cf190eab4411138a7aadfcb09065c6b5"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-mountainhat-explorer-boy-front-256.webp",
-      "outputBytes": 14986
+      "outputBytes": 14768
     },
     "item-compass-explorer-boy-front": {
       "key": "item-compass-explorer-boy-front",
@@ -1998,24 +2163,24 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1448,
       "canvasWidth": 1086,
       "canvasHeight": 1448,
-      "sourceBytes": 127997,
-      "sourceSha256": "204be858011536743528a908cf0827bcc05c8a89eeba94cf602075d6a0eef0ba",
+      "sourceBytes": 33022,
+      "sourceSha256": "c155643b40aa743074ea430c04469afc1f2f080eb74522a1274781f2265af023",
       "metadataName": "explorer-boy-compass-front.json",
-      "metadataBytes": 1089,
-      "metadataSha256": "00dd6efc7ad5ec49e6ceedfb95e06cfbbb03b11e20a2553e795f3aa95b622a1d",
+      "metadataBytes": 1211,
+      "metadataSha256": "4d84f1e6bd34ccfe1a546e53135f4d5c095e64550260ba5b14b659b06003a707",
       "registration": {
-        "scale": 0.737410071942446,
-        "x": 483.48201438848923,
-        "y": 194.46043165467626
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 483.48201438848923,
-        "top": 194.46043165467626,
-        "right": 1284.3093525179856,
-        "bottom": 1262.230215827338
+        "left": 0,
+        "top": 0,
+        "right": 1086,
+        "bottom": 1448
       },
-      "derivationSha256": "a85f4f24767129f9e96f6a8c84257d5e4d1a96b3a3a46b96448cfa8f04e717da",
+      "derivationSha256": "b4b84074322d2613a8c1a44cb26aae2b28c145965b5fcb769b177aafc52d45a6",
       "width": 768,
       "height": 1024,
       "variants": [
@@ -2023,26 +2188,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 341,
           "url": "../../../trainer/assets/avatar-shop/item-compass-explorer-boy-front-256.webp",
-          "bytes": 2538,
-          "sha256": "7ebbd861ed62b4ccd688fc928ea22723654c3cb37af7d63ab06077c0e23a57b0"
+          "bytes": 1738,
+          "sha256": "36b6bcd8f7901ade468b777d35afa67a7b65af2710c2b76af8ca647b1d92e6b1"
         },
         {
           "width": 512,
           "height": 683,
           "url": "../../../trainer/assets/avatar-shop/item-compass-explorer-boy-front-512.webp",
-          "bytes": 5624,
-          "sha256": "8e96532e3ad0203d8f823e6d0052edc425ca29be887d34ebe39f1ce25faf5827"
+          "bytes": 3666,
+          "sha256": "dcc4ea7cc7e1f861e5f5cd26a79f05351ce68add761b927714bafcffac777d46"
         },
         {
           "width": 768,
           "height": 1024,
           "url": "../../../trainer/assets/avatar-shop/item-compass-explorer-boy-front-768.webp",
-          "bytes": 10148,
-          "sha256": "b5cc4237919a222d441871c6e7013461132b2e055bd4e9416b3c6e348b628b4c"
+          "bytes": 6352,
+          "sha256": "319e592b28bb05df679d7f7862f2785442710641c9fa31eaae5491a9ffb9879d"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-compass-explorer-boy-front-256.webp",
-      "outputBytes": 18310
+      "outputBytes": 11756
     },
     "item-runes-head-explorer-boy-front": {
       "key": "item-runes-head-explorer-boy-front",
@@ -2053,24 +2218,24 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1448,
       "canvasWidth": 1086,
       "canvasHeight": 1448,
-      "sourceBytes": 103075,
-      "sourceSha256": "6e573d93a93ef81f69e0367337d8e8a0f2dfa73d0992404fba3344c50e196673",
+      "sourceBytes": 17068,
+      "sourceSha256": "a8361d69c363db589e96178c866b4678293a6bdea69e57241c76566cc29cd8e7",
       "metadataName": "explorer-boy-runes-head-front.json",
-      "metadataBytes": 1245,
-      "metadataSha256": "dbb94682aae4edc717a3ffa639e044862099da8e50cfdf6c775c9c68c240aa64",
+      "metadataBytes": 1223,
+      "metadataSha256": "e14a3d310d5d5ff8d4954eb5d67d2bd3562cb8b84194d65d30c72121e9dce960",
       "registration": {
-        "scale": 0.33,
-        "x": 375,
-        "y": 255
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 375,
-        "top": 255,
-        "right": 733.38,
-        "bottom": 732.84
+        "left": 0,
+        "top": 0,
+        "right": 1086,
+        "bottom": 1448
       },
-      "derivationSha256": "0e6fe21e103b453d23180d72faa055a069e858678ca835d5367592afa21721c7",
+      "derivationSha256": "58fa1c19c8f6570b33ed9d04305d8fd7b9ee087b9e531800ad542521fe72a3be",
       "width": 768,
       "height": 1024,
       "variants": [
@@ -2078,54 +2243,54 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 341,
           "url": "../../../trainer/assets/avatar-shop/item-runes-head-explorer-boy-front-256.webp",
-          "bytes": 1370,
-          "sha256": "46b68dc08e4d9bc360292c8199b25fb51c91626d7baa43cce638ccc78cb65429"
+          "bytes": 1328,
+          "sha256": "df4e5c97be325d4b6d2995054b868887f6788bd28cc0672cdedf121fe1c8323b"
         },
         {
           "width": 512,
           "height": 683,
           "url": "../../../trainer/assets/avatar-shop/item-runes-head-explorer-boy-front-512.webp",
-          "bytes": 2774,
-          "sha256": "1a4e4349dd3f245235c4979d39e4e8a55b56ba3099265111658a1846285c64cc"
+          "bytes": 2766,
+          "sha256": "33451a6cf80f4641bc2d3b0ed65df0e07688cc902111b502df4986fb63e87c0a"
         },
         {
           "width": 768,
           "height": 1024,
           "url": "../../../trainer/assets/avatar-shop/item-runes-head-explorer-boy-front-768.webp",
-          "bytes": 4688,
-          "sha256": "1bfb22a452bb97fc81dd09d9b5531ae52aca0c870e818c43f504f49f60b5afb6"
+          "bytes": 4472,
+          "sha256": "e9d437080902e3336863da8a5e588ff1ff3946c55aff1782b4c0a09923416efb"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-runes-head-explorer-boy-front-256.webp",
-      "outputBytes": 8832
+      "outputBytes": 8566
     },
     "item-runes-back-explorer-boy-rear": {
       "key": "item-runes-back-explorer-boy-rear",
       "figureId": "explorer-boy",
       "plane": "rear",
       "sourceName": "explorer-boy-runes-back-rear.png",
-      "sourceWidth": 1087,
-      "sourceHeight": 1447,
+      "sourceWidth": 1086,
+      "sourceHeight": 1448,
       "canvasWidth": 1086,
       "canvasHeight": 1448,
-      "sourceBytes": 1131321,
-      "sourceSha256": "a2340ff214a43ae16081ade2df497d565aadef534d3c6cb9001e8125cf89190b",
+      "sourceBytes": 607760,
+      "sourceSha256": "0768d9b9951a2813d087682a39d27be9988a82f53d977442dc162a8d81855b60",
       "metadataName": "explorer-boy-runes-back-rear.json",
-      "metadataBytes": 1335,
-      "metadataSha256": "7d6f44c4ad4c1acdb7b0b0129972ed69575a60583a2c8cdaf9cc80ceb7f9300c",
+      "metadataBytes": 1219,
+      "metadataSha256": "7a0e2dc636ca2b2b0532cc1ec8015df4fabd62bfb79ba6d569a82b59fa762dd2",
       "registration": {
-        "scale": 0.9,
-        "x": 50,
-        "y": 120
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 50,
-        "top": 120,
-        "right": 1028.3000000000002,
-        "bottom": 1422.3
+        "left": 0,
+        "top": 0,
+        "right": 1086,
+        "bottom": 1448
       },
-      "derivationSha256": "085f2f175ae0cf08f6e833b25491e41d7666cd496145a9bece71307bd4f0da05",
+      "derivationSha256": "43bf3ef89531da5889363f513bdda83f50b0a31a65caf1cd18de77bf092cee8e",
       "width": 768,
       "height": 1024,
       "variants": [
@@ -2133,26 +2298,81 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 341,
           "url": "../../../trainer/assets/avatar-shop/item-runes-back-explorer-boy-rear-256.webp",
-          "bytes": 14098,
-          "sha256": "7abc409c7e35533a2ae390abe357f62030f5362c4210be818098daca39e95f71"
+          "bytes": 10246,
+          "sha256": "31cdc9637976c68096e9fa8d1836ac2ada2c06412304db044fb4d7fa798d907f"
         },
         {
           "width": 512,
           "height": 683,
           "url": "../../../trainer/assets/avatar-shop/item-runes-back-explorer-boy-rear-512.webp",
-          "bytes": 36602,
-          "sha256": "f8237531aa9193250038506d01661e8e66da82ce232882ea731f5f2b3c4f196a"
+          "bytes": 26422,
+          "sha256": "2e07c9665ffe4834f777f9a93cc612be0a35b461d012dee73844a84424a015a5"
         },
         {
           "width": 768,
           "height": 1024,
           "url": "../../../trainer/assets/avatar-shop/item-runes-back-explorer-boy-rear-768.webp",
-          "bytes": 73570,
-          "sha256": "9b87e3600f36a98f264a89711c02a7b12c8664e87feb5a1ce00564b411386ffc"
+          "bytes": 53762,
+          "sha256": "caeb2e1454d093562d95d4f841ca42b8d6e4607c79719cc02d2c35cb0029f2d1"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-runes-back-explorer-boy-rear-256.webp",
-      "outputBytes": 124270
+      "outputBytes": 90430
+    },
+    "item-runes-back-explorer-boy-front": {
+      "key": "item-runes-back-explorer-boy-front",
+      "figureId": "explorer-boy",
+      "plane": "front",
+      "sourceName": "explorer-boy-runes-back-front.png",
+      "sourceWidth": 1086,
+      "sourceHeight": 1448,
+      "canvasWidth": 1086,
+      "canvasHeight": 1448,
+      "sourceBytes": 595386,
+      "sourceSha256": "93b3487166f49c421eaa3789c2d857a3eb8ab8a345a53f7a19039638816e04ce",
+      "metadataName": "explorer-boy-runes-back-front.json",
+      "metadataBytes": 1221,
+      "metadataSha256": "a77247804c463dcefed4bfac934f1173175a1fe030a7345e92b947a450c1dd30",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1086,
+        "bottom": 1448
+      },
+      "derivationSha256": "1e816d955bd435470f3672af9406f144e4a78f03be64a6d59542df28f549c56f",
+      "width": 768,
+      "height": 1024,
+      "variants": [
+        {
+          "width": 256,
+          "height": 341,
+          "url": "../../../trainer/assets/avatar-shop/item-runes-back-explorer-boy-front-256.webp",
+          "bytes": 2106,
+          "sha256": "eb6f384314cd618d9cbb9eaf16d602e6340ebd87ec5ff41f85ffdc6dda2a4680"
+        },
+        {
+          "width": 512,
+          "height": 683,
+          "url": "../../../trainer/assets/avatar-shop/item-runes-back-explorer-boy-front-512.webp",
+          "bytes": 4510,
+          "sha256": "13dba363aa16ea16636f8191478005fbbef72c4ad78d8df3daabed7d8caf9785"
+        },
+        {
+          "width": 768,
+          "height": 1024,
+          "url": "../../../trainer/assets/avatar-shop/item-runes-back-explorer-boy-front-768.webp",
+          "bytes": 8092,
+          "sha256": "9f0e0f967091647ed437e32083edadf3dfffd3f82101d81ffec2bd07e7658025"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-runes-back-explorer-boy-front-256.webp",
+      "outputBytes": 14708
     },
     "item-runes-hand-explorer-boy-front": {
       "key": "item-runes-hand-explorer-boy-front",
@@ -2163,24 +2383,24 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1448,
       "canvasWidth": 1086,
       "canvasHeight": 1448,
-      "sourceBytes": 305277,
-      "sourceSha256": "b38469b6e4a2a9963690503d6399330b83422fdede011d6a98e92f0fc3473388",
+      "sourceBytes": 69067,
+      "sourceSha256": "eda0fbb8322f20507f0227d6e419792b6a93ccd22a7398f671258bf336e76a54",
       "metadataName": "explorer-boy-runes-hand-front.json",
-      "metadataBytes": 1342,
-      "metadataSha256": "7c8c9c7761f6a01893757cbbac236bfd82e90a56598107c78a992e45026a5b30",
+      "metadataBytes": 1223,
+      "metadataSha256": "8acc927da4e05006ae22cf04737940bdb6a43a4bc72c8ce6f67afa0a81076fc4",
       "registration": {
-        "scale": 0.45,
-        "x": 430,
-        "y": 575
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 430,
-        "top": 575,
-        "right": 918.7,
-        "bottom": 1226.6
+        "left": 0,
+        "top": 0,
+        "right": 1086,
+        "bottom": 1448
       },
-      "derivationSha256": "1499da11a9f61857320deb728846bad0602d5f560cccd140dff9f79a7200c5be",
+      "derivationSha256": "d3e2e8b45141773d2bbc6d91312bd7aad738625f090e4008e89fa0ba67ea2fd1",
       "width": 768,
       "height": 1024,
       "variants": [
@@ -2188,26 +2408,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 341,
           "url": "../../../trainer/assets/avatar-shop/item-runes-hand-explorer-boy-front-256.webp",
-          "bytes": 2844,
-          "sha256": "17c18d9343d818acacbcc9802ce9170b55013f7fdf5c43574233919c51097e1c"
+          "bytes": 2830,
+          "sha256": "bdd2ee4f5c47b086224878f1c5c5ff57cb90704ebfed600b6e9cbf90bc3528ad"
         },
         {
           "width": 512,
           "height": 683,
           "url": "../../../trainer/assets/avatar-shop/item-runes-hand-explorer-boy-front-512.webp",
-          "bytes": 6434,
-          "sha256": "a5e64e04b587177893da68e674651cf12b42d377dc093a703baa627dae689890"
+          "bytes": 6234,
+          "sha256": "663fe257a8ec21cf9526cd1f496a655b1c51d401c45651ae13bb3133abb33ff2"
         },
         {
           "width": 768,
           "height": 1024,
           "url": "../../../trainer/assets/avatar-shop/item-runes-hand-explorer-boy-front-768.webp",
-          "bytes": 11690,
-          "sha256": "376f21ce40f1c8daf4e6c0de71a73977b3da006b3a03b02ae32c7c067e85e2cc"
+          "bytes": 11450,
+          "sha256": "64d5f713fe9c084309462ffd5530fd78b42c894e94c25eed65a9bcbdc74e7490"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-runes-hand-explorer-boy-front-256.webp",
-      "outputBytes": 20968
+      "outputBytes": 20514
     },
     "figure-horse-base": {
       "key": "figure-horse-base",
@@ -2319,61 +2539,6 @@ export const AVATAR_ART = deepFreeze({
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-moon-head-horse-front-256.webp",
       "outputBytes": 12058
     },
-    "item-moon-body-horse-rear": {
-      "key": "item-moon-body-horse-rear",
-      "figureId": "horse",
-      "plane": "rear",
-      "sourceName": "horse-moon-body-rear.png",
-      "sourceWidth": 1024,
-      "sourceHeight": 1536,
-      "canvasWidth": 1024,
-      "canvasHeight": 1536,
-      "sourceBytes": 1802851,
-      "sourceSha256": "f79a9369454bfdd2cd07ed878d5844cecb6f0504791600522b11c135ab1a2866",
-      "metadataName": "horse-moon-body-rear.json",
-      "metadataBytes": 3100,
-      "metadataSha256": "92fe5c445fdc5c9bb9e4392be5d742b56f694f77228c28c1041d09bd2884618a",
-      "registration": {
-        "scale": 0.65,
-        "x": 0,
-        "y": 360
-      },
-      "registrationExplicit": true,
-      "registeredBounds": {
-        "left": 0,
-        "top": 360,
-        "right": 665.6,
-        "bottom": 1358.4
-      },
-      "derivationSha256": "144d4d31fe5985529f6c30e4c9d364cc13736657bd1d0b21f68d024e6915f18a",
-      "width": 768,
-      "height": 1152,
-      "variants": [
-        {
-          "width": 256,
-          "height": 384,
-          "url": "../../../trainer/assets/avatar-shop/item-moon-body-horse-rear-256.webp",
-          "bytes": 11104,
-          "sha256": "2355921bfefea8e67e5fe8b4174c8348845ad121eae3ccb920b27567d644aaad"
-        },
-        {
-          "width": 512,
-          "height": 768,
-          "url": "../../../trainer/assets/avatar-shop/item-moon-body-horse-rear-512.webp",
-          "bytes": 31406,
-          "sha256": "633058b72dce13bbe8ea4dc3782172e998cc47dc3ddeb6eaff7a244df2a2b805"
-        },
-        {
-          "width": 768,
-          "height": 1152,
-          "url": "../../../trainer/assets/avatar-shop/item-moon-body-horse-rear-768.webp",
-          "bytes": 57632,
-          "sha256": "576d4debda6dba29368ddc666ee4772373f9de07311f565d01ce1aafb2d65dec"
-        }
-      ],
-      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-moon-body-horse-rear-256.webp",
-      "outputBytes": 100142
-    },
     "item-moon-body-horse-front": {
       "key": "item-moon-body-horse-front",
       "figureId": "horse",
@@ -2383,11 +2548,11 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1536,
       "canvasWidth": 1024,
       "canvasHeight": 1536,
-      "sourceBytes": 1507163,
-      "sourceSha256": "80e85a240f79996aebf85459294e13615304f9b9793e4f87804391b09a8bc789",
+      "sourceBytes": 416040,
+      "sourceSha256": "427a10326ae684661aeb5863eb95b92170e8ea6dce5eb6d61cebb3ca72791f3f",
       "metadataName": "horse-moon-body-front.json",
-      "metadataBytes": 4369,
-      "metadataSha256": "c0b2b9ebfc252ca4fb953706a01e827c59f5fab494ecd3b8df917d7ab42dcd39",
+      "metadataBytes": 1968,
+      "metadataSha256": "b47c45479b2685bee9616933479ded404bbd8a5cd990ca55ca262a5ec694e02f",
       "registration": {
         "scale": 1,
         "x": 0,
@@ -2400,7 +2565,7 @@ export const AVATAR_ART = deepFreeze({
         "right": 1024,
         "bottom": 1536
       },
-      "derivationSha256": "5b015da305129f5e4a9e1bd0d04f3258a31ce66844272c25cf55772a235efaf8",
+      "derivationSha256": "1d83c5080063f50bce75a7668c97957bb02e414855ad5c3d0e59cb0d241b7385",
       "width": 768,
       "height": 1152,
       "variants": [
@@ -2408,26 +2573,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 384,
           "url": "../../../trainer/assets/avatar-shop/item-moon-body-horse-front-256.webp",
-          "bytes": 16360,
-          "sha256": "800b068b4326a8bc843ba043723b4126035a50853c55ccaae93e3c56e1045f0c"
+          "bytes": 8696,
+          "sha256": "ea30867a6fa5187c351aa84a02b77e386073dec091f3b2c2af3a0c8072f97a17"
         },
         {
           "width": 512,
           "height": 768,
           "url": "../../../trainer/assets/avatar-shop/item-moon-body-horse-front-512.webp",
-          "bytes": 46872,
-          "sha256": "4df8943a9967e2310f02fc2755c7c20f2921cc8390fa3520fe872685acc5ec38"
+          "bytes": 24486,
+          "sha256": "9fb2646d79335c44b3016d0ce32a25e4fbdcae9d390a8c5be7968a33cb70c6c8"
         },
         {
           "width": 768,
           "height": 1152,
           "url": "../../../trainer/assets/avatar-shop/item-moon-body-horse-front-768.webp",
-          "bytes": 86272,
-          "sha256": "9133546cbb1ed6ca692656ed9df4d200e95b4ec6dc46407efda1c8703c968aac"
+          "bytes": 47812,
+          "sha256": "eef0baca14aebb541b33fca463e17dccd615f694f67ad3634fbe5fb1fc955dec"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-moon-body-horse-front-256.webp",
-      "outputBytes": 149504
+      "outputBytes": 80994
     },
     "item-moon-adornment-horse-front": {
       "key": "item-moon-adornment-horse-front",
@@ -2438,11 +2603,11 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1536,
       "canvasWidth": 1024,
       "canvasHeight": 1536,
-      "sourceBytes": 730134,
-      "sourceSha256": "2935d71a79cf5640e9d01b9fd2d3230913c4d7ff91312d1e029b390aa572d636",
+      "sourceBytes": 51158,
+      "sourceSha256": "a33e8b77ca8fdd9b596c13ac4c98a22eed68cada7ebdc48d105ffd70f54c0131",
       "metadataName": "horse-moon-adornment-front.json",
-      "metadataBytes": 2576,
-      "metadataSha256": "3e0bff29100a121059cfd235c75f330c2ac9617b0c03dbd79d35075f770eef9e",
+      "metadataBytes": 2183,
+      "metadataSha256": "91ad71ee737ee0f4f8deed26633b48bbf3cf60427e0b86928d59fca40f91cf2b",
       "registration": {
         "scale": 1,
         "x": 0,
@@ -2455,7 +2620,7 @@ export const AVATAR_ART = deepFreeze({
         "right": 1024,
         "bottom": 1536
       },
-      "derivationSha256": "0907e391c08729f19c2cbc1e128113a9fd3f07a3685280a794ad59c34c547ef0",
+      "derivationSha256": "8aafe1a499381c765bece5e050318cbbd30e604544d253a2c5a64b44b235079b",
       "width": 768,
       "height": 1152,
       "variants": [
@@ -2463,26 +2628,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 384,
           "url": "../../../trainer/assets/avatar-shop/item-moon-adornment-horse-front-256.webp",
-          "bytes": 7054,
-          "sha256": "b6aa833ac4f84cd7d8c3f82b19e3f25db4cd0cfdfaa13b52feb909a5ffea3f80"
+          "bytes": 2808,
+          "sha256": "341e108bbc3059343c427a14ed669a0bd9d5d3f134258cdf2cbbb2de2eb26d90"
         },
         {
           "width": 512,
           "height": 768,
           "url": "../../../trainer/assets/avatar-shop/item-moon-adornment-horse-front-512.webp",
-          "bytes": 18624,
-          "sha256": "1c83ad419ed34c6881de3a5d98f5a9210aaa61bfbe5b9394a2fbe4929a267a63"
+          "bytes": 6810,
+          "sha256": "66abc6ab20329b4a6963c466bb1c219e300ac3328f2e7b28a08550ddcc217e9e"
         },
         {
           "width": 768,
           "height": 1152,
           "url": "../../../trainer/assets/avatar-shop/item-moon-adornment-horse-front-768.webp",
-          "bytes": 35012,
-          "sha256": "6dfc39d7c88a775adc387c94e4029e1250191b319c951bf7ce29f29fc651844e"
+          "bytes": 12268,
+          "sha256": "f6da35caad16bfa162f7690be9e46cc4e7a6852ae60115325239a9b4bc8cb862"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-moon-adornment-horse-front-256.webp",
-      "outputBytes": 60690
+      "outputBytes": 21886
     },
     "item-stars-head-horse-front": {
       "key": "item-stars-head-horse-front",
@@ -2493,24 +2658,24 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1536,
       "canvasWidth": 1024,
       "canvasHeight": 1536,
-      "sourceBytes": 840923,
-      "sourceSha256": "cac821155d085eb77cac101814894cbb42c5bba93b7e141deaf8b6e99f75ab1b",
+      "sourceBytes": 34174,
+      "sourceSha256": "39c5ba55df57803f78b1c7ea8502ff08839cbe59fe9fd8bbd74aca9fce0cdc6e",
       "metadataName": "horse-stars-head-front.json",
-      "metadataBytes": 2650,
-      "metadataSha256": "5f719736ac7bcac6221499563b7bad69552e0451cf7d93e63a55b006d37dafbd",
+      "metadataBytes": 1053,
+      "metadataSha256": "a9b6eb769bd0f4798348bf1793422d92ce328029f1372418065ab5df37958c9b",
       "registration": {
-        "scale": 0.3,
-        "x": 520,
-        "y": 90
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 520,
-        "top": 90,
-        "right": 827.2,
-        "bottom": 550.8
+        "left": 0,
+        "top": 0,
+        "right": 1024,
+        "bottom": 1536
       },
-      "derivationSha256": "76653b6c18c09efcd72e9e6a17ae175201fd8e2459c18278aba8e0bfafe0d97d",
+      "derivationSha256": "c752c04f7e64d888cb323de77fe3559bceb395417aafcc2b801bff7c08f1577a",
       "width": 768,
       "height": 1152,
       "variants": [
@@ -2518,26 +2683,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 384,
           "url": "../../../trainer/assets/avatar-shop/item-stars-head-horse-front-256.webp",
-          "bytes": 1920,
-          "sha256": "034faed51bb6a32e51e826ab11ce91d66bafd884ba7b71981b0f960c144608c6"
+          "bytes": 1964,
+          "sha256": "35a4343f0bddeed2d3b031e382ba234e53bcd98e974d7078a37afa062a0a715c"
         },
         {
           "width": 512,
           "height": 768,
           "url": "../../../trainer/assets/avatar-shop/item-stars-head-horse-front-512.webp",
-          "bytes": 4202,
-          "sha256": "e3000f987476b5841ceb6d45f4b70f5d24a1ad8d9e077f92dc1def5a6be04e5d"
+          "bytes": 4724,
+          "sha256": "156fc3c235002ba1c1d9030a4207d80fe8971a824ec9c895cb69b69fbe37581d"
         },
         {
           "width": 768,
           "height": 1152,
           "url": "../../../trainer/assets/avatar-shop/item-stars-head-horse-front-768.webp",
-          "bytes": 7846,
-          "sha256": "d5f8fd4796604d24c2267cf5e0e25a4d83df81ab03b1fa0f43724742368059d6"
+          "bytes": 8618,
+          "sha256": "bdbc6c1f44d467e77c42a47c36c91af79035ddd6833f8320eceda30014d7f9f3"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-stars-head-horse-front-256.webp",
-      "outputBytes": 13968
+      "outputBytes": 15306
     },
     "item-stars-body-horse-front": {
       "key": "item-stars-body-horse-front",
@@ -2548,24 +2713,24 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1536,
       "canvasWidth": 1024,
       "canvasHeight": 1536,
-      "sourceBytes": 1887276,
-      "sourceSha256": "d56220768f5484be5697b5f99e747ae93719ce1424d11179812b9096538db76a",
+      "sourceBytes": 231259,
+      "sourceSha256": "a4f60ce46bf575708525d70fb6d8de596abe05680c9447e31170fffe9d1be12d",
       "metadataName": "horse-stars-body-front.json",
-      "metadataBytes": 2566,
-      "metadataSha256": "00222964503f2bfe084307f66f2449b3bf681205021badb694fb786456e401d3",
+      "metadataBytes": 1832,
+      "metadataSha256": "517b1cdfd4c50226a396f77af7cbac7724f0d948e27965bedb11589a5aa3fd2a",
       "registration": {
-        "scale": 0.42,
-        "x": 170,
-        "y": 400
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 170,
-        "top": 400,
-        "right": 600.0799999999999,
-        "bottom": 1045.12
+        "left": 0,
+        "top": 0,
+        "right": 1024,
+        "bottom": 1536
       },
-      "derivationSha256": "1d528b6f77cf81c7740f900f53197706990bfbb556608a07fc894c5a9ab8f622",
+      "derivationSha256": "ff05ef6682c1be9bf73854aa0f8eccb30f1deb16533f2824a25cc0bc26241f01",
       "width": 768,
       "height": 1152,
       "variants": [
@@ -2573,26 +2738,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 384,
           "url": "../../../trainer/assets/avatar-shop/item-stars-body-horse-front-256.webp",
-          "bytes": 6110,
-          "sha256": "180ffb8c7907f70fddd8ba7b0f77ad1068d77be87951c0c547f1e75eb2b6aba0"
+          "bytes": 5274,
+          "sha256": "7b791d700005efaa20d4c467ff680dfb618260f286de5a620e5a0f4ab8afa62d"
         },
         {
           "width": 512,
           "height": 768,
           "url": "../../../trainer/assets/avatar-shop/item-stars-body-horse-front-512.webp",
-          "bytes": 16488,
-          "sha256": "3fb0b9a019164189c0a123d4186f7ecb324ab0a04262327ef503a9c2d503965e"
+          "bytes": 14690,
+          "sha256": "75445e056752e5efbf6e2c7ab2d201b4974049a09b980a71f2f73d3af0fc7344"
         },
         {
           "width": 768,
           "height": 1152,
           "url": "../../../trainer/assets/avatar-shop/item-stars-body-horse-front-768.webp",
-          "bytes": 30058,
-          "sha256": "949e70a8596dc9fbbc04dbad9e434da1c6b8e0e308fade258baa236e8c5906b7"
+          "bytes": 26968,
+          "sha256": "ca92b3fef9e6460c498a54556d7195b830bf2a606ee1ac279ad1ff0b8f4fa92a"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-stars-body-horse-front-256.webp",
-      "outputBytes": 52656
+      "outputBytes": 46932
     },
     "item-stars-adornment-horse-front": {
       "key": "item-stars-adornment-horse-front",
@@ -2704,6 +2869,61 @@ export const AVATAR_ART = deepFreeze({
       "fallbackUrl": "../../../trainer/assets/avatar-shop/figure-tiger-base-256.webp",
       "outputBytes": 280020
     },
+    "item-jungle-head-tiger-rear": {
+      "key": "item-jungle-head-tiger-rear",
+      "figureId": "tiger",
+      "plane": "rear",
+      "sourceName": "tiger-jungle-head-rear.png",
+      "sourceWidth": 1223,
+      "sourceHeight": 1286,
+      "canvasWidth": 1223,
+      "canvasHeight": 1286,
+      "sourceBytes": 56785,
+      "sourceSha256": "81447c76c114a2ef34bce876df1ab469dcff17b19d26b0f41e8e44052b5e3143",
+      "metadataName": "tiger-jungle-head-rear.json",
+      "metadataBytes": 1550,
+      "metadataSha256": "5ac0cce934c080b109c960348d9a065bfe9f1d246b501b1f57ee23ce285945de",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1223,
+        "bottom": 1286
+      },
+      "derivationSha256": "26986d94fafc82a6942ae22bd8eda9b2a4bd7f292e7e3e5bece5dffba1c07969",
+      "width": 768,
+      "height": 808,
+      "variants": [
+        {
+          "width": 256,
+          "height": 269,
+          "url": "../../../trainer/assets/avatar-shop/item-jungle-head-tiger-rear-256.webp",
+          "bytes": 2040,
+          "sha256": "fe11625a49478d5ca9a2c019fe04f5c24a2944ee5076a68f254216e5288d25a8"
+        },
+        {
+          "width": 512,
+          "height": 538,
+          "url": "../../../trainer/assets/avatar-shop/item-jungle-head-tiger-rear-512.webp",
+          "bytes": 4112,
+          "sha256": "a1503f1646a618b432365208f653a67ac7f139beb35305a9de4adef7f1c56e79"
+        },
+        {
+          "width": 768,
+          "height": 808,
+          "url": "../../../trainer/assets/avatar-shop/item-jungle-head-tiger-rear-768.webp",
+          "bytes": 7148,
+          "sha256": "a639d711c47c71131ea5015559222a9f5233f305bc244fa09244525d5541052e"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-jungle-head-tiger-rear-256.webp",
+      "outputBytes": 13300
+    },
     "item-jungle-head-tiger-front": {
       "key": "item-jungle-head-tiger-front",
       "figureId": "tiger",
@@ -2713,24 +2933,24 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1286,
       "canvasWidth": 1223,
       "canvasHeight": 1286,
-      "sourceBytes": 611957,
-      "sourceSha256": "c6ddd5a9025bb388578577e532d0a673bd2e76eaad957e08df3ca97bb8a4b728",
+      "sourceBytes": 55285,
+      "sourceSha256": "fd2af6ab4e147a90e4bfc63f3732c6777cf5dceb4b5b91d587e440a554dc9409",
       "metadataName": "tiger-jungle-head-front.json",
-      "metadataBytes": 1704,
-      "metadataSha256": "2fb6f5958b8c3cef3afafc2a73aa0a6d1a0bbe51292d977cd9464d472783db83",
+      "metadataBytes": 1552,
+      "metadataSha256": "52f5dd90b24872b5b8fce75378a2ae782295d7b56b7cf590b8f5b4b7aa794e5a",
       "registration": {
-        "scale": 0.35,
-        "x": 150,
-        "y": 180
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 150,
-        "top": 180,
-        "right": 578.05,
-        "bottom": 630.0999999999999
+        "left": 0,
+        "top": 0,
+        "right": 1223,
+        "bottom": 1286
       },
-      "derivationSha256": "513a454ffd0429e354a79503c80ff3021226cd4417fc0cea852e6015d2aa9d15",
+      "derivationSha256": "322713f444ddeaf890301267e2882d7b982ec103466aecc6d3f03bb7ae90d5a2",
       "width": 768,
       "height": 808,
       "variants": [
@@ -2738,26 +2958,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 269,
           "url": "../../../trainer/assets/avatar-shop/item-jungle-head-tiger-front-256.webp",
-          "bytes": 3228,
-          "sha256": "e6d7acbf8b49ba5114b6452b58426e5a2cbd94e5978d9c0c04bf7a38119f86b0"
+          "bytes": 1720,
+          "sha256": "5b68616987a18cc97ff2be7bb78ee82bd4b0e44036ea86181bd42e7bb998f1aa"
         },
         {
           "width": 512,
           "height": 538,
           "url": "../../../trainer/assets/avatar-shop/item-jungle-head-tiger-front-512.webp",
-          "bytes": 7718,
-          "sha256": "c0a80875a798db40985e01cc9334fb30740ce01341321c1aa99a7aedf2cad27c"
+          "bytes": 3724,
+          "sha256": "08b49ca68cee52181373aeb7c832c90545ce66fa19814e31a753957582c844b6"
         },
         {
           "width": 768,
           "height": 808,
           "url": "../../../trainer/assets/avatar-shop/item-jungle-head-tiger-front-768.webp",
-          "bytes": 13548,
-          "sha256": "8e748e3c4c0a533ba1c756d531ad953289a1978044c64493e153e851061a2f27"
+          "bytes": 6308,
+          "sha256": "01e8dc7ffd531806b05ea6230841d9a506f392ac0b2a9ce8dcfae33b3a2d7b71"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-jungle-head-tiger-front-256.webp",
-      "outputBytes": 24494
+      "outputBytes": 11752
     },
     "item-jungle-body-tiger-front": {
       "key": "item-jungle-body-tiger-front",
@@ -2768,11 +2988,11 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1286,
       "canvasWidth": 1223,
       "canvasHeight": 1286,
-      "sourceBytes": 976500,
-      "sourceSha256": "41dd05b76fd066781c11493c10a09f9dea3268f97662e9f0f1cd4f87c86d49a7",
+      "sourceBytes": 951353,
+      "sourceSha256": "3c24e29baec1bd112f264de55b6b486d24960c6edf93d1444517436dbdcd5439",
       "metadataName": "tiger-jungle-body-front.json",
-      "metadataBytes": 1746,
-      "metadataSha256": "ed561c20f2139f3f66f44dc7dc4e329b05298ee978a8a12c6ca13e6935945274",
+      "metadataBytes": 2822,
+      "metadataSha256": "eedfa5d9f091ba2959be7edfd03417a2b5627fd82e14cdc2d22ed1ab0ced7833",
       "registration": {
         "scale": 1,
         "x": 0,
@@ -2785,7 +3005,7 @@ export const AVATAR_ART = deepFreeze({
         "right": 1223,
         "bottom": 1286
       },
-      "derivationSha256": "d608003223d118d1a6b7629464b8a7c8468b78d2bd68f4da5a827e55db104779",
+      "derivationSha256": "e4825c3601b33f3c7153c0cde4e9b5694d3e58638b2252d2b92a9208c97dbcb9",
       "width": 768,
       "height": 808,
       "variants": [
@@ -2793,26 +3013,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 269,
           "url": "../../../trainer/assets/avatar-shop/item-jungle-body-tiger-front-256.webp",
-          "bytes": 15828,
-          "sha256": "9bfc30e9982307b203b1aeda7a021550bba09f42d6ca725a7bf16ec11228a0c3"
+          "bytes": 12114,
+          "sha256": "6c01565d3d86ca47ece2725d45e15bf5b533803ba9e95d7af6862b36fe2f4600"
         },
         {
           "width": 512,
           "height": 538,
           "url": "../../../trainer/assets/avatar-shop/item-jungle-body-tiger-front-512.webp",
-          "bytes": 45000,
-          "sha256": "f8ceedf26e6118b860143933b6eae208e34abc1da82477a62426025f8f85011a"
+          "bytes": 35754,
+          "sha256": "b9ed6bac8a997ef8823482141a7491e8773d42686d181b71866257495ad766bd"
         },
         {
           "width": 768,
           "height": 808,
           "url": "../../../trainer/assets/avatar-shop/item-jungle-body-tiger-front-768.webp",
-          "bytes": 92318,
-          "sha256": "e0b4790ff1460194d720fd7633c05eab38930c08a5847d382720467f6039dada"
+          "bytes": 74020,
+          "sha256": "a6c95abd8597e108ed5b489d4d44c8f7d80a8632dfee7fc614405dc0f559c5ad"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-jungle-body-tiger-front-256.webp",
-      "outputBytes": 153146
+      "outputBytes": 121888
     },
     "item-jungle-adornment-tiger-front": {
       "key": "item-jungle-adornment-tiger-front",
@@ -2823,11 +3043,11 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1286,
       "canvasWidth": 1223,
       "canvasHeight": 1286,
-      "sourceBytes": 161163,
-      "sourceSha256": "1fc832c08831d48c74a2a705d2b8f82830c516f7ace2c0cca4ded1bf2977b986",
+      "sourceBytes": 54468,
+      "sourceSha256": "33a363c4e7dc368413a313b04db19e78d0b3ebd20f26bdc27793948ca5b00a52",
       "metadataName": "tiger-jungle-adornment-front.json",
-      "metadataBytes": 3290,
-      "metadataSha256": "9732489139ea308c06872aec9a73a90043a612da08d9077252a7c5eeac0e3d0b",
+      "metadataBytes": 2523,
+      "metadataSha256": "6a66bc2ac47b14ad9e4a7a0f184aa85299f71839b091b3980f2f22030275b3d4",
       "registration": {
         "scale": 1,
         "x": 0,
@@ -2840,7 +3060,7 @@ export const AVATAR_ART = deepFreeze({
         "right": 1223,
         "bottom": 1286
       },
-      "derivationSha256": "3bf05fcc8e0f722f44de585d9189b5ce19ee45f559e7f0f3b9a15df00caf090d",
+      "derivationSha256": "99f41e0b9408984b076ffb9d997dbcfdd98571908f645a2828521a4857625c62",
       "width": 768,
       "height": 808,
       "variants": [
@@ -2848,26 +3068,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 269,
           "url": "../../../trainer/assets/avatar-shop/item-jungle-adornment-tiger-front-256.webp",
-          "bytes": 4076,
-          "sha256": "e25fb4f348517a683301a1c6b519dabd69bac8808ea3e938acf3187f2941aafe"
+          "bytes": 2400,
+          "sha256": "73842d41a8aa497fb9e7bcdbf82e1a051234233b2069b4f8be4480e2ffcd1c48"
         },
         {
           "width": 512,
           "height": 538,
           "url": "../../../trainer/assets/avatar-shop/item-jungle-adornment-tiger-front-512.webp",
-          "bytes": 9976,
-          "sha256": "15e21a7dd06c5547206bf238af5427fc1f92b84fcafd4fd0bdf2bed2e8f8de89"
+          "bytes": 5318,
+          "sha256": "dbebc92a31be38a5dcd3ef9040c5b5319a6420cf20ba8cefed756845055e55c4"
         },
         {
           "width": 768,
           "height": 808,
           "url": "../../../trainer/assets/avatar-shop/item-jungle-adornment-tiger-front-768.webp",
-          "bytes": 18658,
-          "sha256": "a45138b974405d25fdab6c93e17e8793aca9428d8e7067d63fff7ab2f5eb2d3a"
+          "bytes": 9418,
+          "sha256": "586608c2b47c9e844ff9a08f9da369662837dca6dd1ea2ffed471c337fcd5e6d"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-jungle-adornment-tiger-front-256.webp",
-      "outputBytes": 32710
+      "outputBytes": 17136
     },
     "figure-dragon-base": {
       "key": "figure-dragon-base",
@@ -2924,130 +3144,20 @@ export const AVATAR_ART = deepFreeze({
       "fallbackUrl": "../../../trainer/assets/avatar-shop/figure-dragon-base-256.webp",
       "outputBytes": 248508
     },
-    "item-crystal-head-dragon-front": {
-      "key": "item-crystal-head-dragon-front",
+    "item-crystal-head-dragon-rear": {
+      "key": "item-crystal-head-dragon-rear",
       "figureId": "dragon",
-      "plane": "front",
-      "sourceName": "dragon-crystal-head-front.png",
+      "plane": "rear",
+      "sourceName": "dragon-crystal-head-rear.png",
       "sourceWidth": 1199,
       "sourceHeight": 1312,
       "canvasWidth": 1199,
       "canvasHeight": 1312,
-      "sourceBytes": 172979,
-      "sourceSha256": "ee0273a140f94ae81d380108411585072430db3ebf21ec46f12e72894e4b1ca7",
-      "metadataName": "dragon-crystal-head-front.json",
-      "metadataBytes": 1367,
-      "metadataSha256": "129f61f4508df8164481633791bc3a34fc17a28b8007a29c557bb1e464dde8b1",
-      "registration": {
-        "scale": 0.55,
-        "x": 200,
-        "y": 150
-      },
-      "registrationExplicit": true,
-      "registeredBounds": {
-        "left": 200,
-        "top": 150,
-        "right": 859.45,
-        "bottom": 871.6
-      },
-      "derivationSha256": "6f39d4047e088ca29a9780d7f35fb99a1a5879ef1fe59d6cb138a7d6643db7db",
-      "width": 768,
-      "height": 840,
-      "variants": [
-        {
-          "width": 256,
-          "height": 280,
-          "url": "../../../trainer/assets/avatar-shop/item-crystal-head-dragon-front-256.webp",
-          "bytes": 2264,
-          "sha256": "bbbf0f784af8b2c91b857d7972eed670e18cb3758d25597109602391d3fa3511"
-        },
-        {
-          "width": 512,
-          "height": 560,
-          "url": "../../../trainer/assets/avatar-shop/item-crystal-head-dragon-front-512.webp",
-          "bytes": 5252,
-          "sha256": "ff6e37355909ba03b7e8acd9272d704ad086f6f540e69bd9f9a75e260a146506"
-        },
-        {
-          "width": 768,
-          "height": 840,
-          "url": "../../../trainer/assets/avatar-shop/item-crystal-head-dragon-front-768.webp",
-          "bytes": 9458,
-          "sha256": "fee3a9baf3751e814528737c368a193ad248aad2834e2905a6598956b56bf6ed"
-        }
-      ],
-      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-crystal-head-dragon-front-256.webp",
-      "outputBytes": 16974
-    },
-    "item-crystal-body-dragon-front": {
-      "key": "item-crystal-body-dragon-front",
-      "figureId": "dragon",
-      "plane": "front",
-      "sourceName": "dragon-crystal-body-front.png",
-      "sourceWidth": 1199,
-      "sourceHeight": 1312,
-      "canvasWidth": 1199,
-      "canvasHeight": 1312,
-      "sourceBytes": 617257,
-      "sourceSha256": "8da74ce5145588d1ec1717ea8435fd435d1b58edcecd59c9bf7439170e86f0dc",
-      "metadataName": "dragon-crystal-body-front.json",
-      "metadataBytes": 1453,
-      "metadataSha256": "8bc1f62753da4f54f3f74e639f9b904de987f7eb84c372e7dfc62d681cf3d7c5",
-      "registration": {
-        "scale": 0.55,
-        "x": 175,
-        "y": 260
-      },
-      "registrationExplicit": true,
-      "registeredBounds": {
-        "left": 175,
-        "top": 260,
-        "right": 834.45,
-        "bottom": 981.6
-      },
-      "derivationSha256": "54661c89c22179782bca76e8d73ff726cbf68b46a4f57bf516503ff6a08e2ca2",
-      "width": 768,
-      "height": 840,
-      "variants": [
-        {
-          "width": 256,
-          "height": 280,
-          "url": "../../../trainer/assets/avatar-shop/item-crystal-body-dragon-front-256.webp",
-          "bytes": 4858,
-          "sha256": "1f71697e53523a30156b955213f6660c5ca6fe196ab0c279c66d087972c33e78"
-        },
-        {
-          "width": 512,
-          "height": 560,
-          "url": "../../../trainer/assets/avatar-shop/item-crystal-body-dragon-front-512.webp",
-          "bytes": 13020,
-          "sha256": "05b0a8fbab30846fec6b47cc15b935e3c387af56c1a41cb77145607531ac45f2"
-        },
-        {
-          "width": 768,
-          "height": 840,
-          "url": "../../../trainer/assets/avatar-shop/item-crystal-body-dragon-front-768.webp",
-          "bytes": 25220,
-          "sha256": "9f067606f4e16c539437324612bf6418be293efd25501595c53e9b6850ff6734"
-        }
-      ],
-      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-crystal-body-dragon-front-256.webp",
-      "outputBytes": 43098
-    },
-    "item-crystal-adornment-dragon-front": {
-      "key": "item-crystal-adornment-dragon-front",
-      "figureId": "dragon",
-      "plane": "front",
-      "sourceName": "dragon-crystal-adornment-front.png",
-      "sourceWidth": 1199,
-      "sourceHeight": 1312,
-      "canvasWidth": 1199,
-      "canvasHeight": 1312,
-      "sourceBytes": 340890,
-      "sourceSha256": "036c2d65d8e37b0a96c884bad4f1afacae51d3de192318f30b66d74185a1f5cd",
-      "metadataName": "dragon-crystal-adornment-front.json",
-      "metadataBytes": 1421,
-      "metadataSha256": "7e3c4d034af4abe280363a9580515e1e9efbe3b56918112e0fd70d8dad293931",
+      "sourceBytes": 54545,
+      "sourceSha256": "6cd1947c2ddcf1774392444cc5ff539a25c7a500a17c14d62ce4d9bde583756f",
+      "metadataName": "dragon-crystal-head-rear.json",
+      "metadataBytes": 1553,
+      "metadataSha256": "e28f71138d5269b4e7e32ffd10f42fa932de536728206b0eaa5a55c57dc687b4",
       "registration": {
         "scale": 1,
         "x": 0,
@@ -3060,7 +3170,282 @@ export const AVATAR_ART = deepFreeze({
         "right": 1199,
         "bottom": 1312
       },
-      "derivationSha256": "523196342dd31cd50012155ad356cdf76ba1cf7f467a79d7db78414e092f73e9",
+      "derivationSha256": "74062004c46a89f133e8c675342dcd0ce3999f5f881080a5b3abaaef35e60a1b",
+      "width": 768,
+      "height": 840,
+      "variants": [
+        {
+          "width": 256,
+          "height": 280,
+          "url": "../../../trainer/assets/avatar-shop/item-crystal-head-dragon-rear-256.webp",
+          "bytes": 1410,
+          "sha256": "90d363f503d686fd6f6593404d633bb92e5797f346712e1276f11604fed793be"
+        },
+        {
+          "width": 512,
+          "height": 560,
+          "url": "../../../trainer/assets/avatar-shop/item-crystal-head-dragon-rear-512.webp",
+          "bytes": 2800,
+          "sha256": "23055665507f350087f04df2688e92b141429e19159a2e35823eae0270619826"
+        },
+        {
+          "width": 768,
+          "height": 840,
+          "url": "../../../trainer/assets/avatar-shop/item-crystal-head-dragon-rear-768.webp",
+          "bytes": 4700,
+          "sha256": "11927677a0b3acc331bf9d927fc3578c54b8db027bd2522307a8b8dac6fc6f69"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-crystal-head-dragon-rear-256.webp",
+      "outputBytes": 8910
+    },
+    "item-crystal-head-dragon-front": {
+      "key": "item-crystal-head-dragon-front",
+      "figureId": "dragon",
+      "plane": "front",
+      "sourceName": "dragon-crystal-head-front.png",
+      "sourceWidth": 1199,
+      "sourceHeight": 1312,
+      "canvasWidth": 1199,
+      "canvasHeight": 1312,
+      "sourceBytes": 56833,
+      "sourceSha256": "0651fc727cfe15262ff19ff1d180f9101b322e9209787a9ecf5a909f6b86c4f4",
+      "metadataName": "dragon-crystal-head-front.json",
+      "metadataBytes": 1555,
+      "metadataSha256": "c06ce84690659fe0d9a09e8501512e45bece8ac714154c7157a9dedfd4b9287b",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1199,
+        "bottom": 1312
+      },
+      "derivationSha256": "d6b364ae6c0b497b18f52207bb0622a8df5c3555d0f58a18e7337bb53a497376",
+      "width": 768,
+      "height": 840,
+      "variants": [
+        {
+          "width": 256,
+          "height": 280,
+          "url": "../../../trainer/assets/avatar-shop/item-crystal-head-dragon-front-256.webp",
+          "bytes": 2216,
+          "sha256": "c36fcc640f001dde5f11de4bff72ae54d1dac4885b33680be0b02dd763bfeb5d"
+        },
+        {
+          "width": 512,
+          "height": 560,
+          "url": "../../../trainer/assets/avatar-shop/item-crystal-head-dragon-front-512.webp",
+          "bytes": 5368,
+          "sha256": "6f9d93587becb7b96337dca53b6375372a23dd7acfcc2cf62693bf1c828ed708"
+        },
+        {
+          "width": 768,
+          "height": 840,
+          "url": "../../../trainer/assets/avatar-shop/item-crystal-head-dragon-front-768.webp",
+          "bytes": 9772,
+          "sha256": "117347913d8a269a892447cb534b60d5a4d9a94b7c3887b6c8c4f74dea0507c5"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-crystal-head-dragon-front-256.webp",
+      "outputBytes": 17356
+    },
+    "item-crystal-body-dragon-rear": {
+      "key": "item-crystal-body-dragon-rear",
+      "figureId": "dragon",
+      "plane": "rear",
+      "sourceName": "dragon-crystal-body-rear.png",
+      "sourceWidth": 1199,
+      "sourceHeight": 1312,
+      "canvasWidth": 1199,
+      "canvasHeight": 1312,
+      "sourceBytes": 202324,
+      "sourceSha256": "9d365c75c6c18963ed7722569eed71f7e7015639c363695d0fbb02167985685d",
+      "metadataName": "dragon-crystal-body-rear.json",
+      "metadataBytes": 1585,
+      "metadataSha256": "22b8291c0c355bbb02ed52f1989a7b65b0bc1099b1d6f188773212bc4014e2a3",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1199,
+        "bottom": 1312
+      },
+      "derivationSha256": "b82ae5409f6247f422c16d5eb723246e591c1845b9ec8f4ee41c23c79e46c40c",
+      "width": 768,
+      "height": 840,
+      "variants": [
+        {
+          "width": 256,
+          "height": 280,
+          "url": "../../../trainer/assets/avatar-shop/item-crystal-body-dragon-rear-256.webp",
+          "bytes": 2966,
+          "sha256": "d88cd0486351e269e938d3f9edfd9af0b73ca68d507a4d4453faa2984073a163"
+        },
+        {
+          "width": 512,
+          "height": 560,
+          "url": "../../../trainer/assets/avatar-shop/item-crystal-body-dragon-rear-512.webp",
+          "bytes": 6602,
+          "sha256": "ead16f4ed66d5af2418a6c5ebc82a07ef5c3a2fdbb2dc121185d60cacf58cc23"
+        },
+        {
+          "width": 768,
+          "height": 840,
+          "url": "../../../trainer/assets/avatar-shop/item-crystal-body-dragon-rear-768.webp",
+          "bytes": 11964,
+          "sha256": "fd6cf7301f594af51167e534808fc23717349e067b600995ffbf6d9920534461"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-crystal-body-dragon-rear-256.webp",
+      "outputBytes": 21532
+    },
+    "item-crystal-body-dragon-front": {
+      "key": "item-crystal-body-dragon-front",
+      "figureId": "dragon",
+      "plane": "front",
+      "sourceName": "dragon-crystal-body-front.png",
+      "sourceWidth": 1199,
+      "sourceHeight": 1312,
+      "canvasWidth": 1199,
+      "canvasHeight": 1312,
+      "sourceBytes": 208068,
+      "sourceSha256": "7e9a04806bd0d5ad09d79c570e41458b78b1d284988d6a2ad888ea361e37dfe1",
+      "metadataName": "dragon-crystal-body-front.json",
+      "metadataBytes": 1587,
+      "metadataSha256": "1a67599b7e1616ff99fe9d52e8fbf258fa11537b978d9ff1ad56ab4b6acf48ad",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1199,
+        "bottom": 1312
+      },
+      "derivationSha256": "df731211ef6dbbe7e9b0ae80422a73d9b94a4a28dfb31b44ac1aa9a2f06b4181",
+      "width": 768,
+      "height": 840,
+      "variants": [
+        {
+          "width": 256,
+          "height": 280,
+          "url": "../../../trainer/assets/avatar-shop/item-crystal-body-dragon-front-256.webp",
+          "bytes": 5134,
+          "sha256": "052cf8ade75523401a471e89d8f48b3895384ce83249d0b01308a1ea130e69f6"
+        },
+        {
+          "width": 512,
+          "height": 560,
+          "url": "../../../trainer/assets/avatar-shop/item-crystal-body-dragon-front-512.webp",
+          "bytes": 14042,
+          "sha256": "e7009f47ac2c82b12bd916453683ff0248394c81d04d4dfb9e8e2fc262e0a7a1"
+        },
+        {
+          "width": 768,
+          "height": 840,
+          "url": "../../../trainer/assets/avatar-shop/item-crystal-body-dragon-front-768.webp",
+          "bytes": 26274,
+          "sha256": "dd57e417291d3d9ab83efa96240df2778e9924303e3064d70acd3694d5ba45cb"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-crystal-body-dragon-front-256.webp",
+      "outputBytes": 45450
+    },
+    "item-crystal-adornment-dragon-rear": {
+      "key": "item-crystal-adornment-dragon-rear",
+      "figureId": "dragon",
+      "plane": "rear",
+      "sourceName": "dragon-crystal-adornment-rear.png",
+      "sourceWidth": 1199,
+      "sourceHeight": 1312,
+      "canvasWidth": 1199,
+      "canvasHeight": 1312,
+      "sourceBytes": 308858,
+      "sourceSha256": "2195fc67de5b9717200f3ff4470371b1660b98169cf64c34a3eb6823922b5d00",
+      "metadataName": "dragon-crystal-adornment-rear.json",
+      "metadataBytes": 1592,
+      "metadataSha256": "7aeebc0a5f8183e18e1687753671453f24eba61d9bfabe61593d5e8ce51f727c",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1199,
+        "bottom": 1312
+      },
+      "derivationSha256": "b579684b09018813ef1cc9291c79f64b9557363870466281bd224221645d6664",
+      "width": 768,
+      "height": 840,
+      "variants": [
+        {
+          "width": 256,
+          "height": 280,
+          "url": "../../../trainer/assets/avatar-shop/item-crystal-adornment-dragon-rear-256.webp",
+          "bytes": 6120,
+          "sha256": "f86f1b743f0b274bcbac1092c2b89ec410bd85cd8b48f4544cce2708969b711a"
+        },
+        {
+          "width": 512,
+          "height": 560,
+          "url": "../../../trainer/assets/avatar-shop/item-crystal-adornment-dragon-rear-512.webp",
+          "bytes": 14690,
+          "sha256": "655e894f84d6f8834e82f80a96179ce4c03d28194a8ee3dd678857b232b0c59b"
+        },
+        {
+          "width": 768,
+          "height": 840,
+          "url": "../../../trainer/assets/avatar-shop/item-crystal-adornment-dragon-rear-768.webp",
+          "bytes": 27694,
+          "sha256": "2966687af5a57fea459ba3ac840d6dfa3dd73fbf7ff45307046347d1d76c65a0"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-crystal-adornment-dragon-rear-256.webp",
+      "outputBytes": 48504
+    },
+    "item-crystal-adornment-dragon-front": {
+      "key": "item-crystal-adornment-dragon-front",
+      "figureId": "dragon",
+      "plane": "front",
+      "sourceName": "dragon-crystal-adornment-front.png",
+      "sourceWidth": 1199,
+      "sourceHeight": 1312,
+      "canvasWidth": 1199,
+      "canvasHeight": 1312,
+      "sourceBytes": 316034,
+      "sourceSha256": "185f8c483e75a4b747753b6595bf085f82bdec2a62892e9163587254977291a5",
+      "metadataName": "dragon-crystal-adornment-front.json",
+      "metadataBytes": 1594,
+      "metadataSha256": "eea397604ea195d9ecf586e99f1798ee38de46044d7a53905ace775c17a8e1ac",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1199,
+        "bottom": 1312
+      },
+      "derivationSha256": "a93b63aacdc904c60d0ab5c5d778660866773987baf7109ce6afaa15b1b82934",
       "width": 768,
       "height": 840,
       "variants": [
@@ -3068,26 +3453,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 280,
           "url": "../../../trainer/assets/avatar-shop/item-crystal-adornment-dragon-front-256.webp",
-          "bytes": 9594,
-          "sha256": "bb585944cf642001b8be23c290b58e67f08c6d201f0d81196b75bc10354b6f08"
+          "bytes": 8476,
+          "sha256": "64db0daf9ba62c590cdf383463ae9f35cf4f581d1f65e8c110075ace3d2a09ce"
         },
         {
           "width": 512,
           "height": 560,
           "url": "../../../trainer/assets/avatar-shop/item-crystal-adornment-dragon-front-512.webp",
-          "bytes": 26928,
-          "sha256": "b6c400d3f98a3daa0adef9bc22ac5d78ede67d263b7ad82eb5c3ab9f5387264e"
+          "bytes": 22028,
+          "sha256": "f8b8de59d40e305f47088cd3dc042d0cb34e6650a49f536d90748b0b884d4c2f"
         },
         {
           "width": 768,
           "height": 840,
           "url": "../../../trainer/assets/avatar-shop/item-crystal-adornment-dragon-front-768.webp",
-          "bytes": 54956,
-          "sha256": "11e8a5d9c560d4e2d4a1b7e89e830a7a8c8b6d8fb9b10634dd13257e0a8ffb82"
+          "bytes": 43258,
+          "sha256": "a6779852b7d7d48204a4021b5bb524ccd60a816e78df3d6fc3cfbcfc5be8cd26"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-crystal-adornment-dragon-front-256.webp",
-      "outputBytes": 91478
+      "outputBytes": 73762
     },
     "figure-deer-mist-base": {
       "key": "figure-deer-mist-base",
@@ -3144,6 +3529,61 @@ export const AVATAR_ART = deepFreeze({
       "fallbackUrl": "../../../trainer/assets/avatar-shop/figure-deer-mist-base-256.webp",
       "outputBytes": 207060
     },
+    "item-forest-head-deer-mist-rear": {
+      "key": "item-forest-head-deer-mist-rear",
+      "figureId": "deer-mist",
+      "plane": "rear",
+      "sourceName": "deer-mist-forest-head-rear.png",
+      "sourceWidth": 1145,
+      "sourceHeight": 1374,
+      "canvasWidth": 1145,
+      "canvasHeight": 1374,
+      "sourceBytes": 398604,
+      "sourceSha256": "904d2fe78a91fa15f804388c2f41736f1dc3d47e04394cb9dcacd0392568f2b7",
+      "metadataName": "deer-mist-forest-head-rear.json",
+      "metadataBytes": 2703,
+      "metadataSha256": "77efa978b9b70a0f743f99da542c4b2d543170ae46d1796488f9d5fc36ec037d",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1145,
+        "bottom": 1374
+      },
+      "derivationSha256": "272e8f9053e30887388782221e2054a8f7f31c942a52ff6d3357f137d3bc09c7",
+      "width": 768,
+      "height": 922,
+      "variants": [
+        {
+          "width": 256,
+          "height": 307,
+          "url": "../../../trainer/assets/avatar-shop/item-forest-head-deer-mist-rear-256.webp",
+          "bytes": 10242,
+          "sha256": "f9cba8ed7c98073ccb36d6e8a8e7a0724e9ca17745e324868911dd86b26e74fe"
+        },
+        {
+          "width": 512,
+          "height": 614,
+          "url": "../../../trainer/assets/avatar-shop/item-forest-head-deer-mist-rear-512.webp",
+          "bytes": 29920,
+          "sha256": "921bb8d878f6f69822c44cf22244e3ec96c64bcd660c281a3cf0af230f19c381"
+        },
+        {
+          "width": 768,
+          "height": 922,
+          "url": "../../../trainer/assets/avatar-shop/item-forest-head-deer-mist-rear-768.webp",
+          "bytes": 57430,
+          "sha256": "5572c09d7e2adf24fc228642771422e90ff77ad4c0269402ae5bc2342edc069d"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-forest-head-deer-mist-rear-256.webp",
+      "outputBytes": 97592
+    },
     "item-forest-head-deer-mist-front": {
       "key": "item-forest-head-deer-mist-front",
       "figureId": "deer-mist",
@@ -3153,24 +3593,24 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1374,
       "canvasWidth": 1145,
       "canvasHeight": 1374,
-      "sourceBytes": 885111,
-      "sourceSha256": "57a14a871eaf870ca9cd5b975b39ad1e707f27c72b841ac01d97d7cbf650ad56",
+      "sourceBytes": 371702,
+      "sourceSha256": "df18cf01b8205d008664a2526dd207424ca718bbd55e563113c11649dc024528",
       "metadataName": "deer-mist-forest-head-front.json",
-      "metadataBytes": 1829,
-      "metadataSha256": "8fec41a929606db392a1b9e9407fc3520a8e720a43ba1b768a0e4736a1dc69b0",
+      "metadataBytes": 2705,
+      "metadataSha256": "4c6ef138d3603a597aff472437aae8d759f64ee7a31650dc5376624fbfdd8e07",
       "registration": {
-        "scale": 0.65,
-        "x": 70,
-        "y": -50
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 70,
-        "top": -50,
-        "right": 814.25,
-        "bottom": 843.1
+        "left": 0,
+        "top": 0,
+        "right": 1145,
+        "bottom": 1374
       },
-      "derivationSha256": "ab1518ca85875d2b01a1375649ee7a6e306bea45b1db3e9a3709f68479d59c21",
+      "derivationSha256": "007aec93a56e46b37acfcf26fc6bc1f7bf1e98ec80b43086285f3ee77b4a6b93",
       "width": 768,
       "height": 922,
       "variants": [
@@ -3178,26 +3618,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 307,
           "url": "../../../trainer/assets/avatar-shop/item-forest-head-deer-mist-front-256.webp",
-          "bytes": 13046,
-          "sha256": "add0a8fed11d02ccad8a72cacaf6ef66885227d4b6938e7f78a6e7b25b4b40ca"
+          "bytes": 2684,
+          "sha256": "d26063d9a1b07c45513897e59b18509c1fbb2b96b7133dc9c01c2ed6ec2a356f"
         },
         {
           "width": 512,
           "height": 614,
           "url": "../../../trainer/assets/avatar-shop/item-forest-head-deer-mist-front-512.webp",
-          "bytes": 38560,
-          "sha256": "a3f66fdb939072d14dd95258f214de9f3ec939c3cfdf0d8c398ae62a7fc28d7e"
+          "bytes": 6614,
+          "sha256": "c8cca4a63122509148a04a6e769490150a3981a14b3527de8bb3c8d811176c7c"
         },
         {
           "width": 768,
           "height": 922,
           "url": "../../../trainer/assets/avatar-shop/item-forest-head-deer-mist-front-768.webp",
-          "bytes": 72542,
-          "sha256": "a2c8d9ed0f0859acb9c3cd5cd4099ad45cd738d5dea8da5134a6bd5028f7aeb1"
+          "bytes": 11834,
+          "sha256": "ee259b9ca0c4a62c3c6759c5650b07714366ecd7c77dfb76680de06df9f24cdb"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-forest-head-deer-mist-front-256.webp",
-      "outputBytes": 124148
+      "outputBytes": 21132
     },
     "item-forest-body-deer-mist-rear": {
       "key": "item-forest-body-deer-mist-rear",
@@ -3205,27 +3645,27 @@ export const AVATAR_ART = deepFreeze({
       "plane": "rear",
       "sourceName": "deer-mist-forest-body-rear.png",
       "sourceWidth": 1145,
-      "sourceHeight": 1373,
+      "sourceHeight": 1374,
       "canvasWidth": 1145,
       "canvasHeight": 1374,
-      "sourceBytes": 951516,
-      "sourceSha256": "faa52402a72956173484006ba285ee438e1ab3a0fc4f812a2282a105693a8577",
+      "sourceBytes": 714751,
+      "sourceSha256": "a84a668e61676cb8253386f34d1b2624a74d8c40c41d259e9c6e7bce2f48099b",
       "metadataName": "deer-mist-forest-body-rear.json",
-      "metadataBytes": 2522,
-      "metadataSha256": "e82e4d3c077df558de508fe2eb36316d474f405bf0a83cfd3c6f91996f6b2f49",
+      "metadataBytes": 1768,
+      "metadataSha256": "6a784c83e192d650671ebbea7871d9c29f1297aa51a245a439eaefafacce8812",
       "registration": {
-        "scale": 0.85,
-        "x": 130,
-        "y": 70
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 130,
-        "top": 70,
-        "right": 1103.25,
-        "bottom": 1237.05
+        "left": 0,
+        "top": 0,
+        "right": 1145,
+        "bottom": 1374
       },
-      "derivationSha256": "e83f5df30b3eb4add2a815e7472dfa844fa637c02da59e6699c15d4154381f2e",
+      "derivationSha256": "8b565e2bbe35ce8690d2b3f495e6bef13106c9eea31e40d2bc83e323885e721b",
       "width": 768,
       "height": 922,
       "variants": [
@@ -3233,26 +3673,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 307,
           "url": "../../../trainer/assets/avatar-shop/item-forest-body-deer-mist-rear-256.webp",
-          "bytes": 11790,
-          "sha256": "d182ee5b7773b3b3b9c8565f66a0454347822e91f55c5f94705122154fc03d4e"
+          "bytes": 12042,
+          "sha256": "81cfba854f23b9e15d2a3c4ce99e1d0249096e1dd69553f1eeb83661f9a79176"
         },
         {
           "width": 512,
           "height": 614,
           "url": "../../../trainer/assets/avatar-shop/item-forest-body-deer-mist-rear-512.webp",
-          "bytes": 34416,
-          "sha256": "22d609ad58054dd7447b3d23c7d28675f94774e75d1acea71da1753a305eacc3"
+          "bytes": 35298,
+          "sha256": "8cefb1a115f56630a864328ddc19494432479c8ceb241cf16f75ad9b999f87fa"
         },
         {
           "width": 768,
           "height": 922,
           "url": "../../../trainer/assets/avatar-shop/item-forest-body-deer-mist-rear-768.webp",
-          "bytes": 65614,
-          "sha256": "ef265a62c31a92d516548215cd8f1bd16b109e5e210d28cf74e16a8b7cb1ae6f"
+          "bytes": 71176,
+          "sha256": "9ceaf6c5a21fbb7b98a2587f4567cf0635f84e28fd0e022a7f033404414aaca1"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-forest-body-deer-mist-rear-256.webp",
-      "outputBytes": 111820
+      "outputBytes": 118516
     },
     "item-forest-body-deer-mist-front": {
       "key": "item-forest-body-deer-mist-front",
@@ -3263,24 +3703,24 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1374,
       "canvasWidth": 1145,
       "canvasHeight": 1374,
-      "sourceBytes": 586318,
-      "sourceSha256": "c687f487fe8f51b199f62497d056991f507c29ea407b21c6ac09d91790e0822c",
+      "sourceBytes": 97308,
+      "sourceSha256": "33d7709a573da92b874013442de66fcb7496924543bc06c26ee89b123db9ff67",
       "metadataName": "deer-mist-forest-body-front.json",
-      "metadataBytes": 2805,
-      "metadataSha256": "ab6155e5a41449d3e6825d94983827221a69b25067ba7540309b5a2105fa319f",
+      "metadataBytes": 1771,
+      "metadataSha256": "d612038c7b6e8ea07e3ceb18502d649d92399a541d93961286f13ffe18b176e7",
       "registration": {
-        "scale": 0.36,
-        "x": 274,
-        "y": 468
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 274,
-        "top": 468,
-        "right": 686.2,
-        "bottom": 962.64
+        "left": 0,
+        "top": 0,
+        "right": 1145,
+        "bottom": 1374
       },
-      "derivationSha256": "3f5928fc2f725696e8a3e99a44cb3d6e8f1a61530b78f9648b7a7523da9dae34",
+      "derivationSha256": "9a77cd21ba524e6a801d74102ed1e41ddfe3683dfa50bee90829f24e91c73202",
       "width": 768,
       "height": 922,
       "variants": [
@@ -3288,26 +3728,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 307,
           "url": "../../../trainer/assets/avatar-shop/item-forest-body-deer-mist-front-256.webp",
-          "bytes": 2992,
-          "sha256": "0798b220942b5272c2bf9ec32e5a494c6abb10e7d4520fbcfa3864f84d86b712"
+          "bytes": 2970,
+          "sha256": "5ed3ee3b29e19acefdc65fdd45821a711a9423e6410ca9ef92e12d24a77ad5c1"
         },
         {
           "width": 512,
           "height": 614,
           "url": "../../../trainer/assets/avatar-shop/item-forest-body-deer-mist-front-512.webp",
-          "bytes": 7520,
-          "sha256": "70a6f6eca78bd41aae1ebe443d5e40720db92e63a21108a729f5f285587120cc"
+          "bytes": 7542,
+          "sha256": "cc377a52c0f67d8f7347ad96a58141bc5cfa1247be2b0539f9dd10e9978d7f39"
         },
         {
           "width": 768,
           "height": 922,
           "url": "../../../trainer/assets/avatar-shop/item-forest-body-deer-mist-front-768.webp",
-          "bytes": 13714,
-          "sha256": "ddf555d9e8e74945108f75b92195c4e245c6d9d36a7eca6d44dec63c9c287614"
+          "bytes": 13972,
+          "sha256": "87148e7fd70d6de16f9bc9838e1953785b232ca203cf81307010b060d0cbfdfd"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-forest-body-deer-mist-front-256.webp",
-      "outputBytes": 24226
+      "outputBytes": 24484
     },
     "item-forest-adornment-deer-mist-front": {
       "key": "item-forest-adornment-deer-mist-front",
@@ -3318,24 +3758,24 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1374,
       "canvasWidth": 1145,
       "canvasHeight": 1374,
-      "sourceBytes": 502027,
-      "sourceSha256": "e07befda7c364e7073867341ed1051cb133655f4c972f938d7f7cee84a5608dd",
+      "sourceBytes": 28853,
+      "sourceSha256": "c2119b1a286e8b048c35f82579477ef9f34b7f01679d488bb8007bdec30fb399",
       "metadataName": "deer-mist-forest-adornment-front.json",
-      "metadataBytes": 1730,
-      "metadataSha256": "de72c85f19670f0740ca51ec7a803b88a83aa4c17c49483f943219f0ea1e6bcd",
+      "metadataBytes": 2555,
+      "metadataSha256": "3c969114441d819f591b360ca314877e194d45712fecef555dd9e2fc80658b4c",
       "registration": {
-        "scale": 0.5,
-        "x": 420,
-        "y": 770
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 420,
-        "top": 770,
-        "right": 992.5,
-        "bottom": 1457
+        "left": 0,
+        "top": 0,
+        "right": 1145,
+        "bottom": 1374
       },
-      "derivationSha256": "e9f1666b31dd5ee9967364843c7dfbdb812a6982bd925c1e19b67762e75d7c2b",
+      "derivationSha256": "888c8dab3f1e9d2e0da1109af3ebd58df38a8243c3dad7e7b91ccc31528c814f",
       "width": 768,
       "height": 922,
       "variants": [
@@ -3343,26 +3783,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 307,
           "url": "../../../trainer/assets/avatar-shop/item-forest-adornment-deer-mist-front-256.webp",
-          "bytes": 5412,
-          "sha256": "580d796e8f558e54ae414ae62915156da90ff595df18bcdec6f47bbea90a080b"
+          "bytes": 1672,
+          "sha256": "b83586d5d958497c851782da03e6261d0ebccec461f5498103802add9f3444b4"
         },
         {
           "width": 512,
           "height": 614,
           "url": "../../../trainer/assets/avatar-shop/item-forest-adornment-deer-mist-front-512.webp",
-          "bytes": 15092,
-          "sha256": "48ee44af0f3bfd1e7e18b35dfc596d2d349e344f8c46cf1b3f29df57765d6607"
+          "bytes": 3792,
+          "sha256": "76eb1a28e730b26bbc139d433ba6ed32cf6c1f0afae0082fa8153ded3a327bca"
         },
         {
           "width": 768,
           "height": 922,
           "url": "../../../trainer/assets/avatar-shop/item-forest-adornment-deer-mist-front-768.webp",
-          "bytes": 28150,
-          "sha256": "74b48283a70df62ea8a3f2fa29d5aeba81ab8469e3d68d079b39152e596d66c1"
+          "bytes": 6880,
+          "sha256": "5795fbe6c998bd6cf2450a8fe18dc5f36c884c8ea97e61dd7c9b860fd209b9db"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-forest-adornment-deer-mist-front-256.webp",
-      "outputBytes": 48654
+      "outputBytes": 12344
     },
     "figure-wolf-aurora-base": {
       "key": "figure-wolf-aurora-base",
@@ -3419,75 +3859,20 @@ export const AVATAR_ART = deepFreeze({
       "fallbackUrl": "../../../trainer/assets/avatar-shop/figure-wolf-aurora-base-256.webp",
       "outputBytes": 319356
     },
-    "item-aurora-head-wolf-aurora-front": {
-      "key": "item-aurora-head-wolf-aurora-front",
-      "figureId": "wolf-aurora",
-      "plane": "front",
-      "sourceName": "wolf-aurora-aurora-head-front.png",
-      "sourceWidth": 1223,
-      "sourceHeight": 1286,
-      "canvasWidth": 1223,
-      "canvasHeight": 1286,
-      "sourceBytes": 426209,
-      "sourceSha256": "28827eb9e93265390ad3c77b80659f93bb2840f2b2d048ea9257ed3381a3ba7e",
-      "metadataName": "wolf-aurora-aurora-head-front.json",
-      "metadataBytes": 1271,
-      "metadataSha256": "b758fb5115ac18b2d9df526248c9f79a5faf2a0fbaa894e3cc35f4a9345e50f8",
-      "registration": {
-        "scale": 0.5,
-        "x": 145,
-        "y": 320
-      },
-      "registrationExplicit": true,
-      "registeredBounds": {
-        "left": 145,
-        "top": 320,
-        "right": 756.5,
-        "bottom": 963
-      },
-      "derivationSha256": "e1c03fe7bbe8e1b8359c95e7492d25f2bfe95df16e6fb76664307ffd3179d84b",
-      "width": 768,
-      "height": 808,
-      "variants": [
-        {
-          "width": 256,
-          "height": 269,
-          "url": "../../../trainer/assets/avatar-shop/item-aurora-head-wolf-aurora-front-256.webp",
-          "bytes": 4098,
-          "sha256": "322cf98b4dece38c02fba0d3815ae04a6d6e5c854dec33c27fb22995d998acac"
-        },
-        {
-          "width": 512,
-          "height": 538,
-          "url": "../../../trainer/assets/avatar-shop/item-aurora-head-wolf-aurora-front-512.webp",
-          "bytes": 10576,
-          "sha256": "cbc0e77995e149598d76e6ffd353103485229638acfa2c7eeac9b4cb3caf8d98"
-        },
-        {
-          "width": 768,
-          "height": 808,
-          "url": "../../../trainer/assets/avatar-shop/item-aurora-head-wolf-aurora-front-768.webp",
-          "bytes": 19860,
-          "sha256": "5b041e758474bbaebdd81155cfbbcb93d84b934531994c4c27c4885411256e78"
-        }
-      ],
-      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-aurora-head-wolf-aurora-front-256.webp",
-      "outputBytes": 34534
-    },
-    "item-aurora-body-wolf-aurora-rear": {
-      "key": "item-aurora-body-wolf-aurora-rear",
+    "item-aurora-head-wolf-aurora-rear": {
+      "key": "item-aurora-head-wolf-aurora-rear",
       "figureId": "wolf-aurora",
       "plane": "rear",
-      "sourceName": "wolf-aurora-aurora-body-rear.png",
+      "sourceName": "wolf-aurora-aurora-head-rear.png",
       "sourceWidth": 1223,
       "sourceHeight": 1286,
       "canvasWidth": 1223,
       "canvasHeight": 1286,
-      "sourceBytes": 1764605,
-      "sourceSha256": "40d885581855d0d3e3a32259a95958463e7e04c51497c2fd723499e2790e4d8e",
-      "metadataName": "wolf-aurora-aurora-body-rear.json",
-      "metadataBytes": 2151,
-      "metadataSha256": "74ce606dd79d2971ba55a73dc409d314fede215cad72a9908903439d64775fc1",
+      "sourceBytes": 66278,
+      "sourceSha256": "063a10dc8b8d1d5112078932c8abe3d024a3dcfcbac96135bf04dea2445e15f1",
+      "metadataName": "wolf-aurora-aurora-head-rear.json",
+      "metadataBytes": 1592,
+      "metadataSha256": "da00657fa048e628c6d2122a2eecf0299ef7c1086b5ab8d2ff69360a63cef8ba",
       "registration": {
         "scale": 1,
         "x": 0,
@@ -3500,7 +3885,117 @@ export const AVATAR_ART = deepFreeze({
         "right": 1223,
         "bottom": 1286
       },
-      "derivationSha256": "b406ef0c9997e9a9b74ae7bfd06abf7bbe2284654cc98ab42056e2865475f195",
+      "derivationSha256": "adacb12669f48ce38d89f43bdd0745a2464348c6bb2d0c315358dc36308d9526",
+      "width": 768,
+      "height": 808,
+      "variants": [
+        {
+          "width": 256,
+          "height": 269,
+          "url": "../../../trainer/assets/avatar-shop/item-aurora-head-wolf-aurora-rear-256.webp",
+          "bytes": 1748,
+          "sha256": "92fd4fada0b089f92f5fccd2e463faa8b6c773ce1e34d3c41a11e195470831f4"
+        },
+        {
+          "width": 512,
+          "height": 538,
+          "url": "../../../trainer/assets/avatar-shop/item-aurora-head-wolf-aurora-rear-512.webp",
+          "bytes": 3782,
+          "sha256": "d23c00da3b5430535979989eb4004bf3abfd998fe9cd91fa01afcd035825f8e8"
+        },
+        {
+          "width": 768,
+          "height": 808,
+          "url": "../../../trainer/assets/avatar-shop/item-aurora-head-wolf-aurora-rear-768.webp",
+          "bytes": 6892,
+          "sha256": "a49d4a16187adb3cdc7376aad3aff4eaa271f4508f40d22f7c640e79c2defb6b"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-aurora-head-wolf-aurora-rear-256.webp",
+      "outputBytes": 12422
+    },
+    "item-aurora-head-wolf-aurora-front": {
+      "key": "item-aurora-head-wolf-aurora-front",
+      "figureId": "wolf-aurora",
+      "plane": "front",
+      "sourceName": "wolf-aurora-aurora-head-front.png",
+      "sourceWidth": 1223,
+      "sourceHeight": 1286,
+      "canvasWidth": 1223,
+      "canvasHeight": 1286,
+      "sourceBytes": 66416,
+      "sourceSha256": "17022dc5b1f3bb9626419143ab0fd5106e06e8b89b88ae61bb8c3e461a8eba34",
+      "metadataName": "wolf-aurora-aurora-head-front.json",
+      "metadataBytes": 1594,
+      "metadataSha256": "44faacfa3c4c729866bf45277c3ca59a4c71bfa48085d0dd408d71c1702250a2",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1223,
+        "bottom": 1286
+      },
+      "derivationSha256": "be635e9089cbc942e8d89d4ea452e6db1e7c564eb768b5f78f6e20c338e1d371",
+      "width": 768,
+      "height": 808,
+      "variants": [
+        {
+          "width": 256,
+          "height": 269,
+          "url": "../../../trainer/assets/avatar-shop/item-aurora-head-wolf-aurora-front-256.webp",
+          "bytes": 1902,
+          "sha256": "6a4254a25fec0c3ad81532e59af8b1d5ab4fc621fee65a9b78c9b001dcdcf173"
+        },
+        {
+          "width": 512,
+          "height": 538,
+          "url": "../../../trainer/assets/avatar-shop/item-aurora-head-wolf-aurora-front-512.webp",
+          "bytes": 4480,
+          "sha256": "74323fd96c1721f2e133a1ac3d8b9678bc72b99fa28cbd20b8aaff338ddc5a08"
+        },
+        {
+          "width": 768,
+          "height": 808,
+          "url": "../../../trainer/assets/avatar-shop/item-aurora-head-wolf-aurora-front-768.webp",
+          "bytes": 8270,
+          "sha256": "07563833fba58f77095662a2610af04f90b4df0d32a56cb672094248fe633b4e"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-aurora-head-wolf-aurora-front-256.webp",
+      "outputBytes": 14652
+    },
+    "item-aurora-body-wolf-aurora-rear": {
+      "key": "item-aurora-body-wolf-aurora-rear",
+      "figureId": "wolf-aurora",
+      "plane": "rear",
+      "sourceName": "wolf-aurora-aurora-body-rear.png",
+      "sourceWidth": 1223,
+      "sourceHeight": 1286,
+      "canvasWidth": 1223,
+      "canvasHeight": 1286,
+      "sourceBytes": 1776211,
+      "sourceSha256": "e1c9b5b2a7203e1564fd8ff6ef046300e3c0d085159596939a4a2ac61a182706",
+      "metadataName": "wolf-aurora-aurora-body-rear.json",
+      "metadataBytes": 1782,
+      "metadataSha256": "104b546deffefbf5b62648d393fce1eb0767fce0b51ea5a4ba8cdc7bbd0b8257",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1223,
+        "bottom": 1286
+      },
+      "derivationSha256": "c9621ad4ab64f71291211ba0b26c16ca9902b7a4f82c82523f50af76f4a2c844",
       "width": 768,
       "height": 808,
       "variants": [
@@ -3538,66 +4033,11 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1286,
       "canvasWidth": 1223,
       "canvasHeight": 1286,
-      "sourceBytes": 616561,
-      "sourceSha256": "03612947a651b22c48270300236e3518e78a778f8240a0775da15602dd31dec9",
+      "sourceBytes": 99094,
+      "sourceSha256": "e9c3723a1d268c7fb09fbb4318e55154e86360860ab311ee4db53f5c34c3453c",
       "metadataName": "wolf-aurora-aurora-body-front.json",
-      "metadataBytes": 3001,
-      "metadataSha256": "c8a84c4cb880f3f00185b602c2024d105c2f26563f85a604612d36c8eb74352a",
-      "registration": {
-        "scale": 0.36,
-        "x": 130,
-        "y": 210
-      },
-      "registrationExplicit": true,
-      "registeredBounds": {
-        "left": 130,
-        "top": 210,
-        "right": 570.28,
-        "bottom": 672.96
-      },
-      "derivationSha256": "374dc023a8bd66ce29ba58e7ea1aeedf9e8720c44f4fae680c4f46c3decc8e49",
-      "width": 768,
-      "height": 808,
-      "variants": [
-        {
-          "width": 256,
-          "height": 269,
-          "url": "../../../trainer/assets/avatar-shop/item-aurora-body-wolf-aurora-front-256.webp",
-          "bytes": 3192,
-          "sha256": "805b630e53762641e6f77b62c337fa4e32347bdaf15ce76bdaf46ca5e0b65a74"
-        },
-        {
-          "width": 512,
-          "height": 538,
-          "url": "../../../trainer/assets/avatar-shop/item-aurora-body-wolf-aurora-front-512.webp",
-          "bytes": 7826,
-          "sha256": "66da288e90dec7a95d7e1a26094d4a02bb4e6a93404e0ab8373a229e432c37ec"
-        },
-        {
-          "width": 768,
-          "height": 808,
-          "url": "../../../trainer/assets/avatar-shop/item-aurora-body-wolf-aurora-front-768.webp",
-          "bytes": 14422,
-          "sha256": "fc31039cb3b365277a992bbdfacfa537602288aaf05fd4415f2bec231c640fbf"
-        }
-      ],
-      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-aurora-body-wolf-aurora-front-256.webp",
-      "outputBytes": 25440
-    },
-    "item-aurora-adornment-wolf-aurora-front": {
-      "key": "item-aurora-adornment-wolf-aurora-front",
-      "figureId": "wolf-aurora",
-      "plane": "front",
-      "sourceName": "wolf-aurora-aurora-adornment-front.png",
-      "sourceWidth": 1223,
-      "sourceHeight": 1286,
-      "canvasWidth": 1223,
-      "canvasHeight": 1286,
-      "sourceBytes": 526197,
-      "sourceSha256": "4e392e5bc2ac969d625409589b735b5e9f344244572b3eac130a7dc3fc795021",
-      "metadataName": "wolf-aurora-aurora-adornment-front.json",
-      "metadataBytes": 1421,
-      "metadataSha256": "040a219c805ada5d6aa02fd4deb245648bd7c76dd74c9c9800e97da49f94eeab",
+      "metadataBytes": 1785,
+      "metadataSha256": "a30503f8c8d038336779f789bd1a7f565423fdbc6e1a6b1cc48bef5f1dd7beab",
       "registration": {
         "scale": 1,
         "x": 0,
@@ -3610,7 +4050,62 @@ export const AVATAR_ART = deepFreeze({
         "right": 1223,
         "bottom": 1286
       },
-      "derivationSha256": "f58d20949291a3fd72c8fa9330d4eca82efc6bdf3b89f8dabaee10f43a544407",
+      "derivationSha256": "ce93f35bc32a6df8312a8a6b39e83802b158e695881bd6bc75befc5e946a5740",
+      "width": 768,
+      "height": 808,
+      "variants": [
+        {
+          "width": 256,
+          "height": 269,
+          "url": "../../../trainer/assets/avatar-shop/item-aurora-body-wolf-aurora-front-256.webp",
+          "bytes": 2766,
+          "sha256": "d55221403fe834cdf76c3893ccddfda4fa2c74929b458232167970401f7fbfb2"
+        },
+        {
+          "width": 512,
+          "height": 538,
+          "url": "../../../trainer/assets/avatar-shop/item-aurora-body-wolf-aurora-front-512.webp",
+          "bytes": 6682,
+          "sha256": "65a061ea3c4c9ee222cc2ecbc9866f5caf66ca76b633d93e51ff766182157258"
+        },
+        {
+          "width": 768,
+          "height": 808,
+          "url": "../../../trainer/assets/avatar-shop/item-aurora-body-wolf-aurora-front-768.webp",
+          "bytes": 12136,
+          "sha256": "b28a70aa5c3c187e765dd9005283d825794e917cba30bdfb5a6914ccd45714c9"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-aurora-body-wolf-aurora-front-256.webp",
+      "outputBytes": 21584
+    },
+    "item-aurora-adornment-wolf-aurora-front": {
+      "key": "item-aurora-adornment-wolf-aurora-front",
+      "figureId": "wolf-aurora",
+      "plane": "front",
+      "sourceName": "wolf-aurora-aurora-adornment-front.png",
+      "sourceWidth": 1223,
+      "sourceHeight": 1286,
+      "canvasWidth": 1223,
+      "canvasHeight": 1286,
+      "sourceBytes": 66636,
+      "sourceSha256": "979b163885ba771d4849dd3d119320dd0d1e1ce064962ae53160fbf41b63650c",
+      "metadataName": "wolf-aurora-aurora-adornment-front.json",
+      "metadataBytes": 2563,
+      "metadataSha256": "84ea2d50bd4cb5d9177374e1be2196b5b4759bd547d33b9a17bbe3fa1acbb6cf",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1223,
+        "bottom": 1286
+      },
+      "derivationSha256": "296fd13250e9d895e695849bb28d38cdcdf414329ebe525bb0c7fa7d964c0ad1",
       "width": 768,
       "height": 808,
       "variants": [
@@ -3618,26 +4113,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 269,
           "url": "../../../trainer/assets/avatar-shop/item-aurora-adornment-wolf-aurora-front-256.webp",
-          "bytes": 13232,
-          "sha256": "e2262a098aa01e2d1d0a331455b52d23cc542c779ffe372e55cf9ab1a01b637a"
+          "bytes": 2722,
+          "sha256": "f35d09e333a12da9be3591e5523b73f61e8aa8a743671c702293cc679aba5e7a"
         },
         {
           "width": 512,
           "height": 538,
           "url": "../../../trainer/assets/avatar-shop/item-aurora-adornment-wolf-aurora-front-512.webp",
-          "bytes": 37362,
-          "sha256": "2f6d5a78e85f176cf66a5ff8cdb17f55610219e36419833cdf87e302d7cea9f0"
+          "bytes": 6320,
+          "sha256": "1ec94b6efd6eab5293e2e52e307dd575743f94d7a72a74b38977b9b7e28b4b8d"
         },
         {
           "width": 768,
           "height": 808,
           "url": "../../../trainer/assets/avatar-shop/item-aurora-adornment-wolf-aurora-front-768.webp",
-          "bytes": 75188,
-          "sha256": "b45aa89a06d62aea112cc9b982484b8136b161ff01b30bb7031087025881019f"
+          "bytes": 11720,
+          "sha256": "4c8d0a48a881c9331e72fe88f05f233a37df223aba87e6520d398dd21ceb32c8"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-aurora-adornment-wolf-aurora-front-256.webp",
-      "outputBytes": 125782
+      "outputBytes": 20762
     },
     "figure-panther-shadow-base": {
       "key": "figure-panther-shadow-base",
@@ -3694,130 +4189,20 @@ export const AVATAR_ART = deepFreeze({
       "fallbackUrl": "../../../trainer/assets/avatar-shop/figure-panther-shadow-base-256.webp",
       "outputBytes": 227510
     },
-    "item-obsidian-head-panther-shadow-front": {
-      "key": "item-obsidian-head-panther-shadow-front",
+    "item-obsidian-head-panther-shadow-rear": {
+      "key": "item-obsidian-head-panther-shadow-rear",
       "figureId": "panther-shadow",
-      "plane": "front",
-      "sourceName": "panther-shadow-obsidian-head-front.png",
+      "plane": "rear",
+      "sourceName": "panther-shadow-obsidian-head-rear.png",
       "sourceWidth": 1223,
       "sourceHeight": 1286,
       "canvasWidth": 1223,
       "canvasHeight": 1286,
-      "sourceBytes": 585648,
-      "sourceSha256": "6d1783c219e623bb1039f3fe57b2000348c9962bdbfe06775505f730b9efcc05",
-      "metadataName": "panther-shadow-obsidian-head-front.json",
-      "metadataBytes": 1785,
-      "metadataSha256": "9ca44a733ccff08e8f864e2ca04d3d87059b7ff2794a206d19716d48e6dc31c1",
-      "registration": {
-        "scale": 0.33,
-        "x": 210,
-        "y": 220
-      },
-      "registrationExplicit": true,
-      "registeredBounds": {
-        "left": 210,
-        "top": 220,
-        "right": 613.59,
-        "bottom": 644.38
-      },
-      "derivationSha256": "8712efd1e4ed2ec94e5394a9ce54c112234c1e7310c358b7792e533ea9067c55",
-      "width": 768,
-      "height": 808,
-      "variants": [
-        {
-          "width": 256,
-          "height": 269,
-          "url": "../../../trainer/assets/avatar-shop/item-obsidian-head-panther-shadow-front-256.webp",
-          "bytes": 3010,
-          "sha256": "3ef05a7b71add2df386d86006fcecb65018d08b005d968a7c644bee0eb49e55f"
-        },
-        {
-          "width": 512,
-          "height": 538,
-          "url": "../../../trainer/assets/avatar-shop/item-obsidian-head-panther-shadow-front-512.webp",
-          "bytes": 7288,
-          "sha256": "e2071c381093adcf9c7577887105562899f0e9a5f27f7194269546aad48d7287"
-        },
-        {
-          "width": 768,
-          "height": 808,
-          "url": "../../../trainer/assets/avatar-shop/item-obsidian-head-panther-shadow-front-768.webp",
-          "bytes": 12720,
-          "sha256": "f0039cfb30bcc50f55ef1553c4b83d7d08c11a542214b9bd36e2ee6e6df16d11"
-        }
-      ],
-      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-obsidian-head-panther-shadow-front-256.webp",
-      "outputBytes": 23018
-    },
-    "item-obsidian-body-panther-shadow-front": {
-      "key": "item-obsidian-body-panther-shadow-front",
-      "figureId": "panther-shadow",
-      "plane": "front",
-      "sourceName": "panther-shadow-obsidian-body-front.png",
-      "sourceWidth": 1119,
-      "sourceHeight": 1405,
-      "canvasWidth": 1223,
-      "canvasHeight": 1286,
-      "sourceBytes": 1005616,
-      "sourceSha256": "8adae0695745067f36271ba87c10d24471e5d1dc45b9437b4b227d2d4c97d8d8",
-      "metadataName": "panther-shadow-obsidian-body-front.json",
-      "metadataBytes": 1808,
-      "metadataSha256": "d46b147bb0a8eac382c23c38fc6fe4f2c784c933bdcbdbf5886c34e30e6dcd87",
-      "registration": {
-        "scale": 0.88,
-        "x": 80,
-        "y": 65
-      },
-      "registrationExplicit": true,
-      "registeredBounds": {
-        "left": 80,
-        "top": 65,
-        "right": 1064.72,
-        "bottom": 1301.4
-      },
-      "derivationSha256": "54ecd04ab78b05ad94a319ee01e4c89d61e868cf3b9aa28061e2e918fa27d37f",
-      "width": 768,
-      "height": 808,
-      "variants": [
-        {
-          "width": 256,
-          "height": 269,
-          "url": "../../../trainer/assets/avatar-shop/item-obsidian-body-panther-shadow-front-256.webp",
-          "bytes": 11376,
-          "sha256": "434c957d9c7565a367d07a908ebf842cf20bef9d77e899ce5ea57db6b67c55c2"
-        },
-        {
-          "width": 512,
-          "height": 538,
-          "url": "../../../trainer/assets/avatar-shop/item-obsidian-body-panther-shadow-front-512.webp",
-          "bytes": 32422,
-          "sha256": "f25f5019eeeab9f0b38ddb42d62e9edb2992c29521faaad85a3a379ad6b4a4a0"
-        },
-        {
-          "width": 768,
-          "height": 808,
-          "url": "../../../trainer/assets/avatar-shop/item-obsidian-body-panther-shadow-front-768.webp",
-          "bytes": 65708,
-          "sha256": "e658dafd9c9c0a5399bd82d03a426ede6456a4f0c58a19eab2b4e722a43f9b69"
-        }
-      ],
-      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-obsidian-body-panther-shadow-front-256.webp",
-      "outputBytes": 109506
-    },
-    "item-obsidian-adornment-panther-shadow-front": {
-      "key": "item-obsidian-adornment-panther-shadow-front",
-      "figureId": "panther-shadow",
-      "plane": "front",
-      "sourceName": "panther-shadow-obsidian-adornment-front.png",
-      "sourceWidth": 1222,
-      "sourceHeight": 1287,
-      "canvasWidth": 1223,
-      "canvasHeight": 1286,
-      "sourceBytes": 295281,
-      "sourceSha256": "38ff23417610ba26261ea94abcc4a409d232f47370f961959ed270073c815a6a",
-      "metadataName": "panther-shadow-obsidian-adornment-front.json",
-      "metadataBytes": 1804,
-      "metadataSha256": "eef940be57ebd1e41334813740a6eda333f4a99104ef14cde861ae8b18e34402",
+      "sourceBytes": 49195,
+      "sourceSha256": "5fef7de5b30ad6203a8d69c3ade37a81fb4d66370fe2aab3f3c6e1bbdde909b8",
+      "metadataName": "panther-shadow-obsidian-head-rear.json",
+      "metadataBytes": 1620,
+      "metadataSha256": "98a05234aa8960c59ac4e86407af3639064850ff3476eec94dd2338ef1c4f8e9",
       "registration": {
         "scale": 1,
         "x": 0,
@@ -3827,10 +4212,175 @@ export const AVATAR_ART = deepFreeze({
       "registeredBounds": {
         "left": 0,
         "top": 0,
-        "right": 1222,
-        "bottom": 1287
+        "right": 1223,
+        "bottom": 1286
       },
-      "derivationSha256": "aedc825a9d615e74b08686ecb111dfe4eb78ece8677f81f85d05c4030e3dcff4",
+      "derivationSha256": "133b97658c911f79c4a9e2959f095c3a746400558aaad5b7e74377d4a7de7149",
+      "width": 768,
+      "height": 808,
+      "variants": [
+        {
+          "width": 256,
+          "height": 269,
+          "url": "../../../trainer/assets/avatar-shop/item-obsidian-head-panther-shadow-rear-256.webp",
+          "bytes": 1646,
+          "sha256": "01a59803e6e9fd9275b66fef4320540d78fe8bd5e58d9fcf559c8b7a04cd88c9"
+        },
+        {
+          "width": 512,
+          "height": 538,
+          "url": "../../../trainer/assets/avatar-shop/item-obsidian-head-panther-shadow-rear-512.webp",
+          "bytes": 3648,
+          "sha256": "11f4a62e749bebd7f55829640f205a2afd9978a464b6f8da3f01c8b238a58ef8"
+        },
+        {
+          "width": 768,
+          "height": 808,
+          "url": "../../../trainer/assets/avatar-shop/item-obsidian-head-panther-shadow-rear-768.webp",
+          "bytes": 6390,
+          "sha256": "d52fb807c9c06c067748b93cc24b667faf102753b604694ac22d27bd512cfad0"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-obsidian-head-panther-shadow-rear-256.webp",
+      "outputBytes": 11684
+    },
+    "item-obsidian-head-panther-shadow-front": {
+      "key": "item-obsidian-head-panther-shadow-front",
+      "figureId": "panther-shadow",
+      "plane": "front",
+      "sourceName": "panther-shadow-obsidian-head-front.png",
+      "sourceWidth": 1223,
+      "sourceHeight": 1286,
+      "canvasWidth": 1223,
+      "canvasHeight": 1286,
+      "sourceBytes": 48225,
+      "sourceSha256": "1cf7206c485a0c72f61a8322d6c482ff9a9a88cb0ef47567c40263675d638d14",
+      "metadataName": "panther-shadow-obsidian-head-front.json",
+      "metadataBytes": 1622,
+      "metadataSha256": "796c1858869e0d0c973609d40b49349d30802ed392d31891b5dfc51f67749fae",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1223,
+        "bottom": 1286
+      },
+      "derivationSha256": "d2ba50e18621309fb60bda608add74a3e45e238c26fdde989293725c38d0c905",
+      "width": 768,
+      "height": 808,
+      "variants": [
+        {
+          "width": 256,
+          "height": 269,
+          "url": "../../../trainer/assets/avatar-shop/item-obsidian-head-panther-shadow-front-256.webp",
+          "bytes": 1550,
+          "sha256": "75f2fecef67a2bb0f0110aa3522ff5e897d8cc1335b52e813faae531092f3bab"
+        },
+        {
+          "width": 512,
+          "height": 538,
+          "url": "../../../trainer/assets/avatar-shop/item-obsidian-head-panther-shadow-front-512.webp",
+          "bytes": 3480,
+          "sha256": "80abc5962f827a2029b2362a10fb704f92c48b33061fe760d31bb7fcf9e1efa2"
+        },
+        {
+          "width": 768,
+          "height": 808,
+          "url": "../../../trainer/assets/avatar-shop/item-obsidian-head-panther-shadow-front-768.webp",
+          "bytes": 5878,
+          "sha256": "0d58f7817e320e06d3130bb02c13f96f1f9ce84d9c3854e7218d01de64685026"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-obsidian-head-panther-shadow-front-256.webp",
+      "outputBytes": 10908
+    },
+    "item-obsidian-body-panther-shadow-front": {
+      "key": "item-obsidian-body-panther-shadow-front",
+      "figureId": "panther-shadow",
+      "plane": "front",
+      "sourceName": "panther-shadow-obsidian-body-front.png",
+      "sourceWidth": 1223,
+      "sourceHeight": 1286,
+      "canvasWidth": 1223,
+      "canvasHeight": 1286,
+      "sourceBytes": 783262,
+      "sourceSha256": "e7d580d11ba7e12da13186e90af2cd8804e4dcad1770ecbd119bc332446462cb",
+      "metadataName": "panther-shadow-obsidian-body-front.json",
+      "metadataBytes": 1964,
+      "metadataSha256": "5457f6377938f0a5e4d37c142f5182a5e1e41dba7ce54d33e763901a40fc50ae",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1223,
+        "bottom": 1286
+      },
+      "derivationSha256": "0b6e8869760ee671f68f62730d93ba7a4f8ef0be802ffeae75fe221be5a515a7",
+      "width": 768,
+      "height": 808,
+      "variants": [
+        {
+          "width": 256,
+          "height": 269,
+          "url": "../../../trainer/assets/avatar-shop/item-obsidian-body-panther-shadow-front-256.webp",
+          "bytes": 7178,
+          "sha256": "4ad714d2220152ea7ec90b74caf0a32f764331609158bab3670c5e832745b3b0"
+        },
+        {
+          "width": 512,
+          "height": 538,
+          "url": "../../../trainer/assets/avatar-shop/item-obsidian-body-panther-shadow-front-512.webp",
+          "bytes": 18350,
+          "sha256": "be10a92e2167ef5cdd6a1a9d519f2613a00f1bf2f01bbe28e971b8955e0729fa"
+        },
+        {
+          "width": 768,
+          "height": 808,
+          "url": "../../../trainer/assets/avatar-shop/item-obsidian-body-panther-shadow-front-768.webp",
+          "bytes": 37370,
+          "sha256": "62dc49c728ef3add8a64ceaf9e39b3c676a0c9e0bb9d3a8c325b8718f9c94f8e"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-obsidian-body-panther-shadow-front-256.webp",
+      "outputBytes": 62898
+    },
+    "item-obsidian-adornment-panther-shadow-front": {
+      "key": "item-obsidian-adornment-panther-shadow-front",
+      "figureId": "panther-shadow",
+      "plane": "front",
+      "sourceName": "panther-shadow-obsidian-adornment-front.png",
+      "sourceWidth": 1223,
+      "sourceHeight": 1286,
+      "canvasWidth": 1223,
+      "canvasHeight": 1286,
+      "sourceBytes": 118331,
+      "sourceSha256": "c2115d38b0271a86113e39c6a7db6ef39f1fdaf97463402ec2a380178b478156",
+      "metadataName": "panther-shadow-obsidian-adornment-front.json",
+      "metadataBytes": 2595,
+      "metadataSha256": "dbaffdb2c3f30cfba9b0d782b964f18ed5e2c4728766671d81e8a5d257c8ccf2",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1223,
+        "bottom": 1286
+      },
+      "derivationSha256": "ccb2f91a69a2daa5448f918266a4add44d096e11fbc4030159ae065a7982923b",
       "width": 768,
       "height": 808,
       "variants": [
@@ -3838,26 +4388,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 269,
           "url": "../../../trainer/assets/avatar-shop/item-obsidian-adornment-panther-shadow-front-256.webp",
-          "bytes": 7276,
-          "sha256": "fdf6c027f1ee410581bd9e300ccc94c1df5cae68824cc8e20c14780f226370a6"
+          "bytes": 3664,
+          "sha256": "3e67c392bbfe58c51473f95dc560edc845c94560229fb1135636d2bb695b665a"
         },
         {
           "width": 512,
           "height": 538,
           "url": "../../../trainer/assets/avatar-shop/item-obsidian-adornment-panther-shadow-front-512.webp",
-          "bytes": 20398,
-          "sha256": "4e2b5ea2866d35b406e44dc91478b9c6fe7daacac4df40eb6d1959542b4354a3"
+          "bytes": 9416,
+          "sha256": "85606511f2474261fbb9a609ccf86d9040830970307aa30f2d997af7e233d114"
         },
         {
           "width": 768,
           "height": 808,
           "url": "../../../trainer/assets/avatar-shop/item-obsidian-adornment-panther-shadow-front-768.webp",
-          "bytes": 40290,
-          "sha256": "efd32490d81ad6c677ae871b7cea00abd3caa394b7602a56fe7efb8f6808f1d9"
+          "bytes": 18158,
+          "sha256": "f2860615dc11b99a41f12a12c95c7867366702bb3c4a4126eec5acf842c126a8"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-obsidian-adornment-panther-shadow-front-256.webp",
-      "outputBytes": 67964
+      "outputBytes": 31238
     },
     "figure-unicorn-moon-base": {
       "key": "figure-unicorn-moon-base",
@@ -3969,61 +4519,6 @@ export const AVATAR_ART = deepFreeze({
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-moon-head-unicorn-moon-front-256.webp",
       "outputBytes": 11110
     },
-    "item-moon-body-unicorn-moon-rear": {
-      "key": "item-moon-body-unicorn-moon-rear",
-      "figureId": "unicorn-moon",
-      "plane": "rear",
-      "sourceName": "unicorn-moon-moon-body-rear.png",
-      "sourceWidth": 1024,
-      "sourceHeight": 1536,
-      "canvasWidth": 1024,
-      "canvasHeight": 1536,
-      "sourceBytes": 1802851,
-      "sourceSha256": "f79a9369454bfdd2cd07ed878d5844cecb6f0504791600522b11c135ab1a2866",
-      "metadataName": "unicorn-moon-moon-body-rear.json",
-      "metadataBytes": 3263,
-      "metadataSha256": "3d6e9daac9211dadc29fd1eb5c3a7446db8b7cc718aa9aad4551a8851620fb27",
-      "registration": {
-        "scale": 0.62,
-        "x": 0,
-        "y": 350
-      },
-      "registrationExplicit": true,
-      "registeredBounds": {
-        "left": 0,
-        "top": 350,
-        "right": 634.88,
-        "bottom": 1302.32
-      },
-      "derivationSha256": "2996e1af446e74f80902d0d5301c6bb258938347f4a2c38311a80c1b6aada7c4",
-      "width": 768,
-      "height": 1152,
-      "variants": [
-        {
-          "width": 256,
-          "height": 384,
-          "url": "../../../trainer/assets/avatar-shop/item-moon-body-unicorn-moon-rear-256.webp",
-          "bytes": 10346,
-          "sha256": "17ebb936e2971b17687884d740e02a4d1b1f8fdeb0aa35fcbfdbbfcfa266db10"
-        },
-        {
-          "width": 512,
-          "height": 768,
-          "url": "../../../trainer/assets/avatar-shop/item-moon-body-unicorn-moon-rear-512.webp",
-          "bytes": 29210,
-          "sha256": "193aaa35c4c896e12da003f4071492f77ee02d5bd32ee5b50abfc2aa88363363"
-        },
-        {
-          "width": 768,
-          "height": 1152,
-          "url": "../../../trainer/assets/avatar-shop/item-moon-body-unicorn-moon-rear-768.webp",
-          "bytes": 53764,
-          "sha256": "2d53f1408fad144e0077ef1b45f3d46d24795c4165c10c1c0b9adc9c175ff191"
-        }
-      ],
-      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-moon-body-unicorn-moon-rear-256.webp",
-      "outputBytes": 93320
-    },
     "item-moon-body-unicorn-moon-front": {
       "key": "item-moon-body-unicorn-moon-front",
       "figureId": "unicorn-moon",
@@ -4033,11 +4528,11 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1536,
       "canvasWidth": 1024,
       "canvasHeight": 1536,
-      "sourceBytes": 1553710,
-      "sourceSha256": "90f76bc11cf9c59cb6967742deee850b1fb33c6c51082de4ec318c4d182b07cf",
+      "sourceBytes": 396081,
+      "sourceSha256": "1331e7fe68ce52b86e33a74e51131357ea845c7f8824c8807163deae7864948d",
       "metadataName": "unicorn-moon-moon-body-front.json",
-      "metadataBytes": 4467,
-      "metadataSha256": "d3113f4353c95c2d149ddb09cc62f885e1ea767f649b82b1d114b86b61c38d30",
+      "metadataBytes": 2416,
+      "metadataSha256": "11a12dc169a265715699b74cc684ae4a9b96d4a7b279b3f70a36e3c1e645e74e",
       "registration": {
         "scale": 1,
         "x": 0,
@@ -4050,7 +4545,7 @@ export const AVATAR_ART = deepFreeze({
         "right": 1024,
         "bottom": 1536
       },
-      "derivationSha256": "4053661a2cd095773fcab9a3d3d360fe762943a5b1c2a29740942023a2c62adc",
+      "derivationSha256": "f80554be063cb94ed34b9d06dd26d69a51f5ed4c320ac35fa73959abcd22c6f0",
       "width": 768,
       "height": 1152,
       "variants": [
@@ -4058,26 +4553,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 384,
           "url": "../../../trainer/assets/avatar-shop/item-moon-body-unicorn-moon-front-256.webp",
-          "bytes": 18376,
-          "sha256": "5a97ed594e08eebde3f8e601ad069f8ec7fa5c4b7cb1506a79c7055fe458ce1c"
+          "bytes": 8722,
+          "sha256": "c323b41f99dc3a604837d681811fd0104d34f367c76dd7237b1ed9aaec1bbcbb"
         },
         {
           "width": 512,
           "height": 768,
           "url": "../../../trainer/assets/avatar-shop/item-moon-body-unicorn-moon-front-512.webp",
-          "bytes": 53250,
-          "sha256": "e9955ca71eb6b0c284ac045238e79e84d10a7e979da01cccdfc319fffc557dd1"
+          "bytes": 25116,
+          "sha256": "9105a32675d19e24fe183b47f0d18a7ad8464f862f1a4a54a3811bf819c4c906"
         },
         {
           "width": 768,
           "height": 1152,
           "url": "../../../trainer/assets/avatar-shop/item-moon-body-unicorn-moon-front-768.webp",
-          "bytes": 103420,
-          "sha256": "7c0e6748662cfc7ef750bb6706aaf006053ed2d6b90941fb9ef8dde8feec5f1c"
+          "bytes": 48656,
+          "sha256": "c8db1b85eabd5007a70e4fa76c7e8bb11eaa61fec9513620ebe02ef2de058715"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-moon-body-unicorn-moon-front-256.webp",
-      "outputBytes": 175046
+      "outputBytes": 82494
     },
     "item-moon-adornment-unicorn-moon-front": {
       "key": "item-moon-adornment-unicorn-moon-front",
@@ -4088,11 +4583,11 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1536,
       "canvasWidth": 1024,
       "canvasHeight": 1536,
-      "sourceBytes": 730134,
-      "sourceSha256": "2935d71a79cf5640e9d01b9fd2d3230913c4d7ff91312d1e029b390aa572d636",
+      "sourceBytes": 46144,
+      "sourceSha256": "85b77601974c8f46a7673af399b71de09b02551800a3f684850aaeafaa1cf693",
       "metadataName": "unicorn-moon-moon-adornment-front.json",
-      "metadataBytes": 2725,
-      "metadataSha256": "6ae0661f27d3da910e486d3d0d9abcd28fde9c1a75eace736bf759be84949a30",
+      "metadataBytes": 2196,
+      "metadataSha256": "ac4b76eca491bafa251b951ebc1ba9dcfa0b3d1a1b909de58e11a224c24d4b8c",
       "registration": {
         "scale": 1,
         "x": 0,
@@ -4105,7 +4600,7 @@ export const AVATAR_ART = deepFreeze({
         "right": 1024,
         "bottom": 1536
       },
-      "derivationSha256": "0907e391c08729f19c2cbc1e128113a9fd3f07a3685280a794ad59c34c547ef0",
+      "derivationSha256": "42525e5e40c0e31a3af99cc5510e618d8c204f6ec89d4093e957b69103350450",
       "width": 768,
       "height": 1152,
       "variants": [
@@ -4113,26 +4608,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 384,
           "url": "../../../trainer/assets/avatar-shop/item-moon-adornment-unicorn-moon-front-256.webp",
-          "bytes": 7054,
-          "sha256": "b6aa833ac4f84cd7d8c3f82b19e3f25db4cd0cfdfaa13b52feb909a5ffea3f80"
+          "bytes": 2598,
+          "sha256": "ab3275f215582d58b3b0823162d7c04f8111108249b9f2e70b786ea9d82e7d24"
         },
         {
           "width": 512,
           "height": 768,
           "url": "../../../trainer/assets/avatar-shop/item-moon-adornment-unicorn-moon-front-512.webp",
-          "bytes": 18624,
-          "sha256": "1c83ad419ed34c6881de3a5d98f5a9210aaa61bfbe5b9394a2fbe4929a267a63"
+          "bytes": 6292,
+          "sha256": "716881c204a98144ccb40fb5112adc0364ba63f837ce6a5e9d5650c7fc365c34"
         },
         {
           "width": 768,
           "height": 1152,
           "url": "../../../trainer/assets/avatar-shop/item-moon-adornment-unicorn-moon-front-768.webp",
-          "bytes": 35012,
-          "sha256": "6dfc39d7c88a775adc387c94e4029e1250191b319c951bf7ce29f29fc651844e"
+          "bytes": 11284,
+          "sha256": "00f368be9c71269520f7aeac2104f73a1824ec80f7c5105cce7564e80d2064b7"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-moon-adornment-unicorn-moon-front-256.webp",
-      "outputBytes": 60690
+      "outputBytes": 20174
     },
     "item-stars-head-unicorn-moon-front": {
       "key": "item-stars-head-unicorn-moon-front",
@@ -4198,24 +4693,24 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1536,
       "canvasWidth": 1024,
       "canvasHeight": 1536,
-      "sourceBytes": 1887276,
-      "sourceSha256": "d56220768f5484be5697b5f99e747ae93719ce1424d11179812b9096538db76a",
+      "sourceBytes": 230631,
+      "sourceSha256": "e3edb8b19d0bb101eb2ddd7a34b44831a7cfa480adf4c8f07ca9e7301d32cb83",
       "metadataName": "unicorn-moon-stars-body-front.json",
-      "metadataBytes": 2707,
-      "metadataSha256": "753f82aa706f6b64ab0069d21e913d6823396467f5746c9e0bd7ac64f8f6a564",
+      "metadataBytes": 2273,
+      "metadataSha256": "c2913a9c541a0ec201d6e3b7a91b3140dc48b1760eaae8b8f6313155e88a5ed1",
       "registration": {
-        "scale": 0.42,
-        "x": 170,
-        "y": 400
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 170,
-        "top": 400,
-        "right": 600.0799999999999,
-        "bottom": 1045.12
+        "left": 0,
+        "top": 0,
+        "right": 1024,
+        "bottom": 1536
       },
-      "derivationSha256": "1d528b6f77cf81c7740f900f53197706990bfbb556608a07fc894c5a9ab8f622",
+      "derivationSha256": "ab7d4b18c6beffcc8a81f72a1fb9bf7833d2f0cab091effc7634db3fa7ef2f93",
       "width": 768,
       "height": 1152,
       "variants": [
@@ -4223,26 +4718,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 384,
           "url": "../../../trainer/assets/avatar-shop/item-stars-body-unicorn-moon-front-256.webp",
-          "bytes": 6110,
-          "sha256": "180ffb8c7907f70fddd8ba7b0f77ad1068d77be87951c0c547f1e75eb2b6aba0"
+          "bytes": 5168,
+          "sha256": "4adc1ed9366a562d65865e0d709e1c0bf8d59bcaa7eb9567c2e3e01f68a53d46"
         },
         {
           "width": 512,
           "height": 768,
           "url": "../../../trainer/assets/avatar-shop/item-stars-body-unicorn-moon-front-512.webp",
-          "bytes": 16488,
-          "sha256": "3fb0b9a019164189c0a123d4186f7ecb324ab0a04262327ef503a9c2d503965e"
+          "bytes": 14382,
+          "sha256": "2e9f0c568c80e9ec3886d7950a9258575cbd836dc95385c85df2c4f5a3891db9"
         },
         {
           "width": 768,
           "height": 1152,
           "url": "../../../trainer/assets/avatar-shop/item-stars-body-unicorn-moon-front-768.webp",
-          "bytes": 30058,
-          "sha256": "949e70a8596dc9fbbc04dbad9e434da1c6b8e0e308fade258baa236e8c5906b7"
+          "bytes": 26354,
+          "sha256": "ddab35c7b1e7db19c1d9751439d8fa97d4cf2144e025a3670d02ebb1aaa4de9a"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-stars-body-unicorn-moon-front-256.webp",
-      "outputBytes": 52656
+      "outputBytes": 45904
     },
     "item-stars-adornment-unicorn-moon-front": {
       "key": "item-stars-adornment-unicorn-moon-front",
@@ -4354,75 +4849,20 @@ export const AVATAR_ART = deepFreeze({
       "fallbackUrl": "../../../trainer/assets/avatar-shop/figure-griffin-storm-base-256.webp",
       "outputBytes": 317336
     },
-    "item-storm-head-griffin-storm-front": {
-      "key": "item-storm-head-griffin-storm-front",
+    "item-storm-head-griffin-storm-rear": {
+      "key": "item-storm-head-griffin-storm-rear",
       "figureId": "griffin-storm",
-      "plane": "front",
-      "sourceName": "griffin-storm-storm-head-front.png",
+      "plane": "rear",
+      "sourceName": "griffin-storm-storm-head-rear.png",
       "sourceWidth": 1225,
       "sourceHeight": 1284,
       "canvasWidth": 1225,
       "canvasHeight": 1284,
-      "sourceBytes": 615596,
-      "sourceSha256": "bbc4c3352551e78988c759eea5f39065a47c12ca59bd1144b5b385e3c25708be",
-      "metadataName": "griffin-storm-storm-head-front.json",
-      "metadataBytes": 1751,
-      "metadataSha256": "273476445e81466fcfb10610444255210cc23faf508e9271c73f853cb65073e2",
-      "registration": {
-        "scale": 0.42,
-        "x": 80,
-        "y": 190
-      },
-      "registrationExplicit": true,
-      "registeredBounds": {
-        "left": 80,
-        "top": 190,
-        "right": 594.5,
-        "bottom": 729.28
-      },
-      "derivationSha256": "0d02251c2579f20897c1f408fad58d5d75a098b7700a2b3c13f4d4b97d86f5bc",
-      "width": 768,
-      "height": 805,
-      "variants": [
-        {
-          "width": 256,
-          "height": 268,
-          "url": "../../../trainer/assets/avatar-shop/item-storm-head-griffin-storm-front-256.webp",
-          "bytes": 4092,
-          "sha256": "03a7aad82f53f5502971221384a59ec3acdd81737708c3c785e61ad94ef99fc5"
-        },
-        {
-          "width": 512,
-          "height": 537,
-          "url": "../../../trainer/assets/avatar-shop/item-storm-head-griffin-storm-front-512.webp",
-          "bytes": 10414,
-          "sha256": "ccba4006a21d498af44d8b48ae99c78480c6a93af4cbe3d34cc536cb289aa62c"
-        },
-        {
-          "width": 768,
-          "height": 805,
-          "url": "../../../trainer/assets/avatar-shop/item-storm-head-griffin-storm-front-768.webp",
-          "bytes": 18734,
-          "sha256": "3a07a410dd6d6b3bb25c84c064bb162c607e1007fa62205b4e867b6e31595c88"
-        }
-      ],
-      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-storm-head-griffin-storm-front-256.webp",
-      "outputBytes": 33240
-    },
-    "item-storm-body-griffin-storm-front": {
-      "key": "item-storm-body-griffin-storm-front",
-      "figureId": "griffin-storm",
-      "plane": "front",
-      "sourceName": "griffin-storm-storm-body-front.png",
-      "sourceWidth": 1225,
-      "sourceHeight": 1284,
-      "canvasWidth": 1225,
-      "canvasHeight": 1284,
-      "sourceBytes": 1105548,
-      "sourceSha256": "bd269851f17ed838e4aa3d34ec8a173b95d3fb0be41c2179d145f47473a48433",
-      "metadataName": "griffin-storm-storm-body-front.json",
-      "metadataBytes": 1770,
-      "metadataSha256": "f3b414fa53d0970b137a79e53b788abd93a456dd7f492ecfd005333fd98f1da5",
+      "sourceBytes": 127966,
+      "sourceSha256": "9ed29754b2d5c9453c8001d32a3533237154094483c81a81c63dea6bca143ed7",
+      "metadataName": "griffin-storm-storm-head-rear.json",
+      "metadataBytes": 1602,
+      "metadataSha256": "661b56d3d87b50791bb476ae430d4c58d26767f1636d38de155d7c275994c9ab",
       "registration": {
         "scale": 1,
         "x": 0,
@@ -4435,7 +4875,172 @@ export const AVATAR_ART = deepFreeze({
         "right": 1225,
         "bottom": 1284
       },
-      "derivationSha256": "f5625d7a25e1c6356c0c6aa508950a5e2aa9f65a904a0f2aae2a1bd0da3da070",
+      "derivationSha256": "714c1c3c75594d6072ae8cf7748eec5f42eb43b45b9696842e1a3dcbc41361b8",
+      "width": 768,
+      "height": 805,
+      "variants": [
+        {
+          "width": 256,
+          "height": 268,
+          "url": "../../../trainer/assets/avatar-shop/item-storm-head-griffin-storm-rear-256.webp",
+          "bytes": 2004,
+          "sha256": "0ada32f40baa91923662a31c24481db4d4d93b0fc861590db05ef1f09fe5e632"
+        },
+        {
+          "width": 512,
+          "height": 537,
+          "url": "../../../trainer/assets/avatar-shop/item-storm-head-griffin-storm-rear-512.webp",
+          "bytes": 4190,
+          "sha256": "200dc1aa733fc58a20fd7b0e9bf0ea374abdcda3e46aa91920e76e7e58703d5c"
+        },
+        {
+          "width": 768,
+          "height": 805,
+          "url": "../../../trainer/assets/avatar-shop/item-storm-head-griffin-storm-rear-768.webp",
+          "bytes": 7252,
+          "sha256": "d088377bb6d7c0e0b00d44947b608050d57e57d4f17276199393041a3f7b3ccf"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-storm-head-griffin-storm-rear-256.webp",
+      "outputBytes": 13446
+    },
+    "item-storm-head-griffin-storm-front": {
+      "key": "item-storm-head-griffin-storm-front",
+      "figureId": "griffin-storm",
+      "plane": "front",
+      "sourceName": "griffin-storm-storm-head-front.png",
+      "sourceWidth": 1225,
+      "sourceHeight": 1284,
+      "canvasWidth": 1225,
+      "canvasHeight": 1284,
+      "sourceBytes": 131081,
+      "sourceSha256": "a975866b7fc433099d8ed93c5d5a0e73f7e80dace2958f3c0921e5019e58e85e",
+      "metadataName": "griffin-storm-storm-head-front.json",
+      "metadataBytes": 1604,
+      "metadataSha256": "4a2c5554a92032da8088158c7d7f1e1c5ed6faa719dfccead55b2e06218b1e92",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1225,
+        "bottom": 1284
+      },
+      "derivationSha256": "2947076f52a3f396432cdc76c9247592bf14160bc3d3345ad4259ff295b65489",
+      "width": 768,
+      "height": 805,
+      "variants": [
+        {
+          "width": 256,
+          "height": 268,
+          "url": "../../../trainer/assets/avatar-shop/item-storm-head-griffin-storm-front-256.webp",
+          "bytes": 3326,
+          "sha256": "93a4da0d1f4320c6419965e7275fde62476053b40ca13bde9d1bd29f202c8c52"
+        },
+        {
+          "width": 512,
+          "height": 537,
+          "url": "../../../trainer/assets/avatar-shop/item-storm-head-griffin-storm-front-512.webp",
+          "bytes": 8272,
+          "sha256": "675afbc77ff50c7d15c17669448a25773ec2217051d27674e825dea368abdbb1"
+        },
+        {
+          "width": 768,
+          "height": 805,
+          "url": "../../../trainer/assets/avatar-shop/item-storm-head-griffin-storm-front-768.webp",
+          "bytes": 15224,
+          "sha256": "7475ef9298171790a4ebe75196ead02d7abcd80cdafe004f302e08f91777d8d4"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-storm-head-griffin-storm-front-256.webp",
+      "outputBytes": 26822
+    },
+    "item-storm-body-griffin-storm-rear": {
+      "key": "item-storm-body-griffin-storm-rear",
+      "figureId": "griffin-storm",
+      "plane": "rear",
+      "sourceName": "griffin-storm-storm-body-rear.png",
+      "sourceWidth": 1225,
+      "sourceHeight": 1284,
+      "canvasWidth": 1225,
+      "canvasHeight": 1284,
+      "sourceBytes": 1055450,
+      "sourceSha256": "04f696bfded5489d9cef4fa8c25367fe313b057db8cc62d1231fae32063d95b3",
+      "metadataName": "griffin-storm-storm-body-rear.json",
+      "metadataBytes": 1644,
+      "metadataSha256": "69a732a0c9a65407f8dcb54976642098e84e3426a1092e6b85b18e33652f24f1",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1225,
+        "bottom": 1284
+      },
+      "derivationSha256": "4ca4bcae8b37b9d50ca0c1beec6fb69c08468e63436cfc440562e2d49c3581f4",
+      "width": 768,
+      "height": 805,
+      "variants": [
+        {
+          "width": 256,
+          "height": 268,
+          "url": "../../../trainer/assets/avatar-shop/item-storm-body-griffin-storm-rear-256.webp",
+          "bytes": 4936,
+          "sha256": "96934dd43f50658a8b4eac522b03f5fde353a7eaefd86e008d12fc6407855c31"
+        },
+        {
+          "width": 512,
+          "height": 537,
+          "url": "../../../trainer/assets/avatar-shop/item-storm-body-griffin-storm-rear-512.webp",
+          "bytes": 12224,
+          "sha256": "7caa3eb87f792be8c1d575a2ff1dd8dabf6cba9cbf99e1b61a67159f7719c92b"
+        },
+        {
+          "width": 768,
+          "height": 805,
+          "url": "../../../trainer/assets/avatar-shop/item-storm-body-griffin-storm-rear-768.webp",
+          "bytes": 22838,
+          "sha256": "c7bc4cf4feb1924993da060bc92923848bb199f5a0b4a2ce3a965aa39e0e9d44"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-storm-body-griffin-storm-rear-256.webp",
+      "outputBytes": 39998
+    },
+    "item-storm-body-griffin-storm-front": {
+      "key": "item-storm-body-griffin-storm-front",
+      "figureId": "griffin-storm",
+      "plane": "front",
+      "sourceName": "griffin-storm-storm-body-front.png",
+      "sourceWidth": 1225,
+      "sourceHeight": 1284,
+      "canvasWidth": 1225,
+      "canvasHeight": 1284,
+      "sourceBytes": 1079797,
+      "sourceSha256": "f7c4ef950b01fa47e67599d86d019890586784a3b117eab291b76a0cfb2629cf",
+      "metadataName": "griffin-storm-storm-body-front.json",
+      "metadataBytes": 1646,
+      "metadataSha256": "541733598d486ed76486e9055a91b31b2220d32a18ccac70b3ab2ebc1902cabd",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1225,
+        "bottom": 1284
+      },
+      "derivationSha256": "5563269cf56ef36e43a12e5a5e9cbef6a52b83713750eac8d3bf6598ef102f78",
       "width": 768,
       "height": 805,
       "variants": [
@@ -4443,26 +5048,81 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 268,
           "url": "../../../trainer/assets/avatar-shop/item-storm-body-griffin-storm-front-256.webp",
-          "bytes": 16046,
-          "sha256": "a964e2078d5e70294f50f367742d6c76bd8fffd46232a72e25e246232a03f159"
+          "bytes": 16294,
+          "sha256": "281e58ec6f0dd650975a25d192741ef9c650f5b76505fc2abc1fe63c7170daba"
         },
         {
           "width": 512,
           "height": 537,
           "url": "../../../trainer/assets/avatar-shop/item-storm-body-griffin-storm-front-512.webp",
-          "bytes": 46244,
-          "sha256": "f3a566590b72d2ab3d05459f8234e79a0fe62a254882aa70af0777fc0d2d8ade"
+          "bytes": 44690,
+          "sha256": "957915e982826ffcc0ca1e2e2e66cab1833410d0b947aba37dd03026981c8dd0"
         },
         {
           "width": 768,
           "height": 805,
           "url": "../../../trainer/assets/avatar-shop/item-storm-body-griffin-storm-front-768.webp",
-          "bytes": 96812,
-          "sha256": "b8e60954abfbd8d9685b9a2d3d288f0c8a0a65d1f474917468881b5a764dd1ab"
+          "bytes": 90072,
+          "sha256": "67ed78682c145e339600b61fd08ce7722094d748bdfac28bcd14ee75d6b0b8cc"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-storm-body-griffin-storm-front-256.webp",
-      "outputBytes": 159102
+      "outputBytes": 151056
+    },
+    "item-storm-adornment-griffin-storm-rear": {
+      "key": "item-storm-adornment-griffin-storm-rear",
+      "figureId": "griffin-storm",
+      "plane": "rear",
+      "sourceName": "griffin-storm-storm-adornment-rear.png",
+      "sourceWidth": 1225,
+      "sourceHeight": 1284,
+      "canvasWidth": 1225,
+      "canvasHeight": 1284,
+      "sourceBytes": 485087,
+      "sourceSha256": "7551bc801a4ef843e82c282baf346072f4438629852301e5db276655314d1b7b",
+      "metadataName": "griffin-storm-storm-adornment-rear.json",
+      "metadataBytes": 1664,
+      "metadataSha256": "4b50dc978e2b19326335e0706ba8e43cc446dab5e46dc02e5defffb8672803ea",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1225,
+        "bottom": 1284
+      },
+      "derivationSha256": "af8d0f6cb1de4c410408594cd110b2696d6c2a289711c2f8f9c0e42ea8094ee1",
+      "width": 768,
+      "height": 805,
+      "variants": [
+        {
+          "width": 256,
+          "height": 268,
+          "url": "../../../trainer/assets/avatar-shop/item-storm-adornment-griffin-storm-rear-256.webp",
+          "bytes": 5788,
+          "sha256": "6d5817d92a6483b988a23355baed9a8d38fca011aa14d2a4b104afde74767d29"
+        },
+        {
+          "width": 512,
+          "height": 537,
+          "url": "../../../trainer/assets/avatar-shop/item-storm-adornment-griffin-storm-rear-512.webp",
+          "bytes": 15420,
+          "sha256": "04b1fd1862b18d31457361706d8e664e721a5e4acf28ec558bde4635a666586f"
+        },
+        {
+          "width": 768,
+          "height": 805,
+          "url": "../../../trainer/assets/avatar-shop/item-storm-adornment-griffin-storm-rear-768.webp",
+          "bytes": 29098,
+          "sha256": "f9adb5bcf17768dcbcd16dde1fd12e3a267cd7b3fd356e07f9b817260f09718b"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-storm-adornment-griffin-storm-rear-256.webp",
+      "outputBytes": 50306
     },
     "item-storm-adornment-griffin-storm-front": {
       "key": "item-storm-adornment-griffin-storm-front",
@@ -4473,24 +5133,24 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1284,
       "canvasWidth": 1225,
       "canvasHeight": 1284,
-      "sourceBytes": 877163,
-      "sourceSha256": "653e47d4bdc4589aa5c79d78cbeebbea217e25e21808ea99b5bbc44114abf6b1",
+      "sourceBytes": 501530,
+      "sourceSha256": "86c048378bad1cfea7e56d3816fbaab36dcce62949de0b611c870ecb433e2f9f",
       "metadataName": "griffin-storm-storm-adornment-front.json",
-      "metadataBytes": 1788,
-      "metadataSha256": "eacc2077e3a3b8b7ad468436e7010cc9d32fbf888d29e3e492413700e86a68b7",
+      "metadataBytes": 1666,
+      "metadataSha256": "b104fc4e92058c6ab0ff62af9d53769fa8cf1c5dee455981ca4c0f5b467493c8",
       "registration": {
-        "scale": 0.75,
-        "x": 290,
-        "y": -20
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 290,
-        "top": -20,
-        "right": 1208.75,
-        "bottom": 943
+        "left": 0,
+        "top": 0,
+        "right": 1225,
+        "bottom": 1284
       },
-      "derivationSha256": "885394aabf7cdf30cecfc544ab4373ef059b248c6f13878425fe8c36827fa093",
+      "derivationSha256": "6a7a3d595519ec2b59d543e0a9227e96ae28b41c562fe53c585eb2392bc7c03a",
       "width": 768,
       "height": 805,
       "variants": [
@@ -4498,26 +5158,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 268,
           "url": "../../../trainer/assets/avatar-shop/item-storm-adornment-griffin-storm-front-256.webp",
-          "bytes": 14208,
-          "sha256": "0fb98e8497d82c2d2ef5f349b014d6ae0f3046847d912f6c5a030c77ac5d0179"
+          "bytes": 9214,
+          "sha256": "67400ecd727a3be63d6456fb4cfb5f3d5b6980411af028c682ff6f6d44ddcd90"
         },
         {
           "width": 512,
           "height": 537,
           "url": "../../../trainer/assets/avatar-shop/item-storm-adornment-griffin-storm-front-512.webp",
-          "bytes": 41368,
-          "sha256": "698d3c5fa6a0066ae829975c4f69a01a9d6fb7ddd520f852b246ee57263e6bf3"
+          "bytes": 26672,
+          "sha256": "a53f08a250eee349a1c0d9a304f4509d5c4f1759b0a8c50fa3a83ae9703fb441"
         },
         {
           "width": 768,
           "height": 805,
           "url": "../../../trainer/assets/avatar-shop/item-storm-adornment-griffin-storm-front-768.webp",
-          "bytes": 80616,
-          "sha256": "c35cd591b9c9cdcbad40070e0330f1a0a804172afda2252a1414a5f9997e9b9a"
+          "bytes": 51890,
+          "sha256": "25b95c58f3d6617fe861a63dcfb2edb25e17640d9f0eee82a4690765361f68bc"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-storm-adornment-griffin-storm-front-256.webp",
-      "outputBytes": 136192
+      "outputBytes": 87776
     },
     "figure-dragon-crystal-base": {
       "key": "figure-dragon-crystal-base",
@@ -4574,130 +5234,20 @@ export const AVATAR_ART = deepFreeze({
       "fallbackUrl": "../../../trainer/assets/avatar-shop/figure-dragon-crystal-base-256.webp",
       "outputBytes": 349476
     },
-    "item-crystal-head-dragon-crystal-front": {
-      "key": "item-crystal-head-dragon-crystal-front",
+    "item-crystal-head-dragon-crystal-rear": {
+      "key": "item-crystal-head-dragon-crystal-rear",
       "figureId": "dragon-crystal",
-      "plane": "front",
-      "sourceName": "dragon-crystal-crystal-head-front.png",
+      "plane": "rear",
+      "sourceName": "dragon-crystal-crystal-head-rear.png",
       "sourceWidth": 1199,
       "sourceHeight": 1312,
       "canvasWidth": 1199,
       "canvasHeight": 1312,
-      "sourceBytes": 172979,
-      "sourceSha256": "ee0273a140f94ae81d380108411585072430db3ebf21ec46f12e72894e4b1ca7",
-      "metadataName": "dragon-crystal-crystal-head-front.json",
-      "metadataBytes": 1433,
-      "metadataSha256": "a3fd4e3f62d089406c959294ca2dd6a803e2fdf1395b0cfc98bc8385b9c8aa79",
-      "registration": {
-        "scale": 0.55,
-        "x": 200,
-        "y": 150
-      },
-      "registrationExplicit": true,
-      "registeredBounds": {
-        "left": 200,
-        "top": 150,
-        "right": 859.45,
-        "bottom": 871.6
-      },
-      "derivationSha256": "6f39d4047e088ca29a9780d7f35fb99a1a5879ef1fe59d6cb138a7d6643db7db",
-      "width": 768,
-      "height": 840,
-      "variants": [
-        {
-          "width": 256,
-          "height": 280,
-          "url": "../../../trainer/assets/avatar-shop/item-crystal-head-dragon-crystal-front-256.webp",
-          "bytes": 2264,
-          "sha256": "bbbf0f784af8b2c91b857d7972eed670e18cb3758d25597109602391d3fa3511"
-        },
-        {
-          "width": 512,
-          "height": 560,
-          "url": "../../../trainer/assets/avatar-shop/item-crystal-head-dragon-crystal-front-512.webp",
-          "bytes": 5252,
-          "sha256": "ff6e37355909ba03b7e8acd9272d704ad086f6f540e69bd9f9a75e260a146506"
-        },
-        {
-          "width": 768,
-          "height": 840,
-          "url": "../../../trainer/assets/avatar-shop/item-crystal-head-dragon-crystal-front-768.webp",
-          "bytes": 9458,
-          "sha256": "fee3a9baf3751e814528737c368a193ad248aad2834e2905a6598956b56bf6ed"
-        }
-      ],
-      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-crystal-head-dragon-crystal-front-256.webp",
-      "outputBytes": 16974
-    },
-    "item-crystal-body-dragon-crystal-front": {
-      "key": "item-crystal-body-dragon-crystal-front",
-      "figureId": "dragon-crystal",
-      "plane": "front",
-      "sourceName": "dragon-crystal-crystal-body-front.png",
-      "sourceWidth": 1199,
-      "sourceHeight": 1312,
-      "canvasWidth": 1199,
-      "canvasHeight": 1312,
-      "sourceBytes": 617257,
-      "sourceSha256": "8da74ce5145588d1ec1717ea8435fd435d1b58edcecd59c9bf7439170e86f0dc",
-      "metadataName": "dragon-crystal-crystal-body-front.json",
-      "metadataBytes": 1484,
-      "metadataSha256": "5d0f89c7b9f4da3dda6d73ba608c617fbf18a4a00cdddfa2da03bc2b55b8afed",
-      "registration": {
-        "scale": 0.55,
-        "x": 175,
-        "y": 260
-      },
-      "registrationExplicit": true,
-      "registeredBounds": {
-        "left": 175,
-        "top": 260,
-        "right": 834.45,
-        "bottom": 981.6
-      },
-      "derivationSha256": "54661c89c22179782bca76e8d73ff726cbf68b46a4f57bf516503ff6a08e2ca2",
-      "width": 768,
-      "height": 840,
-      "variants": [
-        {
-          "width": 256,
-          "height": 280,
-          "url": "../../../trainer/assets/avatar-shop/item-crystal-body-dragon-crystal-front-256.webp",
-          "bytes": 4858,
-          "sha256": "1f71697e53523a30156b955213f6660c5ca6fe196ab0c279c66d087972c33e78"
-        },
-        {
-          "width": 512,
-          "height": 560,
-          "url": "../../../trainer/assets/avatar-shop/item-crystal-body-dragon-crystal-front-512.webp",
-          "bytes": 13020,
-          "sha256": "05b0a8fbab30846fec6b47cc15b935e3c387af56c1a41cb77145607531ac45f2"
-        },
-        {
-          "width": 768,
-          "height": 840,
-          "url": "../../../trainer/assets/avatar-shop/item-crystal-body-dragon-crystal-front-768.webp",
-          "bytes": 25220,
-          "sha256": "9f067606f4e16c539437324612bf6418be293efd25501595c53e9b6850ff6734"
-        }
-      ],
-      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-crystal-body-dragon-crystal-front-256.webp",
-      "outputBytes": 43098
-    },
-    "item-crystal-adornment-dragon-crystal-front": {
-      "key": "item-crystal-adornment-dragon-crystal-front",
-      "figureId": "dragon-crystal",
-      "plane": "front",
-      "sourceName": "dragon-crystal-crystal-adornment-front.png",
-      "sourceWidth": 1199,
-      "sourceHeight": 1312,
-      "canvasWidth": 1199,
-      "canvasHeight": 1312,
-      "sourceBytes": 340890,
-      "sourceSha256": "036c2d65d8e37b0a96c884bad4f1afacae51d3de192318f30b66d74185a1f5cd",
-      "metadataName": "dragon-crystal-crystal-adornment-front.json",
-      "metadataBytes": 1475,
-      "metadataSha256": "b4a6750038f46244a0a43ddc44594acba28641c48cd64e25d6b0d767c599446a",
+      "sourceBytes": 54545,
+      "sourceSha256": "6cd1947c2ddcf1774392444cc5ff539a25c7a500a17c14d62ce4d9bde583756f",
+      "metadataName": "dragon-crystal-crystal-head-rear.json",
+      "metadataBytes": 1617,
+      "metadataSha256": "dfa8073ea17eabf32b715608bd186e9b38b3843ee0809ec20a979b5e4607a916",
       "registration": {
         "scale": 1,
         "x": 0,
@@ -4710,7 +5260,282 @@ export const AVATAR_ART = deepFreeze({
         "right": 1199,
         "bottom": 1312
       },
-      "derivationSha256": "523196342dd31cd50012155ad356cdf76ba1cf7f467a79d7db78414e092f73e9",
+      "derivationSha256": "74062004c46a89f133e8c675342dcd0ce3999f5f881080a5b3abaaef35e60a1b",
+      "width": 768,
+      "height": 840,
+      "variants": [
+        {
+          "width": 256,
+          "height": 280,
+          "url": "../../../trainer/assets/avatar-shop/item-crystal-head-dragon-crystal-rear-256.webp",
+          "bytes": 1410,
+          "sha256": "90d363f503d686fd6f6593404d633bb92e5797f346712e1276f11604fed793be"
+        },
+        {
+          "width": 512,
+          "height": 560,
+          "url": "../../../trainer/assets/avatar-shop/item-crystal-head-dragon-crystal-rear-512.webp",
+          "bytes": 2800,
+          "sha256": "23055665507f350087f04df2688e92b141429e19159a2e35823eae0270619826"
+        },
+        {
+          "width": 768,
+          "height": 840,
+          "url": "../../../trainer/assets/avatar-shop/item-crystal-head-dragon-crystal-rear-768.webp",
+          "bytes": 4700,
+          "sha256": "11927677a0b3acc331bf9d927fc3578c54b8db027bd2522307a8b8dac6fc6f69"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-crystal-head-dragon-crystal-rear-256.webp",
+      "outputBytes": 8910
+    },
+    "item-crystal-head-dragon-crystal-front": {
+      "key": "item-crystal-head-dragon-crystal-front",
+      "figureId": "dragon-crystal",
+      "plane": "front",
+      "sourceName": "dragon-crystal-crystal-head-front.png",
+      "sourceWidth": 1199,
+      "sourceHeight": 1312,
+      "canvasWidth": 1199,
+      "canvasHeight": 1312,
+      "sourceBytes": 56833,
+      "sourceSha256": "0651fc727cfe15262ff19ff1d180f9101b322e9209787a9ecf5a909f6b86c4f4",
+      "metadataName": "dragon-crystal-crystal-head-front.json",
+      "metadataBytes": 1619,
+      "metadataSha256": "6b5ad60d1e08bc5999857cbac0994d5b96de550474651af1036c656964cbbd40",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1199,
+        "bottom": 1312
+      },
+      "derivationSha256": "d6b364ae6c0b497b18f52207bb0622a8df5c3555d0f58a18e7337bb53a497376",
+      "width": 768,
+      "height": 840,
+      "variants": [
+        {
+          "width": 256,
+          "height": 280,
+          "url": "../../../trainer/assets/avatar-shop/item-crystal-head-dragon-crystal-front-256.webp",
+          "bytes": 2216,
+          "sha256": "c36fcc640f001dde5f11de4bff72ae54d1dac4885b33680be0b02dd763bfeb5d"
+        },
+        {
+          "width": 512,
+          "height": 560,
+          "url": "../../../trainer/assets/avatar-shop/item-crystal-head-dragon-crystal-front-512.webp",
+          "bytes": 5368,
+          "sha256": "6f9d93587becb7b96337dca53b6375372a23dd7acfcc2cf62693bf1c828ed708"
+        },
+        {
+          "width": 768,
+          "height": 840,
+          "url": "../../../trainer/assets/avatar-shop/item-crystal-head-dragon-crystal-front-768.webp",
+          "bytes": 9772,
+          "sha256": "117347913d8a269a892447cb534b60d5a4d9a94b7c3887b6c8c4f74dea0507c5"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-crystal-head-dragon-crystal-front-256.webp",
+      "outputBytes": 17356
+    },
+    "item-crystal-body-dragon-crystal-rear": {
+      "key": "item-crystal-body-dragon-crystal-rear",
+      "figureId": "dragon-crystal",
+      "plane": "rear",
+      "sourceName": "dragon-crystal-crystal-body-rear.png",
+      "sourceWidth": 1199,
+      "sourceHeight": 1312,
+      "canvasWidth": 1199,
+      "canvasHeight": 1312,
+      "sourceBytes": 202324,
+      "sourceSha256": "9d365c75c6c18963ed7722569eed71f7e7015639c363695d0fbb02167985685d",
+      "metadataName": "dragon-crystal-crystal-body-rear.json",
+      "metadataBytes": 1641,
+      "metadataSha256": "14b47bf0ec3d30a2b3494044b7405ff0fc0c98a3f9c409842d47885cba4c49eb",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1199,
+        "bottom": 1312
+      },
+      "derivationSha256": "b82ae5409f6247f422c16d5eb723246e591c1845b9ec8f4ee41c23c79e46c40c",
+      "width": 768,
+      "height": 840,
+      "variants": [
+        {
+          "width": 256,
+          "height": 280,
+          "url": "../../../trainer/assets/avatar-shop/item-crystal-body-dragon-crystal-rear-256.webp",
+          "bytes": 2966,
+          "sha256": "d88cd0486351e269e938d3f9edfd9af0b73ca68d507a4d4453faa2984073a163"
+        },
+        {
+          "width": 512,
+          "height": 560,
+          "url": "../../../trainer/assets/avatar-shop/item-crystal-body-dragon-crystal-rear-512.webp",
+          "bytes": 6602,
+          "sha256": "ead16f4ed66d5af2418a6c5ebc82a07ef5c3a2fdbb2dc121185d60cacf58cc23"
+        },
+        {
+          "width": 768,
+          "height": 840,
+          "url": "../../../trainer/assets/avatar-shop/item-crystal-body-dragon-crystal-rear-768.webp",
+          "bytes": 11964,
+          "sha256": "fd6cf7301f594af51167e534808fc23717349e067b600995ffbf6d9920534461"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-crystal-body-dragon-crystal-rear-256.webp",
+      "outputBytes": 21532
+    },
+    "item-crystal-body-dragon-crystal-front": {
+      "key": "item-crystal-body-dragon-crystal-front",
+      "figureId": "dragon-crystal",
+      "plane": "front",
+      "sourceName": "dragon-crystal-crystal-body-front.png",
+      "sourceWidth": 1199,
+      "sourceHeight": 1312,
+      "canvasWidth": 1199,
+      "canvasHeight": 1312,
+      "sourceBytes": 208068,
+      "sourceSha256": "7e9a04806bd0d5ad09d79c570e41458b78b1d284988d6a2ad888ea361e37dfe1",
+      "metadataName": "dragon-crystal-crystal-body-front.json",
+      "metadataBytes": 1643,
+      "metadataSha256": "d460181684f089f54042656172a0d3a126a92609f68f5624f71e0c089b1ffcc3",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1199,
+        "bottom": 1312
+      },
+      "derivationSha256": "df731211ef6dbbe7e9b0ae80422a73d9b94a4a28dfb31b44ac1aa9a2f06b4181",
+      "width": 768,
+      "height": 840,
+      "variants": [
+        {
+          "width": 256,
+          "height": 280,
+          "url": "../../../trainer/assets/avatar-shop/item-crystal-body-dragon-crystal-front-256.webp",
+          "bytes": 5134,
+          "sha256": "052cf8ade75523401a471e89d8f48b3895384ce83249d0b01308a1ea130e69f6"
+        },
+        {
+          "width": 512,
+          "height": 560,
+          "url": "../../../trainer/assets/avatar-shop/item-crystal-body-dragon-crystal-front-512.webp",
+          "bytes": 14042,
+          "sha256": "e7009f47ac2c82b12bd916453683ff0248394c81d04d4dfb9e8e2fc262e0a7a1"
+        },
+        {
+          "width": 768,
+          "height": 840,
+          "url": "../../../trainer/assets/avatar-shop/item-crystal-body-dragon-crystal-front-768.webp",
+          "bytes": 26274,
+          "sha256": "dd57e417291d3d9ab83efa96240df2778e9924303e3064d70acd3694d5ba45cb"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-crystal-body-dragon-crystal-front-256.webp",
+      "outputBytes": 45450
+    },
+    "item-crystal-adornment-dragon-crystal-rear": {
+      "key": "item-crystal-adornment-dragon-crystal-rear",
+      "figureId": "dragon-crystal",
+      "plane": "rear",
+      "sourceName": "dragon-crystal-crystal-adornment-rear.png",
+      "sourceWidth": 1199,
+      "sourceHeight": 1312,
+      "canvasWidth": 1199,
+      "canvasHeight": 1312,
+      "sourceBytes": 310376,
+      "sourceSha256": "56301a40851a9c660d2341c1467c77bba2fa5b373abe6e24a1877c4fdb725720",
+      "metadataName": "dragon-crystal-crystal-adornment-rear.json",
+      "metadataBytes": 1652,
+      "metadataSha256": "9fea16e738d4edfb94dcdd752efec609fa94248f4d77a07cd21d4c6fb392c147",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1199,
+        "bottom": 1312
+      },
+      "derivationSha256": "f1e659f86f8a191557812c8105fe329a07b766f22a6466140e72e1cda45a8283",
+      "width": 768,
+      "height": 840,
+      "variants": [
+        {
+          "width": 256,
+          "height": 280,
+          "url": "../../../trainer/assets/avatar-shop/item-crystal-adornment-dragon-crystal-rear-256.webp",
+          "bytes": 6556,
+          "sha256": "e48e688f188834b44281055b67ed12b3367e77f2eb607932cfbefcfb9cdb1e99"
+        },
+        {
+          "width": 512,
+          "height": 560,
+          "url": "../../../trainer/assets/avatar-shop/item-crystal-adornment-dragon-crystal-rear-512.webp",
+          "bytes": 17322,
+          "sha256": "6e3391341479cecea69b7c1920b5ff565642cec8ca93d88f91c9ddf9c608aa28"
+        },
+        {
+          "width": 768,
+          "height": 840,
+          "url": "../../../trainer/assets/avatar-shop/item-crystal-adornment-dragon-crystal-rear-768.webp",
+          "bytes": 33414,
+          "sha256": "aece6b93a6478f5fabf836f262ac7a3b75fb221001553572e72482feff341b36"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-crystal-adornment-dragon-crystal-rear-256.webp",
+      "outputBytes": 57292
+    },
+    "item-crystal-adornment-dragon-crystal-front": {
+      "key": "item-crystal-adornment-dragon-crystal-front",
+      "figureId": "dragon-crystal",
+      "plane": "front",
+      "sourceName": "dragon-crystal-crystal-adornment-front.png",
+      "sourceWidth": 1199,
+      "sourceHeight": 1312,
+      "canvasWidth": 1199,
+      "canvasHeight": 1312,
+      "sourceBytes": 313437,
+      "sourceSha256": "ca0a85b3cbfbf022e246bb531b5fac1f5c346f13ef628bcd1a18594159c6b9e2",
+      "metadataName": "dragon-crystal-crystal-adornment-front.json",
+      "metadataBytes": 1654,
+      "metadataSha256": "22bd8fc02d28a9784f5fc970fc622400041a99b5427e7cd6f157e68114f4f73f",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1199,
+        "bottom": 1312
+      },
+      "derivationSha256": "d309d529752ad055a55099e20dca53bffa5df159893a7e0ab15709c9024c6611",
       "width": 768,
       "height": 840,
       "variants": [
@@ -4718,26 +5543,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 280,
           "url": "../../../trainer/assets/avatar-shop/item-crystal-adornment-dragon-crystal-front-256.webp",
-          "bytes": 9594,
-          "sha256": "bb585944cf642001b8be23c290b58e67f08c6d201f0d81196b75bc10354b6f08"
+          "bytes": 7394,
+          "sha256": "7ef001c0c5cc8e18f4f2f4b2e3c4aac81ab447cf28c1bf154524d45b0a006c2c"
         },
         {
           "width": 512,
           "height": 560,
           "url": "../../../trainer/assets/avatar-shop/item-crystal-adornment-dragon-crystal-front-512.webp",
-          "bytes": 26928,
-          "sha256": "b6c400d3f98a3daa0adef9bc22ac5d78ede67d263b7ad82eb5c3ab9f5387264e"
+          "bytes": 19236,
+          "sha256": "3a846c9e04df4678a5766774cfcdc282ac25be9a8ddff2a2208346460b4b50d3"
         },
         {
           "width": 768,
           "height": 840,
           "url": "../../../trainer/assets/avatar-shop/item-crystal-adornment-dragon-crystal-front-768.webp",
-          "bytes": 54956,
-          "sha256": "11e8a5d9c560d4e2d4a1b7e89e830a7a8c8b6d8fb9b10634dd13257e0a8ffb82"
+          "bytes": 36416,
+          "sha256": "38c34d5dd58a9ce7d9e35cb113dc0892af24396a6ef2b8923e4f5ea27d84e899"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-crystal-adornment-dragon-crystal-front-256.webp",
-      "outputBytes": 91478
+      "outputBytes": 63046
     },
     "figure-pegasus-star-base": {
       "key": "figure-pegasus-star-base",
@@ -4849,61 +5674,6 @@ export const AVATAR_ART = deepFreeze({
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-moon-head-pegasus-star-front-256.webp",
       "outputBytes": 12496
     },
-    "item-moon-body-pegasus-star-rear": {
-      "key": "item-moon-body-pegasus-star-rear",
-      "figureId": "pegasus-star",
-      "plane": "rear",
-      "sourceName": "pegasus-star-moon-body-rear.png",
-      "sourceWidth": 1024,
-      "sourceHeight": 1536,
-      "canvasWidth": 1024,
-      "canvasHeight": 1536,
-      "sourceBytes": 1802851,
-      "sourceSha256": "f79a9369454bfdd2cd07ed878d5844cecb6f0504791600522b11c135ab1a2866",
-      "metadataName": "pegasus-star-moon-body-rear.json",
-      "metadataBytes": 3257,
-      "metadataSha256": "4ea095305f52575aa4cf35397fb4d4d07990182349ecdd21f4389cd8d64e3d28",
-      "registration": {
-        "scale": 0.55,
-        "x": 0,
-        "y": 380
-      },
-      "registrationExplicit": true,
-      "registeredBounds": {
-        "left": 0,
-        "top": 380,
-        "right": 563.2,
-        "bottom": 1224.8000000000002
-      },
-      "derivationSha256": "b8503494c53c64912c2d77aeaa7bd0df9a6abd7ae524e4c77621e9b57f3dfcfd",
-      "width": 768,
-      "height": 1152,
-      "variants": [
-        {
-          "width": 256,
-          "height": 384,
-          "url": "../../../trainer/assets/avatar-shop/item-moon-body-pegasus-star-rear-256.webp",
-          "bytes": 8656,
-          "sha256": "7912bf04cc2e3a794ee5ba844f311fcead7836f9faa38462e0be304994d5beba"
-        },
-        {
-          "width": 512,
-          "height": 768,
-          "url": "../../../trainer/assets/avatar-shop/item-moon-body-pegasus-star-rear-512.webp",
-          "bytes": 24398,
-          "sha256": "ca86173996ce773f659123f5b2799e13b57007d850cd65f69ec0575e9b54a1fd"
-        },
-        {
-          "width": 768,
-          "height": 1152,
-          "url": "../../../trainer/assets/avatar-shop/item-moon-body-pegasus-star-rear-768.webp",
-          "bytes": 45130,
-          "sha256": "4511f810120ed35fdbc97fa38e08f8afd1bcdc72e3ac19f9a1de118603aa53d6"
-        }
-      ],
-      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-moon-body-pegasus-star-rear-256.webp",
-      "outputBytes": 78184
-    },
     "item-moon-body-pegasus-star-front": {
       "key": "item-moon-body-pegasus-star-front",
       "figureId": "pegasus-star",
@@ -4913,11 +5683,11 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1536,
       "canvasWidth": 1024,
       "canvasHeight": 1536,
-      "sourceBytes": 1239109,
-      "sourceSha256": "619b678c355e0dcac40eb73c6508516169cfb49b4be167c34b0b933b5c716ed1",
+      "sourceBytes": 247852,
+      "sourceSha256": "5e4af0e781b797e69e2a44d0825f5c55f1feec536687f176bd365489fce19be5",
       "metadataName": "pegasus-star-moon-body-front.json",
-      "metadataBytes": 4848,
-      "metadataSha256": "2e28e60ba7553f8c388b54317f0b40da6ce798674494c3cef178bd75052e80e6",
+      "metadataBytes": 1998,
+      "metadataSha256": "cd8f0f0debaf62beca54a5a851bea7e00bc25b26c23117683dd0ad32775bc739",
       "registration": {
         "scale": 1,
         "x": 0,
@@ -4930,7 +5700,7 @@ export const AVATAR_ART = deepFreeze({
         "right": 1024,
         "bottom": 1536
       },
-      "derivationSha256": "ac0656302abf2826ada33f25b5b403f08e36f1248729363df13aceddc0bc75f3",
+      "derivationSha256": "896fc6ef0457b8fba168189d2729e1e6108b98d6a26634fc619779712fc6da68",
       "width": 768,
       "height": 1152,
       "variants": [
@@ -4938,26 +5708,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 384,
           "url": "../../../trainer/assets/avatar-shop/item-moon-body-pegasus-star-front-256.webp",
-          "bytes": 11926,
-          "sha256": "43c676000ad0cd3b75b8a92b0bfa6bb8336755defc8d73b68098ec1e196acb19"
+          "bytes": 6290,
+          "sha256": "09a99275198e50c9ed1f2aaa68cd56c25b4944bf77adf910c92be63ef533ce7d"
         },
         {
           "width": 512,
           "height": 768,
           "url": "../../../trainer/assets/avatar-shop/item-moon-body-pegasus-star-front-512.webp",
-          "bytes": 34742,
-          "sha256": "e8a34129d0b35e38bc87d51be992723affe4cc62676ca04ebd582a45554d760b"
+          "bytes": 18078,
+          "sha256": "63b957e1a8fee5016a885ebe942af8e4fdfd37339c862e069fb77a2ebe7fd071"
         },
         {
           "width": 768,
           "height": 1152,
           "url": "../../../trainer/assets/avatar-shop/item-moon-body-pegasus-star-front-768.webp",
-          "bytes": 63786,
-          "sha256": "f55e6c65366d7c96b3cc54363e5352fbcab7499c5ac1e7aa823d7724fac71520"
+          "bytes": 35424,
+          "sha256": "5fa00c3f5ad9591dea4c1211619885ce83a48436936381c3a64938c2cd99c069"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-moon-body-pegasus-star-front-256.webp",
-      "outputBytes": 110454
+      "outputBytes": 59792
     },
     "item-moon-adornment-pegasus-star-front": {
       "key": "item-moon-adornment-pegasus-star-front",
@@ -4968,11 +5738,11 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1536,
       "canvasWidth": 1024,
       "canvasHeight": 1536,
-      "sourceBytes": 730134,
-      "sourceSha256": "2935d71a79cf5640e9d01b9fd2d3230913c4d7ff91312d1e029b390aa572d636",
+      "sourceBytes": 53717,
+      "sourceSha256": "f328efddd27ab23d291dc01161840557966406fecec7f40447f71d9e538e6a6b",
       "metadataName": "pegasus-star-moon-adornment-front.json",
-      "metadataBytes": 2725,
-      "metadataSha256": "61aabe2135f563324e0add3ab19462ae41565209e8e1ce70686942d34cf5abd3",
+      "metadataBytes": 2198,
+      "metadataSha256": "860a9dd7a70d994cf30cec1446600c5badb47452e8602f3986dab0ae9b121116",
       "registration": {
         "scale": 1,
         "x": 0,
@@ -4985,7 +5755,7 @@ export const AVATAR_ART = deepFreeze({
         "right": 1024,
         "bottom": 1536
       },
-      "derivationSha256": "0907e391c08729f19c2cbc1e128113a9fd3f07a3685280a794ad59c34c547ef0",
+      "derivationSha256": "d2602e09a94ba5690661466de544f1e5eec4da0410b67fe3bc144a518d27f4ef",
       "width": 768,
       "height": 1152,
       "variants": [
@@ -4993,26 +5763,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 384,
           "url": "../../../trainer/assets/avatar-shop/item-moon-adornment-pegasus-star-front-256.webp",
-          "bytes": 7054,
-          "sha256": "b6aa833ac4f84cd7d8c3f82b19e3f25db4cd0cfdfaa13b52feb909a5ffea3f80"
+          "bytes": 2844,
+          "sha256": "e8f29d6952c3fe8ed23d571fe2d9a30146ff1cc52b260f7435fce8d35afe4d80"
         },
         {
           "width": 512,
           "height": 768,
           "url": "../../../trainer/assets/avatar-shop/item-moon-adornment-pegasus-star-front-512.webp",
-          "bytes": 18624,
-          "sha256": "1c83ad419ed34c6881de3a5d98f5a9210aaa61bfbe5b9394a2fbe4929a267a63"
+          "bytes": 7062,
+          "sha256": "9296de28a6f379bd1fedfafab232ab9bff58d16916875d3315d78584d2dca1d6"
         },
         {
           "width": 768,
           "height": 1152,
           "url": "../../../trainer/assets/avatar-shop/item-moon-adornment-pegasus-star-front-768.webp",
-          "bytes": 35012,
-          "sha256": "6dfc39d7c88a775adc387c94e4029e1250191b319c951bf7ce29f29fc651844e"
+          "bytes": 12930,
+          "sha256": "1b8cf5ed4e4b517d69c823bcc4624dc5318ee42e5f122a9d92051b2f16061242"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-moon-adornment-pegasus-star-front-256.webp",
-      "outputBytes": 60690
+      "outputBytes": 22836
     },
     "item-stars-head-pegasus-star-front": {
       "key": "item-stars-head-pegasus-star-front",
@@ -5078,24 +5848,24 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1536,
       "canvasWidth": 1024,
       "canvasHeight": 1536,
-      "sourceBytes": 1887276,
-      "sourceSha256": "d56220768f5484be5697b5f99e747ae93719ce1424d11179812b9096538db76a",
+      "sourceBytes": 131131,
+      "sourceSha256": "cfa9bc1a83c1a9818b8629d1b43fe9658d5d4dc3a5eb843189b297d0a3815262",
       "metadataName": "pegasus-star-stars-body-front.json",
-      "metadataBytes": 2757,
-      "metadataSha256": "030a1e3abaaaee6cba8109c8c06e94e269bcd5b7f08b5c019c915640d6127e46",
+      "metadataBytes": 2029,
+      "metadataSha256": "cd3e514c59e32bc5956df4e0c65a2379e2fed625dea4bbf7ce653da7421f6a16",
       "registration": {
-        "scale": 0.32,
-        "x": 220,
-        "y": 650
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 220,
-        "top": 650,
-        "right": 547.6800000000001,
-        "bottom": 1141.52
+        "left": 0,
+        "top": 0,
+        "right": 1024,
+        "bottom": 1536
       },
-      "derivationSha256": "faafaeb66974f789d0ee6d66cfb7f9155f57ccf065a304d56633c3884629e4d6",
+      "derivationSha256": "1324d85f5f85f39e077c783b846a63178e31708dcc7f050c1d65ab4d8a5d5f6e",
       "width": 768,
       "height": 1152,
       "variants": [
@@ -5103,26 +5873,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 384,
           "url": "../../../trainer/assets/avatar-shop/item-stars-body-pegasus-star-front-256.webp",
-          "bytes": 4250,
-          "sha256": "d4ae9bd08c299252482ca5642444aa65e9fab3831459c185021c486815be98cc"
+          "bytes": 4174,
+          "sha256": "362899f478a352158f85ee8e83f919c0595f931bcf529e8bfcc1932be79e9b85"
         },
         {
           "width": 512,
           "height": 768,
           "url": "../../../trainer/assets/avatar-shop/item-stars-body-pegasus-star-front-512.webp",
-          "bytes": 11398,
-          "sha256": "e305fa92e26643a32f82aef7d6f12ba24c31b00e8914d2bf6acfa58d9210a269"
+          "bytes": 11584,
+          "sha256": "cdb0e29751ad6a86e48c9c22ce64c51a08d707bbcf664805422297a61b1fcd39"
         },
         {
           "width": 768,
           "height": 1152,
           "url": "../../../trainer/assets/avatar-shop/item-stars-body-pegasus-star-front-768.webp",
-          "bytes": 21120,
-          "sha256": "25a27788cd2d41969edba2ad08f344b3bc576b622b8f86d859caa85fe5f98330"
+          "bytes": 21584,
+          "sha256": "f56b9d66e27b9eac398e62c4afe9592342118ab4600194c9251bddae785ffaca"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-stars-body-pegasus-star-front-256.webp",
-      "outputBytes": 36768
+      "outputBytes": 37342
     },
     "item-stars-adornment-pegasus-star-front": {
       "key": "item-stars-adornment-pegasus-star-front",
@@ -5234,6 +6004,61 @@ export const AVATAR_ART = deepFreeze({
       "fallbackUrl": "../../../trainer/assets/avatar-shop/figure-phoenix-base-256.webp",
       "outputBytes": 432218
     },
+    "item-sun-head-phoenix-rear": {
+      "key": "item-sun-head-phoenix-rear",
+      "figureId": "phoenix",
+      "plane": "rear",
+      "sourceName": "phoenix-sun-head-rear.png",
+      "sourceWidth": 1024,
+      "sourceHeight": 1536,
+      "canvasWidth": 1024,
+      "canvasHeight": 1536,
+      "sourceBytes": 67528,
+      "sourceSha256": "2ea3d9f3477de11e5b3cbe1fbeeafd500ee9eecee0659d8d042b57b7baed011d",
+      "metadataName": "phoenix-sun-head-rear.json",
+      "metadataBytes": 1559,
+      "metadataSha256": "eb2d5c8950443ea911885ca050ed5edb1ef567087588194d09ee7f1568f72edd",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1024,
+        "bottom": 1536
+      },
+      "derivationSha256": "c25c057493510be7dacf214ca8034769a1d55149d1a81400fb0e0ff90908e19b",
+      "width": 768,
+      "height": 1152,
+      "variants": [
+        {
+          "width": 256,
+          "height": 384,
+          "url": "../../../trainer/assets/avatar-shop/item-sun-head-phoenix-rear-256.webp",
+          "bytes": 2138,
+          "sha256": "4b407186f67e480c628c8749ace8f0edc016ecca9364514dce9014e7223b2686"
+        },
+        {
+          "width": 512,
+          "height": 768,
+          "url": "../../../trainer/assets/avatar-shop/item-sun-head-phoenix-rear-512.webp",
+          "bytes": 4954,
+          "sha256": "78deb03eb1e9f89003a56a894d7215a4649454859653184713e671dccbd14a0f"
+        },
+        {
+          "width": 768,
+          "height": 1152,
+          "url": "../../../trainer/assets/avatar-shop/item-sun-head-phoenix-rear-768.webp",
+          "bytes": 8894,
+          "sha256": "9c5b0e30e26ae8b06642fb95d4fc7d723b5e1fad514616e8fee2e75ec4995b4e"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-sun-head-phoenix-rear-256.webp",
+      "outputBytes": 15986
+    },
     "item-sun-head-phoenix-front": {
       "key": "item-sun-head-phoenix-front",
       "figureId": "phoenix",
@@ -5243,24 +6068,24 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1536,
       "canvasWidth": 1024,
       "canvasHeight": 1536,
-      "sourceBytes": 1329797,
-      "sourceSha256": "a988e4aee3a4275dbbc8debb78cc3955873de34dfc782647e5d352b187a26c69",
+      "sourceBytes": 71546,
+      "sourceSha256": "ef4a8c4ccb77e279f89d2f2f046f5b0ba5bdc787c8310d4c5daf498c1202795c",
       "metadataName": "phoenix-sun-head-front.json",
-      "metadataBytes": 1820,
-      "metadataSha256": "1b42b58dd18dddb89ab60156702bfd058d356a0e75f5b15b9baff031bb667833",
+      "metadataBytes": 1561,
+      "metadataSha256": "3e16f4acd9bf17a42d0c1bbf602087658f2483408080c966ca06fdf752ae2a53",
       "registration": {
-        "scale": 0.28,
-        "x": 510,
-        "y": 100
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 510,
-        "top": 100,
-        "right": 796.72,
-        "bottom": 530.08
+        "left": 0,
+        "top": 0,
+        "right": 1024,
+        "bottom": 1536
       },
-      "derivationSha256": "02d76a6504b5b9ec67fb6e10b3305f46bfc94fab2ed2f2c9b23c9ea0e9a3ef00",
+      "derivationSha256": "0d64793e71af9941c7635542c4ab5f9148e16dd45b7c3ea8d075d4180836aca9",
       "width": 768,
       "height": 1152,
       "variants": [
@@ -5268,26 +6093,81 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 384,
           "url": "../../../trainer/assets/avatar-shop/item-sun-head-phoenix-front-256.webp",
-          "bytes": 3280,
-          "sha256": "bc86a1729628092ffbbae5ab7d12f8aef3313e961a8e1011cfa49ff6105e88bf"
+          "bytes": 3700,
+          "sha256": "1ca241ddc7bac846a53c338d3cb31478049d9bca95aeab62f239b86102cdb0ca"
         },
         {
           "width": 512,
           "height": 768,
           "url": "../../../trainer/assets/avatar-shop/item-sun-head-phoenix-front-512.webp",
-          "bytes": 8698,
-          "sha256": "92b925ffd8df04f81529ebf25942fcbca3125614cd95b77ac429cc9ae3e1f0a9"
+          "bytes": 9660,
+          "sha256": "ef500f7e0cfef2f568af1b388d76e245e485ba9fe3038d53e884e10c41544e59"
         },
         {
           "width": 768,
           "height": 1152,
           "url": "../../../trainer/assets/avatar-shop/item-sun-head-phoenix-front-768.webp",
-          "bytes": 16322,
-          "sha256": "42f50ad569f7a0026d46b0eac03696146e6063a8db67331e19f600de36fe69fa"
+          "bytes": 17926,
+          "sha256": "484e26c7e6892923078c5fc844dff56c1dc8c024ae82dd5ff92bc85c91ba4c78"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-sun-head-phoenix-front-256.webp",
-      "outputBytes": 28300
+      "outputBytes": 31286
+    },
+    "item-sun-body-phoenix-rear": {
+      "key": "item-sun-body-phoenix-rear",
+      "figureId": "phoenix",
+      "plane": "rear",
+      "sourceName": "phoenix-sun-body-rear.png",
+      "sourceWidth": 1024,
+      "sourceHeight": 1536,
+      "canvasWidth": 1024,
+      "canvasHeight": 1536,
+      "sourceBytes": 191624,
+      "sourceSha256": "d5cfc3daeeaad4984acd4ada9220625a7a7af16e7df6ae89830dde2a14387299",
+      "metadataName": "phoenix-sun-body-rear.json",
+      "metadataBytes": 1564,
+      "metadataSha256": "21d1caaa2936b487f8ae9c7d9ff37024286fd1905a86e0ee1836f9363cec4255",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1024,
+        "bottom": 1536
+      },
+      "derivationSha256": "c1a3dc84b91c0cec37aab4408ba4b9e607fd573b7dad69e0d9d1daf39ecb0046",
+      "width": 768,
+      "height": 1152,
+      "variants": [
+        {
+          "width": 256,
+          "height": 384,
+          "url": "../../../trainer/assets/avatar-shop/item-sun-body-phoenix-rear-256.webp",
+          "bytes": 3400,
+          "sha256": "64582367e04f2ceac5147a1d3f5728240abf5a4b3293a4db449fd880d2c2b91b"
+        },
+        {
+          "width": 512,
+          "height": 768,
+          "url": "../../../trainer/assets/avatar-shop/item-sun-body-phoenix-rear-512.webp",
+          "bytes": 8512,
+          "sha256": "cfb2dfa58fc6efbca9c598302bc690087f4e5b2fcc4dab559369ca7cc3466578"
+        },
+        {
+          "width": 768,
+          "height": 1152,
+          "url": "../../../trainer/assets/avatar-shop/item-sun-body-phoenix-rear-768.webp",
+          "bytes": 15410,
+          "sha256": "5e232454cd7d49752a86f691e390cc76d49fe66f6ace16577cbcfb4cfe05b180"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-sun-body-phoenix-rear-256.webp",
+      "outputBytes": 27322
     },
     "item-sun-body-phoenix-front": {
       "key": "item-sun-body-phoenix-front",
@@ -5298,24 +6178,24 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1536,
       "canvasWidth": 1024,
       "canvasHeight": 1536,
-      "sourceBytes": 1813211,
-      "sourceSha256": "9b012de196c40fea56c3d7441b805724874fcd704967c0d24f3033107b027384",
+      "sourceBytes": 199517,
+      "sourceSha256": "4e0ee962191dfafb2c5f2e15159cd908f3e9a3cf411e1030b0291b538178b20f",
       "metadataName": "phoenix-sun-body-front.json",
-      "metadataBytes": 1867,
-      "metadataSha256": "4c4b44eba56c547478cfb588889e8bf4611c66ea1ccf1d0e2f047e1f748683d5",
+      "metadataBytes": 1566,
+      "metadataSha256": "a3130cb784eb049b5a6517208c7a63b18601f9cba56a347b0c488f914279ff8f",
       "registration": {
-        "scale": 0.4,
-        "x": 370,
-        "y": 330
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 370,
-        "top": 330,
-        "right": 779.6,
-        "bottom": 944.4000000000001
+        "left": 0,
+        "top": 0,
+        "right": 1024,
+        "bottom": 1536
       },
-      "derivationSha256": "58924b1af71c230db50b06ecbe36e429a24df68c26c565694e25d02cad534b61",
+      "derivationSha256": "209d7a4365fda061c4e942715b4534d5ae53a0d27421d225464072123b8c2bbe",
       "width": 768,
       "height": 1152,
       "variants": [
@@ -5323,26 +6203,81 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 384,
           "url": "../../../trainer/assets/avatar-shop/item-sun-body-phoenix-front-256.webp",
-          "bytes": 6686,
-          "sha256": "80eebb50ced412a7d4bf044ec60fbe95ce6a58fa3fc314881adc0295a9cb8370"
+          "bytes": 7576,
+          "sha256": "4ed5014bbf7a6deb948e6e59a746afeb34316c486d10252fc0b839c6e072d9c7"
         },
         {
           "width": 512,
           "height": 768,
           "url": "../../../trainer/assets/avatar-shop/item-sun-body-phoenix-front-512.webp",
-          "bytes": 19470,
-          "sha256": "70cba20859b48b14cb5a9c54165e31fdad9bea47b23c85352921c7d19a0eefcf"
+          "bytes": 20890,
+          "sha256": "c906774a3c606e80ce986aae0f47e31020760c2b927510208e886d868e1f7c71"
         },
         {
           "width": 768,
           "height": 1152,
           "url": "../../../trainer/assets/avatar-shop/item-sun-body-phoenix-front-768.webp",
-          "bytes": 36486,
-          "sha256": "58f77169ed85aeef07be4b2b0e7bd254f09ecdea019a20d4aec91156e2edb1c0"
+          "bytes": 38744,
+          "sha256": "d9877bb0f8817ec677614cb62a0a2b0a89a08e29411963ac26138e8560e854b0"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-sun-body-phoenix-front-256.webp",
-      "outputBytes": 62642
+      "outputBytes": 67210
+    },
+    "item-sun-adornment-phoenix-rear": {
+      "key": "item-sun-adornment-phoenix-rear",
+      "figureId": "phoenix",
+      "plane": "rear",
+      "sourceName": "phoenix-sun-adornment-rear.png",
+      "sourceWidth": 1024,
+      "sourceHeight": 1536,
+      "canvasWidth": 1024,
+      "canvasHeight": 1536,
+      "sourceBytes": 362948,
+      "sourceSha256": "65b6517c173de87c87c24a7beb2cc62b7cbaac6a489614aad4d2020a685eb2d9",
+      "metadataName": "phoenix-sun-adornment-rear.json",
+      "metadataBytes": 1577,
+      "metadataSha256": "177cda149032fedef30a123e0636aa73e44b5b7b3bd7973456d64f6037d70f1f",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1024,
+        "bottom": 1536
+      },
+      "derivationSha256": "c077df63555986baf345367cd2985c9ce75dfdd36788d626350d5edcb89accf8",
+      "width": 768,
+      "height": 1152,
+      "variants": [
+        {
+          "width": 256,
+          "height": 384,
+          "url": "../../../trainer/assets/avatar-shop/item-sun-adornment-phoenix-rear-256.webp",
+          "bytes": 8090,
+          "sha256": "55ab1be3f26ab119921af542d94de2e40b55b4a4f7db9ff16a30d7a6950d0df7"
+        },
+        {
+          "width": 512,
+          "height": 768,
+          "url": "../../../trainer/assets/avatar-shop/item-sun-adornment-phoenix-rear-512.webp",
+          "bytes": 21812,
+          "sha256": "7823bd67666f67bd212312f8a45c351e8339104658b0b41e1ebf890124bc0ad3"
+        },
+        {
+          "width": 768,
+          "height": 1152,
+          "url": "../../../trainer/assets/avatar-shop/item-sun-adornment-phoenix-rear-768.webp",
+          "bytes": 40376,
+          "sha256": "1b5d676951d8121838294856293170998b9cd209d9ff4c52db8a72620d6254a7"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-sun-adornment-phoenix-rear-256.webp",
+      "outputBytes": 70278
     },
     "item-sun-adornment-phoenix-front": {
       "key": "item-sun-adornment-phoenix-front",
@@ -5353,24 +6288,24 @@ export const AVATAR_ART = deepFreeze({
       "sourceHeight": 1536,
       "canvasWidth": 1024,
       "canvasHeight": 1536,
-      "sourceBytes": 1589750,
-      "sourceSha256": "1f440b9df21dc64a8c7bc1f1f091c3d047c65b967f2542fae218b9c9f3c3f2a2",
+      "sourceBytes": 378552,
+      "sourceSha256": "6c55606d83525eb22d5b0f70496e2082a5c874807bd2d5f97470434edb3a68af",
       "metadataName": "phoenix-sun-adornment-front.json",
-      "metadataBytes": 1871,
-      "metadataSha256": "57422aa214e4c6c79f3fa438f94fcb7223e0f2b64c68f251c986faf137a27341",
+      "metadataBytes": 1579,
+      "metadataSha256": "dab5b0fcfa249ff4e9ed2846d19987c4b830e06461e3aa8c5563e027be54ad5a",
       "registration": {
-        "scale": 0.65,
-        "x": 180,
-        "y": 30
+        "scale": 1,
+        "x": 0,
+        "y": 0
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 180,
-        "top": 30,
-        "right": 845.6,
-        "bottom": 1028.4
+        "left": 0,
+        "top": 0,
+        "right": 1024,
+        "bottom": 1536
       },
-      "derivationSha256": "52308f90bab048f012c0d0eec1ab701172e9d2c519a57c38a10b030e6ffc265c",
+      "derivationSha256": "13fd2201858390f9934b4fc9e573f85cf2c6d75bac5398337b031cd30bc43203",
       "width": 768,
       "height": 1152,
       "variants": [
@@ -5378,26 +6313,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 384,
           "url": "../../../trainer/assets/avatar-shop/item-sun-adornment-phoenix-front-256.webp",
-          "bytes": 14454,
-          "sha256": "9c5a8f6813d77fbed631ad18d828f9c1d825c0865b7e60047ec0615433f5a7c6"
+          "bytes": 15464,
+          "sha256": "23bc6578cd2b93b4ac35a54577ffb580f4dbbf0092d8cf748ed057825d980280"
         },
         {
           "width": 512,
           "height": 768,
           "url": "../../../trainer/assets/avatar-shop/item-sun-adornment-phoenix-front-512.webp",
-          "bytes": 43626,
-          "sha256": "afd04c251a2d85af9903d76d72583e342aa3e5b62de513afbde51523a76518da"
+          "bytes": 44272,
+          "sha256": "1967e4f822c9ae79f91fa148a5c197db6d6d9d84e1c16ce4d6907da6c7879ed1"
         },
         {
           "width": 768,
           "height": 1152,
           "url": "../../../trainer/assets/avatar-shop/item-sun-adornment-phoenix-front-768.webp",
-          "bytes": 83106,
-          "sha256": "0f27034ba602806be2543b2dcd94bff96cb330e489d3bcc185053133def3457d"
+          "bytes": 83450,
+          "sha256": "2bb313e6e59622efd957d5fb309f8ac8b3e9c8fce829aa05fc45b1fd7ebb881f"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-sun-adornment-phoenix-front-256.webp",
-      "outputBytes": 141186
+      "outputBytes": 143186
     }
   },
   "figures": {
@@ -5426,7 +6361,8 @@ export const AVATAR_ART = deepFreeze({
           "front": "item-cap-explorer-girl-front"
         },
         "backpack": {
-          "rear": "item-backpack-explorer-girl-rear"
+          "rear": "item-backpack-explorer-girl-rear",
+          "front": "item-backpack-explorer-girl-front"
         },
         "sunhat": {
           "front": "item-sunhat-explorer-girl-front"
@@ -5447,7 +6383,8 @@ export const AVATAR_ART = deepFreeze({
           "front": "item-runes-head-explorer-girl-front"
         },
         "runes-back": {
-          "rear": "item-runes-back-explorer-girl-rear"
+          "rear": "item-runes-back-explorer-girl-rear",
+          "front": "item-runes-back-explorer-girl-front"
         },
         "runes-hand": {
           "front": "item-runes-hand-explorer-girl-front"
@@ -5479,7 +6416,8 @@ export const AVATAR_ART = deepFreeze({
           "front": "item-cap-explorer-boy-front"
         },
         "backpack": {
-          "rear": "item-backpack-explorer-boy-rear"
+          "rear": "item-backpack-explorer-boy-rear",
+          "front": "item-backpack-explorer-boy-front"
         },
         "sunhat": {
           "front": "item-sunhat-explorer-boy-front"
@@ -5500,7 +6438,8 @@ export const AVATAR_ART = deepFreeze({
           "front": "item-runes-head-explorer-boy-front"
         },
         "runes-back": {
-          "rear": "item-runes-back-explorer-boy-rear"
+          "rear": "item-runes-back-explorer-boy-rear",
+          "front": "item-runes-back-explorer-boy-front"
         },
         "runes-hand": {
           "front": "item-runes-hand-explorer-boy-front"
@@ -5520,7 +6459,6 @@ export const AVATAR_ART = deepFreeze({
           "front": "item-moon-head-horse-front"
         },
         "moon-body": {
-          "rear": "item-moon-body-horse-rear",
           "front": "item-moon-body-horse-front"
         },
         "moon-adornment": {
@@ -5547,6 +6485,7 @@ export const AVATAR_ART = deepFreeze({
       "clothing": {},
       "items": {
         "jungle-head": {
+          "rear": "item-jungle-head-tiger-rear",
           "front": "item-jungle-head-tiger-front"
         },
         "jungle-body": {
@@ -5567,12 +6506,15 @@ export const AVATAR_ART = deepFreeze({
       "clothing": {},
       "items": {
         "crystal-head": {
+          "rear": "item-crystal-head-dragon-rear",
           "front": "item-crystal-head-dragon-front"
         },
         "crystal-body": {
+          "rear": "item-crystal-body-dragon-rear",
           "front": "item-crystal-body-dragon-front"
         },
         "crystal-adornment": {
+          "rear": "item-crystal-adornment-dragon-rear",
           "front": "item-crystal-adornment-dragon-front"
         }
       }
@@ -5587,6 +6529,7 @@ export const AVATAR_ART = deepFreeze({
       "clothing": {},
       "items": {
         "forest-head": {
+          "rear": "item-forest-head-deer-mist-rear",
           "front": "item-forest-head-deer-mist-front"
         },
         "forest-body": {
@@ -5608,6 +6551,7 @@ export const AVATAR_ART = deepFreeze({
       "clothing": {},
       "items": {
         "aurora-head": {
+          "rear": "item-aurora-head-wolf-aurora-rear",
           "front": "item-aurora-head-wolf-aurora-front"
         },
         "aurora-body": {
@@ -5629,6 +6573,7 @@ export const AVATAR_ART = deepFreeze({
       "clothing": {},
       "items": {
         "obsidian-head": {
+          "rear": "item-obsidian-head-panther-shadow-rear",
           "front": "item-obsidian-head-panther-shadow-front"
         },
         "obsidian-body": {
@@ -5652,7 +6597,6 @@ export const AVATAR_ART = deepFreeze({
           "front": "item-moon-head-unicorn-moon-front"
         },
         "moon-body": {
-          "rear": "item-moon-body-unicorn-moon-rear",
           "front": "item-moon-body-unicorn-moon-front"
         },
         "moon-adornment": {
@@ -5679,12 +6623,15 @@ export const AVATAR_ART = deepFreeze({
       "clothing": {},
       "items": {
         "storm-head": {
+          "rear": "item-storm-head-griffin-storm-rear",
           "front": "item-storm-head-griffin-storm-front"
         },
         "storm-body": {
+          "rear": "item-storm-body-griffin-storm-rear",
           "front": "item-storm-body-griffin-storm-front"
         },
         "storm-adornment": {
+          "rear": "item-storm-adornment-griffin-storm-rear",
           "front": "item-storm-adornment-griffin-storm-front"
         }
       }
@@ -5699,12 +6646,15 @@ export const AVATAR_ART = deepFreeze({
       "clothing": {},
       "items": {
         "crystal-head": {
+          "rear": "item-crystal-head-dragon-crystal-rear",
           "front": "item-crystal-head-dragon-crystal-front"
         },
         "crystal-body": {
+          "rear": "item-crystal-body-dragon-crystal-rear",
           "front": "item-crystal-body-dragon-crystal-front"
         },
         "crystal-adornment": {
+          "rear": "item-crystal-adornment-dragon-crystal-rear",
           "front": "item-crystal-adornment-dragon-crystal-front"
         }
       }
@@ -5722,7 +6672,6 @@ export const AVATAR_ART = deepFreeze({
           "front": "item-moon-head-pegasus-star-front"
         },
         "moon-body": {
-          "rear": "item-moon-body-pegasus-star-rear",
           "front": "item-moon-body-pegasus-star-front"
         },
         "moon-adornment": {
@@ -5749,12 +6698,15 @@ export const AVATAR_ART = deepFreeze({
       "clothing": {},
       "items": {
         "sun-head": {
+          "rear": "item-sun-head-phoenix-rear",
           "front": "item-sun-head-phoenix-front"
         },
         "sun-body": {
+          "rear": "item-sun-body-phoenix-rear",
           "front": "item-sun-body-phoenix-front"
         },
         "sun-adornment": {
+          "rear": "item-sun-adornment-phoenix-rear",
           "front": "item-sun-adornment-phoenix-front"
         }
       }
@@ -5780,9 +6732,9 @@ export const AVATAR_ART = deepFreeze({
         "sourceName": "dragon-margin.png"
       }
     ],
-    "assetCount": 98,
-    "smallBytes": 1005120,
-    "totalBytes": 9184038,
+    "assetCount": 115,
+    "smallBytes": 947568,
+    "totalBytes": 8529122,
     "smallBudgetBytes": 8388608
   }
 });
@@ -5800,6 +6752,7 @@ export const AVATAR_SMALL_URLS = Object.freeze([
   "../../../trainer/assets/avatar-shop/figure-explorer-girl-clothing-5-256.webp",
   "../../../trainer/assets/avatar-shop/item-cap-explorer-girl-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-backpack-explorer-girl-rear-256.webp",
+  "../../../trainer/assets/avatar-shop/item-backpack-explorer-girl-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-sunhat-explorer-girl-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-knight-clothing-explorer-girl-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-binoculars-explorer-girl-front-256.webp",
@@ -5807,6 +6760,7 @@ export const AVATAR_SMALL_URLS = Object.freeze([
   "../../../trainer/assets/avatar-shop/item-compass-explorer-girl-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-runes-head-explorer-girl-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-runes-back-explorer-girl-rear-256.webp",
+  "../../../trainer/assets/avatar-shop/item-runes-back-explorer-girl-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-runes-hand-explorer-girl-front-256.webp",
   "../../../trainer/assets/avatar-shop/figure-explorer-boy-skin-0-256.webp",
   "../../../trainer/assets/avatar-shop/figure-explorer-boy-skin-1-256.webp",
@@ -5820,6 +6774,7 @@ export const AVATAR_SMALL_URLS = Object.freeze([
   "../../../trainer/assets/avatar-shop/figure-explorer-boy-clothing-5-256.webp",
   "../../../trainer/assets/avatar-shop/item-cap-explorer-boy-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-backpack-explorer-boy-rear-256.webp",
+  "../../../trainer/assets/avatar-shop/item-backpack-explorer-boy-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-sunhat-explorer-boy-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-knight-clothing-explorer-boy-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-binoculars-explorer-boy-front-256.webp",
@@ -5827,63 +6782,77 @@ export const AVATAR_SMALL_URLS = Object.freeze([
   "../../../trainer/assets/avatar-shop/item-compass-explorer-boy-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-runes-head-explorer-boy-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-runes-back-explorer-boy-rear-256.webp",
+  "../../../trainer/assets/avatar-shop/item-runes-back-explorer-boy-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-runes-hand-explorer-boy-front-256.webp",
   "../../../trainer/assets/avatar-shop/figure-horse-base-256.webp",
   "../../../trainer/assets/avatar-shop/item-moon-head-horse-front-256.webp",
-  "../../../trainer/assets/avatar-shop/item-moon-body-horse-rear-256.webp",
   "../../../trainer/assets/avatar-shop/item-moon-body-horse-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-moon-adornment-horse-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-stars-head-horse-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-stars-body-horse-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-stars-adornment-horse-front-256.webp",
   "../../../trainer/assets/avatar-shop/figure-tiger-base-256.webp",
+  "../../../trainer/assets/avatar-shop/item-jungle-head-tiger-rear-256.webp",
   "../../../trainer/assets/avatar-shop/item-jungle-head-tiger-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-jungle-body-tiger-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-jungle-adornment-tiger-front-256.webp",
   "../../../trainer/assets/avatar-shop/figure-dragon-base-256.webp",
+  "../../../trainer/assets/avatar-shop/item-crystal-head-dragon-rear-256.webp",
   "../../../trainer/assets/avatar-shop/item-crystal-head-dragon-front-256.webp",
+  "../../../trainer/assets/avatar-shop/item-crystal-body-dragon-rear-256.webp",
   "../../../trainer/assets/avatar-shop/item-crystal-body-dragon-front-256.webp",
+  "../../../trainer/assets/avatar-shop/item-crystal-adornment-dragon-rear-256.webp",
   "../../../trainer/assets/avatar-shop/item-crystal-adornment-dragon-front-256.webp",
   "../../../trainer/assets/avatar-shop/figure-deer-mist-base-256.webp",
+  "../../../trainer/assets/avatar-shop/item-forest-head-deer-mist-rear-256.webp",
   "../../../trainer/assets/avatar-shop/item-forest-head-deer-mist-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-forest-body-deer-mist-rear-256.webp",
   "../../../trainer/assets/avatar-shop/item-forest-body-deer-mist-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-forest-adornment-deer-mist-front-256.webp",
   "../../../trainer/assets/avatar-shop/figure-wolf-aurora-base-256.webp",
+  "../../../trainer/assets/avatar-shop/item-aurora-head-wolf-aurora-rear-256.webp",
   "../../../trainer/assets/avatar-shop/item-aurora-head-wolf-aurora-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-aurora-body-wolf-aurora-rear-256.webp",
   "../../../trainer/assets/avatar-shop/item-aurora-body-wolf-aurora-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-aurora-adornment-wolf-aurora-front-256.webp",
   "../../../trainer/assets/avatar-shop/figure-panther-shadow-base-256.webp",
+  "../../../trainer/assets/avatar-shop/item-obsidian-head-panther-shadow-rear-256.webp",
   "../../../trainer/assets/avatar-shop/item-obsidian-head-panther-shadow-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-obsidian-body-panther-shadow-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-obsidian-adornment-panther-shadow-front-256.webp",
   "../../../trainer/assets/avatar-shop/figure-unicorn-moon-base-256.webp",
   "../../../trainer/assets/avatar-shop/item-moon-head-unicorn-moon-front-256.webp",
-  "../../../trainer/assets/avatar-shop/item-moon-body-unicorn-moon-rear-256.webp",
   "../../../trainer/assets/avatar-shop/item-moon-body-unicorn-moon-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-moon-adornment-unicorn-moon-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-stars-head-unicorn-moon-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-stars-body-unicorn-moon-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-stars-adornment-unicorn-moon-front-256.webp",
   "../../../trainer/assets/avatar-shop/figure-griffin-storm-base-256.webp",
+  "../../../trainer/assets/avatar-shop/item-storm-head-griffin-storm-rear-256.webp",
   "../../../trainer/assets/avatar-shop/item-storm-head-griffin-storm-front-256.webp",
+  "../../../trainer/assets/avatar-shop/item-storm-body-griffin-storm-rear-256.webp",
   "../../../trainer/assets/avatar-shop/item-storm-body-griffin-storm-front-256.webp",
+  "../../../trainer/assets/avatar-shop/item-storm-adornment-griffin-storm-rear-256.webp",
   "../../../trainer/assets/avatar-shop/item-storm-adornment-griffin-storm-front-256.webp",
   "../../../trainer/assets/avatar-shop/figure-dragon-crystal-base-256.webp",
+  "../../../trainer/assets/avatar-shop/item-crystal-head-dragon-crystal-rear-256.webp",
   "../../../trainer/assets/avatar-shop/item-crystal-head-dragon-crystal-front-256.webp",
+  "../../../trainer/assets/avatar-shop/item-crystal-body-dragon-crystal-rear-256.webp",
   "../../../trainer/assets/avatar-shop/item-crystal-body-dragon-crystal-front-256.webp",
+  "../../../trainer/assets/avatar-shop/item-crystal-adornment-dragon-crystal-rear-256.webp",
   "../../../trainer/assets/avatar-shop/item-crystal-adornment-dragon-crystal-front-256.webp",
   "../../../trainer/assets/avatar-shop/figure-pegasus-star-base-256.webp",
   "../../../trainer/assets/avatar-shop/item-moon-head-pegasus-star-front-256.webp",
-  "../../../trainer/assets/avatar-shop/item-moon-body-pegasus-star-rear-256.webp",
   "../../../trainer/assets/avatar-shop/item-moon-body-pegasus-star-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-moon-adornment-pegasus-star-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-stars-head-pegasus-star-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-stars-body-pegasus-star-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-stars-adornment-pegasus-star-front-256.webp",
   "../../../trainer/assets/avatar-shop/figure-phoenix-base-256.webp",
+  "../../../trainer/assets/avatar-shop/item-sun-head-phoenix-rear-256.webp",
   "../../../trainer/assets/avatar-shop/item-sun-head-phoenix-front-256.webp",
+  "../../../trainer/assets/avatar-shop/item-sun-body-phoenix-rear-256.webp",
   "../../../trainer/assets/avatar-shop/item-sun-body-phoenix-front-256.webp",
+  "../../../trainer/assets/avatar-shop/item-sun-adornment-phoenix-rear-256.webp",
   "../../../trainer/assets/avatar-shop/item-sun-adornment-phoenix-front-256.webp"
 ]);

@@ -1,0 +1,147 @@
+{
+  "kind": "synthetic-shop-probe",
+  "diagnosticVersion": 3,
+  "startedAt": "2026-09-20T09:56:38.646Z",
+  "completedAt": "2026-09-20T09:57:42.474Z",
+  "origin": "http://localhost:4173",
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0",
+  "etagSource": "v2-json",
+  "apiPaths": {
+    "read": "GET /drive/v3/files/{probeFileId}?alt=media",
+    "metadataRead": "GET /drive/v3/files/{ownedId}?fields=id,name,mimeType,parents,appProperties,trashed,version",
+    "tokenRead": "GET /drive/v2/files/{ownedId}?fields=id,mimeType,etag",
+    "mediaUpdate": "PATCH /upload/drive/v3/files/{probeFileId}?uploadType=media",
+    "metadataUpdate": "PATCH /drive/v3/files/{probeFolderId}",
+    "condition": "If-Match"
+  },
+  "passed": false,
+  "failed": 6,
+  "unsupported": 0,
+  "checks": [
+    {
+      "id": "fixture",
+      "expected": "Eigener synthetischer Probeordner angelegt.",
+      "passed": true,
+      "status": "passed",
+      "actual": "Erwartete Wirkung nach erneutem Lesen bestätigt."
+    },
+    {
+      "id": "version-token",
+      "expected": "Starke Versionskennung im Browser lesbar.",
+      "passed": true,
+      "status": "passed",
+      "actual": {
+        "metadataEtagReadable": false,
+        "mediaEtagReadable": false,
+        "jsonEtagReadable": true,
+        "etagSource": "v2-json"
+      }
+    },
+    {
+      "id": "invalid-token",
+      "expected": "Falsches If-Match ergibt 412; Inhalt bleibt unverändert.",
+      "passed": false,
+      "status": "failed",
+      "actual": "stale",
+      "diagnostic": {
+        "phase": "read-stability",
+        "reason": "changed-during-read",
+        "etagSource": "v2-json",
+        "metadataEtagState": "absent",
+        "mediaEtagState": "absent",
+        "jsonEtagState": "strong",
+        "versionChanged": true,
+        "metadataEtagChanged": false,
+        "jsonEtagChanged": false
+      },
+      "scenarioStage": "fixture-read"
+    },
+    {
+      "id": "stale-write",
+      "expected": "Verbrauchtes If-Match ergibt 412; erster Inhalt bleibt.",
+      "passed": false,
+      "status": "failed",
+      "actual": "stale",
+      "diagnostic": {
+        "phase": "read-stability",
+        "reason": "changed-during-read",
+        "etagSource": "v2-json",
+        "metadataEtagState": "absent",
+        "mediaEtagState": "absent",
+        "jsonEtagState": "strong",
+        "versionChanged": true,
+        "metadataEtagChanged": false,
+        "jsonEtagChanged": false
+      },
+      "scenarioStage": "fixture-read"
+    },
+    {
+      "id": "initialization",
+      "expected": "Zwei Initialisierer: genau eine verbindliche Ordnerbindung.",
+      "passed": false,
+      "status": "failed",
+      "actual": "assertion"
+    },
+    {
+      "id": "two-purchases",
+      "expected": "Zwei Käufe zu 800 bei 1000 Guthaben: genau einer, Rest 200.",
+      "passed": false,
+      "status": "failed",
+      "actual": "assertion"
+    },
+    {
+      "id": "response-loss",
+      "expected": "Absichtlich verworfene Erfolgsantwort: Beleg mit gleicher ID gefunden, keine zweite Ausgabe.",
+      "passed": false,
+      "status": "failed",
+      "actual": "assertion"
+    },
+    {
+      "id": "duplicate-operation",
+      "expected": "Vorgang und vorhandener Besitz erzeugen keine zweite Ausgabe.",
+      "passed": true,
+      "status": "passed",
+      "actual": "Erwartete Wirkung nach erneutem Lesen bestätigt."
+    },
+    {
+      "id": "reset-race",
+      "expected": "Kauf und Epochenwechsel teilen dieselbe Schreibgrenze; beide Gewinnerreihenfolgen.",
+      "passed": false,
+      "status": "failed",
+      "actual": "stale",
+      "diagnostic": {
+        "phase": "read-stability",
+        "reason": "changed-during-read",
+        "etagSource": "v2-json",
+        "metadataEtagState": "absent",
+        "mediaEtagState": "absent",
+        "jsonEtagState": "strong",
+        "versionChanged": true,
+        "metadataEtagChanged": false,
+        "jsonEtagChanged": false
+      },
+      "scenarioStage": "fixture-read"
+    },
+    {
+      "id": "create-conflict",
+      "expected": "Erneutes Create prüft identischen Inhalt; abweichender Inhalt wird abgewiesen.",
+      "passed": true,
+      "status": "passed",
+      "actual": "Erwartete Wirkung nach erneutem Lesen bestätigt."
+    },
+    {
+      "id": "conflict-credit",
+      "expected": "Konfliktbehaftete Grundlage kann keine synthetische Ausgabe auslösen.",
+      "passed": true,
+      "status": "passed",
+      "actual": "Lokale Proberegel geprüft; Produktledger/Quarantäne noch nicht integriert."
+    }
+  ],
+  "productReady": false,
+  "limitations": [
+    "Zwei logische Clients im selben Browser; keine Zwei-Geräte-Abnahme.",
+    "Antwortverlust durch lokales Verwerfen einer Erfolgsantwort; kein echter Leitungsabbruch.",
+    "Keine Produktdaten-, Altclient-, Backup- oder Epochenmigration geprüft.",
+    "Ein Probe-Erfolg ersetzt keine dokumentierte Servergarantie."
+  ]
+}

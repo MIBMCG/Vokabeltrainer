@@ -1,16 +1,58 @@
 {
   "sourceFile": "tiger-jungle-head-front.png",
-  "prompt": "Use case: stylized-concept\nAsset type: transparent game equipment layer\nInput image: tiger.png is a reference image for exact body pose, original 1223 x 1286 canvas, placement, scale, perspective, and painterly magical style.\nPrimary request: create only the Dschungel set head equipment called Blatt-Amulett: a polished emerald leaf pendant with a small amber gem on a braided dark-green cord, fitted around the upper neck and resting on the white chest ruff of the tiger.\nComposition/framing: preserve the exact 1223 x 1286 canvas coordinate system. Place the necklace at the coordinates where it would be worn in the reference. Do not crop or rescale the canvas.\nStyle/medium: high-quality detailed magical adventure game illustration matching the tiger.\nConstraints: output only the necklace and pendant on a genuinely transparent background; no tiger, no head, no fur, no eyes, no paws, no scenery, no text, no watermark. Front layer.",
+  "figure": "tiger",
+  "item": "jungle-head",
+  "layer": "front",
   "reference": "tiger.png",
-  "generator": "built-in image_gen",
-  "generatedOn": "2026-09-19",
-  "registration": {"scale": 0.35, "x": 150, "y": 180},
-  "canvas": {"width": 1223, "height": 1286},
+  "generator": "Classical raster editing (Pillow/NumPy), explicitly authorized 2026-09-20",
+  "provenance": "Body-specific depth split: chain or antler mounting sits behind fur/antler; only the restrained pendant or crystal faces remain in front.",
+  "originalCommit": "24ce5a38b561c6012d7307603fc378ca339ab58c",
+  "originalSources": [
+    {
+      "path": "tiger-jungle-head-front.png",
+      "sha256": "c6ddd5a9025bb388578577e532d0a673bd2e76eaad957e08df3ca97bb8a4b728"
+    }
+  ],
+  "repairScript": "../../../scripts/avatar-fit/quadrupeds.py",
+  "recipeFile": "../avatar-fit-recipes/quadrupeds/tiger.json",
+  "recipe": {
+    "sourceBox": [
+      170,
+      204,
+      566,
+      588
+    ],
+    "center": [
+      344,
+      378
+    ],
+    "scale": [
+      0.7,
+      0.72
+    ],
+    "angle": 0,
+    "rearChainFraction": 0.57,
+    "frontPendantBoxFraction": [
+      0.29,
+      0.34,
+      0.71,
+      1.0
+    ]
+  },
+  "canvas": {
+    "width": 1223,
+    "height": 1286
+  },
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "sourceSha256": "fd2af6ab4e147a90e4bfc63f3732c6777cf5dceb4b5b91d587e440a554dc9409",
   "qa": {
-    "status": "accepted-for-current-base",
-    "method": "Fresh headless Edge full-canvas composition, individual layer and complete set",
-    "evidence": "../../../.superpowers/sdd/2026-09-19-avatar-shop/mystic-gear-evidence/tiger-jungle-head-front-composite.png",
-    "result": "The braided cord follows the neck and the leaf pendant rests on the white upper chest.",
-    "limits": "A short cord end remains visible behind the right side of the mane; it does not cover the face."
+    "status": "internal-fit-review-pending",
+    "personalAcceptance": false,
+    "comparisonSheet": "../avatar-fit-v3/quadrupeds/tiger-pairs-256.png",
+    "largeEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/quadrupeds/tiger-head-before-after-large.png"
   }
 }

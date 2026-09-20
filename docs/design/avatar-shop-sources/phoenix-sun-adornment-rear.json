@@ -1,0 +1,31 @@
+{
+  "sourceFile": "phoenix-sun-adornment-rear.png",
+  "reference": "phoenix.png",
+  "generator": "classical-raster-edit/pillow-numpy",
+  "editedOn": "2026-09-20",
+  "provenance": "Classical alpha-mask edit of phoenix-sun-adornment-front.png, captured byte-for-byte from Git revision 24ce5a3; no generated or repainted pixels.",
+  "inputSourceFile": "phoenix-sun-adornment-front.png",
+  "sourceRevision": "24ce5a3",
+  "sourceSha256": "1f440b9df21dc64a8c7bc1f1f091c3d047c65b967f2542fae218b9c9f3c3f2a2",
+  "baseSourceSha256": "5bf95178a98bb9c8f0b79f2d1d9c98c1be186b0cdd9562fae40da13563055b3c",
+  "recipe": "../avatar-fit-recipes/wings/phoenix.json",
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "canvas": {
+    "width": 1024,
+    "height": 1536
+  },
+  "qa": {
+    "status": "fit-pass-complete-pending-user-acceptance",
+    "method": "Full-resolution light-background composition, item detail pair, complete set and 256 px card inspected from immutable original inputs.",
+    "evidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/wings/phoenix-adornment-before-after.png",
+    "detailEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/wings/phoenix-adornment-detail-before-after.png",
+    "result": "Six feather-shaped occlusions alternate the gold cuffs behind and in front of the selected wing-feather bundles.",
+    "limits": "Internal visual fit pass only; personal user acceptance and product WebP build remain separate."
+  },
+  "plane": "rear",
+  "outputSha256": "65b6517c173de87c87c24a7beb2cc62b7cbaac6a489614aad4d2020a685eb2d9"
+}

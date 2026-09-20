@@ -19,6 +19,7 @@ playwright-report/
 .worktrees/
 .superpowers/
 *.log
+__pycache__/
 
 # Betriebssystemdateien
 .DS_Store

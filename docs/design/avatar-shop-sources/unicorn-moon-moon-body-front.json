@@ -1,52 +1,145 @@
 {
   "sourceFile": "unicorn-moon-moon-body-front.png",
-  "prompt": "Use case: precise-object-edit\nAsset type: transparent front equipment layer for a layered children's game avatar\nInput images: Image 1 is the exact canonical white unicorn body and coordinate reference; Image 2 is the existing rear moon cloak layer whose blue, violet, silver, star embroidery, folds, and trailing drape must be continued; Image 3 is the current browser composite showing that rear layer mostly hidden behind this exact unicorn.\nPrimary request: Create ONLY the missing FRONT portion of the same moon/star cloak, fitted precisely to the exact unicorn in Image 1. Add a clearly visible curved yoke resting around the lower neck and both shoulders, a small silver-violet clasp at the front/side of the neck, and a believable deep-blue fabric panel lying over the unicorn's visible left back and outer left flank. The visible front panel must connect naturally to the rear drape in Image 2 when layered together.\nComposition: preserve the exact 1024 x 1536 canonical canvas and exact unicorn coordinates from Image 1. The equipment must already be aligned at full canvas scale; do not require translation, scaling, cropping, bbox normalization, or rotation. Keep the horn, ears, face, eyes, muzzle, mane, tail, all four legs and hooves fully free. Stop the fabric above the leg joints. Keep the yoke below the mane line and far below the horn. The layer may cover a modest part of the torso/back so it reads as worn cloth, but must not hide most of the white body.\nStyle: polished painterly premium magical children's adventure illustration matching Images 1-3; deep midnight blue and silver-violet cloth, restrained embroidered stars, silver edging, coherent cool-white lighting.\nTransparency: output a genuinely transparent RGBA background. Include ONLY the new front equipment pixels. The unicorn, horn, mane, tail, body, legs, hooves, eyes, all existing equipment, checkerboard, glow, shadow, and backdrop must be absent and fully transparent.\nConstraints: one equipment layer only; clean alpha edges; full canonical canvas; no labels, no text, no watermark; no full unicorn; no new figure; no saddle; no headpiece; no hoof jewelry; no floating ornaments.\nAvoid: animal pixels or silhouette, background, black fill, white fill, checkerboard painted into the image, detached fabric, fabric crossing horn, face, mane, or legs, oversized blanket hiding the torso, duplicated rear cloak.",
-  "relativeReference": "unicorn-moon.png",
-  "relativeReferences": [
-    "unicorn-moon.png",
-    "unicorn-moon-moon-body-rear.png",
-    "../../../.superpowers/avatar-shop-equine-qa/screens/unicorn-moon-set-moon.png"
+  "figure": "unicorn-moon",
+  "layer": "front",
+  "generator": "Classical raster editing (Pillow/NumPy), explicitly authorized 2026-09-20",
+  "provenance": "Body-specific piecewise drape adjustment: folded chest edge, shorter hem, connected clasp and exposed foreground mane. Far collar tip and old detached rear curtain removed. No base pixels changed.",
+  "originalCommit": "24ce5a38b561c6012d7307603fc378ca339ab58c",
+  "originalSources": [
+    {
+      "path": "unicorn-moon-moon-body-front.png",
+      "sha256": "90f76bc11cf9c59cb6967742deee850b1fb33c6c51082de4ec318c4d182b07cf"
+    },
+    {
+      "path": "unicorn-moon-moon-body-rear.png",
+      "sha256": "f79a9369454bfdd2cd07ed878d5844cecb6f0504791600522b11c135ab1a2866"
+    }
   ],
-  "generator": "built-in image_gen",
-  "generatedOn": "2026-09-20",
-  "candidate": false,
+  "repairScript": "../../../scripts/avatar-fit/equines.py",
+  "recipe": {
+    "mesh": {
+      "sx": [
+        0,
+        180,
+        500,
+        760,
+        900,
+        1024
+      ],
+      "dx": [
+        203,
+        280,
+        462,
+        675,
+        800,
+        910
+      ],
+      "sy": [
+        0,
+        410,
+        620,
+        940,
+        1230,
+        1536
+      ],
+      "dy": [
+        150,
+        500,
+        710,
+        900,
+        970,
+        1200
+      ]
+    },
+    "maneOcclusionPolygon": [
+      [
+        470,
+        490
+      ],
+      [
+        568,
+        471
+      ],
+      [
+        544,
+        587
+      ],
+      [
+        520,
+        620
+      ],
+      [
+        486,
+        659
+      ],
+      [
+        505,
+        652
+      ],
+      [
+        488,
+        681
+      ],
+      [
+        465,
+        694
+      ],
+      [
+        479,
+        673
+      ],
+      [
+        450,
+        702
+      ],
+      [
+        423,
+        704
+      ],
+      [
+        438,
+        691
+      ],
+      [
+        417,
+        686
+      ],
+      [
+        440,
+        668
+      ],
+      [
+        454,
+        624
+      ],
+      [
+        449,
+        599
+      ],
+      [
+        470,
+        564
+      ]
+    ],
+    "farSideGemBoundary": [
+      901,
+      630,
+      31,
+      38
+    ]
+  },
   "canvas": {
     "width": 1024,
     "height": 1536
-  },
-  "alphaBounds": {
-    "threshold": 16,
-    "x": 22,
-    "y": 411,
-    "width": 994,
-    "height": 814
   },
   "registration": {
     "scale": 1,
     "x": 0,
     "y": 0
   },
-  "provenance": "Original body-specific built-in image_gen front layer generated from the exact unicorn body, existing rear layer, and previous browser composition.",
-  "sourceSha256": "90f76bc11cf9c59cb6967742deee850b1fb33c6c51082de4ec318c4d182b07cf",
-  "figure": "unicorn-moon",
-  "layer": "front",
-  "registeredBounds": {
-    "alphaThreshold": 16,
-    "x": 22,
-    "y": 411,
-    "width": 994,
-    "height": 814
-  },
+  "sourceSha256": "1331e7fe68ce52b86e33a74e51131357ea845c7f8824c8807163deae7864948d",
   "qa": {
-    "date": "2026-09-20",
-    "method": "Headless Edge composition from decoded PNGs on the canonical canvas at 1024 px and responsive 320 px.",
-    "evidence": ".superpowers/sdd/2026-09-20-avatar-fit/equine/screens/unicorn-moon-new-1024.png",
-    "mobileEvidence": ".superpowers/sdd/2026-09-20-avatar-fit/equine/screens/unicorn-moon-new-320.png",
-    "fullSetEvidence": ".superpowers/sdd/2026-09-20-avatar-fit/equine/screens/unicorn-moon-new-full-1024.png",
-    "fullSetMobileEvidence": ".superpowers/sdd/2026-09-20-avatar-fit/equine/screens/unicorn-moon-new-full-320.png",
-    "observedFit": "The high curved yoke stays below the mane and horn, the clasp sits at the right shoulder edge, and the front cloth follows the left back and flank. The horn, face, white tail silhouette, four lower legs, and hooves remain visible in both sizes.",
-    "publicEvidence": "../2026-09-20-avatar-passform.png",
-    "publicReport": "../../reports/2026-09-20-avatar-passform.md"
-  },
-  "registrationReference": "unicorn-moon.png"
+    "status": "internal-fit-review-pending",
+    "personalAcceptance": false
+  }
 }

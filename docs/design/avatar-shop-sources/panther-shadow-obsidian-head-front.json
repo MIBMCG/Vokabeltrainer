@@ -1,16 +1,58 @@
 {
   "sourceFile": "panther-shadow-obsidian-head-front.png",
-  "prompt": "Use case: stylized-concept\nAsset type: transparent game equipment layer\nInput image: panther-shadow.png is a reference image for exact body pose, original 1223 x 1286 canvas, placement, scale, perspective, and painterly magical style.\nPrimary request: create only the Obsidian set head equipment called Obsidian-Amulett: a refined black-obsidian pendant with a violet glowing rune on a short dark-silver chain, fitted around the upper neck and resting high on the chest of the panther.\nComposition/framing: preserve the exact 1223 x 1286 canvas coordinate system. Place the necklace where it would be worn on the reference. Do not crop or rescale the canvas.\nStyle/medium: high-quality detailed magical game illustration matching the shadow-panther palette.\nConstraints: output only the necklace and pendant on a genuinely transparent background; no panther, no head, no fur, no eyes, no paws, no scenery, no text, no watermark. Front layer.",
+  "figure": "panther-shadow",
+  "item": "obsidian-head",
+  "layer": "front",
   "reference": "panther-shadow.png",
-  "generator": "built-in image_gen",
-  "generatedOn": "2026-09-19",
-  "registration": {"scale": 0.33, "x": 210, "y": 220},
-  "canvas": {"width": 1223, "height": 1286},
+  "generator": "Classical raster editing (Pillow/NumPy), explicitly authorized 2026-09-20",
+  "provenance": "Body-specific depth split: chain or antler mounting sits behind fur/antler; only the restrained pendant or crystal faces remain in front.",
+  "originalCommit": "24ce5a38b561c6012d7307603fc378ca339ab58c",
+  "originalSources": [
+    {
+      "path": "panther-shadow-obsidian-head-front.png",
+      "sha256": "6d1783c219e623bb1039f3fe57b2000348c9962bdbfe06775505f730b9efcc05"
+    }
+  ],
+  "repairScript": "../../../scripts/avatar-fit/quadrupeds.py",
+  "recipeFile": "../avatar-fit-recipes/quadrupeds/panther-shadow.json",
+  "recipe": {
+    "sourceBox": [
+      249,
+      238,
+      576,
+      604
+    ],
+    "center": [
+      388,
+      390
+    ],
+    "scale": [
+      0.66,
+      0.68
+    ],
+    "angle": 0,
+    "rearChainFraction": 0.54,
+    "frontPendantBoxFraction": [
+      0.28,
+      0.34,
+      0.72,
+      1.0
+    ]
+  },
+  "canvas": {
+    "width": 1223,
+    "height": 1286
+  },
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "sourceSha256": "1cf7206c485a0c72f61a8322d6c482ff9a9a88cb0ef47567c40263675d638d14",
   "qa": {
-    "status": "accepted-for-current-base",
-    "method": "Fresh headless Edge full-canvas composition, individual layer and complete set",
-    "evidence": "../../../.superpowers/sdd/2026-09-19-avatar-shop/mystic-gear-evidence/panther-shadow-obsidian-head-front-composite.png",
-    "result": "The chain closes around the neck and the obsidian pendant rests on the upper chest without covering the face.",
-    "limits": "A fine chain tip remains visible behind the right jaw; it is part of the generated source and is accepted at this scale."
+    "status": "internal-fit-review-pending",
+    "personalAcceptance": false,
+    "comparisonSheet": "../avatar-fit-v3/quadrupeds/panther-shadow-pairs-256.png",
+    "largeEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/quadrupeds/panther-shadow-head-before-after-large.png"
   }
 }

@@ -26,9 +26,10 @@ el('start').addEventListener('click',async()=>{
     const result=await runProbeScenarios({transport:createProbeTransport({token:()=>session.getToken(),etagSource}),emit:check=>{
       const item=document.createElement('li');item.textContent=`${check.passed?'Bestanden':check.status==='unsupported'?'Nicht nachgewiesen':'Fehlgeschlagen'}: ${check.expected} Ergebnis: ${typeof check.actual==='string'?check.actual:JSON.stringify(check.actual)}`;
       if(check.diagnostic){const message=diagnosticMessages[check.diagnostic.reason];if(message)item.append(document.createTextNode(` ${message} Details: ${JSON.stringify(check.diagnostic)}`));}
+      if(check.evidence)item.append(document.createTextNode(` Prüfstelle und Antwortklassen: ${JSON.stringify(check.evidence)}`));
       el('checks').append(item);
     }});
-    report={kind:'synthetic-shop-probe',diagnosticVersion:3,startedAt,completedAt:new Date().toISOString(),origin:location.origin,userAgent:navigator.userAgent,etagSource,
+    report={kind:'synthetic-shop-probe',diagnosticVersion:4,startedAt,completedAt:new Date().toISOString(),origin:location.origin,userAgent:navigator.userAgent,etagSource,
       apiPaths:{read:'GET /drive/v3/files/{probeFileId}?alt=media',metadataRead:'GET /drive/v3/files/{ownedId}?fields=id,name,mimeType,parents,appProperties,trashed,version',
         ...(etagSource==='v2-json'?{tokenRead:'GET /drive/v2/files/{ownedId}?fields=id,mimeType,etag'}:{}),mediaUpdate:'PATCH /upload/drive/v3/files/{probeFileId}?uploadType=media',metadataUpdate:'PATCH /drive/v3/files/{probeFolderId}',condition:'If-Match'},...result};
     el('status').textContent=result.passed?'Alle isolierten Probeszenarien bestanden. Produktshop bleibt gesperrt; weitere Nachweise stehen aus.':'Kaufkoordination nicht ausreichend nachgewiesen. Produktshop bleibt gesperrt.';
@@ -37,6 +38,6 @@ el('start').addEventListener('click',async()=>{
 });
 el('download').addEventListener('click',()=>{
   if(!report)return;const url=URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json'}));
-  const link=document.createElement('a');link.href=url;link.download='shop-probe-bericht3.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  const link=document.createElement('a');link.href=url;link.download='shop-probe-bericht4.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 });
 buttons();

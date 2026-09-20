@@ -1,8 +1,28 @@
 const clone=value=>structuredClone(value);
 const initial=()=>({probeVersion:1,epoch:'epoch-0',sequence:0,earned:1000,spent:0,operations:[],owned:[]});
 const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
-const assert=(condition)=>{if(!condition)throw Object.assign(new Error('unexpected'),{code:'assertion'});};
-async function rejects(operation,code){try{await operation();}catch(error){assert(error.code===code);return;}assert(false);}
+const assert=(condition,evidence)=>{if(!condition)throw Object.assign(new Error('unexpected'),{code:'assertion',evidence});};
+const errorClasses=['unsupported','stale','collision','auth','network','binding','permission','missing','http','assertion'];
+const classify=error=>errorClasses.includes(error?.code)?error.code:'unexpected';
+async function rejects(operation,code,checkpoint){try{await operation();}catch(error){assert(error?.code===code,{checkpoint,outcome:classify(error)});return;}assert(false,{checkpoint,outcome:'fulfilled'});}
+
+function concurrentEvidence(results){
+  const accepted=results.filter(r=>r.status==='fulfilled').length;
+  const rejections=results.filter(r=>r.status==='rejected').map(r=>classify(r.reason));
+  const stale=rejections.filter(code=>code==='stale').length;
+  return {checkpoint:'concurrent-writes',accepted,stale,other:rejections.length-stale,rejections};
+}
+
+// The exported evidence has no raw result objects, errors, identifiers or ETags.
+function safeEvidence(value){
+  const checkpoints=['concurrent-writes','initialization-readback','purchase-readback','response-loss-receipt','response-loss-idempotency','old-token-retry','response-loss-balance'];
+  if(!value||!checkpoints.includes(value.checkpoint))return null;
+  const result={checkpoint:value.checkpoint};
+  for(const key of ['accepted','stale','other'])if(Number.isInteger(value[key])&&value[key]>=0&&value[key]<=2)result[key]=value[key];
+  if(Array.isArray(value.rejections)&&value.rejections.length<=2)result.rejections=value.rejections.map(code=>errorClasses.includes(code)?code:'unexpected');
+  if(['fulfilled','unexpected',...errorClasses].includes(value.outcome))result.outcome=value.outcome;
+  return result;
+}
 
 // Export classifications only, never raw headers, file IDs, token values or errors.
 function safeDiagnostic(value){
@@ -32,9 +52,10 @@ export async function runProbeScenarios({transport,emit=()=>{}}) {
   }
   async function check(id,expected,fn) {
     let result;try{const detail=await fn();result={id,expected,passed:true,status:'passed',actual:detail??'Erwartete Wirkung nach erneutem Lesen bestätigt.'};}
-    catch(error){const code=['unsupported','stale','collision','auth','network','binding','permission','missing','http','assertion'].includes(error?.code)?error.code:'unexpected';
+    catch(error){const code=classify(error);
       const diagnostic=safeDiagnostic(error?.diagnostic);
-      result={id,expected,passed:false,status:code==='unsupported'?'unsupported':'failed',actual:code,...(diagnostic?{diagnostic}:{}),...(['fixture-read','post-write-read','initialization-read'].includes(error?.scenarioStage)?{scenarioStage:error.scenarioStage}:{}),...(Number.isInteger(error?.status)?{httpStatus:error.status}:{})};}
+      const evidence=safeEvidence(error?.evidence);
+      result={id,expected,passed:false,status:code==='unsupported'?'unsupported':'failed',actual:code,...(diagnostic?{diagnostic}:{}),...(evidence?{evidence}:{}),...(['fixture-read','post-write-read','initialization-read'].includes(error?.scenarioStage)?{scenarioStage:error.scenarioStage}:{}),...(Number.isInteger(error?.status)?{httpStatus:error.status}:{})};}
     checks.push(result);emit(clone(result));
   }
   let folder;
@@ -53,24 +74,24 @@ export async function runProbeScenarios({transport,emit=()=>{}}) {
     const a=await transport.create({parentId:folder.id,name:'candidate-a',value:initial()}),b=await transport.create({parentId:folder.id,name:'candidate-b',value:initial()});
     const before=await read(folder.id,'initialization-read');
     const results=await Promise.allSettled([a,b].map(file=>transport.updateIfUnchanged(before,{...before.properties,coordinator:file.id},{metadata:true})));
-    assert(results.filter(r=>r.status==='fulfilled').length===1);assert(results.filter(r=>r.status==='rejected'&&r.reason.code==='stale').length===1);
-    const winner=results[0].status==='fulfilled'?a:b;assert((await read(folder.id)).properties.coordinator===winner.id);
+    const evidence=concurrentEvidence(results);assert(evidence.accepted===1&&evidence.stale===1,evidence);
+    const winner=results[0].status==='fulfilled'?a:b;assert((await read(folder.id)).properties.coordinator===winner.id,{checkpoint:'initialization-readback'});
   });
   await check('two-purchases','Zwei Käufe zu 800 bei 1000 Guthaben: genau einer, Rest 200.',async()=>{
     const before=await fixture('two-clients'),a=purchase(before.value,{id:'buy-a',article:'a',price:800}),b=purchase(before.value,{id:'buy-b',article:'b',price:800});
     const results=await Promise.allSettled([transport.updateIfUnchanged(clone(before),a),transport.updateIfUnchanged(clone(before),b)]);
-    assert(results.filter(r=>r.status==='fulfilled').length===1);assert(results.filter(r=>r.status==='rejected'&&r.reason.code==='stale').length===1);
-    const current=(await read(before.id)).value;assert(current.spent===800&&current.operations.length===1);
+    const evidence=concurrentEvidence(results);assert(evidence.accepted===1&&evidence.stale===1,evidence);
+    const current=(await read(before.id)).value;assert(current.spent===800&&current.operations.length===1,{checkpoint:'purchase-readback'});
     await rejects(async()=>purchase(current,{id:'third',article:'c',price:800}),'assertion');
   });
   await check('response-loss','Absichtlich verworfene Erfolgsantwort: Beleg mit gleicher ID gefunden, keine zweite Ausgabe.',async()=>{
     const before=await fixture('response-loss'),request={id:'same-operation',article:'a',price:800};
     try{await transport.updateIfUnchanged(before,purchase(before.value,request));throw Object.assign(new Error(),{code:'network'});}catch(error){if(error.code!=='network')throw error;}
-    let current=await read(before.id);assert(current.value.operations.some(op=>op.id===request.id));
+    let current=await read(before.id);assert(current.value.operations.some(op=>op.id===request.id),{checkpoint:'response-loss-receipt'});
     await transport.updateIfUnchanged(current,purchase(current.value,{id:'later-operation',article:'b',price:100}));
     current=await read(before.id);
-    assert(same(purchase(current.value,request),current.value));await rejects(()=>transport.updateIfUnchanged(before,purchase(before.value,request)),'stale');
-    assert((await read(before.id)).value.spent===900);
+    assert(same(purchase(current.value,request),current.value),{checkpoint:'response-loss-idempotency'});await rejects(()=>transport.updateIfUnchanged(before,purchase(before.value,request)),'stale','old-token-retry');
+    assert((await read(before.id)).value.spent===900,{checkpoint:'response-loss-balance'});
     return 'Erfolgsantwort lokal verworfen; kein tatsächlicher Leitungsabbruch simuliert.';
   });
   await check('duplicate-operation','Vorgang und vorhandener Besitz erzeugen keine zweite Ausgabe.',async()=>{

@@ -1,17 +1,29 @@
 {
-  "source": "explorer-boy-runes-head-front.png",
+  "date": "2026-09-20",
+  "sourceFile": "explorer-boy-runes-head-front.png",
   "reference": "explorer-boy-skin-0.png",
-  "prompt": "A small exquisite gold and silver rune medallion containing a brilliant turquoise gemstone, hanging from a short dark cord around the reference explorer's neck and resting on the upper chest below the shirt collar. The medallion is about one tenth of the shoulder width, subtle but highly detailed and magical. Use the attached human explorer only as a size and pose reference. Output ONLY the wearable item on the exact same 1086x1448 transparent canvas, at the intended body coordinates. Remove the entire person, all skin, hair and clothing. Do not enlarge or center the equipment as a product photo. Genuine transparent alpha background, no scenery, no text. Match the premium painterly adventure-game style.",
-  "generator": "OpenAI image generation tool",
-  "generatedAt": "2026-09-19",
+  "provenance": "Classical raster editing explicitly approved by the user on 2026-09-20; deterministic Pillow compositing and masks cut from original painted material; no image generation.",
+  "derivedFrom": {
+    "revision": "24ce5a3",
+    "png": "explorer-boy-runes-head-front.png",
+    "pngSha256": "6e573d93a93ef81f69e0367337d8e8a0f2dfa73d0992404fba3344c50e196673",
+    "metadata": "explorer-boy-runes-head-front.json",
+    "metadataSha256": "dbb94682aae4edc717a3ffa639e044862099da8e50cfdf6c775c9c68c240aa64"
+  },
+  "recipe": "../avatar-fit-recipes/humans/recipes.json",
+  "script": "../../../scripts/avatar-fit/humans.py",
+  "item": "runes-head",
+  "figure": "explorer-boy",
+  "layer": "front",
+  "sourceSha256": "a8361d69c363db589e96178c866b4678293a6bdea69e57241c76566cc29cd8e7",
   "canvas": {
     "width": 1086,
     "height": 1448
   },
   "registration": {
-    "scale": 0.33,
-    "x": 375,
-    "y": 255
+    "scale": 1,
+    "x": 0,
+    "y": 0
   },
-  "qa": "Source composition inspected on 2026-09-19: all 48 skin/color combinations and all 20 human equipment previews. Neck/eyes remain visible; small original silhouette differences between skin variants remain."
+  "qa": "Internally inspected at full canvas and 256-pixel card size on a light background; all four skin variants and all six clothing colors rendered. Personal user acceptance remains open."
 }

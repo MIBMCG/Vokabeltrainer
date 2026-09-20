@@ -1,27 +1,67 @@
 {
   "sourceFile": "deer-mist-forest-body-rear.png",
-  "prompt": "Use case: stylized-concept\nAsset type: transparent game equipment layer\nInput image: deer-mist.png is a reference image for exact body pose, original 1145 x 1374 canvas, placement, scale, perspective, and painterly magical style.\nPrimary request: create only the Waldgeist set body equipment called Runenumhang: a flowing deep forest-green and mist-teal magical cloak with embroidered silver runes, leaf-shaped edging and one subtle crystal clasp, fitted behind the neck, shoulders and back of the deer.\nComposition/framing: preserve the exact 1145 x 1374 canvas coordinate system. Place the cloak at the coordinates where it would sit behind the deer in the reference. Do not crop or rescale the canvas.\nStyle/medium: high-quality detailed magical game illustration matching the reference animal.\nConstraints: output only the cloak on a genuinely transparent background; no deer, no antlers, no fur, no eyes, no body, no scenery, no text, no watermark. Rear layer; body and legs are intended to render in front of it.",
+  "figure": "deer-mist",
+  "item": "forest-body",
+  "layer": "rear",
   "reference": "deer-mist.png",
-  "generator": "built-in image_gen",
-  "generatedOn": "2026-09-19",
-  "sourceSha256": "faa52402a72956173484006ba285ee438e1ab3a0fc4f812a2282a105693a8577",
-  "registration": {
-    "scale": 0.85,
-    "x": 130,
-    "y": 70
+  "generator": "Classical raster editing (Pillow/NumPy), explicitly authorized 2026-09-20",
+  "provenance": "Body-specific silhouette mask removes detached loops, oversized collar sections and straps through limbs while retaining the original painted material.",
+  "originalCommit": "24ce5a38b561c6012d7307603fc378ca339ab58c",
+  "originalSources": [
+    {
+      "path": "deer-mist-forest-body-rear.png",
+      "sha256": "faa52402a72956173484006ba285ee438e1ab3a0fc4f812a2282a105693a8577"
+    }
+  ],
+  "repairScript": "../../../scripts/avatar-fit/quadrupeds.py",
+  "recipeFile": "../avatar-fit-recipes/quadrupeds/deer-mist.json",
+  "recipe": {
+    "retainOriginalRear": true,
+    "frontShapes": [
+      {
+        "type": "ellipse",
+        "box": [
+          430,
+          653,
+          545,
+          795
+        ]
+      },
+      {
+        "type": "ellipse",
+        "box": [
+          278,
+          666,
+          410,
+          780
+        ]
+      },
+      {
+        "type": "ellipse",
+        "box": [
+          545,
+          664,
+          680,
+          780
+        ]
+      }
+    ],
+    "feather": 3
   },
   "canvas": {
     "width": 1145,
     "height": 1374
   },
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "sourceSha256": "a84a668e61676cb8253386f34d1b2624a74d8c40c41d259e9c6e7bce2f48099b",
   "qa": {
-    "status": "registered-behind-neck-with-single-visible-clasp",
-    "method": "Headless Edge composition from decoded PNGs at the native 1145 x 1374 canvas and at 320 px, including the body-specific front attachment and the complete forest set.",
-    "evidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit/deer-rear/deer-fullset-1145.png",
-    "mobileEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit/deer-rear/deer-fullset-320.png",
-    "result": "At scale 0.85 and offset (130, 70), the old rear-layer collar and crystal clasp are occluded by the deer's neck and ear. The body-specific front clasp is the only visible cloak clasp, while the rear fabric remains connected behind the left shoulder and continues across the flank.",
-    "limits": "The source PNG remains byte-for-byte unchanged at 1145 x 1373, one transparent-border row shorter than the 1145 x 1374 logical canvas. The registration is specific to deer-mist.png and the paired front layer.",
-    "publicEvidence": "../2026-09-20-avatar-passform.png",
-    "publicReport": "../../reports/2026-09-20-avatar-passform.md"
+    "status": "internal-fit-review-pending",
+    "personalAcceptance": false,
+    "comparisonSheet": "../avatar-fit-v3/quadrupeds/deer-mist-pairs-256.png",
+    "largeEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/quadrupeds/deer-mist-body-before-after-large.png"
   }
 }

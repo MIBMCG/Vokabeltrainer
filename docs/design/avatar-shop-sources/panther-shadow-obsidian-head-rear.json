@@ -1,0 +1,58 @@
+{
+  "sourceFile": "panther-shadow-obsidian-head-rear.png",
+  "figure": "panther-shadow",
+  "item": "obsidian-head",
+  "layer": "rear",
+  "reference": "panther-shadow.png",
+  "generator": "Classical raster editing (Pillow/NumPy), explicitly authorized 2026-09-20",
+  "provenance": "Body-specific depth split: chain or antler mounting sits behind fur/antler; only the restrained pendant or crystal faces remain in front.",
+  "originalCommit": "24ce5a38b561c6012d7307603fc378ca339ab58c",
+  "originalSources": [
+    {
+      "path": "panther-shadow-obsidian-head-front.png",
+      "sha256": "6d1783c219e623bb1039f3fe57b2000348c9962bdbfe06775505f730b9efcc05"
+    }
+  ],
+  "repairScript": "../../../scripts/avatar-fit/quadrupeds.py",
+  "recipeFile": "../avatar-fit-recipes/quadrupeds/panther-shadow.json",
+  "recipe": {
+    "sourceBox": [
+      249,
+      238,
+      576,
+      604
+    ],
+    "center": [
+      388,
+      390
+    ],
+    "scale": [
+      0.66,
+      0.68
+    ],
+    "angle": 0,
+    "rearChainFraction": 0.54,
+    "frontPendantBoxFraction": [
+      0.28,
+      0.34,
+      0.72,
+      1.0
+    ]
+  },
+  "canvas": {
+    "width": 1223,
+    "height": 1286
+  },
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "sourceSha256": "5fef7de5b30ad6203a8d69c3ade37a81fb4d66370fe2aab3f3c6e1bbdde909b8",
+  "qa": {
+    "status": "internal-fit-review-pending",
+    "personalAcceptance": false,
+    "comparisonSheet": "../avatar-fit-v3/quadrupeds/panther-shadow-pairs-256.png",
+    "largeEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/quadrupeds/panther-shadow-head-before-after-large.png"
+  }
+}

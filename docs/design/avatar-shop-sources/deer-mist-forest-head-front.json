@@ -1,16 +1,134 @@
 {
   "sourceFile": "deer-mist-forest-head-front.png",
-  "prompt": "Use case: stylized-concept\nAsset type: transparent game equipment layer\nInput image: deer-mist.png is a reference image for exact body pose, original 1145 x 1374 canvas, placement, scale, perspective, and painterly magical style.\nPrimary request: create only the Waldgeist set head equipment called Kristallgeweih-Schmuck: elegant small ice-blue and mint-green crystals, silver vine filigree and subtle rune charms fitted precisely around and between the existing antler branches.\nComposition/framing: preserve the exact 1145 x 1374 canvas coordinate system. Place every ornament at the coordinates where it would fit the antlers in the reference. Do not crop or rescale the canvas.\nStyle/medium: high-quality detailed magical game illustration matching the reference animal.\nConstraints: output only the equipment pixels on a genuinely transparent background; no deer, no antlers, no fur, no eyes, no body, no scenery, no text, no watermark. Keep the equipment separated where antlers would pass in front. Front layer.",
+  "figure": "deer-mist",
+  "item": "forest-head",
+  "layer": "front",
   "reference": "deer-mist.png",
-  "generator": "built-in image_gen",
-  "generatedOn": "2026-09-19",
-  "registration": {"scale": 0.65, "x": 70, "y": -50},
-  "canvas": {"width": 1145, "height": 1374},
+  "generator": "Classical raster editing (Pillow/NumPy), explicitly authorized 2026-09-20",
+  "provenance": "Body-specific depth split: chain or antler mounting sits behind fur/antler; only the restrained pendant or crystal faces remain in front.",
+  "originalCommit": "24ce5a38b561c6012d7307603fc378ca339ab58c",
+  "originalSources": [
+    {
+      "path": "deer-mist-forest-head-front.png",
+      "sha256": "57a14a871eaf870ca9cd5b975b39ad1e707f27c72b841ac01d97d7cbf650ad56"
+    }
+  ],
+  "repairScript": "../../../scripts/avatar-fit/quadrupeds.py",
+  "recipeFile": "../avatar-fit-recipes/quadrupeds/deer-mist.json",
+  "recipe": {
+    "rearShapes": [
+      {
+        "type": "rectangle",
+        "box": [
+          70,
+          50,
+          390,
+          430
+        ]
+      },
+      {
+        "type": "polygon",
+        "points": [
+          [
+            600,
+            50
+          ],
+          [
+            810,
+            50
+          ],
+          [
+            810,
+            450
+          ],
+          [
+            650,
+            450
+          ],
+          [
+            600,
+            350
+          ]
+        ]
+      }
+    ],
+    "frontShapes": [
+      {
+        "type": "ellipse",
+        "box": [
+          200,
+          70,
+          285,
+          165
+        ]
+      },
+      {
+        "type": "ellipse",
+        "box": [
+          555,
+          70,
+          650,
+          175
+        ]
+      },
+      {
+        "type": "polygon",
+        "points": [
+          [
+            380,
+            410
+          ],
+          [
+            406,
+            430
+          ],
+          [
+            427,
+            415
+          ],
+          [
+            453,
+            437
+          ],
+          [
+            467,
+            422
+          ],
+          [
+            468,
+            486
+          ],
+          [
+            438,
+            522
+          ],
+          [
+            414,
+            503
+          ],
+          [
+            397,
+            470
+          ]
+        ]
+      }
+    ],
+    "feather": 2
+  },
+  "canvas": {
+    "width": 1145,
+    "height": 1374
+  },
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "sourceSha256": "df18cf01b8205d008664a2526dd207424ca718bbd55e563113c11649dc024528",
   "qa": {
-    "status": "accepted-for-current-base",
-    "method": "Fresh headless Edge full-canvas composition, individual layer and complete set",
-    "evidence": "../../../.superpowers/sdd/2026-09-19-avatar-shop/mystic-gear-evidence/deer-mist-forest-head-front-composite.png",
-    "result": "Crystal and silver ornaments follow the antler span while the eyes and muzzle remain readable.",
-    "limits": "The generated ornament is dense and front-only; individual antler crossings are not split into separate occlusion layers."
+    "status": "internal-fit-review-pending",
+    "personalAcceptance": false,
+    "comparisonSheet": "../avatar-fit-v3/quadrupeds/deer-mist-pairs-256.png",
+    "largeEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/quadrupeds/deer-mist-head-before-after-large.png"
   }
 }

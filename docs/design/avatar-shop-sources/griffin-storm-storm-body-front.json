@@ -1,16 +1,31 @@
 {
   "sourceFile": "griffin-storm-storm-body-front.png",
-  "prompt": "Use case: stylized-concept\nAsset type: transparent game equipment layer\nInput image: griffin-storm.png is a reference image for exact body pose, original 1225 x 1284 canvas, placement, scale, perspective, and painterly magical style.\nPrimary request: create only the Sturm set body equipment called Blitzrüstung: articulated blue-steel and silver armor with restrained electric-blue lightning runes, fitted across the griffin's chest, shoulders and flank while leaving both wings, head and legs free.\nComposition/framing: preserve the exact 1225 x 1284 canvas coordinate system. Place armor pieces at the coordinates where they would fit the reference griffin. Do not crop or rescale the canvas.\nStyle/medium: high-quality detailed magical game illustration matching the storm griffin.\nConstraints: output only the armor on a genuinely transparent background; no griffin, no feathers, no wings, no fur, no paws, no scenery, no text, no watermark. Front layer.",
   "reference": "griffin-storm.png",
-  "generator": "built-in image_gen",
-  "generatedOn": "2026-09-19",
-  "registration": {"scale": 1, "x": 0, "y": 0},
-  "canvas": {"width": 1225, "height": 1284},
+  "generator": "classical-raster-edit/pillow-numpy",
+  "editedOn": "2026-09-20",
+  "provenance": "Classical alpha-mask edit of griffin-storm-storm-body-front.png, captured byte-for-byte from Git revision 24ce5a3; no generated or repainted pixels.",
+  "inputSourceFile": "griffin-storm-storm-body-front.png",
+  "sourceRevision": "24ce5a3",
+  "sourceSha256": "bd269851f17ed838e4aa3d34ec8a173b95d3fb0be41c2179d145f47473a48433",
+  "baseSourceSha256": "9824b0ed7141d278a057f48d22620a5c2239027855f3b980d2d4105ecad7fd63",
+  "recipe": "../avatar-fit-recipes/wings/griffin-storm.json",
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "canvas": {
+    "width": 1225,
+    "height": 1284
+  },
   "qa": {
-    "status": "accepted-for-current-base",
-    "method": "Fresh headless Edge full-canvas composition, individual layer and complete set",
-    "evidence": "../../../.superpowers/sdd/2026-09-19-avatar-shop/mystic-gear-evidence/griffin-storm-storm-body-front-composite.png",
-    "result": "The blue-steel plates follow the breast, shoulder and flank while both wings remain visible.",
-    "limits": "The armor is intentionally dense and covers much of the near shoulder feathers; it is accepted only for this base pose."
-  }
+    "status": "fit-pass-complete-pending-user-acceptance",
+    "method": "Full-resolution light-background composition, item detail pair, complete set and 256 px card inspected from immutable original inputs.",
+    "evidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/wings/griffin-storm-body-before-after.png",
+    "detailEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/wings/griffin-storm-body-detail-before-after.png",
+    "result": "The near wing occludes the upper flank armor, and the lower belly strap now passes behind the body without a floating span; attached buckles remain visible.",
+    "limits": "Internal visual fit pass only; personal user acceptance and product WebP build remain separate."
+  },
+  "plane": "front",
+  "outputSha256": "f7c4ef950b01fa47e67599d86d019890586784a3b117eab291b76a0cfb2629cf"
 }

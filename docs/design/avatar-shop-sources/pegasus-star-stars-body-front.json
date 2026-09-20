@@ -1,45 +1,104 @@
 {
   "sourceFile": "pegasus-star-stars-body-front.png",
-  "prompt": "Use case: precise-object-edit\nAsset type: transparent equipment layer for a layered game avatar\nInput image: Image 1 is alignment and fit reference only for the exact horse rig.\nPrimary request: Create ONLY a premium cloud saddle: one elegant fitted saddle positioned on the horse's back, sculpted like soft silver-blue clouds with violet trim, subtle constellation stitching, and practical saddle contours; front body layer only.\nCanvas and placement: preserve the exact 1024 x 1536 canvas and position the equipment to fit Image 1 without moving, scaling, or redrawing the rig.\nStyle: premium magical children's adventure illustration, detailed blue, silver, and violet materials, polished painterly rendering matching the horse reference.\nTransparency: output a genuinely transparent background. The entire horse, its mane, tail, body, legs, hooves, eyes, and the brown backdrop must be absent and fully transparent. Include only the named equipment pixels in their aligned positions.\nConstraints: exactly one equipment concept and one slot; clean alpha edges; no labels, no text, no watermark.\nAvoid: horse or animal pixels, complete animal silhouette, background, landscape, pedestal, cast shadow, extra jewelry, extra tack, unrelated stars or loose decorative objects, duplicated parts, additional slot items.",
-  "relativeReference": "horse.png",
-  "generator": "built-in image_gen",
-  "generatedOn": "2026-09-19",
-  "candidate": false,
+  "figure": "pegasus-star",
+  "layer": "front",
+  "generator": "Classical raster editing (Pillow/NumPy), explicitly authorized 2026-09-20",
+  "provenance": "Distant stirrup hidden behind torso; original near stirrup and painted saddle contours retained. Pegasus saddle raised onto back; local foreground mane exposed.",
+  "originalCommit": "24ce5a38b561c6012d7307603fc378ca339ab58c",
+  "originalSources": [
+    {
+      "path": "pegasus-star-stars-body-front.png",
+      "sha256": "d56220768f5484be5697b5f99e747ae93719ce1424d11179812b9096538db76a"
+    }
+  ],
+  "repairScript": "../../../scripts/avatar-fit/equines.py",
+  "recipe": {
+    "originalRegistration": {
+      "scale": 0.32,
+      "x": 220,
+      "y": 650
+    },
+    "hiddenStirrupPolygon": [
+      [
+        316.0,
+        866.3809523809524
+      ],
+      [
+        347.23809523809524,
+        867.9047619047619
+      ],
+      [
+        338.8571428571429,
+        938.0
+      ],
+      [
+        355.61904761904765,
+        992.0952380952381
+      ],
+      [
+        352.57142857142856,
+        1041.6190476190477
+      ],
+      [
+        274.8571428571429,
+        1041.6190476190477
+      ],
+      [
+        282.4761904761905,
+        978.3809523809523
+      ],
+      [
+        303.80952380952385,
+        944.0952380952381
+      ]
+    ],
+    "shift": [
+      0,
+      -63
+    ],
+    "maneOcclusionPolygon": [
+      [
+        453,
+        670
+      ],
+      [
+        572,
+        623
+      ],
+      [
+        583,
+        744
+      ],
+      [
+        545,
+        819
+      ],
+      [
+        479,
+        854
+      ],
+      [
+        407,
+        830
+      ],
+      [
+        427,
+        777
+      ]
+    ]
+  },
   "canvas": {
     "width": 1024,
     "height": 1536
   },
-  "alphaBounds": {
-    "threshold": 16,
-    "x": 160,
-    "y": 270,
-    "width": 744,
-    "height": 991
-  },
   "registration": {
-    "scale": 0.32,
-    "x": 220,
-    "y": 650
+    "scale": 1,
+    "x": 0,
+    "y": 0
   },
-  "provenance": "Byte-for-byte copy of horse-stars-body-front.png with body-specific browser-verified affine registration; no redrawing or resampling.",
-  "sourceSha256": "d56220768f5484be5697b5f99e747ae93719ce1424d11179812b9096538db76a",
-  "figure": "pegasus-star",
-  "layer": "front",
-  "registeredBounds": {
-    "alphaThreshold": 16,
-    "x": 271.2,
-    "y": 736.4,
-    "width": 238.08,
-    "height": 317.12
-  },
+  "sourceSha256": "cfa9bc1a83c1a9818b8629d1b43fe9658d5d4dc3a5eb843189b297d0a3815262",
   "qa": {
-    "date": "2026-09-19",
-    "method": "Headless Edge composition on the exact 1024 x 1536 source canvas.",
-    "evidence": ".superpowers/avatar-shop-equine-qa/screens/pegasus-star-stars-body-front.png",
-    "setEvidence": ".superpowers/avatar-shop-equine-qa/screens/pegasus-star-set-stars.png",
-    "observedFit": "Root large-composition correction: saddle lowered onto the visible back below the wing, rather than floating over the wing base."
-  },
-  "registrationReference": "pegasus-star.png",
-  "derivedFrom": "horse-stars-body-front.png",
-  "copy": "byte-for-byte"
+    "status": "internal-fit-review-pending",
+    "personalAcceptance": false
+  }
 }

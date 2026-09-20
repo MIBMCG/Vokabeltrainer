@@ -1,0 +1,31 @@
+{
+  "sourceFile": "dragon-crystal-head-rear.png",
+  "reference": "dragon.png",
+  "generator": "classical-raster-edit/pillow-numpy",
+  "editedOn": "2026-09-20",
+  "provenance": "Classical alpha-mask edit of dragon-crystal-head-front.png, captured byte-for-byte from Git revision 24ce5a3; no generated or repainted pixels.",
+  "inputSourceFile": "dragon-crystal-head-front.png",
+  "sourceRevision": "24ce5a3",
+  "sourceSha256": "ee0273a140f94ae81d380108411585072430db3ebf21ec46f12e72894e4b1ca7",
+  "baseSourceSha256": "305f541b09a1a7da241491056697cadeaf1e8677b1943618580f9287d2abc9fb",
+  "recipe": "../avatar-fit-recipes/wings/dragon.json",
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "canvas": {
+    "width": 1199,
+    "height": 1312
+  },
+  "qa": {
+    "status": "fit-pass-complete-pending-user-acceptance",
+    "method": "Full-resolution light-background composition, item detail pair, complete set and 256 px card inspected from immutable original inputs.",
+    "evidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/wings/dragon-head-before-after.png",
+    "detailEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/wings/dragon-head-detail-before-after.png",
+    "result": "The side chain now passes behind the neck scales while the central rune pendant remains on the upper breast.",
+    "limits": "Internal visual fit pass only; personal user acceptance and product WebP build remain separate."
+  },
+  "plane": "rear",
+  "outputSha256": "6cd1947c2ddcf1774392444cc5ff539a25c7a500a17c14d62ce4d9bde583756f"
+}

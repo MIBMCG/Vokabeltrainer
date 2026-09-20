@@ -1,0 +1,256 @@
+{
+  "schema": "avatar-classical-fit-recipe-v1",
+  "figure": "phoenix",
+  "set": "sun",
+  "sourceRevision": "24ce5a3",
+  "sourceCapture": "git show <sourceRevision>:<path> with binary stdout capture",
+  "base": {
+    "path": "docs/design/avatar-shop-sources/phoenix.png",
+    "sha256": "5bf95178a98bb9c8f0b79f2d1d9c98c1be186b0cdd9562fae40da13563055b3c",
+    "unchangedByteForByte": true,
+    "canvas": {
+      "width": 1024,
+      "height": 1536
+    }
+  },
+  "method": "Pillow and NumPy alpha masks; original equipment pixels only; no generative image step",
+  "items": {
+    "head": {
+      "input": {
+        "path": "docs/design/avatar-shop-sources/phoenix-sun-head-front.png",
+        "sha256": "a988e4aee3a4275dbbc8debb78cc3955873de34dfc782647e5d352b187a26c69",
+        "registration": {
+          "scale": 0.28,
+          "x": 510,
+          "y": 100
+        }
+      },
+      "operations": {
+        "rear": [
+          [
+            [
+              650,
+              275
+            ],
+            [
+              720,
+              245
+            ],
+            [
+              775,
+              320
+            ],
+            [
+              700,
+              355
+            ]
+          ]
+        ]
+      },
+      "outputs": {
+        "rear": {
+          "path": "docs/design/avatar-shop-sources/phoenix-sun-head-rear.png",
+          "sha256": "2ea3d9f3477de11e5b3cbe1fbeeafd500ee9eecee0659d8d042b57b7baed011d"
+        },
+        "front": {
+          "path": "docs/design/avatar-shop-sources/phoenix-sun-head-front.png",
+          "sha256": "ef4a8c4ccb77e279f89d2f2f046f5b0ba5bdc787c8310d4c5daf498c1202795c"
+        }
+      }
+    },
+    "body": {
+      "input": {
+        "path": "docs/design/avatar-shop-sources/phoenix-sun-body-front.png",
+        "sha256": "9b012de196c40fea56c3d7441b805724874fcd704967c0d24f3033107b027384",
+        "registration": {
+          "scale": 0.4,
+          "x": 370,
+          "y": 330
+        }
+      },
+      "operations": {
+        "rear": [
+          [
+            [
+              408,
+              505
+            ],
+            [
+              470,
+              470
+            ],
+            [
+              520,
+              540
+            ],
+            [
+              465,
+              590
+            ]
+          ],
+          [
+            [
+              680,
+              465
+            ],
+            [
+              755,
+              430
+            ],
+            [
+              770,
+              545
+            ],
+            [
+              705,
+              570
+            ]
+          ]
+        ]
+      },
+      "outputs": {
+        "rear": {
+          "path": "docs/design/avatar-shop-sources/phoenix-sun-body-rear.png",
+          "sha256": "d5cfc3daeeaad4984acd4ada9220625a7a7af16e7df6ae89830dde2a14387299"
+        },
+        "front": {
+          "path": "docs/design/avatar-shop-sources/phoenix-sun-body-front.png",
+          "sha256": "4e0ee962191dfafb2c5f2e15159cd908f3e9a3cf411e1030b0291b538178b20f"
+        }
+      }
+    },
+    "adornment": {
+      "input": {
+        "path": "docs/design/avatar-shop-sources/phoenix-sun-adornment-front.png",
+        "sha256": "1f440b9df21dc64a8c7bc1f1f091c3d047c65b967f2542fae218b9c9f3c3f2a2",
+        "registration": {
+          "scale": 0.65,
+          "x": 180,
+          "y": 30
+        }
+      },
+      "operations": {
+        "rear": [
+          [
+            [
+              250,
+              170
+            ],
+            [
+              300,
+              135
+            ],
+            [
+              345,
+              250
+            ],
+            [
+              295,
+              275
+            ]
+          ],
+          [
+            [
+              335,
+              315
+            ],
+            [
+              385,
+              275
+            ],
+            [
+              435,
+              395
+            ],
+            [
+              380,
+              420
+            ]
+          ],
+          [
+            [
+              430,
+              455
+            ],
+            [
+              480,
+              420
+            ],
+            [
+              515,
+              535
+            ],
+            [
+              465,
+              560
+            ]
+          ],
+          [
+            [
+              650,
+              145
+            ],
+            [
+              700,
+              120
+            ],
+            [
+              735,
+              245
+            ],
+            [
+              685,
+              265
+            ]
+          ],
+          [
+            [
+              690,
+              300
+            ],
+            [
+              745,
+              280
+            ],
+            [
+              785,
+              405
+            ],
+            [
+              730,
+              425
+            ]
+          ],
+          [
+            [
+              660,
+              480
+            ],
+            [
+              720,
+              455
+            ],
+            [
+              755,
+              575
+            ],
+            [
+              700,
+              595
+            ]
+          ]
+        ]
+      },
+      "outputs": {
+        "rear": {
+          "path": "docs/design/avatar-shop-sources/phoenix-sun-adornment-rear.png",
+          "sha256": "65b6517c173de87c87c24a7beb2cc62b7cbaac6a489614aad4d2020a685eb2d9"
+        },
+        "front": {
+          "path": "docs/design/avatar-shop-sources/phoenix-sun-adornment-front.png",
+          "sha256": "6c55606d83525eb22d5b0f70496e2082a5c874807bd2d5f97470434edb3a68af"
+        }
+      }
+    }
+  }
+}

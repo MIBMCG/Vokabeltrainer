@@ -1,13 +1,29 @@
 {
+  "date": "2026-09-20",
   "sourceFile": "explorer-girl-knight-clothing-front.png",
-  "reference": "explorer-boy-skin-0.png",
-  "prompt": "Create only an isolated wearable knight armor overlay to fit the exact explorer in the reference. Remove the entire person and all body/hair/skin/boots/shorts pixels; retain ONLY a magnificent fitted silver steel breastplate and two short shoulder guards replacing the shirt. The breastplate has tasteful teal blue inlay and a small gold sun emblem, friendly adventure-game equipment, no weapons, no helmet, no cape. Neck area must be a true open transparent hole so the character neck will show beneath, not filled by a metal bib up to the chin. Shape fits the existing relaxed shoulder pose, width and waist. Keep EXACT 1086x1448 canvas and original torso pixel coordinates, shoulder around y340, waist y650, no enlarging or centering as a product photo. Genuine transparent alpha background, high detail painterly style matching reference.",
-  "generator": "built-in image_gen",
-  "generatedOn": "2026-09-19",
-  "registration": {
-    "scale": 0.55,
-    "x": 249,
-    "y": 125
+  "reference": "explorer-girl-skin-0.png",
+  "provenance": "Classical raster editing explicitly approved by the user on 2026-09-20; deterministic Pillow compositing and masks cut from original painted material; no image generation.",
+  "derivedFrom": {
+    "revision": "24ce5a3",
+    "png": "explorer-girl-knight-clothing-front.png",
+    "pngSha256": "71c30a4642c1aeb2a4e4c743b486cdafdac5cc46a3c85cd8a4e9129b3286f7f6",
+    "metadata": "explorer-girl-knight-clothing-front.json",
+    "metadataSha256": "9bb5395c784c1c182b8d8db17413bfc7ccbf1b265002359242de1ded0719d771"
   },
-  "qa": "Source composition inspected on 2026-09-19: all 48 skin/color combinations and all 20 human equipment previews. Neck/eyes remain visible; small original silhouette differences between skin variants remain."
+  "recipe": "../avatar-fit-recipes/humans/recipes.json",
+  "script": "../../../scripts/avatar-fit/humans.py",
+  "item": "knight-clothing",
+  "figure": "explorer-girl",
+  "layer": "front",
+  "sourceSha256": "7b58e65ce8d8d63cc8e3b2415662bdaa53f56240807b2b1e35ece3adaaf9e6c8",
+  "canvas": {
+    "width": 1086,
+    "height": 1448
+  },
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "qa": "Internally inspected at full canvas and 256-pixel card size on a light background; all four skin variants and all six clothing colors rendered. Personal user acceptance remains open."
 }

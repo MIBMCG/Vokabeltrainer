@@ -1,0 +1,174 @@
+{
+  "schema": "avatar-classical-fit-recipe-v1",
+  "figure": "dragon",
+  "set": "crystal",
+  "sourceRevision": "24ce5a3",
+  "sourceCapture": "git show <sourceRevision>:<path> with binary stdout capture",
+  "base": {
+    "path": "docs/design/avatar-shop-sources/dragon.png",
+    "sha256": "305f541b09a1a7da241491056697cadeaf1e8677b1943618580f9287d2abc9fb",
+    "unchangedByteForByte": true,
+    "canvas": {
+      "width": 1199,
+      "height": 1312
+    }
+  },
+  "method": "Pillow and NumPy alpha masks; original equipment pixels only; no generative image step",
+  "items": {
+    "head": {
+      "input": {
+        "path": "docs/design/avatar-shop-sources/dragon-crystal-head-front.png",
+        "sha256": "ee0273a140f94ae81d380108411585072430db3ebf21ec46f12e72894e4b1ca7",
+        "registration": {
+          "scale": 0.55,
+          "x": 200,
+          "y": 150
+        }
+      },
+      "operations": {
+        "rear": [
+          [
+            [
+              415,
+              425
+            ],
+            [
+              455,
+              410
+            ],
+            [
+              485,
+              468
+            ],
+            [
+              448,
+              495
+            ]
+          ],
+          [
+            [
+              565,
+              425
+            ],
+            [
+              610,
+              410
+            ],
+            [
+              615,
+              480
+            ],
+            [
+              575,
+              500
+            ]
+          ]
+        ]
+      },
+      "outputs": {
+        "rear": {
+          "path": "docs/design/avatar-shop-sources/dragon-crystal-head-rear.png",
+          "sha256": "6cd1947c2ddcf1774392444cc5ff539a25c7a500a17c14d62ce4d9bde583756f"
+        },
+        "front": {
+          "path": "docs/design/avatar-shop-sources/dragon-crystal-head-front.png",
+          "sha256": "0651fc727cfe15262ff19ff1d180f9101b322e9209787a9ecf5a909f6b86c4f4"
+        }
+      }
+    },
+    "body": {
+      "input": {
+        "path": "docs/design/avatar-shop-sources/dragon-crystal-body-front.png",
+        "sha256": "8da74ce5145588d1ec1717ea8435fd435d1b58edcecd59c9bf7439170e86f0dc",
+        "registration": {
+          "scale": 0.55,
+          "x": 175,
+          "y": 260
+        }
+      },
+      "operations": {
+        "rear": [
+          [
+            [
+              315,
+              650
+            ],
+            [
+              360,
+              615
+            ],
+            [
+              415,
+              682
+            ],
+            [
+              395,
+              742
+            ],
+            [
+              345,
+              720
+            ]
+          ],
+          [
+            [
+              550,
+              625
+            ],
+            [
+              620,
+              595
+            ],
+            [
+              670,
+              662
+            ],
+            [
+              642,
+              725
+            ],
+            [
+              588,
+              700
+            ]
+          ]
+        ],
+        "soften": 5
+      },
+      "outputs": {
+        "rear": {
+          "path": "docs/design/avatar-shop-sources/dragon-crystal-body-rear.png",
+          "sha256": "9d365c75c6c18963ed7722569eed71f7e7015639c363695d0fbb02167985685d"
+        },
+        "front": {
+          "path": "docs/design/avatar-shop-sources/dragon-crystal-body-front.png",
+          "sha256": "7e9a04806bd0d5ad09d79c570e41458b78b1d284988d6a2ad888ea361e37dfe1"
+        }
+      }
+    },
+    "adornment": {
+      "input": {
+        "path": "docs/design/avatar-shop-sources/dragon-crystal-adornment-front.png",
+        "sha256": "036c2d65d8e37b0a96c884bad4f1afacae51d3de192318f30b66d74185a1f5cd",
+        "registration": {
+          "scale": 1,
+          "x": 0,
+          "y": 0
+        }
+      },
+      "operations": {
+        "edge": 37
+      },
+      "outputs": {
+        "rear": {
+          "path": "docs/design/avatar-shop-sources/dragon-crystal-adornment-rear.png",
+          "sha256": "2195fc67de5b9717200f3ff4470371b1660b98169cf64c34a3eb6823922b5d00"
+        },
+        "front": {
+          "path": "docs/design/avatar-shop-sources/dragon-crystal-adornment-front.png",
+          "sha256": "185f8c483e75a4b747753b6595bf085f82bdec2a62892e9163587254977291a5"
+        }
+      }
+    }
+  }
+}

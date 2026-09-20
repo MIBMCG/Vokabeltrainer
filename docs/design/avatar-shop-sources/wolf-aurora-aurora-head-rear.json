@@ -1,0 +1,58 @@
+{
+  "sourceFile": "wolf-aurora-aurora-head-rear.png",
+  "figure": "wolf-aurora",
+  "item": "aurora-head",
+  "layer": "rear",
+  "reference": "wolf-aurora.png",
+  "generator": "Classical raster editing (Pillow/NumPy), explicitly authorized 2026-09-20",
+  "provenance": "Body-specific depth split: chain or antler mounting sits behind fur/antler; only the restrained pendant or crystal faces remain in front.",
+  "originalCommit": "24ce5a38b561c6012d7307603fc378ca339ab58c",
+  "originalSources": [
+    {
+      "path": "wolf-aurora-aurora-head-front.png",
+      "sha256": "28827eb9e93265390ad3c77b80659f93bb2840f2b2d048ea9257ed3381a3ba7e"
+    }
+  ],
+  "repairScript": "../../../scripts/avatar-fit/quadrupeds.py",
+  "recipeFile": "../avatar-fit-recipes/quadrupeds/wolf-aurora.json",
+  "recipe": {
+    "sourceBox": [
+      208,
+      397,
+      518,
+      789
+    ],
+    "center": [
+      365,
+      540
+    ],
+    "scale": [
+      0.7,
+      0.68
+    ],
+    "angle": 0,
+    "rearChainFraction": 0.48,
+    "frontPendantBoxFraction": [
+      0.27,
+      0.31,
+      0.73,
+      1.0
+    ]
+  },
+  "canvas": {
+    "width": 1223,
+    "height": 1286
+  },
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "sourceSha256": "063a10dc8b8d1d5112078932c8abe3d024a3dcfcbac96135bf04dea2445e15f1",
+  "qa": {
+    "status": "internal-fit-review-pending",
+    "personalAcceptance": false,
+    "comparisonSheet": "../avatar-fit-v3/quadrupeds/wolf-aurora-pairs-256.png",
+    "largeEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit-v3/quadrupeds/wolf-aurora-head-before-after-large.png"
+  }
+}
