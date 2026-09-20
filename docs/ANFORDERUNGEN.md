@@ -1,5 +1,13 @@
 # Anforderungen und Entscheidungen
 
+## Bestätigter Richtungswechsel: Avatar-Entwicklungsstufen (20.09.2026)
+
+Der Nutzer hat die Empfehlung „vier vollständig gerenderte Entwicklungsformen je Figur einschließlich Grundform“ mit „so machen wir das“ bestätigt. Erspielte Punkte können in die Entwicklung des eigenen Avatars investiert werden; Level und Lernfortschritt bleiben unverändert. Ein sichtbarer Fortschrittsbalken kündigt die nächste Form an, und bereits freigeschaltete Formen bleiben dauerhaft auswählbar. Zuerst wird nur eine vierstufige Drachenreihe gemeinsam beurteilt. [Bestätigte Richtung und Grenzen](design/2026-09-20-avatar-entwicklungsstufen.md).
+
+Für künftige Avatar-Erweiterungen ersetzt diese Entscheidung den modularen Ausrüstungsumfang aus AV02 und die Kompatibilitätsgruppen aus AV11. Die bisherigen Bildquellen und Passformnachweise bleiben als historische Artefakte erhalten; die Produktoberfläche ist noch unverändert. Konkrete Preise, Datenmodell, Shopintegration, endgültige Namen und die vollständige Produktion von 52 Stufenbildern sind nicht Teil der Prototypentscheidung und bleiben im Detaildesign zu konkretisieren. Die bereits bestätigte allgemeine Entwicklungsfreigabe und die übrigen Produktentscheidungen bleiben bestehen. Die alten AV01–AV12-Unterlagen bleiben als Entscheidungshistorie erhalten, soweit sie nicht durch diese Präzisierung ersetzt werden.
+
+Der echte Drive-Probelauf mit Diagnoseversion 4 ergab 3 bestandene und 8 fehlgeschlagene Fälle. Zwei parallele Initialisierungen und zwei parallele Käufe wurden jeweils beide angenommen. Damit ist der bisherige gemischte v2-ETag-/v3-Schreibkandidat kein nachgewiesener exklusiver Kauf-Guard. [Auswertung](reports/2026-09-20-shop-v4-reallauf.md).
+
 ## Neuer Auftrag: Avatare und Punkteshop (19.09.2026)
 
 Die [bestätigten Entscheidungen AV01–AV12](design/2026-09-19-avatar-shop-entscheidungen.md) erweitern den bisherigen Umfang: Mädchen-/Jungenfiguren, Tiere und mystische Avatare, passende Ausstattung je Figurenart, kostenlose Levelbelohnungen und ein Shop mit erspieltem Guthaben. Der Nutzer hat R24/Q6d ausdrücklich geändert: Der frühere Ausschluss eines Münzladens gilt für diese Erweiterung nicht mehr. Gesamte Lernpunkte und ausgebbares Guthaben werden getrennt; bisherige Punkte zählen vollständig als Startguthaben. O-AV01 ist mit A beantwortet: Kaufen nur online nach erfolgreichem Abgleich, vorhandenen Besitz offline verwenden. Der [Gesamtentwurf](superpowers/specs/2026-09-19-avatar-shop-design.md) ist freigegeben. Bildpipeline und isolierte Kaufprobe sind vorbereitet, die Produktintegration steht aus; die abgeschlossene Überarbeitung U01–U07 bleibt davon getrennt.

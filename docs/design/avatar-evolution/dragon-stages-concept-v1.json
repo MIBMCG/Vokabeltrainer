@@ -1,0 +1,24 @@
+{
+  "kind": "avatar-evolution-concept",
+  "version": 1,
+  "createdOn": "2026-09-20",
+  "generator": "built-in image_gen",
+  "model": "not exposed by tool",
+  "sourceFile": "dragon-stages-concept-v1.png",
+  "sha256": "e21044679c3cc4eebada25dbea749496aa0e67b37621ec1a245f90f8e859c878",
+  "width": 1942,
+  "height": 809,
+  "colorMode": "RGB",
+  "reference": "../avatar-shop-sources/dragon.png",
+  "referenceRole": "character and style reference, not a composited layer",
+  "stages": [
+    "Abenteuerdrache",
+    "Runendrache",
+    "Kristallwächter",
+    "Runenlegende"
+  ],
+  "status": "concept for user review; not a production sprite sheet",
+  "personalApproval": false,
+  "scope": "One four-panel comparison board, no product integration, no all-avatar batch",
+  "prompt": "Create ONE polished illustrated concept comparison board for a German vocabulary-learning adventure app for children aged 10–13. Landscape layout with four equal portrait panels in a single left-to-right row, clear generous spacing. Warm pale ivory background, restrained teal headings and thin muted gold panel dividers. This is an ART DIRECTION PROTOTYPE, not an app screenshot. Crisp premium painterly fantasy game illustration, enchanting and beautiful, detailed material rendering, not vector, not photorealistic.\n\nInput image 1 is a character/style REFERENCE, not a layer to paste: the existing emerald-green and gold friendly dragon with amber eyes and curved cream horns. Show FOUR evolutionary forms of this SAME individual, recognisable through its amber eyes, green/turquoise scales, gold chest plates and horn silhouette. Redraw every form as a cohesive finished character. Same three-quarter viewpoint and gentle upper-left light. Each dragon has FOUR legs plus TWO wings, one tail, plausible coherent anatomy and fully visible extremities, including wing tips and feet. Every form centred in its own panel; no overlap across panels, no cropping.\n\nProgression must be immediately clear through silhouette, maturity, wing shape and magical detail, not merely recoloring or adding more jewellery. Stage 1 already beautiful and desirable; friendly young adventurer, smaller compact graceful body, emerald and gold, neat natural horns, no armour, hopeful expression. Stage 2 visibly more confident and taller, swept horns, stronger elegant wings, subtle luminous turquoise runic markings and a small naturally fitted integrated shoulder/chest armour accent. Stage 3 powerful noble guardian, crystal crest integrated with its horns, faceted teal and blue accents in the scales and wings, beautifully articulated gold-and-teal chest/shoulder armour conforming to the body, calm wise face. Stage 4 majestic legendary runic guardian, longest elegant silhouette, spectacular broad sculpted wings with luminous vein patterns, natural crownlike crystal horn crest, emerald-teal and antique gold armour as one coherent illustration with correct occlusion, restrained magical radiance. Its strength should read as heroic protection, never aggressive or scary. Preserve green/gold identity instead of turning this into four unrelated species. Keep effects restrained enough for recognition on phone cards.\n\nAll armour, ornaments and straps must be painted directly on the complete dragon in anatomically correct perspective: connected to its body, joint-aware, subtle contact shadows, naturally hidden behind limbs where appropriate. No floating parts, no open hollow rings in front of legs, no hanging hoops, no equipment pasted over the silhouette, no capes that collide with wings. Avoid clutter, weapons and logos. Four distinct forms only.\n\nExact German text: small top heading \"DEIN DRACHE ENTWICKELT SICH\". Under each figure, clear readable two-line label:\n\"STUFE 1\" / \"Abenteuerdrache\"\n\"STUFE 2\" / \"Runendrache\"\n\"STUFE 3\" / \"Kristallwächter\"\n\"STUFE 4\" / \"Runenlegende\"\nNo invented prices, progress numbers, buttons or extra captions. High-resolution presentation board, comfortable whitespace around every figure and readable visual differences at approximately 256px width per panel."
+}
