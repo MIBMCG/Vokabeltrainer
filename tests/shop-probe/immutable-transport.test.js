@@ -137,6 +137,32 @@ test('immutable verification preserves malformed 200 metadata and media response
   }
 });
 
+test('immutable metadata verification classifies non-file 200 bodies as invalid with status',async()=>{
+  for(const body of [null,[],42]){
+    const fixture=v2CoherentDriveFixture();let corrupt=false;
+    const fetch=async(url,request)=>{
+      const parsed=new URL(url),method=request?.method??'GET';
+      if(corrupt&&method==='GET'&&parsed.pathname.includes('/drive/v2/files/')&&parsed.searchParams.get('alt')!=='media'){
+        const id=parsed.pathname.split('/').at(-1),record=fixture.files.get(id);
+        if(record?.mimeType==='application/json'){
+          corrupt=false;
+          return new Response(JSON.stringify(body),{status:200,headers:{'Content-Type':'application/json'}});
+        }
+      }
+      return fixture.fetch(url,request);
+    };
+    const transport=makeTransport(fixture,fetch),{id:anchorId}=await transport.createMetadataFolder();
+    const ref=await transport.prepareImmutable({parentId:anchorId,value:{probe:String(body)}});
+    corrupt=true;
+    await assert.rejects(()=>transport.writeImmutable(ref),error=>{
+      assert.equal(error.code,'invalid');
+      assert.equal(error.status,200);
+      return true;
+    });
+    assert.deepEqual(await transport.writeImmutable(ref),{probe:String(body)});
+  }
+});
+
 test('legacy JSON parsing keeps its existing status-free invalid error',async()=>{
   const fixture=v2CoherentDriveFixture();let corrupt=false,targetId;
   const fetch=async(url,request)=>{

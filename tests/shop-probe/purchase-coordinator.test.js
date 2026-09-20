@@ -319,6 +319,37 @@ test('malformed 200 immutable verification stays uncertain and explicitly contin
   }
 });
 
+test('non-file 200 metadata bodies stay uncertain and resume through the same ticket',async()=>{
+  for(const body of [null,[],42]){
+    const fixture=v2CoherentDriveFixture();let corrupt=false,uploads=0;
+    const fetch=async(url,request)=>{
+      const method=request?.method??'GET',parsed=new URL(url);
+      if(method==='POST'&&url.includes('/upload/drive/v3/files'))uploads++;
+      if(corrupt&&method==='GET'&&parsed.pathname.includes('/drive/v2/files/')&&parsed.searchParams.get('alt')!=='media'){
+        const id=parsed.pathname.split('/').at(-1),record=fixture.files.get(id);
+        if(record?.mimeType==='application/json'){
+          corrupt=false;
+          return new Response(JSON.stringify(body),{status:200,headers:{'Content-Type':'application/json'}});
+        }
+      }
+      return fixture.fetch(url,request);
+    };
+    const transport=makeTransport(fixture,fetch),{id:anchorId}=await transport.createMetadataFolder();
+    const coordinator=createPurchaseCoordinator({transport,anchorId}),prepared=await coordinator.prepare(init);
+    corrupt=true;
+    assert.deepEqual(await coordinator.commit(prepared.ticket),{
+      outcome:'uncertain',phase:'upload',code:'invalid',httpStatus:200,
+    });
+    assert.equal(putCalls(fixture).length,0);
+    const continued=await coordinator.prepare({...init});
+    assert.equal(continued.ticket,prepared.ticket);
+    assert.equal((await coordinator.commit(continued.ticket)).outcome,'confirmed');
+    assert.equal(uploads,2);
+    assert.equal(putCalls(fixture).length,1);
+    assert.equal([...fixture.files.values()].filter(record=>record.mimeType==='application/json').length,1);
+  }
+});
+
 test('invalid 200 pointer response is uncertain and recover verifies the written receipt',async()=>{
   const fixture=v2CoherentDriveFixture();let corrupt=false,pointers=0;
   const fetch=async(url,init)=>{

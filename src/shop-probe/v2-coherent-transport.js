@@ -287,9 +287,9 @@ export function createV2CoherentProbeTransport({fetch:fetchImpl=globalThis.fetch
   async function readImmutable(ref,{parentId=null}={}){
     const record=immutableRecord(ref);
     if(parentId!==null&&(typeof parentId!=='string'||record.parentId!==parentId))fail('binding');
-    const before=await readV2Metadata(ref.id,{cache:'no-store'},immutableJson);
+    const before=await readV2Metadata(ref.id,{cache:'no-store'},boundResponseJson);
     const value=await immutableJson(await request(`${API_V2}/${ref.id}?alt=media`,{cache:'no-store'}));
-    const after=await readV2Metadata(ref.id,{cache:'no-store'},immutableJson);
+    const after=await readV2Metadata(ref.id,{cache:'no-store'},boundResponseJson);
     if(canonicalJson(before.properties)!==canonicalJson(after.properties))fail('binding');
     let actual;
     try{actual=await immutableHash(value);}catch(error){
