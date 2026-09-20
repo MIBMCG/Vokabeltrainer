@@ -1,3 +1,5 @@
+import {createV2CoherentProbeTransport} from './v2-coherent-transport.js';
+
 // Isolated capability experiment. Never used by the product sync adapter.
 const API='https://www.googleapis.com/drive/v3/files';
 const API_V2='https://www.googleapis.com/drive/v2/files';
@@ -10,6 +12,7 @@ export class ProbeError extends Error {
   constructor(code,status=null,diagnostic=null){super(`Probe: ${code}`);this.code=code;this.status=status;if(diagnostic)this.diagnostic=diagnostic;}
 }
 export function createProbeTransport({fetch:fetchImpl=globalThis.fetch,token,etagSource='media'}={}) {
+  if(etagSource==='v2-coherent')return createV2CoherentProbeTransport({fetch:fetchImpl,token});
   if(typeof fetchImpl!=='function'||typeof token!=='function'||!['media','metadata','v2-json'].includes(etagSource))throw new ProbeError('invalid');
   const runId=globalThis.crypto.randomUUID(),files=new Map();
   const fail=(code,diagnostic)=>{throw new ProbeError(code,null,diagnostic);};

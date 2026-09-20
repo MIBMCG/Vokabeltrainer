@@ -41,6 +41,7 @@ test('serves only named probe and trainer assets with correct MIME types', async
       ['/shop-probe/styles.css', 'text/css; charset=utf-8'],
       ['/src/shop-probe/main.js', 'text/javascript; charset=utf-8'],
       ['/src/shop-probe/transport.js', 'text/javascript; charset=utf-8'],
+      ['/src/shop-probe/v2-coherent-transport.js', 'text/javascript; charset=utf-8'],
       ['/src/shop-probe/scenarios.js', 'text/javascript; charset=utf-8'],
       ['/', 'text/html; charset=utf-8'],
       ['/styles.css', 'text/css; charset=utf-8'],
@@ -99,6 +100,8 @@ test('serves only named probe and trainer assets with correct MIME types', async
       assert.equal(response.headers['content-type'], contentType, path);
       assert.ok(response.body.length > 0, path);
     }
+    const coherentTransport=(await request(port,'/src/shop-probe/v2-coherent-transport.js')).body.toString();
+    assert.match(coherentTransport,/export function createV2CoherentProbeTransport/);
   });
 });
 

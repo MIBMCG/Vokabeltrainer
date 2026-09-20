@@ -162,3 +162,16 @@ test('v2 JSON candidate still fails ignored conditions and corrupting 412 readba
     assert.ok(result.checks.some(check=>check.id===failedCheck&&!check.passed));
   }
 });
+
+test('legacy modes retain their established v3 read and PATCH routes',async()=>{
+  for(const source of ['media','metadata','v2-json']){
+    const fixture=driveFixture({noEtag:source==='v2-json'});
+    const result=await runProbeScenarios({transport:createProbeTransport({fetch:fixture.fetch,token:()=> 'secret',etagSource:source})});
+    assert.equal(result.passed,true,source);
+    assert.ok(fixture.calls.some(call=>call.method==='GET'&&call.url.includes('/drive/v3/files/')&&call.url.includes('alt=media')),source);
+    assert.ok(fixture.calls.some(call=>call.method==='PATCH'&&call.url.includes('/upload/drive/v3/files/')),source);
+    assert.ok(fixture.calls.some(call=>call.method==='PATCH'&&call.url.includes('/drive/v3/files/')&&!call.url.includes('/upload/')),source);
+    assert.equal(fixture.calls.some(call=>call.method==='PUT'),false,source);
+    assert.equal(fixture.calls.some(call=>call.method==='GET'&&call.url.includes('/drive/v2/files/')),source==='v2-json',source);
+  }
+});

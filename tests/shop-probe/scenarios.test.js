@@ -47,6 +47,15 @@ test('v2 JSON diagnostics preserve only token classifications and change boolean
   assert.equal(JSON.stringify(result).includes('private-json-marker'),false);
 });
 
+test('v2 coherent diagnostics preserve only the fixed source and known observations',async()=>{
+  const transport=fake();
+  transport.read=async()=>{throw Object.assign(new Error('private-v2-marker'),{code:'stale',diagnostic:{phase:'read-stability',reason:'changed-during-read',etagSource:'v2-coherent',versionChanged:true,jsonEtagChanged:false,jsonEtagState:'strong',etag:'private-v2-marker',runId:'private-v2-marker',fileId:'private-v2-marker'}});};
+  const result=await runProbeScenarios({transport});
+  const check=result.checks.find(item=>item.id==='version-token');
+  assert.deepEqual(check.diagnostic,{phase:'read-stability',reason:'changed-during-read',etagSource:'v2-coherent',jsonEtagState:'strong',versionChanged:true,jsonEtagChanged:false});
+  assert.equal(JSON.stringify(result).includes('private-v2-marker'),false);
+});
+
 test('concurrent write failure reports bounded counts for data and folder writes',async()=>{
   const result=await runProbeScenarios({transport:fake({ignore:true,metadataIgnore:true})});
   for(const id of ['two-purchases','initialization']){
