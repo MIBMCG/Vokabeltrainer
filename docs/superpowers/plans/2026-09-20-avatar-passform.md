@@ -1,5 +1,7 @@
 # Korrekturplan: sichtbare und passend befestigte Ausrüstung
 
+**Nach Nutzerprüfung wieder offen:** Die Umsetzung dieses ersten Korrekturplans ist technisch dokumentiert, die positive Passformbewertung jedoch widerlegt. Maßgeblich sind der [Zweitaudit](../../reports/2026-09-20-avatar-fit-second-audit.md) und der [neue körperbezogene Reparaturansatz](../../design/2026-09-20-avatar-passform-v2.md). Frühere abgehakte Punkte sind keine aktuelle visuelle Abnahme.
+
 Stand: 20.09.2026. Konkreter Korrekturauftrag nach der Nutzerkritik an verdeckter und versetzter Avatar-Ausrüstung. Der [unabhängige Sichtaudit](../../reports/2026-09-20-avatar-fit-audit.md) benennt sechs betroffene Kombinationen. Der bestätigte Figuren-/Ausrüstungsumfang bleibt bestehen; keine neue Produktentscheidung ist nötig.
 
 ## Grenzen und Verantwortlichkeiten

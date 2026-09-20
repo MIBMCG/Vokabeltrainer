@@ -37,3 +37,12 @@ test('error diagnostics keep only known classifications and boolean observations
   assert.deepEqual(check.diagnostic,{phase:'read-stability',reason:'changed-during-read',etagSource:'media',versionChanged:true,metadataEtagState:'strong'});
   assert.equal(JSON.stringify(result).includes('private-marker'),false);
 });
+
+test('v2 JSON diagnostics preserve only token classifications and change booleans',async()=>{
+  const transport=fake();
+  transport.read=async()=>{throw Object.assign(new Error('private-json-marker'),{code:'stale',diagnostic:{phase:'read-stability',reason:'changed-during-read',etagSource:'v2-json',versionChanged:false,metadataEtagChanged:false,jsonEtagChanged:true,metadataEtagState:'absent',mediaEtagState:'absent',jsonEtagState:'strong',jsonEtag:'private-json-marker',fileId:'private-json-marker'}});};
+  const result=await runProbeScenarios({transport});
+  const check=result.checks.find(item=>item.id==='version-token');
+  assert.deepEqual(check.diagnostic,{phase:'read-stability',reason:'changed-during-read',etagSource:'v2-json',metadataEtagState:'absent',mediaEtagState:'absent',jsonEtagState:'strong',versionChanged:false,metadataEtagChanged:false,jsonEtagChanged:true});
+  assert.equal(JSON.stringify(result).includes('private-json-marker'),false);
+});

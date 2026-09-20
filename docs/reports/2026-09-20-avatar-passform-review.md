@@ -1,5 +1,7 @@
 # Unabhängige Nachprüfung der Avatar-Passform
 
+**Urteil zurückgenommen:** Die erneute Nutzerkritik und der [unabhängige Zweitaudit](2026-09-20-avatar-fit-second-audit.md) widerlegen die nachfolgende positive Passformbewertung. Insbesondere verdecken die vollständigen Ringbilder die Beine, statt sie räumlich zu umgreifen. Die frühere Review war zu großzügig; sie ist keine gültige visuelle Freigabe des aktuellen Bildstands.
+
 Stand: 20.09.2026
 
 ## Ergebnis

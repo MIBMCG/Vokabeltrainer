@@ -94,3 +94,71 @@ test('missing file version is reported separately from an unreadable ETag',async
   assert.equal(result.checks[0].status,'unsupported');
   assert.deepEqual(result.checks[0].diagnostic,{phase:'metadata',reason:'missing-file-version'});
 });
+
+test('explicit v2 JSON ETag brackets owned reads and conditions unchanged v3 writes',async()=>{
+  const fixture=driveFixture({noEtag:true});
+  const result=await runProbeScenarios({transport:createProbeTransport({fetch:fixture.fetch,token:()=> 'secret',etagSource:'v2-json'})});
+  assert.equal(result.passed,true);
+  const tokenReads=fixture.calls.filter(call=>call.method==='GET'&&call.url.includes('/drive/v2/files/'));
+  assert.ok(tokenReads.length>10);
+  assert.ok(tokenReads.every(call=>new URL(call.url).searchParams.get('fields')==='id,mimeType,etag'));
+  const updates=fixture.calls.filter(call=>call.method==='PATCH');
+  assert.ok(updates.some(call=>call.url.includes('/upload/drive/v3/files/')&&call.url.includes('uploadType=media')));
+  assert.ok(updates.some(call=>call.url.includes('/drive/v3/files/')&&!call.url.includes('/upload/')));
+  assert.equal(updates.filter(call=>call.headers['If-Match']==='"deliberately-invalid-probe-token"').length,1);
+  assert.ok(updates.filter(call=>call.headers['If-Match']!=='"deliberately-invalid-probe-token"').every(call=>call.headers['If-Match']?.startsWith('"version-')));
+  assert.equal(result.productReady,false);
+});
+
+test('v2 JSON ETag must be strong, stable and bound before any conditional write',async()=>{
+  for(const [jsonEtagValue,state] of [[null,'absent'],['W/"private-json-marker"','weak'],['private-json-marker','malformed']]){
+    const fixture=driveFixture({noEtag:true,noJsonEtag:jsonEtagValue===null,jsonEtagValue});
+    const result=await runProbeScenarios({transport:createProbeTransport({fetch:fixture.fetch,token:()=> 'secret',etagSource:'v2-json'})});
+    const check=result.checks.find(item=>item.id==='version-token');
+    assert.equal(check.status,'unsupported');
+    assert.deepEqual(check.diagnostic,{phase:'read-token',reason:'missing-strong-etag',etagSource:'v2-json',metadataEtagState:'absent',mediaEtagState:'absent',jsonEtagState:state});
+    assert.equal(fixture.calls.some(call=>call.method==='PATCH'),false);
+    assert.equal(JSON.stringify(result).includes('private-json-marker'),false);
+  }
+
+  const fixture=driveFixture({noEtag:true});let tokenReads=0;
+  const transport=createProbeTransport({token:()=> 'secret',etagSource:'v2-json',fetch:async(url,init)=>{
+    const response=await fixture.fetch(url,init);
+    if(!new URL(url).pathname.includes('/drive/v2/files/'))return response;
+    const value=await response.json();tokenReads++;
+    if(tokenReads===2)value.etag='"private-json-marker"';
+    return new Response(JSON.stringify(value),{status:response.status,headers:response.headers});
+  }});
+  const file=await transport.create({value:{}});
+  await assert.rejects(()=>transport.read(file.id),error=>{
+    assert.deepEqual(error.diagnostic,{phase:'read-stability',reason:'changed-during-read',etagSource:'v2-json',versionChanged:false,metadataEtagChanged:false,jsonEtagChanged:true,metadataEtagState:'absent',mediaEtagState:'absent',jsonEtagState:'strong'});
+    assert.equal(JSON.stringify(error).includes('private-json-marker'),false);
+    return true;
+  });
+  assert.equal(fixture.calls.some(call=>call.method==='PATCH'),false);
+});
+
+test('v2 token metadata cannot substitute a foreign ID or MIME type',async()=>{
+  for(const field of ['id','mimeType']){
+    const fixture=driveFixture({noEtag:true});
+    const transport=createProbeTransport({token:()=> 'secret',etagSource:'v2-json',fetch:async(url,init)=>{
+      const response=await fixture.fetch(url,init);
+      if(!new URL(url).pathname.includes('/drive/v2/files/'))return response;
+      const value=await response.json();value[field]=field==='id'?'foreign-resource':'text/plain';
+      return new Response(JSON.stringify(value),{status:response.status,headers:response.headers});
+    }});
+    const result=await runProbeScenarios({transport});
+    assert.equal(result.passed,false);
+    assert.equal(result.checks.find(item=>item.id==='version-token').actual,'binding');
+    assert.equal(fixture.calls.some(call=>call.method==='PATCH'),false);
+  }
+});
+
+test('v2 JSON candidate still fails ignored conditions and corrupting 412 readback',async()=>{
+  for(const [options,failedCheck] of [[{ignore:true},'stale-write'],[{metadataIgnore:true},'initialization'],[{mutateBefore412:true},'stale-write']]){
+    const fixture=driveFixture({...options,noEtag:true});
+    const result=await runProbeScenarios({transport:createProbeTransport({fetch:fixture.fetch,token:()=> 'secret',etagSource:'v2-json'})});
+    assert.equal(result.passed,false);
+    assert.ok(result.checks.some(check=>check.id===failedCheck&&!check.passed));
+  }
+});

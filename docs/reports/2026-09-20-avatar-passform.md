@@ -1,5 +1,7 @@
 # Korrektur der Avatar-Ausrüstung
 
+**Visuelle Bewertung zurückgenommen:** Der Nutzer hat nach diesem Stand erneut falsch sitzende Ausrüstung bei Pferden, Tiger und weiteren Figuren gemeldet. Der [unabhängige Zweitaudit](2026-09-20-avatar-fit-second-audit.md) bestätigt anatomische und räumliche Fehler bei allen Figurengruppen. Die folgenden Änderungen und technischen Prüfergebnisse bleiben historische Tatsachen; Aussagen über abgeschlossene Passformkorrektur oder sitzende Reifen sind keine aktuelle Freigabe. Die Bildwelt bleibt zur Nacharbeit offen.
+
 Stand: 20.09.2026. Die Nutzerkritik an falsch sitzender und verdeckter Ausrüstung wurde an sechs Kombinationen nachvollzogen und korrigiert. Der [ursprüngliche Sichtaudit](2026-09-20-avatar-fit-audit.md) berichtigt die zu großzügige Passformbewertung vom Vortag. [Aktuelle Vorschau der sechs Sets](../design/2026-09-20-avatar-passform.png), [Gesamtvorschau aller 13 Figuren](../design/avatar-shop-preview.png).
 
 ## Ursache und Änderung

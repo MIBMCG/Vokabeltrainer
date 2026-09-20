@@ -1,5 +1,6 @@
 // Isolated capability experiment. Never used by the product sync adapter.
 const API='https://www.googleapis.com/drive/v3/files';
+const API_V2='https://www.googleapis.com/drive/v2/files';
 const UPLOAD='https://www.googleapis.com/upload/drive/v3/files';
 const FIELDS='id,name,mimeType,parents,appProperties,trashed,version';
 const APP='vokabeltrainer-shop-probe';
@@ -9,7 +10,7 @@ export class ProbeError extends Error {
   constructor(code,status=null,diagnostic=null){super(`Probe: ${code}`);this.code=code;this.status=status;if(diagnostic)this.diagnostic=diagnostic;}
 }
 export function createProbeTransport({fetch:fetchImpl=globalThis.fetch,token,etagSource='media'}={}) {
-  if(typeof fetchImpl!=='function'||typeof token!=='function'||!['media','metadata'].includes(etagSource))throw new ProbeError('invalid');
+  if(typeof fetchImpl!=='function'||typeof token!=='function'||!['media','metadata','v2-json'].includes(etagSource))throw new ProbeError('invalid');
   const runId=globalThis.crypto.randomUUID(),files=new Map();
   const fail=(code,diagnostic)=>{throw new ProbeError(code,null,diagnostic);};
   const owned=id=>files.get(id)??fail('binding');
@@ -28,17 +29,24 @@ export function createProbeTransport({fetch:fetchImpl=globalThis.fetch,token,eta
     if(typeof value.version!=='string'||!/^\d+$/.test(value.version))fail('unsupported',{phase:'metadata',reason:'missing-file-version'});
     return {value,etag:response.headers.get('ETag')};
   }
+  async function jsonEtagMetadata(id) {
+    const expected=owned(id),response=await request(`${API_V2}/${id}?fields=id,mimeType,etag`),value=await json(response);
+    if(value.id!==id||value.mimeType!==expected.mimeType)fail('binding');
+    return {etag:value.etag??null};
+  }
   async function read(id) {
-    const expected=owned(id),before=await metadata(id);let value={},mediaEtag=null;
+    const expected=owned(id),before=await metadata(id),jsonBefore=etagSource==='v2-json'?await jsonEtagMetadata(id):null;let value={},mediaEtag=null;
     if(!expected.folder){const response=await request(`${API}/${id}?alt=media`);mediaEtag=response.headers.get('ETag');value=await json(response);}
-    const after=await metadata(id);
-    const observation={etagSource:expected.folder?'metadata':etagSource,metadataEtagState:etagState(after.etag),mediaEtagState:expected.folder?'not-requested':etagState(mediaEtag)};
-    const versionChanged=before.value.version!==after.value.version,metadataEtagChanged=before.etag!==after.etag;
-    if(versionChanged||metadataEtagChanged)fail('stale',{phase:'read-stability',reason:'changed-during-read',...observation,versionChanged,metadataEtagChanged});
-    const etag=expected.folder||etagSource==='metadata'?after.etag:mediaEtag;
+    const jsonAfter=etagSource==='v2-json'?await jsonEtagMetadata(id):null,after=await metadata(id);
+    const selectedSource=etagSource==='v2-json'?'v2-json':expected.folder?'metadata':etagSource;
+    const observation={etagSource:selectedSource,metadataEtagState:etagState(after.etag),mediaEtagState:expected.folder?'not-requested':etagState(mediaEtag),
+      ...(jsonAfter?{jsonEtagState:etagState(jsonAfter.etag)}:{})};
+    const versionChanged=before.value.version!==after.value.version,metadataEtagChanged=before.etag!==after.etag,jsonEtagChanged=jsonBefore?.etag!==jsonAfter?.etag;
+    if(versionChanged||metadataEtagChanged||(etagSource==='v2-json'&&jsonEtagChanged))fail('stale',{phase:'read-stability',reason:'changed-during-read',...observation,versionChanged,metadataEtagChanged,...(etagSource==='v2-json'?{jsonEtagChanged}:{})});
+    const etag=etagSource==='v2-json'?jsonAfter.etag:expected.folder||etagSource==='metadata'?after.etag:mediaEtag;
     if(etagState(etag)!=='strong')fail('unsupported',{phase:'read-token',reason:'missing-strong-etag',...observation});
     return {id,value,version:after.value.version,etag,properties:after.value.appProperties,
-      observation:{metadataEtagReadable:!!after.etag,mediaEtagReadable:!!mediaEtag,etagSource:expected.folder?'metadata':etagSource}};
+      observation:{metadataEtagReadable:!!after.etag,mediaEtagReadable:!!mediaEtag,...(jsonAfter?{jsonEtagReadable:!!jsonAfter.etag}:{}),etagSource:selectedSource}};
   }
   async function post(id,value) {
     const record=owned(id),meta={id,name:record.name,mimeType:record.mimeType,appProperties:{app:APP,runId},...(record.parentId?{parents:[record.parentId]}:{})};

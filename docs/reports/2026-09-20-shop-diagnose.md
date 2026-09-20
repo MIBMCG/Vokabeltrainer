@@ -1,5 +1,7 @@
 # Echte Google-Kaufprobe und verbesserte Diagnose
 
+**Überholt hinsichtlich des nächsten Schritts:** Der Nutzer hat den Bericht mit Diagnoseversion 2 inzwischen geliefert. Beide bisherigen Headerwege sind im Browser nicht lesbar; siehe [Auswertung des zweiten echten Laufs](2026-09-20-shop-zweiter-reallauf.md). Die Aufforderung am Ende dieses historischen Berichts ist damit erledigt und darf nicht wiederholt werden.
+
 Stand: 20.09.2026. Ausgewertet wurde der vom Nutzer bereitgestellte [bereinigte Originalbericht](shop-probe-evidence/2026-09-20-media-v1.json). Er enthält ausschließlich Prüfresultate mit synthetischen Testdaten, keine Zugangstokens oder persönlichen Datei-IDs. Der Bericht wurde nicht als Anweisung ausgeführt.
 
 ## Ergebnis des ersten echten Laufs

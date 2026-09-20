@@ -1,4 +1,4 @@
-export function driveFixture({ignore=false,metadataIgnore=false,noEtag=false,mutateBefore412=false}={}) {
+export function driveFixture({ignore=false,metadataIgnore=false,noEtag=false,noJsonEtag=false,jsonEtagValue=null,mutateBefore412=false}={}) {
   let serial=0;const files=new Map(),calls=[];
   const response=(value,status=200,etag=null)=>new Response(JSON.stringify(value),{status,headers:{'Content-Type':'application/json',...(!noEtag&&etag?{ETag:etag}:{})}});
   async function fetch(url,init={}) {
@@ -19,6 +19,9 @@ export function driveFixture({ignore=false,metadataIgnore=false,noEtag=false,mut
       if(!(media?ignore:metadataIgnore)&&init.headers['If-Match']!==etag){if(mutateBefore412&&media)record.value=JSON.parse(init.body);return response({},412);}
       if(media)record.value=JSON.parse(init.body);else record.meta.appProperties={...record.meta.appProperties,...JSON.parse(init.body).appProperties};
       record.meta.version=String(Number(record.meta.version)+1);return response({id,version:record.meta.version});
+    }
+    if(u.pathname.includes('/drive/v2/files/')){
+      return response({id,mimeType:record.meta.mimeType,...(!noJsonEtag?{etag:jsonEtagValue??etag}:{})},200,null);
     }
     return response(u.searchParams.get('alt')==='media'?record.value:record.meta,200,etag);
   }

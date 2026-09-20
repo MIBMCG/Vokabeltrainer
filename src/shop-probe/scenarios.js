@@ -7,10 +7,10 @@ async function rejects(operation,code){try{await operation();}catch(error){asser
 // Export classifications only, never raw headers, file IDs, token values or errors.
 function safeDiagnostic(value){
   if(!value||typeof value!=='object')return null;
-  const allowed={phase:['metadata','read-stability','read-token','write-token'],reason:['missing-file-version','changed-during-read','missing-strong-etag'],etagSource:['media','metadata'],metadataEtagState:['absent','strong','weak','malformed'],mediaEtagState:['absent','strong','weak','malformed','not-requested']};
+  const allowed={phase:['metadata','read-stability','read-token','write-token'],reason:['missing-file-version','changed-during-read','missing-strong-etag'],etagSource:['media','metadata','v2-json'],metadataEtagState:['absent','strong','weak','malformed'],mediaEtagState:['absent','strong','weak','malformed','not-requested'],jsonEtagState:['absent','strong','weak','malformed']};
   const result={};
   for(const [key,values] of Object.entries(allowed))if(Object.hasOwn(value,key)&&values.includes(value[key]))result[key]=value[key];
-  for(const key of ['versionChanged','metadataEtagChanged'])if(Object.hasOwn(value,key)&&typeof value[key]==='boolean')result[key]=value[key];
+  for(const key of ['versionChanged','metadataEtagChanged','jsonEtagChanged'])if(Object.hasOwn(value,key)&&typeof value[key]==='boolean')result[key]=value[key];
   return Object.keys(result).length?result:null;
 }
 
@@ -41,7 +41,7 @@ export async function runProbeScenarios({transport,emit=()=>{}}) {
   await check('fixture','Eigener synthetischer Probeordner angelegt.',async()=>{folder=await transport.create({folder:true,name:'SYNTHETISCH'});});
   if(!folder)return summarize(checks);
   async function fixture(name){const file=await transport.create({parentId:folder.id,name,value:initial()});return read(file.id,'fixture-read');}
-  await check('version-token','Starker Versionsheader im Browser lesbar.',async()=>{const file=await fixture('token');return file.observation??'Versionsheader lesbar.';});
+  await check('version-token','Starke Versionskennung im Browser lesbar.',async()=>{const file=await fixture('token');return file.observation??'Versionskennung lesbar.';});
   await check('invalid-token','Falsches If-Match ergibt 412; Inhalt bleibt unverändert.',async()=>{
     const before=await fixture('invalid-token');await rejects(()=>transport.updateIfUnchanged({...before,etag:'"deliberately-invalid-probe-token"'},{...before.value,sequence:99}),'stale');assert(same((await read(before.id)).value,before.value));
   });
