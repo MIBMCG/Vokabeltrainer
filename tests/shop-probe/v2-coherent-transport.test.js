@@ -114,6 +114,12 @@ test('v2-coherent forwards the supplied strong ETag without refreshing it',async
   assert.equal(write.headers['If-Match'],'"deliberately-invalid-probe-token"');
 });
 
+test('v2-coherent returns the actual successful conditional write status',async()=>{
+  const fixture=v2CoherentDriveFixture(),transport=makeTransport(fixture);
+  const file=await transport.create({value:{before:true}}),before=await transport.read(file.id);
+  assert.deepEqual(await transport.updateIfUnchanged(before,{after:true}),{id:file.id,status:200});
+});
+
 test('v2-coherent preserves bound private properties during metadata PUT',async()=>{
   const fixture=v2CoherentDriveFixture(),transport=makeTransport(fixture);
   const folder=await transport.create({folder:true,name:'folder'});

@@ -16,6 +16,7 @@ export function v2CoherentDriveFixture({
   mutateBefore412=false,
   mutateDuringRead=false,
   metadataOverride=null,
+  invalidTokenStatus=null,
 }={}){
   let serial=0;
   const files=new Map(),calls=[],metadataReads=new Map();
@@ -76,6 +77,7 @@ export function v2CoherentDriveFixture({
     if(method==='PUT'&&parsed.pathname.includes('/drive/v2/files/')){
       const media=parsed.pathname.includes('/upload/'),ignored=media?ignoreMediaCondition:ignoreMetadataCondition;
       if(!ignored&&headers['If-Match']!==currentEtag(record)){
+        if(headers['If-Match']==='"deliberately-invalid-probe-token"'&&Number.isInteger(invalidTokenStatus))return response({},invalidTokenStatus);
         if(mutateBefore412&&media)record.value=copy(JSON.parse(init.body));
         return response({},412);
       }

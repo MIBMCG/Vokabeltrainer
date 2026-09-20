@@ -1,5 +1,7 @@
 # Übergabe: Diagnose 6 ausgewertet, Koordinationsrichtung offen
 
+Historischer Stand: Der Nutzer hat inzwischen **C** gewählt. Die [neue Übergabe zur gezielten Direkt-Drive-Untersuchung](2026-09-20-direkt-drive-c-und-gezielte-probe.md) ist maßgeblich; A/B/C nicht erneut abfragen.
+
 Stand: 20.09.2026. Branch `codex/vokabeltrainer-v1`, Ausgangscommit `c8571964f60affab87c1c9ce21b470a7c31d216e`. Vor diesem Paket waren Arbeitsbaum und Branch sauber; Ausgangsstand und Remote wurden geprüft. Dieses Paket enthält ausschließlich Auswertung, Entscheidungsvorlage und Statusdokumentation.
 
 ## Ergebnis

@@ -140,8 +140,8 @@ export function createV2CoherentProbeTransport({fetch:fetchImpl=globalThis.fetch
     if(!strongEtag(before.etag))fail('unsupported',{phase:'write-token',reason:'missing-strong-etag',etagSource:'v2-coherent',jsonEtagState:etagState(before.etag)});
     const url=metadata?`${API_V2}/${before.id}?fields=id,etag,version,properties`:`${UPLOAD_V2}/${before.id}?uploadType=media&fields=id,etag,version`;
     const body=metadata?{properties:privatePropertiesBody({...before.properties,...value,app:APP,runId})}:value;
-    await request(url,{method:'PUT',headers:{'Content-Type':'application/json; charset=UTF-8','If-Match':before.etag},body:JSON.stringify(body)});
-    return {id:before.id};
+    const response=await request(url,{method:'PUT',headers:{'Content-Type':'application/json; charset=UTF-8','If-Match':before.etag},body:JSON.stringify(body)});
+    return {id:before.id,status:response.status};
   }
 
   return {create,read,retryCreate,updateIfUnchanged};

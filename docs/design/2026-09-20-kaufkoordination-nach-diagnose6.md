@@ -1,6 +1,6 @@
 # Entscheidungsvorlage: Kaufkoordination nach Diagnose 6
 
-Stand: 20.09.2026. **Vorschlag, keine bestätigte Architekturänderung und kein Implementierungsplan.** Anlass ist die [Auswertung des echten Diagnose-6-Laufs](../reports/2026-09-20-shop-v6-reallauf.md). Der Nutzer hat bisher keinen zusätzlichen Backenddienst gewählt.
+Stand: 20.09.2026. **Nutzerwahl C bestätigt (Antwort „c“): den direkten Drive-Ansatz gezielt weiter untersuchen.** Anlass ist die [Auswertung des echten Diagnose-6-Laufs](../reports/2026-09-20-shop-v6-reallauf.md). Kein zusätzlicher Backenddienst und keine Änderung der ausgebbaren Punkte sind gewählt. Die nachfolgenden Optionen und der Vorschlag A bleiben Entscheidungshistorie, keine Freigabe für A.
 
 ## Warum jetzt eine Richtungsentscheidung nötig ist
 
@@ -38,4 +38,4 @@ Die Auswahl von A erlaubt zunächst die konkrete Ausarbeitung dieses Weges. Sie 
 
 ## Entscheidungsstand
 
-Offen: A, B oder C. Empfehlung ist A, weil es den gewünschten Punkteshop erhält und ein ausdrücklich dokumentiertes Serialisierungswerkzeug bietet. Technische Ausführung, genaue Betreiber-Einrichtung und Prüfung werden erst auf dieser Grundlage konkretisiert. Unabhängige Bildproduktion kann währenddessen fortgesetzt werden.
+**C gewählt.** Die frühere Empfehlung A wurde vom Nutzer nicht übernommen. Keine weitere A/B/C-Abfrage und kein stiller Wechsel zu Apps Script. Der [begrenzte nächste Diagnoseschritt](../superpowers/plans/2026-09-20-shop-probe-v7-invalid-token.md) unterscheidet den Schreibausgang der absichtlich falschen ETag und die anschließende Inhaltsnachlese; dafür wird ein gezielter Umfang mit nur diesem Fall ergänzt. Die bestehenden Stabilitätsprüfungen bleiben, und ein positiver Einzeltest aktiviert keinen Shop. Weiterhin keine unveränderte Vollprobe anfordern. Unabhängige Bildproduktion kann währenddessen fortgesetzt werden.

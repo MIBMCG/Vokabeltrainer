@@ -13,6 +13,35 @@ function fake({ignore=false, missing=false, metadataIgnore=false}={}) {
     async retryCreate(id,value) {if(JSON.stringify(records.get(id).value)!==JSON.stringify(value))throw error('collision');return this.read(id);},
   };
 }
+
+function invalidTokenFake({writeOutcome='stale',writeStatus=412,readback='unchanged',fixtureError=null}={}) {
+  const beforeValue={probeVersion:1,epoch:'epoch-0',sequence:0,earned:1000,spent:0,operations:[],owned:['a','b'],nested:{left:1,right:{top:2,bottom:3}}};
+  let reads=0,writes=0,creates=0;
+  const reordered={nested:{right:{bottom:3,top:2},left:1},owned:['a','b'],operations:[],spent:0,earned:1000,sequence:0,epoch:'epoch-0',probeVersion:1};
+  const transport={
+    async create({folder=false}={}) {
+      creates++;
+      if(!folder&&fixtureError)throw fixtureError;
+      return {id:folder?'folder':'file'};
+    },
+    async read() {
+      reads++;
+      if(reads===1)return {id:'file',value:structuredClone(beforeValue),etag:'"1"'};
+      if(readback==='error')throw {code:'network',status:503,message:'private-read-message',raw:{private:true}};
+      if(readback==='key-order-only')return {id:'file',value:structuredClone(reordered),etag:'"1"'};
+      if(readback==='array-order')return {id:'file',value:{...structuredClone(beforeValue),owned:['b','a']},etag:'"1"'};
+      if(readback==='changed')return {id:'file',value:{...structuredClone(beforeValue),sequence:99},etag:'"2"'};
+      return {id:'file',value:structuredClone(beforeValue),etag:'"1"'};
+    },
+    async updateIfUnchanged(before) {
+      writes++;
+      assert.equal(before.etag,'"deliberately-invalid-probe-token"');
+      if(writeOutcome==='fulfilled')return {id:'file',status:writeStatus,privateMarker:'private-write-result'};
+      throw {code:writeOutcome,status:writeStatus,message:'private-write-message',headers:{private:true}};
+    },
+  };
+  return {transport,counts:()=>({creates,reads,writes})};
+}
 test('capability scenarios include purchases, initialization, retries and reset with honest boundary',async()=>{
   const result=await runProbeScenarios({transport:fake()});assert.equal(result.passed,true);
   for(const id of ['stale-write','invalid-token','initialization','two-purchases','response-loss','duplicate-operation','reset-race','create-conflict','conflict-credit'])assert.ok(result.checks.some(c=>c.id===id&&c.passed),id);
@@ -114,4 +143,80 @@ test('read-back assertion identifies its checkpoint and does not include file id
   const result=await runProbeScenarios({transport});
   assert.deepEqual(result.checks.find(c=>c.id==='initialization').evidence,{checkpoint:'initialization-readback'});
   assert.equal(JSON.stringify(result).includes('private-marker'),false);
+});
+
+test('invalid-token scope runs only the folder and targeted check',async()=>{
+  const {transport,counts}=invalidTokenFake();
+  const result=await runProbeScenarios({transport,probeScope:'invalid-token'});
+  assert.deepEqual(result.checks.map(check=>check.id),['fixture','invalid-token']);
+  assert.equal(result.passed,true);
+  assert.equal(result.productReady,false);
+  assert.deepEqual(result.checks[1].actual,{checkpoint:'invalid-token-observation',outcome:'stale',httpStatus:412,readback:'unchanged',readbackOutcome:'success'});
+  assert.deepEqual(counts(),{creates:2,reads:2,writes:1});
+});
+
+test('unknown probe scope stops before creating or reading anything',async()=>{
+  let calls=0;
+  const transport={create:async()=>{calls++;},read:async()=>{calls++;},updateIfUnchanged:async()=>{calls++;}};
+  await assert.rejects(()=>runProbeScenarios({transport,probeScope:'private-scope'}));
+  assert.equal(calls,0);
+});
+
+for(const [label,options,expected] of [
+  ['accepted write with unchanged content',{writeOutcome:'fulfilled',writeStatus:200},{outcome:'fulfilled',httpStatus:200,readback:'unchanged'}],
+  ['accepted write without a reported status',{writeOutcome:'fulfilled',writeStatus:null},{outcome:'fulfilled',readback:'unchanged'}],
+  ['accepted write with changed content',{writeOutcome:'fulfilled',writeStatus:201,readback:'changed'},{outcome:'fulfilled',httpStatus:201,readback:'changed'}],
+  ['HTTP 400 rejection',{writeOutcome:'http',writeStatus:400},{outcome:'http',httpStatus:400,readback:'unchanged'}],
+  ['network rejection',{writeOutcome:'network',writeStatus:null},{outcome:'network',readback:'unchanged'}],
+  ['412 with mutated content',{writeOutcome:'stale',writeStatus:412,readback:'changed'},{outcome:'stale',httpStatus:412,readback:'changed'}],
+  ['key order only',{writeOutcome:'stale',writeStatus:412,readback:'key-order-only'},{outcome:'stale',httpStatus:412,readback:'key-order-only'}],
+  ['changed array order',{writeOutcome:'stale',writeStatus:412,readback:'array-order'},{outcome:'stale',httpStatus:412,readback:'changed'}],
+])test(`invalid-token observation distinguishes ${label} without weakening the strict pass rule`,async()=>{
+  const {transport}=invalidTokenFake(options);
+  const result=await runProbeScenarios({transport,probeScope:'invalid-token'});
+  const check=result.checks[1];
+  assert.equal(check.passed,false);
+  assert.equal(result.passed,false);
+  assert.deepEqual(check.evidence,{checkpoint:'invalid-token-observation',...expected,readbackOutcome:'success'});
+  assert.equal(JSON.stringify(result).includes('private-'),false);
+});
+
+test('invalid-token readback failure keeps the write outcome and bounded read diagnosis',async()=>{
+  const {transport,counts}=invalidTokenFake({writeOutcome:'http',writeStatus:400,readback:'error'});
+  const check=(await runProbeScenarios({transport,probeScope:'invalid-token'})).checks[1];
+  assert.equal(check.scenarioStage,'invalid-token-readback');
+  assert.deepEqual(check.evidence,{checkpoint:'invalid-token-observation',outcome:'http',httpStatus:400,readback:'unavailable',readbackOutcome:'network',readbackHttpStatus:503});
+  assert.deepEqual(counts(),{creates:2,reads:2,writes:1});
+  assert.equal(JSON.stringify(check).includes('private-'),false);
+});
+
+test('invalid-token readback instability keeps its sanitized diagnostic beside the observed PUT status',async()=>{
+  const {transport}=invalidTokenFake({writeOutcome:'fulfilled',writeStatus:200});
+  const read=transport.read.bind(transport);let calls=0;
+  transport.read=async()=>++calls===1?read():Promise.reject({code:'stale',diagnostic:{
+    phase:'read-stability',reason:'changed-during-read',etagSource:'v2-coherent',readContext:'snapshot-read',readKind:'metadata-media-metadata',
+    versionChanged:true,jsonEtagChanged:false,jsonEtagState:'strong',contentChecksumState:'same',headRevisionState:'same',modifiedDateState:'same',viewedDateState:'unavailable',fileSizeState:'same',raw:'private-marker',
+  }});
+  const check=(await runProbeScenarios({transport,probeScope:'invalid-token'})).checks[1];
+  assert.equal(check.scenarioStage,'invalid-token-readback');
+  assert.deepEqual(check.evidence,{checkpoint:'invalid-token-observation',outcome:'fulfilled',httpStatus:200,readback:'unavailable',readbackOutcome:'stale'});
+  assert.deepEqual(check.diagnostic,{phase:'read-stability',reason:'changed-during-read',etagSource:'v2-coherent',jsonEtagState:'strong',readContext:'snapshot-read',readKind:'metadata-media-metadata',contentChecksumState:'same',headRevisionState:'same',modifiedDateState:'same',viewedDateState:'unavailable',fileSizeState:'same',versionChanged:true,jsonEtagChanged:false});
+  assert.equal(JSON.stringify(check).includes('private-marker'),false);
+});
+
+test('invalid-token fixture failure performs no conditional write',async()=>{
+  const {transport,counts}=invalidTokenFake({fixtureError:{code:'stale',message:'private-fixture-message'}});
+  const check=(await runProbeScenarios({transport,probeScope:'invalid-token'})).checks[1];
+  assert.equal(check.passed,false);
+  assert.deepEqual(counts(),{creates:2,reads:0,writes:0});
+  assert.equal(JSON.stringify(check).includes('private-'),false);
+});
+
+test('invalid-token evidence exports only known enums and valid HTTP status numbers',async()=>{
+  const {transport}=invalidTokenFake({writeOutcome:'private-class',writeStatus:999,readback:'error'});
+  const read=transport.read.bind(transport);let calls=0;
+  transport.read=async()=>++calls===1?read():Promise.reject({code:'private-read-class',status:99,message:'private-marker'});
+  const check=(await runProbeScenarios({transport,probeScope:'invalid-token'})).checks[1];
+  assert.deepEqual(check.evidence,{checkpoint:'invalid-token-observation',outcome:'unexpected',readback:'unavailable',readbackOutcome:'unexpected'});
+  assert.equal(JSON.stringify(check).includes('private-'),false);
 });

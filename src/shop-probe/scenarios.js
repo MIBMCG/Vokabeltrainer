@@ -1,6 +1,13 @@
 const clone=value=>structuredClone(value);
 const initial=()=>({probeVersion:1,epoch:'epoch-0',sequence:0,earned:1000,spent:0,operations:[],owned:[]});
 const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+const sameJsonValue=(a,b)=>{
+  if(Object.is(a,b))return true;
+  if(Array.isArray(a)||Array.isArray(b))return Array.isArray(a)&&Array.isArray(b)&&a.length===b.length&&a.every((value,index)=>sameJsonValue(value,b[index]));
+  if(!a||!b||typeof a!=='object'||typeof b!=='object')return false;
+  const aKeys=Object.keys(a),bKeys=Object.keys(b);
+  return aKeys.length===bKeys.length&&aKeys.every(key=>Object.hasOwn(b,key)&&sameJsonValue(a[key],b[key]));
+};
 const assert=(condition,evidence)=>{if(!condition)throw Object.assign(new Error('unexpected'),{code:'assertion',evidence});};
 const errorClasses=['unsupported','stale','collision','auth','network','binding','permission','missing','http','assertion'];
 const classify=error=>errorClasses.includes(error?.code)?error.code:'unexpected';
@@ -15,12 +22,16 @@ function concurrentEvidence(results){
 
 // The exported evidence has no raw result objects, errors, identifiers or ETags.
 function safeEvidence(value){
-  const checkpoints=['concurrent-writes','initialization-readback','purchase-readback','response-loss-receipt','response-loss-idempotency','old-token-retry','response-loss-balance'];
+  const checkpoints=['concurrent-writes','initialization-readback','purchase-readback','response-loss-receipt','response-loss-idempotency','old-token-retry','response-loss-balance','invalid-token-observation'];
   if(!value||!checkpoints.includes(value.checkpoint))return null;
   const result={checkpoint:value.checkpoint};
   for(const key of ['accepted','stale','other'])if(Number.isInteger(value[key])&&value[key]>=0&&value[key]<=2)result[key]=value[key];
   if(Array.isArray(value.rejections)&&value.rejections.length<=2)result.rejections=value.rejections.map(code=>errorClasses.includes(code)?code:'unexpected');
   if(['fulfilled','unexpected',...errorClasses].includes(value.outcome))result.outcome=value.outcome;
+  if(Number.isInteger(value.httpStatus)&&value.httpStatus>=100&&value.httpStatus<=599)result.httpStatus=value.httpStatus;
+  if(['unchanged','key-order-only','changed','unavailable'].includes(value.readback))result.readback=value.readback;
+  if(['success','unexpected',...errorClasses].includes(value.readbackOutcome))result.readbackOutcome=value.readbackOutcome;
+  if(Number.isInteger(value.readbackHttpStatus)&&value.readbackHttpStatus>=100&&value.readbackHttpStatus<=599)result.readbackHttpStatus=value.readbackHttpStatus;
   return result;
 }
 
@@ -44,7 +55,8 @@ export function purchase(state,{id,article,price,epoch=state.epoch,conflicted=fa
   const next=clone(state);next.sequence++;next.spent+=price;next.owned.push(article);
   next.operations.push({kind:'purchase',id,article,price,epoch});return next;
 }
-export async function runProbeScenarios({transport,emit=()=>{}}) {
+export async function runProbeScenarios({transport,emit=()=>{},probeScope='full'}) {
+  if(!['full','invalid-token'].includes(probeScope))throw new TypeError('Unknown probe scope');
   const checks=[];
   async function read(id,scenarioStage='post-write-read'){
     try{return await transport.read(id);}
@@ -55,17 +67,33 @@ export async function runProbeScenarios({transport,emit=()=>{}}) {
     catch(error){const code=classify(error);
       const diagnostic=safeDiagnostic(error?.diagnostic);
       const evidence=safeEvidence(error?.evidence);
-      result={id,expected,passed:false,status:code==='unsupported'?'unsupported':'failed',actual:code,...(diagnostic?{diagnostic}:{}),...(evidence?{evidence}:{}),...(['fixture-read','post-write-read','initialization-read','response-loss-receipt','response-loss-after-second-write','response-loss-balance'].includes(error?.scenarioStage)?{scenarioStage:error.scenarioStage}:{}),...(Number.isInteger(error?.status)?{httpStatus:error.status}:{})};}
+      result={id,expected,passed:false,status:code==='unsupported'?'unsupported':'failed',actual:code,...(diagnostic?{diagnostic}:{}),...(evidence?{evidence}:{}),...(['fixture-read','post-write-read','initialization-read','invalid-token-readback','response-loss-receipt','response-loss-after-second-write','response-loss-balance'].includes(error?.scenarioStage)?{scenarioStage:error.scenarioStage}:{}),...(Number.isInteger(error?.status)&&error.status>=100&&error.status<=599?{httpStatus:error.status}:{})};}
     checks.push(result);emit(clone(result));
   }
   let folder;
   await check('fixture','Eigener synthetischer Probeordner angelegt.',async()=>{folder=await transport.create({folder:true,name:'SYNTHETISCH'});});
   if(!folder)return summarize(checks);
   async function fixture(name){const file=await transport.create({parentId:folder.id,name,value:initial()});return read(file.id,'fixture-read');}
-  await check('version-token','Starke Versionskennung im Browser lesbar.',async()=>{const file=await fixture('token');return file.observation??'Versionskennung lesbar.';});
+  if(probeScope==='full')await check('version-token','Starke Versionskennung im Browser lesbar.',async()=>{const file=await fixture('token');return file.observation??'Versionskennung lesbar.';});
   await check('invalid-token','Falsches If-Match ergibt 412; Inhalt bleibt unverändert.',async()=>{
-    const before=await fixture('invalid-token');await rejects(()=>transport.updateIfUnchanged({...before,etag:'"deliberately-invalid-probe-token"'},{...before.value,sequence:99}),'stale');assert(same((await read(before.id)).value,before.value));
+    const before=await fixture('invalid-token');
+    let outcome,httpStatus;
+    try{
+      const response=await transport.updateIfUnchanged({...before,etag:'"deliberately-invalid-probe-token"'},{...before.value,sequence:99});
+      outcome='fulfilled';httpStatus=response?.status;
+    }catch(error){outcome=classify(error);httpStatus=error?.status;}
+    let readback='unavailable',readbackOutcome='unexpected',readbackHttpStatus,readError;
+    try{
+      const current=await read(before.id,'invalid-token-readback');
+      readback=same(current.value,before.value)?'unchanged':sameJsonValue(current.value,before.value)?'key-order-only':'changed';
+      readbackOutcome='success';
+    }catch(error){readError=error;readbackOutcome=classify(error);readbackHttpStatus=error?.status;}
+    const evidence=safeEvidence({checkpoint:'invalid-token-observation',outcome,httpStatus,readback,readbackOutcome,readbackHttpStatus});
+    if(readError)throw {...readError,evidence};
+    assert(outcome==='stale'&&readback==='unchanged',evidence);
+    return evidence;
   });
+  if(probeScope==='invalid-token')return summarize(checks);
   await check('stale-write','Verbrauchtes If-Match ergibt 412; erster Inhalt bleibt.',async()=>{
     const before=await fixture('stale'),winner={...before.value,sequence:1};await transport.updateIfUnchanged(before,winner);
     await rejects(()=>transport.updateIfUnchanged(before,{...before.value,sequence:2}),'stale');assert(same((await read(before.id)).value,winner));

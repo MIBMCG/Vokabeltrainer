@@ -19,15 +19,18 @@ const cases=[
   {basePath:'',source:'v2-coherent',ignoreMediaCondition:true},
   {basePath:'',source:'v2-coherent',ignoreMetadataCondition:true},
   {basePath:'',source:'v2-coherent',instability:true},
+  {basePath:'',source:'v2-coherent',scope:'invalid-token'},
+  {basePath:'',source:'v2-coherent',scope:'invalid-token',invalidTokenStatus:400},
+  {basePath:'',source:'v2-coherent',scope:'invalid-token',ignoreMediaCondition:true},
 ];
-for(const {basePath,noEtag=false,source='media',noJsonEtag=false,ignore=false,ignoreMediaCondition=false,ignoreMetadataCondition=false,instability=false} of cases)test(`isolated shop probe UI with synthetic Google boundary ${basePath||'root'} ${source}${noEtag?' missing headers':''}${noJsonEtag?' missing JSON ETag':''}${ignore||ignoreMediaCondition||ignoreMetadataCondition?' ignored conditions':''}${instability?' unstable snapshot':''}`,async()=>{
+for(const {basePath,noEtag=false,source='media',scope='full',noJsonEtag=false,ignore=false,ignoreMediaCondition=false,ignoreMetadataCondition=false,instability=false,invalidTokenStatus=null} of cases)test(`isolated shop probe UI with synthetic Google boundary ${basePath||'root'} ${source} ${scope}${noEtag?' missing headers':''}${noJsonEtag?' missing JSON ETag':''}${ignore||ignoreMediaCondition||ignoreMetadataCondition?' ignored conditions':''}${instability?' unstable snapshot':''}${invalidTokenStatus?` invalid token ${invalidTokenStatus}`:''}`,async()=>{
   const server=createProbeServer({basePath});await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
   let browser;
   try{
     browser=await chromium.launch({headless:true,...(process.env.BROWSER_EXECUTABLE?{executablePath:process.env.BROWSER_EXECUTABLE}:{})});
     const context=await browser.newContext({viewport:{width:320,height:700},acceptDownloads:true});
     const fixture=source==='v2-coherent'
-      ?v2CoherentDriveFixture({ignoreMediaCondition,ignoreMetadataCondition,...(instability?{mutateDuringRead:{field:'version',after:0,filesOnly:true}}:{})})
+      ?v2CoherentDriveFixture({ignoreMediaCondition,ignoreMetadataCondition,invalidTokenStatus,...(instability?{mutateDuringRead:{field:'version',after:0,filesOnly:true}}:{})})
       :driveFixture({noEtag,noJsonEtag,ignore,metadataIgnore:ignore});
     let loginCalls=0;
     await context.route('https://accounts.google.com/gsi/client',route=>route.fulfill({contentType:'text/javascript',body:`globalThis.google={accounts:{oauth2:{initTokenClient(options){return {requestAccessToken(){options.callback({access_token:'synthetic-only-secret',expires_in:3600,scope:'https://www.googleapis.com/auth/drive.file'})}}}}}};`}));
@@ -40,19 +43,21 @@ for(const {basePath,noEtag=false,source='media',noJsonEtag=false,ignore=false,ig
     const page=await context.newPage();const errors=[];page.on('pageerror',error=>errors.push(error.message));
     await page.goto(`http://127.0.0.1:${server.address().port}${basePath}/shop-probe/`);
     assert.equal(await page.locator('#source option').count(),4);await page.locator('#source').selectOption(source);
+    assert.equal(await page.locator('#scope option').count(),2);assert.equal(await page.locator('#scope').inputValue(),'full');await page.locator('#scope').selectOption(scope);
     await page.locator('#connect').waitFor();assert.equal(loginCalls,0);assert.equal(await page.locator('#start').isDisabled(),true);
     await page.locator('#connect').click();await page.waitForFunction(()=>document.getElementById('status').textContent.startsWith('Verbunden.'));
     assert.equal(loginCalls,0);assert.equal(await page.locator('#start').isDisabled(),true);
     await page.locator('#consent').check();await page.locator('#start').click();
-    const expectedPass=!ignore&&!ignoreMediaCondition&&!ignoreMetadataCondition&&!instability&&!noJsonEtag&&(!noEtag||source==='v2-json');
-    await page.waitForFunction(expectedPass=>document.getElementById('status').textContent.startsWith(expectedPass?'Alle isolierten':'Kaufkoordination nicht'),expectedPass,{timeout:30000});
-    assert.equal(await page.locator('#checks li').count(),11);assert.equal(await page.locator('#start').isDisabled(),true);
+    assert.equal(await page.locator('#source').isDisabled(),true);assert.equal(await page.locator('#scope').isDisabled(),true);
+    const expectedPass=!ignore&&!ignoreMediaCondition&&!ignoreMetadataCondition&&!instability&&!invalidTokenStatus&&!noJsonEtag&&(!noEtag||source==='v2-json');
+    await page.waitForFunction(({scope,expectedPass})=>{const text=document.getElementById('status').textContent;return scope==='invalid-token'?text.includes('keine vollständige Kaufkoordination geprüft'):text.startsWith(expectedPass?'Alle isolierten':'Kaufkoordination nicht');},{scope,expectedPass},{timeout:30000});
+    assert.equal(await page.locator('#checks li').count(),scope==='invalid-token'?2:11);assert.equal(await page.locator('#start').isDisabled(),true);
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
     assert.equal(await page.evaluate(()=>localStorage.length),0);assert.deepEqual(await page.evaluate(async()=>await indexedDB.databases()),[]);
     const downloadPromise=page.waitForEvent('download');await page.locator('#download').click();const downloaded=await downloadPromise;
     const report=JSON.parse(await readFile(await downloaded.path(),'utf8'));assert.equal(report.passed,expectedPass);assert.equal(report.productReady,false);assert.ok(!JSON.stringify(report).includes('synthetic-only-secret'));assert.ok(!JSON.stringify(report).includes('test-1'));
-    assert.equal(downloaded.suggestedFilename(),'shop-probe-bericht6.json');
-    assert.equal(report.diagnosticVersion,6);assert.equal(report.etagSource,source);
+    assert.equal(downloaded.suggestedFilename(),'shop-probe-bericht7.json');
+    assert.equal(report.diagnosticVersion,7);assert.equal(report.etagSource,source);assert.equal(report.probeScope,scope);
     if(source==='v2-json'){
       assert.equal(report.apiPaths.tokenRead,'GET /drive/v2/files/{ownedId}?fields=id,mimeType,etag');
       assert.equal(report.apiPaths.read,'GET /drive/v3/files/{probeFileId}?alt=media');
@@ -70,10 +75,19 @@ for(const {basePath,noEtag=false,source='media',noJsonEtag=false,ignore=false,ig
       assert.equal(report.apiPaths.condition,'If-Match');
       assert.equal(fixture.calls.some(call=>call.method==='PATCH'),false);
       assert.equal(fixture.calls.some(call=>call.method==='GET'&&call.url.includes('/drive/v3/files/')&&!call.url.includes('generateIds')),false);
-      if(expectedPass){
+      if(expectedPass&&scope==='full'){
         assert.equal(Object.hasOwn(report.checks.find(check=>check.id==='initialization'),'evidence'),false);
         assert.equal(Object.hasOwn(report.checks.find(check=>check.id==='two-purchases'),'evidence'),false);
       }
+    }
+    if(scope==='invalid-token'){
+      const observation=(report.checks.find(check=>check.id==='invalid-token').actual?.checkpoint==='invalid-token-observation'
+        ?report.checks.find(check=>check.id==='invalid-token').actual
+        :report.checks.find(check=>check.id==='invalid-token').evidence);
+      if(invalidTokenStatus===400)assert.deepEqual(observation,{checkpoint:'invalid-token-observation',outcome:'http',httpStatus:400,readback:'unchanged',readbackOutcome:'success'});
+      else if(ignoreMediaCondition)assert.deepEqual(observation,{checkpoint:'invalid-token-observation',outcome:'fulfilled',httpStatus:200,readback:'changed',readbackOutcome:'success'});
+      else assert.deepEqual(observation,{checkpoint:'invalid-token-observation',outcome:'stale',httpStatus:412,readback:'unchanged',readbackOutcome:'success'});
+      assert.match(await page.locator('#status').innerText(),/keine vollständige Kaufkoordination geprüft/);
     }
     if(noEtag&&source==='media'){
       const first=report.checks.find(check=>check.id==='version-token');
@@ -89,7 +103,7 @@ for(const {basePath,noEtag=false,source='media',noJsonEtag=false,ignore=false,ig
       assert.equal(first.diagnostic.jsonEtagState,'absent');
       assert.equal(fixture.calls.some(call=>call.method==='PATCH'),false);
     }
-    if(ignore||ignoreMediaCondition||ignoreMetadataCondition){
+    if(scope==='full'&&(ignore||ignoreMediaCondition||ignoreMetadataCondition)){
       const failedIds=ignore?['initialization','two-purchases']:ignoreMediaCondition?['two-purchases']:['initialization'];
       for(const id of failedIds){
         assert.deepEqual(report.checks.find(c=>c.id===id).evidence,{checkpoint:'concurrent-writes',accepted:2,stale:0,other:0,rejections:[]});
