@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {runProbeScenarios} from '../../src/shop-probe/scenarios.js';
+import {createProbeTransport} from '../../src/shop-probe/transport.js';
+import {v2CoherentDriveFixture} from './v2-coherent-drive-fixture.js';
 
 function fake({ignore=false, missing=false, metadataIgnore=false}={}) {
   const records=new Map();let serial=0;
@@ -313,4 +315,122 @@ test('invalid-token evidence exports only known enums and valid HTTP status numb
   const check=(await runProbeScenarios({transport,probeScope:'invalid-token'})).checks[1];
   assert.deepEqual(check.evidence,{checkpoint:'invalid-token-observation',outcome:'unexpected',readback:'unavailable',readbackOutcome:'unexpected'});
   assert.equal(JSON.stringify(check).includes('private-'),false);
+});
+
+const makeMetadataTransport=fixture=>createProbeTransport({fetch:fixture.fetch,token:()=> 'secret',etagSource:'v2-coherent'});
+
+test('diagnostic 9 metadata coordination reports four green checks from folder metadata only',async()=>{
+  const fixture=v2CoherentDriveFixture();
+  const result=await runProbeScenarios({transport:makeMetadataTransport(fixture),probeScope:'metadata-coordination'});
+  assert.deepEqual(result.checks.map(check=>check.id),['fixture','metadata-invalid-token','metadata-stale-write','metadata-concurrent']);
+  assert.equal(result.checks.length,4);assert.equal(result.passed,true);assert.equal(result.productReady,false);
+  assert.equal(fixture.calls.some(({url})=>url.includes('alt=media')||url.includes('/upload/')),false);
+  const folders=[...fixture.files.values()];assert.equal(folders.length,4);
+  const root=folders.find(record=>record.parentId==='synthetic-my-drive-root');
+  assert.equal(folders.filter(record=>record.parentId===root.id).length,3);
+  assert.deepEqual(result.checks[1].actual,{
+    checkpoint:'metadata-invalid-token',cacheMode:'no-store',phase:'complete',
+    writes:[{role:'invalid-token',outcome:'stale',httpStatus:412}],
+    readbacks:[{role:'after-invalid-token',outcome:'success',comparison:'equal'}],
+  });
+  assert.deepEqual(result.checks[2].actual,{
+    checkpoint:'metadata-stale-write',cacheMode:'no-store',phase:'complete',
+    writes:[{role:'first',outcome:'fulfilled',httpStatus:200},{role:'stale',outcome:'stale',httpStatus:412}],
+    readbacks:[{role:'winner',outcome:'success',comparison:'equal'},{role:'final',outcome:'success',comparison:'equal'}],
+  });
+  assert.deepEqual(result.checks[3].actual,{
+    checkpoint:'metadata-concurrent',cacheMode:'no-store',phase:'complete',
+    writes:[{role:'sentinel',outcome:'fulfilled',httpStatus:200},{role:'candidate-a',outcome:'fulfilled',httpStatus:200},{role:'candidate-b',outcome:'stale',httpStatus:412}],
+    readbacks:[{role:'sentinel',outcome:'success',comparison:'equal'},{role:'winner',outcome:'success',comparison:'equal'}],
+  });
+  assert.match(result.limitations.join(' '),/Metadaten/);
+  assert.doesNotMatch(result.limitations.join(' '),/Antwortverlust/);
+});
+
+test('diagnostic 9 marks all target checks red when Drive ignores metadata If-Match',async()=>{
+  const fixture=v2CoherentDriveFixture({ignoreMetadataCondition:true});
+  const result=await runProbeScenarios({transport:makeMetadataTransport(fixture),probeScope:'metadata-coordination'});
+  assert.equal(result.checks[0].passed,true);
+  for(const id of ['metadata-invalid-token','metadata-stale-write','metadata-concurrent'])assert.equal(result.checks.find(check=>check.id===id).passed,false,id);
+  assert.equal(result.passed,false);
+});
+
+test('diagnostic 9 fails closed on target version-only drift and still runs later independent checks',async()=>{
+  const fixture=v2CoherentDriveFixture({mutateDuringRead:{field:'version',after:0,nameIncludes:'metadata-invalid-token'}});
+  const result=await runProbeScenarios({transport:makeMetadataTransport(fixture),probeScope:'metadata-coordination'});
+  assert.equal(result.checks[0].passed,true);
+  assert.equal(result.checks.find(check=>check.id==='metadata-invalid-token').passed,false);
+  assert.equal(result.checks.find(check=>check.id==='metadata-stale-write').passed,true);
+  assert.equal(result.checks.find(check=>check.id==='metadata-concurrent').passed,true);
+  assert.equal(result.checks.length,4);
+});
+
+test('diagnostic 9 keeps a measured 412 when its independent readback later fails',async()=>{
+  const fixture=v2CoherentDriveFixture();let afterRejectedWrite=false,failedRead=false;
+  const fetch=async(url,init)=>{
+    const response=await fixture.fetch(url,init),parsed=new URL(url),method=init?.method??'GET';
+    if(method==='PUT'&&response.status===412)afterRejectedWrite=true;
+    else if(afterRejectedWrite&&!failedRead&&method==='GET'&&parsed.pathname.includes('/drive/v2/files/')&&parsed.searchParams.get('alt')!=='media'){
+      failedRead=true;
+      return new Response(JSON.stringify({privateMarker:'private-read-secret'}),{status:503,headers:{'Content-Type':'application/json'}});
+    }
+    return response;
+  };
+  const transport=createProbeTransport({fetch,token:()=> 'secret',etagSource:'v2-coherent'});
+  const result=await runProbeScenarios({transport,probeScope:'metadata-coordination'}),check=result.checks[1];
+  assert.equal(check.passed,false);assert.equal(check.actual,'http');assert.equal(check.httpStatus,503);
+  assert.deepEqual(check.evidence.writes,[{role:'invalid-token',outcome:'stale',httpStatus:412}]);
+  assert.deepEqual(check.evidence.readbacks,[{role:'after-invalid-token',outcome:'http',httpStatus:503,comparison:'unavailable'}]);
+  assert.equal(JSON.stringify(result).includes('private-read-secret'),false);
+  assert.equal(result.checks.length,4);
+});
+
+test('diagnostic 9 rejects a 412 that changed metadata and never exports rejected response data',async()=>{
+  const fixture=v2CoherentDriveFixture();let mutated=false;
+  const fetch=async(url,init)=>{
+    const response=await fixture.fetch(url,init),method=init?.method??'GET';
+    if(!mutated&&method==='PUT'&&response.status===412){
+      mutated=true;
+      const record=fixture.files.get(new URL(url).pathname.split('/').at(-1));
+      record.properties=Object.fromEntries(JSON.parse(init.body).properties.map(item=>[item.key,item.value]));
+      return new Response(JSON.stringify({privateMarker:'private-rejected-secret'}),{status:412,headers:{'Content-Type':'application/json'}});
+    }
+    return response;
+  };
+  const result=await runProbeScenarios({transport:createProbeTransport({fetch,token:()=> 'secret',etagSource:'v2-coherent'}),probeScope:'metadata-coordination'});
+  const check=result.checks.find(item=>item.id==='metadata-invalid-token');
+  assert.equal(check.passed,false);
+  assert.deepEqual(check.evidence.readbacks,[{role:'after-invalid-token',outcome:'success',comparison:'different'}]);
+  assert.equal(JSON.stringify(result).includes('private-rejected-secret'),false);
+});
+
+test('diagnostic 9 rejects successful writes without a confirmed HTTP status',async()=>{
+  const fixture=v2CoherentDriveFixture(),transport=makeMetadataTransport(fixture);
+  const update=transport.updateMetadataIfUnchanged.bind(transport);
+  transport.updateMetadataIfUnchanged=async(...args)=>{const result=await update(...args);return {id:result.id};};
+  const result=await runProbeScenarios({transport,probeScope:'metadata-coordination'});
+  assert.equal(result.passed,false);
+  const stale=result.checks.find(check=>check.id==='metadata-stale-write'),concurrent=result.checks.find(check=>check.id==='metadata-concurrent');
+  assert.equal(stale.passed,false);assert.deepEqual(stale.evidence.writes,[{role:'first',outcome:'fulfilled'}]);
+  assert.equal(concurrent.passed,false);assert.deepEqual(concurrent.evidence.writes,[{role:'sentinel',outcome:'fulfilled'}]);
+});
+
+test('diagnostic 9 rejects an unsupported transport before creating a folder',async()=>{
+  let calls=0;const transport={createMetadataFolder:async()=>{calls++;}};
+  await assert.rejects(()=>runProbeScenarios({transport,probeScope:'metadata-coordination'}));
+  assert.equal(calls,0);
+});
+
+test('diagnostic 9 stops only when the root fixture cannot be established',async()=>{
+  let creates=0,reads=0,writes=0;
+  const transport={
+    async createMetadataFolder(){creates++;throw {code:'network',status:503,message:'private-root-secret'};},
+    async readMetadataSnapshot(){reads++;},
+    async updateMetadataIfUnchanged(){writes++;},
+  };
+  const result=await runProbeScenarios({transport,probeScope:'metadata-coordination'});
+  assert.deepEqual(result.checks.map(check=>check.id),['fixture']);
+  assert.equal(result.passed,false);assert.equal(result.checks[0].actual,'network');assert.equal(result.checks[0].httpStatus,503);
+  assert.deepEqual({creates,reads,writes},{creates:1,reads:0,writes:0});
+  assert.equal(JSON.stringify(result).includes('private-root-secret'),false);
 });

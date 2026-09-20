@@ -1,5 +1,7 @@
 # Übergabe: Bericht 7 ausgewertet, Lesekontrolle eingrenzen
 
+**Historischer Zwischenstand:** Der hier angeforderte 8er-Lauf ist inzwischen ausgeführt und ausgewertet. Nächste Schritte ausschließlich aus der [aktuellen Übergabe](2026-09-20-shop-v8-auswertung-und-metadatenprobe.md) übernehmen; keinen unveränderten 8er-Lauf nochmals anfordern.
+
 Stand: 20.09.2026. Branch `codex/vokabeltrainer-v1`, Ausgangspunkt `a802a0e512682891ff65e98a7085812986791f94`, Arbeitsbaum zu Beginn sauber. Nutzer hat `shop-probe-bericht7.json` zur Auswertung übergeben; Nutzerwahl C und die Entwicklungsfreigabe gelten fort.
 
 **Gesicherter Code- und Dokumentationsstand:** `0800733e8cbb50d6a64a3c8193018d8ad543deda` ist auf `origin/codex/vokabeltrainer-v1` veröffentlicht. Nach dem Push stimmten lokales HEAD und der über `git ls-remote` gelesene Branch exakt überein; der Arbeitsbaum war sauber. Diese anschließende Dokumentation des Nachweises verändert keinen geprüften Programmcode.

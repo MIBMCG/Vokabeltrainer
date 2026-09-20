@@ -21,8 +21,9 @@ el('disconnect').addEventListener('click',()=>{session?.invalidate();connected=f
 el('start').addEventListener('click',async()=>{
   if(busy||!connected||!el('consent').checked)return;
   const etagSource=el('source').value,probeScope=el('scope').value;
-  if(probeScope==='read-stability'&&etagSource!=='v2-coherent'){
-    report=null;el('checks').replaceChildren();el('status').textContent='Dateilesen gezielt untersuchen benötigt „Drive v2 kohärent (Koordination)“. Die Quelle wurde nicht automatisch geändert; es wurden keine Probe-Dateien angelegt.';buttons();return;
+  if(['read-stability','metadata-coordination'].includes(probeScope)&&etagSource!=='v2-coherent'){
+    const scopeName=probeScope==='metadata-coordination'?'Ordner-Koordination gezielt prüfen':'Dateilesen gezielt untersuchen';
+    report=null;el('checks').replaceChildren();el('status').textContent=`${scopeName} benötigt „Drive v2 kohärent (Koordination)“. Die Quelle wurde nicht automatisch geändert; es wurden keine Probe-Dateien angelegt.`;buttons();return;
   }
   busy=true;report=null;buttons();el('checks').replaceChildren();el('status').textContent='Synthetische Dateien werden angelegt und geprüft …';
   const startedAt=new Date().toISOString();
@@ -33,13 +34,17 @@ el('start').addEventListener('click',async()=>{
       if(check.evidence)item.append(document.createTextNode(` Prüfstelle und Antwortklassen: ${JSON.stringify(check.evidence)}`));
       el('checks').append(item);
     }});
-    const apiPaths=etagSource==='v2-coherent'
+    const apiPaths=probeScope==='metadata-coordination'
+      ?{idReservation:'GET /drive/v3/files/generateIds',create:'POST /drive/v3/files',metadataRead:'2 × GET /drive/v2/files/{ownedFolderId}?fields=...version,etag,...; cache=no-store',metadataUpdate:'PUT /drive/v2/files/{ownedFolderId}',condition:'If-Match'}
+      :etagSource==='v2-coherent'
       ?{idReservation:'GET /drive/v3/files/generateIds',create:'POST /drive/v3/files oder /upload/drive/v3/files',metadataRead:'GET /drive/v2/files/{ownedId}?fields=...version,etag,md5Checksum,headRevisionId,modifiedDate,lastViewedByMeDate,fileSize',read:'GET /drive/v2/files/{probeFileId}?alt=media',mediaUpdate:'PUT /upload/drive/v2/files/{probeFileId}?uploadType=media',metadataUpdate:'PUT /drive/v2/files/{probeFolderId}',condition:'If-Match',
         ...(probeScope==='read-stability'?{readObservation:'M1, M2 und M3: GET /drive/v2/files/{newProbeFileId}?fields=...; Media: GET /drive/v2/files/{newProbeFileId}?alt=media',observationCache:'no-store'}:{})}
       :{idReservation:'GET /drive/v3/files/generateIds',create:'POST /drive/v3/files oder /upload/drive/v3/files',read:'GET /drive/v3/files/{probeFileId}?alt=media',metadataRead:'GET /drive/v3/files/{ownedId}?fields=id,name,mimeType,parents,appProperties,trashed,version',
         ...(etagSource==='v2-json'?{tokenRead:'GET /drive/v2/files/{ownedId}?fields=id,mimeType,etag'}:{}),mediaUpdate:'PATCH /upload/drive/v3/files/{probeFileId}?uploadType=media',metadataUpdate:'PATCH /drive/v3/files/{probeFolderId}',condition:'If-Match'};
-    report={kind:'synthetic-shop-probe',diagnosticVersion:8,startedAt,completedAt:new Date().toISOString(),origin:location.origin,userAgent:navigator.userAgent,etagSource,probeScope,apiPaths,...result};
-    el('status').textContent=probeScope==='read-stability'
+    report={kind:'synthetic-shop-probe',diagnosticVersion:9,startedAt,completedAt:new Date().toISOString(),origin:location.origin,userAgent:navigator.userAgent,etagSource,probeScope,apiPaths,...result};
+    el('status').textContent=probeScope==='metadata-coordination'
+      ?result.passed?'Die reine Metadatenprobe ist vollständig bestanden. Sie gibt keine Kauf- oder Zwei-Geräte-Garantie; der Produktshop bleibt gesperrt.':'Die reine Metadatenprobe ist fehlgeschlagen oder unvollständig. Sie gibt keine Kauf- oder Zwei-Geräte-Garantie; der Produktshop bleibt gesperrt.'
+      :probeScope==='read-stability'
       ?result.passed?'Leseprüfung vollständig und stabil. Es wurde keine Schreibbedingung geprüft; der Produktshop bleibt gesperrt.':'Leseprüfung instabil oder unvollständig. Es wurde keine Schreibbedingung geprüft; der Produktshop bleibt gesperrt.'
       :probeScope==='invalid-token'
       ?result.passed?'Gezielte Prüfung bestanden. Es wurde keine vollständige Kaufkoordination geprüft; der Produktshop bleibt gesperrt.':'Gezielte Prüfung fehlgeschlagen. Es wurde keine vollständige Kaufkoordination geprüft; der Produktshop bleibt gesperrt.'
@@ -49,6 +54,6 @@ el('start').addEventListener('click',async()=>{
 });
 el('download').addEventListener('click',()=>{
   if(!report)return;const url=URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json'}));
-  const link=document.createElement('a');link.href=url;link.download='shop-probe-bericht8.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  const link=document.createElement('a');link.href=url;link.download='shop-probe-bericht9.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 });
 buttons();

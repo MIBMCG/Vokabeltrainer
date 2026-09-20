@@ -24,15 +24,18 @@ const cases=[
   {basePath:'',source:'v2-coherent',scope:'invalid-token',ignoreMediaCondition:true},
   {basePath:'',source:'v2-coherent',scope:'read-stability'},
   {basePath:'',source:'v2-coherent',scope:'read-stability',readInstability:true},
+  {basePath:'',source:'v2-coherent',scope:'metadata-coordination'},
+  {basePath:'',source:'v2-coherent',scope:'metadata-coordination',ignoreMetadataCondition:true},
+  {basePath:'',source:'v2-coherent',scope:'metadata-coordination',metadataInstability:true},
 ];
-for(const {basePath,noEtag=false,source='media',scope='full',noJsonEtag=false,ignore=false,ignoreMediaCondition=false,ignoreMetadataCondition=false,instability=false,invalidTokenStatus=null,readInstability=false} of cases)test(`isolated shop probe UI with synthetic Google boundary ${basePath||'root'} ${source} ${scope}${noEtag?' missing headers':''}${noJsonEtag?' missing JSON ETag':''}${ignore||ignoreMediaCondition||ignoreMetadataCondition?' ignored conditions':''}${instability?' unstable snapshot':''}${invalidTokenStatus?` invalid token ${invalidTokenStatus}`:''}${readInstability?' unstable observation':''}`,async()=>{
+for(const {basePath,noEtag=false,source='media',scope='full',noJsonEtag=false,ignore=false,ignoreMediaCondition=false,ignoreMetadataCondition=false,instability=false,invalidTokenStatus=null,readInstability=false,metadataInstability=false} of cases)test(`isolated shop probe UI with synthetic Google boundary ${basePath||'root'} ${source} ${scope}${noEtag?' missing headers':''}${noJsonEtag?' missing JSON ETag':''}${ignore||ignoreMediaCondition||ignoreMetadataCondition?' ignored conditions':''}${instability?' unstable snapshot':''}${invalidTokenStatus?` invalid token ${invalidTokenStatus}`:''}${readInstability?' unstable observation':''}${metadataInstability?' unstable metadata coordination':''}`,async()=>{
   const server=createProbeServer({basePath});await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
   let browser;
   try{
     browser=await chromium.launch({headless:true,...(process.env.BROWSER_EXECUTABLE?{executablePath:process.env.BROWSER_EXECUTABLE}:{})});
     const context=await browser.newContext({viewport:{width:320,height:700},acceptDownloads:true});
     const fixture=source==='v2-coherent'
-      ?v2CoherentDriveFixture({ignoreMediaCondition,ignoreMetadataCondition,invalidTokenStatus,...(instability||readInstability?{mutateDuringRead:{field:'version',after:0,filesOnly:true}}:{})})
+      ?v2CoherentDriveFixture({ignoreMediaCondition,ignoreMetadataCondition,invalidTokenStatus,...(instability||readInstability?{mutateDuringRead:{field:'version',after:0,filesOnly:true}}:{}),...(metadataInstability?{mutateDuringRead:{field:'version',after:0,nameIncludes:'metadata-invalid-token'}}:{})})
       :driveFixture({noEtag,noJsonEtag,ignore,metadataIgnore:ignore});
     let loginCalls=0;
     await context.route('https://accounts.google.com/gsi/client',route=>route.fulfill({contentType:'text/javascript',body:`globalThis.google={accounts:{oauth2:{initTokenClient(options){return {requestAccessToken(){options.callback({access_token:'synthetic-only-secret',expires_in:3600,scope:'https://www.googleapis.com/auth/drive.file'})}}}}}};`}));
@@ -45,22 +48,23 @@ for(const {basePath,noEtag=false,source='media',scope='full',noJsonEtag=false,ig
     const page=await context.newPage();const errors=[];page.on('pageerror',error=>errors.push(error.message));
     await page.goto(`http://127.0.0.1:${server.address().port}${basePath}/shop-probe/`);
     assert.equal(await page.locator('#source option').count(),4);await page.locator('#source').selectOption(source);
-    assert.equal(await page.locator('#scope option').count(),3);assert.equal(await page.locator('#scope').inputValue(),'full');await page.locator('#scope').selectOption(scope);
-    assert.match(await page.locator('#scope-hint').innerText(),/Drive v2 kohärent.*keine Schreibbedingung/);
+    assert.equal(await page.locator('#scope option').count(),4);assert.equal(await page.locator('#scope').inputValue(),'full');
+    assert.equal(await page.locator('#scope option[value="metadata-coordination"]').innerText(),'Ordner-Koordination gezielt prüfen');await page.locator('#scope').selectOption(scope);
+    assert.match(await page.locator('#scope-hint').innerText(),/Drive v2 kohärent.*Metadaten/);
     await page.locator('#connect').waitFor();assert.equal(loginCalls,0);assert.equal(await page.locator('#start').isDisabled(),true);
     await page.locator('#connect').click();await page.waitForFunction(()=>document.getElementById('status').textContent.startsWith('Verbunden.'));
     assert.equal(loginCalls,0);assert.equal(await page.locator('#start').isDisabled(),true);
     await page.locator('#consent').check();await page.locator('#start').click();
     assert.equal(await page.locator('#source').isDisabled(),true);assert.equal(await page.locator('#scope').isDisabled(),true);
-    const expectedPass=!ignore&&!ignoreMediaCondition&&!ignoreMetadataCondition&&!instability&&!readInstability&&!invalidTokenStatus&&!noJsonEtag&&(!noEtag||source==='v2-json');
-    await page.waitForFunction(({scope,expectedPass})=>{const text=document.getElementById('status').textContent;return scope==='invalid-token'?text.includes('keine vollständige Kaufkoordination geprüft'):scope==='read-stability'?text.includes('keine Schreibbedingung geprüft'):text.startsWith(expectedPass?'Alle isolierten':'Kaufkoordination nicht');},{scope,expectedPass},{timeout:30000});
-    assert.equal(await page.locator('#checks li').count(),scope==='full'?11:2);assert.equal(await page.locator('#start').isDisabled(),true);
+    const expectedPass=!ignore&&!ignoreMediaCondition&&!ignoreMetadataCondition&&!instability&&!readInstability&&!metadataInstability&&!invalidTokenStatus&&!noJsonEtag&&(!noEtag||source==='v2-json');
+    await page.waitForFunction(({scope,expectedPass})=>{const text=document.getElementById('status').textContent;return scope==='metadata-coordination'?text.includes('reine Metadatenprobe'):scope==='invalid-token'?text.includes('keine vollständige Kaufkoordination geprüft'):scope==='read-stability'?text.includes('keine Schreibbedingung geprüft'):text.startsWith(expectedPass?'Alle isolierten':'Kaufkoordination nicht');},{scope,expectedPass},{timeout:30000});
+    assert.equal(await page.locator('#checks li').count(),scope==='full'?11:scope==='metadata-coordination'?4:2);assert.equal(await page.locator('#start').isDisabled(),true);
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
     assert.equal(await page.evaluate(()=>localStorage.length),0);assert.deepEqual(await page.evaluate(async()=>await indexedDB.databases()),[]);
     const downloadPromise=page.waitForEvent('download');await page.locator('#download').click();const downloaded=await downloadPromise;
     const report=JSON.parse(await readFile(await downloaded.path(),'utf8'));assert.equal(report.passed,expectedPass);assert.equal(report.productReady,false);assert.ok(!JSON.stringify(report).includes('synthetic-only-secret'));assert.ok(!JSON.stringify(report).includes('test-1'));
-    assert.equal(downloaded.suggestedFilename(),'shop-probe-bericht8.json');
-    assert.equal(report.diagnosticVersion,8);assert.equal(report.etagSource,source);assert.equal(report.probeScope,scope);
+    assert.equal(downloaded.suggestedFilename(),'shop-probe-bericht9.json');
+    assert.equal(report.diagnosticVersion,9);assert.equal(report.etagSource,source);assert.equal(report.probeScope,scope);
     if(source==='v2-json'){
       assert.equal(report.apiPaths.tokenRead,'GET /drive/v2/files/{ownedId}?fields=id,mimeType,etag');
       assert.equal(report.apiPaths.read,'GET /drive/v3/files/{probeFileId}?alt=media');
@@ -70,11 +74,13 @@ for(const {basePath,noEtag=false,source='media',scope='full',noJsonEtag=false,ig
     }
     if(source==='v2-coherent'){
       assert.equal(report.apiPaths.idReservation,'GET /drive/v3/files/generateIds');
-      assert.equal(report.apiPaths.create,'POST /drive/v3/files oder /upload/drive/v3/files');
-      assert.equal(report.apiPaths.metadataRead,'GET /drive/v2/files/{ownedId}?fields=...version,etag,md5Checksum,headRevisionId,modifiedDate,lastViewedByMeDate,fileSize');
-      assert.equal(report.apiPaths.read,'GET /drive/v2/files/{probeFileId}?alt=media');
-      assert.equal(report.apiPaths.mediaUpdate,'PUT /upload/drive/v2/files/{probeFileId}?uploadType=media');
-      assert.equal(report.apiPaths.metadataUpdate,'PUT /drive/v2/files/{probeFolderId}');
+      if(scope!=='metadata-coordination'){
+        assert.equal(report.apiPaths.create,'POST /drive/v3/files oder /upload/drive/v3/files');
+        assert.equal(report.apiPaths.metadataRead,'GET /drive/v2/files/{ownedId}?fields=...version,etag,md5Checksum,headRevisionId,modifiedDate,lastViewedByMeDate,fileSize');
+        assert.equal(report.apiPaths.read,'GET /drive/v2/files/{probeFileId}?alt=media');
+        assert.equal(report.apiPaths.mediaUpdate,'PUT /upload/drive/v2/files/{probeFileId}?uploadType=media');
+        assert.equal(report.apiPaths.metadataUpdate,'PUT /drive/v2/files/{probeFolderId}');
+      }
       assert.equal(report.apiPaths.condition,'If-Match');
       assert.equal(Object.hasOwn(report.apiPaths,'readObservation'),scope==='read-stability');
       assert.equal(Object.hasOwn(report.apiPaths,'observationCache'),scope==='read-stability');
@@ -84,6 +90,18 @@ for(const {basePath,noEtag=false,source='media',scope='full',noJsonEtag=false,ig
         assert.equal(Object.hasOwn(report.checks.find(check=>check.id==='initialization'),'evidence'),false);
         assert.equal(Object.hasOwn(report.checks.find(check=>check.id==='two-purchases'),'evidence'),false);
       }
+    }
+    if(scope==='metadata-coordination'){
+      assert.deepEqual(report.apiPaths,{
+        idReservation:'GET /drive/v3/files/generateIds',
+        create:'POST /drive/v3/files',
+        metadataRead:'2 × GET /drive/v2/files/{ownedFolderId}?fields=...version,etag,...; cache=no-store',
+        metadataUpdate:'PUT /drive/v2/files/{ownedFolderId}',condition:'If-Match',
+      });
+      assert.equal(fixture.calls.some(call=>call.url.includes('alt=media')||call.url.includes('/upload/')),false);
+      assert.match(await page.locator('#status').innerText(),/reine Metadatenprobe/);
+      assert.match(await page.locator('#status').innerText(),/keine Kauf- oder Zwei-Geräte-Garantie/);
+      assert.doesNotMatch(report.limitations.join(' '),/Antwortverlust/);
     }
     if(scope==='invalid-token'){
       const observation=(report.checks.find(check=>check.id==='invalid-token').actual?.checkpoint==='invalid-token-observation'
@@ -139,7 +157,7 @@ for(const {basePath,noEtag=false,source='media',scope='full',noJsonEtag=false,ig
   }finally{await browser?.close();await new Promise(resolve=>server.close(resolve));}
 });
 
-test('read-stability UI rejects a non-v2 source before any Drive request',async()=>{
+for(const scope of ['read-stability','metadata-coordination'])test(`${scope} UI rejects a non-v2 source before any Drive request`,async()=>{
   const server=createProbeServer({basePath:''});await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));let browser;
   try{
     browser=await chromium.launch({headless:true,...(process.env.BROWSER_EXECUTABLE?{executablePath:process.env.BROWSER_EXECUTABLE}:{})});
@@ -147,7 +165,7 @@ test('read-stability UI rejects a non-v2 source before any Drive request',async(
     await context.route('https://accounts.google.com/gsi/client',route=>route.fulfill({contentType:'text/javascript',body:`globalThis.google={accounts:{oauth2:{initTokenClient(options){return {requestAccessToken(){options.callback({access_token:'synthetic-only-secret',expires_in:3600,scope:'https://www.googleapis.com/auth/drive.file'})}}}}}};`}));
     await context.route('https://www.googleapis.com/**',route=>{driveCalls++;return route.fulfill({status:500,body:'{}'});});
     const page=await context.newPage();await page.goto(`http://127.0.0.1:${server.address().port}/shop-probe/`);
-    await page.locator('#source').selectOption('media');await page.locator('#scope').selectOption('read-stability');await page.locator('#connect').click();
+    await page.locator('#source').selectOption('media');await page.locator('#scope').selectOption(scope);await page.locator('#connect').click();
     await page.waitForFunction(()=>document.getElementById('status').textContent.startsWith('Verbunden.'));await page.locator('#consent').check();await page.locator('#start').click();
     await page.waitForFunction(()=>document.getElementById('status').textContent.includes('Drive v2 kohärent'));
     assert.equal(driveCalls,0);assert.equal(await page.locator('#checks li').count(),0);assert.equal(await page.locator('#download').isDisabled(),true);

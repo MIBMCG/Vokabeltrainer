@@ -294,6 +294,90 @@ test('diagnostic 8 rejects a mismatched v3 creation response before observation 
   assert.equal(fixture.calls.some(call=>call.method==='PUT'),false);
 });
 
+test('diagnostic 9 metadata methods create, read and conditionally update folders without media requests',async()=>{
+  const fixture=v2CoherentDriveFixture();let putResponse;
+  const transport=createProbeTransport({token:()=> 'secret',etagSource:'v2-coherent',fetch:async(url,init)=>{
+    const response=await fixture.fetch(url,init);
+    if((init?.method??'GET')==='PUT')putResponse=response;
+    return response;
+  }});
+  const folder=await transport.createMetadataFolder({name:'coordination'});
+  const before=await transport.readMetadataSnapshot(folder.id);
+  const result=await transport.updateMetadataIfUnchanged(before,{coordinator:'first',sentinel:'preserve-me'});
+
+  assert.deepEqual(result,{id:folder.id,status:200});
+  assert.equal(putResponse.bodyUsed,true);
+  assert.equal(fixture.calls.some(call=>call.url.includes('alt=media')||call.url.includes('/upload/')),false);
+  const reads=fixture.calls.filter(call=>call.method==='GET'&&call.url.includes(`/drive/v2/files/${folder.id}`));
+  assert.equal(reads.length,4);
+  assert.equal(reads.every(call=>call.cache==='no-store'),true);
+  const write=fixture.calls.find(call=>call.method==='PUT');
+  assert.equal(write.headers['If-Match'],before.etag);
+  assert.deepEqual(Object.fromEntries(JSON.parse(write.body).properties.map(item=>[item.key,item.value])),{
+    app:fixture.APP,runId:before.properties.runId,coordinator:'first',sentinel:'preserve-me',
+  });
+});
+
+for(const [label,override,expectedCode] of [
+  ['wrong create ID',{kind:'create',body:{id:'foreign-id'}},'binding'],
+  ['invalid create body',{kind:'create',body:'{'},'invalid'],
+  ['null create body',{kind:'create',body:null},'invalid'],
+  ['wrong PUT ID',{kind:'put',body:{id:'foreign-id'}},'binding'],
+  ['invalid PUT body',{kind:'put',body:'{'},'invalid'],
+  ['null PUT body',{kind:'put',body:null},'invalid'],
+])test(`diagnostic 9 consumes successful ${label} and preserves its HTTP status`,async()=>{
+  const fixture=v2CoherentDriveFixture();let targetResponse,active=override.kind==='create';
+  const transport=createProbeTransport({token:()=> 'secret',etagSource:'v2-coherent',fetch:async(url,init)=>{
+    const method=init?.method??'GET';
+    if(active&&((override.kind==='create'&&method==='POST')||(override.kind==='put'&&method==='PUT'))){
+      if(override.kind==='put')await fixture.fetch(url,init);
+      targetResponse=new Response(typeof override.body==='string'?override.body:JSON.stringify(override.body),{status:200,headers:{'Content-Type':'application/json'}});
+      return targetResponse;
+    }
+    return fixture.fetch(url,init);
+  }});
+  if(override.kind==='create'){
+    await assert.rejects(()=>transport.createMetadataFolder(),error=>error.code===expectedCode&&error.status===200);
+  }else{
+    active=false;
+    const folder=await transport.createMetadataFolder(),before=await transport.readMetadataSnapshot(folder.id);
+    active=true;
+    await assert.rejects(()=>transport.updateMetadataIfUnchanged(before,{coordinator:'first'}),error=>error.code===expectedCode&&error.status===200);
+  }
+  assert.equal(targetResponse.bodyUsed,true);
+});
+
+test('diagnostic 9 consumes a rejected PUT body and keeps the 412 classification',async()=>{
+  const fixture=v2CoherentDriveFixture();let rejectedResponse;
+  const transport=createProbeTransport({token:()=> 'secret',etagSource:'v2-coherent',fetch:async(url,init)=>{
+    const response=await fixture.fetch(url,init);
+    if((init?.method??'GET')==='PUT')rejectedResponse=response;
+    return response;
+  }});
+  const folder=await transport.createMetadataFolder(),before=await transport.readMetadataSnapshot(folder.id);
+  await assert.rejects(()=>transport.updateMetadataIfUnchanged({...before,etag:'"wrong"'},{coordinator:'rejected'}),{code:'stale',status:412});
+  assert.equal(rejectedResponse.bodyUsed,true);
+});
+
+test('diagnostic 9 consumes a rejected create body and keeps its HTTP status',async()=>{
+  const fixture=v2CoherentDriveFixture();let rejectedResponse;
+  const transport=createProbeTransport({token:()=> 'secret',etagSource:'v2-coherent',fetch:async(url,init)=>{
+    if((init?.method??'GET')==='POST'){
+      rejectedResponse=new Response(JSON.stringify({privateMarker:'private-create-error'}),{status:503,headers:{'Content-Type':'application/json'}});
+      return rejectedResponse;
+    }
+    return fixture.fetch(url,init);
+  }});
+  await assert.rejects(()=>transport.createMetadataFolder(),error=>error.code==='http'&&error.status===503&&!JSON.stringify(error).includes('private-create-error'));
+  assert.equal(rejectedResponse.bodyUsed,true);
+});
+
+test('diagnostic 9 rejects version-only drift in a metadata snapshot before PUT',async()=>{
+  const fixture=v2CoherentDriveFixture({mutateDuringRead:{field:'version',after:0}}),transport=makeTransport(fixture);
+  await assert.rejects(()=>transport.createMetadataFolder(),error=>error.code==='stale'&&error.diagnostic?.versionChanged===true&&error.diagnostic?.jsonEtagChanged===false);
+  assert.equal(fixture.calls.some(call=>call.method==='PUT'),false);
+});
+
 function observationFailureTransport({phase,kind}){
   const fixture=v2CoherentDriveFixture();let metadataReads=0;
   const fetch=async(url,init)=>{

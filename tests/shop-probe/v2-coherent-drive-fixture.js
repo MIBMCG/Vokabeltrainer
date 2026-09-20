@@ -67,7 +67,7 @@ export function v2CoherentDriveFixture({
       };
       if(typeof metadataOverride==='function')metadata=metadataOverride(copy(metadata),{id,count,record})??metadata;
       else if(metadataOverride)metadata={...metadata,...copy(metadataOverride)};
-      if(mutation&&(!mutation.filesOnly||record.mimeType==='application/json')&&count===Number(mutation.after??0)+1){
+      if(mutation&&(!mutation.filesOnly||record.mimeType==='application/json')&&(!mutation.nameIncludes||record.title.includes(mutation.nameIncludes))&&count===Number(mutation.after??0)+1){
         if(mutation.field==='version')record.version++;
         if(mutation.field==='etag')record.etagVersion++;
       }

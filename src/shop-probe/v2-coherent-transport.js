@@ -25,7 +25,7 @@ export function createV2CoherentProbeTransport({fetch:fetchImpl=globalThis.fetch
   const fail=(code,diagnostic)=>{throw new V2ProbeError(code,null,diagnostic);};
   const owned=id=>files.get(id)??fail('binding');
 
-  async function request(url,init={},allowed=[]){
+  async function request(url,init={},allowed=[],consumeRejectedBody=false){
     let credential;
     try{credential=token();}catch{throw new V2ProbeError('auth');}
     if(typeof credential!=='string'||!credential)throw new V2ProbeError('auth');
@@ -34,6 +34,7 @@ export function createV2CoherentProbeTransport({fetch:fetchImpl=globalThis.fetch
     catch{throw new V2ProbeError('network');}
     if(!response.ok&&!allowed.includes(response.status)){
       const code=response.status===412?'stale':response.status===409?'collision':response.status===401?'auth':response.status===403?'permission':response.status===404?'missing':'http';
+      if(consumeRejectedBody)try{await response.text();}catch{}
       throw new V2ProbeError(code,response.status);
     }
     return response;
@@ -41,6 +42,13 @@ export function createV2CoherentProbeTransport({fetch:fetchImpl=globalThis.fetch
 
   async function json(response){
     try{return await response.json();}catch{throw new V2ProbeError('invalid');}
+  }
+
+  async function boundResponseJson(response){
+    let value;
+    try{value=await response.json();}catch{throw new V2ProbeError('invalid',response.status);}
+    if(!value||typeof value!=='object'||Array.isArray(value))throw new V2ProbeError('invalid',response.status);
+    return value;
   }
 
   function normalizeParents(value){
@@ -180,6 +188,53 @@ export function createV2CoherentProbeTransport({fetch:fetchImpl=globalThis.fetch
     return structuredClone(observation);
   }
 
+  async function createMetadataFolder({parentId=null,name='SYNTHETISCH'}={}){
+    if(parentId&&!owned(parentId).folder)fail('binding');
+    const generated=await json(await request(`${API_V3}/generateIds?count=1&space=drive&type=files`));
+    const id=generated.ids?.[0];
+    if(!/^[A-Za-z0-9_-]+$/.test(id??''))fail('invalid');
+    const record={folder:true,parentId,name:`SHOP-PROBE-${name}-${runId.slice(0,8)}`,mimeType:FOLDER_MIME};
+    files.set(id,record);
+    const metadata={id,name:record.name,mimeType:FOLDER_MIME,appProperties:{app:APP,runId},...(parentId?{parents:[parentId]}:{})};
+    const response=await request(`${API_V3}?fields=id`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(metadata)},[],true);
+    const created=await boundResponseJson(response);
+    if(created.id!==id)throw new V2ProbeError('binding',response.status);
+    await readMetadataSnapshot(id);
+    return {id};
+  }
+
+  async function readMetadataSnapshot(id){
+    const expected=owned(id);
+    if(!expected.folder)fail('binding');
+    const before=await readV2Metadata(id,{cache:'no-store'});
+    const after=await readV2Metadata(id,{cache:'no-store'});
+    const versionChanged=before.version!==after.version,jsonEtagChanged=before.etag!==after.etag;
+    if(versionChanged||jsonEtagChanged)fail('stale',{
+      phase:'read-stability',reason:'changed-during-read',etagSource:'v2-coherent',readContext:'metadata-coordination',readKind:'metadata-metadata',
+      versionChanged,jsonEtagChanged,jsonEtagState:etagState(after.etag),
+      contentChecksumState:observationState(before.md5Checksum,after.md5Checksum),
+      headRevisionState:observationState(before.headRevisionId,after.headRevisionId),
+      modifiedDateState:observationState(before.modifiedDate,after.modifiedDate),
+      viewedDateState:observationState(before.lastViewedByMeDate,after.lastViewedByMeDate),
+      fileSizeState:observationState(before.fileSize,after.fileSize),
+    });
+    return {id,version:after.version,etag:after.etag,properties:after.properties,folder:true,mimeType:expected.mimeType};
+  }
+
+  async function updateMetadataIfUnchanged(before,properties){
+    if(!before||typeof before!=='object'||!properties||typeof properties!=='object'||Array.isArray(properties))fail('binding');
+    const record=owned(before.id);
+    if(!record.folder||before.folder!==true||before.mimeType!==record.mimeType||before.properties?.app!==APP||before.properties?.runId!==runId)fail('binding');
+    if(!strongEtag(before.etag))fail('unsupported',{phase:'write-token',reason:'missing-strong-etag',etagSource:'v2-coherent',jsonEtagState:etagState(before.etag)});
+    const body={properties:privatePropertiesBody({...before.properties,...properties,app:APP,runId})};
+    const response=await request(`${API_V2}/${before.id}?fields=id,etag,version,properties`,{
+      method:'PUT',headers:{'Content-Type':'application/json; charset=UTF-8','If-Match':before.etag},body:JSON.stringify(body),
+    },[],true);
+    const updated=await boundResponseJson(response);
+    if(updated.id!==before.id)throw new V2ProbeError('binding',response.status);
+    return {id:before.id,status:response.status};
+  }
+
   async function retryCreate(id,value){
     owned(id);
     await post(id,value);
@@ -199,5 +254,5 @@ export function createV2CoherentProbeTransport({fetch:fetchImpl=globalThis.fetch
     return {id:before.id,status:response.status};
   }
 
-  return {create,read,retryCreate,updateIfUnchanged,observeReadStability};
+  return {create,read,retryCreate,updateIfUnchanged,observeReadStability,createMetadataFolder,readMetadataSnapshot,updateMetadataIfUnchanged};
 }

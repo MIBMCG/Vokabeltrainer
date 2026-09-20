@@ -11,6 +11,8 @@ const sameJsonValue=(a,b)=>{
 const assert=(condition,evidence)=>{if(!condition)throw Object.assign(new Error('unexpected'),{code:'assertion',evidence});};
 const errorClasses=['unsupported','stale','collision','auth','network','binding','permission','missing','http','assertion'];
 const classify=error=>errorClasses.includes(error?.code)?error.code:'unexpected';
+const metadataResultClasses=[...errorClasses,'invalid','fulfilled','success'];
+const metadataClassify=error=>metadataResultClasses.includes(error?.code)?error.code:'unexpected';
 async function rejects(operation,code,checkpoint){try{await operation();}catch(error){assert(error?.code===code,{checkpoint,outcome:classify(error)});return;}assert(false,{checkpoint,outcome:'fulfilled'});}
 
 function concurrentEvidence(results){
@@ -22,9 +24,39 @@ function concurrentEvidence(results){
 
 // The exported evidence has no raw result objects, errors, identifiers or ETags.
 function safeEvidence(value){
-  const checkpoints=['concurrent-writes','initialization-readback','purchase-readback','response-loss-receipt','response-loss-idempotency','old-token-retry','response-loss-balance','invalid-token-observation','read-stability-observation'];
+  const checkpoints=['concurrent-writes','initialization-readback','purchase-readback','response-loss-receipt','response-loss-idempotency','old-token-retry','response-loss-balance','invalid-token-observation','read-stability-observation','metadata-invalid-token','metadata-stale-write','metadata-concurrent'];
   if(!value||!checkpoints.includes(value.checkpoint))return null;
   const result={checkpoint:value.checkpoint};
+  if(value.checkpoint.startsWith('metadata-')){
+    const roles={
+      'metadata-invalid-token':{writes:['invalid-token'],readbacks:['after-invalid-token']},
+      'metadata-stale-write':{writes:['first','stale'],readbacks:['winner','final']},
+      'metadata-concurrent':{writes:['sentinel','candidate-a','candidate-b'],readbacks:['sentinel','winner']},
+    }[value.checkpoint];
+    const phases=['folder-create','snapshot','write','readback','first-write','winner-readback','stale-write','final-readback','sentinel-write','sentinel-readback','concurrent-writes','complete'];
+    if(value.cacheMode==='no-store')result.cacheMode=value.cacheMode;
+    if(phases.includes(value.phase))result.phase=value.phase;
+    if(Array.isArray(value.writes)&&value.writes.length<=3){
+      const seen=new Set();result.writes=[];
+      for(const item of value.writes){
+        if(!item||!roles.writes.includes(item.role)||seen.has(item.role))continue;
+        seen.add(item.role);const observation={role:item.role,outcome:metadataResultClasses.includes(item.outcome)?item.outcome:'unexpected'};
+        if(Number.isInteger(item.httpStatus)&&item.httpStatus>=100&&item.httpStatus<=599)observation.httpStatus=item.httpStatus;
+        result.writes.push(observation);
+      }
+    }
+    if(Array.isArray(value.readbacks)&&value.readbacks.length<=2){
+      const seen=new Set();result.readbacks=[];
+      for(const item of value.readbacks){
+        if(!item||!roles.readbacks.includes(item.role)||seen.has(item.role))continue;
+        seen.add(item.role);const observation={role:item.role,outcome:metadataResultClasses.includes(item.outcome)?item.outcome:'unexpected'};
+        if(Number.isInteger(item.httpStatus)&&item.httpStatus>=100&&item.httpStatus<=599)observation.httpStatus=item.httpStatus;
+        if(['equal','different','unavailable'].includes(item.comparison))observation.comparison=item.comparison;
+        result.readbacks.push(observation);
+      }
+    }
+    return result;
+  }
   if(value.checkpoint==='read-stability-observation'){
     if(value.cacheMode==='no-store')result.cacheMode=value.cacheMode;
     if(typeof value.complete==='boolean')result.complete=value.complete;
@@ -61,7 +93,7 @@ function safeEvidence(value){
 // Export classifications only, never raw headers, file IDs, token values or errors.
 function safeDiagnostic(value){
   if(!value||typeof value!=='object')return null;
-  const allowed={phase:['metadata','read-stability','read-token','write-token'],reason:['missing-file-version','changed-during-read','missing-strong-etag'],etagSource:['media','metadata','v2-json','v2-coherent'],metadataEtagState:['absent','strong','weak','malformed'],mediaEtagState:['absent','strong','weak','malformed','not-requested'],jsonEtagState:['absent','strong','weak','malformed'],readContext:['create-verification','snapshot-read','retry-create-verification'],readKind:['metadata-metadata','metadata-media-metadata'],contentChecksumState:['same','changed','unavailable'],headRevisionState:['same','changed','unavailable'],modifiedDateState:['same','changed','unavailable'],viewedDateState:['same','changed','unavailable'],fileSizeState:['same','changed','unavailable']};
+  const allowed={phase:['metadata','read-stability','read-token','write-token'],reason:['missing-file-version','changed-during-read','missing-strong-etag'],etagSource:['media','metadata','v2-json','v2-coherent'],metadataEtagState:['absent','strong','weak','malformed'],mediaEtagState:['absent','strong','weak','malformed','not-requested'],jsonEtagState:['absent','strong','weak','malformed'],readContext:['create-verification','snapshot-read','retry-create-verification','metadata-coordination'],readKind:['metadata-metadata','metadata-media-metadata'],contentChecksumState:['same','changed','unavailable'],headRevisionState:['same','changed','unavailable'],modifiedDateState:['same','changed','unavailable'],viewedDateState:['same','changed','unavailable'],fileSizeState:['same','changed','unavailable']};
   const result={};
   for(const [key,values] of Object.entries(allowed))if(Object.hasOwn(value,key)&&values.includes(value[key]))result[key]=value[key];
   for(const key of ['versionChanged','metadataEtagChanged','jsonEtagChanged'])if(Object.hasOwn(value,key)&&typeof value[key]==='boolean')result[key]=value[key];
@@ -79,8 +111,9 @@ export function purchase(state,{id,article,price,epoch=state.epoch,conflicted=fa
   next.operations.push({kind:'purchase',id,article,price,epoch});return next;
 }
 export async function runProbeScenarios({transport,emit=()=>{},probeScope='full'}) {
-  if(!['full','invalid-token','read-stability'].includes(probeScope))throw new TypeError('Unknown probe scope');
+  if(!['full','invalid-token','read-stability','metadata-coordination'].includes(probeScope))throw new TypeError('Unknown probe scope');
   if(probeScope==='read-stability'&&typeof transport?.observeReadStability!=='function')throw new TypeError('Unsupported probe scope');
+  if(probeScope==='metadata-coordination'&&['createMetadataFolder','readMetadataSnapshot','updateMetadataIfUnchanged'].some(name=>typeof transport?.[name]!=='function'))throw new TypeError('Unsupported probe scope');
   const checks=[];
   async function read(id,scenarioStage='post-write-read'){
     try{return await transport.read(id);}
@@ -95,6 +128,95 @@ export async function runProbeScenarios({transport,emit=()=>{},probeScope='full'
     checks.push(result);emit(clone(result));
   }
   let folder;
+  if(probeScope==='metadata-coordination'){
+    const createFolder=async name=>transport.createMetadataFolder({parentId:folder?.id??null,name});
+    const evidence=checkpoint=>({checkpoint,cacheMode:'no-store',phase:'folder-create',writes:[],readbacks:[]});
+    const observedError=(error,current)=>({code:error?.code,status:error?.status,diagnostic:error?.diagnostic,evidence:current});
+    async function observeWrite(current,role,operation){
+      try{
+        const response=await operation(),httpStatus=response?.status;
+        const item={role,outcome:'fulfilled'};
+        if(Number.isInteger(httpStatus)&&httpStatus>=100&&httpStatus<=599)item.httpStatus=httpStatus;
+        current.writes.push(item);
+        return {confirmed:Number.isInteger(httpStatus)&&httpStatus>=200&&httpStatus<=299};
+      }catch(error){
+        const item={role,outcome:metadataClassify(error)};
+        if(Number.isInteger(error?.status)&&error.status>=100&&error.status<=599)item.httpStatus=error.status;
+        current.writes.push(item);return {confirmed:false,error};
+      }
+    }
+    async function observeReadback(current,role,operation,expected){
+      try{
+        const snapshot=await operation(),comparison=expected===null?'unavailable':sameJsonValue(snapshot.properties,expected)?'equal':'different';
+        current.readbacks.push({role,outcome:'success',comparison});return {snapshot,comparison};
+      }catch(error){
+        const item={role,outcome:metadataClassify(error),comparison:'unavailable'};
+        if(Number.isInteger(error?.status)&&error.status>=100&&error.status<=599)item.httpStatus=error.status;
+        current.readbacks.push(item);return {error,comparison:'unavailable'};
+      }
+    }
+    await check('fixture','Eigener synthetischer Metadaten-Probeordner streng angelegt und nachgelesen.',async()=>{folder=await createFolder('SYNTHETISCH');});
+    if(!folder)return summarize(checks,probeScope);
+
+    await check('metadata-invalid-token','Falsche Metadaten-ETag ergibt 412; Properties bleiben vollständig gleich.',async()=>{
+      const current=evidence('metadata-invalid-token');let target,before;
+      try{target=await createFolder('metadata-invalid-token');current.phase='snapshot';before=await transport.readMetadataSnapshot(target.id);}
+      catch(error){throw observedError(error,current);}
+      const invalidEtag=`${before.etag.slice(0,-1)}x"`;
+      current.phase='write';const write=await observeWrite(current,'invalid-token',()=>transport.updateMetadataIfUnchanged({...before,etag:invalidEtag},{coordinator:'invalid'}));
+      current.phase='readback';const readback=await observeReadback(current,'after-invalid-token',()=>transport.readMetadataSnapshot(target.id),before.properties);
+      if(readback.error)throw observedError(readback.error,current);
+      current.phase='complete';assert(write.error?.code==='stale'&&write.error?.status===412&&readback.comparison==='equal',current);
+      return safeEvidence(current);
+    });
+
+    await check('metadata-stale-write','Verbrauchte Metadaten-ETag ergibt 412; Gewinner und Sentinel bleiben vollständig erhalten.',async()=>{
+      const current=evidence('metadata-stale-write');let target,before;
+      try{target=await createFolder('metadata-stale-write');current.phase='snapshot';before=await transport.readMetadataSnapshot(target.id);}
+      catch(error){throw observedError(error,current);}
+      const winner={...before.properties,coordinator:'first',sentinel:'preserve-me'};
+      current.phase='first-write';const first=await observeWrite(current,'first',()=>transport.updateMetadataIfUnchanged(before,{coordinator:'first',sentinel:'preserve-me'}));
+      current.phase='winner-readback';const winnerRead=await observeReadback(current,'winner',()=>transport.readMetadataSnapshot(target.id),winner);
+      if(winnerRead.error)throw observedError(winnerRead.error,current);
+      if(!first.confirmed||winnerRead.comparison!=='equal'){assert(false,current);}
+      current.phase='stale-write';const stale=await observeWrite(current,'stale',()=>transport.updateMetadataIfUnchanged(before,{coordinator:'stale'}));
+      current.phase='final-readback';const finalRead=await observeReadback(current,'final',()=>transport.readMetadataSnapshot(target.id),winner);
+      if(finalRead.error)throw observedError(finalRead.error,current);
+      current.phase='complete';assert(stale.error?.code==='stale'&&stale.error?.status===412&&finalRead.comparison==='equal',current);
+      return safeEvidence(current);
+    });
+
+    await check('metadata-concurrent','Zwei gleichzeitige Metadaten-PUTs ergeben genau einen bestätigten Gewinner und eine 412.',async()=>{
+      const current=evidence('metadata-concurrent');let target,before;
+      try{target=await createFolder('metadata-concurrent');current.phase='snapshot';before=await transport.readMetadataSnapshot(target.id);}
+      catch(error){throw observedError(error,current);}
+      const sentinel={...before.properties,sentinel:'preserve-me'};
+      current.phase='sentinel-write';const sentinelWrite=await observeWrite(current,'sentinel',()=>transport.updateMetadataIfUnchanged(before,{sentinel:'preserve-me'}));
+      current.phase='sentinel-readback';const sentinelRead=await observeReadback(current,'sentinel',()=>transport.readMetadataSnapshot(target.id),sentinel);
+      if(sentinelRead.error)throw observedError(sentinelRead.error,current);
+      if(!sentinelWrite.confirmed||sentinelRead.comparison!=='equal'){assert(false,current);}
+      const fresh=sentinelRead.snapshot,candidates=[
+        {role:'candidate-a',properties:{...fresh.properties,coordinator:'candidate-a'}},
+        {role:'candidate-b',properties:{...fresh.properties,coordinator:'candidate-b'}},
+      ];
+      current.phase='concurrent-writes';
+      const results=await Promise.allSettled(candidates.map(candidate=>transport.updateMetadataIfUnchanged(clone(fresh),{coordinator:candidate.properties.coordinator})));
+      results.forEach((result,index)=>{
+        const item={role:candidates[index].role,outcome:result.status==='fulfilled'?'fulfilled':metadataClassify(result.reason)};
+        const status=result.status==='fulfilled'?result.value?.status:result.reason?.status;
+        if(Number.isInteger(status)&&status>=100&&status<=599)item.httpStatus=status;
+        current.writes.push(item);
+      });
+      const accepted=results.map((result,index)=>({result,index})).filter(({result})=>result.status==='fulfilled'&&Number.isInteger(result.value?.status)&&result.value.status>=200&&result.value.status<=299);
+      const rejected=results.filter(result=>result.status==='rejected'&&result.reason?.code==='stale'&&result.reason?.status===412);
+      const expectedWinner=accepted.length===1?candidates[accepted[0].index].properties:null;
+      current.phase='final-readback';const finalRead=await observeReadback(current,'winner',()=>transport.readMetadataSnapshot(target.id),expectedWinner);
+      if(finalRead.error)throw observedError(finalRead.error,current);
+      current.phase='complete';assert(accepted.length===1&&rejected.length===1&&finalRead.comparison==='equal',current);
+      return safeEvidence(current);
+    });
+    return summarize(checks,probeScope);
+  }
   await check('fixture','Eigener synthetischer Probeordner angelegt.',async()=>{folder=await transport.create({folder:true,name:'SYNTHETISCH'});});
   if(!folder)return summarize(checks);
   if(probeScope==='read-stability'){
@@ -188,5 +310,7 @@ export async function runProbeScenarios({transport,emit=()=>{},probeScope='full'
   });
   return summarize(checks);
 }
-function summarize(checks){return {passed:checks.length>0&&checks.every(c=>c.passed),failed:checks.filter(c=>c.status==='failed').length,unsupported:checks.filter(c=>c.status==='unsupported').length,checks,productReady:false,
-  limitations:['Zwei logische Clients im selben Browser; keine Zwei-Geräte-Abnahme.','Antwortverlust durch lokales Verwerfen einer Erfolgsantwort; kein echter Leitungsabbruch.','Keine Produktdaten-, Altclient-, Backup- oder Epochenmigration geprüft.','Ein Probe-Erfolg ersetzt keine dokumentierte Servergarantie.']};}
+function summarize(checks,probeScope='full'){return {passed:checks.length>0&&checks.every(c=>c.passed),failed:checks.filter(c=>c.status==='failed').length,unsupported:checks.filter(c=>c.status==='unsupported').length,checks,productReady:false,
+  limitations:probeScope==='metadata-coordination'
+    ?['Nur neue synthetische Ordner-Metadaten in einem Browser; keine Zwei-Geräte-Abnahme.','Keine JSON-Datei, kein Medieninhalt und kein Produktbestand geprüft.','Keine Kauf-, Wiederanlauf-, Epochen- oder Bereinigungslogik geprüft.','Ein Probe-Erfolg ersetzt keine dokumentierte Servergarantie.']
+    :['Zwei logische Clients im selben Browser; keine Zwei-Geräte-Abnahme.','Antwortverlust durch lokales Verwerfen einer Erfolgsantwort; kein echter Leitungsabbruch.','Keine Produktdaten-, Altclient-, Backup- oder Epochenmigration geprüft.','Ein Probe-Erfolg ersetzt keine dokumentierte Servergarantie.']};}
