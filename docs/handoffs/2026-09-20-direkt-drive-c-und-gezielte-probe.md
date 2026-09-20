@@ -2,6 +2,12 @@
 
 Stand: 20.09.2026. Branch `codex/vokabeltrainer-v1`, Ausgangspunkt `9106c6091bfc42b067262160e722804e50ed264a`, Arbeitsbaum zu Beginn sauber. Der Nutzer antwortete auf die Richtungsfrage mit **c**.
 
+## Gesicherter Stand
+
+Diagnose 7, Nutzerentscheidung, Tests und Review sind in **`f5f76cdfc1c5ead65ba3734b583691c8aaa214e6`** gesichert und auf `origin/codex/vokabeltrainer-v1` veröffentlicht. Nach dem Push stimmten lokales `HEAD` und `git ls-remote` für diesen Branch exakt überein; der Arbeitsbaum war sauber. Diese nachträgliche Ergänzung dokumentiert den Nachweis, ohne den geprüften Programmcode zu ändern.
+
+Die abschließende Dokumentprüfung fand **1103 Dateien, 166 Markdown-Dateien, 806 lokale Links und 0 Fehler**; `git diff --check` war ohne Befund. Die finalen Code- und Browserprüfungen wurden nach dem reinen Dokumentabschluss nicht wiederholt.
+
 ## Verbindliche Richtung
 
 O-KO01 ist beantwortet: direkte Drive-Koordination weiter untersuchen. Kein zusätzlicher Backenddienst und keine Umstellung der ausgebbaren Punkte. Nicht nochmals A/B/C fragen. [Entscheidung und frühere Alternativen](../design/2026-09-20-kaufkoordination-nach-diagnose6.md).

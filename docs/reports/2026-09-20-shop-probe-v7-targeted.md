@@ -32,4 +32,4 @@ Es wurden keine echten Google-Anfragen ausgeführt, keine Konten geändert und k
 
 Für den nächsten echten Nachweis bewusst **Drive v2 kohärent (Koordination)** und **Falsche Schreibkennung gezielt prüfen** auswählen. Eine instabile Fixture vor dem PUT belegt die Schreibbedingung nicht. Schutzbedingungen, Tokenform und strikte Inhaltsprüfung bleiben unverändert; automatische Wiederholungsschleifen sind nicht Teil dieses Pakets.
 
-Unabhängige Spezifikations- und Codeprüfung, Commit, Push und Remotevergleich übernimmt die Hauptaufgabe.
+Die [unabhängige Spezifikations- und Codeprüfung](2026-09-20-shop-probe-v7-review.md) ist ohne offene relevante Befunde abgeschlossen. Commit, verifizierter Push und nächste Bedienungsschritte stehen in der [aktuellen Übergabe](../handoffs/2026-09-20-direkt-drive-c-und-gezielte-probe.md).

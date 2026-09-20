@@ -26,7 +26,7 @@ Stand: 20.09.2026. Ausgangscode `9106c60`. Nutzerwahl **C** autorisiert die weit
 - [x] Browser: vollständige Probe weiterhin elf Checks; gezielte Probe nur zwei. Explizite Wahl, ehrliche Erfolgs-/Fehlertexte, Berichtsumfang/Version/Dateiname, Ergebnis 400/angenommener PUT, keine persistenten Token-/Nutzerdaten.
 - [x] Komplette Shop-Node-Suite und Shop-Browser-Harness einmal auf finalem Code ausführen; bei späteren Fixes nur begründet betroffene Prüfungen. Docs-/Diff-Prüfung. Keine unveränderte Trainerregression.
 - [x] Unabhängige Spezifikations-/Codeprüfung ohne offene relevante Befunde; Umsetzungsergebnis und Grenzen dokumentiert.
-- [ ] Root-Commit/Push mit Remotevergleich.
+- [x] Root-Commit/Push mit Remotevergleich: `f5f76cdfc1c5ead65ba3734b583691c8aaa214e6`, lokales HEAD und GitHub-Branch identisch, sauberer Arbeitsbaum. Nachträgliche Dokumentation dieses Nachweises ändert keinen getesteten Code.
 
 ## Nächster echter Nachweis
 
