@@ -1,6 +1,6 @@
 # Avatar-Entwicklungsstufen: bestätigte Richtung und erster Prototyp
 
-Stand: 20.09.2026. Der Nutzer hat den vorgeschlagenen Richtungswechsel mit „so machen wir das“ bestätigt. Diese Bestätigung gilt für das Entwicklungsstufen-Prinzip und einen ersten vollständig gerenderten Drachen-Prototyp zur gemeinsamen Beurteilung. Sie ist noch keine Freigabe für Preise, Datenmodell, Produktintegration oder die vollständige Produktion aller 13 Figuren.
+Stand: 20.09.2026. Der Nutzer hat den vorgeschlagenen Richtungswechsel mit „so machen wir das“ bestätigt. Diese ursprüngliche Bestätigung gilt für das Entwicklungsstufen-Prinzip und einen ersten vollständig gerenderten Drachen-Prototyp zur gemeinsamen Beurteilung. Die inzwischen bestätigten Details zu Kaufablauf, Preisen und menschlichen Bildvarianten stehen unter EV01–EV03. Datenmodell, Produktintegration und die Produktion der übrigen Figuren benötigen noch ein konkretes Detaildesign.
 
 ## Bestätigte Richtung
 
@@ -34,14 +34,20 @@ Nutzerantwort **a** vom 20.09.2026: Eine ganze Entwicklungsstufe auf einmal frei
 
 Nutzerantwort **A** vom 20.09.2026: Einheitliche Preise für alle Avatare. Der Aufstieg von Stufe 1 auf 2 kostet **200 Punkte**, von 2 auf 3 **400 Punkte**, von 3 auf 4 **800 Punkte**. Das sind zusätzliche Einzelpreise, keine kumulierten Schwellen: insgesamt **1.400 Punkte** ab vorhandener Grundform. Ein etwaiger Kaufpreis der Grundfigur kommt separat hinzu. Grundlage bleiben 10 Punkte je richtiger Antwort plus 20 je gewerteter abgeschlossener Runde. Preise sind bestätigt, noch nicht im Produkt umgesetzt.
 
+## Bestätigte menschliche Bildvarianten EV03
+
+Nutzerantwort **a** vom 20.09.2026: Mädchen- und Jungen-Avatare behalten jeweils **vier kostenlos wählbare Hauttöne**. Kleidung und Rüstung sind für jede Entwicklungsstufe fest gestaltet; die bisherige zusätzliche Auswahl aus sechs Kleidungsfarben entfällt für die neuen Stufenbilder. Dies präzisiert ausdrücklich die frühere freie Farbwahl des Avatar-/Shop-Entwurfs. Bestehende Bilder und gespeicherte Altwerte werden durch diese Dokumentationsentscheidung nicht gelöscht oder verändert; ihr Übergang gehört in den Datenentwurf.
+
+Bei den bisherigen 13 Grundfiguren ergeben sich rechnerisch 32 menschliche Motive (2 Figuren × 4 Hauttöne × 4 Stufen) und 44 Tier-/Fantasie-Motive (11 × 4), insgesamt **76 Bildmotive**. Unterschiedliche Auflösungen zählen nicht als neue Motive. Die Zahl ersetzt die frühere vereinfachte Angabe von 52 Stufenbildern ohne Hauttonvarianten; sie ist eine Planungsgrundlage, kein Produktionsnachweis.
+
 ## Noch nicht entschieden oder umgesetzt
 
-**Nächste Frage EV03, noch offen:** Gestaltung der menschlichen Figuren bei vollständigen Stufenbildern. A (Empfehlung): Mädchen und Junge behalten jeweils vier Hauttöne; Kleidung/Rüstung ist innerhalb jeder Stufe fest gestaltet. B: zusätzlich die bisherigen sechs Kleidungsfarben für jede Stufe erhalten. Vier Hauttöne bleiben in beiden Varianten kostenlos. A würde bei 13 Figuren rechnerisch 32 menschliche plus 44 Tier-/Fantasie-Motive ergeben; B bis zu 192 menschliche plus 44 übrige Motive. Unterschiedliche Auflösungen zählen dabei nicht als neue Motive. Keine Variante ist bereits bestätigt; die bisherige freie Farbwahl nicht stillschweigend entfernen.
+**Nächste Frage EV04, noch offen:** Umgang mit der bisherigen menschlichen Avataransicht und ihrem kostenlosen Zubehör beim Umstieg. A (Empfehlung): In der Oberfläche vollständig auf die neuen Entwicklungsformen wechseln; bisherige Kleidungsfarben und einzelne Zubehörteile nicht mehr anbieten. Lernstand, Punkte, Level und erreichte Meilensteine bleiben erhalten; alte kosmetische Werte bleiben in Altdaten/Sicherungen nachvollziehbar. B: Die bisherige Avataransicht zusätzlich als „Klassisch“-Auswahl mit ihren Farben und ihrem Zubehör weiter anbieten. In beiden Varianten bleiben neue Stufen vollständige Bilder nach EV03; keine alten Zubehörlagen auf neue Figuren montieren. Noch keine Variante bestätigt. Bereits gekaufte Figuren oder Stufen stehen nicht zur Disposition; der neue Produktshop ist noch nicht aktiviert.
 
 - genaue Berechnung und Speicherung des Entwicklungsfortschritts,
 - Verhalten bei gleichzeitigem Kauf auf mehreren Geräten,
 - genaue Texte, Bedienfolge und Darstellung in der Produktoberfläche,
 - endgültige Namen der Drachenformen,
-- Übertragung des Prinzips auf alle 13 Figuren und damit 52 fertige Stufenbilder.
+- Übertragung des Prinzips auf alle 13 Figuren und die nach EV03 vorgesehenen 76 Bildmotive.
 
 Die technische Kaufkoordination bleibt ein eigener offener Nachweis. Eine Bildfreigabe darf nicht als Nachweis eines sicheren Drive-Schreibvertrags oder als Freigabe der Produktintegration ausgegeben werden.
