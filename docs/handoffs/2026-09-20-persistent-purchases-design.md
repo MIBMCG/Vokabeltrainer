@@ -1,5 +1,7 @@
 # Übergabe: dauerhafte Käufe konkret entworfen
 
+**Historische Entwurfsübergabe:** Die hier ursprünglich ausstehende Zustimmung wurde anschließend mit „ja“ erteilt. Maßgeblich ist die [laufende Implementierungsübergabe](2026-09-20-persistent-purchases-implementation.md). Die folgende Darstellung hält den damaligen Planungsstand fest.
+
 Branch `codex/vokabeltrainer-v1`, Arbeitsbaum `drive-probe`. Ausgangspunkt `102d8c7f77ac7978db2d3649db7b19780eca7aaf`; lokaler und entfernter Stand zu Beginn frisch verglichen, identisch und lokal sauber. Nutzerauftrag: „Dan mache nun weiter“ nach Auswertung von Bericht10.
 
 ## Ergebnis und Freigabestatus
