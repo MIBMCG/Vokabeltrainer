@@ -37,7 +37,9 @@ function observationState(before, after) {
 - [x] Browser: Version/Dateiname 6 prüfen; ein instabiler Fall zeigt und exportiert die bereinigten Zustände, bleibt aber fehlgeschlagen. Alle bestehenden positiven und negativen Fälle bestehen weiterhin.
 - [x] Verifikation: Zieltests, komplette Shop-Node-Suite und Shop-Browser-Harness ausführen. Dokument- und Diff-Prüfung. Keine unveränderte Produktsuite ohne neue Produkt-/Serveränderung wiederholen.
 - [x] Unabhängige Prüfung von unverändertem Schutzverhalten, Diagnosewahrheit und Datenbereinigung; anschließend Umsetzung und tatsächliche Grenzen dokumentieren.
-- [ ] Root sichert nur die betroffenen Dateien und aktualisiert Arbeitsstand/Übergabe; kein automatischer echter Google-Lauf. Ein späterer Nutzerbericht muss ausdrücklich Diagnose 6 sein.
+- [x] Root sichert nur die betroffenen Dateien und aktualisiert Arbeitsstand/Übergabe; kein automatischer echter Google-Lauf. Ein späterer Nutzerbericht muss ausdrücklich Diagnose 6 sein.
+
+Abschluss: 39/39 Transport-, 15/15 Szenario-, 69/69 Shop-Node- und 10/10 Browserprüfungen bestanden. Unabhängige Review ohne offene relevante Befunde. Diagnosepaket `ac8bf43` ist gepusht und per identischer Remote-SHA bestätigt; der folgende Dokumentationscommit führt die Einstiegspunkte nach. Der echte Google-Nachweis bleibt offen.
 
 ## Auswertung des nächsten Berichts
 

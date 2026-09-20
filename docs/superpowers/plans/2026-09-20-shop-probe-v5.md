@@ -389,15 +389,15 @@ git commit -m "docs(shop): document drive v2 coherent probe"
 - Consumes: unabhängig freigegebenes lokales v5-Paket und einen bewusst gestarteten REAL-Lauf mit `etagSource:'v2-coherent'`.
 - Produces: Entscheidung `candidatePassed:true|false` für einen späteren, gesonderten Produktintegrationsentwurf; niemals unmittelbare Produktaktivierung.
 
-- [ ] **Step 1: REAL-Lauf nur nach bewusster Nutzeraktion vorbereiten**
+- [x] **Step 1: REAL-Lauf nur nach bewusster Nutzeraktion vorbereiten**
 
 Die Seite über einen bereits erlaubten Ursprung öffnen. Der Nutzer verbindet das bestehende Konto, wählt ausdrücklich „Drive v2 kohärent (Koordination)“, bestätigt die Anlage neuer synthetischer Dateien und startet genau diesen neuen Kandidaten. Keine bestehende Probe wiederholen und keine Dateien löschen.
 
-- [ ] **Step 2: Bericht gegen harte Kriterien auswerten**
+- [x] **Step 2: Bericht gegen harte Kriterien auswerten**
 
 Der Bericht muss Diagnose 5 und die getrennten v3-/v2-Pfade nennen. Alle elf Szenarien müssen bestehen. Der unveränderte Szenariocode verlangt für `invalid-token` und `stale-write` die Klasse `stale` (Transport: HTTP 412), für `initialization` und `two-purchases` jeweils `accepted:1`, `stale:1`, `other:0` und eine passende Nachlese. Im positiven Bericht werden diese Bedingungen durch den bestandenen Szenariostatus belegt; separate Zähler werden bislang nur bei einem Fehlschlag exportiert. Keine nicht exportierten Einzelwerte im REAL-Bericht erfinden.
 
-- [ ] **Step 3: Negatives oder unvollständiges Ergebnis sicher festhalten**
+- [x] **Step 3: Negatives oder unvollständiges Ergebnis sicher festhalten**
 
 Bei CORS-/Netzfehler, fehlender ETag, anderem Status, zwei angenommenen Schreibversuchen, instabilem Snapshot oder falschem Nachlesestand bleibt `candidatePassed:false`. Keine Guard-Prüfung entfernen, keine Fehlklasse umdeuten und keinen weiteren identischen Lauf verlangen.
 
@@ -422,4 +422,4 @@ Phasen A–D sind lokal abgeschlossen und unabhängig ohne offene relevante Befu
 
 31/31 gezielte Transportfälle, 56/56 Shop-Node-, 9/9 Browser- und 379/379 Produkttests bestanden. Zusätzliche unabhängige Gegenprüfungen für geänderten Wurzelordner und einen trotz 412 mutierenden Ordner-PUT ließen die Probe korrekt fehlschlagen. Die neue Server-Assetfreigabe, realistischer My-Drive-Parent, sichere besondere Property-Schlüssel und strikte ETags sind enthalten.
 
-**Phase E bleibt offen.** Keine echte Google-Anfrage und keine Produktintegration wurden aus den lokalen Ergebnissen abgeleitet.
+**Phase E inzwischen negativ ausgewertet:** Der Nutzer lieferte den echten Diagnose-5-Bericht; [Auswertung](../../reports/2026-09-20-shop-v5-reallauf.md) mit 4 bestandenen und 7 instabilen Lesevorgängen. `candidatePassed:false`. Die positiven Zweige E4/E5 sind nicht anwendbar; keine Produktintegration freigegeben. Die lokale Durchführung durch Agenten umfasste weiterhin keine echten Google-Datenaufrufe. Die [Diagnose-6-Ergänzung](2026-09-20-shop-probe-v6-diagnostics.md) ändert ausschließlich Messwerte und Fehlerkontexte.

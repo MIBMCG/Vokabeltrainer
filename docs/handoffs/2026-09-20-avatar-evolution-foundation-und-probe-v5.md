@@ -1,5 +1,7 @@
 # Übergabe: Avatar-Grundlagen und neuer Drive-Prüfkandidat
 
+**Fortgeschrieben:** Der echte v5-Bericht wurde inzwischen ausgewertet. Aktuelle Fortsetzung über die [Übergabe zur v5-Auswertung und Diagnose 6](2026-09-20-shop-v5-auswertung-und-diagnose-v6.md). Die folgenden Testzahlen und Aussagen beschreiben den gesicherten Stand vor diesem echten Lauf.
+
 Stand: 20.09.2026. Branch: `codex/vokabeltrainer-v1`; Remote: `https://github.com/MIBMCG/Vokabeltrainer.git`.
 
 ## Bestätigter Auftrag
