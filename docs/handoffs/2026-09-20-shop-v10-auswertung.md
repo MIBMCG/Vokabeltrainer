@@ -1,5 +1,7 @@
 # Übergabe: echte Kaufprobe 10 vollständig bestanden
 
+**Nachfolgende Fortsetzung:** Der Nutzer beauftragte danach die Weiterarbeit. Der daraus ausgearbeitete Integrationsentwurf und sein noch offener Abstimmungsstatus stehen in der [neueren Übergabe](2026-09-20-persistent-purchases-design.md). Die Ergebnisse dieses Google-Laufs bleiben unverändert.
+
 Branch `codex/vokabeltrainer-v1`, isolierter Arbeitsbaum `drive-probe`. Ausgangspunkt `639556c99cdcb9aef9370b812f7822dbb0e8fbfa`; lokaler HEAD und GitHub-Branch wurden vor der Auswertung frisch verglichen und waren gleich. Arbeitsbaum war sauber. Die persönlichen Berichte im übergeordneten Clone bleiben unverändert und unversioniert.
 
 ## Ergebnis

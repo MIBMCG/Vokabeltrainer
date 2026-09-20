@@ -1,5 +1,9 @@
 # Architektur
 
+## Integrationsentwurf zur Abstimmung
+
+Der [neue Entwurf](superpowers/specs/2026-09-20-persistent-purchases-design.md) empfiehlt einen gemeinsamen Bestätigungspunkt je Lernbestand, getrennte Profilkonten im Inhalt und dauerhafte Aufträge im atomaren Produktzustand. Er verbindet Kauf und Wiederherstellung mit demselben Kopfwechsel. Die einmalige Ordnerbindung, neue Sitzungen, v1/v2-Übergang, alte Clients und Belegwachstum sind darin ausdrücklich behandelt. **Noch nicht bestätigt oder implementiert**; aktueller ausführbarer Stand bleibt die nachfolgend dokumentierte Probe und das unveränderte Produkt.
+
 ## Echter Nachweis des isolierten Kaufablaufs
 
 [Bericht10](reports/2026-09-20-shop-v10-reallauf.md) bestätigt am 20.09.2026 alle sechs Szenarien des unten beschriebenen synthetischen Vertrags. Ordnerkoordination, vollständige Belegprüfung, Wiederholung, lokal simulierter Antwortverlust und beide Reset-Reihenfolgen sind in diesem einen echten Google-Lauf bestanden. Die Prüfung verwendet zwei logische Clients und eine gemeinsame Registrierung innerhalb derselben Sitzung.
