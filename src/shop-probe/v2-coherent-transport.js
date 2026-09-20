@@ -1,4 +1,5 @@
 // Isolated Drive-v2 coordination candidate. Never imported by the product adapter.
+import {canonicalJson,immutableHash} from './immutable-value.js';
 const API_V2='https://www.googleapis.com/drive/v2/files';
 const UPLOAD_V2='https://www.googleapis.com/upload/drive/v2/files';
 const API_V3='https://www.googleapis.com/drive/v3/files';
@@ -69,6 +70,7 @@ export function createV2CoherentProbeTransport({fetch:fetchImpl=globalThis.fetch
   function privatePropertiesBody(properties){
     const entries=Object.entries(properties);
     if(!entries.every(([key,value])=>typeof key==='string'&&typeof value==='string'))fail('binding');
+    if(entries.length>30||entries.some(([key,value])=>new TextEncoder().encode(key+value).byteLength>124))fail('limit');
     return entries.sort(([a],[b])=>a.localeCompare(b)).map(([key,value])=>({key,value,visibility:'PRIVATE'}));
   }
 
@@ -110,7 +112,10 @@ export function createV2CoherentProbeTransport({fetch:fetchImpl=globalThis.fetch
       observation:{etagSource:'v2-coherent',jsonEtagReadable:true}};
   }
 
-  async function read(id){return readSnapshot(id,'snapshot-read');}
+  async function read(id){
+    if(owned(id).immutable)fail('binding');
+    return readSnapshot(id,'snapshot-read');
+  }
 
   function compareObservation(window,before,after){
     return {window,version:versionDirection(before.version,after.version),etag:observationState(before.etag,after.etag),
@@ -131,7 +136,8 @@ export function createV2CoherentProbeTransport({fetch:fetchImpl=globalThis.fetch
     const record=owned(id),metadata={id,name:record.name,mimeType:record.mimeType,appProperties:{app:APP,runId},...(record.parentId?{parents:[record.parentId]}:{})};
     if(record.folder)return request(`${API_V3}?fields=id`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(metadata)},[409]);
     const boundary=`probe_${runId}`;
-    const body=`--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(metadata)}\r\n--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(value)}\r\n--${boundary}--\r\n`;
+    const content=record.immutable?record.canonical:JSON.stringify(value);
+    const body=`--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(metadata)}\r\n--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${content}\r\n--${boundary}--\r\n`;
     return request(`${UPLOAD_V3}?uploadType=multipart&fields=id`,{method:'POST',headers:{'Content-Type':`multipart/related; boundary=${boundary}`},body},[409]);
   }
 
@@ -236,7 +242,7 @@ export function createV2CoherentProbeTransport({fetch:fetchImpl=globalThis.fetch
   }
 
   async function retryCreate(id,value){
-    owned(id);
+    if(owned(id).immutable)fail('binding');
     await post(id,value);
     const actual=await readSnapshot(id,'retry-create-verification');
     if(!same(actual.value,value))fail('collision');
@@ -246,6 +252,7 @@ export function createV2CoherentProbeTransport({fetch:fetchImpl=globalThis.fetch
   async function updateIfUnchanged(before,value,{metadata=false}={}){
     if(!before||typeof before!=='object')fail('binding');
     const record=owned(before.id);
+    if(record.immutable)fail('binding');
     if(before.folder!==record.folder||before.mimeType!==record.mimeType||metadata!==record.folder||before.properties?.app!==APP||before.properties?.runId!==runId)fail('binding');
     if(!strongEtag(before.etag))fail('unsupported',{phase:'write-token',reason:'missing-strong-etag',etagSource:'v2-coherent',jsonEtagState:etagState(before.etag)});
     const url=metadata?`${API_V2}/${before.id}?fields=id,etag,version,properties`:`${UPLOAD_V2}/${before.id}?uploadType=media&fields=id,etag,version`;
@@ -254,5 +261,51 @@ export function createV2CoherentProbeTransport({fetch:fetchImpl=globalThis.fetch
     return {id:before.id,status:response.status};
   }
 
-  return {create,read,retryCreate,updateIfUnchanged,observeReadStability,createMetadataFolder,readMetadataSnapshot,updateMetadataIfUnchanged};
+  function immutableRecord(ref){
+    if(!ref||typeof ref!=='object'||Array.isArray(ref)||Object.getOwnPropertySymbols(ref).length
+      ||Object.keys(ref).sort().join('\0')!=='id\0sha256'||typeof ref.id!=='string'||typeof ref.sha256!=='string')fail('binding');
+    const record=owned(ref.id);
+    if(!record.immutable||record.sha256!==ref.sha256)fail('binding');
+    return record;
+  }
+
+  async function prepareImmutable({parentId,value}={}){
+    if(typeof parentId!=='string'||!owned(parentId).folder)fail('binding');
+    const canonical=canonicalJson(value),sha256=await immutableHash(value);
+    const generated=await json(await request(`${API_V3}/generateIds?count=1&space=drive&type=files`));
+    const id=generated.ids?.[0];
+    if(!/^[A-Za-z0-9_-]+$/.test(id??''))fail('invalid');
+    files.set(id,{folder:false,parentId,name:`SHOP-PROBE-immutable-${runId.slice(0,8)}`,mimeType:JSON_MIME,
+      immutable:true,canonical,sha256,value:JSON.parse(canonical)});
+    return {id,sha256};
+  }
+
+  async function readImmutable(ref,{parentId=null}={}){
+    const record=immutableRecord(ref);
+    if(parentId!==null&&(typeof parentId!=='string'||record.parentId!==parentId))fail('binding');
+    const before=await readV2Metadata(ref.id,{cache:'no-store'});
+    const value=await json(await request(`${API_V2}/${ref.id}?alt=media`,{cache:'no-store'}));
+    const after=await readV2Metadata(ref.id,{cache:'no-store'});
+    if(canonicalJson(before.properties)!==canonicalJson(after.properties))fail('binding');
+    let actual;
+    try{actual=await immutableHash(value);}catch(error){
+      if(error?.code==='limit')throw error;
+      throw new V2ProbeError('integrity');
+    }
+    if(actual!==record.sha256||canonicalJson(value)!==record.canonical)fail('integrity');
+    return JSON.parse(record.canonical);
+  }
+
+  async function writeImmutable(ref){
+    const record=immutableRecord(ref),response=await post(ref.id,record.value);
+    if(response.status===409){try{await response.text();}catch{}}
+    else{
+      const created=await boundResponseJson(response);
+      if(created.id!==ref.id)throw new V2ProbeError('binding',response.status);
+    }
+    return readImmutable(ref,{parentId:record.parentId});
+  }
+
+  return {create,read,retryCreate,updateIfUnchanged,observeReadStability,createMetadataFolder,readMetadataSnapshot,updateMetadataIfUnchanged,
+    prepareImmutable,writeImmutable,readImmutable};
 }
