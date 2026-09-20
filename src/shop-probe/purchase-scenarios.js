@@ -12,7 +12,10 @@ const REQUIRED=['createMetadataFolder','readMetadataSnapshot','updateMetadataIfU
 const ERROR_CLASSES=new Set(['assertion','auth','binding','collision','conflict','epoch','funds','http','integrity','invalid','limit','missing','network','owned','permission','stale','unsupported']);
 const PHASES=new Set(['fixture','setup','prepare','commit','readback','recover','complete']);
 const OUTCOMES=new Set(['confirmed','stale','uncertain','rejected','unexpected']);
-const BOOLEAN_FIELDS=['markerPreserved','repeatCommitted','noAdditionalUpload','noAdditionalPointerWrite','conflictRejected','simulatedResponseLoss','firstWriteObserved','ancestorRecovered','oldPurchaseRejected','oldEpochPrepareRejected','staleResetRejected','freshResetConfirmed','historicalPurchaseFound','historicalPurchaseActive'];
+const COMMIT_PHASES=new Set(['upload','pointer']);
+const WRITE_GROUPS=['setupWrites','writes','followupWrites'];
+const WRITE_ROLES=new Set(['initialization','client-a','client-b','purchase','purchase-first','purchase-second','reset','old-purchase','old-reset','fresh-reset']);
+const BOOLEAN_FIELDS=['markerPreserved','winnerOperationMatched','winnerEpochMatched','loserOperationExcluded','originalInitializationPreserved','ownedArticleMatched','repeatCommitted','noAdditionalUpload','noAdditionalPointerWrite','conflictRejected','simulatedResponseLoss','firstWriteObserved','ancestorRecovered','oldPurchaseRejected','oldEpochPrepareRejected','staleResetRejected','freshResetConfirmed','historicalPurchaseFound','historicalPurchaseActive'];
 const COUNT_FIELDS=['receiptCount','ownedCount','spentPoints','remainingPoints'];
 const clone=value=>structuredClone(value);
 const fail=code=>{throw Object.assign(new Error('purchase scenario'),{code});};
@@ -23,10 +26,11 @@ const statusOf=value=>Number.isInteger(value)&&value>=100&&value<=599?value:null
 function safeEvidence(value,checkpoint){
   const result={checkpoint};
   if(PHASES.has(value?.phase))result.phase=value.phase;
-  if(Array.isArray(value?.writes)){
-    result.writes=value.writes.slice(0,2).map((write,index)=>{
-      const item={role:['client-a','client-b','reset','old-purchase','purchase','old-reset'].includes(write?.role)?write.role:`client-${index?'b':'a'}`,
-        outcome:OUTCOMES.has(write?.outcome)?write.outcome:'unexpected'};
+  for(const group of WRITE_GROUPS)if(Array.isArray(value?.[group])){
+    result[group]=value[group].slice(0,2).map((write,index)=>{
+      const item={role:WRITE_ROLES.has(write?.role)?write.role:`client-${index?'b':'a'}`,outcome:OUTCOMES.has(write?.outcome)?write.outcome:'unexpected'};
+      if(COMMIT_PHASES.has(write?.phase))item.phase=write.phase;
+      if(ERROR_CLASSES.has(write?.code))item.code=write.code;
       const status=statusOf(write?.httpStatus);if(status!==null)item.httpStatus=status;
       return item;
     });
@@ -49,8 +53,23 @@ function trackedTransport(transport){
 function commitObservation(result,role){
   const outcome=OUTCOMES.has(result?.outcome)?result.outcome:'unexpected';
   const item={role,outcome};
+  if(COMMIT_PHASES.has(result?.phase))item.phase=result.phase;
+  if(ERROR_CLASSES.has(result?.code))item.code=result.code;
   const status=statusOf(result?.httpStatus);if(status!==null)item.httpStatus=status;
   return item;
+}
+
+function recordCommit(progress,group,result,role){
+  progress[group]??=[];
+  if(progress[group].length<2)progress[group].push(commitObservation(result,role));
+  return result;
+}
+
+function requireConfirmed(result){
+  if(result?.outcome==='confirmed'&&statusOf(result.httpStatus)>=200&&result.httpStatus<=299)return;
+  const error=Object.assign(new Error('purchase commit'),{code:ERROR_CLASSES.has(result?.code)?result.code:result?.outcome==='stale'?'stale':'unexpected'});
+  const status=statusOf(result?.httpStatus);if(status!==null)error.status=status;
+  throw error;
 }
 
 async function observeCommits(progress,entries){
@@ -58,8 +77,8 @@ async function observeCommits(progress,entries){
   const settled=await Promise.allSettled(entries.map(entry=>entry.commit()));
   const observations=settled.map((result,index)=>result.status==='fulfilled'
     ?commitObservation(result.value,entries[index].role)
-    :{role:entries[index].role,outcome:codeOf(result.reason)==='stale'?'stale':'unexpected',...(statusOf(result.reason?.status)===null?{}:{httpStatus:result.reason.status})});
-  progress.writes=[...observations].sort((left,right)=>({confirmed:0,stale:1}[left.outcome]??2)-({confirmed:0,stale:1}[right.outcome]??2));
+    :commitObservation({outcome:codeOf(result.reason)==='stale'?'stale':'unexpected',code:codeOf(result.reason),httpStatus:statusOf(result.reason?.status)},entries[index].role));
+  progress.writes=observations;
   return settled.map(result=>result.status==='fulfilled'?result.value:{outcome:codeOf(result.reason),httpStatus:statusOf(result.reason?.status)});
 }
 
@@ -70,6 +89,12 @@ function exactRace(results){
 
 function samePreserved(before,after){
   return Object.entries(before).every(([key,value])=>after[key]===value);
+}
+
+function sameOperation(left,right){
+  if(!left||!right||typeof left!=='object'||typeof right!=='object')return false;
+  const leftKeys=Object.keys(left).sort(),rightKeys=Object.keys(right).sort();
+  return leftKeys.length===rightKeys.length&&leftKeys.every((key,index)=>key===rightKeys[index]&&left[key]===right[key]);
 }
 
 export async function runPurchaseScenarios({transport,emit=()=>{}}={}){
@@ -107,8 +132,8 @@ export async function runPurchaseScenarios({transport,emit=()=>{}}={}){
     const operation={kind:'init',id:`init-${suffix}`,epoch:`epoch-${suffix}`,earned:1000};
     const instance=coordinator(context),prepared=await instance.prepare(operation);
     assert(prepared.outcome==='prepared');
-    const committed=await instance.commit(prepared.ticket);
-    assert(committed.outcome==='confirmed'&&statusOf(committed.httpStatus)>=200&&committed.httpStatus<=299);
+    const committed=recordCommit(context.progress,'setupWrites',await instance.commit(prepared.ticket),'initialization');
+    requireConfirmed(committed);
     return {instance,operation};
   };
   const finishRead=async(context,progress,marked)=>{
@@ -130,10 +155,15 @@ export async function runPurchaseScenarios({transport,emit=()=>{}}={}){
       {role:'client-b',commit:()=>b.commit(preparedB.ticket)},
     ]);
     assert(exactRace(results));
+    const operations=[operationA,operationB],winnerIndex=results.findIndex(result=>result?.outcome==='confirmed'),loserIndex=winnerIndex===0?1:0;
     const current=await finishRead(context,context.progress,context.marked);
     context.progress.receiptCount=current.state.receipts.length;
     context.progress.remainingPoints=current.state.earned-current.state.spent;
-    assert(current.state.receipts.length===1&&current.state.spent===0&&current.state.owned.length===0);
+    context.progress.winnerOperationMatched=current.state.receipts.length===1&&sameOperation(current.state.receipts[0],operations[winnerIndex]);
+    context.progress.winnerEpochMatched=current.state.epoch===operations[winnerIndex].epoch;
+    context.progress.loserOperationExcluded=!current.state.receipts.some(receipt=>sameOperation(receipt,operations[loserIndex]));
+    assert(context.progress.winnerOperationMatched&&context.progress.winnerEpochMatched&&context.progress.loserOperationExcluded
+      &&current.state.spent===0&&current.state.owned.length===0);
   });
 
   await runCheck(CHECKS[1],async context=>{
@@ -148,18 +178,27 @@ export async function runPurchaseScenarios({transport,emit=()=>{}}={}){
       {role:'client-b',commit:()=>b.commit(preparedB.ticket)},
     ]);
     assert(exactRace(results));
+    const operations=[purchaseA,purchaseB],winnerIndex=results.findIndex(result=>result?.outcome==='confirmed'),loserIndex=winnerIndex===0?1:0;
     const current=await finishRead(context,context.progress,context.marked);
     context.progress.receiptCount=current.state.receipts.length;
     context.progress.ownedCount=current.state.owned.length;
     context.progress.remainingPoints=current.state.earned-current.state.spent;
-    assert(current.state.receipts.length===2&&current.state.owned.length===1&&current.state.spent===800);
+    context.progress.originalInitializationPreserved=sameOperation(current.state.receipts[0],operation);
+    context.progress.winnerOperationMatched=current.state.receipts.length===2&&sameOperation(current.state.receipts[1],operations[winnerIndex]);
+    context.progress.winnerEpochMatched=current.state.epoch===operations[winnerIndex].epoch;
+    context.progress.loserOperationExcluded=!current.state.receipts.some(receipt=>sameOperation(receipt,operations[loserIndex]));
+    context.progress.ownedArticleMatched=current.state.owned.length===1&&current.state.owned[0]===operations[winnerIndex].article;
+    assert(context.progress.originalInitializationPreserved&&context.progress.winnerOperationMatched&&context.progress.winnerEpochMatched
+      &&context.progress.loserOperationExcluded&&context.progress.ownedArticleMatched&&current.state.spent===800);
   });
 
   await runCheck(CHECKS[2],async context=>{
     const {operation:initOperation}=await init(context,'idempotency');
     const operation={kind:'purchase',id:'buy-idempotent',epoch:initOperation.epoch,article:'dragon-idempotent',price:200};
-    const instance=coordinator(context),prepared=await instance.prepare(operation),committed=await instance.commit(prepared.ticket);
-    assert(committed.outcome==='confirmed');
+    const instance=coordinator(context),prepared=await instance.prepare(operation);
+    context.progress.phase='commit';
+    const committed=recordCommit(context.progress,'writes',await instance.commit(prepared.ticket),'purchase');
+    requireConfirmed(committed);
     const before={...tracked.counts};
     const repeat=await instance.prepare(operation);
     context.progress.repeatCommitted=repeat.outcome==='committed'&&repeat.active===true;
@@ -182,12 +221,15 @@ export async function runPurchaseScenarios({transport,emit=()=>{}}={}){
       return response;
     }};
     const firstOperation={kind:'purchase',id:'buy-loss-first',epoch:initOperation.epoch,article:'dragon-loss-first',price:400};
-    const first=coordinator(context,lossy),firstPrepared=await first.prepare(firstOperation),firstResult=await first.commit(firstPrepared.ticket);
+    const first=coordinator(context,lossy),firstPrepared=await first.prepare(firstOperation);
+    context.progress.phase='commit';
+    const firstResult=recordCommit(context.progress,'writes',await first.commit(firstPrepared.ticket),'purchase-first');
     context.progress.simulatedResponseLoss=true;context.progress.firstWriteObserved=observed&&firstResult.outcome==='uncertain'&&firstResult.phase==='pointer';
     assert(context.progress.firstWriteObserved);
     const secondOperation={kind:'purchase',id:'buy-loss-second',epoch:initOperation.epoch,article:'dragon-loss-second',price:200};
-    const second=coordinator(context),secondPrepared=await second.prepare(secondOperation),secondResult=await second.commit(secondPrepared.ticket);
-    assert(secondResult.outcome==='confirmed');
+    const second=coordinator(context),secondPrepared=await second.prepare(secondOperation);
+    const secondResult=recordCommit(context.progress,'writes',await second.commit(secondPrepared.ticket),'purchase-second');
+    requireConfirmed(secondResult);
     context.progress.phase='recover';
     const fresh=coordinator(context),recovered=await fresh.recover(firstOperation);
     context.progress.ancestorRecovered=recovered.outcome==='committed'&&recovered.active===true;
@@ -203,8 +245,9 @@ export async function runPurchaseScenarios({transport,emit=()=>{}}={}){
     const buyer=coordinator(context),resetter=coordinator(context);
     context.progress.phase='prepare';
     const [buyPrepared,resetPrepared]=await Promise.all([buyer.prepare(oldPurchase),resetter.prepare(reset)]);
-    const resetResult=await resetter.commit(resetPrepared.ticket),buyResult=await buyer.commit(buyPrepared.ticket);
-    context.progress.writes=[commitObservation(resetResult,'reset'),commitObservation(buyResult,'old-purchase')];
+    context.progress.phase='commit';
+    const resetResult=recordCommit(context.progress,'writes',await resetter.commit(resetPrepared.ticket),'reset');
+    const buyResult=recordCommit(context.progress,'writes',await buyer.commit(buyPrepared.ticket),'old-purchase');
     context.progress.oldPurchaseRejected=buyResult.outcome==='stale'&&buyResult.httpStatus===412;
     assert(resetResult.outcome==='confirmed'&&context.progress.oldPurchaseRejected);
     const fresh=coordinator(context);
@@ -223,11 +266,13 @@ export async function runPurchaseScenarios({transport,emit=()=>{}}={}){
     const buyer=coordinator(context),resetter=coordinator(context);
     context.progress.phase='prepare';
     const [buyPrepared,resetPrepared]=await Promise.all([buyer.prepare(purchase),resetter.prepare(reset)]);
-    const buyResult=await buyer.commit(buyPrepared.ticket),oldResetResult=await resetter.commit(resetPrepared.ticket);
-    context.progress.writes=[commitObservation(buyResult,'purchase'),commitObservation(oldResetResult,'old-reset')];
+    context.progress.phase='commit';
+    const buyResult=recordCommit(context.progress,'writes',await buyer.commit(buyPrepared.ticket),'purchase');
+    const oldResetResult=recordCommit(context.progress,'writes',await resetter.commit(resetPrepared.ticket),'old-reset');
     context.progress.staleResetRejected=oldResetResult.outcome==='stale'&&oldResetResult.httpStatus===412;
     assert(buyResult.outcome==='confirmed'&&context.progress.staleResetRejected);
-    const freshResetter=coordinator(context),freshPrepared=await freshResetter.prepare(reset),freshResult=await freshResetter.commit(freshPrepared.ticket);
+    const freshResetter=coordinator(context),freshPrepared=await freshResetter.prepare(reset);
+    const freshResult=recordCommit(context.progress,'followupWrites',await freshResetter.commit(freshPrepared.ticket),'fresh-reset');
     context.progress.freshResetConfirmed=freshResult.outcome==='confirmed';assert(context.progress.freshResetConfirmed);
     context.progress.phase='recover';
     const recovered=await coordinator(context).recover(purchase);
