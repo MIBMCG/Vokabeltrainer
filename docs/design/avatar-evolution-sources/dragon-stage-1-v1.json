@@ -1,0 +1,12 @@
+{
+  "figureId": "dragon",
+  "stage": 1,
+  "source": "dragon-stage-1-v1.png",
+  "reference": "../avatar-evolution/dragon-stages-concept-v2.png",
+  "generator": "Built-in image_gen; backend model not exposed",
+  "prompt": "Use case: background-extraction / identity-preserve. Asset: one complete production avatar illustration for a vocabulary-learning PWA for ages 10–13. Use the supplied user-approved four-panel DRAGON board as the exact identity and style reference. Render ONLY the dragon from the FIRST LEFTMOST panel, STAGE ONE. Youthful emerald green dragon with golden belly, warm friendly eyes, small ivory curved horns, natural green membrane wings and a curled natural tail. NO armor, NO crown, NO mane, NO crystals, NO rune effects. Preserve the individual stage's features and friendly heroic identity, full-body quadruped stance with both wings open. Polished painterly storybook fantasy in the reference style, not vector. Single centered standalone dragon on a genuine transparent alpha background. Entire horns, BOTH wing tips, all paws and complete tail visible. Leave at least 8% TRANSPARENT padding around every extremity, no cropping at any edge. Portrait canvas. No typography, letters, stage labels, UI, frame, ground, rocks, landscape, floor shadow, other dragons or painted checkerboard. Any equipment must be painted naturally fitting the body as part of this one whole image. Do not borrow features from higher stages. Output PNG with actual transparency, not a collage.",
+  "status": "superseded-source-candidate",
+  "created": "2026-09-20",
+  "sha256": "e454cc03443939cc3b75f4117ad29c17ada7157f52ee22c0c9fa203264cad38a",
+  "visualReview": "Root inspected full source and 256px light/dark comparison; independent review recorded separately. Not a personal user acceptance."
+}

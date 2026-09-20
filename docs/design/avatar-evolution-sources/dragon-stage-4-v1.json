@@ -1,0 +1,13 @@
+{
+  "figureId": "dragon",
+  "stage": 4,
+  "source": "dragon-stage-4-v1.png",
+  "reference": "../avatar-evolution/dragon-stages-concept-v2.png",
+  "generator": "Built-in image_gen; backend model not exposed",
+  "prompt": "Use case: background-extraction / identity-preserve. Asset type: production avatar PNG for a vocabulary-learning PWA, ages 10–13. The reference is the user-approved four-stage DRAGON concept board. Produce ONLY the stage FOUR dragon from the RIGHTMOST panel as a standalone, complete, full-body, high-resolution illustration on a truly transparent alpha background. Preserve its specific emerald green and gold identity, friendly heroic face, upright quadruped pose, majestic gold antler horn crown, luminous turquoise/gold flowing mane, celestial constellation wings, smoothly integrated ceremonial gold armor and chest rune, and luminous plume tail. This is the final mythical transformation, clearly more epic than stage three. Composition: single centered dragon with the entire crown, both wings, all paws, and tail visible with generous clear transparent margin, portrait canvas, suitable for 256/512/768-pixel-wide versions. Painted polished storybook fantasy matching the reference exactly in visual direction, NOT vector art. No text, stage labels, title, frame, ground, stones, cast ground shadow, landscape, other dragons, checkerboard painting or background glow rectangle. Any local glow must fade to actual transparency. Armor must be part of the full illustration and fit the body naturally; no floating equipment. This is one independent asset, not a grid/sprite sheet. Save a PNG with genuine transparency.",
+  "status": "superseded-source-candidate",
+  "personalApproval": "Reference style approved; this separate source is pending technical and visual verification",
+  "created": "2026-09-20",
+  "sha256": "16428a5895c291b339c97fe1efb39d6b13926761832b0c6b274aab9f597a8e24",
+  "visualReview": "Root inspected full source and 256px light/dark comparison; independent review recorded separately. Not a personal user acceptance."
+}

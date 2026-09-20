@@ -1,0 +1,113 @@
+{
+  "scope": "four production source candidates; no product integration",
+  "sources": [
+    {
+      "source": "dragon-stage-1-v3.png",
+      "size": [
+        1145,
+        1374
+      ],
+      "mode": "RGBA",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "alphaBounds": [
+        25,
+        9,
+        1107,
+        1340
+      ],
+      "solidBounds": [
+        51,
+        180,
+        1096,
+        1257
+      ],
+      "fullyTransparentPixels": 886396,
+      "fullyOpaquePixels": 984,
+      "sha256": "76ebab873f68d43c4b6cc31834ee24c1e20d351e89b8b8af71f61b5c45ecf907"
+    },
+    {
+      "source": "dragon-stage-2-v3.png",
+      "size": [
+        1145,
+        1374
+      ],
+      "mode": "RGBA",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "alphaBounds": [
+        31,
+        29,
+        1102,
+        1336
+      ],
+      "solidBounds": [
+        51,
+        159,
+        1097,
+        1259
+      ],
+      "fullyTransparentPixels": 888558,
+      "fullyOpaquePixels": 1869,
+      "sha256": "5e2aad5ab188c8a31695d30a0fa9c64b84d435257822f63f563a316f8b71d29c"
+    },
+    {
+      "source": "dragon-stage-3-v1.png",
+      "size": [
+        1145,
+        1374
+      ],
+      "mode": "RGBA",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "alphaBounds": [
+        33,
+        9,
+        1129,
+        1350
+      ],
+      "solidBounds": [
+        52,
+        133,
+        1096,
+        1256
+      ],
+      "fullyTransparentPixels": 854008,
+      "fullyOpaquePixels": 1253,
+      "sha256": "f94f2b962e8360e9443211628bb32119c17113f73b1d72cc1662af5db6af1a96"
+    },
+    {
+      "source": "dragon-stage-4-v2.png",
+      "size": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "alphaBounds": [
+        0,
+        49,
+        1221,
+        1254
+      ],
+      "solidBounds": [
+        52,
+        57,
+        1210,
+        1166
+      ],
+      "fullyTransparentPixels": 744740,
+      "fullyOpaquePixels": 455,
+      "sha256": "eaafc1fa21b72fa764963b9c021ffadc93bd9055b0b48230f9e8fd5f74049afa"
+    }
+  ]
+}

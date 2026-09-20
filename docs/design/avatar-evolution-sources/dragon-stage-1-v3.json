@@ -1,0 +1,13 @@
+{
+  "figureId": "dragon",
+  "stage": 1,
+  "source": "dragon-stage-1-v3.png",
+  "reference": "dragon-stage-3-v1.png",
+  "generator": "Built-in image_gen; backend model not exposed",
+  "prompt": "Use case: precise-object-edit. This source image is a clean transparent cutout of a friendly emerald dragon. Produce its earlier evolution STAGE 1 by changing ONLY these details: Remove ALL armor, the turquoise crystal crest and crystal wing edge plates. Earlier young form with natural emerald scales, golden belly, small ivory curved horns, naturally green membranous wings and simple curling scaly tail. No jewelry, no runes, no new magic. Keep its friendly face, four-legged sitting pose, whole-body composition, painterly storybook style and emerald/gold identity consistent. Most importantly RETAIN THE SOURCE'S TRUE TRANSPARENT BACKGROUND. The region outside the dragon must be exact RGBA alpha zero, with a narrow antialias edge only. DO NOT ADD any mist, glowing aura, gradients, background illumination, floor, shadows, color wash, backdrop or background of any type. Lighting is on the DRAGON ONLY, never outside it. No text. Entire wings, horn tips, tail and paws visible. Output one PNG transparent cutout for an app.",
+  "status": "selected-production-source",
+  "previousAttempts": "First concept-derived image and direct extraction retained broad halo; this retry derives earlier stage from clean stage-3 source.",
+  "created": "2026-09-20",
+  "sha256": "76ebab873f68d43c4b6cc31834ee24c1e20d351e89b8b8af71f61b5c45ecf907",
+  "visualReview": "Root inspected full source and 256px light/dark comparison; independent review recorded separately. Not a personal user acceptance."
+}

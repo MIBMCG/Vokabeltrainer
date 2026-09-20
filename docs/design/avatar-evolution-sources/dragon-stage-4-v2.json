@@ -1,0 +1,12 @@
+{
+  "figureId": "dragon",
+  "stage": 4,
+  "source": "dragon-stage-4-v2.png",
+  "reference": "dragon-stage-4-v1.png",
+  "generator": "Built-in image_gen; backend model not exposed",
+  "prompt": "Use case: precise-object-edit / uncrop. Preserve this EXACT epic final-form dragon: same face, emerald/gold scales, golden antler crown, turquoise/gold energy mane, star-constellation wings, fitted gold armor and plume tail. Fix composition only: provide a WIDER SQUARE 1536x1536 transparent canvas and make the complete dragon fit INSIDE the central 75 percent of the canvas with a clearly visible TRANSPARENT BORDER on all four sides. Both wing tips must be entirely visible, especially the currently edge-touching left and right outer wing tips. Reconstruct any missing small wing tip naturally. Head crown, all feet and tail fully visible too. No ground, text, effects beyond the figure, mist, backdrop or shadow. Genuine RGBA transparent background with zero-alpha space around the creature. Do not add glowing colored background behind the figure. Keep the illustrated character and its details unchanged as closely as possible. This is a clean production cutout; the transparent margin is mandatory.",
+  "status": "selected-production-source",
+  "created": "2026-09-20",
+  "sha256": "eaafc1fa21b72fa764963b9c021ffadc93bd9055b0b48230f9e8fd5f74049afa",
+  "visualReview": "Root inspected full source and 256px light/dark comparison; independent review recorded separately. Not a personal user acceptance."
+}
