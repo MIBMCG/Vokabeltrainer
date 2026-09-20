@@ -1,3 +1,5 @@
+import {runPurchaseScenarios} from './purchase-scenarios.js';
+
 const clone=value=>structuredClone(value);
 const initial=()=>({probeVersion:1,epoch:'epoch-0',sequence:0,earned:1000,spent:0,operations:[],owned:[]});
 const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
@@ -111,7 +113,11 @@ export function purchase(state,{id,article,price,epoch=state.epoch,conflicted=fa
   next.operations.push({kind:'purchase',id,article,price,epoch});return next;
 }
 export async function runProbeScenarios({transport,emit=()=>{},probeScope='full'}) {
-  if(!['full','invalid-token','read-stability','metadata-coordination'].includes(probeScope))throw new TypeError('Unknown probe scope');
+  if(!['full','invalid-token','read-stability','metadata-coordination','immutable-purchases'].includes(probeScope))throw new TypeError('Unknown probe scope');
+  if(probeScope==='immutable-purchases'){
+    if(['createMetadataFolder','readMetadataSnapshot','updateMetadataIfUnchanged','prepareImmutable','writeImmutable','readImmutable'].some(name=>typeof transport?.[name]!=='function'))throw new TypeError('Unsupported probe scope');
+    return runPurchaseScenarios({transport,emit});
+  }
   if(probeScope==='read-stability'&&typeof transport?.observeReadStability!=='function')throw new TypeError('Unsupported probe scope');
   if(probeScope==='metadata-coordination'&&['createMetadataFolder','readMetadataSnapshot','updateMetadataIfUnchanged'].some(name=>typeof transport?.[name]!=='function'))throw new TypeError('Unsupported probe scope');
   const checks=[];

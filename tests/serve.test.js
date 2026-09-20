@@ -43,6 +43,9 @@ test('serves only named probe and trainer assets with correct MIME types', async
       ['/src/shop-probe/transport.js', 'text/javascript; charset=utf-8'],
       ['/src/shop-probe/v2-coherent-transport.js', 'text/javascript; charset=utf-8'],
       ['/src/shop-probe/scenarios.js', 'text/javascript; charset=utf-8'],
+      ['/src/shop-probe/immutable-value.js', 'text/javascript; charset=utf-8'],
+      ['/src/shop-probe/purchase-coordinator.js', 'text/javascript; charset=utf-8'],
+      ['/src/shop-probe/purchase-scenarios.js', 'text/javascript; charset=utf-8'],
       ['/', 'text/html; charset=utf-8'],
       ['/styles.css', 'text/css; charset=utf-8'],
       ['/src/probe/main.js', 'text/javascript; charset=utf-8'],
@@ -110,6 +113,7 @@ test('serves the same bounded trainer below a repository path prefix', async () 
     for (const path of [
       '/repo/trainer/', '/repo/trainer/sw.js', '/repo/trainer/manifest.webmanifest',
       '/repo/src/trainer/main.js', '/repo/src/trainer/ui/preview.js', '/repo/src/drive/auth.js',
+      '/repo/src/shop-probe/immutable-value.js', '/repo/src/shop-probe/purchase-coordinator.js', '/repo/src/shop-probe/purchase-scenarios.js',
     ]) assert.equal((await request(port, path)).status, 200, path);
     assert.equal((await request(port, '/trainer/')).status, 404);
     const manifest = JSON.parse((await request(port, '/repo/trainer/manifest.webmanifest')).body.toString());

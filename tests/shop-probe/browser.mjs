@@ -27,6 +27,9 @@ const cases=[
   {basePath:'',source:'v2-coherent',scope:'metadata-coordination'},
   {basePath:'',source:'v2-coherent',scope:'metadata-coordination',ignoreMetadataCondition:true},
   {basePath:'',source:'v2-coherent',scope:'metadata-coordination',metadataInstability:true},
+  {basePath:'',source:'v2-coherent',scope:'immutable-purchases'},
+  {basePath:'/isolated',source:'v2-coherent',scope:'immutable-purchases'},
+  {basePath:'',source:'v2-coherent',scope:'immutable-purchases',ignoreMetadataCondition:true},
 ];
 for(const {basePath,noEtag=false,source='media',scope='full',noJsonEtag=false,ignore=false,ignoreMediaCondition=false,ignoreMetadataCondition=false,instability=false,invalidTokenStatus=null,readInstability=false,metadataInstability=false} of cases)test(`isolated shop probe UI with synthetic Google boundary ${basePath||'root'} ${source} ${scope}${noEtag?' missing headers':''}${noJsonEtag?' missing JSON ETag':''}${ignore||ignoreMediaCondition||ignoreMetadataCondition?' ignored conditions':''}${instability?' unstable snapshot':''}${invalidTokenStatus?` invalid token ${invalidTokenStatus}`:''}${readInstability?' unstable observation':''}${metadataInstability?' unstable metadata coordination':''}`,async()=>{
   const server=createProbeServer({basePath});await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
@@ -48,8 +51,9 @@ for(const {basePath,noEtag=false,source='media',scope='full',noJsonEtag=false,ig
     const page=await context.newPage();const errors=[];page.on('pageerror',error=>errors.push(error.message));
     await page.goto(`http://127.0.0.1:${server.address().port}${basePath}/shop-probe/`);
     assert.equal(await page.locator('#source option').count(),4);await page.locator('#source').selectOption(source);
-    assert.equal(await page.locator('#scope option').count(),4);assert.equal(await page.locator('#scope').inputValue(),'full');
+    assert.equal(await page.locator('#scope option').count(),5);assert.equal(await page.locator('#scope').inputValue(),'full');
     assert.equal(await page.locator('#scope option[value="metadata-coordination"]').innerText(),'Ordner-Koordination gezielt prüfen');await page.locator('#scope').selectOption(scope);
+    assert.equal(await page.locator('#scope option[value="immutable-purchases"]').innerText(),'Kaufablauf mit Belegkette prüfen');
     assert.match(await page.locator('#scope-hint').innerText(),/Drive v2 kohärent.*Metadaten/);
     await page.locator('#connect').waitFor();assert.equal(loginCalls,0);assert.equal(await page.locator('#start').isDisabled(),true);
     await page.locator('#connect').click();await page.waitForFunction(()=>document.getElementById('status').textContent.startsWith('Verbunden.'));
@@ -57,14 +61,14 @@ for(const {basePath,noEtag=false,source='media',scope='full',noJsonEtag=false,ig
     await page.locator('#consent').check();await page.locator('#start').click();
     assert.equal(await page.locator('#source').isDisabled(),true);assert.equal(await page.locator('#scope').isDisabled(),true);
     const expectedPass=!ignore&&!ignoreMediaCondition&&!ignoreMetadataCondition&&!instability&&!readInstability&&!metadataInstability&&!invalidTokenStatus&&!noJsonEtag&&(!noEtag||source==='v2-json');
-    await page.waitForFunction(({scope,expectedPass})=>{const text=document.getElementById('status').textContent;return scope==='metadata-coordination'?text.includes('reine Metadatenprobe'):scope==='invalid-token'?text.includes('keine vollständige Kaufkoordination geprüft'):scope==='read-stability'?text.includes('keine Schreibbedingung geprüft'):text.startsWith(expectedPass?'Alle isolierten':'Kaufkoordination nicht');},{scope,expectedPass},{timeout:30000});
-    assert.equal(await page.locator('#checks li').count(),scope==='full'?11:scope==='metadata-coordination'?4:2);assert.equal(await page.locator('#start').isDisabled(),true);
+    await page.waitForFunction(({scope,expectedPass})=>{const text=document.getElementById('status').textContent;return scope==='immutable-purchases'?text.includes('Belegkettenprobe'):scope==='metadata-coordination'?text.includes('reine Metadatenprobe'):scope==='invalid-token'?text.includes('keine vollständige Kaufkoordination geprüft'):scope==='read-stability'?text.includes('keine Schreibbedingung geprüft'):text.startsWith(expectedPass?'Alle isolierten':'Kaufkoordination nicht');},{scope,expectedPass},{timeout:30000});
+    assert.equal(await page.locator('#checks li').count(),scope==='full'?11:scope==='immutable-purchases'?6:scope==='metadata-coordination'?4:2);assert.equal(await page.locator('#start').isDisabled(),true);
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
     assert.equal(await page.evaluate(()=>localStorage.length),0);assert.deepEqual(await page.evaluate(async()=>await indexedDB.databases()),[]);
     const downloadPromise=page.waitForEvent('download');await page.locator('#download').click();const downloaded=await downloadPromise;
     const report=JSON.parse(await readFile(await downloaded.path(),'utf8'));assert.equal(report.passed,expectedPass);assert.equal(report.productReady,false);assert.ok(!JSON.stringify(report).includes('synthetic-only-secret'));assert.ok(!JSON.stringify(report).includes('test-1'));
-    assert.equal(downloaded.suggestedFilename(),'shop-probe-bericht9.json');
-    assert.equal(report.diagnosticVersion,9);assert.equal(report.etagSource,source);assert.equal(report.probeScope,scope);
+    assert.equal(downloaded.suggestedFilename(),'shop-probe-bericht10.json');
+    assert.equal(report.diagnosticVersion,10);assert.equal(report.etagSource,source);assert.equal(report.probeScope,scope);
     if(source==='v2-json'){
       assert.equal(report.apiPaths.tokenRead,'GET /drive/v2/files/{ownedId}?fields=id,mimeType,etag');
       assert.equal(report.apiPaths.read,'GET /drive/v3/files/{probeFileId}?alt=media');
@@ -74,7 +78,7 @@ for(const {basePath,noEtag=false,source='media',scope='full',noJsonEtag=false,ig
     }
     if(source==='v2-coherent'){
       assert.equal(report.apiPaths.idReservation,'GET /drive/v3/files/generateIds');
-      if(scope!=='metadata-coordination'){
+      if(!['metadata-coordination','immutable-purchases'].includes(scope)){
         assert.equal(report.apiPaths.create,'POST /drive/v3/files oder /upload/drive/v3/files');
         assert.equal(report.apiPaths.metadataRead,'GET /drive/v2/files/{ownedId}?fields=...version,etag,md5Checksum,headRevisionId,modifiedDate,lastViewedByMeDate,fileSize');
         assert.equal(report.apiPaths.read,'GET /drive/v2/files/{probeFileId}?alt=media');
@@ -102,6 +106,31 @@ for(const {basePath,noEtag=false,source='media',scope='full',noJsonEtag=false,ig
       assert.match(await page.locator('#status').innerText(),/reine Metadatenprobe/);
       assert.match(await page.locator('#status').innerText(),/keine Kauf- oder Zwei-Geräte-Garantie/);
       assert.doesNotMatch(report.limitations.join(' '),/Antwortverlust/);
+    }
+    if(scope==='immutable-purchases'){
+      assert.deepEqual(report.apiPaths,{
+        idReservation:'GET /drive/v3/files/generateIds',
+        create:'POST /drive/v3/files oder /upload/drive/v3/files',
+        metadataRead:'2 × GET /drive/v2/files/{ownedFolderId}?fields=...version,etag,...; cache=no-store',
+        immutableRead:'2 × GET /drive/v2/files/{ownedReceiptId}?fields=... plus GET alt=media; cache=no-store',
+        metadataUpdate:'PUT /drive/v2/files/{ownedFolderId}',condition:'If-Match',
+      });
+      assert.match(await page.locator('#status').innerText(),/Belegkettenprobe/);
+      if(expectedPass){
+        for(const id of ['purchase-init','purchase-race']){
+          const writes=report.checks.find(check=>check.id===id).actual.writes;
+          assert.equal(writes.filter(write=>write.outcome==='confirmed'&&write.httpStatus>=200&&write.httpStatus<=299).length,1,id);
+          assert.equal(writes.filter(write=>write.outcome==='stale'&&write.httpStatus===412).length,1,id);
+        }
+        assert.equal(report.checks.find(check=>check.id==='purchase-response-loss').actual.simulatedResponseLoss,true);
+      }else if(ignoreMetadataCondition){
+        for(const id of ['purchase-init','purchase-race']){
+          const check=report.checks.find(item=>item.id===id);assert.equal(check.passed,false,id);
+          assert.deepEqual(check.evidence.writes.map(({outcome,httpStatus})=>({outcome,httpStatus})),[
+            {outcome:'confirmed',httpStatus:200},{outcome:'confirmed',httpStatus:200},
+          ],id);
+        }
+      }
     }
     if(scope==='invalid-token'){
       const observation=(report.checks.find(check=>check.id==='invalid-token').actual?.checkpoint==='invalid-token-observation'
@@ -149,7 +178,7 @@ for(const {basePath,noEtag=false,source='media',scope='full',noJsonEtag=false,ig
     }
     const conditionalMethod=source==='v2-coherent'?'PUT':'PATCH';
     assert.equal(fixture.calls.filter(c=>c.method===conditionalMethod).every(c=>!!c.headers['If-Match']),true);
-    const screenshotName=readInstability?'v2-read-observation-unstable':scope==='read-stability'?'v2-read-observation':ignore?'v6-write-diagnostics':ignoreMediaCondition?'v2-coherent-media-ignore':ignoreMetadataCondition?'v2-coherent-metadata-ignore':instability?'v2-coherent-instability':noJsonEtag?'v2-json-missing-token':source==='v2-coherent'?'v2-coherent':source==='v2-json'?'v2-json':noEtag?'missing-headers':basePath?'subpath':'root';
+    const screenshotName=scope==='immutable-purchases'?(ignoreMetadataCondition?'immutable-purchases-condition-ignored':basePath?'immutable-purchases-subpath':'immutable-purchases'):readInstability?'v2-read-observation-unstable':scope==='read-stability'?'v2-read-observation':ignore?'v6-write-diagnostics':ignoreMediaCondition?'v2-coherent-media-ignore':ignoreMetadataCondition?'v2-coherent-metadata-ignore':instability?'v2-coherent-instability':noJsonEtag?'v2-json-missing-token':source==='v2-coherent'?'v2-coherent':source==='v2-json'?'v2-json':noEtag?'missing-headers':basePath?'subpath':'root';
     await mkdir('test-results/shop-probe',{recursive:true});await page.screenshot({path:`test-results/shop-probe/${screenshotName}.png`,fullPage:true});
     assert.deepEqual(errors,[]);
     await page.locator('#disconnect').click();assert.equal(await page.locator('#start').isDisabled(),true);
@@ -157,7 +186,7 @@ for(const {basePath,noEtag=false,source='media',scope='full',noJsonEtag=false,ig
   }finally{await browser?.close();await new Promise(resolve=>server.close(resolve));}
 });
 
-for(const scope of ['read-stability','metadata-coordination'])test(`${scope} UI rejects a non-v2 source before any Drive request`,async()=>{
+for(const scope of ['read-stability','metadata-coordination','immutable-purchases'])test(`${scope} UI rejects a non-v2 source before any Drive request`,async()=>{
   const server=createProbeServer({basePath:''});await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));let browser;
   try{
     browser=await chromium.launch({headless:true,...(process.env.BROWSER_EXECUTABLE?{executablePath:process.env.BROWSER_EXECUTABLE}:{})});
