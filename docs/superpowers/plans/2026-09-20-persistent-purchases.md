@@ -1,5 +1,7 @@
 # Dauerhafte Käufe: Implementierungsplan
 
+**Aktuell pausiert auf Nutzerwunsch.** Task 1 implementiert, Review mit vier wichtigen offenen Befunden; Tasks 2–6 offen. Bei ausdrücklicher Fortsetzung zuerst [Reviewbefunde](../../reports/2026-09-20-persistent-purchases-task1-review.md) korrigieren. [Pausenübergabe](../../handoffs/2026-09-20-pause-persistent-purchases.md).
+
 > Ausführung mit `subagent-driven-development`; konkrete Zustimmung des Nutzers: „ja“ nach Vorlage des Integrationsentwurfs. Keine weitere Startfreigabe erforderlich.
 
 **Goal:** Bestätigte Käufe dauerhaft und geräteübergreifend erhalten, echte Lernpunkte getrennt je Kind verwenden und Wiederherstellung über denselben Bestätigungspunkt ordnen.
@@ -28,7 +30,7 @@ Die Typen sind JSON-Daten; IDs und Hashes werden strikt validiert. Zusätzliche 
 
 `Intent = {version:1, operationId, datasetId, profileId, epochId, articleId, catalogVersion:1, price, confirmed:true}` ist unveränderlich. Artikel sind Figur-IDs für bezahlte Grundfiguren oder `evolution:<figureId>:<stage>` für Entwicklungsformen. Die abgelösten bezahlten modularen Ausrüstungsstücke werden nicht neu angeboten.
 
-`Receipt = {version:1, kind:'receipt', datasetId, coordinatorId, sequence, previous:Ref|null, operationId, operation:'initialize'|'purchase'|'restore', epochId, basis:Ref, intent:Intent|null, economy:null|EconomicSnapshot}`. Initialisierung/Restore setzen einen geprüften wirtschaftlichen Zielstand; Kauf trägt genau einen Intent. `EconomicSnapshot` enthält die überprüfbare Herkunft für übertragenen Besitz/Ausgaben, keine bloßen behaupteten Guthaben. Die konkrete portable Darstellung wird in Task 1 zusammen mit Replay definiert und dokumentiert; sie muss vollständige Herkunftsbelege samt Basen prüfen und zyklische Herkunft ablehnen.
+`Receipt = {version:1, kind:'receipt', datasetId, coordinatorId, sequence, previous:Ref|null, operationId, operation:'initialize'|'purchase'|'restore', epochId, basis:Ref, intent:Intent|null, economy:null|EconomicSnapshot}`. Initialisierung/Restore setzen einen geprüften wirtschaftlichen Zielstand; Kauf trägt genau einen Intent. `EconomicSnapshot` enthält die überprüfbare Herkunft für übertragenen Besitz/Ausgaben, keine bloßen behaupteten Guthaben. Die konkrete portable Darstellung wird in Task 1 zusammen mit Replay definiert und dokumentiert; sie muss vollständige Herkunftsbelege samt Basen prüfen und zyklische Herkunft ablehnen. Eine fremde Herkunft referenziert zusätzlich ein gehashtes Proofmanifest: ursprüngliche logische Referenzen werden neuen physischen Referenzen mit unverändertem Body/Hash zugeordnet. Ein leeres Zielgerät darf dafür keinen Zugriff auf das Quellkonto benötigen.
 
 `Basis` ist ein unveränderlicher Manifestverweis auf in begrenzte Stücke zerlegtes kanonisches JSON eines vollständigen validierten Ledgers. Manifest bindet Länge, Hash und geordnete Teilreferenzen. Keine einzelne große Metadateneigenschaft. Serialisierung/Lesung werden in eigenen `value.js`/`basis.js`-Modulen gehalten.
 
@@ -38,7 +40,7 @@ Netzwerkfehler und Integritätsfehler tragen maschinenlesbare `code`-Werte über
 
 ### Task 1: Belegvertrag, echte Punkte und vollständige Historie
 
-**Files:** neue `src/trainer/purchases/{value,schema,basis,projection,history}.js`; neue `tests/trainer/purchases-contract.test.js`, `purchases-fixtures.js`; Schnittstellen-Dokument `docs/KAUFPROTOKOLL.md`.
+**Files:** neue `src/trainer/purchases/{value,schema,basis,proof,projection,history}.js`; neue `tests/trainer/purchases-contract.test.js`, `purchases-fixtures.js`; Schnittstellen-Dokument `docs/KAUFPROTOKOLL.md`.
 
 **Interfaces consumed:** `assertLedger`, `resolveEpochs`, `project`, `canonical`/`digest`, Figuren-/Stufenkatalog. Keine Speicherung/HTTP.
 

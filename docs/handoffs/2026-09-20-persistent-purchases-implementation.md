@@ -1,5 +1,7 @@
 # Übergabe: Umsetzung dauerhafter Käufe
 
+**Historischer Arbeitsbeginn:** Inzwischen wurde Aufgabe 1 implementiert, noch nicht freigegeben und die Arbeit auf Nutzerwunsch pausiert. Maßgeblich ist die [Pausenübergabe](2026-09-20-pause-persistent-purchases.md).
+
 ## Auftrag und verbindlicher Umfang
 
 Der Nutzer hat den [Integrationsentwurf](../superpowers/specs/2026-09-20-persistent-purchases-design.md) mit „ja“ ausdrücklich bestätigt. Die Umsetzung läuft nach dem [Plan](../superpowers/plans/2026-09-20-persistent-purchases.md). Keine erneute Grundsatz-, Entwurfs- oder Ausführungsfreigabe verlangen. C, Onlinekäufe, EV01–EV05, Google Drive und die getrennten Lernprofile bleiben erhalten.

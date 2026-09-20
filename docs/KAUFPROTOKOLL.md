@@ -1,5 +1,7 @@
 # Kaufprotokoll: Verträge der reinen Kernmodule
 
+**Nicht zur Integration freigegeben:** Die [Task-1-Review](reports/2026-09-20-persistent-purchases-task1-review.md) enthält vier wichtige offene Befunde. Dieser Zwischenvertrag wird bei der Fortsetzung korrigiert; keine Produktkäufe daran anschließen.
+
 Stand: 20.09.2026. Dieses Dokument bindet die nachfolgenden Transport-, Service-,
 Speicher- und Restore-Tasks an die öffentlichen Formen aus
 `src/trainer/purchases/`. Alle Formen sind JSON-Daten. Unbekannte Felder sind

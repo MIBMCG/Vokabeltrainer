@@ -2,7 +2,7 @@
 
 ## Bestätigter Integrationsentwurf
 
-Der [neue Entwurf](superpowers/specs/2026-09-20-persistent-purchases-design.md) empfiehlt einen gemeinsamen Bestätigungspunkt je Lernbestand, getrennte Profilkonten im Inhalt und dauerhafte Aufträge im atomaren Produktzustand. Er verbindet Kauf und Wiederherstellung mit demselben Kopfwechsel. Die einmalige Ordnerbindung, neue Sitzungen, v1/v2-Übergang, alte Clients und Belegwachstum sind darin ausdrücklich behandelt. **Mit „ja“ bestätigt; Umsetzung läuft**; aktueller ausführbarer Stand bleibt die nachfolgend dokumentierte Probe und das unveränderte Produkt.
+Der [neue Entwurf](superpowers/specs/2026-09-20-persistent-purchases-design.md) empfiehlt einen gemeinsamen Bestätigungspunkt je Lernbestand, getrennte Profilkonten im Inhalt und dauerhafte Aufträge im atomaren Produktzustand. Er verbindet Kauf und Wiederherstellung mit demselben Kopfwechsel. Die einmalige Ordnerbindung, neue Sitzungen, v1/v2-Übergang, alte Clients und Belegwachstum sind darin ausdrücklich behandelt. **Mit „ja“ bestätigt; Umsetzung auf Nutzerwunsch pausiert**; aktueller ausführbarer Stand bleibt die nachfolgend dokumentierte Probe und das unveränderte Produkt. Der neue reine Kaufkern ist noch nicht integriert und hat [offene Reviewbefunde](reports/2026-09-20-persistent-purchases-task1-review.md).
 
 ## Echter Nachweis des isolierten Kaufablaufs
 
