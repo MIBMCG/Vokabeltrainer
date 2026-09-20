@@ -34,7 +34,7 @@ Dateien: `src/shop-probe/v2-coherent-transport.js`, `src/shop-probe/scenarios.js
 - [x] **Browser:** neue Auswahl und Quellenhinweis, kein Request bei falscher Kombination, korrekter 8er-Download, vollständige und instabile Beobachtung mit ehrlichem Text; alte Umfänge bleiben 11 bzw. 2 Checks. Google synthetisch, keine persönlichen Browserprofile.
 - [x] **Abschluss:** `npm run test:shop-probe` und `npm run test:shop-probe:browser` je einmal auf finalem Code; Rohlogs ignoriert. Dokumentprüfung und Diffprüfung. Keine unveränderte Trainer-Gesamtregression.
 - [x] **Review:** unabhängige Spezifikations-/Codeprüfung; ein enger Erfolgs-Guard-Befund ist mit RED 0/4 → GREEN 4/4 korrigiert. Abschlussreview ohne offene relevante Befunde.
-- [ ] **Git:** Root-Commit/Push mit Remotevergleich.
+- [x] **Git:** Root-Commit `0800733e8cbb50d6a64a3c8193018d8ad543deda` gepusht, Remotevergleich identisch, Arbeitsbaum sauber; nachträgliche Dokumentation dieses Nachweises ändert keinen getesteten Code.
 
 ## Interpretation des nächsten echten Laufs
 
