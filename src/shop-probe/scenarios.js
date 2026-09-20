@@ -27,7 +27,7 @@ function safeEvidence(value){
 // Export classifications only, never raw headers, file IDs, token values or errors.
 function safeDiagnostic(value){
   if(!value||typeof value!=='object')return null;
-  const allowed={phase:['metadata','read-stability','read-token','write-token'],reason:['missing-file-version','changed-during-read','missing-strong-etag'],etagSource:['media','metadata','v2-json','v2-coherent'],metadataEtagState:['absent','strong','weak','malformed'],mediaEtagState:['absent','strong','weak','malformed','not-requested'],jsonEtagState:['absent','strong','weak','malformed']};
+  const allowed={phase:['metadata','read-stability','read-token','write-token'],reason:['missing-file-version','changed-during-read','missing-strong-etag'],etagSource:['media','metadata','v2-json','v2-coherent'],metadataEtagState:['absent','strong','weak','malformed'],mediaEtagState:['absent','strong','weak','malformed','not-requested'],jsonEtagState:['absent','strong','weak','malformed'],readContext:['create-verification','snapshot-read','retry-create-verification'],readKind:['metadata-metadata','metadata-media-metadata'],contentChecksumState:['same','changed','unavailable'],headRevisionState:['same','changed','unavailable'],modifiedDateState:['same','changed','unavailable'],viewedDateState:['same','changed','unavailable'],fileSizeState:['same','changed','unavailable']};
   const result={};
   for(const [key,values] of Object.entries(allowed))if(Object.hasOwn(value,key)&&values.includes(value[key]))result[key]=value[key];
   for(const key of ['versionChanged','metadataEtagChanged','jsonEtagChanged'])if(Object.hasOwn(value,key)&&typeof value[key]==='boolean')result[key]=value[key];
@@ -55,7 +55,7 @@ export async function runProbeScenarios({transport,emit=()=>{}}) {
     catch(error){const code=classify(error);
       const diagnostic=safeDiagnostic(error?.diagnostic);
       const evidence=safeEvidence(error?.evidence);
-      result={id,expected,passed:false,status:code==='unsupported'?'unsupported':'failed',actual:code,...(diagnostic?{diagnostic}:{}),...(evidence?{evidence}:{}),...(['fixture-read','post-write-read','initialization-read'].includes(error?.scenarioStage)?{scenarioStage:error.scenarioStage}:{}),...(Number.isInteger(error?.status)?{httpStatus:error.status}:{})};}
+      result={id,expected,passed:false,status:code==='unsupported'?'unsupported':'failed',actual:code,...(diagnostic?{diagnostic}:{}),...(evidence?{evidence}:{}),...(['fixture-read','post-write-read','initialization-read','response-loss-receipt','response-loss-after-second-write','response-loss-balance'].includes(error?.scenarioStage)?{scenarioStage:error.scenarioStage}:{}),...(Number.isInteger(error?.status)?{httpStatus:error.status}:{})};}
     checks.push(result);emit(clone(result));
   }
   let folder;
@@ -87,11 +87,11 @@ export async function runProbeScenarios({transport,emit=()=>{}}) {
   await check('response-loss','Absichtlich verworfene Erfolgsantwort: Beleg mit gleicher ID gefunden, keine zweite Ausgabe.',async()=>{
     const before=await fixture('response-loss'),request={id:'same-operation',article:'a',price:800};
     try{await transport.updateIfUnchanged(before,purchase(before.value,request));throw Object.assign(new Error(),{code:'network'});}catch(error){if(error.code!=='network')throw error;}
-    let current=await read(before.id);assert(current.value.operations.some(op=>op.id===request.id),{checkpoint:'response-loss-receipt'});
+    let current=await read(before.id,'response-loss-receipt');assert(current.value.operations.some(op=>op.id===request.id),{checkpoint:'response-loss-receipt'});
     await transport.updateIfUnchanged(current,purchase(current.value,{id:'later-operation',article:'b',price:100}));
-    current=await read(before.id);
+    current=await read(before.id,'response-loss-after-second-write');
     assert(same(purchase(current.value,request),current.value),{checkpoint:'response-loss-idempotency'});await rejects(()=>transport.updateIfUnchanged(before,purchase(before.value,request)),'stale','old-token-retry');
-    assert((await read(before.id)).value.spent===900,{checkpoint:'response-loss-balance'});
+    assert((await read(before.id,'response-loss-balance')).value.spent===900,{checkpoint:'response-loss-balance'});
     return 'Erfolgsantwort lokal verworfen; kein tatsächlicher Leitungsabbruch simuliert.';
   });
   await check('duplicate-operation','Vorgang und vorhandener Besitz erzeugen keine zweite Ausgabe.',async()=>{

@@ -49,7 +49,9 @@ for(const field of ['version','etag']){
       assert.equal(error.code,'stale');
       assert.deepEqual(error.diagnostic,{
         phase:'read-stability',reason:'changed-during-read',etagSource:'v2-coherent',
+        readContext:'snapshot-read',readKind:'metadata-media-metadata',
         versionChanged:field==='version',jsonEtagChanged:field==='etag',jsonEtagState:'strong',
+        contentChecksumState:'unavailable',headRevisionState:'unavailable',modifiedDateState:'unavailable',viewedDateState:'unavailable',fileSizeState:'unavailable',
       });
       return true;
     });
@@ -143,4 +145,83 @@ test('v2-coherent rejects foreign IDs without HTTP calls and hides token failure
   assert.equal(fixture.calls.length,0);
   const broken=createProbeTransport({fetch:async()=>{throw new Error('secret');},token:()=> 'secret',etagSource:'v2-coherent'});
   await assert.rejects(()=>broken.create({value:{}}),error=>error.code==='network'&&!error.message.includes('secret'));
+});
+
+const diagnosticStates={
+  contentChecksumState:'changed',
+  headRevisionState:'changed',
+  modifiedDateState:'same',
+  viewedDateState:'changed',
+  fileSizeState:'same',
+};
+const diagnosticMetadata=(metadata,{count})=>({...metadata,
+  md5Checksum:count%2?'private-checksum-before':'private-checksum-after',
+  headRevisionId:count%2?'private-revision-before':'private-revision-after',
+  modifiedDate:'private-modified-marker',
+  lastViewedByMeDate:count%2?'private-viewed-before':'private-viewed-after',
+  fileSize:'private-size-marker',
+});
+
+test('diagnostic 6 compares five optional fields without exporting their raw values',async()=>{
+  const fixture=v2CoherentDriveFixture({mutateDuringRead:{field:'version',after:0},metadataOverride:diagnosticMetadata});
+  await assert.rejects(()=>makeTransport(fixture).create({value:{}}),error=>{
+    assert.equal(error.code,'stale');
+    assert.deepEqual(error.diagnostic,{
+      phase:'read-stability',reason:'changed-during-read',etagSource:'v2-coherent',readContext:'create-verification',
+      readKind:'metadata-media-metadata',versionChanged:true,jsonEtagChanged:false,jsonEtagState:'strong',...diagnosticStates,
+    });
+    for(const marker of ['private-checksum-before','private-checksum-after','private-revision-before','private-revision-after','private-modified-marker','private-viewed-before','private-viewed-after','private-size-marker']){
+      assert.equal(JSON.stringify(error).includes(marker),false);
+    }
+    return true;
+  });
+});
+
+test('diagnostic 6 reports missing optional metadata as unavailable',async()=>{
+  const fixture=v2CoherentDriveFixture({mutateDuringRead:{field:'version',after:0}});
+  await assert.rejects(()=>makeTransport(fixture).create({value:{}}),error=>{
+    assert.equal(error.diagnostic.readContext,'create-verification');
+    assert.equal(error.diagnostic.readKind,'metadata-media-metadata');
+    for(const key of Object.keys(diagnosticStates))assert.equal(error.diagnostic[key],'unavailable',key);
+    return true;
+  });
+});
+
+test('diagnostic 6 reports wrongly typed optional metadata as unavailable',async()=>{
+  const fixture=v2CoherentDriveFixture({mutateDuringRead:{field:'version',after:0},metadataOverride:metadata=>({...metadata,
+    md5Checksum:1,headRevisionId:false,modifiedDate:{},lastViewedByMeDate:[],fileSize:null,
+  })});
+  await assert.rejects(()=>makeTransport(fixture).create({value:{}}),error=>{
+    for(const key of Object.keys(diagnosticStates))assert.equal(error.diagnostic[key],'unavailable',key);
+    return true;
+  });
+});
+
+for(const [operation,readContext,after] of [
+  ['create','create-verification',0],
+  ['read','snapshot-read',2],
+  ['retry','retry-create-verification',2],
+]){
+  test(`diagnostic 6 labels ${operation} instability as ${readContext}`,async()=>{
+    const fixture=v2CoherentDriveFixture({mutateDuringRead:{field:'version',after}}),transport=makeTransport(fixture);
+    let file;
+    if(operation!=='create')file=await transport.create({value:{probe:true}});
+    const action=operation==='create'?()=>transport.create({value:{probe:true}}):operation==='read'?()=>transport.read(file.id):()=>transport.retryCreate(file.id,{probe:true});
+    await assert.rejects(action,error=>error.code==='stale'&&error.diagnostic?.readContext===readContext&&error.diagnostic?.readKind==='metadata-media-metadata');
+  });
+}
+
+test('diagnostic 6 labels folder reads as metadata-metadata',async()=>{
+  const fixture=v2CoherentDriveFixture({mutateDuringRead:{field:'version',after:0}});
+  await assert.rejects(()=>makeTransport(fixture).create({folder:true}),error=>error.code==='stale'&&error.diagnostic?.readContext==='create-verification'&&error.diagnostic?.readKind==='metadata-metadata');
+});
+
+test('diagnostic 6 adds no HTTP request to a stable snapshot',async()=>{
+  const fixture=v2CoherentDriveFixture(),transport=makeTransport(fixture),file=await transport.create({value:{probe:true}});
+  const before=fixture.calls.length;
+  await transport.read(file.id);
+  const calls=fixture.calls.slice(before);
+  assert.equal(calls.length,3);
+  assert.equal(calls.filter(call=>call.method==='GET'&&call.url.includes('/drive/v2/files/')).length,3);
+  assert.equal(new URL(calls[0].url).searchParams.get('fields'),'id,title,mimeType,parents,properties,labels,version,etag,md5Checksum,headRevisionId,modifiedDate,lastViewedByMeDate,fileSize');
 });

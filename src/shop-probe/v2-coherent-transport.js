@@ -3,11 +3,14 @@ const API_V2='https://www.googleapis.com/drive/v2/files';
 const UPLOAD_V2='https://www.googleapis.com/upload/drive/v2/files';
 const API_V3='https://www.googleapis.com/drive/v3/files';
 const UPLOAD_V3='https://www.googleapis.com/upload/drive/v3/files';
-const V2_FIELDS='id,title,mimeType,parents,properties,labels,version,etag';
+const V2_FIELDS='id,title,mimeType,parents,properties,labels,version,etag,md5Checksum,headRevisionId,modifiedDate,lastViewedByMeDate,fileSize';
 const APP='vokabeltrainer-shop-probe';
 const FOLDER_MIME='application/vnd.google-apps.folder';
 const JSON_MIME='application/json';
 const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+const observationState=(before,after)=>typeof before==='string'&&before.length>0&&typeof after==='string'&&after.length>0
+  ?before===after?'same':'changed'
+  :'unavailable';
 const etagState=value=>value===null||value===undefined?'absent':typeof value==='string'&&/^"[\x21\x23-\x7E\x80-\xFF]+"$/.test(value)?'strong':typeof value==='string'&&/^W\/"[\x21\x23-\x7E\x80-\xFF]+"$/.test(value)?'weak':'malformed';
 const strongEtag=value=>etagState(value)==='strong';
 
@@ -74,21 +77,31 @@ export function createV2CoherentProbeTransport({fetch:fetchImpl=globalThis.fetch
       ||properties.app!==APP||properties.runId!==runId)fail('binding');
     if(typeof value.version!=='string'||!/^\d+$/.test(value.version))fail('unsupported',{phase:'metadata',reason:'missing-file-version'});
     if(!strongEtag(value.etag))fail('unsupported',{phase:'read-token',reason:'missing-strong-etag',etagSource:'v2-coherent',jsonEtagState:etagState(value.etag)});
-    return {version:value.version,etag:value.etag,properties};
+    return {version:value.version,etag:value.etag,properties,
+      md5Checksum:value.md5Checksum,headRevisionId:value.headRevisionId,modifiedDate:value.modifiedDate,
+      lastViewedByMeDate:value.lastViewedByMeDate,fileSize:value.fileSize};
   }
 
-  async function read(id){
+  async function readSnapshot(id,readContext){
     const expected=owned(id),before=await readV2Metadata(id);
     let value={};
     if(!expected.folder)value=await json(await request(`${API_V2}/${id}?alt=media`));
     const after=await readV2Metadata(id);
     const versionChanged=before.version!==after.version,jsonEtagChanged=before.etag!==after.etag;
     if(versionChanged||jsonEtagChanged)fail('stale',{
-      phase:'read-stability',reason:'changed-during-read',etagSource:'v2-coherent',versionChanged,jsonEtagChanged,jsonEtagState:etagState(after.etag),
+      phase:'read-stability',reason:'changed-during-read',etagSource:'v2-coherent',readContext,
+      readKind:expected.folder?'metadata-metadata':'metadata-media-metadata',versionChanged,jsonEtagChanged,jsonEtagState:etagState(after.etag),
+      contentChecksumState:observationState(before.md5Checksum,after.md5Checksum),
+      headRevisionState:observationState(before.headRevisionId,after.headRevisionId),
+      modifiedDateState:observationState(before.modifiedDate,after.modifiedDate),
+      viewedDateState:observationState(before.lastViewedByMeDate,after.lastViewedByMeDate),
+      fileSizeState:observationState(before.fileSize,after.fileSize),
     });
     return {id,value,version:after.version,etag:after.etag,properties:after.properties,folder:expected.folder,mimeType:expected.mimeType,
       observation:{etagSource:'v2-coherent',jsonEtagReadable:true}};
   }
+
+  async function read(id){return readSnapshot(id,'snapshot-read');}
 
   async function post(id,value){
     const record=owned(id),metadata={id,name:record.name,mimeType:record.mimeType,appProperties:{app:APP,runId},...(record.parentId?{parents:[record.parentId]}:{})};
@@ -107,7 +120,7 @@ export function createV2CoherentProbeTransport({fetch:fetchImpl=globalThis.fetch
     files.set(id,record);
     const response=await post(id,value);
     if(response.status===409)fail('collision');
-    const actual=await read(id);
+    const actual=await readSnapshot(id,'create-verification');
     if(!folder&&!same(actual.value,value))fail('collision');
     return {id};
   }
@@ -115,7 +128,7 @@ export function createV2CoherentProbeTransport({fetch:fetchImpl=globalThis.fetch
   async function retryCreate(id,value){
     owned(id);
     await post(id,value);
-    const actual=await read(id);
+    const actual=await readSnapshot(id,'retry-create-verification');
     if(!same(actual.value,value))fail('collision');
     return actual;
   }

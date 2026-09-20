@@ -30,16 +30,16 @@ el('start').addEventListener('click',async()=>{
       el('checks').append(item);
     }});
     const apiPaths=etagSource==='v2-coherent'
-      ?{idReservation:'GET /drive/v3/files/generateIds',create:'POST /drive/v3/files oder /upload/drive/v3/files',metadataRead:'GET /drive/v2/files/{ownedId}?fields=...version,etag',read:'GET /drive/v2/files/{probeFileId}?alt=media',mediaUpdate:'PUT /upload/drive/v2/files/{probeFileId}?uploadType=media',metadataUpdate:'PUT /drive/v2/files/{probeFolderId}',condition:'If-Match'}
+      ?{idReservation:'GET /drive/v3/files/generateIds',create:'POST /drive/v3/files oder /upload/drive/v3/files',metadataRead:'GET /drive/v2/files/{ownedId}?fields=...version,etag,md5Checksum,headRevisionId,modifiedDate,lastViewedByMeDate,fileSize',read:'GET /drive/v2/files/{probeFileId}?alt=media',mediaUpdate:'PUT /upload/drive/v2/files/{probeFileId}?uploadType=media',metadataUpdate:'PUT /drive/v2/files/{probeFolderId}',condition:'If-Match'}
       :{idReservation:'GET /drive/v3/files/generateIds',create:'POST /drive/v3/files oder /upload/drive/v3/files',read:'GET /drive/v3/files/{probeFileId}?alt=media',metadataRead:'GET /drive/v3/files/{ownedId}?fields=id,name,mimeType,parents,appProperties,trashed,version',
         ...(etagSource==='v2-json'?{tokenRead:'GET /drive/v2/files/{ownedId}?fields=id,mimeType,etag'}:{}),mediaUpdate:'PATCH /upload/drive/v3/files/{probeFileId}?uploadType=media',metadataUpdate:'PATCH /drive/v3/files/{probeFolderId}',condition:'If-Match'};
-    report={kind:'synthetic-shop-probe',diagnosticVersion:5,startedAt,completedAt:new Date().toISOString(),origin:location.origin,userAgent:navigator.userAgent,etagSource,apiPaths,...result};
+    report={kind:'synthetic-shop-probe',diagnosticVersion:6,startedAt,completedAt:new Date().toISOString(),origin:location.origin,userAgent:navigator.userAgent,etagSource,apiPaths,...result};
     el('status').textContent=result.passed?'Alle isolierten Probeszenarien bestanden. Produktshop bleibt gesperrt; weitere Nachweise stehen aus.':'Kaufkoordination nicht ausreichend nachgewiesen. Produktshop bleibt gesperrt.';
   }catch{el('status').textContent='Probe unterbrochen. Kein vollständiger Nachweis; Produktshop bleibt gesperrt.';}
   finally{busy=false;el('consent').checked=false;buttons();}
 });
 el('download').addEventListener('click',()=>{
   if(!report)return;const url=URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json'}));
-  const link=document.createElement('a');link.href=url;link.download='shop-probe-bericht5.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  const link=document.createElement('a');link.href=url;link.download='shop-probe-bericht6.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 });
 buttons();

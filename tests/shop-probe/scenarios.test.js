@@ -9,7 +9,7 @@ function fake({ignore=false, missing=false, metadataIgnore=false}={}) {
   return {
     async create({value={},folder=false}) {const id=`f${++serial}`;records.set(id,{value:copy(value),folder,version:1,properties:{}});return {id};},
     async read(id) {const r=records.get(id);if(missing)throw error('unsupported');return {id,value:copy(r.value),version:String(r.version),etag:`"${r.version}"`,properties:copy(r.properties)};},
-    async updateIfUnchanged(before,value,{metadata=false}={}) {const r=records.get(before.id);if(!(metadata?metadataIgnore:ignore)&&before.etag!==`"${r.version}"`)throw error('stale');if(metadata)r.properties=copy(value);else r.value=copy(value);r.version++;return this.read(before.id);},
+    async updateIfUnchanged(before,value,{metadata=false}={}) {const r=records.get(before.id);if(!(metadata?metadataIgnore:ignore)&&before.etag!==`"${r.version}"`)throw error('stale');if(metadata)r.properties=copy(value);else r.value=copy(value);r.version++;return {id:before.id};},
     async retryCreate(id,value) {if(JSON.stringify(records.get(id).value)!==JSON.stringify(value))throw error('collision');return this.read(id);},
   };
 }
@@ -55,6 +55,43 @@ test('v2 coherent diagnostics preserve only the fixed source and known observati
   assert.deepEqual(check.diagnostic,{phase:'read-stability',reason:'changed-during-read',etagSource:'v2-coherent',jsonEtagState:'strong',versionChanged:true,jsonEtagChanged:false});
   assert.equal(JSON.stringify(result).includes('private-v2-marker'),false);
 });
+
+test('diagnostic 6 sanitizes read context and optional field states without raw markers',async()=>{
+  const transport=fake();
+  transport.read=async()=>{throw Object.assign(new Error('private-v6-marker'),{code:'stale',diagnostic:{
+    phase:'read-stability',reason:'changed-during-read',etagSource:'v2-coherent',readContext:'snapshot-read',readKind:'metadata-media-metadata',
+    versionChanged:true,jsonEtagChanged:false,jsonEtagState:'strong',contentChecksumState:'changed',headRevisionState:'same',modifiedDateState:'unavailable',viewedDateState:'changed',fileSizeState:'same',
+    md5Checksum:'private-v6-marker',headRevisionId:'private-v6-marker',modifiedDate:'private-v6-marker',lastViewedByMeDate:'private-v6-marker',fileSize:'private-v6-marker',
+  }});};
+  const result=await runProbeScenarios({transport}),diagnostic=result.checks.find(item=>item.id==='version-token').diagnostic;
+  assert.deepEqual(diagnostic,{phase:'read-stability',reason:'changed-during-read',etagSource:'v2-coherent',jsonEtagState:'strong',readContext:'snapshot-read',readKind:'metadata-media-metadata',contentChecksumState:'changed',headRevisionState:'same',modifiedDateState:'unavailable',viewedDateState:'changed',fileSizeState:'same',versionChanged:true,jsonEtagChanged:false});
+  assert.equal(JSON.stringify(result).includes('private-v6-marker'),false);
+});
+
+test('diagnostic 6 drops unknown contexts and invalid comparison states',async()=>{
+  const transport=fake();
+  transport.read=async()=>{throw {code:'stale',diagnostic:{phase:'read-stability',reason:'changed-during-read',etagSource:'v2-coherent',readContext:'private-context',readKind:'private-kind',contentChecksumState:'private-state',headRevisionState:'same'}};};
+  const diagnostic=(await runProbeScenarios({transport})).checks.find(item=>item.id==='version-token').diagnostic;
+  assert.deepEqual(diagnostic,{phase:'read-stability',reason:'changed-during-read',etagSource:'v2-coherent',headRevisionState:'same'});
+});
+
+for(const [failAt,scenarioStage] of [[2,'response-loss-receipt'],[3,'response-loss-after-second-write'],[4,'response-loss-balance']]){
+  test(`diagnostic 6 distinguishes response-loss read ${failAt-1} as ${scenarioStage}`,async()=>{
+    const transport=fake(),names=new Map(),readCounts=new Map();
+    const create=transport.create.bind(transport),read=transport.read.bind(transport);
+    transport.create=async options=>{const file=await create(options);names.set(file.id,options.name);return file;};
+    transport.read=async id=>{
+      if(names.get(id)==='response-loss'){
+        const count=(readCounts.get(id)??0)+1;readCounts.set(id,count);
+        if(count===failAt)throw {code:'stale',diagnostic:{phase:'read-stability',reason:'changed-during-read',etagSource:'v2-coherent',readContext:'snapshot-read',readKind:'metadata-media-metadata'}};
+      }
+      return read(id);
+    };
+    const check=(await runProbeScenarios({transport})).checks.find(item=>item.id==='response-loss');
+    assert.equal(check.passed,false);
+    assert.equal(check.scenarioStage,scenarioStage);
+  });
+}
 
 test('concurrent write failure reports bounded counts for data and folder writes',async()=>{
   const result=await runProbeScenarios({transport:fake({ignore:true,metadataIgnore:true})});
