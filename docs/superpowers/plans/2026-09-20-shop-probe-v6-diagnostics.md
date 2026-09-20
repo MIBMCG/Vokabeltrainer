@@ -39,7 +39,7 @@ function observationState(before, after) {
 - [x] Unabhängige Prüfung von unverändertem Schutzverhalten, Diagnosewahrheit und Datenbereinigung; anschließend Umsetzung und tatsächliche Grenzen dokumentieren.
 - [x] Root sichert nur die betroffenen Dateien und aktualisiert Arbeitsstand/Übergabe; kein automatischer echter Google-Lauf. Ein späterer Nutzerbericht muss ausdrücklich Diagnose 6 sein.
 
-Abschluss: 39/39 Transport-, 15/15 Szenario-, 69/69 Shop-Node- und 10/10 Browserprüfungen bestanden. Unabhängige Review ohne offene relevante Befunde. Diagnosepaket `ac8bf43` ist gepusht und per identischer Remote-SHA bestätigt; der folgende Dokumentationscommit führt die Einstiegspunkte nach. Der echte Google-Nachweis bleibt offen.
+Abschluss: 39/39 Transport-, 15/15 Szenario-, 69/69 Shop-Node- und 10/10 Browserprüfungen bestanden. Unabhängige Review ohne offene relevante Befunde. Diagnosepaket `ac8bf43` ist gepusht und per identischer Remote-SHA bestätigt; `c857196` führt die Einstiegspunkte nach. Der echte Lauf liegt inzwischen vor: [6 bestanden, 5 fehlgeschlagen](../../reports/2026-09-20-shop-v6-reallauf.md). Der Gesamtnachweis ist nicht erreicht. Keine weitere unveränderte Probe anfordern; [Koordinationsrichtung auswählen](../../design/2026-09-20-kaufkoordination-nach-diagnose6.md).
 
 ## Auswertung des nächsten Berichts
 

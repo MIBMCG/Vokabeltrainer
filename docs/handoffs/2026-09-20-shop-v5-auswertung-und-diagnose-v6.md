@@ -1,5 +1,7 @@
 # Übergabe: echter v5-Befund und gezielte Diagnose 6
 
+Historischer Stand: Der echte Diagnose-6-Bericht ist inzwischen ausgewertet. Für die Fortsetzung die [neue Übergabe zur Architekturwahl](2026-09-20-shop-v6-auswertung-und-architekturwahl.md) verwenden; den unten beschriebenen Probelauf nicht erneut anfordern.
+
 Stand: 20.09.2026. Branch `codex/vokabeltrainer-v1`, Ausgangspunkt `2e98850b38588515eba0d70522dedc9aaacb44cc`. Die [Avatar-Grundlagen](2026-09-20-avatar-evolution-foundation-und-probe-v5.md) bleiben erhalten: 52 Formkennungen, 76 Bildkennungen, erste vier Drachenquellen; keine neuen Produktkäufe aktiviert.
 
 ## Neuer Nutzerbericht
