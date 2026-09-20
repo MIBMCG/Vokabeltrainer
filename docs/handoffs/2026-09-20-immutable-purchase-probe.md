@@ -1,5 +1,7 @@
 # Übergabe: zusammenhängende Kaufprobe
 
+**Historischer Implementierungsabschluss:** Der Nutzer hat anschließend Bericht10 mit 6/6 bestandenen echten Google-Checks übergeben. Maßgeblich für die Fortsetzung ist die [neuere Auswertungsübergabe](2026-09-20-shop-v10-auswertung.md). Die unten beschriebene Aufforderung zum neuen Google-Lauf ist damit erledigt.
+
 Branch `codex/vokabeltrainer-v1`, bestehender isolierter Arbeitsbaum `drive-probe`. Ausgangspunkt `a0043444ac5d4598e1673274e130c8b3817267af`; Entwurf und Plan wurden in `e2f4d46` gesichert. C bleibt entschieden: Google Drive direkt, keine zusätzlichen Dienste und keine Änderung des Punktesystems.
 
 ## Auftragsumfang

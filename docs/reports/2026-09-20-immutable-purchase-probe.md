@@ -1,5 +1,7 @@
 # Kaufprobe mit unveränderlichen Belegen
 
+**Späterer Realnachweis:** Der anschließend übergebene [Google-Bericht10](2026-09-20-shop-v10-reallauf.md) besteht alle sechs Szenarien. Der folgende Bericht dokumentiert weiterhin die lokale Implementierung und ihre automatisierten Prüfungen.
+
 Stand: 20.09.2026. [Entwurf](../superpowers/specs/2026-09-20-immutable-purchase-probe-design.md), [Plan](../superpowers/plans/2026-09-20-immutable-purchase-probe.md), [Anleitung](../KAUFPROBE.md). Ausgangspunkt `a004344`; Entwurfscommit `e2f4d46`, Kernimplementierung `88714c32999b36adff1f9bc09a5533726e69795a`.
 
 ## Kernimplementierung

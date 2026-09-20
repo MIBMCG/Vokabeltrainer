@@ -1,5 +1,11 @@
 # Architektur
 
+## Echter Nachweis des isolierten Kaufablaufs
+
+[Bericht10](reports/2026-09-20-shop-v10-reallauf.md) bestätigt am 20.09.2026 alle sechs Szenarien des unten beschriebenen synthetischen Vertrags. Ordnerkoordination, vollständige Belegprüfung, Wiederholung, lokal simulierter Antwortverlust und beide Reset-Reihenfolgen sind in diesem einen echten Google-Lauf bestanden. Die Prüfung verwendet zwei logische Clients und eine gemeinsame Registrierung innerhalb derselben Sitzung.
+
+Der nächste Entwurf muss diese Grenze mit dauerhaften Aufträgen, Wiederanbindung, Produktpunkten, Katalog und dem bestehenden Epochen-/Backupvertrag verbinden. Die Registrierung im Speicher und die Grenze von 64 Belegen sind keine fertige Produktlösung. Der Produktadapter bleibt unverändert; weder ein Backendwechsel noch eine Freischaltung von Käufen folgt automatisch aus dem positiven Bericht. [Aktuelle Übergabe](handoffs/2026-09-20-shop-v10-auswertung.md).
+
 ## Neuer isolierter Kaufvertrag (20.09.2026)
 
 Die Fortsetzung nach Bericht 9 konkretisiert den [Ordnerverweis auf unveränderliche Belege](superpowers/specs/2026-09-20-immutable-purchase-probe-design.md). Ein eigener SHA-256-Inhaltsvertrag ergänzt den bestehenden Transport, ohne den Versions-/ETag-Guard veränderlicher Snapshots zu lockern. Käufe, Initialisierung und Reset teilen innerhalb der synthetischen Probe denselben Anker. Ein Schreibbefund allein bestätigt keinen Besitz; dazu muss die genaue Operation in der vollständig geprüften Belegkette stehen.

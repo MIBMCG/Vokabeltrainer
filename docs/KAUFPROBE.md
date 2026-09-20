@@ -2,6 +2,8 @@
 
 Diese Seite beschreibt die neue technische Probe ab Diagnoseversion 10. Sie arbeitet mit erfundenen Punkten und Artikeln. Der eigentliche Trainer erhält dadurch noch keinen Shop.
 
+**Aktueller Nachweis:** Der am 20.09.2026 übergebene [Bericht10](reports/2026-09-20-shop-v10-reallauf.md) hat alle sechs Checks bestanden. Ein identischer Wiederholungslauf ist derzeit nicht nötig. Die folgende Anleitung bleibt für eine später gezielt begründete Prüfung erhalten.
+
 ## Start
 
 1. Im aktuellen Arbeitsordner des Zweigs `codex/vokabeltrainer-v1` bei der Datei `package.json` den Befehl `npm start` ausführen. Bei einem verknüpften Arbeitsbaum ist das dessen Ordner, nicht der übergeordnete Clone. Falls bereits ein älterer lokaler Server läuft, diesen zuerst mit `Strg+C` beenden und neu starten, damit die neuen Module verfügbar sind.
