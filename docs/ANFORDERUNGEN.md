@@ -1,6 +1,6 @@
 # Anforderungen und Entscheidungen
 
-**Integrationsvorschlag, noch zur Abstimmung:** Der [Entwurf für dauerhafte Käufe](superpowers/specs/2026-09-20-persistent-purchases-design.md) konkretisiert nach der Nutzerfortsetzung die Speicherung von Aufträgen, gemeinsame Kauf-/Restorekoordination und gesicherte Datenumstellung. Seine technischen Festlegungen sind noch kein bestätigter oder implementierter Produktvertrag. C, Onlinekäufe, EV01–EV05 und die bestehenden Wiederherstellungsregeln bleiben die Grundlage.
+**Integrationsentwurf bestätigt (Nutzerantwort „ja“, 20.09.2026):** Der [Entwurf für dauerhafte Käufe](superpowers/specs/2026-09-20-persistent-purchases-design.md) konkretisiert nach der Nutzerfortsetzung die Speicherung von Aufträgen, gemeinsame Kauf-/Restorekoordination und gesicherte Datenumstellung. Seine technischen Festlegungen sind bestätigt; Implementierungsnachweise folgen getrennt. C, Onlinekäufe, EV01–EV05 und die bestehenden Wiederherstellungsregeln bleiben die Grundlage.
 
 **Nachweis vom 20.09.2026:** Der echte [Google-Bericht10](reports/2026-09-20-shop-v10-reallauf.md) enthält sechs bestandene synthetische Kaufprüfungen. Dies bestätigt keine neuen Produktentscheidungen und ersetzt keine Integration. Die nächste technische Aufgabe ist der konkrete Vertrag für dauerhaft gespeicherte Kaufaufträge, Wiederaufnahme und Produktmigration; bestehende C-/EV-Entscheidungen bleiben erhalten. Kein identischer Probelauf nötig.
 

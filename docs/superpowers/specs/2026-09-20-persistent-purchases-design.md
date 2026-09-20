@@ -1,6 +1,6 @@
 # Dauerhafte Käufe und gemeinsame Wiederherstellung
 
-Stand: 20.09.2026. **Entwurf zur Abstimmung, noch nicht implementiert.** Ausgangspunkt `102d8c7f77ac7978db2d3649db7b19780eca7aaf`. Der Nutzer hat nach dem erfolgreichen [Bericht10](../../reports/2026-09-20-shop-v10-reallauf.md) die Fortsetzung beauftragt. Allgemeine Entwicklungsfreigabe, Richtung C und EV01–EV05 bestehen. Dieser Entwurf konkretisiert erstmals die Integration in dauerhafte Produktdaten; seine Zustimmung ist noch nicht dokumentiert.
+Stand: 20.09.2026. **Vom Nutzer mit „ja“ bestätigt; Umsetzung beauftragt.** Ausgangspunkt `102d8c7f77ac7978db2d3649db7b19780eca7aaf`. Der Nutzer hat nach dem erfolgreichen [Bericht10](../../reports/2026-09-20-shop-v10-reallauf.md) die Fortsetzung beauftragt. Allgemeine Entwicklungsfreigabe, Richtung C und EV01–EV05 bestehen. Dieser Entwurf konkretisiert erstmals die Integration in dauerhafte Produktdaten; die konkrete Zustimmung ist am 20.09.2026 erfolgt.
 
 ## 1. Ergebnis für Kinder und Eltern
 
@@ -123,7 +123,7 @@ Pflichtfälle: Neustart vor/nach jedem Speicher-/Netzschritt; angenommener Uploa
 
 Automatisierte Integration nutzt ausschließlich synthetische Daten. Der erfolgreiche Bericht10 bleibt der vorhandene Realbeleg für das Grundverfahren. Spätere reale Wiederaufnahme, zwei physische Geräte sowie iPhone/iPad werden separat nachgewiesen; kein identischer 10er-Wiederholungslauf. Bei ausgelieferten Produktänderungen Cachekennung und explizite Assetliste aktualisieren und Offline-/Updatefälle prüfen.
 
-Geplante Ausführung nach Zustimmung: abgegrenzte Implementierung mit GPT-5.6 Sol/hoch, unabhängige Prüfung der Daten-/Kaufgrenzen mit GPT-6 Astra/hoch. Dieser Entwurf wurde lokal anhand der bestehenden Module ausgearbeitet; dafür wurden keine zusätzlichen Agenten gestartet. Der detaillierte Implementierungsplan folgt nach der konkreten Entwurfsabstimmung.
+Bestätigte Ausführung: abgegrenzte Implementierung mit GPT-5.6 Sol/hoch, unabhängige Prüfung der Daten-/Kaufgrenzen mit GPT-6 Astra/hoch. Dieser Entwurf wurde lokal anhand der bestehenden Module ausgearbeitet; dafür wurden keine zusätzlichen Agenten gestartet. Der [Implementierungsplan](../plans/2026-09-20-persistent-purchases.md) setzt die bestätigte Abstimmung um.
 
 ## 11. Quellen und Einordnung
 
