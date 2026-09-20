@@ -45,6 +45,10 @@ export function createV2CoherentProbeTransport({fetch:fetchImpl=globalThis.fetch
     try{return await response.json();}catch{throw new V2ProbeError('invalid');}
   }
 
+  async function immutableJson(response){
+    try{return await response.json();}catch{throw new V2ProbeError('invalid',response.status);}
+  }
+
   async function boundResponseJson(response){
     let value;
     try{value=await response.json();}catch{throw new V2ProbeError('invalid',response.status);}
@@ -74,9 +78,9 @@ export function createV2CoherentProbeTransport({fetch:fetchImpl=globalThis.fetch
     return entries.sort(([a],[b])=>a.localeCompare(b)).map(([key,value])=>({key,value,visibility:'PRIVATE'}));
   }
 
-  async function readV2Metadata(id,init={}){
+  async function readV2Metadata(id,init={},parse=json){
     const expected=owned(id);
-    const value=await json(await request(`${API_V2}/${id}?fields=${V2_FIELDS}`,init));
+    const value=await parse(await request(`${API_V2}/${id}?fields=${V2_FIELDS}`,init));
     const parents=normalizeParents(value.parents),properties=normalizePrivateProperties(value.properties);
     if(expected.parentId){if(!same(parents,[expected.parentId]))fail('binding');}
     else if(expected.boundRootParents){if(!same(parents,expected.boundRootParents))fail('binding');}
@@ -283,9 +287,9 @@ export function createV2CoherentProbeTransport({fetch:fetchImpl=globalThis.fetch
   async function readImmutable(ref,{parentId=null}={}){
     const record=immutableRecord(ref);
     if(parentId!==null&&(typeof parentId!=='string'||record.parentId!==parentId))fail('binding');
-    const before=await readV2Metadata(ref.id,{cache:'no-store'});
-    const value=await json(await request(`${API_V2}/${ref.id}?alt=media`,{cache:'no-store'}));
-    const after=await readV2Metadata(ref.id,{cache:'no-store'});
+    const before=await readV2Metadata(ref.id,{cache:'no-store'},immutableJson);
+    const value=await immutableJson(await request(`${API_V2}/${ref.id}?alt=media`,{cache:'no-store'}));
+    const after=await readV2Metadata(ref.id,{cache:'no-store'},immutableJson);
     if(canonicalJson(before.properties)!==canonicalJson(after.properties))fail('binding');
     let actual;
     try{actual=await immutableHash(value);}catch(error){

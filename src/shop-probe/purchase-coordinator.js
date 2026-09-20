@@ -105,7 +105,13 @@ function validateSnapshot(snapshot,anchorId){
 
 export function createPurchaseCoordinator({transport,anchorId,contentParentId=anchorId}={}){
   if(!transport||!identifier(anchorId)||!identifier(contentParentId))fail('binding');
-  const ownTickets=new WeakMap();
+  const ownTickets=new WeakMap(),pendingOperations=new Map();
+
+  function release(record){
+    if(ownTickets.get(record.ticket)===record)ownTickets.delete(record.ticket);
+    if(tickets.get(record.ticket)===record)tickets.delete(record.ticket);
+    if(pendingOperations.get(record.operation.id)===record)pendingOperations.delete(record.operation.id);
+  }
 
   async function read(){
     const before=await transport.readMetadataSnapshot(anchorId);validateSnapshot(before,anchorId);
@@ -132,7 +138,12 @@ export function createPurchaseCoordinator({transport,anchorId,contentParentId=an
   }
 
   async function prepare(input){
-    const operation=validateOperation(input),current=await read();
+    const operation=validateOperation(input),pending=pendingOperations.get(operation.id);
+    if(pending){
+      if(!same(pending.operation,operation))fail('conflict');
+      return {outcome:'prepared',ticket:pending.ticket};
+    }
+    const current=await read();
     const existing=current.state?.receipts.find(receipt=>receipt.id===operation.id);
     if(existing){
       if(!same(existing,operation))fail('conflict');
@@ -150,23 +161,41 @@ export function createPurchaseCoordinator({transport,anchorId,contentParentId=an
     const ref=await transport.prepareImmutable({parentId:contentParentId,value:node});
     validateRef(ref);
     const ticket=Object.freeze({});
-    const record={snapshot:current.snapshot,ref,node};
+    const record={snapshot:current.snapshot,ref,node,operation:clone(operation),ticket,state:'ready',inFlight:null};
     ownTickets.set(ticket,record);tickets.set(ticket,record);
+    pendingOperations.set(operation.id,record);
     return {outcome:'prepared',ticket};
   }
 
   async function commit(ticket){
     const record=ownTickets.get(ticket);
     if(!record||tickets.get(ticket)!==record)fail('binding');
-    ownTickets.delete(ticket);tickets.delete(ticket);
-    try{await transport.writeImmutable(record.ref);}catch(error){return commitFailure(error,'upload');}
-    try{
-      const result=await transport.updateMetadataIfUnchanged(record.snapshot,{
-        purchaseProtocol:PROTOCOL,purchaseHeadId:record.ref.id,purchaseHeadHash:record.ref.sha256,
-      });
-      if(!Number.isInteger(result?.status)||result.status<200||result.status>299)return {outcome:'uncertain',phase:'pointer',code:'invalid'};
-      return {outcome:'confirmed',phase:'pointer',httpStatus:result.status};
-    }catch(error){return commitFailure(error,'pointer');}
+    if(record.inFlight)return record.inFlight;
+    if(record.state!=='ready'&&record.state!=='upload-uncertain')fail('binding');
+    const attempt=(async()=>{
+      record.state='committing';
+      try{await transport.writeImmutable(record.ref);}catch(error){
+        const result=commitFailure(error,'upload');
+        if(result.outcome==='uncertain')record.state='upload-uncertain';
+        else{record.state='done';release(record);}
+        return result;
+      }
+      record.state='pointer-attempted';
+      let result;
+      try{
+        const update=await transport.updateMetadataIfUnchanged(record.snapshot,{
+          purchaseProtocol:PROTOCOL,purchaseHeadId:record.ref.id,purchaseHeadHash:record.ref.sha256,
+        });
+        result=!Number.isInteger(update?.status)||update.status<200||update.status>299
+          ?{outcome:'uncertain',phase:'pointer',code:'invalid'}
+          :{outcome:'confirmed',phase:'pointer',httpStatus:update.status};
+      }catch(error){result=commitFailure(error,'pointer');}
+      record.state='done';release(record);
+      return result;
+    })();
+    record.inFlight=attempt;
+    try{return await attempt;}
+    finally{if(ownTickets.get(ticket)===record&&record.state==='upload-uncertain')record.inFlight=null;}
   }
 
   async function recover(input){

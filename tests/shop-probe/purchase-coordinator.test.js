@@ -233,10 +233,97 @@ test('upload network, 5xx and invalid 200 outcomes stay uncertain and never atte
   }
 });
 
+test('a lost upload response keeps the reserved candidate for one explicit same-ID continuation',async()=>{
+  const fixture=v2CoherentDriveFixture();let lose=true,uploads=0;
+  const fetch=async(url,request)=>{
+    const method=request?.method??'GET';
+    if(method==='POST'&&url.includes('/upload/drive/v3/files')){
+      uploads++;
+      if(lose){lose=false;await fixture.fetch(url,request);throw new Error('private response loss');}
+    }
+    return fixture.fetch(url,request);
+  };
+  const transport=makeTransport(fixture,fetch),{id:anchorId}=await transport.createMetadataFolder();
+  const coordinator=createPurchaseCoordinator({transport,anchorId}),prepared=await coordinator.prepare(init);
+  assert.deepEqual(await coordinator.commit(prepared.ticket),{outcome:'uncertain',phase:'upload',code:'network'});
+  assert.equal(uploads,1);
+  assert.equal(putCalls(fixture).length,0);
+  assert.equal((await coordinator.recover(init)).outcome,'absent');
+
+  const continued=await coordinator.prepare({...init});
+  assert.equal(continued.ticket,prepared.ticket);
+  await assert.rejects(()=>coordinator.prepare({...init,earned:999}),{code:'invalid'});
+  await assert.rejects(()=>coordinator.prepare({...init,id:'init-a',epoch:'other'}),{code:'conflict'});
+  assert.equal((await coordinator.commit(continued.ticket)).outcome,'confirmed');
+  assert.equal(uploads,2);
+  assert.equal(putCalls(fixture).length,1);
+  assert.equal([...fixture.files.values()].filter(record=>record.mimeType==='application/json').length,1);
+  assert.equal((await coordinator.recover(init)).outcome,'committed');
+  await assert.rejects(()=>coordinator.commit(prepared.ticket),{code:'binding'});
+});
+
+test('concurrent commits share one in-flight attempt and cannot duplicate the pointer PUT',async()=>{
+  const fixture=v2CoherentDriveFixture();let block=false,releaseUpload,announceUpload;
+  const enteredUpload=new Promise(resolve=>{announceUpload=resolve;});
+  const fetch=async(url,request)=>{
+    if(block&&(request?.method??'GET')==='POST'&&url.includes('/upload/drive/v3/files')){
+      announceUpload();
+      await new Promise(resolve=>{releaseUpload=resolve;});
+    }
+    return fixture.fetch(url,request);
+  };
+  const transport=makeTransport(fixture,fetch),{id:anchorId}=await transport.createMetadataFolder();
+  const coordinator=createPurchaseCoordinator({transport,anchorId}),prepared=await coordinator.prepare(init);
+  block=true;
+  const first=coordinator.commit(prepared.ticket);
+  await enteredUpload;
+  const second=coordinator.commit(prepared.ticket);
+  releaseUpload();
+  const results=await Promise.all([first,second]);
+  assert.deepEqual(results,[
+    {outcome:'confirmed',phase:'pointer',httpStatus:200},
+    {outcome:'confirmed',phase:'pointer',httpStatus:200},
+  ]);
+  assert.equal(fixture.calls.filter(call=>call.method==='POST'&&call.url.includes('/upload/drive/v3/files')).length,1);
+  assert.equal(putCalls(fixture).length,1);
+  await assert.rejects(()=>coordinator.commit(prepared.ticket),{code:'binding'});
+});
+
+test('malformed 200 immutable verification stays uncertain and explicitly continues the same candidate',async()=>{
+  for(const broken of ['metadata','media']){
+    const fixture=v2CoherentDriveFixture();let corrupt=false,uploads=0;
+    const fetch=async(url,request)=>{
+      const method=request?.method??'GET',parsed=new URL(url);
+      if(method==='POST'&&url.includes('/upload/drive/v3/files'))uploads++;
+      if(corrupt&&method==='GET'&&parsed.pathname.includes('/drive/v2/files/')){
+        const id=parsed.pathname.split('/').at(-1),record=fixture.files.get(id);
+        const isMedia=parsed.searchParams.get('alt')==='media';
+        if(record?.mimeType==='application/json'&&isMedia===(broken==='media')){
+          corrupt=false;
+          return new Response('{',{status:200,headers:{'Content-Type':'application/json'}});
+        }
+      }
+      return fixture.fetch(url,request);
+    };
+    const transport=makeTransport(fixture,fetch),{id:anchorId}=await transport.createMetadataFolder();
+    const coordinator=createPurchaseCoordinator({transport,anchorId}),prepared=await coordinator.prepare(init);
+    corrupt=true;
+    assert.deepEqual(await coordinator.commit(prepared.ticket),{
+      outcome:'uncertain',phase:'upload',code:'invalid',httpStatus:200,
+    });
+    assert.equal(putCalls(fixture).length,0);
+    assert.equal((await coordinator.commit(prepared.ticket)).outcome,'confirmed');
+    assert.equal(uploads,2);
+    assert.equal(putCalls(fixture).length,1);
+    assert.equal([...fixture.files.values()].filter(record=>record.mimeType==='application/json').length,1);
+  }
+});
+
 test('invalid 200 pointer response is uncertain and recover verifies the written receipt',async()=>{
-  const fixture=v2CoherentDriveFixture();let corrupt=false;
+  const fixture=v2CoherentDriveFixture();let corrupt=false,pointers=0;
   const fetch=async(url,init)=>{
     if(corrupt&&(init?.method??'GET')==='PUT'){
+      pointers++;
       await fixture.fetch(url,init);
       return new Response('{',{status:200,headers:{'Content-Type':'application/json'}});
     }
@@ -246,6 +333,8 @@ test('invalid 200 pointer response is uncertain and recover verifies the written
   const coordinator=createPurchaseCoordinator({transport,anchorId}),prepared=await coordinator.prepare(init);
   corrupt=true;
   assert.deepEqual(await coordinator.commit(prepared.ticket),{outcome:'uncertain',phase:'pointer',code:'invalid',httpStatus:200});
+  await assert.rejects(()=>coordinator.commit(prepared.ticket),{code:'binding'});
+  assert.equal(pointers,1);
   assert.equal((await coordinator.recover(init)).outcome,'committed');
 });
 

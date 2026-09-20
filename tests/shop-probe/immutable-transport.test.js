@@ -109,6 +109,53 @@ test('lost upload response remains recoverable only by retrying the same reserve
   assert.equal(fixture.files.has(ref.id),true);
 });
 
+test('immutable verification preserves malformed 200 metadata and media response status',async()=>{
+  for(const broken of ['metadata','media']){
+    const fixture=v2CoherentDriveFixture();let corrupt=false;
+    const fetch=async(url,request)=>{
+      const method=request?.method??'GET',parsed=new URL(url);
+      if(corrupt&&method==='GET'&&parsed.pathname.includes('/drive/v2/files/')){
+        const id=parsed.pathname.split('/').at(-1),record=fixture.files.get(id);
+        const isMedia=parsed.searchParams.get('alt')==='media';
+        if(record?.mimeType==='application/json'&&isMedia===(broken==='media')){
+          corrupt=false;
+          return new Response('{',{status:200,headers:{'Content-Type':'application/json'}});
+        }
+      }
+      return fixture.fetch(url,request);
+    };
+    const transport=makeTransport(fixture,fetch),{id:anchorId}=await transport.createMetadataFolder();
+    const ref=await transport.prepareImmutable({parentId:anchorId,value:{probe:broken}});
+    corrupt=true;
+    await assert.rejects(()=>transport.writeImmutable(ref),error=>{
+      assert.equal(error.code,'invalid');
+      assert.equal(error.status,200);
+      return true;
+    });
+    assert.deepEqual(await transport.writeImmutable(ref),{probe:broken});
+    assert.equal(fixture.files.has(ref.id),true);
+  }
+});
+
+test('legacy JSON parsing keeps its existing status-free invalid error',async()=>{
+  const fixture=v2CoherentDriveFixture();let corrupt=false,targetId;
+  const fetch=async(url,request)=>{
+    const parsed=new URL(url);
+    if(corrupt&&(request?.method??'GET')==='GET'&&parsed.pathname.endsWith(`/${targetId}`)&&parsed.searchParams.get('alt')==='media'){
+      corrupt=false;
+      return new Response('{',{status:200,headers:{'Content-Type':'application/json'}});
+    }
+    return fixture.fetch(url,request);
+  };
+  const transport=makeTransport(fixture,fetch),file=await transport.create({value:{probe:true}});
+  targetId=file.id;corrupt=true;
+  await assert.rejects(()=>transport.read(file.id),error=>{
+    assert.equal(error.code,'invalid');
+    assert.equal(error.status,null);
+    return true;
+  });
+});
+
 test('private property count and UTF-8 pair limits stop metadata PUTs',async()=>{
   const fixture=v2CoherentDriveFixture(),transport=makeTransport(fixture);
   const {id}=await transport.createMetadataFolder(),record=fixture.files.get(id);
