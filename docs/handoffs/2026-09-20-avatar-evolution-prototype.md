@@ -28,8 +28,8 @@ Keine weitere unveränderte Wiederholung derselben Probe anfordern. Ein spätere
 
 ## Nächster Schritt
 
-1. Die noch offenen Details der Punkteinvestition einzeln klären, beginnend mit Schwellen beziehungsweise Preisen und dem sichtbaren Investitionsablauf.
+1. Preisfrage EV02 klären. EV01 ist mit Nutzerantwort a bestätigt: ansparen und die nächste Stufe mit einem bewussten Kauf vollständig freischalten; keine Teilbeträge.
 2. Danach Datenvertrag und Oberfläche konkretisieren; die bestätigte Vier-Stufen- und Bildrichtung nicht erneut abstimmen.
 3. Die Produktion weiterer Figuren erst im daraus abgeleiteten Umfang planen; kein unbestätigter 52-Bilder-Gesamtlauf.
 
-Beide PNGs wurden erfolgreich gelesen (je 1942 × 809 Pixel, RGB); die SHA-256-Prüfsummen sind in den jeweiligen Sidecars festgehalten. Root hat v2 tatsächlich visuell geprüft; Stufen 1–3 sind visuell erhalten, aber nicht pixelidentisch. Dokumentationslinks und Diff sind geprüft. Keine Produktdateien geändert, deshalb keine neuen Funktionstests ausgeführt. Implementierungsstand weiterhin `33c7274`; der erste Prototypstand liegt in `89f0260`, v2 und Bestätigung im Folgecommit dieser Übergabe. Lokalen und entfernten Branch vor einer Fortsetzung frisch vergleichen. Die bereits gestellte Bedienungsfrage EV01 (ganze Stufe oder Teilbeträge) ist noch offen; bis zur Antwort keine Variante als beschlossen ausgeben.
+Beide PNGs wurden erfolgreich gelesen (je 1942 × 809 Pixel, RGB); die SHA-256-Prüfsummen sind in den jeweiligen Sidecars festgehalten. Root hat v2 tatsächlich visuell geprüft; Stufen 1–3 sind visuell erhalten, aber nicht pixelidentisch. Dokumentationslinks und Diff sind geprüft. Keine Produktdateien geändert, deshalb keine neuen Funktionstests ausgeführt. Implementierungsstand weiterhin `33c7274`; der erste Prototypstand liegt in `89f0260`, v2 und Bestätigung im Folgecommit dieser Übergabe. Lokalen und entfernten Branch vor einer Fortsetzung frisch vergleichen. EV01 ist inzwischen mit a beantwortet und in Anforderungen sowie Entscheidungsdokument festgehalten. Preisfrage EV02 bleibt offen. Diese Fortschreibung ändert nur Dokumentation; vor Sicherung Verweise und Diff prüfen.
