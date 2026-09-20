@@ -2331,8 +2331,8 @@ export const AVATAR_ART = deepFreeze({
       "sourceBytes": 1802851,
       "sourceSha256": "f79a9369454bfdd2cd07ed878d5844cecb6f0504791600522b11c135ab1a2866",
       "metadataName": "horse-moon-body-rear.json",
-      "metadataBytes": 2700,
-      "metadataSha256": "d0557abd869ef88499843c18685b35123b1bc520bc8f80e23b7575c6dd61f069",
+      "metadataBytes": 3100,
+      "metadataSha256": "92fe5c445fdc5c9bb9e4392be5d742b56f694f77228c28c1041d09bd2884618a",
       "registration": {
         "scale": 0.65,
         "x": 0,
@@ -2373,6 +2373,61 @@ export const AVATAR_ART = deepFreeze({
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-moon-body-horse-rear-256.webp",
       "outputBytes": 100142
+    },
+    "item-moon-body-horse-front": {
+      "key": "item-moon-body-horse-front",
+      "figureId": "horse",
+      "plane": "front",
+      "sourceName": "horse-moon-body-front.png",
+      "sourceWidth": 1024,
+      "sourceHeight": 1536,
+      "canvasWidth": 1024,
+      "canvasHeight": 1536,
+      "sourceBytes": 1507163,
+      "sourceSha256": "80e85a240f79996aebf85459294e13615304f9b9793e4f87804391b09a8bc789",
+      "metadataName": "horse-moon-body-front.json",
+      "metadataBytes": 4369,
+      "metadataSha256": "c0b2b9ebfc252ca4fb953706a01e827c59f5fab494ecd3b8df917d7ab42dcd39",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1024,
+        "bottom": 1536
+      },
+      "derivationSha256": "5b015da305129f5e4a9e1bd0d04f3258a31ce66844272c25cf55772a235efaf8",
+      "width": 768,
+      "height": 1152,
+      "variants": [
+        {
+          "width": 256,
+          "height": 384,
+          "url": "../../../trainer/assets/avatar-shop/item-moon-body-horse-front-256.webp",
+          "bytes": 16360,
+          "sha256": "800b068b4326a8bc843ba043723b4126035a50853c55ccaae93e3c56e1045f0c"
+        },
+        {
+          "width": 512,
+          "height": 768,
+          "url": "../../../trainer/assets/avatar-shop/item-moon-body-horse-front-512.webp",
+          "bytes": 46872,
+          "sha256": "4df8943a9967e2310f02fc2755c7c20f2921cc8390fa3520fe872685acc5ec38"
+        },
+        {
+          "width": 768,
+          "height": 1152,
+          "url": "../../../trainer/assets/avatar-shop/item-moon-body-horse-front-768.webp",
+          "bytes": 86272,
+          "sha256": "9133546cbb1ed6ca692656ed9df4d200e95b4ec6dc46407efda1c8703c968aac"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-moon-body-horse-front-256.webp",
+      "outputBytes": 149504
     },
     "item-moon-adornment-horse-front": {
       "key": "item-moon-adornment-horse-front",
@@ -2764,15 +2819,15 @@ export const AVATAR_ART = deepFreeze({
       "figureId": "tiger",
       "plane": "front",
       "sourceName": "tiger-jungle-adornment-front.png",
-      "sourceWidth": 1222,
-      "sourceHeight": 1287,
+      "sourceWidth": 1223,
+      "sourceHeight": 1286,
       "canvasWidth": 1223,
       "canvasHeight": 1286,
-      "sourceBytes": 349057,
-      "sourceSha256": "ab64379155f0822e8d4935f64fe48b6b40f1d7ffc89431b6cbbc3a3034d27ba5",
+      "sourceBytes": 161163,
+      "sourceSha256": "1fc832c08831d48c74a2a705d2b8f82830c516f7ace2c0cca4ded1bf2977b986",
       "metadataName": "tiger-jungle-adornment-front.json",
-      "metadataBytes": 1697,
-      "metadataSha256": "35dee76ebb9775f1cb6d631cd5d4e44fd9b999c3dfbb821f543f2887c1409b28",
+      "metadataBytes": 3290,
+      "metadataSha256": "9732489139ea308c06872aec9a73a90043a612da08d9077252a7c5eeac0e3d0b",
       "registration": {
         "scale": 1,
         "x": 0,
@@ -2782,10 +2837,10 @@ export const AVATAR_ART = deepFreeze({
       "registeredBounds": {
         "left": 0,
         "top": 0,
-        "right": 1222,
-        "bottom": 1287
+        "right": 1223,
+        "bottom": 1286
       },
-      "derivationSha256": "c3c4357ec7c9fc6cc21474c699fa38246cf6d897004cfeb725999c40a6a26783",
+      "derivationSha256": "3bf05fcc8e0f722f44de585d9189b5ce19ee45f559e7f0f3b9a15df00caf090d",
       "width": 768,
       "height": 808,
       "variants": [
@@ -2793,26 +2848,26 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 269,
           "url": "../../../trainer/assets/avatar-shop/item-jungle-adornment-tiger-front-256.webp",
-          "bytes": 8760,
-          "sha256": "53d85b996fec7dc394e87194d9311860d95d28506231a907ff404614fd2213f9"
+          "bytes": 4076,
+          "sha256": "e25fb4f348517a683301a1c6b519dabd69bac8808ea3e938acf3187f2941aafe"
         },
         {
           "width": 512,
           "height": 538,
           "url": "../../../trainer/assets/avatar-shop/item-jungle-adornment-tiger-front-512.webp",
-          "bytes": 24902,
-          "sha256": "07aef06eea288f5eff323a9d44fe4811534ff4b3f1f172a1002b404dfb3678c1"
+          "bytes": 9976,
+          "sha256": "15e21a7dd06c5547206bf238af5427fc1f92b84fcafd4fd0bdf2bed2e8f8de89"
         },
         {
           "width": 768,
           "height": 808,
           "url": "../../../trainer/assets/avatar-shop/item-jungle-adornment-tiger-front-768.webp",
-          "bytes": 48004,
-          "sha256": "c2e7ccdde9b16bc8b053234481d3b6eafafc427af2791b3bacddc93a4f7581db"
+          "bytes": 18658,
+          "sha256": "a45138b974405d25fdab6c93e17e8793aca9428d8e7067d63fff7ab2f5eb2d3a"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-jungle-adornment-tiger-front-256.webp",
-      "outputBytes": 81666
+      "outputBytes": 32710
     },
     "figure-dragon-base": {
       "key": "figure-dragon-base",
@@ -3156,21 +3211,21 @@ export const AVATAR_ART = deepFreeze({
       "sourceBytes": 951516,
       "sourceSha256": "faa52402a72956173484006ba285ee438e1ab3a0fc4f812a2282a105693a8577",
       "metadataName": "deer-mist-forest-body-rear.json",
-      "metadataBytes": 1852,
-      "metadataSha256": "e6a3b494d1ab791def71f65f8ed6b955fe92c2d2e1102113780389bcccbccbff",
+      "metadataBytes": 2522,
+      "metadataSha256": "e82e4d3c077df558de508fe2eb36316d474f405bf0a83cfd3c6f91996f6b2f49",
       "registration": {
-        "scale": 1,
-        "x": 0,
-        "y": 0
+        "scale": 0.85,
+        "x": 130,
+        "y": 70
       },
       "registrationExplicit": true,
       "registeredBounds": {
-        "left": 0,
-        "top": 0,
-        "right": 1145,
-        "bottom": 1373
+        "left": 130,
+        "top": 70,
+        "right": 1103.25,
+        "bottom": 1237.05
       },
-      "derivationSha256": "659c32d66c4d3e7ab00255123c19a14be3dcfe68feff9706117191a509b25526",
+      "derivationSha256": "e83f5df30b3eb4add2a815e7472dfa844fa637c02da59e6699c15d4154381f2e",
       "width": 768,
       "height": 922,
       "variants": [
@@ -3178,26 +3233,81 @@ export const AVATAR_ART = deepFreeze({
           "width": 256,
           "height": 307,
           "url": "../../../trainer/assets/avatar-shop/item-forest-body-deer-mist-rear-256.webp",
-          "bytes": 15054,
-          "sha256": "b92bb5b607da186bf87b32d26e669bb15c202ca37bb9d1d26227abe4403673da"
+          "bytes": 11790,
+          "sha256": "d182ee5b7773b3b3b9c8565f66a0454347822e91f55c5f94705122154fc03d4e"
         },
         {
           "width": 512,
           "height": 614,
           "url": "../../../trainer/assets/avatar-shop/item-forest-body-deer-mist-rear-512.webp",
-          "bytes": 44460,
-          "sha256": "06418371613d0ae947e1a569c747b0dc4d4358251f1db09a72a4f6bd5112ee40"
+          "bytes": 34416,
+          "sha256": "22d609ad58054dd7447b3d23c7d28675f94774e75d1acea71da1753a305eacc3"
         },
         {
           "width": 768,
           "height": 922,
           "url": "../../../trainer/assets/avatar-shop/item-forest-body-deer-mist-rear-768.webp",
-          "bytes": 90346,
-          "sha256": "d94199f52926dafe3b70d1c91c59ab27cb45ff4430930bfb6de154a9b324b9a2"
+          "bytes": 65614,
+          "sha256": "ef265a62c31a92d516548215cd8f1bd16b109e5e210d28cf74e16a8b7cb1ae6f"
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-forest-body-deer-mist-rear-256.webp",
-      "outputBytes": 149860
+      "outputBytes": 111820
+    },
+    "item-forest-body-deer-mist-front": {
+      "key": "item-forest-body-deer-mist-front",
+      "figureId": "deer-mist",
+      "plane": "front",
+      "sourceName": "deer-mist-forest-body-front.png",
+      "sourceWidth": 1145,
+      "sourceHeight": 1374,
+      "canvasWidth": 1145,
+      "canvasHeight": 1374,
+      "sourceBytes": 586318,
+      "sourceSha256": "c687f487fe8f51b199f62497d056991f507c29ea407b21c6ac09d91790e0822c",
+      "metadataName": "deer-mist-forest-body-front.json",
+      "metadataBytes": 2805,
+      "metadataSha256": "ab6155e5a41449d3e6825d94983827221a69b25067ba7540309b5a2105fa319f",
+      "registration": {
+        "scale": 0.36,
+        "x": 274,
+        "y": 468
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 274,
+        "top": 468,
+        "right": 686.2,
+        "bottom": 962.64
+      },
+      "derivationSha256": "3f5928fc2f725696e8a3e99a44cb3d6e8f1a61530b78f9648b7a7523da9dae34",
+      "width": 768,
+      "height": 922,
+      "variants": [
+        {
+          "width": 256,
+          "height": 307,
+          "url": "../../../trainer/assets/avatar-shop/item-forest-body-deer-mist-front-256.webp",
+          "bytes": 2992,
+          "sha256": "0798b220942b5272c2bf9ec32e5a494c6abb10e7d4520fbcfa3864f84d86b712"
+        },
+        {
+          "width": 512,
+          "height": 614,
+          "url": "../../../trainer/assets/avatar-shop/item-forest-body-deer-mist-front-512.webp",
+          "bytes": 7520,
+          "sha256": "70a6f6eca78bd41aae1ebe443d5e40720db92e63a21108a729f5f285587120cc"
+        },
+        {
+          "width": 768,
+          "height": 922,
+          "url": "../../../trainer/assets/avatar-shop/item-forest-body-deer-mist-front-768.webp",
+          "bytes": 13714,
+          "sha256": "ddf555d9e8e74945108f75b92195c4e245c6d9d36a7eca6d44dec63c9c287614"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-forest-body-deer-mist-front-256.webp",
+      "outputBytes": 24226
     },
     "item-forest-adornment-deer-mist-front": {
       "key": "item-forest-adornment-deer-mist-front",
@@ -3376,8 +3486,8 @@ export const AVATAR_ART = deepFreeze({
       "sourceBytes": 1764605,
       "sourceSha256": "40d885581855d0d3e3a32259a95958463e7e04c51497c2fd723499e2790e4d8e",
       "metadataName": "wolf-aurora-aurora-body-rear.json",
-      "metadataBytes": 1532,
-      "metadataSha256": "3b5a2fc172f2b6a54b294044d640a334f0e1cc012f15498baba511f23aecdf6c",
+      "metadataBytes": 2151,
+      "metadataSha256": "74ce606dd79d2971ba55a73dc409d314fede215cad72a9908903439d64775fc1",
       "registration": {
         "scale": 1,
         "x": 0,
@@ -3418,6 +3528,61 @@ export const AVATAR_ART = deepFreeze({
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-aurora-body-wolf-aurora-rear-256.webp",
       "outputBytes": 265872
+    },
+    "item-aurora-body-wolf-aurora-front": {
+      "key": "item-aurora-body-wolf-aurora-front",
+      "figureId": "wolf-aurora",
+      "plane": "front",
+      "sourceName": "wolf-aurora-aurora-body-front.png",
+      "sourceWidth": 1223,
+      "sourceHeight": 1286,
+      "canvasWidth": 1223,
+      "canvasHeight": 1286,
+      "sourceBytes": 616561,
+      "sourceSha256": "03612947a651b22c48270300236e3518e78a778f8240a0775da15602dd31dec9",
+      "metadataName": "wolf-aurora-aurora-body-front.json",
+      "metadataBytes": 3001,
+      "metadataSha256": "c8a84c4cb880f3f00185b602c2024d105c2f26563f85a604612d36c8eb74352a",
+      "registration": {
+        "scale": 0.36,
+        "x": 130,
+        "y": 210
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 130,
+        "top": 210,
+        "right": 570.28,
+        "bottom": 672.96
+      },
+      "derivationSha256": "374dc023a8bd66ce29ba58e7ea1aeedf9e8720c44f4fae680c4f46c3decc8e49",
+      "width": 768,
+      "height": 808,
+      "variants": [
+        {
+          "width": 256,
+          "height": 269,
+          "url": "../../../trainer/assets/avatar-shop/item-aurora-body-wolf-aurora-front-256.webp",
+          "bytes": 3192,
+          "sha256": "805b630e53762641e6f77b62c337fa4e32347bdaf15ce76bdaf46ca5e0b65a74"
+        },
+        {
+          "width": 512,
+          "height": 538,
+          "url": "../../../trainer/assets/avatar-shop/item-aurora-body-wolf-aurora-front-512.webp",
+          "bytes": 7826,
+          "sha256": "66da288e90dec7a95d7e1a26094d4a02bb4e6a93404e0ab8373a229e432c37ec"
+        },
+        {
+          "width": 768,
+          "height": 808,
+          "url": "../../../trainer/assets/avatar-shop/item-aurora-body-wolf-aurora-front-768.webp",
+          "bytes": 14422,
+          "sha256": "fc31039cb3b365277a992bbdfacfa537602288aaf05fd4415f2bec231c640fbf"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-aurora-body-wolf-aurora-front-256.webp",
+      "outputBytes": 25440
     },
     "item-aurora-adornment-wolf-aurora-front": {
       "key": "item-aurora-adornment-wolf-aurora-front",
@@ -3816,8 +3981,8 @@ export const AVATAR_ART = deepFreeze({
       "sourceBytes": 1802851,
       "sourceSha256": "f79a9369454bfdd2cd07ed878d5844cecb6f0504791600522b11c135ab1a2866",
       "metadataName": "unicorn-moon-moon-body-rear.json",
-      "metadataBytes": 2841,
-      "metadataSha256": "d85f83df167201d2b078127cc43c0871df85b6877d731b679f45423a61273975",
+      "metadataBytes": 3263,
+      "metadataSha256": "3d6e9daac9211dadc29fd1eb5c3a7446db8b7cc718aa9aad4551a8851620fb27",
       "registration": {
         "scale": 0.62,
         "x": 0,
@@ -3858,6 +4023,61 @@ export const AVATAR_ART = deepFreeze({
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-moon-body-unicorn-moon-rear-256.webp",
       "outputBytes": 93320
+    },
+    "item-moon-body-unicorn-moon-front": {
+      "key": "item-moon-body-unicorn-moon-front",
+      "figureId": "unicorn-moon",
+      "plane": "front",
+      "sourceName": "unicorn-moon-moon-body-front.png",
+      "sourceWidth": 1024,
+      "sourceHeight": 1536,
+      "canvasWidth": 1024,
+      "canvasHeight": 1536,
+      "sourceBytes": 1553710,
+      "sourceSha256": "90f76bc11cf9c59cb6967742deee850b1fb33c6c51082de4ec318c4d182b07cf",
+      "metadataName": "unicorn-moon-moon-body-front.json",
+      "metadataBytes": 4467,
+      "metadataSha256": "d3113f4353c95c2d149ddb09cc62f885e1ea767f649b82b1d114b86b61c38d30",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1024,
+        "bottom": 1536
+      },
+      "derivationSha256": "4053661a2cd095773fcab9a3d3d360fe762943a5b1c2a29740942023a2c62adc",
+      "width": 768,
+      "height": 1152,
+      "variants": [
+        {
+          "width": 256,
+          "height": 384,
+          "url": "../../../trainer/assets/avatar-shop/item-moon-body-unicorn-moon-front-256.webp",
+          "bytes": 18376,
+          "sha256": "5a97ed594e08eebde3f8e601ad069f8ec7fa5c4b7cb1506a79c7055fe458ce1c"
+        },
+        {
+          "width": 512,
+          "height": 768,
+          "url": "../../../trainer/assets/avatar-shop/item-moon-body-unicorn-moon-front-512.webp",
+          "bytes": 53250,
+          "sha256": "e9955ca71eb6b0c284ac045238e79e84d10a7e979da01cccdfc319fffc557dd1"
+        },
+        {
+          "width": 768,
+          "height": 1152,
+          "url": "../../../trainer/assets/avatar-shop/item-moon-body-unicorn-moon-front-768.webp",
+          "bytes": 103420,
+          "sha256": "7c0e6748662cfc7ef750bb6706aaf006053ed2d6b90941fb9ef8dde8feec5f1c"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-moon-body-unicorn-moon-front-256.webp",
+      "outputBytes": 175046
     },
     "item-moon-adornment-unicorn-moon-front": {
       "key": "item-moon-adornment-unicorn-moon-front",
@@ -4641,8 +4861,8 @@ export const AVATAR_ART = deepFreeze({
       "sourceBytes": 1802851,
       "sourceSha256": "f79a9369454bfdd2cd07ed878d5844cecb6f0504791600522b11c135ab1a2866",
       "metadataName": "pegasus-star-moon-body-rear.json",
-      "metadataBytes": 2836,
-      "metadataSha256": "d3f812acbf63d6b76ec2b9ce30869bb9b895af7d54e96107e809cd0589e657ea",
+      "metadataBytes": 3257,
+      "metadataSha256": "4ea095305f52575aa4cf35397fb4d4d07990182349ecdd21f4389cd8d64e3d28",
       "registration": {
         "scale": 0.55,
         "x": 0,
@@ -4683,6 +4903,61 @@ export const AVATAR_ART = deepFreeze({
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-shop/item-moon-body-pegasus-star-rear-256.webp",
       "outputBytes": 78184
+    },
+    "item-moon-body-pegasus-star-front": {
+      "key": "item-moon-body-pegasus-star-front",
+      "figureId": "pegasus-star",
+      "plane": "front",
+      "sourceName": "pegasus-star-moon-body-front.png",
+      "sourceWidth": 1024,
+      "sourceHeight": 1536,
+      "canvasWidth": 1024,
+      "canvasHeight": 1536,
+      "sourceBytes": 1239109,
+      "sourceSha256": "619b678c355e0dcac40eb73c6508516169cfb49b4be167c34b0b933b5c716ed1",
+      "metadataName": "pegasus-star-moon-body-front.json",
+      "metadataBytes": 4848,
+      "metadataSha256": "2e28e60ba7553f8c388b54317f0b40da6ce798674494c3cef178bd75052e80e6",
+      "registration": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "registrationExplicit": true,
+      "registeredBounds": {
+        "left": 0,
+        "top": 0,
+        "right": 1024,
+        "bottom": 1536
+      },
+      "derivationSha256": "ac0656302abf2826ada33f25b5b403f08e36f1248729363df13aceddc0bc75f3",
+      "width": 768,
+      "height": 1152,
+      "variants": [
+        {
+          "width": 256,
+          "height": 384,
+          "url": "../../../trainer/assets/avatar-shop/item-moon-body-pegasus-star-front-256.webp",
+          "bytes": 11926,
+          "sha256": "43c676000ad0cd3b75b8a92b0bfa6bb8336755defc8d73b68098ec1e196acb19"
+        },
+        {
+          "width": 512,
+          "height": 768,
+          "url": "../../../trainer/assets/avatar-shop/item-moon-body-pegasus-star-front-512.webp",
+          "bytes": 34742,
+          "sha256": "e8a34129d0b35e38bc87d51be992723affe4cc62676ca04ebd582a45554d760b"
+        },
+        {
+          "width": 768,
+          "height": 1152,
+          "url": "../../../trainer/assets/avatar-shop/item-moon-body-pegasus-star-front-768.webp",
+          "bytes": 63786,
+          "sha256": "f55e6c65366d7c96b3cc54363e5352fbcab7499c5ac1e7aa823d7724fac71520"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-shop/item-moon-body-pegasus-star-front-256.webp",
+      "outputBytes": 110454
     },
     "item-moon-adornment-pegasus-star-front": {
       "key": "item-moon-adornment-pegasus-star-front",
@@ -5245,7 +5520,8 @@ export const AVATAR_ART = deepFreeze({
           "front": "item-moon-head-horse-front"
         },
         "moon-body": {
-          "rear": "item-moon-body-horse-rear"
+          "rear": "item-moon-body-horse-rear",
+          "front": "item-moon-body-horse-front"
         },
         "moon-adornment": {
           "front": "item-moon-adornment-horse-front"
@@ -5314,7 +5590,8 @@ export const AVATAR_ART = deepFreeze({
           "front": "item-forest-head-deer-mist-front"
         },
         "forest-body": {
-          "rear": "item-forest-body-deer-mist-rear"
+          "rear": "item-forest-body-deer-mist-rear",
+          "front": "item-forest-body-deer-mist-front"
         },
         "forest-adornment": {
           "front": "item-forest-adornment-deer-mist-front"
@@ -5334,7 +5611,8 @@ export const AVATAR_ART = deepFreeze({
           "front": "item-aurora-head-wolf-aurora-front"
         },
         "aurora-body": {
-          "rear": "item-aurora-body-wolf-aurora-rear"
+          "rear": "item-aurora-body-wolf-aurora-rear",
+          "front": "item-aurora-body-wolf-aurora-front"
         },
         "aurora-adornment": {
           "front": "item-aurora-adornment-wolf-aurora-front"
@@ -5374,7 +5652,8 @@ export const AVATAR_ART = deepFreeze({
           "front": "item-moon-head-unicorn-moon-front"
         },
         "moon-body": {
-          "rear": "item-moon-body-unicorn-moon-rear"
+          "rear": "item-moon-body-unicorn-moon-rear",
+          "front": "item-moon-body-unicorn-moon-front"
         },
         "moon-adornment": {
           "front": "item-moon-adornment-unicorn-moon-front"
@@ -5443,7 +5722,8 @@ export const AVATAR_ART = deepFreeze({
           "front": "item-moon-head-pegasus-star-front"
         },
         "moon-body": {
-          "rear": "item-moon-body-pegasus-star-rear"
+          "rear": "item-moon-body-pegasus-star-rear",
+          "front": "item-moon-body-pegasus-star-front"
         },
         "moon-adornment": {
           "front": "item-moon-adornment-pegasus-star-front"
@@ -5500,9 +5780,9 @@ export const AVATAR_ART = deepFreeze({
         "sourceName": "dragon-margin.png"
       }
     ],
-    "assetCount": 93,
-    "smallBytes": 960222,
-    "totalBytes": 8786364,
+    "assetCount": 98,
+    "smallBytes": 1005120,
+    "totalBytes": 9184038,
     "smallBudgetBytes": 8388608
   }
 });
@@ -5551,6 +5831,7 @@ export const AVATAR_SMALL_URLS = Object.freeze([
   "../../../trainer/assets/avatar-shop/figure-horse-base-256.webp",
   "../../../trainer/assets/avatar-shop/item-moon-head-horse-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-moon-body-horse-rear-256.webp",
+  "../../../trainer/assets/avatar-shop/item-moon-body-horse-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-moon-adornment-horse-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-stars-head-horse-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-stars-body-horse-front-256.webp",
@@ -5566,10 +5847,12 @@ export const AVATAR_SMALL_URLS = Object.freeze([
   "../../../trainer/assets/avatar-shop/figure-deer-mist-base-256.webp",
   "../../../trainer/assets/avatar-shop/item-forest-head-deer-mist-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-forest-body-deer-mist-rear-256.webp",
+  "../../../trainer/assets/avatar-shop/item-forest-body-deer-mist-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-forest-adornment-deer-mist-front-256.webp",
   "../../../trainer/assets/avatar-shop/figure-wolf-aurora-base-256.webp",
   "../../../trainer/assets/avatar-shop/item-aurora-head-wolf-aurora-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-aurora-body-wolf-aurora-rear-256.webp",
+  "../../../trainer/assets/avatar-shop/item-aurora-body-wolf-aurora-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-aurora-adornment-wolf-aurora-front-256.webp",
   "../../../trainer/assets/avatar-shop/figure-panther-shadow-base-256.webp",
   "../../../trainer/assets/avatar-shop/item-obsidian-head-panther-shadow-front-256.webp",
@@ -5578,6 +5861,7 @@ export const AVATAR_SMALL_URLS = Object.freeze([
   "../../../trainer/assets/avatar-shop/figure-unicorn-moon-base-256.webp",
   "../../../trainer/assets/avatar-shop/item-moon-head-unicorn-moon-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-moon-body-unicorn-moon-rear-256.webp",
+  "../../../trainer/assets/avatar-shop/item-moon-body-unicorn-moon-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-moon-adornment-unicorn-moon-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-stars-head-unicorn-moon-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-stars-body-unicorn-moon-front-256.webp",
@@ -5593,6 +5877,7 @@ export const AVATAR_SMALL_URLS = Object.freeze([
   "../../../trainer/assets/avatar-shop/figure-pegasus-star-base-256.webp",
   "../../../trainer/assets/avatar-shop/item-moon-head-pegasus-star-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-moon-body-pegasus-star-rear-256.webp",
+  "../../../trainer/assets/avatar-shop/item-moon-body-pegasus-star-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-moon-adornment-pegasus-star-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-stars-head-pegasus-star-front-256.webp",
   "../../../trainer/assets/avatar-shop/item-stars-body-pegasus-star-front-256.webp",

@@ -37,7 +37,11 @@
     "method": "Headless Edge composition on the exact 1024 x 1536 source canvas.",
     "evidence": ".superpowers/avatar-shop-equine-qa/screens/horse-moon-body-rear.png",
     "setEvidence": ".superpowers/avatar-shop-equine-qa/screens/horse-set-moon.png",
-    "observedFit": "The rear cloak is visible behind the tail and rump. Its central shoulder attachment is occluded by the body layer, so this review does not claim a complete anatomical drape."
+    "observedFit": "With the new fitted front layer, this rear source supplies visible depth at the left tail edge and a narrow inner fold behind the hindquarters; the combined outer contour reads as one continuous cloak at 1024 px and 320 px.",
+    "updatedCompositionEvidence": ".superpowers/sdd/2026-09-20-avatar-fit/equine/screens/horse-new-full-1024.png",
+    "updatedMobileEvidence": ".superpowers/sdd/2026-09-20-avatar-fit/equine/screens/horse-new-full-320.png",
+    "publicEvidence": "../2026-09-20-avatar-passform.png",
+    "publicReport": "../../reports/2026-09-20-avatar-passform.md"
   },
   "registrationReference": "horse.png"
 }

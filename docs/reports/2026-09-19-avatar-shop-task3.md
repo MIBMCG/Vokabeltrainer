@@ -1,5 +1,7 @@
 # Avatarbilder und Halskorrektur
 
+**Folgebefund vom 20.09.2026:** Der Nutzer meldet falsch sitzende und verdeckte Ausrüstung. Der [erneute Sichtaudit](2026-09-20-avatar-fit-audit.md) bestätigt sechs betroffene Kombinationen. Die unten dokumentierte technische Vollständigkeit und frühere Sichtprüfung sind dafür keine Akzeptanz. Die Korrektur läuft nach dem [Passformplan](../superpowers/plans/2026-09-20-avatar-passform.md).
+
 Stand: 19.09.2026. Teilpaket aus dem [freigegebenen Plan](../superpowers/plans/2026-09-19-avatar-shop.md); die gesamte Avatar-/Shop-Erweiterung ist noch nicht abgeschlossen.
 
 ## Bereits im Produkt

@@ -22,6 +22,8 @@ Das Cutout-Mindestkriterium wird vor jeder Registrierung auf der dekodierten Que
 
 ## Sichtprüfung und Grenzen
 
+Die [Passformkorrektur vom 20.09.2026](../../reports/2026-09-20-avatar-passform.md) ergänzt bei Pferd, Einhorn, Pegasus, Polarlichtwolf und Nebelhirsch eine eigene vordere Umhanglage. Ein Gegenstand darf beide Dateien `-rear.png` und `-front.png` besitzen: Hintere Stoffteile liegen hinter der Figur, Joch, Schließe und sichtbare Drapierung davor. Ein kompletter Umhang nur hinter der Figur verdeckte zuvor gerade die Befestigung. Eine pauschale Umkehr aller Ebenen ist keine geeignete Reparatur. Der Tiger erhält eine eigene Korrektur seiner vier Pfotenringe.
+
 Die Kontaktbögen prüfen echte Kompositionen mit sichtbarem Hals, freien Augen und passend befestigter Ausrüstung. Die menschlichen Hautvarianten unterscheiden sich durch die Bildgenerierung geringfügig in der Silhouette; feste Registrierungen gleichen die Kleidungslage an. Leuchtsäume gehören zum illustrierten Stil. Eine schwarze oder farbige Werkzeugvorschau allein beweist keinen deckenden Hintergrund: maßgeblich sind tatsächliche Alphawerte und die Komposition.
 
 Die neue Figurenwahl und Käufe benötigen noch die versionierte Produktintegration. Die vorhandene Entdeckerfigur kann die korrigierten Bilder unabhängig davon verwenden. Aktuelle Umsetzung, Prüfstände und noch offene Google-/Gerätebelege stehen in der [Übergabe](../../handoffs/2026-09-19-avatar-shop.md).

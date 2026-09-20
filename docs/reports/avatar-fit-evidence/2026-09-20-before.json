@@ -1,0 +1,37 @@
+[
+  {
+    "figureId": "horse",
+    "itemId": "moon-body",
+    "bodyPixels": 37643,
+    "visiblyClothedPixels": 0,
+    "visibleBodyFraction": 0
+  },
+  {
+    "figureId": "unicorn-moon",
+    "itemId": "moon-body",
+    "bodyPixels": 38664,
+    "visiblyClothedPixels": 0,
+    "visibleBodyFraction": 0
+  },
+  {
+    "figureId": "pegasus-star",
+    "itemId": "moon-body",
+    "bodyPixels": 46622,
+    "visiblyClothedPixels": 0,
+    "visibleBodyFraction": 0
+  },
+  {
+    "figureId": "wolf-aurora",
+    "itemId": "aurora-body",
+    "bodyPixels": 31877,
+    "visiblyClothedPixels": 0,
+    "visibleBodyFraction": 0
+  },
+  {
+    "figureId": "deer-mist",
+    "itemId": "forest-body",
+    "bodyPixels": 17176,
+    "visiblyClothedPixels": 0,
+    "visibleBodyFraction": 0
+  }
+]

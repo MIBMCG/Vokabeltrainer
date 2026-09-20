@@ -1,16 +1,29 @@
 {
   "sourceFile": "tiger-jungle-adornment-front.png",
-  "prompt": "Use case: stylized-concept\nAsset type: transparent game equipment layer\nInput image: tiger.png is a reference image for exact body pose, original 1223 x 1286 canvas, placement, scale, perspective, and painterly magical style.\nPrimary request: create only the Dschungel set adornment called Goldene Pfotenreifen: four slim engraved gold cuffs with small emerald leaf charms fitted around the wrists and ankles just above all four paws, perspective matched to each leg.\nComposition/framing: preserve the exact 1223 x 1286 canvas coordinate system. Place each cuff at the exact coordinates of the four paws in the reference. Do not crop or rescale the canvas.\nStyle/medium: high-quality detailed magical adventure game illustration matching the tiger.\nConstraints: output only the four paw cuffs on a genuinely transparent background; no tiger, no legs, no paws, no fur, no scenery, no text, no watermark. Front layer.",
+  "prompt": "Use case: precise-object-edit\nAsset type: body-specific transparent front equipment layer for a layered children's game avatar\nInput image: tiger.png is the exact body, pose and 1223 x 1286 coordinate reference only. It must not appear in the output.\nPrimary request: create ONLY four separate slim engraved gold paw rings with one small flush emerald inset per ring. Fit one ring closely around each lower leg immediately above its paw at these exact body anchors: front-left centered x=190 y=1110, width about 140 px, height about 55 px; front-right centered x=400 y=1140, width about 135 px, height about 55 px; rear-inner gray leg centered x=690 y=1000, width about 105 px, height about 45 px and perspective matched to that slanted leg; rear-right orange leg centered x=955 y=1060, width about 105 px, height about 45 px and perspective matched to that leg. Each band must cross its leg centerline and extend approximately equally to both sides. Preserve the 1223 x 1286 body coordinate system with transparent margins.\nStyle: slim premium painterly gold rings matching the tiger illustration, restrained leaf engraving, one small flush emerald inset, no hanging parts.\nTransparency: output only the four cuffs on genuine transparent alpha.\nAvoid: tiger pixels, fur, legs, paws, body, face, tail, background, scene, shadow, text, watermark, large bangles, dangling pendants, leaf clusters, extra jewelry, fifth cuff, floating cuff.",
+  "previousPrompt": "Earlier 20 September built-in edits were rejected when at least one cuff remained detached, too decorative, or a targeted edit changed protected cuffs. The final selected source was freshly generated against four explicit body anchors using only tiger.png as the alignment reference.",
   "reference": "tiger.png",
   "generator": "built-in image_gen",
-  "generatedOn": "2026-09-19",
-  "registration": {"scale": 1, "x": 0, "y": 0},
-  "canvas": {"width": 1223, "height": 1286},
+  "generatedOn": "2026-09-20",
+  "sourceSha256": "1fc832c08831d48c74a2a705d2b8f82830c516f7ace2c0cca4ded1bf2977b986",
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "canvas": {
+    "width": 1223,
+    "height": 1286
+  },
   "qa": {
-    "status": "accepted-for-current-base",
-    "method": "Fresh headless Edge full-canvas composition, individual layer and complete set",
-    "evidence": "../../../.superpowers/sdd/2026-09-19-avatar-shop/mystic-gear-evidence/tiger-jungle-adornment-front-composite.png",
-    "result": "All four gold cuffs sit immediately above the tiger paws.",
-    "limits": "The generated front cuffs are visually large and decorative; the source canvas differs by minus one pixel in width and plus one in height."
+    "status": "verified-after-fit-repair",
+    "method": "Isolated Headless Edge composition of the selected built-in edit against the unchanged tiger.png base, inspected at full source resolution and as a 320 px card; all four horizontal components were measured against body alpha.",
+    "evidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit/mystic/mystic-composites-320.png",
+    "detailEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit/mystic/tiger-composite.png",
+    "metrics": "../../../.superpowers/sdd/2026-09-20-avatar-fit/mystic/metrics.json",
+    "result": "Exactly four close-fitting bands remain. Their body-overlap ratios in front-left, front-right, rear-inner and rear-right order are 68.1%, 73.2%, 86.9% and 66.5%; every band crosses its associated leg centreline and remains visible at 320 px.",
+    "limits": "The selected built-in image is already on the exact 1223 x 1286 canonical canvas. The pipeline applies only the declared identity registration and does not move individual parts.",
+    "publicEvidence": "../2026-09-20-avatar-passform.png",
+    "publicReport": "../../reports/2026-09-20-avatar-passform.md"
   }
 }

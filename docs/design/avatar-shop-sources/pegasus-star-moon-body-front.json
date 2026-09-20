@@ -1,0 +1,52 @@
+{
+  "sourceFile": "pegasus-star-moon-body-front.png",
+  "prompt": "Use case: precise-object-edit\nAsset type: transparent front equipment layer for a layered children's game avatar\nInput images: Image 1 is the exact canonical dark-blue Pegasus body with two large spread wings and is the absolute coordinate and wing-clearance reference; Image 2 is the existing rear moon cloak layer whose blue, violet, silver, star embroidery, folds, and trailing drape must be continued; Image 3 is the current browser composite showing the rear layer behind this exact Pegasus.\nPrimary request: Create ONLY the missing FRONT portion of the same moon/star cloak, fitted precisely to the exact Pegasus in Image 1. Add a clearly visible narrow curved yoke across the lower chest/shoulder area BELOW the neck and OUTSIDE the wing roots, with a small silver-violet clasp at the front/side of the chest. Add a short believable deep-blue fabric panel over the visible left outer flank, underneath the left wing, connecting naturally toward the rear drape in Image 2.\nCritical wing clearance: every visible feather and the complete silhouette of BOTH wings in Image 1 must remain unobscured. Do not place fabric, trim, clasp, glow, or alpha haze over any wing feather or wing root. The front panel must stay entirely within the horse torso/flank region below the left wing root and must not bridge across either wing.\nComposition: preserve the exact 1024 x 1536 canonical canvas and exact Pegasus coordinates from Image 1. The equipment must already be aligned at full canvas scale; do not require translation, scaling, cropping, bbox normalization, or rotation. Keep ears, face, eyes, muzzle, mane, tail, all four legs and hooves fully free. Stop fabric above the leg joints. Keep the yoke low on the chest and away from the face/mane. Cover only a modest torso area.\nStyle: polished painterly premium magical children's adventure illustration matching Images 1-3; deep midnight blue and silver-violet cloth, restrained embroidered stars, silver edging, coherent cool galactic lighting.\nTransparency: output a genuinely transparent RGBA background. Include ONLY the new front equipment pixels. The Pegasus, wings, feathers, mane, tail, body, legs, hooves, eyes, all existing equipment, checkerboard, glow, shadow, and backdrop must be absent and fully transparent.\nConstraints: one equipment layer only; clean alpha edges; full canonical canvas; no labels, no text, no watermark; no full Pegasus; no new figure; no saddle; no headpiece; no hoof jewelry; no floating ornaments.\nAvoid: any pixels on wings or feathers, animal pixels or silhouette, background, black fill, white fill, checkerboard painted into the image, detached fabric, fabric crossing face, mane, wings, or legs, oversized blanket hiding the torso, duplicated rear cloak.",
+  "relativeReference": "pegasus-star.png",
+  "relativeReferences": [
+    "pegasus-star.png",
+    "pegasus-star-moon-body-rear.png",
+    "../../../.superpowers/avatar-shop-equine-qa/screens/pegasus-star-set-moon.png"
+  ],
+  "generator": "built-in image_gen",
+  "generatedOn": "2026-09-20",
+  "candidate": false,
+  "canvas": {
+    "width": 1024,
+    "height": 1536
+  },
+  "alphaBounds": {
+    "threshold": 16,
+    "x": 92,
+    "y": 675,
+    "width": 864,
+    "height": 631
+  },
+  "registration": {
+    "scale": 1,
+    "x": 0,
+    "y": 0
+  },
+  "provenance": "Original body-specific built-in image_gen front layer generated from the exact Pegasus body, existing rear layer, and previous browser composition.",
+  "sourceSha256": "619b678c355e0dcac40eb73c6508516169cfb49b4be167c34b0b933b5c716ed1",
+  "figure": "pegasus-star",
+  "layer": "front",
+  "registeredBounds": {
+    "alphaThreshold": 16,
+    "x": 92,
+    "y": 675,
+    "width": 864,
+    "height": 631
+  },
+  "qa": {
+    "date": "2026-09-20",
+    "method": "Headless Edge composition from decoded PNGs on the canonical canvas at 1024 px and responsive 320 px.",
+    "evidence": ".superpowers/sdd/2026-09-20-avatar-fit/equine/screens/pegasus-star-new-1024.png",
+    "mobileEvidence": ".superpowers/sdd/2026-09-20-avatar-fit/equine/screens/pegasus-star-new-320.png",
+    "fullSetEvidence": ".superpowers/sdd/2026-09-20-avatar-fit/equine/screens/pegasus-star-new-full-1024.png",
+    "fullSetMobileEvidence": ".superpowers/sdd/2026-09-20-avatar-fit/equine/screens/pegasus-star-new-full-320.png",
+    "observedFit": "The narrow yoke runs across the lower torso beneath the spread wing roots, the clasp rests at the right chest edge, and the left flank drape joins the rear cloth. Both wing silhouettes and every visible feather remain unobscured; face, lower legs, and hooves remain visible.",
+    "publicEvidence": "../2026-09-20-avatar-passform.png",
+    "publicReport": "../../reports/2026-09-20-avatar-passform.md"
+  },
+  "registrationReference": "pegasus-star.png"
+}

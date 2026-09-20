@@ -4,13 +4,24 @@
   "reference": "deer-mist.png",
   "generator": "built-in image_gen",
   "generatedOn": "2026-09-19",
-  "registration": {"scale": 1, "x": 0, "y": 0},
-  "canvas": {"width": 1145, "height": 1374},
+  "sourceSha256": "faa52402a72956173484006ba285ee438e1ab3a0fc4f812a2282a105693a8577",
+  "registration": {
+    "scale": 0.85,
+    "x": 130,
+    "y": 70
+  },
+  "canvas": {
+    "width": 1145,
+    "height": 1374
+  },
   "qa": {
-    "status": "accepted-for-current-base",
-    "method": "Fresh headless Edge full-canvas composition, individual rear layer and complete set",
-    "evidence": "../../../.superpowers/sdd/2026-09-19-avatar-shop/mystic-gear-evidence/deer-mist-forest-body-rear-composite.png",
-    "result": "The cloak flows behind the shoulder, flank and tail without covering the body silhouette.",
-    "limits": "The generated source is 1145 x 1373, one pixel shorter than the 1145 x 1374 logical canvas; the rear clasp is mostly hidden by the base body as intended."
+    "status": "registered-behind-neck-with-single-visible-clasp",
+    "method": "Headless Edge composition from decoded PNGs at the native 1145 x 1374 canvas and at 320 px, including the body-specific front attachment and the complete forest set.",
+    "evidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit/deer-rear/deer-fullset-1145.png",
+    "mobileEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit/deer-rear/deer-fullset-320.png",
+    "result": "At scale 0.85 and offset (130, 70), the old rear-layer collar and crystal clasp are occluded by the deer's neck and ear. The body-specific front clasp is the only visible cloak clasp, while the rear fabric remains connected behind the left shoulder and continues across the flank.",
+    "limits": "The source PNG remains byte-for-byte unchanged at 1145 x 1373, one transparent-border row shorter than the 1145 x 1374 logical canvas. The registration is specific to deer-mist.png and the paired front layer.",
+    "publicEvidence": "../2026-09-20-avatar-passform.png",
+    "publicReport": "../../reports/2026-09-20-avatar-passform.md"
   }
 }

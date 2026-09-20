@@ -37,7 +37,11 @@
     "method": "Headless Edge composition on the exact 1024 x 1536 source canvas.",
     "evidence": ".superpowers/avatar-shop-equine-qa/screens/pegasus-star-moon-body-rear.png",
     "setEvidence": ".superpowers/avatar-shop-equine-qa/screens/pegasus-star-set-moon.png",
-    "observedFit": "The rear cloak is visible behind the tail and rump. Its central shoulder attachment is occluded by the body layer, so this review does not claim a complete anatomical drape."
+    "observedFit": "With the body-specific front layer, this rear source remains visible along the left tail edge and behind the left flank; the combined cloth stays below the wing roots and does not cross either wing silhouette at 1024 px or 320 px.",
+    "updatedCompositionEvidence": ".superpowers/sdd/2026-09-20-avatar-fit/equine/screens/pegasus-star-new-full-1024.png",
+    "updatedMobileEvidence": ".superpowers/sdd/2026-09-20-avatar-fit/equine/screens/pegasus-star-new-full-320.png",
+    "publicEvidence": "../2026-09-20-avatar-passform.png",
+    "publicReport": "../../reports/2026-09-20-avatar-passform.md"
   },
   "registrationReference": "pegasus-star.png",
   "derivedFrom": "horse-moon-body-rear.png",

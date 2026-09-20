@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
-import {mkdir, readFile} from 'node:fs/promises';
+import {mkdir, readFile, writeFile} from 'node:fs/promises';
 import {extname, resolve} from 'node:path';
 import {pathToFileURL} from 'node:url';
 
@@ -61,6 +61,61 @@ async function fixtureServer() {
     close: () => new Promise((resolveClose, reject) => server.close((error) => (error ? reject(error) : resolveClose()))),
   };
 }
+
+test('animal cloaks remain visibly worn over the body instead of disappearing behind it', {timeout: 60_000}, async () => {
+  const harness = await fixtureServer();
+  const {chromium} = await import(moduleUrl(PLAYWRIGHT_MODULE));
+  const browser = await chromium.launch({headless: true, ...(BROWSER_EXECUTABLE ? {executablePath: BROWSER_EXECUTABLE} : {})});
+  const page = await browser.newPage({viewport: {width: 1320, height: 850}, deviceScaleFactor: 1});
+  try {
+    await page.goto(`${harness.baseUrl}/fixture.html`);
+    const samples = await page.evaluate(async () => {
+      const {figurePicture} = await import('/src/trainer/avatar/art.js');
+      const pairs = [['horse','moon-body'],['unicorn-moon','moon-body'],['pegasus-star','moon-body'],['wolf-aurora','aurora-body'],['deer-mist','forest-body']];
+      const root = document.querySelector('#fixture');
+      root.style.cssText = 'display:flex;gap:20px;padding:20px;font:16px system-ui;background:#eaf0e8';
+      for (const [figureId,itemId] of pairs) {
+        const card = document.createElement('section');
+        card.style.cssText = 'width:235px;flex-shrink:0';
+        const title = document.createElement('h2');title.textContent = figureId;title.style.fontSize = '16px';
+        const avatar = figurePicture({figureId,equipment:{body:itemId}}, {sizes:'235px'});
+        avatar.dataset.fitItem = itemId;
+        card.append(title,avatar);root.append(card);
+      }
+      await Promise.all([...document.images].map(image=>image.decode()));
+      return [...document.querySelectorAll('.avatar-shop-art')].map(avatar=>{
+        const pictures=[...avatar.querySelectorAll('picture')];
+        const body=avatar.querySelector('[data-plane="base"] img');
+        function pixels(images){
+          const canvas=document.createElement('canvas');canvas.width=256;canvas.height=Math.round(256*body.naturalHeight/body.naturalWidth);
+          const context=canvas.getContext('2d',{willReadFrequently:true});
+          for(const image of images)context.drawImage(image,0,0,canvas.width,canvas.height);
+          return context.getImageData(0,0,canvas.width,canvas.height).data;
+        }
+        const bare=pixels([body]),dressed=pixels(pictures.map(picture=>picture.querySelector('img')));
+        let bodyPixels=0,visiblyClothedPixels=0;
+        for(let i=0;i<bare.length;i+=4){
+          if(bare[i+3]<240)continue;
+          bodyPixels++;
+          if(Math.abs(bare[i]-dressed[i])+Math.abs(bare[i+1]-dressed[i+1])+Math.abs(bare[i+2]-dressed[i+2])>=45)visiblyClothedPixels++;
+        }
+        return {figureId:avatar.dataset.figureId,itemId:avatar.dataset.fitItem,bodyPixels,visiblyClothedPixels,visibleBodyFraction:visiblyClothedPixels/bodyPixels};
+      });
+    });
+    await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+    await mkdir(resolve('test-results/avatar-fit'),{recursive:true});
+    const phase=process.env.AVATAR_FIT_PHASE==='before'?'before':'after';
+    await page.screenshot({path:resolve(`test-results/avatar-fit/cloaks-${phase}.png`),fullPage:true});
+    await writeFile(resolve(`test-results/avatar-fit/visibility-${phase}.json`),JSON.stringify(samples,null,2)+'\n');
+    for (const sample of samples) {
+      assert.ok(sample.bodyPixels > 0, `${sample.figureId} must have a visible opaque body to compare`);
+    }
+    const hidden=samples.filter(sample=>sample.visibleBodyFraction<0.025);
+    assert.deepEqual(hidden,[],`Cloaks must have a visible attachment or drape on the body: ${JSON.stringify(hidden)}`);
+  } finally {
+    await browser.close();await harness.close();
+  }
+});
 
 test('complete avatar catalogue renders every compatible item and every human colour at mobile width', {timeout: 60_000}, async () => {
   const harness = await fixtureServer();

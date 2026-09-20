@@ -1,0 +1,29 @@
+{
+  "sourceFile": "wolf-aurora-aurora-body-front.png",
+  "reference": "wolf-aurora.png",
+  "rearReference": "wolf-aurora-aurora-body-rear.png",
+  "prompt": "Use case: precise-object-edit\nAsset type: transparent FRONT equipment layer for a layered children's game avatar\nInput images: wolf-aurora-aurora-body-rear.png is the existing aurora cloak rear layer; wolf-aurora.png is the exact arctic wolf body and pose used only for anatomical alignment.\nPrimary request: create ONLY the small front attachment for the rear cloak: a fitted open emerald/blue aurora collar edge at the wolf's lower neck, one unobtrusive silver northern-star clasp on the upper chest, and two short narrow shoulder-edge tabs that visibly connect toward the rear cloak. The front attachment must sit over the dense neck fur without covering the face, eyes, muzzle, forelegs, torso, or tail.\nCanvas and placement: preserve the exact 1223 x 1286 coordinate system and transparent margins. Align to wolf-aurora.png at its neck and shoulders. The collar must read as attached to the rear cloak already shown in wolf-aurora-aurora-body-rear.png.\nStyle/medium: premium detailed painterly fantasy game art, matching the emerald/cyan/silver materials and northern-star embroidery of the rear cloak.\nTransparency: output a genuinely transparent PNG. Every pixel except this compact collar/clasp/shoulder attachment must be transparent.\nConstraints: front layer only; compact wearable attachment, visible at 320px; no full cape and no animal pixels.\nAvoid: wolf, fur, eyes, face, muzzle, legs, paws, body silhouette, large bib, breastplate, long hanging fabric, background, scene, shadow, text, watermark, unrelated jewelry.",
+  "generator": "built-in image_gen",
+  "generatedOn": "2026-09-20",
+  "sourceSha256": "03612947a651b22c48270300236e3518e78a778f8240a0775da15602dd31dec9",
+  "registration": {
+    "scale": 0.36,
+    "x": 130,
+    "y": 210
+  },
+  "canvas": {
+    "width": 1223,
+    "height": 1286
+  },
+  "qa": {
+    "status": "verified-after-fit-repair",
+    "method": "Isolated Headless Edge composition of rear, unchanged base and front attachment on the declared registration, inspected at full source resolution and as a 320 px card.",
+    "evidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit/mystic/mystic-composites-320.png",
+    "detailEvidence": "../../../.superpowers/sdd/2026-09-20-avatar-fit/mystic/wolf-composite.png",
+    "metrics": "../../../.superpowers/sdd/2026-09-20-avatar-fit/mystic/metrics.json",
+    "result": "The compact front attachment restores a visible collar, clasp and shoulder connection to the retained rear drapery; all 24,116 visible front pixels overlap the wolf body at the declared registration.",
+    "limits": "The front attachment deliberately stays clear of the face, eyes, muzzle and forelegs; it does not replace or repaint the wolf base.",
+    "publicEvidence": "../2026-09-20-avatar-passform.png",
+    "publicReport": "../../reports/2026-09-20-avatar-passform.md"
+  }
+}

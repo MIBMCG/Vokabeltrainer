@@ -1,5 +1,7 @@
 # Übergabe: freigegebene Avatarwelt und Punkteshop
 
+**Aktueller Stand 20.09.2026:** Diagnoseversion 2 ist veröffentlicht. Der erste echte Medienlauf ist nicht bestanden; der neue Ergebnisbericht fehlt noch. Die anschließend gemeldeten sechs Passformfehler sind in den vorbereiteten Bildern korrigiert und unabhängig an Source- und Runtime-Bildern geprüft. [Passformbericht](../reports/2026-09-20-avatar-passform.md), [Nachprüfung](../reports/2026-09-20-avatar-passform-review.md), [Sechser-Vorschau](../design/2026-09-20-avatar-passform.png). Neue Figurenwahl und Käufe sind weiterhin nicht im Produkt aktiviert. Die folgenden älteren Commit-/Prüfstände sind Vorgeschichte.
+
 Stand 19.09.2026, Umsetzung läuft auf `codex/vokabeltrainer-v1` im vorhandenen isolierten Worktree. Ausgangspunkt: `c614fb5f29357929803f6ebd9ea927fb43ef22a7`. Kaufprobe und Katalog sind mit `f61c6ef9ad550fe3b157466e4bc9d39c7338e1f7` exakt auf GitHub bestätigt. Auch Bildquellen, Pipeline, Halskorrektur, Vorschau und Nachweise sind mit **`2b4c47f202486a6c63407acae6ba38b677e27409`** gepusht und durch identische lokale HEAD-/Remote-Branch-SHA bestätigt. Dieser nachfolgende Dokumentationscommit ergänzt den Empfangsbeleg; seine eigene SHA ergibt sich aus der Git-Historie.
 
 ## Auftrag und Freigabe
@@ -18,7 +20,11 @@ Der Nutzer hat den [Gesamtentwurf](../superpowers/specs/2026-09-19-avatar-shop-d
 
 ## Nächste Schritte und Grenzen
 
-**Aktualisierung 20.09.2026:** Der Nutzer hat die echte Probe ausgeführt und den Bericht geliefert. Der Medienlauf ist nicht bestanden; siehe [Auswertung und Diagnoseversion 2](../reports/2026-09-20-shop-diagnose.md). Anmeldung und Serverneustart sind damit keine ungeklärte frühere Voraussetzung mehr. Außerdem meldet der Nutzer fehlerhafte Ausrüstungspositionen und verdeckte Bildteile. Die damaligen Gestaltungsgrenzen gelten dafür nicht als Akzeptanz; die visuelle Korrektur ist offen.
+**Aktualisierung 20.09.2026:** Der Nutzer hat die echte Probe ausgeführt und den Bericht geliefert. Der Medienlauf ist nicht bestanden; siehe [Auswertung und Diagnoseversion 2](../reports/2026-09-20-shop-diagnose.md). Anmeldung und Serverneustart sind damit keine ungeklärte frühere Voraussetzung mehr. Die anschließend gemeldeten fehlerhaften Ausrüstungspositionen und verdeckten Bildteile sind korrigiert; die damaligen Gestaltungsgrenzen wurden ausdrücklich nicht als Nutzerakzeptanz behandelt.
+
+Die geprüfte Diagnosekorrektur einschließlich Bericht ist als `cc7c74c028881899329f3fe3596a408e62c90453` gepusht und mit identischer Remote-SHA bestätigt. Die Avatar-Passform wird getrennt nach dem [konkreten Korrekturplan](../superpowers/plans/2026-09-20-avatar-passform.md) bearbeitet; der [Sichtaudit](../reports/2026-09-20-avatar-fit-audit.md) hält die Ausgangsbefunde fest.
+
+Die Passformkorrektur erweitert den Bildsatz auf **98 Lagen / 294 WebPs**, kleine Größen zusammen **1.005.120 Byte**, alle Größen **9.184.038 Byte**. 372/372 Node-Tests und 5/5 gezielte Avatar-Browserfälle bestanden frisch. Fünf körperbezogene Vorderlagen, die feste Hirsch-Rear-Registrierung und die ersetzte Tiger-Pfotenquelle beheben die sechs konkret geprüften Kombinationen. Figurenbasen, Katalog und Kaufregeln blieben unverändert. Die unabhängige Nachprüfung hat im geprüften Bildumfang keine offenen Befunde. Alle Bildgruppen und die Review nutzten GPT-5.6 Sol/high; Prompts und Provenienz sind versioniert. Keine allgemeine Freigabe erneut erfragen.
 
 1. Probe und Katalog nicht erneut implementieren; ihre unabhängige Prüfung ist abgeschlossen.
 2. Ersten realen Medienbericht nicht als Erfolg ausgeben. Erweiterten Bericht mit Diagnoseversion 2 auswerten und die konkrete fehlende Voraussetzung ermitteln. Persönlichen Server 4173 und Browserdaten nicht ungefragt für automatisierte Prüfungen ersetzen. Anmeldung bleibt ausdrücklich beim Nutzer.
