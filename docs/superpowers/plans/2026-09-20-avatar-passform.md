@@ -20,7 +20,7 @@ Stand: 20.09.2026. Konkreter Korrekturauftrag nach der Nutzerkritik an verdeckte
 - [x] Wolf-/Hirsch-Lagen und Tiger-Pfotenquelle korrigieren; jeden Pfotenanker einzeln ansehen.
 - [x] Herkunftsdateien abschließen; gemeinsame Pipeline einmal ausführen. Transparenz, Registrierung, Katalogabdeckung und kleines Bildbudget prüfen.
 - [x] Ganze Sets, Einzelteile, Pferdegruppen-Kombinationen, Handygröße und Fallback erneut prüfen; unabhängige Nachreview durchführen.
-- [ ] Aktuelle Vorschau, Bedien-/Arbeitsstand und Übergabe aktualisieren, geprüften Stand nach GitHub übertragen und SHA abgleichen.
+- [x] Aktuelle Vorschau, Bedien-/Arbeitsstand und Übergabe aktualisieren, geprüften Stand nach GitHub übertragen und SHA abgleichen: `026186c4dcf769a8175dec5eceb91e09ce53c39e` wurde mit identischer Remote-SHA bestätigt. Der nachfolgende Dokumentationscommit hält den Empfangsbeleg fest.
 
 ## Prüfaussage
 

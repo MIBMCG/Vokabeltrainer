@@ -1,5 +1,7 @@
 # Arbeitsstand
 
+**Auf GitHub bestätigt:** Die Passformkorrektur liegt als `026186c4dcf769a8175dec5eceb91e09ce53c39e` auf `codex/vokabeltrainer-v1`; lokale und entfernte SHA wurden nach dem Push verglichen. Der nachfolgende Dokumentationsstand ergänzt diesen Nachweis. [Aktuelle Übergabe](docs/handoffs/2026-09-19-avatar-shop.md).
+
 **Aktuell 20.09.2026:** Auswertung der echten Kaufprobe und Passformkorrektur abgeschlossen; Bildumfang jetzt 98 Lagen / 294 WebPs. [Neue Vorschau](docs/design/2026-09-20-avatar-passform.png), [Nachprüfung](docs/reports/2026-09-20-avatar-passform-review.md). Nächster benötigter Eingang ist der reale Google-Bericht mit `diagnosticVersion: 2`; neue Figurenwahl und Käufe sind noch nicht aktiviert. Git-Belege und Fortsetzung stehen in der [aktuellen Übergabe](docs/handoffs/2026-09-19-avatar-shop.md).
 
 **Vorheriger gesicherter Avatar-Zwischenstand:** `2b4c47f202486a6c63407acae6ba38b677e27409` ist auf `codex/vokabeltrainer-v1` gepusht und per Remote-SHA bestätigt. Bildquellen, Halskorrektur, Prüfnachweise und [Gesamtvorschau](docs/design/avatar-shop-preview.png) sind enthalten. Nächster abhängiger Schritt: echte Google-Kaufprobe, danach Besitz-/Guthaben- und Oberflächenintegration.
