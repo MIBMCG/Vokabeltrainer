@@ -1,6 +1,6 @@
 # Avatar-Entwicklungsstufen: bestätigte Richtung und erster Prototyp
 
-Stand: 20.09.2026. Der Nutzer hat den vorgeschlagenen Richtungswechsel mit „so machen wir das“ bestätigt. Diese ursprüngliche Bestätigung gilt für das Entwicklungsstufen-Prinzip und einen ersten vollständig gerenderten Drachen-Prototyp zur gemeinsamen Beurteilung. Die inzwischen bestätigten Details zu Kaufablauf, Preisen, menschlichen Bildvarianten und Erhalt der bisherigen Avataransicht stehen unter EV01–EV04. Datenmodell, Produktintegration und die Produktion der übrigen Figuren benötigen noch ein konkretes Detaildesign.
+Stand: 20.09.2026. Der Nutzer hat den vorgeschlagenen Richtungswechsel mit „so machen wir das“ bestätigt. Diese ursprüngliche Bestätigung gilt für das Entwicklungsstufen-Prinzip und einen ersten vollständig gerenderten Drachen-Prototyp zur gemeinsamen Beurteilung. Die inzwischen bestätigten Details zu Kaufablauf, Preisen, menschlichen Bildvarianten und Erhalt der bisherigen Avataransicht stehen unter EV01–EV05. Datenmodell, Produktintegration und die Produktion der übrigen Figuren benötigen noch ein konkretes Detaildesign.
 
 ## Bestätigte Richtung
 
@@ -46,9 +46,9 @@ Nutzerantwort **B** vom 20.09.2026: Der bisherige menschliche Avatar bleibt zus�
 
 Die feste Kleidung/Rüstung aus EV03 gilt für die neuen Stufenbilder; die klassische Ansicht behält ihre bisherige Farb-/Zubehörwahl. Alte Zubehörlagen werden nicht auf neue Entwicklungsformen montiert. EV04 erweitert weder die klassischen Figuren um neue modulare Tierausrüstung noch die vier Entwicklungsstufen um eine fünfte Stufe. Die 76 geplanten neuen Bildmotive bleiben von der Wiederverwendung der klassischen Bilder unberührt. Die Entscheidung ist dokumentiert, noch nicht im Produkt umgesetzt.
 
-## Konkreter Oberflächenvorschlag zur gemeinsamen Prüfung
+## Bestätigter Oberflächenaufbau EV05
 
-EV01–EV04 sind beantwortet. Der folgende Aufbau führt diese Entscheidungen zusammen; die Anordnung ist ein Vorschlag, keine bereits umgesetzte Oberfläche und keine erneute Abstimmung über die bestätigten Regeln.
+Nutzerantwort **ja** vom 20.09.2026 bestätigt die Bereiche „Meine Figur“, „Entwicklung“ und „Shop“, die klassische Auswahl, die Vorschau der vier Formen, Preis und fehlende Punkte sowie die Kaufbestätigung mit Restguthaben und anschließender bewusster Auswahl. Die folgenden Einzelheiten konkretisieren diese Bedienung technisch. Noch keine Umsetzung in der Produktoberfläche behaupten.
 
 1. **Meine Figur:** Große Vorschau der ausgewählten Figur und Bildkarten der eigenen Avatare. „Klassisch“ ist hier eine zusätzliche Auswahl. Bei dieser Auswahl erscheinen die bisherigen Farben und Zubehörteile; ein Wechsel zu einer Entwicklungsfigur blendet diese Bedienelemente aus, ohne die klassische Zusammenstellung zu verwerfen. Klassisch ist keine fünfte Entwicklungsstufe.
 2. **Entwicklung:** Für die ausgewählte Entwicklungsfigur erscheinen ihre vier Formen nebeneinander beziehungsweise auf schmalen Bildschirmen untereinander. Jede Karte zeigt klar „Gehört dir“ oder „Noch gesperrt“; besessene Formen lassen sich kostenlos wieder auswählen. Nur die nächste noch nicht freigeschaltete Stufe ist kaufbar. Weitere Stufen sind bereits als Vorschau erkennbar.
@@ -59,9 +59,15 @@ EV01–EV04 sind beantwortet. Der folgende Aufbau führt diese Entscheidungen zu
 
 Die klassische Auswahl erhält eigene gespeicherte Gestaltungswerte; Wechsel zwischen klassischer Figur und Entwicklungsfigur dürfen deren Einstellungen oder erworbene Formen nicht überschreiben. Konkrete Felder, Migration und Synchronisation folgen im technischen Detailentwurf. Der echte Drive-Befund unten wird durch diesen Oberflächenvorschlag nicht gelöst.
 
+## Umsetzungsstand nach EV05
+
+Der [Grundlagenbericht](../reports/2026-09-20-avatar-evolution-foundation.md) dokumentiert den inzwischen implementierten Katalog mit 52 Formkennungen und 76 Bildkennungen sowie die ersten vier transparenten Drachenquellen. Preise und Vorschaufortschritt sind als reine Funktionen geprüft; dies ist noch keine Besitzverwaltung oder Kaufautorisierung. Die ältere Aussage über fehlende Einzelbilder beschreibt den damaligen Konzeptstand. Die ersten vier Quellen ersetzen sie für den Drachen; die Darstellung im Produkt und die übrigen 72 Motive bleiben offen.
+
+Der [neue Drive-Kandidat](../superpowers/specs/2026-09-20-shop-probe-v5.md) verwendet kohärente v2-Lese-/Schreibwege zur Koordination. Sein tatsächliches Serververhalten ist noch nachzuweisen.
+
 ## Noch nicht entschieden oder umgesetzt
 
-Als Nächstes den Oberflächenvorschlag gemeinsam prüfen und anschließend Bildproduktion sowie Datenvertrag konkretisieren. Bestätigte Entscheidungen nicht erneut als Einzelfragen vorlegen.
+Als Nächstes Bildproduktion sowie Datenvertrag konkretisieren und die bestätigte Bedienung in einen ausführbaren Plan überführen. Bestätigte Entscheidungen nicht erneut als Einzelfragen vorlegen.
 
 - genaue Berechnung und Speicherung des Entwicklungsfortschritts,
 - Verhalten bei gleichzeitigem Kauf auf mehreren Geräten,

@@ -1,5 +1,7 @@
 # Übergabe: Avatar-Entwicklungsstufen und erster Drachen-Prototyp
 
+**Historische Übergabe:** Seit Bestätigung von EV05 sind Katalog und erste Drachenquellen umgesetzt. Fortsetzung über die [neue Übergabe zu Grundlagen und Probe v5](2026-09-20-avatar-evolution-foundation-und-probe-v5.md). Die folgenden Aussagen beschreiben den vorherigen Konzeptstand.
+
 Stand: 20.09.2026. Branch `codex/vokabeltrainer-v1`, dokumentierter Ausgangscommit `33c7274`. Diese Übergabe beschreibt zunächst eine bestätigte Gestaltungsrichtung und die Auswertung des echten Drive-Probelaufs. Produktcode, Laufzeitbilder und Datenformat wurden dabei nicht geändert.
 
 ## Bestätigte Entscheidung
@@ -28,8 +30,8 @@ Keine weitere unveränderte Wiederholung derselben Probe anfordern. Ein spätere
 
 ## Nächster Schritt
 
-1. EV01–EV04 sind beantwortet: vollständiger Stufenkauf, 200 / 400 / 800 Punkte, Mädchen und Jungen mit je vier kostenlosen Hauttönen und fest gestalteter Kleidung/Rüstung pro Stufe; bisherige menschliche Avataransicht zusätzlich als „Klassisch“ mit Farben und Zubehör erhalten.
-2. Der konkrete Oberflächenvorschlag mit „Meine Figur“, „Entwicklung“ und „Shop“ steht im [Entscheidungsdokument](../design/2026-09-20-avatar-entwicklungsstufen.md) zur gemeinsamen Prüfung. Er erhält „Klassisch“ als eigene Auswahl und führt die bestätigten Entscheidungen zusammen. Danach Datenübergang und Bildproduktion konkretisieren. Die sichere Kaufkoordination bleibt technisch offen.
+1. EV01–EV05 sind beantwortet: vollständiger Stufenkauf, 200 / 400 / 800 Punkte, Mädchen und Jungen mit je vier kostenlosen Hauttönen und fest gestalteter Kleidung/Rüstung pro Stufe; bisherige menschliche Avataransicht zusätzlich als „Klassisch“ mit Farben und Zubehör erhalten.
+2. Der Oberflächenaufbau mit „Meine Figur“, „Entwicklung“ und „Shop“ ist mit ja als EV05 bestätigt; siehe [Entscheidungsdokument](../design/2026-09-20-avatar-entwicklungsstufen.md). Er erhält „Klassisch“ als eigene Auswahl und führt die bestätigten Entscheidungen zusammen. Danach Datenübergang und Bildproduktion konkretisieren. Die sichere Kaufkoordination bleibt technisch offen.
 3. Die Produktion weiterer Figuren erst im daraus abgeleiteten Umfang planen; kein unbestätigter Gesamtlauf. Die 76 Bildmotive nach EV03 sind bislang eine Planungsgrundlage.
 
 Beide PNGs wurden erfolgreich gelesen (je 1942 × 809 Pixel, RGB); die SHA-256-Prüfsummen sind in den jeweiligen Sidecars festgehalten. Root hat v2 tatsächlich visuell geprüft; Stufen 1–3 sind visuell erhalten, aber nicht pixelidentisch. Dokumentationslinks und Diff sind geprüft. Keine Produktdateien geändert, deshalb keine neuen Funktionstests ausgeführt. Implementierungsstand weiterhin `33c7274`; der erste Prototypstand liegt in `89f0260`, v2 und Bestätigung im Folgecommit dieser Übergabe. Lokalen und entfernten Branch vor einer Fortsetzung frisch vergleichen. EV01 ist inzwischen mit a beantwortet und in Anforderungen sowie Entscheidungsdokument festgehalten. EV02 ist mit A beantwortet; EV03 ist inzwischen mit a bestätigt: vier kostenlose Hauttöne je menschlicher Figur, feste Kleidung/Rüstung pro Stufe. EV04 ist mit B bestätigt: klassische Avataransicht samt Farben und Zubehör zusätzlich erhalten. Der nächste Schritt ist der zusammengeführte Detailentwurf. Diese Fortschreibung ändert nur Dokumentation; vor Sicherung Verweise und Diff prüfen.

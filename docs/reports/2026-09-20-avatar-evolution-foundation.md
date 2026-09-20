@@ -41,4 +41,4 @@ GPT-5.6 Sol / medium hat die Referenz, die kleine Gegenüberstellung und die End
 
 Das sind **4 von 76** geplanten neuen Motiven. Die übrigen 72, WebP-Ableitungen und Laufzeitmanifest folgen als eigene Bildproduktion. Die klassische Avataransicht bleibt unverändert. Neue Figurenwahl, Stufenkäufe, Datenvertrag, Migration, Backup/Wiederherstellung sowie Offline-/Updateintegration sind noch nicht im Produkt aktiv.
 
-Der neue Drive-Schreibkandidat wird gesondert vorbereitet. Weder Bildprüfung noch Katalogtests belegen dessen reale Exklusivität. Physische iOS-/Zwei-Geräte-Prüfungen bleiben offen.
+Der neue Drive-Schreibkandidat ist inzwischen getrennt implementiert und lokal geprüft; siehe [Probe-v5-Bericht](2026-09-20-shop-probe-v5.md). Sein echter Google-Lauf steht noch aus. Weder Bildprüfung noch Katalogtests belegen dessen reale Exklusivität. Physische iOS-/Zwei-Geräte-Prüfungen bleiben offen.

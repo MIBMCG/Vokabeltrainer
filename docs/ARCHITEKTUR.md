@@ -1,4 +1,10 @@
 # Architektur
+
+## Ergänzung: Entwicklungsformen und isolierte Kaufprobe
+
+Der [Grundlagenentwurf](superpowers/specs/2026-09-20-avatar-evolution-foundation.md) trennt Formkennungen und kostenlose menschliche Bildvarianten. Das reine Katalogmodul ist implementiert, wird aber noch nicht vom Produkt importiert. Die ersten vier Drachenquellen sind geprüft; Produktdatenmigration, Kaufbelege und Auswahlzustand bleiben ein eigenes Folgepaket.
+
+Der [Shop-Probe-v5-Entwurf](superpowers/specs/2026-09-20-shop-probe-v5.md) prüft einen neuen, kohärenten Drive-v2-Schreibkandidaten ausschließlich mit eigenen synthetischen Daten. Ein lokaler oder realer Probe-Erfolg aktiviert keine Produktkäufe. Klassische Gestaltung, Lernereignisse und bestehende Synchronisation bleiben davon getrennt. Maßgeblich ist die [aktuelle Übergabe](handoffs/2026-09-20-avatar-evolution-foundation-und-probe-v5.md).
 ## Aktuelle Umsetzung vom 19.09.2026
 
 Der [Überarbeitungsplan](superpowers/plans/2026-09-19-ueberarbeitung.md) und der [Produkt-Datenvertrag v1/v2](PRODUKT-DATENFORMAT.md) konkretisieren den bestätigten Entwurf. Die Produkt-App ist getrennt von der Probe unter `trainer/` umgesetzt, mit eigenen Lernereignissen, Inhaltsfassungen, Datenepochen, Browserdaten und Drive-Kennungen. Die aktuelle Implementierung ergänzt Rasterbilder, vorbereiteten Google-Zugang, Regeln je Kind und gemeinsame Statistikprojektionen. Prüfbelege stehen im [Arbeitsstand](../ARBEITSSTAND.md); der [v1-Abschluss](reports/2026-09-18-vokabeltrainer-v1.md) bleibt historische Grundlage.
