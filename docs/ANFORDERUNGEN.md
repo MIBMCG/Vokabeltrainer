@@ -1,5 +1,7 @@
 # Anforderungen und Entscheidungen
 
+**Technische Fortsetzung nach Bericht 9:** Der [zusammenhängende Kaufversuch](superpowers/specs/2026-09-20-immutable-purchase-probe-design.md) untersucht einen gemeinsamen Ordnerverweis und unveränderliche Belege. Er erweitert ausschließlich die synthetische Probe innerhalb der bestätigten Richtung C. Produktregeln, Punktepreise, Anbieter und die fehlende Produktshopfreigabe bleiben unverändert. Der [Plan](superpowers/plans/2026-09-20-immutable-purchase-probe.md) enthält Initialisierung, Konkurrenz, Wiederholung, Antwortverlust und beide Reset-Reihenfolgen; dauerhafte Wiederaufnahme und Produktmigration bleiben gesondert.
+
 ## Bestätigter Richtungswechsel: Avatar-Entwicklungsstufen (20.09.2026)
 
 **EV01–EV05 bestätigt:** Das Kind spart Guthaben an und schaltet die nächste Entwicklungsstufe mit einem bewussten Kauf vollständig frei. Keine Teilbeträge pro Avatar. Einheitliche Einzelpreise je Aufstieg: **200 / 400 / 800 Punkte**, insgesamt 1.400 ab vorhandener Grundform, zusätzlich zu einem etwaigen Kaufpreis der Grundfigur. Mädchen und Jungen behalten jeweils vier kostenlose Hauttöne; Kleidung/Rüstung ist je neuer Stufe fest gestaltet, ohne zusätzliche Kleidungsfarbwahl (EV03: Nutzerantwort a). Der bisherige menschliche Avatar bleibt zusätzlich als **„Klassisch“** mit seinen Farben, Zubehörteilen und bisherigen kostenlosen Freischaltungen nutzbar (EV04: Nutzerantwort B). Klassisches Zubehör wird nicht auf neue Stufenbilder montiert. [Laufende Entscheidungen](design/2026-09-20-avatar-entwicklungsstufen.md).

@@ -1,5 +1,7 @@
 # Übergabe: Bericht 9 ausgewertet – Ordnerkoordination teilweise bestätigt
 
+**Historische Übergabe:** Der Nutzer hat danach mit „Dann geht es nun weiter“ fortgesetzt. Entwurf, Implementierungsplan und Umsetzung des nächsten zusammenhängenden Kaufversuchs stehen in der [neueren Übergabe](2026-09-20-immutable-purchase-probe.md). Die folgenden Befunde zu Bericht9 bleiben erhalten; die damalige Aussage „noch kein ausführbarer Plan“ beschreibt nur diesen früheren Stand.
+
 Stand: 20.09.2026. Branch `codex/vokabeltrainer-v1`, Ausgangspunkt `cc979f495f746f2a27b41c7422c136c9c34ee08c`, Arbeitsbaum zu Beginn sauber. Der Nutzer hat `shop-probe-bericht9.json` zur Auswertung übergeben. C gilt weiter; kein Backend- oder Punktewechsel.
 
 ## Ergebnis
