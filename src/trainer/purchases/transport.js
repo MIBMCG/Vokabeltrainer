@@ -549,11 +549,19 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
       if (await digest(setup.config) !== setup.configRef.sha256) {
         error('binding', 'Die gespeicherte Kaufkonfiguration stimmt nicht mit ihrer Referenz überein.');
       }
+      propertiesBody(setup.pointerProperties);
       const storedConfig = await readImmutable(setup.configRef, {kind: 'config', config: setup.config});
       if (canonical(storedConfig) !== canonical(setup.config)) {
         error('binding', 'Der gespeicherte Configbody stimmt nicht mit dem Einrichtungsauftrag überein.');
       }
-      propertiesBody(setup.pointerProperties);
+      const installed = await readFolder({id: checkedBinding.folderId, kind: 'dataset'});
+      if (Object.hasOwn(installed.properties, 'purchaseConfigId')) {
+        if (installed.properties.purchaseConfigId !== configRef.id
+          || installed.properties.purchaseConfigSha256 !== configRef.sha256) {
+          error('binding', 'Ein installierter Kaufkonfigurationsverweis darf nicht ersetzt werden.');
+        }
+        return {id: checkedBinding.folderId, status: null, unchanged: true};
+      }
       const response = await boundRequest(`${API_V2}/${encodeURIComponent(checkedBinding.folderId)}?fields=id,version,etag,properties`, {
         method: 'PUT',
         headers: {'Content-Type': 'application/json; charset=UTF-8', 'If-Match': setup.etag},

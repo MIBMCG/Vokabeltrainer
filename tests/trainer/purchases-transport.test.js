@@ -317,6 +317,64 @@ test('pointer authority requires the exact persisted ETag and cannot replace an 
   assert.equal(fixture.files.get(binding.folderId).properties.purchaseConfigId, winner.configRef.id);
 });
 
+test('snapshot-free setup pointer cannot replace an installed config ref', async () => {
+  const {fixture, descriptorHash, transport} = await setupFixture();
+  const firstSaved = recorder();
+  const first = await prepareBootstrap({
+    transport, binding, descriptorHash, operationId: 'setup-first', persist: firstSaved.persist,
+  });
+  const winner = await resumeBootstrap({transport, setup: first, persist: firstSaved.persist});
+
+  const secondSaved = recorder();
+  const second = await prepareBootstrap({
+    transport, binding, descriptorHash, operationId: 'setup-second', persist: secondSaved.persist,
+  });
+  await transport.createFolder({kind: 'coordinator', setup: second});
+  await transport.createFolder({kind: 'content', setup: second});
+  await transport.writeImmutable({
+    ref: second.configRef,
+    value: second.config,
+    kind: 'config',
+    config: second.config,
+    authorization: {kind: 'setup', setup: second},
+  });
+  const installed = await transport.readFolder({id: binding.folderId, kind: 'dataset'});
+  const pending = {
+    ...second,
+    phase: 'pointer-pending',
+    etag: installed.etag,
+    pointerProperties: {
+      ...installed.properties,
+      purchaseApp: 'vokabeltrainer-purchases',
+      purchaseConfigId: second.configRef.id,
+      purchaseConfigSha256: second.configRef.sha256,
+    },
+  };
+  const writes = () => fixture.calls.filter(({method}) => method === 'PUT').length;
+  const before = writes();
+
+  await assert.rejects(() => transport.putPointer({
+    configRef: second.configRef,
+    authorization: {kind: 'setup', setup: pending},
+  }), {code: 'binding'});
+  assert.equal(writes(), before);
+  assert.equal(fixture.files.get(binding.folderId).properties.purchaseConfigId, winner.configRef.id);
+
+  const unchanged = await transport.putPointer({
+    configRef: winner.configRef,
+    authorization: {
+      kind: 'setup',
+      setup: {
+        ...winner,
+        phase: 'pointer-pending',
+        etag: '"stale-condition-must-not-be-used"',
+      },
+    },
+  });
+  assert.deepEqual(unchanged, {id: binding.folderId, status: null, unchanged: true});
+  assert.equal(writes(), before);
+});
+
 test('immutable reads enforce exact parent, app, dataset and full configured folder IDs', async () => {
   for (const mutate of [
     (record) => { record.parentId = 'foreign-parent'; },

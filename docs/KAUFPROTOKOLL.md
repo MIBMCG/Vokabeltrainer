@@ -564,9 +564,12 @@ exakt stimmen.
 Setupjob in Phase `pointer-pending`. Der PUT verwendet ausschließlich dessen
 gespeicherte `pointerProperties` und ursprüngliche `etag`; ein aktueller
 Ordnersnapshot darf diese Werte nicht ersetzen. Configbody und Ref werden vor
-dem Versand erneut gelesen und gehasht. Eine bereits vollständige gleiche
-Referenz ist unverändert erfolgreich; eine andere oder teilweise Referenz wird
-niemals ersetzt. Ein Kaufkopfschritt schreibt nur in den Koordinationsordner
+dem Versand erneut gelesen und gehasht. Unabhängig von einem optional
+übergebenen Snapshot liest der Transport den Bestandsordner außerdem selbst
+frisch und gebunden. Eine bereits vollständige gleiche Referenz ist nach dieser
+Prüfung unverändert erfolgreich; eine andere oder teilweise Referenz wird ohne
+PUT abgelehnt. Die frische Lesung ersetzt weder den gespeicherten PUT-Body noch
+dessen ursprüngliche ETag. Ein Kaufkopfschritt schreibt nur in den Koordinationsordner
 und verlangt:
 
 ```text
