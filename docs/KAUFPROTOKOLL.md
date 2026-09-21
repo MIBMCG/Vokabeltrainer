@@ -1,9 +1,10 @@
 # Kaufprotokoll: Verträge der reinen Kernmodule
 
-**Noch nicht unabhängig nachgeprüft:** Die Korrekturrunde zu den vier wichtigen
-Befunden der [Task-1-Review](reports/2026-09-20-persistent-purchases-task1-review.md)
-ist implementiert. Die nachfolgenden Tasks dürfen diesen Vertrag erst nach der
-erneuten unabhängigen Prüfung integrieren.
+**Task 1 im geprüften Umfang freigegeben:** Die erneute unabhängige
+[Nachprüfung der vier wichtigen Befunde](reports/2026-09-21-persistent-purchases-task1-review.md)
+bestätigt alle vier Korrekturen. Diese Freigabe gilt für den reinen Kern und
+ist keine Freigabe der noch laufenden Transport-/Serviceintegration oder eines
+realen Gerätebetriebs.
 
 Stand: 20.09.2026. Dieses Dokument bindet die nachfolgenden Transport-, Service-,
 Speicher- und Restore-Tasks an die öffentlichen Formen aus
@@ -462,3 +463,148 @@ Die reinen Module verwenden mindestens:
 
 Transportfehler ergänzen später eigene Codes, verändern diese fachlichen Codes
 aber nicht.
+
+## Gebundener Drive-Transport
+
+`createPurchaseTransport({fetchImpl,getToken,binding,descriptorHash})` bindet
+jeden Netzwerkzugriff an die vollständige bestehende `Binding` und den
+unveränderten Hash der Datensatzbeschreibung. `getToken` wird ausschließlich
+zur Laufzeit aufgerufen. Das zurückgegebene Objekt ist eingefroren und stellt
+folgende Formen bereit:
+
+```text
+await accountId() -> accountId
+await reserveId() -> Id
+await readFolder({id, kind:'dataset'|'coordinator'|'content', config?})
+  -> FolderSnapshot
+await createFolder({kind:'coordinator'|'content', setup}) -> FolderSnapshot
+await readImmutable(ref, {kind:'descriptor'|'config'|'content', config?})
+  -> JSON
+await writeImmutable({ref,value,kind:'config'|'content',config,authorization})
+  -> JSON
+await putPointer({snapshot,configRef?,head?,headValue?,authorization})
+  -> {id,status} | {id,status:null,unchanged:true}
+
+FolderSnapshot = {
+  id:Id,
+  name:string,
+  mimeType:string,
+  parents:[Id, ...],
+  properties:{[key:string]:string},
+  version:string,
+  etag:string
+}
+```
+
+Jede Operation prüft das aktuell angemeldete Drive-Konto erneut. Ordner werden
+durch zwei V2-Metadatenreads kohärent gelesen; unveränderliche JSON-Dateien
+durch Metadaten-, Medien- und zweiten Metadatenread. Die starke ETag bleibt als
+opaker String unverändert. Fehlende, schwache oder während der Lesung geänderte
+ETags/Versionen sperren den Schritt.
+
+Die vorhandene Datensatzbeschreibung ist ausschließlich lesbar als
+`{id:binding.descriptorFileId,sha256:descriptorHash}`. Sie muss Kind,
+Datensatz, Elternordner und Inhaltshash unverändert erfüllen. Neue
+Kaufprotokollobjekte verwenden den Markerwert `vokabeltrainer-purchases`.
+Koordinationsordner, Inhaltsordner und unveränderliche Dateien binden in ihren
+privaten Properties stets:
+
+```text
+app:'vokabeltrainer-purchases'
+kind:'coordinator'|'content'|'config'
+datasetId
+descriptorFileId
+descriptorHash
+coordinatorId
+contentFolderId
+```
+
+Unveränderliche Dateien binden zusätzlich `sha256`. Der Elternordner beider
+Kaufordner ist der bestehende Bestandsordner; der Elternordner aller
+unveränderlichen Kaufobjekte ist der konfigurierte Inhaltsordner. Ein Ref darf
+für `readImmutable` lesend entdeckt werden. Das verleiht niemals
+Schreibberechtigung.
+
+`writeImmutable` akzeptiert ausschließlich eine der beiden Autorisierungen:
+
+```text
+{kind:'setup', setup:SetupJob}
+{kind:'attempt', commerce:Commerce, operationId:Id, attemptId:Id}
+```
+
+Beim Setup müssen Ref und Body exakt `setup.configRef` und `setup.config` sein.
+Bei einem Kaufversuch müssen Ref und Body exakt einem Upload des durch
+`operationId`/`attemptId` gefundenen, vollständig validierten Commerce-Jobs
+entsprechen. Unmittelbar vor dem POST wird der Body erneut gehasht. Eine freie
+ID, ein Cacheeintrag, ein gelesener Remote-Ref oder ein Aufruferobjekt ist keine
+Schreibautorität. Nach einem Create wird die Datei unabhängig vom HTTP-Status
+vollständig nachgelesen. Ein 409 nach möglichem Antwortverlust ist nur dann
+erfolgreich, wenn Eltern, Marker, vollständige Konfiguration und Inhaltshash
+exakt stimmen.
+
+`putPointer` kennt zwei getrennte Formen. Die Einrichtung schreibt
+`configRef` einmalig in den bestehenden Bestandsordner und verlangt einen
+Setupjob in Phase `pointer-pending` sowie exakt dessen gespeicherte ETag. Eine
+bereits vollständige gleiche Referenz ist unverändert erfolgreich; eine andere
+oder teilweise Referenz wird niemals ersetzt. Ein Kaufkopfschritt schreibt nur
+in den Koordinationsordner und verlangt:
+
+```text
+putPointer({
+  snapshot:FolderSnapshot,
+  head:Attempt.candidate,
+  headValue:der gespeicherte Receipt-Body,
+  authorization:{kind:'attempt',commerce,operationId,attemptId}
+})
+```
+
+Der Versuch muss `pointer-pending` sein, Kandidat und Body müssen exakt dem
+gespeicherten Receipt entsprechen, der Bodyhash wird erneut geprüft und die
+Snapshot-ETag muss exakt `Attempt.etag` sein. Die Rückgabe eines HTTP-200 ist
+kein Kaufabschluss; Service und Bootstrap lesen den Pointer anschließend neu.
+Restore-Pointeraufträge werden erst mit ihrem eigenen dauerhaften Vertrag in
+Task 3 ergänzt und nicht als Kaufjob ausgegeben.
+
+Vor jedem Metadaten-PUT werden alle vorhandenen privaten Properties erhalten.
+Es gelten höchstens 30 private Properties und höchstens 124 UTF-8-Bytes für
+Schlüssel plus Wert jedes Eintrags. Eine Überschreitung erzeugt `limit`, bevor
+der PUT gesendet wird.
+
+## Eindeutige Einrichtung
+
+```text
+await prepareBootstrap({
+  transport,binding,descriptorHash,operationId,persist
+}) -> SetupJob
+
+await resumeBootstrap({transport,setup,persist}) -> SetupJob // phase confirmed
+```
+
+`persist(nextSetup)` ist ein injizierter, dauerhafter Callback. Er erhält stets
+eine Kopie; eine Ablehnung beendet den Ablauf vor dem davon abhängigen
+Schreibzugriff. `prepareBootstrap` prüft Konto, Beschreibung und Bestandsordner,
+reserviert anschließend Koordinationsordner, Inhaltsordner und Config-ID,
+erstellt die gehashte vollständige Config und persistiert den Setupjob in Phase
+`reserved`. Bis dahin gibt es keinen Drive-POST oder -PUT.
+
+`resumeBootstrap` arbeitet nur mit diesem validierten gespeicherten Job. Die
+beiden Ordner sowie die Config werden unter denselben IDs wiederholbar erzeugt
+und vollständig nachgelesen. Nach den Uploads wird `uploaded` persistiert. Vor
+dem Pointer-PUT wird ein frischer kohärenter Ordnerstand samt ETag als
+`pointer-pending` gespeichert. Nach Erfolg, 412 oder unklarer Antwort wird
+`reconciling` gespeichert und der Bestandsordner zuerst erneut gelesen.
+
+Der Bestandsordner behält seine bestehenden Properties und erhält genau:
+
+```text
+purchaseApp:'vokabeltrainer-purchases'
+purchaseConfigId:ConfigRef.id
+purchaseConfigSha256:ConfigRef.sha256
+```
+
+Bei konkurrierender Einrichtung entscheidet ausschließlich die vollständig
+nachgelesene Configref samt gehashtem Configbody. Der Verlierer übernimmt deren
+`coordinatorId`, `contentFolderId`, `configRef` und `config` in seinen
+bestätigten Setupstand; seine eigenen unreferenzierten Dateien verleihen keine
+Wirkung. Die Configref wird nie ersetzt. Erst nach dieser Prüfung wird
+`confirmed` persistiert und zurückgegeben.
