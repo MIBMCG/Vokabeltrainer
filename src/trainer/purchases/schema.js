@@ -7,6 +7,7 @@ import {
   assertInteger,
   assertNullableRef,
   assertNullableString,
+  assertPlainObject,
   assertRef,
   canonical,
   copy,
@@ -231,7 +232,7 @@ function assertJob(value) {
 function assertSetup(value) {
   assertExactKeys(value, [
     'version', 'operationId', 'phase', 'binding', 'descriptorHash', 'coordinatorId',
-    'contentFolderId', 'configRef', 'config', 'etag',
+    'contentFolderId', 'configRef', 'config', 'etag', 'pointerProperties',
   ], 'Der Einrichtungsauftrag ist ungültig.');
   assertVersion(value);
   assertId(value.operationId);
@@ -244,6 +245,27 @@ function assertSetup(value) {
   assertNullableRef(value.configRef);
   if (value.config !== null) assertConfig(value.config);
   assertNullableString(value.etag, 2048);
+  if (value.pointerProperties !== null) {
+    assertPlainObject(value.pointerProperties, 'Die gespeicherten Pointereigenschaften sind ungültig.');
+    for (const [key, propertyValue] of Object.entries(value.pointerProperties)) {
+      if (key.length === 0 || typeof propertyValue !== 'string') {
+        fail('invalid', 'Die gespeicherten Pointereigenschaften sind ungültig.');
+      }
+    }
+  }
+  if (['pointer-pending', 'reconciling'].includes(value.phase)
+    && (value.pointerProperties === null || value.etag === null)) {
+    fail('invalid', 'Dem unklaren Einrichtungsauftrag fehlt der gespeicherte Pointerversuch.');
+  }
+  if (value.pointerProperties !== null && (value.configRef === null
+    || value.pointerProperties.app !== 'vokabeltrainer-product'
+    || value.pointerProperties.kind !== 'dataset-folder'
+    || value.pointerProperties.datasetId !== value.binding.datasetId
+    || value.pointerProperties.purchaseApp !== 'vokabeltrainer-purchases'
+    || value.pointerProperties.purchaseConfigId !== value.configRef.id
+    || value.pointerProperties.purchaseConfigSha256 !== value.configRef.sha256)) {
+    fail('binding', 'Der gespeicherte Pointerbody gehört nicht zur Einrichtungsreferenz.');
+  }
   if ((value.config === null) !== (value.configRef === null)) {
     fail('invalid', 'Konfiguration und Konfigurationsverweis sind unvollständig.');
   }

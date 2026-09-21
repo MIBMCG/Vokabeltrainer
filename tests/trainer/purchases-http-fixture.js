@@ -20,6 +20,7 @@ export function purchasesHttpFixture({accountId = 'account-a', etag = '"opaque/s
   let activeAccountId = accountId;
   let loseNextCreateResponse = false;
   let loseNextPointerResponse = false;
+  let dropNextPointerResponse = false;
   let beforePointer = null;
   const calls = [];
   const files = new Map();
@@ -115,6 +116,10 @@ export function purchasesHttpFixture({accountId = 'account-a', etag = '"opaque/s
         await hook({id, record, files});
         if (init.headers?.['If-Match'] !== record.etag) return response({}, 412);
       }
+      if (dropNextPointerResponse) {
+        dropNextPointerResponse = false;
+        throw new Error('synthetic pointer response lost before application');
+      }
       const body = JSON.parse(init.body);
       record.properties = Object.fromEntries((body.properties ?? []).map(({key, value}) => [key, value]));
       record.version += 1;
@@ -137,6 +142,7 @@ export function purchasesHttpFixture({accountId = 'account-a', etag = '"opaque/s
     setAccountId(value) { activeAccountId = value; },
     loseCreateResponse() { loseNextCreateResponse = true; },
     losePointerResponse() { loseNextPointerResponse = true; },
+    dropPointerResponse() { dropNextPointerResponse = true; },
     beforeNextPointer(callback) { beforePointer = callback; },
     FOLDER,
     JSON_TYPE,

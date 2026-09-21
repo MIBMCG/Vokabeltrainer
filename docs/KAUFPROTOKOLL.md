@@ -408,7 +408,8 @@ SetupJob = {
   contentFolderId:Id|null,
   configRef:Ref|null,
   config:PurchaseConfig|null,
-  etag:string|null
+  etag:string|null,
+  pointerProperties:null|{[key:string]:string}
 }
 
 PurchaseJob = {
@@ -442,6 +443,14 @@ referenzierten Teile, keine zusätzliche Datei. Diese persistierte Closure ist
 die einzige Schreibmenge des Versuchs. Jeder Transport-/Service-Schritt muss
 vor einem Upload zusätzlich `digest(value) === ref.sha256` prüfen. Weder Cache,
 fremde Provenienz noch ein importiertes Backup können Schreib-IDs ergänzen.
+
+Der Einrichtungsauftrag hält bis `uploaded` noch keinen Pointerbody. Vor dem
+ersten Pointerversand werden die vollständigen privaten Eigenschaften des
+Bestandsordners einschließlich Configref in `pointerProperties` und die dazu
+gehörende opake Bedingung in `etag` dauerhaft gespeichert. In
+`pointer-pending` und `reconciling` sind beide Pflicht. Der Body bindet
+Produktmarker, Datensatz und exakt `configRef`; fremde vorhandene Properties
+bleiben Teil desselben gespeicherten Bodies.
 
 ## Fehlercodes
 
@@ -496,7 +505,10 @@ FolderSnapshot = {
 }
 ```
 
-Jede Operation prüft das aktuell angemeldete Drive-Konto erneut. Ordner werden
+Jeder gebundene HTTP-Schritt nimmt genau einen Laufzeit-Token auf, prüft mit
+diesem Token das aktuell angemeldete Drive-Konto und verwendet denselben Token
+für den davon abhängigen Request. Ein später notwendiger Tokenwechsel beginnt
+einen neuen gebundenen Schritt; Tokens werden nie gespeichert. Ordner werden
 durch zwei V2-Metadatenreads kohärent gelesen; unveränderliche JSON-Dateien
 durch Metadaten-, Medien- und zweiten Metadatenread. Die starke ETag bleibt als
 opaker String unverändert. Fehlende, schwache oder während der Lesung geänderte
@@ -535,7 +547,12 @@ Schreibberechtigung.
 Beim Setup müssen Ref und Body exakt `setup.configRef` und `setup.config` sein.
 Bei einem Kaufversuch müssen Ref und Body exakt einem Upload des durch
 `operationId`/`attemptId` gefundenen, vollständig validierten Commerce-Jobs
-entsprechen. Unmittelbar vor dem POST wird der Body erneut gehasht. Eine freie
+entsprechen. Vor jedem Kaufupload wird außerdem die Config gegen ihre Ref
+gehasht, die exakt gleiche Configref am Bestandsordner frisch nachgelesen und
+der unveränderliche Configbody erneut vollständig geprüft. Receipt und Intent
+müssen zum gebundenen Datensatz, Receipt zum konfigurierten Koordinationsordner
+und das Basismanifest ebenfalls zum Datensatz gehören. Unmittelbar vor dem
+POST wird der eigentliche Uploadbody erneut gehasht. Eine freie
 ID, ein Cacheeintrag, ein gelesener Remote-Ref oder ein Aufruferobjekt ist keine
 Schreibautorität. Nach einem Create wird die Datei unabhängig vom HTTP-Status
 vollständig nachgelesen. Ein 409 nach möglichem Antwortverlust ist nur dann
@@ -544,10 +561,13 @@ exakt stimmen.
 
 `putPointer` kennt zwei getrennte Formen. Die Einrichtung schreibt
 `configRef` einmalig in den bestehenden Bestandsordner und verlangt einen
-Setupjob in Phase `pointer-pending` sowie exakt dessen gespeicherte ETag. Eine
-bereits vollständige gleiche Referenz ist unverändert erfolgreich; eine andere
-oder teilweise Referenz wird niemals ersetzt. Ein Kaufkopfschritt schreibt nur
-in den Koordinationsordner und verlangt:
+Setupjob in Phase `pointer-pending`. Der PUT verwendet ausschließlich dessen
+gespeicherte `pointerProperties` und ursprüngliche `etag`; ein aktueller
+Ordnersnapshot darf diese Werte nicht ersetzen. Configbody und Ref werden vor
+dem Versand erneut gelesen und gehasht. Eine bereits vollständige gleiche
+Referenz ist unverändert erfolgreich; eine andere oder teilweise Referenz wird
+niemals ersetzt. Ein Kaufkopfschritt schreibt nur in den Koordinationsordner
+und verlangt:
 
 ```text
 putPointer({
@@ -560,8 +580,10 @@ putPointer({
 
 Der Versuch muss `pointer-pending` sein, Kandidat und Body müssen exakt dem
 gespeicherten Receipt entsprechen, der Bodyhash wird erneut geprüft und die
-Snapshot-ETag muss exakt `Attempt.etag` sein. Die Rückgabe eines HTTP-200 ist
-kein Kaufabschluss; Service und Bootstrap lesen den Pointer anschließend neu.
+Snapshot-ETag muss exakt `Attempt.etag` sein. Vor dem PUT wird dieselbe frisch
+nachgelesene installierte Configautorität wie beim Upload geprüft. Die Rückgabe
+eines HTTP-200 ist kein Kaufabschluss; Service und Bootstrap lesen den Pointer
+anschließend neu.
 Restore-Pointeraufträge werden erst mit ihrem eigenen dauerhaften Vertrag in
 Task 3 ergänzt und nicht als Kaufjob ausgegeben.
 
@@ -577,7 +599,8 @@ await prepareBootstrap({
   transport,binding,descriptorHash,operationId,persist
 }) -> SetupJob
 
-await resumeBootstrap({transport,setup,persist}) -> SetupJob // phase confirmed
+await resumeBootstrap({transport,setup,persist,repeatPointer?:boolean})
+  -> SetupJob // confirmed oder weiterhin pointer-pending/reconciling
 ```
 
 `persist(nextSetup)` ist ein injizierter, dauerhafter Callback. Er erhält stets
@@ -590,9 +613,19 @@ erstellt die gehashte vollständige Config und persistiert den Setupjob in Phase
 `resumeBootstrap` arbeitet nur mit diesem validierten gespeicherten Job. Die
 beiden Ordner sowie die Config werden unter denselben IDs wiederholbar erzeugt
 und vollständig nachgelesen. Nach den Uploads wird `uploaded` persistiert. Vor
-dem Pointer-PUT wird ein frischer kohärenter Ordnerstand samt ETag als
-`pointer-pending` gespeichert. Nach Erfolg, 412 oder unklarer Antwort wird
-`reconciling` gespeichert und der Bestandsordner zuerst erneut gelesen.
+dem ersten Pointer-PUT werden ein frischer kohärenter Ordnerstand, dessen
+vollständiger resultierender Propertybody und die ETag als `pointer-pending`
+gespeichert. Nach Erfolg, 412 oder unklarer Antwort wird `reconciling`
+gespeichert und der Bestandsordner zuerst erneut gelesen.
+
+Ein nach Neustart bereits `pointer-pending` oder `reconciling` gespeicherter
+Auftrag führt beim gewöhnlichen `resumeBootstrap` ausschließlich Reads aus.
+Fehlt weiterhin ein vollständiger Gewinner, bleibt die Phase unklar. Nur die
+ausdrückliche Option `repeatPointer:true` sendet nochmals exakt den gespeicherten
+Propertybody mit exakt der ursprünglichen ETag. Eine zwischenzeitliche fremde
+Metadatenänderung liefert deshalb 412 und wird nicht durch eine frische
+Bedingung umgangen. Auch danach entscheidet ausschließlich das erneute Lesen;
+es wird weder eine neue Configref noch ein neuer Pointerkandidat erzeugt.
 
 Der Bestandsordner behält seine bestehenden Properties und erhält genau:
 

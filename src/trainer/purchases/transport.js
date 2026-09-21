@@ -1,8 +1,9 @@
-import {assertCommerce, assertConfig, emptyCommerce} from './schema.js';
+import {assertCommerce, assertConfig, assertReceipt, emptyCommerce} from './schema.js';
 import {
   assertBinding,
   assertHash,
   assertId,
+  assertRef,
   canonical,
   copy,
   digest,
@@ -180,7 +181,7 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
   const checkedBinding = assertBinding(binding);
   assertHash(descriptorHash);
 
-  async function request(url, init = {}, accepted = []) {
+  async function runtimeToken() {
     let token;
     try {
       token = await getToken();
@@ -188,6 +189,10 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
       error('auth', 'Google-Zugriff ist nicht verfügbar.');
     }
     if (typeof token !== 'string' || token.trim() === '') error('auth', 'Google-Zugriff ist nicht verfügbar.');
+    return token;
+  }
+
+  async function requestWithToken(url, init = {}, accepted = [], token) {
     let response;
     try {
       response = await fetchImpl(url, {
@@ -208,17 +213,27 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
     return response;
   }
 
-  async function accountId() {
-    const response = await request('https://www.googleapis.com/drive/v3/about?fields=user(permissionId)');
+  async function accountIdForToken(token) {
+    const response = await requestWithToken(
+      'https://www.googleapis.com/drive/v3/about?fields=user(permissionId)',
+      {},
+      [],
+      token,
+    );
     const value = await responseJson(response);
     const actual = value?.user?.permissionId;
     if (actual !== checkedBinding.accountId) error('binding', 'Das verbundene Google-Konto stimmt nicht.');
     return actual;
   }
 
+  async function accountId() {
+    return accountIdForToken(await runtimeToken());
+  }
+
   async function boundRequest(url, init = {}, accepted = []) {
-    await accountId();
-    return request(url, init, accepted);
+    const token = await runtimeToken();
+    await accountIdForToken(token);
+    return requestWithToken(url, init, accepted, token);
   }
 
   async function reserveId() {
@@ -408,11 +423,44 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
     }
     const job = commerce.jobs.find((entry) => entry.intent.operationId === operationId);
     const attempt = job?.attempts.find((entry) => entry.attemptId === attemptId);
+    if (!attempt || job.intent.datasetId !== checkedBinding.datasetId) {
+      error('binding', 'Der Kaufversuch gehört zu einem anderen Datensatz.');
+    }
+    const candidateUpload = attempt.uploads.find((entry) => sameRef(entry.ref, attempt.candidate));
+    const receipt = assertReceipt(candidateUpload?.value);
+    const manifestUpload = attempt.uploads.find((entry) => sameRef(entry.ref, receipt.basis));
+    if (receipt.datasetId !== checkedBinding.datasetId
+      || receipt.coordinatorId !== commerce.config.coordinatorId
+      || receipt.intent?.datasetId !== checkedBinding.datasetId
+      || manifestUpload?.value?.datasetId !== checkedBinding.datasetId) {
+      error('binding', 'Der gespeicherte Kaufversuch gehört nicht zur konfigurierten Belegfolge.');
+    }
     const upload = attempt?.uploads.find((entry) => sameRef(entry.ref, ref));
     if (!upload || canonical(upload.value) !== canonical(value)) {
       error('binding', 'Die Datei ist nicht im gespeicherten Kaufauftrag registriert.');
     }
-    return {config: commerce.config, attempt, upload};
+    return {config: commerce.config, configRef: commerce.configRef, attempt, upload};
+  }
+
+  async function verifyInstalledConfig(configRef, config) {
+    const checkedRef = assertRef(configRef);
+    const checkedConfig = assertConfig(config);
+    if (!sameBinding(checkedConfig.binding, checkedBinding)
+      || checkedConfig.descriptorHash !== descriptorHash
+      || await digest(checkedConfig) !== checkedRef.sha256) {
+      error('binding', 'Die gespeicherte Kaufkonfiguration stimmt nicht mit ihrer Referenz überein.');
+    }
+    const root = await readFolder({id: checkedBinding.folderId, kind: 'dataset'});
+    if (root.properties.purchaseApp !== PURCHASE_APP
+      || root.properties.purchaseConfigId !== checkedRef.id
+      || root.properties.purchaseConfigSha256 !== checkedRef.sha256) {
+      error('binding', 'Die Kaufkonfiguration ist nicht als Bestandsanker installiert.');
+    }
+    const installed = await readImmutable(checkedRef, {kind: 'config'});
+    if (canonical(installed) !== canonical(checkedConfig)) {
+      error('binding', 'Die installierte Kaufkonfiguration stimmt nicht mit dem Auftrag überein.');
+    }
+    return checkedConfig;
   }
 
   async function writeImmutable({ref, value, kind = 'content', config, authorization} = {}) {
@@ -427,7 +475,8 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
       }
       authorizedConfig = setup.config;
     } else if (authorization?.kind === 'attempt') {
-      authorizedConfig = attemptAuthorization(authorization, ref, value).config;
+      const checked = attemptAuthorization(authorization, ref, value);
+      authorizedConfig = await verifyInstalledConfig(checked.configRef, checked.config);
     } else {
       error('binding', 'Der unveränderlichen Datei fehlt ein gespeicherter Schreibauftrag.');
     }
@@ -472,19 +521,54 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
       if (!sameRef(configRef, setup.configRef) || head !== null) {
         error('binding', 'Der Konfigurationspointer stimmt nicht mit dem gespeicherten Auftrag überein.');
       }
-      if (setup.phase !== 'pointer-pending' || setup.etag !== snapshot?.etag) {
+      if (setup.phase !== 'pointer-pending'
+        || (snapshot !== undefined && setup.etag !== snapshot.etag)) {
         error('binding', 'Der Konfigurationspointer verwendet nicht die gespeicherte Schreibbedingung.');
       }
-      expected = {id: checkedBinding.folderId, kind: 'dataset', config: null};
+      if (snapshot !== undefined) {
+        const dataset = {id: checkedBinding.folderId, kind: 'dataset', config: null};
+        assertSnapshot(snapshot, dataset);
+        checkFolder(snapshot, dataset);
+        if (Object.hasOwn(snapshot.properties, 'purchaseConfigId')
+          && (snapshot.properties.purchaseConfigId !== configRef.id
+            || snapshot.properties.purchaseConfigSha256 !== configRef.sha256)) {
+          error('binding', 'Ein installierter Kaufkonfigurationsverweis darf nicht ersetzt werden.');
+        }
+      }
       additions = {
         purchaseApp: PURCHASE_APP,
         purchaseConfigId: configRef.id,
         purchaseConfigSha256: configRef.sha256,
       };
+      requiredProperties(setup.pointerProperties, {
+        app: PRODUCT_APP,
+        kind: 'dataset-folder',
+        datasetId: checkedBinding.datasetId,
+        ...additions,
+      });
+      if (await digest(setup.config) !== setup.configRef.sha256) {
+        error('binding', 'Die gespeicherte Kaufkonfiguration stimmt nicht mit ihrer Referenz überein.');
+      }
+      const storedConfig = await readImmutable(setup.configRef, {kind: 'config', config: setup.config});
+      if (canonical(storedConfig) !== canonical(setup.config)) {
+        error('binding', 'Der gespeicherte Configbody stimmt nicht mit dem Einrichtungsauftrag überein.');
+      }
+      propertiesBody(setup.pointerProperties);
+      const response = await boundRequest(`${API_V2}/${encodeURIComponent(checkedBinding.folderId)}?fields=id,version,etag,properties`, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json; charset=UTF-8', 'If-Match': setup.etag},
+        body: JSON.stringify({properties: propertiesBody(setup.pointerProperties)}),
+      });
+      const updated = await responseJson(response);
+      if (updated.id !== checkedBinding.folderId) {
+        error('binding', 'Drive hat einen anderen Pointer geändert.', response.status);
+      }
+      return {id: checkedBinding.folderId, status: response.status};
     } else if (authorization?.kind === 'attempt') {
       const commerce = assertCommerce(authorization.commerce);
       const checked = attemptAuthorization(authorization, head, headValue);
-      const {config, attempt} = checked;
+      const config = await verifyInstalledConfig(checked.configRef, checked.config);
+      const {attempt} = checked;
       if (!sameRef(attempt.candidate, head)
         || attempt.phase !== 'pointer-pending'
         || attempt.etag !== snapshot?.etag

@@ -12,6 +12,7 @@ import {packBasis, readBasis} from '../../src/trainer/purchases/basis.js';
 import {purchaseOffer} from '../../src/trainer/purchases/projection.js';
 import {packProof} from '../../src/trainer/purchases/proof.js';
 import {readHistory, replayHistory} from '../../src/trainer/purchases/history.js';
+import {digest} from '../../src/trainer/purchases/value.js';
 import {
   BINDING,
   earnedLedger,
@@ -80,6 +81,55 @@ test('purchase schemas reject unknown fields and emptyCommerce returns independe
   assert.notStrictEqual(first.cache, second.cache);
   first.selection.push({profileId: 'p1', figureId: 'explorer-girl', stage: 1});
   assert.deepEqual(second.selection, []);
+});
+
+test('unclear setup persists an exact config pointer body bound to its dataset and ref', async () => {
+  const config = {
+    version: 1,
+    kind: 'purchase-config',
+    binding: BINDING,
+    descriptorHash: 'a'.repeat(64),
+    coordinatorId: 'coordinator-a',
+    contentFolderId: 'content-a',
+  };
+  const configRef = {id: 'config-a', sha256: await digest(config)};
+  const setup = {
+    version: 1,
+    operationId: 'setup-a',
+    phase: 'reconciling',
+    binding: BINDING,
+    descriptorHash: config.descriptorHash,
+    coordinatorId: config.coordinatorId,
+    contentFolderId: config.contentFolderId,
+    configRef,
+    config,
+    etag: '"opaque-original"',
+    pointerProperties: {
+      app: 'vokabeltrainer-product',
+      kind: 'dataset-folder',
+      datasetId: BINDING.datasetId,
+      foreign: 'preserved',
+      purchaseApp: 'vokabeltrainer-purchases',
+      purchaseConfigId: configRef.id,
+      purchaseConfigSha256: configRef.sha256,
+    },
+  };
+  const commerce = {...emptyCommerce(), mode: 'migrating', binding: BINDING, setup};
+  assert.deepEqual(assertCommerce(commerce).setup, setup);
+  for (const pointerProperties of [
+    {...setup.pointerProperties, datasetId: 'foreign-dataset'},
+    {...setup.pointerProperties, purchaseConfigId: 'foreign-config'},
+    {...setup.pointerProperties, purchaseConfigSha256: 'f'.repeat(64)},
+  ]) {
+    assert.throws(() => assertCommerce({
+      ...commerce,
+      setup: {...setup, pointerProperties},
+    }), {code: 'binding'});
+  }
+  assert.throws(() => assertCommerce({
+    ...commerce,
+    setup: {...setup, etag: null},
+  }), {code: 'invalid'});
 });
 
 test('a reserved attempt owns every immutable upload and cannot borrow write authority from cache', async () => {

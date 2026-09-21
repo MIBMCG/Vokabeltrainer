@@ -53,6 +53,15 @@ function pointerRef(snapshot) {
   return {id: properties.purchaseConfigId, sha256: properties.purchaseConfigSha256};
 }
 
+function pointerProperties(snapshot, configRef) {
+  return {
+    ...snapshot.properties,
+    purchaseApp: PURCHASE_APP,
+    purchaseConfigId: configRef.id,
+    purchaseConfigSha256: configRef.sha256,
+  };
+}
+
 async function verifyDescriptor(transport, binding, descriptorHash) {
   await transport.readImmutable(
     {id: binding.descriptorFileId, sha256: descriptorHash},
@@ -76,6 +85,7 @@ async function winnerSetup({transport, setup, snapshot, persist}) {
     configRef: copy(ref),
     config: checked,
     etag: snapshot.etag,
+    pointerProperties: copy(snapshot.properties),
   };
   return persist(next);
 }
@@ -111,6 +121,7 @@ export async function prepareBootstrap({transport, binding, descriptorHash, oper
     configRef,
     config,
     etag: root.etag,
+    pointerProperties: null,
   };
   const existing = pointerRef(root);
   if (existing !== null) {
@@ -120,7 +131,7 @@ export async function prepareBootstrap({transport, binding, descriptorHash, oper
   return save(setup);
 }
 
-export async function resumeBootstrap({transport, setup: rawSetup, persist} = {}) {
+export async function resumeBootstrap({transport, setup: rawSetup, persist, repeatPointer = false} = {}) {
   const save = checkedPersist(persist);
   let setup = checkedSetup(rawSetup, transport);
   await transport.accountId();
@@ -130,26 +141,54 @@ export async function resumeBootstrap({transport, setup: rawSetup, persist} = {}
   let winner = await winnerSetup({transport, setup, snapshot: root, persist: save});
   if (winner !== null) return winner;
 
-  await transport.createFolder({kind: 'coordinator', setup});
-  await transport.createFolder({kind: 'content', setup});
-  await transport.writeImmutable({
-    ref: setup.configRef,
-    value: setup.config,
-    kind: 'config',
-    config: setup.config,
-    authorization: {kind: 'setup', setup},
-  });
-  setup = await save({...setup, phase: 'uploaded'});
+  if (['pointer-pending', 'reconciling'].includes(setup.phase)) {
+    if (repeatPointer !== true) return copy(setup);
+    setup = await save({...setup, phase: 'pointer-pending'});
+    try {
+      await transport.putPointer({
+        configRef: setup.configRef,
+        authorization: {kind: 'setup', setup},
+      });
+    } catch {
+      // The repeated request deliberately retains the original body and ETag.
+      // Any outcome is reconciled by reading before another decision.
+    }
+    setup = await save({...setup, phase: 'reconciling'});
+    root = await transport.readFolder({id: setup.binding.folderId, kind: 'dataset'});
+    winner = await winnerSetup({transport, setup, snapshot: root, persist: save});
+    return winner ?? setup;
+  }
+
+  if (repeatPointer === true) {
+    fail('invalid', 'Eine Pointerwiederholung ist nur für einen unklaren gespeicherten Versuch zulässig.');
+  }
+
+  if (setup.phase === 'reserved') {
+    await transport.createFolder({kind: 'coordinator', setup});
+    await transport.createFolder({kind: 'content', setup});
+    await transport.writeImmutable({
+      ref: setup.configRef,
+      value: setup.config,
+      kind: 'config',
+      config: setup.config,
+      authorization: {kind: 'setup', setup},
+    });
+    setup = await save({...setup, phase: 'uploaded'});
+  }
 
   root = await transport.readFolder({id: setup.binding.folderId, kind: 'dataset'});
   winner = await winnerSetup({transport, setup, snapshot: root, persist: save});
   if (winner !== null) return winner;
 
-  setup = await save({...setup, phase: 'pointer-pending', etag: root.etag});
+  setup = await save({
+    ...setup,
+    phase: 'pointer-pending',
+    etag: root.etag,
+    pointerProperties: pointerProperties(root, setup.configRef),
+  });
   let pointerError = null;
   try {
     await transport.putPointer({
-      snapshot: root,
       configRef: setup.configRef,
       authorization: {kind: 'setup', setup},
     });

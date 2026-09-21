@@ -84,6 +84,37 @@ test('transport binds every operation to the configured account and unchanged de
   ), {code: 'integrity'});
 });
 
+test('account check and dependent request use one runtime token snapshot', async () => {
+  const fixture = purchasesHttpFixture();
+  const descriptorHash = 'a'.repeat(64);
+  let tokenCalls = 0;
+  const tokens = ['token-account-a', 'token-account-b'];
+  const transport = createPurchaseTransport({
+    binding,
+    descriptorHash,
+    getToken: async () => tokens[Math.min(tokenCalls++, tokens.length - 1)],
+    fetchImpl: async (url, init = {}) => {
+      const parsed = new URL(url);
+      if (parsed.pathname.endsWith('/drive/v3/about')) {
+        const permissionId = init.headers?.Authorization === 'Bearer token-account-a'
+          ? binding.accountId
+          : 'account-b';
+        return new Response(JSON.stringify({user: {permissionId}}), {
+          status: 200,
+          headers: {'Content-Type': 'application/json'},
+        });
+      }
+      return fixture.fetch(url, init);
+    },
+  });
+  assert.equal(await transport.reserveId(), 'reserved-1');
+  assert.equal(tokenCalls, 1);
+  const authorizations = fixture.calls
+    .filter(({url}) => url.includes('/drive/v3/files/generateIds'))
+    .map(({headers}) => headers.Authorization);
+  assert.deepEqual(authorizations, ['Bearer token-account-a']);
+});
+
 test('bootstrap persists both folder IDs and config before its first write', async () => {
   const {fixture, descriptorHash, transport} = await setupFixture();
   const saved = recorder();
@@ -143,6 +174,50 @@ test('lost pointer response is reconciled from the original persisted job', asyn
   assert.equal(confirmed.configRef.id, setup.configRef.id);
 });
 
+test('unclear bootstrap resume stays read-only until an explicit identical pointer repeat', async () => {
+  const {fixture, descriptorHash, transport} = await setupFixture();
+  const saved = recorder();
+  const setup = await prepareBootstrap({transport, binding, descriptorHash, operationId: 'setup-a', persist: saved.persist});
+  fixture.dropPointerResponse();
+  await assert.rejects(() => resumeBootstrap({transport, setup, persist: saved.persist}), {code: 'network'});
+  const unclear = saved.values.at(-1);
+  assert.equal(unclear.phase, 'reconciling');
+  assert.equal(unclear.etag, '"opaque/strong:token"');
+  assert.deepEqual(unclear.pointerProperties, {
+    app: 'vokabeltrainer-product',
+    kind: 'dataset-folder',
+    datasetId: binding.datasetId,
+    foreign: 'keep',
+    purchaseApp: 'vokabeltrainer-purchases',
+    purchaseConfigId: setup.configRef.id,
+    purchaseConfigSha256: setup.configRef.sha256,
+  });
+
+  const root = fixture.files.get(binding.folderId);
+  root.properties.unrelated = 'changed-after-unknown-outcome';
+  root.version += 1;
+  root.etag = '"changed-between-restarts"';
+  const before = fixture.calls.filter(({method}) => method === 'PUT').length;
+  const stillUnclear = await resumeBootstrap({transport, setup: unclear, persist: saved.persist});
+  assert.equal(stillUnclear.phase, 'reconciling');
+  assert.equal(fixture.calls.filter(({method}) => method === 'PUT').length, before);
+
+  const repeated = await resumeBootstrap({
+    transport,
+    setup: stillUnclear,
+    persist: saved.persist,
+    repeatPointer: true,
+  });
+  assert.equal(repeated.phase, 'reconciling');
+  const pointerCalls = fixture.calls.filter(({method}) => method === 'PUT');
+  assert.equal(pointerCalls.length, before + 1);
+  assert.equal(pointerCalls.at(-1).headers['If-Match'], '"opaque/strong:token"');
+  assert.deepEqual(
+    Object.fromEntries(JSON.parse(pointerCalls.at(-1).body).properties.map(({key, value}) => [key, value])),
+    unclear.pointerProperties,
+  );
+});
+
 test('immutable 409 is accepted only for exact config binding and content hash', async () => {
   const {fixture, descriptorHash, transport} = await setupFixture();
   const saved = recorder();
@@ -200,7 +275,17 @@ test('pointer authority requires the exact persisted ETag and cannot replace an 
   const firstSaved = recorder();
   const first = await prepareBootstrap({transport, binding, descriptorHash, operationId: 'setup-first', persist: firstSaved.persist});
   const root = await transport.readFolder({id: binding.folderId, kind: 'dataset'});
-  const wrongEtag = {...first, phase: 'pointer-pending', etag: '"different-opaque"'};
+  const wrongEtag = {
+    ...first,
+    phase: 'pointer-pending',
+    etag: '"different-opaque"',
+    pointerProperties: {
+      ...root.properties,
+      purchaseApp: 'vokabeltrainer-purchases',
+      purchaseConfigId: first.configRef.id,
+      purchaseConfigSha256: first.configRef.sha256,
+    },
+  };
   const before = fixture.calls.filter(({method}) => method === 'PUT').length;
   await assert.rejects(() => transport.putPointer({
     snapshot: root,
@@ -213,7 +298,17 @@ test('pointer authority requires the exact persisted ETag and cannot replace an 
   const secondSaved = recorder();
   const second = await prepareBootstrap({transport, binding, descriptorHash, operationId: 'setup-second', persist: secondSaved.persist});
   const installed = await transport.readFolder({id: binding.folderId, kind: 'dataset'});
-  const pending = {...second, phase: 'pointer-pending', etag: installed.etag};
+  const pending = {
+    ...second,
+    phase: 'pointer-pending',
+    etag: installed.etag,
+    pointerProperties: {
+      ...installed.properties,
+      purchaseApp: 'vokabeltrainer-purchases',
+      purchaseConfigId: second.configRef.id,
+      purchaseConfigSha256: second.configRef.sha256,
+    },
+  };
   await assert.rejects(() => transport.putPointer({
     snapshot: installed,
     configRef: second.configRef,
@@ -354,4 +449,155 @@ test('purchase pointer accepts only the persisted receipt candidate with its per
     headValue: prepared.receipt,
     authorization,
   }), {id: confirmed.coordinatorId, status: 200});
+});
+
+async function configuredPointerCase() {
+  const ready = await setupFixture();
+  const saved = recorder();
+  const setup = await prepareBootstrap({
+    transport: ready.transport,
+    binding,
+    descriptorHash: ready.descriptorHash,
+    operationId: 'setup-a',
+    persist: saved.persist,
+  });
+  const confirmed = await resumeBootstrap({transport: ready.transport, setup, persist: saved.persist});
+  const coordinator = await ready.transport.readFolder({
+    id: confirmed.coordinatorId,
+    kind: 'coordinator',
+    config: confirmed.config,
+  });
+  return {
+    ...ready,
+    confirmed,
+    coordinator,
+    prepared: await pointerCommerce(confirmed.configRef, confirmed.config, coordinator.etag),
+  };
+}
+
+test('purchase authority requires config body hash and the exact installed anchor ref', async () => {
+  for (const changedRef of [
+    {id: null, sha256: 'f'.repeat(64)},
+    {id: 'uninstalled-config', sha256: null},
+  ]) {
+    const {transport, confirmed, coordinator, prepared} = await configuredPointerCase();
+    prepared.commerce.configRef = {
+      id: changedRef.id ?? confirmed.configRef.id,
+      sha256: changedRef.sha256 ?? await digest(prepared.commerce.config),
+    };
+    await assert.rejects(() => transport.putPointer({
+      snapshot: coordinator,
+      head: prepared.candidate,
+      headValue: prepared.receipt,
+      authorization: {
+        kind: 'attempt',
+        commerce: prepared.commerce,
+        operationId: 'purchase-a',
+        attemptId: 'attempt-a',
+      },
+    }), {code: 'binding'});
+  }
+});
+
+test('purchase uploads reject a rehashed configuration with an exchanged content folder', async () => {
+  const {transport, confirmed, prepared} = await configuredPointerCase();
+  prepared.commerce.config = {
+    ...prepared.commerce.config,
+    contentFolderId: prepared.commerce.config.coordinatorId,
+  };
+  prepared.commerce.configRef = {
+    id: confirmed.configRef.id,
+    sha256: await digest(prepared.commerce.config),
+  };
+  const partUpload = prepared.attempt.uploads.at(-1);
+  await assert.rejects(() => transport.writeImmutable({
+    ref: partUpload.ref,
+    value: partUpload.value,
+    kind: 'content',
+    config: prepared.commerce.config,
+    authorization: {
+      kind: 'attempt',
+      commerce: prepared.commerce,
+      operationId: 'purchase-a',
+      attemptId: 'attempt-a',
+    },
+  }), {code: 'binding'});
+});
+
+async function replaceCandidate(prepared, receipt) {
+  const candidate = {id: prepared.candidate.id, sha256: await digest(receipt)};
+  prepared.receipt = receipt;
+  prepared.candidate = candidate;
+  prepared.attempt.candidate = candidate;
+  prepared.attempt.uploads[0] = {ref: candidate, value: receipt};
+}
+
+test('purchase pointer rejects a correctly rehashed receipt for a foreign coordinator', async () => {
+  const {fixture, transport, coordinator, prepared} = await configuredPointerCase();
+  await replaceCandidate(prepared, {...prepared.receipt, coordinatorId: 'foreign-coordinator'});
+  const before = fixture.calls.filter(({method}) => method === 'PUT').length;
+  await assert.rejects(() => transport.putPointer({
+    snapshot: coordinator,
+    head: prepared.candidate,
+    headValue: prepared.receipt,
+    authorization: {
+      kind: 'attempt',
+      commerce: prepared.commerce,
+      operationId: 'purchase-a',
+      attemptId: 'attempt-a',
+    },
+  }), {code: 'binding'});
+  assert.equal(fixture.calls.filter(({method}) => method === 'PUT').length, before);
+});
+
+test('immutable writes reject correctly rehashed foreign intent and receipt dataset binding', async () => {
+  const {fixture, transport, prepared} = await configuredPointerCase();
+  const foreignIntent = {
+    ...prepared.receipt.intent,
+    datasetId: 'foreign-dataset',
+  };
+  prepared.commerce.jobs[0].intent = foreignIntent;
+  await replaceCandidate(prepared, {
+    ...prepared.receipt,
+    datasetId: 'foreign-dataset',
+    intent: foreignIntent,
+  });
+  const before = fixture.calls.filter(({method}) => method === 'POST').length;
+  await assert.rejects(() => transport.writeImmutable({
+    ref: prepared.candidate,
+    value: prepared.receipt,
+    kind: 'content',
+    config: prepared.commerce.config,
+    authorization: {
+      kind: 'attempt',
+      commerce: prepared.commerce,
+      operationId: 'purchase-a',
+      attemptId: 'attempt-a',
+    },
+  }), {code: 'binding'});
+  assert.equal(fixture.calls.filter(({method}) => method === 'POST').length, before);
+});
+
+test('immutable writes reject a correctly rehashed basis manifest for a foreign dataset', async () => {
+  const {fixture, transport, prepared} = await configuredPointerCase();
+  const manifest = {...prepared.manifest, datasetId: 'foreign-dataset'};
+  const basisRef = {id: prepared.basisRef.id, sha256: await digest(manifest)};
+  prepared.manifest = manifest;
+  prepared.basisRef = basisRef;
+  prepared.attempt.uploads[1] = {ref: basisRef, value: manifest};
+  await replaceCandidate(prepared, {...prepared.receipt, basis: basisRef});
+  const before = fixture.calls.filter(({method}) => method === 'POST').length;
+  await assert.rejects(() => transport.writeImmutable({
+    ref: basisRef,
+    value: manifest,
+    kind: 'content',
+    config: prepared.commerce.config,
+    authorization: {
+      kind: 'attempt',
+      commerce: prepared.commerce,
+      operationId: 'purchase-a',
+      attemptId: 'attempt-a',
+    },
+  }), {code: 'binding'});
+  assert.equal(fixture.calls.filter(({method}) => method === 'POST').length, before);
 });
