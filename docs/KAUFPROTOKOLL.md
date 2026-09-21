@@ -1,6 +1,9 @@
 # Kaufprotokoll: Verträge der reinen Kernmodule
 
-**Nicht zur Integration freigegeben:** Die [Task-1-Review](reports/2026-09-20-persistent-purchases-task1-review.md) enthält vier wichtige offene Befunde. Dieser Zwischenvertrag wird bei der Fortsetzung korrigiert; keine Produktkäufe daran anschließen.
+**Noch nicht unabhängig nachgeprüft:** Die Korrekturrunde zu den vier wichtigen
+Befunden der [Task-1-Review](reports/2026-09-20-persistent-purchases-task1-review.md)
+ist implementiert. Die nachfolgenden Tasks dürfen diesen Vertrag erst nach der
+erneuten unabhängigen Prüfung integrieren.
 
 Stand: 20.09.2026. Dieses Dokument bindet die nachfolgenden Transport-, Service-,
 Speicher- und Restore-Tasks an die öffentlichen Formen aus
@@ -192,7 +195,11 @@ ProofRecord = {
 `logical.sha256`, `stored.sha256` und der Hash von `value` müssen identisch
 sein. Nur die physische ID ändert sich. Das Manifest selbst ist kanonisch
 gehasht. Es enthält exakt die vollständige Quellclosure aus Belegen,
-Basismanifesten und Basisteilen, keine lokalen Jobs, Tokens oder Pointer.
+Basismanifesten und Basisteilen. Enthält die Quelle bereits fremde
+Restoreherkunft, gehören außerdem deren unveränderte Proofmanifeste und
+physische Mappingobjekte zur Closure. Dadurch kann ein weiteres Zielgerät die
+verschachtelte Herkunft allein aus seinen neu reservierten physischen IDs
+rekonstruieren. Lokale Jobs, Tokens und Pointer gehören nie zur Closure.
 
 ```text
 await packProof({
@@ -301,13 +308,17 @@ Die Replayprüfung ist iterativ und prüft vor wirtschaftlicher Projektion:
 5. eindeutige aktive Ledger-Epochen und Übereinstimmung mit dem Beleg;
 6. bei Käufen Erhaltung aller früher aktiven Fakten, unveränderte Daten für
    vorhandene Ereignis-IDs und keine neue Antwort-ID für einen bereits
-   belegten Profil/Runde/Ordinal-Platz;
-7. bei v3-Restore fachliche Gleichheit von Quelle und Ziel nach Entfernung nur
+   belegten Profil/Runde/Ordinal-Platz; ein Kauf muss außerdem die aktive
+   Epoche seines direkten Vorgängers erhalten;
+7. jeder Restore aktiviert innerhalb seiner Zielbindung eine neue, dort noch
+   nie verwendete Epoche; die aktuelle oder eine frühere Zielepoche darf nicht
+   reaktiviert werden;
+8. bei v3-Restore fachliche Gleichheit von Quelle und Ziel nach Entfernung nur
    der Dataset-/Epochenhülle; danach werden Ausgaben und Besitz aus der
    Quellprojektion übernommen und gegen die echten Punkte der Zielbasis geprüft;
-8. bei fremder Binding ein gehashtes Proofmanifest, das exakt alle logisch
-   erreichbaren Quellbelege und Basisdateien auf unveränderte Bodies unter
-   neuen physischen Refs abbildet.
+9. bei fremder Binding ein gehashtes Proofmanifest, das exakt alle logisch
+   erreichbaren Quellbelege, Basisdateien und gegebenenfalls verschachtelten
+   Proofartefakte auf unveränderte Bodies unter neuen physischen Refs abbildet.
 
 Die vollständige `receipts`-Liste bleibt erhalten. Es gibt keine 64-Beleg-Grenze
 und keine automatische Löschung oder Verdichtung.
@@ -343,8 +354,11 @@ Alternative, abgeschnittene oder hashabweichende Ketten sperren.
 
 Beim fremden Restore liest `readHistory` zuerst das über den Restorebeleg
 erreichbare Proofmanifest, dann ausschließlich dessen neue physische
-`stored.id`-Dateien. Daraus stellt es die ursprünglichen logischen Refs für das
-Replay wieder her. Die ursprünglichen Drive-IDs müssen nicht erreichbar sein.
+`stored.id`-Dateien. Daraus stellt es die ursprünglichen logischen Refs und
+gegebenenfalls ältere Proofmanifeste samt deren Mapping-IDs für das Replay
+wieder her. Auch bei A→B→C müssen weder die ursprünglichen A- noch die
+physischen B-Datei-IDs erreichbar sein; C verwendet ausschließlich neu
+reservierte C-Datei-IDs.
 
 Der Cache ist ausschließlich Lesebeschleunigung. Seine IDs verleihen niemals
 Schreibberechtigung.
@@ -418,7 +432,10 @@ Phase = 'intent'|'reserved'|'uploaded'|'pointer-pending'|'reconciling'|
 ```
 
 In Phase `intent` sind Kopf, ETag und Kandidat null, `uploads` ist leer. Ab
-`reserved` zeigt `candidate` auf den Receipt innerhalb `uploads`. `uploads`
+`reserved` sind der gelesene Ausgangskopf und ein nichtleerer ETag dauerhaft
+gespeichert. `candidate` zeigt auf einen Kauf-Receipt innerhalb `uploads`,
+`candidate.previous` ist exakt der gespeicherte Ausgangskopf und sein Intent
+ist exakt das unveränderliche Intent des zugehörigen Kaufauftrags. `uploads`
 enthält exakt den Receipt, sein Basismanifest und sämtliche darin geordnet
 referenzierten Teile, keine zusätzliche Datei. Diese persistierte Closure ist
 die einzige Schreibmenge des Versuchs. Jeder Transport-/Service-Schritt muss

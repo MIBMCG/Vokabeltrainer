@@ -1,10 +1,12 @@
 # Task-1-Bericht: Belegvertrag, echte Punkte und vollständige Historie
 
-Stand: 20.09.2026
+Stand: 21.09.2026
 
 Basis: `f54bd5d42762959c8c2dd8b2f746d417c0706706`
 
-Status: DONE
+Status: FIXRUNDE ABGESCHLOSSEN, UNABHÄNGIGE NACHPRÜFUNG AUSSTEHEND
+
+Fixbasis: `777b3511e280f37de7aa0a940ca86b6b16a5fdbf`
 
 ## Umsetzung
 
@@ -143,3 +145,106 @@ npm run check:docs
   `digest(value) === ref.sha256` erneut prüfen.
 - Reale Drive-, Zwei-Geräte- und Apple-Abnahme bleiben außerhalb dieses reinen
   Task-1-Pakets offen.
+
+## Korrekturrunde nach unabhängiger Review (21.09.2026)
+
+Die vier als wichtig eingestuften Befunde aus
+`docs/reports/2026-09-20-persistent-purchases-task1-review.md` wurden gegen den
+Code geprüft, jeweils vor der Produktionsänderung als enger Negativfall
+reproduziert und behoben:
+
+1. Ein Kaufbeleg darf nur die aktive Epoche seines direkten Vorgängers
+   fortsetzen. Ein Kauf mit identischen Fakten in einer neuen Epoche wird mit
+   `history` abgewiesen.
+2. Ein Restoreziel muss innerhalb seiner Binding eine neue, noch nie verwendete
+   Epoche sein. Sowohl die aktuelle als auch eine frühere Zielepoche werden
+   abgewiesen. Der Langtest verwendet deshalb 1000 echte neue Restoreepochen
+   statt abwechselnd zwei alte Epochen zu reaktivieren.
+3. Die portable Closure enthält bei verschachtelter Herkunft zusätzlich die
+   unveränderten Proofmanifeste und deren physische Mappingobjekte. Der neue
+   A→B→C-Fall liest auf C ausschließlich neu reservierte C-Datei-IDs; A- und
+   B-Datei-IDs sind nicht im Leser vorhanden. Der ursprüngliche Kaufbelegbody
+   und sein Hash bleiben unverändert, Besitz und Ausgaben bleiben je Kind
+   getrennt erhalten.
+4. Jeder Versuch ab `reserved` verlangt den gespeicherten Ausgangskopf und
+   einen nichtleeren ETag. Der Kandidat muss diesen Kopf direkt erweitern und
+   ein Kaufbeleg mit exakt dem unveränderlichen Job-Intent sein. Initialisierungs-
+   oder Restorebelege können den Intentabgleich nicht mehr umgehen.
+
+### Schnittstellenänderungen
+
+Die öffentlichen Funktionssignaturen bleiben unverändert. Präzisiert wurden
+die validierten Verträge von `replayHistory`/`readHistory` und
+`assertCommerce`: Restoreepochen sind je Binding einmalig, Käufe wechseln keine
+Epoche, portable Proofclosures dürfen und müssen ältere Proofartefakte
+vollständig einschließen, und persistierte Schreibversuche sind an Kopf, ETag,
+Kandidatenvorgänger und Kauf-Intent gebunden. `docs/KAUFPROTOKOLL.md` beschreibt
+diese Regeln jetzt ausdrücklich.
+
+### RED-Nachweise
+
+Alle folgenden Befehle liefen vor der jeweiligen Produktionsänderung und
+scheiterten aus dem erwarteten Grund:
+
+```text
+node --test --experimental-test-isolation=none --test-name-pattern "purchase cannot activate" tests/trainer/purchases-contract.test.js
+0/1 bestanden; fehlende erwartete Ablehnung; 174.8755 ms
+
+node --test --experimental-test-isolation=none --test-name-pattern "restore requires a fresh" tests/trainer/purchases-contract.test.js
+0/1 bestanden; fehlende erwartete Ablehnung; 200.223 ms
+
+node --test --experimental-test-isolation=none --test-name-pattern "reserved attempt owns" tests/trainer/purchases-contract.test.js
+Pointer ohne Kopf/ETag: fehlende erwartete Ausnahme; 123.8707 ms
+abweichender Kandidatenvorgänger: fehlende erwartete Ausnahme; 184.6743 ms
+Restorekandidat im Kaufjob: fehlende erwartete Ausnahme; 130.1915 ms
+
+node --test --experimental-test-isolation=none --test-name-pattern "restore imports a foreign" tests/trainer/purchases-contract.test.js
+0/1 bestanden; A→B→C wegen zu flacher Closure mit code=history abgewiesen; 464.0394 ms
+```
+
+Nach Einführung der frischen Restoreepoche deckte der bisherige Langtest seine
+eigene unzulässige Epochenreaktivierung auf:
+
+```text
+node --test --experimental-test-isolation=none --test-name-pattern "iterative history reading" tests/trainer/purchases-contract.test.js
+0/1 bestanden; code=history: Restore muss neue Zielepoche aktivieren; 709.8586 ms
+```
+
+### GREEN- und Abschlussnachweise
+
+```text
+node --test --experimental-test-isolation=none tests/trainer/purchases-contract.test.js tests/trainer/learning.test.js tests/trainer/avatar-catalog.test.js tests/trainer/avatar-evolution.test.js
+49/49 bestanden; 0 fehlgeschlagen; 46367.2793 ms
+```
+
+Der enthaltene Langfall prüft Initialisierung plus 1000 Restoretransaktionen,
+1000 frische Zielepochen, 1001 eindeutige Operations-IDs, vollständige
+Basisrecords, Endkopf, echtes Guthaben und Cache-Rehash. Laufzeit des Falls:
+45351.5793 ms.
+
+```text
+npm test
+391/391 bestanden; 0 fehlgeschlagen; 81440.6359 ms
+
+npm run check:docs
+1142 Dateien; 195 Markdown-Dateien; 914 lokale Links; 0 Fehler
+
+git diff --check
+Exit 0; keine Whitespacefehler
+```
+
+### Selbstprüfung, Commit und verbleibende Punkte
+
+- Geänderte Taskdateien: `src/trainer/purchases/history.js`,
+  `src/trainer/purchases/schema.js`, `tests/trainer/purchases-contract.test.js`,
+  `docs/KAUFPROTOKOLL.md` und dieser Bericht. `proof.js` und die Fixtures
+  benötigten keine Vertragsänderung.
+- Keine Speicherung, HTTP-/Drive-Anbindung, bestehende Synchronisation,
+  Commands, UI oder Task-2-Integration geändert.
+- Fixcommit: der lokale Commit, der diese Korrekturrunde und diesen Bericht
+  gemeinsam enthält; kein Push durch Task 1.
+- Die beiden Minor-Befunde der Review sind nicht verloren: echte kooperative
+  Eventloop-Abgabe einschließlich Proof-/Basisobjekten sowie das Bewahren
+  bestehender maschinenlesbarer Leserfehlercodes bleiben ausdrücklich bei
+  Task 3. Sie ändern keinen der vier hier korrigierten Integritätsverträge.
+- Reale Drive-, Zwei-Geräte- und Apple-Abnahme bleiben offen.

@@ -136,7 +136,7 @@ async function proofMap(values) {
   return byId;
 }
 
-function closureObjectRefs(head, receipts, bases) {
+function closureObjectRefs(head, receipts, bases, proofs) {
   const refs = new Map();
   const seen = new Set();
   const queue = [head];
@@ -151,6 +151,15 @@ function closureObjectRefs(head, receipts, bases) {
     if (!basis) fail('history', 'Eine Herkunftsbasis fehlt in ihrer Closure.');
     refs.set(basis.ref.id, basis.ref);
     for (const part of basis.parts) refs.set(part.ref.id, part.ref);
+    const proofRef = receipt.economy?.source?.proof;
+    if (proofRef !== null && proofRef !== undefined) {
+      const proof = proofs.get(proofRef.id);
+      if (!proof || !sameRef(proof.ref, proofRef)) {
+        fail('history', 'Ein verschachteltes Herkunftsmanifest fehlt in seiner Closure.');
+      }
+      refs.set(proof.ref.id, proof.ref);
+      for (const object of proof.objects) refs.set(object.stored.id, object.stored);
+    }
     for (const dependency of dependencies(receipt)) queue.push(dependency);
   }
   return refs;
@@ -173,7 +182,7 @@ function verifySourceProofs(order, receipts, bases, contexts, proofs) {
       || !sameRef(proof.manifest.head, source.head)) {
       fail('binding', 'Das Herkunftsmanifest gehört zu einer anderen Quelle.');
     }
-    const expected = closureObjectRefs(source.head, receipts, bases);
+    const expected = closureObjectRefs(source.head, receipts, bases, proofs);
     const actual = new Map(proof.objects.map(({logical}) => [logical.id, logical]));
     if (expected.size !== actual.size) fail('history', 'Das Herkunftsmanifest bildet nicht exakt die Quellclosure ab.');
     for (const [logicalId, ref] of expected) {
@@ -285,6 +294,7 @@ export async function replayHistory({entries, bases, binding}) {
   const states = new Map();
   const receiptSummaries = [];
   const usedBases = new Set();
+  const usedEpochs = new Map();
   for (const id of order) {
     const entry = byId.get(id);
     const receipt = entry.value;
@@ -294,6 +304,7 @@ export async function replayHistory({entries, bases, binding}) {
     if (!basis || !sameRef(basis.ref, receipt.basis)) fail('history', 'Die geprüfte Belegbasis fehlt.');
     usedBases.add(basis.ref.id);
     const learning = checkedLearning(basis.ledger, receipt);
+    const contextEpochs = usedEpochs.get(contextKey) ?? new Set();
     let accounts;
 
     if (receipt.operation === 'initialize') {
@@ -304,7 +315,13 @@ export async function replayHistory({entries, bases, binding}) {
       if (receipt.sequence !== previous.receipt.sequence + 1) {
         fail('history', 'Die Belegsequenz ist nicht lückenlos.');
       }
+      if (receipt.operation === 'restore' && contextEpochs.has(receipt.epochId)) {
+        fail('history', 'Eine Wiederherstellung muss eine neue Zielepoche aktivieren.');
+      }
       if (receipt.operation === 'purchase') {
+        if (receipt.epochId !== previous.receipt.epochId) {
+          fail('history', 'Ein Kauf darf die aktive Epoche nicht wechseln.');
+        }
         assertExtends(previous.basis.ledger, basis.ledger);
         accounts = rebuildAccounts(learning, previous.accounts);
         const economic = stateResult({
@@ -353,6 +370,8 @@ export async function replayHistory({entries, bases, binding}) {
     };
     receiptSummaries.push(summary);
     states.set(id, {receipt, basis, accounts, binding: contextBinding});
+    contextEpochs.add(receipt.epochId);
+    usedEpochs.set(contextKey, contextEpochs);
   }
   if (usedBases.size !== basisById.size) fail('history', 'Die Basismodellmenge enthält nicht verwendete alternative Inhalte.');
   const current = states.get(head.id);

@@ -11,6 +11,7 @@ import {
   canonical,
   copy,
   fail,
+  sameRef,
 } from './value.js';
 
 const OPERATIONS = ['initialize', 'purchase', 'restore'];
@@ -167,10 +168,16 @@ function assertAttempt(value) {
   if (value.phase !== 'intent' && (value.candidate === null || !uploads.has(value.candidate.id))) {
     fail('invalid', 'Dem Kaufversuch fehlt der gespeicherte Kandidat.');
   }
+  if (value.phase !== 'intent' && (value.head === null || value.etag === null)) {
+    fail('invalid', 'Dem Kaufversuch fehlt die gespeicherte Pointerbedingung.');
+  }
   if (value.candidate !== null) {
     const candidate = uploads.get(value.candidate.id);
     if (candidate.ref.sha256 !== value.candidate.sha256) fail('integrity', 'Der Belegkandidat hat einen anderen Hash.');
     const receipt = assertReceipt(candidate.value);
+    if (!sameRef(receipt.previous, value.head)) {
+      fail('reference', 'Der Belegkandidat erweitert nicht den gespeicherten Ausgangskopf.');
+    }
     const manifest = uploads.get(receipt.basis.id);
     if (!manifest || manifest.ref.sha256 !== receipt.basis.sha256) {
       fail('invalid', 'Dem Kaufversuch fehlt das gespeicherte Basismodellmanifest.');
@@ -212,7 +219,9 @@ function assertJob(value) {
     const candidate = checked.candidate === null
       ? null
       : checked.uploads.find(({ref}) => ref.id === checked.candidate.id)?.value;
-    if (candidate?.intent && canonical(candidate.intent) !== canonical(intent)) {
+    if (candidate !== null && (candidate.operation !== 'purchase'
+      || candidate.intent === null
+      || canonical(candidate.intent) !== canonical(intent))) {
       fail('collision', 'Ein Belegkandidat verändert seinen Kaufauftrag.');
     }
   }

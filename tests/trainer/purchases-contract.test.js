@@ -119,6 +119,37 @@ test('a reserved attempt owns every immutable upload and cannot borrow write aut
     candidate,
   ];
   assert.deepEqual(assertCommerce(commerce), commerce);
+
+  const pointerWithoutCondition = structuredClone(commerce);
+  pointerWithoutCondition.jobs[0].attempts[0].phase = 'pointer-pending';
+  pointerWithoutCondition.jobs[0].attempts[0].head = null;
+  pointerWithoutCondition.jobs[0].attempts[0].etag = null;
+  assert.throws(() => assertCommerce(pointerWithoutCondition), {code: 'invalid'});
+
+  const wrongPreviousValue = structuredClone(candidateValue);
+  wrongPreviousValue.previous = {id: 'different-head', sha256: '2'.repeat(64)};
+  const wrongPrevious = await referenced(wrongPreviousValue, candidate.ref.id);
+  const wrongPreviousCommerce = structuredClone(commerce);
+  wrongPreviousCommerce.jobs[0].attempts[0].candidate = wrongPrevious.ref;
+  wrongPreviousCommerce.jobs[0].attempts[0].uploads = wrongPreviousCommerce.jobs[0].attempts[0].uploads
+    .map((upload) => upload.ref.id === candidate.ref.id ? wrongPrevious : upload);
+  assert.throws(() => assertCommerce(wrongPreviousCommerce), {code: 'reference'});
+
+  const restoreCandidateValue = receipt({
+    sequence: 1,
+    previous: commerce.jobs[0].attempts[0].head,
+    operationId: 'restore-in-purchase-job',
+    operation: 'restore',
+    basis: bundle.ref,
+    intent: null,
+    economy: {version: 1, kind: 'economic-snapshot', source: null},
+  });
+  const restoreCandidate = await referenced(restoreCandidateValue, candidate.ref.id);
+  const restoreCandidateCommerce = structuredClone(commerce);
+  restoreCandidateCommerce.jobs[0].attempts[0].candidate = restoreCandidate.ref;
+  restoreCandidateCommerce.jobs[0].attempts[0].uploads = restoreCandidateCommerce.jobs[0].attempts[0].uploads
+    .map((upload) => upload.ref.id === candidate.ref.id ? restoreCandidate : upload);
+  assert.throws(() => assertCommerce(restoreCandidateCommerce), {code: 'collision'});
 });
 
 test('basis packing round-trips a validated ledger and detects changed manifest or part content', async () => {
@@ -191,6 +222,29 @@ test('a purchase spends only the selected child real points and leaves learning 
   assert.equal(after.accounts.p2.availablePoints, 300);
   assert.deepEqual(project(ledger), beforeLearning);
   assert.equal(project(ledger).profiles.p1.level, beforeLearning.profiles.p1.level);
+});
+
+test('a purchase cannot activate a different epoch without a restore receipt', async () => {
+  const initial = await initialHistory({prefix: 'purchase-epoch-before'});
+  const changedLedger = earnedLedger({epochId: 'e-new'});
+  const changedBundle = await packed(changedLedger, 'purchase-epoch-after');
+  const purchaseValue = receipt({
+    sequence: 1,
+    previous: initial.entry.ref,
+    operationId: 'purchase-new-epoch',
+    operation: 'purchase',
+    epochId: 'e-new',
+    basis: changedBundle.ref,
+    intent: intent({operationId: 'purchase-new-epoch', epochId: 'e-new'}),
+    economy: null,
+  });
+  const purchaseEntry = await referenced(purchaseValue, 'purchase-new-epoch-receipt');
+
+  await assert.rejects(replayHistory({
+    entries: {head: purchaseEntry.ref, values: [initial.entry, purchaseEntry], proofs: []},
+    bases: [...initial.bases, basisEntry(changedBundle, changedLedger)],
+    binding: BINDING,
+  }), {code: 'history'});
 });
 
 test('economic accounts preserve a profile whose valid ID is prototype-sensitive', async () => {
@@ -376,6 +430,82 @@ test('restore imports a foreign binding through a flat proof DAG and rejects wro
   assert.equal(portable.projection.accounts.p1.availablePoints, 100);
   assert.deepEqual(portable.projection.accounts.p1.purchasedArticleIds, ['evolution:explorer-girl:2']);
 
+  const nestedObjects = [
+    target.entry,
+    restoreEntry,
+    source.entry,
+    sourcePurchaseEntry,
+    {ref: target.bundle.ref, value: target.bundle.manifest},
+    ...target.bundle.parts,
+    {ref: restoredBundle.ref, value: restoredBundle.manifest},
+    ...restoredBundle.parts,
+    {ref: source.bundle.ref, value: source.bundle.manifest},
+    ...source.bundle.parts,
+    {ref: proof.ref, value: proof.manifest},
+    ...proof.objects.map(({stored, value}) => ({ref: stored, value})),
+  ];
+  let nestedId = 0;
+  const nestedProof = await packProof(
+    {binding: targetBinding, head: restoreEntry.ref, objects: nestedObjects},
+    async ({kind}) => `nested-${kind}-${nestedId += 1}`,
+  );
+  const finalBinding = {
+    accountId: 'final-account', folderId: 'final-folder',
+    descriptorFileId: 'final-descriptor', datasetId: 'final-dataset',
+  };
+  const finalInitialLedger = rebindLedger(earnedLedger(), {
+    datasetId: 'final-dataset', epochId: 'final-old',
+  });
+  const finalInitial = await initialHistory({
+    ledger: finalInitialLedger, binding: finalBinding, prefix: 'final',
+  });
+  const finalRestoredLedger = rebindLedger(earnedLedger(), {
+    datasetId: 'final-dataset', epochId: 'final-restored',
+  });
+  const finalRestoredBundle = await packed(finalRestoredLedger, 'final-restored');
+  const finalRestoreValue = receipt({
+    datasetId: 'final-dataset',
+    sequence: 1,
+    previous: finalInitial.entry.ref,
+    operationId: 'restore-nested-foreign',
+    operation: 'restore',
+    epochId: 'final-restored',
+    basis: finalRestoredBundle.ref,
+    intent: null,
+    economy: {
+      version: 1,
+      kind: 'economic-snapshot',
+      source: {binding: targetBinding, head: restoreEntry.ref, proof: nestedProof.ref},
+    },
+  });
+  const finalRestore = await referenced(finalRestoreValue, 'final-restore');
+  const finalStored = [
+    finalInitial.entry,
+    {ref: finalInitial.bundle.ref, value: finalInitial.bundle.manifest},
+    ...finalInitial.bundle.parts,
+    finalRestore,
+    {ref: finalRestoredBundle.ref, value: finalRestoredBundle.manifest},
+    ...finalRestoredBundle.parts,
+    {ref: nestedProof.ref, value: nestedProof.manifest},
+    ...nestedProof.objects.map(({stored, value}) => ({ref: stored, value})),
+  ];
+  const nestedPortable = await readHistory({
+    head: finalRestore.ref,
+    read: memoryReader(finalStored),
+    cache: {version: 1, head: null, values: []},
+    binding: finalBinding,
+    onProgress: () => {},
+  });
+  assert.equal(nestedPortable.projection.activeEpochId, 'final-restored');
+  assert.equal(nestedPortable.projection.accounts.p1.availablePoints, 100);
+  assert.deepEqual(
+    nestedPortable.projection.accounts.p1.purchasedArticleIds,
+    ['evolution:explorer-girl:2'],
+  );
+  const replayedOriginal = nestedPortable.entries.values
+    .find(({ref}) => ref.id === sourcePurchaseEntry.ref.id);
+  assert.deepEqual(replayedOriginal, sourcePurchaseEntry);
+
   const tamperedProof = structuredClone(proof);
   tamperedProof.objects[0].stored.sha256 = '9'.repeat(64);
   await assert.rejects(replayHistory({
@@ -409,6 +539,58 @@ test('restore of a validated legacy backup without purchase history starts with 
   assert.deepEqual(result.accounts.p1.purchasedArticleIds, []);
 });
 
+test('restore requires a fresh target epoch and rejects the current or an earlier target epoch', async () => {
+  const initial = await initialHistory({prefix: 'fresh-epoch-initial'});
+  const nextLedger = earnedLedger({epochId: 'e1'});
+  const nextBundle = await packed(nextLedger, 'fresh-epoch-next');
+  const firstRestoreValue = receipt({
+    sequence: 1,
+    previous: initial.entry.ref,
+    operationId: 'restore-fresh-e1',
+    operation: 'restore',
+    epochId: 'e1',
+    basis: nextBundle.ref,
+    intent: null,
+    economy: {
+      version: 1,
+      kind: 'economic-snapshot',
+      source: {binding: BINDING, head: initial.entry.ref, proof: null},
+    },
+  });
+  const firstRestore = await referenced(firstRestoreValue, 'restore-fresh-e1-receipt');
+  const bases = [...initial.bases, basisEntry(nextBundle, nextLedger)];
+
+  for (const target of [
+    {epochId: 'e1', basis: nextBundle.ref, operationId: 'restore-current-e1'},
+    {epochId: 'e0', basis: initial.bundle.ref, operationId: 'restore-earlier-e0'},
+  ]) {
+    const repeatedValue = receipt({
+      sequence: 2,
+      previous: firstRestore.ref,
+      operationId: target.operationId,
+      operation: 'restore',
+      epochId: target.epochId,
+      basis: target.basis,
+      intent: null,
+      economy: {
+        version: 1,
+        kind: 'economic-snapshot',
+        source: {binding: BINDING, head: firstRestore.ref, proof: null},
+      },
+    });
+    const repeated = await referenced(repeatedValue, `${target.operationId}-receipt`);
+    await assert.rejects(replayHistory({
+      entries: {
+        head: repeated.ref,
+        values: [initial.entry, firstRestore, repeated],
+        proofs: [],
+      },
+      bases,
+      binding: BINDING,
+    }), {code: 'history'});
+  }
+});
+
 test('provenance cycles are rejected before an untrusted circular graph is replayed', async () => {
   const hashA = 'a'.repeat(64);
   const hashB = 'b'.repeat(64);
@@ -431,24 +613,26 @@ test('provenance cycles are rejected before an untrusted circular graph is repla
   }), {code: 'cycle'});
 });
 
-test('iterative history reading verifies 1000 transactions, all IDs, multiple epochs and cache hashes', async () => {
-  const ledger0 = earnedLedger({epochId: 'e0'});
-  const ledger1 = earnedLedger({epochId: 'e1'});
+test('iterative history reading verifies 1000 transactions, fresh epochs, all IDs and cache hashes', async () => {
+  const ledger0 = earnedLedger({epochId: 'e0', correct: 10});
   const basis0 = await packed(ledger0, 'long-0');
-  const basis1 = await packed(ledger1, 'long-1');
+  const bundles = [basis0];
   const firstValue = receipt({basis: basis0.ref});
   const first = await referenced(firstValue, 'receipt-0000');
   const entries = [first];
   let previous = first.ref;
   for (let sequence = 1; sequence <= 1000; sequence += 1) {
-    const useSecond = sequence % 2 === 1;
+    const epochId = `e${sequence}`;
+    const ledger = rebindLedger(ledger0, {datasetId: 'd1', epochId});
+    const bundle = await packed(ledger, `long-${sequence}`);
+    bundles.push(bundle);
     const value = receipt({
       sequence,
       previous,
       operationId: `restore-${String(sequence).padStart(4, '0')}`,
       operation: 'restore',
-      epochId: useSecond ? 'e1' : 'e0',
-      basis: useSecond ? basis1.ref : basis0.ref,
+      epochId,
+      basis: bundle.ref,
       intent: null,
       economy: {
         version: 1,
@@ -462,8 +646,10 @@ test('iterative history reading verifies 1000 transactions, all IDs, multiple ep
   }
   const stored = [
     ...entries,
-    {ref: basis0.ref, value: basis0.manifest}, ...basis0.parts,
-    {ref: basis1.ref, value: basis1.manifest}, ...basis1.parts,
+    ...bundles.flatMap((bundle) => [
+      {ref: bundle.ref, value: bundle.manifest},
+      ...bundle.parts,
+    ]),
   ];
   let reads = 0;
   let progress = 0;
@@ -480,8 +666,8 @@ test('iterative history reading verifies 1000 transactions, all IDs, multiple ep
   assert.equal(result.projection.receipts[0].operationId, 'initialize-1');
   assert.equal(result.projection.receipts.at(-1).operationId, 'restore-1000');
   assert.equal(new Set(result.projection.receipts.map(({operationId}) => operationId)).size, 1001);
-  assert.equal(result.projection.activeEpochId, 'e0');
-  assert.equal(result.projection.accounts.p1.availablePoints, 300);
+  assert.equal(result.projection.activeEpochId, 'e1000');
+  assert.equal(result.projection.accounts.p1.availablePoints, 100);
   assert.ok(progress >= 1001);
   assert.ok(reads >= 1001);
 
