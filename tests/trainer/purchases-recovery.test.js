@@ -6,8 +6,9 @@ import {ProductError} from '../../src/trainer/model/errors.js';
 import {packBasis} from '../../src/trainer/purchases/basis.js';
 import {emptyCommerce} from '../../src/trainer/purchases/schema.js';
 import {digest} from '../../src/trainer/purchases/value.js';
-import {earnedLedger,receipt,BINDING} from './purchases-fixtures.js';
+import {earnedLedger,receipt,rebindLedger,BINDING} from './purchases-fixtures.js';
 import {memoryStore,productState,sequenceIds} from './backup-fixtures.js';
+import {createFixture} from './fixtures.js';
 
 const CONFIG={
   version:1,kind:'purchase-config',binding:BINDING,descriptorHash:'a'.repeat(64),
@@ -15,10 +16,9 @@ const CONFIG={
 };
 
 class PurchaseRemote {
-  constructor() {
+  constructor(server=null) {
     this.binding=structuredClone(BINDING);this.descriptorHash=CONFIG.descriptorHash;
-    this.files=new Map();this.next=0;this.putCalls=[];this.writeCalls=[];
-    this.coordinator={
+    this.server=server??{files:new Map(),next:0,putCalls:[],writeCalls:[],coordinator:{
       id:CONFIG.coordinatorId,name:'coordinator',mimeType:'application/vnd.google-apps.folder',
       parents:[BINDING.folderId],version:'1',etag:'"head-1"',
       properties:{
@@ -26,10 +26,23 @@ class PurchaseRemote {
         descriptorFileId:BINDING.descriptorFileId,descriptorHash:CONFIG.descriptorHash,
         coordinatorId:CONFIG.coordinatorId,contentFolderId:CONFIG.contentFolderId,
       },
-    };
-    this.pointerFailure=null;
+    }};
   }
-  async reserveId(){return `reserved-${++this.next}`;}
+  get files(){return this.server.files;}
+  get coordinator(){return this.server.coordinator;}
+  get putCalls(){return this.server.putCalls;}
+  get writeCalls(){return this.server.writeCalls;}
+  get next(){return this.server.next;}
+  set next(value){this.server.next=value;}
+  get pointerFailure(){return this.server.pointerFailure??null;}
+  set pointerFailure(value){this.server.pointerFailure=value;}
+  get writeFailure(){return this.server.writeFailure??false;}
+  set writeFailure(value){this.server.writeFailure=value;}
+  get afterPointer(){return this.server.afterPointer;}
+  set afterPointer(value){this.server.afterPointer=value;}
+  get offline(){return this.server.offline??false;}
+  set offline(value){this.server.offline=value;}
+  async reserveId(){return `reserved-${++this.server.next}`;}
   async readFolder({id}){
     if(this.offline)throw new ProductError('network','synthetic offline');
     if(id!==CONFIG.coordinatorId)throw new ProductError('binding','wrong folder');
@@ -82,17 +95,56 @@ async function openHarness({store,remote,ids=sequenceIds('purchase')}={}){
     const next=commands.getState(),commerce=emptyCommerce();
     commerce.mode='active';commerce.binding=BINDING;commerce.config=CONFIG;
     commerce.configRef={id:'config-a',sha256:await digest(CONFIG)};commerce.head=head;
-    next.binding=structuredClone(BINDING);next.commerce=commerce;
+    next.binding=structuredClone(BINDING);next.commerce=commerce;next.outboxEventIds=[];next.pendingPackets=[];
     await commands.commitExternal(next,await productStateHash(commands.getState()));
   }
   const statuses=[];
-  const service=createPurchaseService({commands,transport:remote,sync:{},now:()=>new Date('2026-09-21T10:00:00Z'),id:ids,onStatus:s=>statuses.push(s)});
+  const service=createPurchaseService({commands,transport:remote,sync:learningSync(commands),now:()=>new Date('2026-09-21T10:00:00Z'),id:ids,onStatus:s=>statuses.push(s)});
   return {store,remote,commands,service,statuses};
+}
+
+function learningSync(commands) {
+  return {
+    async syncLearning() {
+      const state=commands.getState();
+      if(state.outboxEventIds.length>0||state.pendingPackets.length>0) {
+        const next=structuredClone(state);next.outboxEventIds=[];next.pendingPackets=[];
+        await commands.commitExternal(next,await productStateHash(state));
+      }
+      return {phase:'synced'};
+    },
+  };
+}
+
+function byteStore(initial) {
+  let bytes=initial===null?null:JSON.stringify(initial);
+  let reject=null;
+  return {
+    async load(){return bytes===null?null:JSON.parse(bytes);},
+    async save(next){
+      const previous=bytes===null?null:JSON.parse(bytes);
+      if(reject?.(next,previous)) { reject=null;throw new Error('synthetic durable save failure'); }
+      bytes=JSON.stringify(next);
+    },
+    snapshot(){return bytes===null?null:JSON.parse(bytes);},
+    failWhen(predicate){reject=predicate;},
+  };
+}
+
+async function restartHarness(harness,{ids=sequenceIds('fresh-restart')}={}) {
+  const store=byteStore(harness.store.snapshot());
+  const remote=new PurchaseRemote(harness.remote.server);
+  const reopened=await openHarness({store,remote,ids});
+  assert.notEqual(reopened.store,harness.store);
+  assert.notEqual(reopened.remote,harness.remote);
+  assert.equal(reopened.remote.server,harness.remote.server);
+  return reopened;
 }
 
 function activationPorts(commands,remote) {
   const calls={prepared:0,applied:0,sawPersistedIntent:false};
   return {
+    ...learningSync(commands),
     calls,
     async prepareActivationCandidate({state,control,reserve}) {
       calls.prepared+=1;
@@ -117,6 +169,7 @@ function activationPorts(commands,remote) {
 function restorePorts(commands) {
   const calls={prepared:0,applied:0,sawPersistedIntent:false};
   return {
+    ...learningSync(commands),
     calls,
     async prepareRestoreCandidate({state,control,history,reserve}) {
       calls.prepared+=1;
@@ -144,23 +197,32 @@ function restorePorts(commands) {
   };
 }
 
-async function migratingHarness() {
-  const remote=new PurchaseRemote(),store=memoryStore(productState(earnedLedger()));
+async function migratingHarness({remote=new PurchaseRemote(),store=memoryStore(productState(earnedLedger())),ids=sequenceIds('control')}={}) {
   const commands=await createCommands({store,now:()=>new Date('2026-09-21T10:00:00Z'),id:sequenceIds('command'),deviceId:'dev1',onChange(){}});
-  const next=commands.getState(),commerce=emptyCommerce();
-  commerce.mode='migrating';commerce.binding=BINDING;commerce.config=CONFIG;
-  commerce.configRef={id:'config-a',sha256:await digest(CONFIG)};
-  commerce.setup={
-    version:1,operationId:'setup-a',phase:'confirmed',binding:BINDING,
-    descriptorHash:CONFIG.descriptorHash,coordinatorId:CONFIG.coordinatorId,
-    contentFolderId:CONFIG.contentFolderId,configRef:commerce.configRef,config:CONFIG,
-    etag:null,pointerProperties:null,
-  };
-  next.binding=structuredClone(BINDING);next.commerce=commerce;
-  await commands.commitExternal(next,await productStateHash(commands.getState()));
+  if(commands.getState().commerce.mode==='inactive') {
+    const next=commands.getState(),commerce=emptyCommerce();
+    commerce.mode='migrating';commerce.binding=BINDING;commerce.config=CONFIG;
+    commerce.configRef={id:'config-a',sha256:await digest(CONFIG)};
+    commerce.setup={
+      version:1,operationId:'setup-a',phase:'confirmed',binding:BINDING,
+      descriptorHash:CONFIG.descriptorHash,coordinatorId:CONFIG.coordinatorId,
+      contentFolderId:CONFIG.contentFolderId,configRef:commerce.configRef,config:CONFIG,
+      etag:null,pointerProperties:null,
+    };
+    next.binding=structuredClone(BINDING);next.commerce=commerce;next.outboxEventIds=[];next.pendingPackets=[];
+    await commands.commitExternal(next,await productStateHash(commands.getState()));
+  }
   const sync=activationPorts(commands,remote);
-  const service=createPurchaseService({commands,transport:remote,sync,now:()=>new Date('2026-09-21T10:00:00Z'),id:sequenceIds('control'),onStatus(){}});
+  const service=createPurchaseService({commands,transport:remote,sync,now:()=>new Date('2026-09-21T10:00:00Z'),id:ids,onStatus(){}});
   return {remote,store,commands,sync,service};
+}
+
+async function restoreHarness({remote=new PurchaseRemote(),store=memoryStore(productState(earnedLedger())),ids=sequenceIds('restore')}={}) {
+  const base=await openHarness({remote,store,ids});
+  const sync=restorePorts(base.commands);
+  const service=createPurchaseService({commands:base.commands,transport:remote,sync,
+    now:()=>new Date('2026-09-21T10:00:00Z'),id:ids,onStatus(){}});
+  return {...base,sync,service};
 }
 
 test('purchase service rejects creation without the durable command boundary', () => {
@@ -210,11 +272,68 @@ test('pointer success without local completion is confirmed after restart withou
   const preview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
   await assert.rejects(harness.service.confirm(preview),{code:'storage'});
   assert.equal(harness.remote.putCalls.length,1);
-  delete harness.remote.afterPointer;
+  harness.remote.afterPointer=null;
   const reopened=await openHarness({store,remote:harness.remote,ids:sequenceIds('post-pointer')});
   await reopened.service.refresh();
   assert.equal(reopened.commands.getState().commerce.jobs[0].status,'confirmed');
   assert.equal(harness.remote.putCalls.length,1);
+});
+
+test('fresh store, transport, commands, service and sync recover every purchase persistence cutpoint',async(t)=>{
+  const cases=[
+    {fail:'intent',persisted:null},
+    {fail:'reserved',persisted:'intent'},
+    {fail:'uploaded',persisted:'reserved'},
+    {fail:'pointer-pending',persisted:'uploaded'},
+  ];
+  for(const entry of cases)await t.test(entry.fail,async()=>{
+    const store=byteStore(productState(earnedLedger())),remote=new PurchaseRemote();
+    const harness=await openHarness({store,remote,ids:sequenceIds(`cut-${entry.fail}`)});
+    const preview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
+    const beforePuts=remote.putCalls.length;
+    store.failWhen(next=>next.commerce.jobs.at(-1)?.attempts.at(-1)?.phase===entry.fail);
+
+    await assert.rejects(harness.service.confirm(preview),{code:'storage'});
+
+    const persisted=store.snapshot().commerce.jobs.at(-1)??null;
+    assert.equal(persisted?.attempts.at(-1)?.phase??null,entry.persisted);
+    assert.equal(remote.putCalls.length,beforePuts);
+    if(entry.fail==='intent')return;
+    const operationId=persisted.intent.operationId;
+    const reopened=await restartHarness(harness,{ids:sequenceIds(`resume-${entry.fail}`)});
+    const result=await reopened.service.resume(operationId);
+    assert.equal(result.status,'confirmed');
+    assert.equal(remote.putCalls.length,beforePuts+1);
+  });
+
+  await t.test('reconciling and confirmed',async()=>{
+    const store=byteStore(productState(earnedLedger())),remote=new PurchaseRemote();
+    const harness=await openHarness({store,remote,ids:sequenceIds('cut-reconciling')});
+    const preview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
+    store.failWhen(next=>next.commerce.jobs.at(-1)?.attempts.at(-1)?.phase==='reconciling');
+    await assert.rejects(harness.service.confirm(preview),{code:'storage'});
+    assert.equal(remote.putCalls.length,1);
+    const operationId=store.snapshot().commerce.jobs[0].intent.operationId;
+    const reopened=await restartHarness(harness,{ids:sequenceIds('resume-reconciling')});
+    await reopened.service.refresh();
+    assert.equal(reopened.commands.getState().commerce.jobs[0].status,'confirmed');
+    assert.equal(remote.putCalls.length,1);
+
+    const confirmedStore=byteStore(reopened.store.snapshot());
+    const confirmedRemote=new PurchaseRemote(remote.server);
+    const confirmed=await openHarness({store:confirmedStore,remote:confirmedRemote,ids:sequenceIds('confirmed-save')});
+    const state=confirmed.commands.getState(),next=structuredClone(state);
+    next.commerce.jobs[0].status='open';next.commerce.jobs[0].attempts[0].phase='reconciling';
+    await confirmed.commands.commitExternal(next,await productStateHash(state));
+    confirmedStore.failWhen(value=>value.commerce.jobs[0].status==='confirmed');
+    await assert.rejects(confirmed.service.refresh(),{code:'storage'});
+    assert.equal(remote.putCalls.length,1);
+    const final=await restartHarness(confirmed,{ids:sequenceIds('resume-confirmed-save')});
+    await final.service.refresh();
+    assert.equal(final.commands.getState().commerce.jobs[0].status,'confirmed');
+    assert.equal(remote.putCalls.length,1);
+    assert.equal(final.commands.getState().commerce.jobs[0].intent.operationId,operationId);
+  });
 });
 
 test('response loss is recovered from history after a later purchase without another old pointer write',async()=>{
@@ -238,6 +357,50 @@ test('response loss is recovered from history after a later purchase without ano
   const result=await reopened.service.resume(operationId);
   assert.equal(result.status,'confirmed');
   assert.equal(first.remote.putCalls.length,2);
+});
+
+test('fresh-process purchase recovery keeps every ambiguous network outcome read-only until explicit resume',async(t)=>{
+  await t.test('immutable upload',async()=>{
+    const store=byteStore(productState(earnedLedger())),remote=new PurchaseRemote();
+    const harness=await openHarness({store,remote,ids:sequenceIds('purchase-upload-loss')});
+    const preview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
+    remote.writeFailure=true;
+    await assert.rejects(harness.service.confirm(preview),{code:'network'});
+    const saved=store.snapshot().commerce.jobs[0];
+    assert.equal(saved.attempts[0].phase,'reserved');assert.equal(remote.putCalls.length,0);
+    const fresh=await restartHarness(harness,{ids:sequenceIds('purchase-upload-fresh')});
+    const result=await fresh.service.resume(saved.intent.operationId);
+    assert.equal(result.status,'confirmed');assert.equal(remote.putCalls.length,1);
+  });
+
+  await t.test('pointer request loss',async()=>{
+    const store=byteStore(productState(earnedLedger())),remote=new PurchaseRemote();
+    const harness=await openHarness({store,remote,ids:sequenceIds('purchase-before-loss')});
+    const preview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
+    remote.pointerFailure='before';
+    await assert.rejects(harness.service.confirm(preview),{code:'network'});
+    const saved=store.snapshot().commerce.jobs[0],attempt=saved.attempts[0];
+    const fresh=await restartHarness(harness,{ids:sequenceIds('purchase-before-fresh')});
+    await fresh.service.refresh();assert.equal(remote.putCalls.length,1);
+    remote.pointerFailure=null;
+    const result=await fresh.service.resume(saved.intent.operationId);
+    assert.equal(result.status,'confirmed');assert.equal(remote.putCalls.length,2);
+    assert.equal(remote.putCalls[1].etag,attempt.etag);
+    assert.deepEqual(remote.putCalls[1].properties,attempt.pointerProperties);
+  });
+
+  await t.test('pointer response loss',async()=>{
+    const store=byteStore(productState(earnedLedger())),remote=new PurchaseRemote();
+    const harness=await openHarness({store,remote,ids:sequenceIds('purchase-after-loss')});
+    const preview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
+    remote.pointerFailure='after';
+    await assert.rejects(harness.service.confirm(preview),{code:'network'});
+    remote.pointerFailure=null;
+    const fresh=await restartHarness(harness,{ids:sequenceIds('purchase-after-fresh')});
+    await fresh.service.refresh();
+    assert.equal(fresh.commands.getState().commerce.jobs[0].status,'confirmed');
+    assert.equal(remote.putCalls.length,1);
+  });
 });
 
 test('restart refresh stays read-only and explicit resume repeats the exact saved pointer body and ETag',async()=>{
@@ -319,6 +482,122 @@ test('activation resumes its exact reserved closure after an upload failure and 
   assert.equal(harness.remote.putCalls.length,1);
 });
 
+test('fresh-process control recovery covers initialize and restore persistence and network cutpoints',async(t)=>{
+  for(const operation of ['initialize','restore'])await t.test(operation,async(t)=>{
+    const open=operation==='initialize'?migratingHarness:restoreHarness;
+    const prepare=(service)=>operation==='initialize'
+      ? service.prepareActivation()
+      : service.prepareRestore({previewId:'durable-preview'});
+    const finalState=(commands)=>operation==='initialize'
+      ? commands.getState().commerce.mode==='active'
+      : commands.getState().ledger.epochs[0].id==='e1';
+    const reopen=async(harness,suffix)=>{
+      const store=byteStore(harness.store.snapshot()),remote=new PurchaseRemote(harness.remote.server);
+      const fresh=await open({store,remote,ids:sequenceIds(`${operation}-${suffix}`)});
+      assert.notEqual(fresh.store,harness.store);assert.notEqual(fresh.remote,harness.remote);
+      assert.notEqual(fresh.commands,harness.commands);assert.notEqual(fresh.service,harness.service);
+      assert.notEqual(fresh.sync,harness.sync);assert.equal(fresh.remote.server,harness.remote.server);
+      return fresh;
+    };
+    for(const entry of [
+      {fail:'intent',persisted:null},
+      {fail:'reserved',persisted:'intent'},
+      {fail:'uploaded',persisted:'reserved'},
+      {fail:'pointer-pending',persisted:'uploaded'},
+    ])await t.test(`save ${entry.fail}`,async()=>{
+      const store=byteStore(productState(earnedLedger())),remote=new PurchaseRemote();
+      const harness=await open({store,remote,ids:sequenceIds(`${operation}-${entry.fail}`)});
+      const beforeWrites=remote.writeCalls.length,beforePuts=remote.putCalls.length;
+      store.failWhen(next=>next.commerce.control?.phase===entry.fail);
+      await assert.rejects(prepare(harness.service),{code:'storage'});
+      const persisted=store.snapshot().commerce.control;
+      assert.equal(persisted?.phase??null,entry.persisted);
+      assert.equal(remote.putCalls.length,beforePuts);
+      if(entry.fail==='intent') {
+        assert.equal(remote.writeCalls.length,beforeWrites);
+        assert.equal(harness.sync.calls.prepared,0);
+        return;
+      }
+      if(entry.fail==='reserved')assert.equal(remote.writeCalls.length,beforeWrites);
+      const fresh=await reopen(harness,`resume-${entry.fail}`);
+      const result=await fresh.service.resume(persisted.operationId);
+      assert.equal(result.phase,'confirmed');assert.equal(finalState(fresh.commands),true);
+      assert.equal(remote.putCalls.length,beforePuts+1);
+    });
+
+    for(const phase of ['reconciling','confirmed'])await t.test(`save ${phase}`,async()=>{
+      const store=byteStore(productState(earnedLedger())),remote=new PurchaseRemote();
+      const harness=await open({store,remote,ids:sequenceIds(`${operation}-${phase}`)});
+      const prepared=await prepare(harness.service);
+      store.failWhen(next=>next.commerce.control?.phase===phase);
+      await assert.rejects(
+        operation==='initialize'
+          ? harness.service.confirmActivation(prepared.operationId)
+          : harness.service.confirmRestore(prepared.operationId),
+        {code:'storage'},
+      );
+      assert.equal(remote.putCalls.length,1);
+      const fresh=await reopen(harness,`resume-${phase}`);
+      await fresh.service.refresh();
+      assert.equal(fresh.commands.getState().commerce.control.phase,'confirmed');
+      assert.equal(finalState(fresh.commands),true);
+      assert.equal(remote.putCalls.length,1);
+    });
+
+    await t.test('upload failure',async()=>{
+      const store=byteStore(productState(earnedLedger())),remote=new PurchaseRemote();
+      const harness=await open({store,remote,ids:sequenceIds(`${operation}-upload-loss`)});
+      remote.writeFailure=true;
+      await assert.rejects(prepare(harness.service),{code:'network'});
+      const saved=store.snapshot().commerce.control;
+      assert.equal(saved.phase,'reserved');assert.equal(remote.putCalls.length,0);
+      const fresh=await reopen(harness,'upload-loss');
+      const result=await fresh.service.resume(saved.operationId);
+      assert.equal(result.phase,'confirmed');assert.equal(finalState(fresh.commands),true);
+      assert.equal(remote.putCalls.length,1);
+    });
+
+    await t.test('unknown pointer before send',async()=>{
+      const store=byteStore(productState(earnedLedger())),remote=new PurchaseRemote();
+      const harness=await open({store,remote,ids:sequenceIds(`${operation}-before-loss`)});
+      const prepared=await prepare(harness.service),saved=store.snapshot().commerce.control;
+      remote.pointerFailure='before';
+      await assert.rejects(
+        operation==='initialize'
+          ? harness.service.confirmActivation(prepared.operationId)
+          : harness.service.confirmRestore(prepared.operationId),
+        {code:'network'},
+      );
+      const fresh=await reopen(harness,'before-loss');
+      await fresh.service.refresh();
+      assert.equal(remote.putCalls.length,1);
+      remote.pointerFailure=null;
+      const result=await fresh.service.resume(saved.operationId);
+      assert.equal(result.phase,'confirmed');assert.equal(remote.putCalls.length,2);
+      assert.equal(remote.putCalls[1].etag,saved.etag);
+      assert.deepEqual(remote.putCalls[1].properties,saved.pointerProperties);
+    });
+
+    await t.test('unknown pointer response after commit',async()=>{
+      const store=byteStore(productState(earnedLedger())),remote=new PurchaseRemote();
+      const harness=await open({store,remote,ids:sequenceIds(`${operation}-after-loss`)});
+      const prepared=await prepare(harness.service);
+      remote.pointerFailure='after';
+      await assert.rejects(
+        operation==='initialize'
+          ? harness.service.confirmActivation(prepared.operationId)
+          : harness.service.confirmRestore(prepared.operationId),
+        {code:'network'},
+      );
+      remote.pointerFailure=null;
+      const fresh=await reopen(harness,'after-loss');
+      await fresh.service.refresh();
+      assert.equal(fresh.commands.getState().commerce.control.phase,'confirmed');
+      assert.equal(finalState(fresh.commands),true);assert.equal(remote.putCalls.length,1);
+    });
+  });
+});
+
 test('confirmed ownership stays readable and selectable offline after restart',async()=>{
   const first=await openHarness();
   const preview=await first.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
@@ -372,6 +651,57 @@ test('changed intent, unknown profile and account or folder switch fail before a
   assert.equal(harness.remote.putCalls.length,0);
 });
 
+test('learning-sync port is mandatory and contradictory persisted sync state fails closed',async()=>{
+  const harness=await openHarness();
+  const make=(sync)=>createPurchaseService({
+    commands:harness.commands,transport:harness.remote,sync,
+    now:()=>new Date('2026-09-21T10:00:00Z'),id:sequenceIds('sync-boundary'),onStatus(){},
+  });
+  await assert.rejects(
+    make({}).preview({profileId:'p1',articleId:'evolution:explorer-girl:2'}),
+    {code:'not-ready'},
+  );
+  await assert.rejects(
+    make({async syncLearning(){return {phase:'pending'};}})
+      .preview({profileId:'p1',articleId:'evolution:explorer-girl:2'}),
+    {code:'pending'},
+  );
+  const contradictory=make({
+    async syncLearning(){
+      const state=harness.commands.getState(),next=structuredClone(state);
+      next.outboxEventIds=['rev-p1'];
+      await harness.commands.commitExternal(next,await productStateHash(state));
+      return {phase:'synced'};
+    },
+  });
+  await assert.rejects(
+    contradictory.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'}),
+    {code:'pending'},
+  );
+  assert.equal(harness.remote.writeCalls.length,0);assert.equal(harness.remote.putCalls.length,0);
+});
+
+test('a failed durable learning-sync commit prevents purchase-network mutation',async()=>{
+  const base=await openHarness();
+  const store=byteStore(base.store.snapshot()),remote=new PurchaseRemote(base.remote.server);
+  const commands=await createCommands({store,now:()=>new Date('2026-09-21T10:00:00Z'),id:sequenceIds('sync-store'),deviceId:'dev1',onChange(){}});
+  const state=commands.getState(),pending=structuredClone(state);pending.outboxEventIds=['rev-p1'];
+  await commands.commitExternal(pending,await productStateHash(state));
+  store.failWhen(next=>next.outboxEventIds.length===0);
+  const service=createPurchaseService({
+    commands,transport:remote,sync:learningSync(commands),
+    now:()=>new Date('2026-09-21T10:00:00Z'),id:sequenceIds('sync-store-service'),onStatus(){},
+  });
+
+  await assert.rejects(
+    service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'}),
+    {code:'storage'},
+  );
+
+  assert.equal(remote.writeCalls.length,0);assert.equal(remote.putCalls.length,0);
+  assert.deepEqual(store.snapshot().outboxEventIds,['rev-p1']);
+});
+
 test('a proven advanced head without the intent supersedes the attempt and requires a new preview',async()=>{
   const first=await openHarness();
   first.remote.pointerFailure='before';
@@ -407,4 +737,144 @@ test('a rejected stale ETag supersedes the purchase attempt before another expli
   const resumed=await harness.service.resume(job.intent.operationId);
   assert.equal(resumed.status,'superseded');
   assert.equal(harness.remote.putCalls.length,calls);
+});
+
+test('an older ledger cannot publish a receipt that invalidates the verified shared head',async()=>{
+  const remote=new PurchaseRemote();
+  const first=await openHarness({remote,ids:sequenceIds('first')});
+  const second=await openHarness({remote,ids:sequenceIds('second')});
+  await first.commands.setAnimations({profileId:'p1',animations:false});
+  const firstPreview=await first.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
+  await first.service.confirm(firstPreview);
+  const acceptedHead=structuredClone(remote.coordinator.properties);
+  const putCount=remote.putCalls.length;
+
+  const stalePreview=await second.service.preview({profileId:'p2',articleId:'evolution:explorer-girl:2'});
+  await assert.rejects(second.service.confirm(stalePreview),{code:'history'});
+
+  assert.equal(remote.putCalls.length,putCount);
+  assert.deepEqual(remote.coordinator.properties,acceptedHead);
+  await first.service.refresh();
+});
+
+test('a target-chain receipt with a reused operation ID cannot confirm a different local intent',async()=>{
+  const remote=new PurchaseRemote();
+  const first=await openHarness({remote,ids:sequenceIds('collision')});
+  remote.pointerFailure='before';
+  const firstPreview=await first.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
+  await assert.rejects(first.service.confirm(firstPreview),{code:'network'});
+  const local=first.commands.getState().commerce.jobs[0];
+  remote.pointerFailure=null;
+
+  const second=await openHarness({
+    store:memoryStore(productState(earnedLedger())),remote,ids:sequenceIds('collision'),
+  });
+  const secondPreview=await second.service.preview({profileId:'p2',articleId:'evolution:explorer-girl:2'});
+  await second.service.confirm(secondPreview);
+
+  await assert.rejects(first.service.refresh(),{code:'collision'});
+  const unchanged=first.commands.getState().commerce.jobs[0];
+  assert.equal(unchanged.intent.profileId,'p1');
+  assert.equal(unchanged.intent.operationId,local.intent.operationId);
+  assert.notEqual(unchanged.status,'confirmed');
+});
+
+test('a reused operation ID with a changed article cannot confirm the local purchase',async()=>{
+  const remote=new PurchaseRemote();
+  const first=await openHarness({remote,ids:sequenceIds('article-collision')});
+  remote.pointerFailure='before';
+  const localPreview=await first.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
+  await assert.rejects(first.service.confirm(localPreview),{code:'network'});
+  remote.pointerFailure=null;
+  const second=await openHarness({
+    store:memoryStore(productState(earnedLedger())),remote,ids:sequenceIds('article-collision'),
+  });
+  const foreignPreview=await second.service.preview({profileId:'p1',articleId:'evolution:explorer-boy:2'});
+  await second.service.confirm(foreignPreview);
+
+  await assert.rejects(first.service.refresh(),{code:'collision'});
+  assert.equal(first.commands.getState().commerce.jobs[0].status,'open');
+});
+
+test('a same-named foreign provenance operation never confirms the target-chain job',async()=>{
+  const remote=new PurchaseRemote();
+  const harness=await openHarness({remote,ids:sequenceIds('source-collision')});
+  remote.pointerFailure='before';
+  const preview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
+  await assert.rejects(harness.service.confirm(preview),{code:'network'});
+  remote.pointerFailure=null;
+  const job=harness.commands.getState().commerce.jobs[0];
+  const previous={
+    id:remote.coordinator.properties.purchaseHeadId,
+    sha256:remote.coordinator.properties.purchaseHeadSha256,
+  };
+  const sourceLedger=rebindLedger(earnedLedger(),{datasetId:BINDING.datasetId,epochId:'source-epoch'});
+  const restoredLedger=rebindLedger(earnedLedger(),{datasetId:BINDING.datasetId,epochId:'restored-epoch'});
+  const sourceBundle=await packBasis(sourceLedger,()=>remote.reserveId());
+  const restoreBundle=await packBasis(restoredLedger,()=>remote.reserveId());
+  const sourceValue=receipt({
+    coordinatorId:CONFIG.coordinatorId,basis:sourceBundle.ref,operationId:job.intent.operationId,
+    epochId:'source-epoch',
+  });
+  const sourceRef={id:await remote.reserveId(),sha256:await digest(sourceValue)};
+  const restoreValue=receipt({
+    coordinatorId:CONFIG.coordinatorId,basis:restoreBundle.ref,sequence:1,previous,
+    operationId:'different-target-operation',operation:'restore',epochId:'restored-epoch',intent:null,
+    economy:{version:1,kind:'economic-snapshot',source:{binding:BINDING,head:sourceRef,proof:null}},
+  });
+  const restoreRef={id:await remote.reserveId(),sha256:await digest(restoreValue)};
+  for(const entry of [...sourceBundle.parts,{ref:sourceBundle.ref,value:sourceBundle.manifest},
+    ...restoreBundle.parts,{ref:restoreBundle.ref,value:restoreBundle.manifest},
+    {ref:sourceRef,value:sourceValue},{ref:restoreRef,value:restoreValue}]) {
+    remote.files.set(entry.ref.id,structuredClone(entry.value));
+  }
+  remote.coordinator.properties.purchaseHeadId=restoreRef.id;
+  remote.coordinator.properties.purchaseHeadSha256=restoreRef.sha256;
+  remote.coordinator.version=String(Number(remote.coordinator.version)+1);
+  remote.coordinator.etag=`"head-${remote.coordinator.version}"`;
+
+  await harness.service.refresh();
+
+  assert.equal(harness.commands.getState().commerce.jobs[0].status,'superseded');
+});
+
+test('a mismatched target control candidate cannot activate the local control',async()=>{
+  const harness=await migratingHarness();
+  const prepared=await harness.service.prepareActivation();
+  const candidateValue=harness.remote.files.get(prepared.candidate.id);
+  const foreignRef={id:'foreign-control-head',sha256:await digest(candidateValue)};
+  harness.remote.files.set(foreignRef.id,structuredClone(candidateValue));
+  harness.remote.coordinator.properties={
+    ...prepared.pointerProperties,purchaseHeadId:foreignRef.id,purchaseHeadSha256:foreignRef.sha256,
+  };
+  harness.remote.coordinator.version='2';harness.remote.coordinator.etag='"head-2"';
+
+  await assert.rejects(harness.service.refresh(),{code:'collision'});
+
+  assert.notEqual(harness.commands.getState().commerce.control.phase,'confirmed');
+  assert.equal(harness.sync.calls.applied,0);
+});
+
+test('verified new learning points rebuild available funds for the next purchase',async()=>{
+  const harness=await openHarness();
+  const firstPreview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
+  await harness.service.confirm(firstPreview);
+  const fixture=createFixture();
+  const start=fixture.event('round.started',{
+    roundId:'later-round',profileId:'p1',mode:'all',size:10,
+  },{id:'later-round-start',deviceId:'learning-device',clock:1000});
+  const answers=Array.from({length:10},(_,index)=>fixture.answer({
+    id:`later-answer-${index+1}`,roundId:'later-round',profileId:'p1',ordinal:index+1,
+    wordId:`w${(index%3)+1}`,deviceId:'learning-device',clock:1001+index,
+  }));
+  const before=harness.commands.getState(),next=structuredClone(before);
+  next.ledger.events.push(start,...answers);
+  next.clock=1010;
+  await harness.commands.commitExternal(next,await productStateHash(before));
+
+  const preview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-boy:2'});
+
+  assert.equal(preview.earnedPoints,400);
+  assert.equal(preview.spentPoints,200);
+  assert.equal(preview.availablePoints,200);
 });

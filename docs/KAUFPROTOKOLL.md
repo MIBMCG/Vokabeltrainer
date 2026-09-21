@@ -700,6 +700,8 @@ sync.prepareRestoreCandidate({state,control,input,history,reserve})
   -> {epochId,candidate,uploads}
 
 sync.applyConfirmedControl({state,control,history}) -> ProductState
+
+sync.syncLearning() -> {phase:'synced', ...}
 ```
 
 Vor `prepare*Candidate` ist der `ControlJob` in Phase `intent` dauerhaft
@@ -712,3 +714,27 @@ dessen Ergebnis gemeinsam mit dem bestätigten Commerce-Kopf. Ein fehlender Port
 schließt den Ablauf mit `not-ready`; der Shop wird in diesem Paket nicht
 automatisch sichtbar. Markerabsichten gehören in den dauerhaften Produkt-Outbox
 oder in eine später ausdrücklich validierte Schemaerweiterung, nie nur in RAM.
+
+`syncLearning` ist ein enger Adapter auf den vollständigen Produktabgleich. Er
+darf insbesondere nicht erneut `PurchaseService.refresh` aufrufen, weil er aus
+der bereits serialisierten Kaufoperation verwendet wird. Ein fehlender Port
+oder ein Ergebnis außer `phase:'synced'` sperrt den Kauf. Nach seiner Rückgabe
+liest der Kaufdienst den aktuellen Commands-Zustand erneut und prüft die exakte
+Bindingidentität, leere Outbox und Pendingpakete, Quarantäne sowie Fachkonflikte
+und Integritätsprobleme. Der Rückgabestatus allein verleiht keine Autorität.
+
+Vor Vorschau, Bestätigung und Reservierung wird dieser Fachabgleich ausgeführt.
+Die wirtschaftlichen Konten werden anschließend aus dem geprüften aktuellen
+Ledger und ausschließlich den bestätigten Ausgaben/Besitzlisten der verifizierten
+Kaufhistorie neu aufgebaut. Vor dem ersten abhängigen Upload liest der Dienst
+den exakten geplanten Receipt-/Basis-Kandidaten gemeinsam mit der vollständigen
+bereits geprüften Historie probeweise ein und spielt ihn vollständig ab. Ein
+Kandidat, der frühere aktive Fakten entfernt oder ändert, kann daher den
+gemeinsamen Pointer nicht erreichen.
+
+Lokale Aufträge werden nur durch einen Beleg auf der aktiven Zielkette bestätigt.
+Die Operations-ID allein genügt nicht: Referenz und Body des gespeicherten
+Kandidaten, der unveränderliche Kaufintent beziehungsweise Operation und Epoche
+des ControlJobs müssen exakt mit dem tatsächlich gelesenen Beleg übereinstimmen.
+Gleichnamige Operations-IDs in einer Herkunftskette bestätigen keinen lokalen
+Zielauftrag; eine abweichende Zielkettenverwendung wird als `collision` gesperrt.

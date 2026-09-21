@@ -1,8 +1,9 @@
 import {ProductError} from '../model/errors.js';
 import {productStateHash} from '../commands.js';
+import {project} from '../learning/progress.js';
 import {packBasis} from './basis.js';
 import {readHistory} from './history.js';
-import {purchaseOffer} from './projection.js';
+import {purchaseOffer,rebuildAccounts} from './projection.js';
 import {assertCommerce,assertIntent} from './schema.js';
 import {canonical,copy,digest,fail,sameRef} from './value.js';
 import {prepareBootstrap,resumeBootstrap} from './bootstrap.js';
@@ -80,8 +81,93 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     return {...copy(snapshot.properties),purchaseHeadId:head.id,purchaseHeadSha256:head.sha256};
   }
 
-  function receiptFor(commerce,operationId) {
-    return lastHistory?.projection.receipts.find(entry=>entry.operationId===operationId)??null;
+  function targetReceipt(history,operationId) {
+    const byId=new Map(history.entries.values.map(entry=>[entry.ref.id,entry]));
+    let cursor=history.entries.head;
+    const seen=new Set();
+    while(cursor!==null) {
+      if(seen.has(cursor.id))fail('cycle','Die Zielbelegkette enthält einen Kreis.');
+      seen.add(cursor.id);
+      const entry=byId.get(cursor.id);
+      if(!entry||!sameRef(entry.ref,cursor))fail('history','Ein Zielkettenbeleg fehlt.');
+      if(entry.value.operationId===operationId)return copy(entry);
+      cursor=entry.value.previous;
+    }
+    return null;
+  }
+
+  function candidateUpload(uploads,candidate) {
+    return uploads.find(entry=>sameRef(entry.ref,candidate))??null;
+  }
+
+  function assertPurchaseMatch(found,job,attempt) {
+    const candidate=candidateUpload(attempt.uploads,attempt.candidate);
+    if(candidate===null||!sameRef(found.ref,attempt.candidate)
+      ||canonical(found.value)!==canonical(candidate.value)
+      ||found.value.operation!=='purchase'
+      ||canonical(found.value.intent)!==canonical(job.intent)) {
+      fail('collision','Die Zielkette verwendet die Kaufoperations-ID für einen anderen Auftrag.');
+    }
+  }
+
+  function assertControlMatch(found,control) {
+    const candidate=candidateUpload(control.uploads,control.candidate);
+    if(candidate===null||!sameRef(found.ref,control.candidate)
+      ||canonical(found.value)!==canonical(candidate.value)
+      ||found.value.operation!==control.operation
+      ||found.value.operationId!==control.operationId
+      ||found.value.epochId!==control.epochId) {
+      fail('collision','Die Zielkette verwendet die Steueroperations-ID für einen anderen Auftrag.');
+    }
+  }
+
+  async function syncLearning() {
+    if(typeof sync.syncLearning!=='function') {
+      fail('not-ready','Der vollständige Lernabgleich ist nicht angebunden.');
+    }
+    const before=current(),expectedBinding=copy(before.commerce.binding);
+    const result=await sync.syncLearning();
+    if(result?.phase!=='synced')fail('pending','Der Lernstand ist noch nicht vollständig abgeglichen.');
+    const state=current();
+    if(canonical(state.binding)!==canonical(expectedBinding)
+      ||canonical(state.commerce.binding)!==canonical(expectedBinding)) {
+      fail('binding','Der Lernabgleich hat Konto oder Datensatz gewechselt.');
+    }
+    if(state.outboxEventIds.length>0||state.pendingPackets.length>0) {
+      fail('pending','Der Lernabgleich hat noch unbestätigte Änderungen.');
+    }
+    if(state.quarantinedFiles.length>0)fail('integrity','Der Lernabgleich enthält gesperrte Dateien.');
+    const learning=project(state.ledger);
+    if(learning.epochConflict||learning.conflicts.length>0||learning.integrityProblems.length>0
+      ||learning.activeEpochId===null) {
+      fail('incomplete','Der Lernstand ist nach dem Abgleich nicht vollständig eindeutig.');
+    }
+    return {state,learning};
+  }
+
+  function economicForLedger(history,state) {
+    const learning=project(state.ledger);
+    if(learning.epochConflict||learning.conflicts.length>0||learning.integrityProblems.length>0
+      ||learning.activeEpochId===null) {
+      fail('incomplete','Der Lernstand ist nicht vollständig eindeutig.');
+    }
+    return {
+      ...copy(history.projection),activeEpochId:learning.activeEpochId,
+      accounts:rebuildAccounts(learning,history.projection.accounts),
+    };
+  }
+
+  async function preflightCandidate({candidate,uploads,history,binding}) {
+    const local=new Map(uploads.map(entry=>[entry.ref.id,copy(entry.value)]));
+    return readHistory({
+      head:candidate,binding,
+      cache:history?.cache??{version:1,head:null,values:[]},
+      read:async(fileId)=>{
+        if(!local.has(fileId))fail('history',`Der vorgeschlagene Belegwert fehlt: ${fileId}.`);
+        return copy(local.get(fileId));
+      },
+      onProgress:()=>{},
+    });
   }
 
   async function refreshInternal() {
@@ -117,8 +203,10 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     nextCommerce.head=copy(head);
     nextCommerce.cache=copy(history.cache);
     for(const job of nextCommerce.jobs) {
-      const found=history.projection.receipts.find(entry=>entry.operationId===job.intent.operationId);
+      const found=targetReceipt(history,job.intent.operationId);
       if(found) {
+        const attempt=job.attempts.at(-1);
+        assertPurchaseMatch(found,job,attempt);
         job.status='confirmed';
         for(const attempt of job.attempts)if(!['rejected','superseded'].includes(attempt.phase))attempt.phase='confirmed';
         continue;
@@ -133,11 +221,14 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     }
     let confirmedControl=false;
     if(nextCommerce.control!==null) {
-      const found=history.projection.receipts.find(entry=>entry.operationId===nextCommerce.control.operationId);
-      if(found&&nextCommerce.control.phase!=='confirmed') {
-        nextCommerce.control.phase='confirmed';
-        nextCommerce.mode=nextCommerce.control.operation==='initialize'?'active':nextCommerce.mode;
-        confirmedControl=true;
+      const found=targetReceipt(history,nextCommerce.control.operationId);
+      if(found) {
+        assertControlMatch(found,nextCommerce.control);
+        if(nextCommerce.control.phase!=='confirmed') {
+          nextCommerce.control.phase='confirmed';
+          nextCommerce.mode=nextCommerce.control.operation==='initialize'?'active':nextCommerce.mode;
+          confirmedControl=true;
+        }
       } else if(!found&&['pointer-pending','reconciling'].includes(nextCommerce.control.phase)
         && nextCommerce.control.head!==null&&!sameRef(head,nextCommerce.control.head)) {
         nextCommerce.control.phase='superseded';
@@ -175,6 +266,7 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
   }
 
   async function previewInternal({profileId,articleId}={}) {
+    await syncLearning();
     const history=await ensureHistory();
     const state=current(),commerce=state.commerce;
     if(commerce.mode!=='active'||history===null)fail('not-ready','Käufe sind noch nicht aktiviert.');
@@ -182,7 +274,7 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
       fail('pending','Ein Steuerauftrag muss zuerst abgeschlossen werden.');
     }
     if(commerce.jobs.some(job=>job.status==='open'))fail('pending','Ein Kauf wird bereits geprüft.');
-    const offer=purchaseOffer({ledger:state.ledger,economic:history.projection,profileId,articleId});
+    const offer=purchaseOffer({ledger:state.ledger,economic:economicForLedger(history,state),profileId,articleId});
     const stateHash=await productStateHash(state);
     const previewId=await digest({version:1,kind:'purchase-preview',stateHash,head:commerce.head,offer});
     return {...copy(offer),previewId,stateHash,head:copy(commerce.head)};
@@ -208,6 +300,7 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
   }
 
   async function reservePurchase(operationId) {
+    await syncLearning();
     await refreshInternal();
     let state=current(),commerce=state.commerce;
     let {job,attempt}=attemptByOperation(commerce,operationId);
@@ -218,7 +311,7 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     if(!sameRef(remoteHead,commerce.head))fail('stale','Der gemeinsame Kaufkopf hat sich geändert.');
     const history=lastHistory??await ensureHistory();
     const offer=purchaseOffer({
-      ledger:state.ledger,economic:history.projection,
+      ledger:state.ledger,economic:economicForLedger(history,state),
       profileId:job.intent.profileId,articleId:job.intent.articleId,
     });
     if(offer.epochId!==job.intent.epochId||offer.price!==job.intent.price
@@ -232,6 +325,7 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     };
     const receiptRef={id:await transport.reserveId(),sha256:await digest(receiptValue)};
     const uploads=uploadClosure(bundle,receiptRef,receiptValue);
+    await preflightCandidate({candidate:receiptRef,uploads,history,binding:commerce.binding});
     const pointerProperties=exactPointerProperties(snapshot,receiptRef);
     ({job,attempt}=await persistAttempt(operationId,({attempt:target})=>{
       target.phase='reserved';target.head=copy(commerce.head);target.etag=snapshot.etag;
@@ -283,12 +377,14 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
 
   async function confirmInternal(preview) {
     if(!preview||typeof preview!=='object')fail('invalid','Die Kaufvorschau fehlt.');
+    await syncLearning();
+    await refreshInternal();
     const state=current();
     if(await productStateHash(state)!==preview.stateHash||!sameRef(state.commerce.head,preview.head)) {
       fail('stale','Die Kaufvorschau ist nicht mehr aktuell.');
     }
     const offer=purchaseOffer({
-      ledger:state.ledger,economic:lastHistory?.projection,
+      ledger:state.ledger,economic:economicForLedger(lastHistory,state),
       profileId:preview.profileId,articleId:preview.articleId,
     });
     const expectedId=await digest({version:1,kind:'purchase-preview',stateHash:preview.stateHash,head:preview.head,offer});
@@ -330,6 +426,8 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     }
     const storedControl=current().commerce.control;
     if(storedControl?.operationId===operationId) {
+      if(['rejected','superseded','confirmed'].includes(storedControl.phase))return copy(storedControl);
+      if(storedControl.phase==='intent')await prepareControl(storedControl.operation);
       return sendControl(operationId,storedControl.operation);
     }
     await refreshInternal();
@@ -430,6 +528,14 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
       reserve:()=>transport.reserveId(),
     });
     await verifyUploads(prepared?.uploads);
+    const candidateHistory=await preflightCandidate({
+      candidate:prepared?.candidate,uploads:prepared?.uploads,
+      history:operation==='initialize'?null:lastHistory,binding:state.commerce.binding,
+    });
+    const candidateReceipt=targetReceipt(candidateHistory,control.operationId);
+    if(candidateReceipt===null||!sameRef(candidateReceipt.ref,prepared.candidate)) {
+      fail('reference','Der vorbereitete Steuerkandidat ist nicht sein eigener Zielkettenkopf.');
+    }
     const snapshot=await transport.readFolder({
       id:state.commerce.config.coordinatorId,kind:'coordinator',config:state.commerce.config,
     });
