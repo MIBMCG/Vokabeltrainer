@@ -1,5 +1,7 @@
 # Fortsetzung der Kauf-Integration – 21.09.2026
 
+**Historischer Fortsetzungsverlauf; inzwischen erneut pausiert.** Maßgeblich ist die [Desktop-Übergabe vom 21.09.](2026-09-21-desktop-pause.md). Getesteter Fixcheckpoint `1ecddd6`, 471/471 Gesamttests bestanden; unabhängige Task-3-Nachprüfung bleibt offen. Keine Entwicklung während der Nutzerpause.
+
 Der Nutzer hat nach dem Abgleich mit GitHub ausdrücklich die Weiterarbeit an den Aufgaben beauftragt. Die Pause vom 20.09. ist beendet. Der [bestätigte Integrationsentwurf](../superpowers/specs/2026-09-20-persistent-purchases-design.md) und der [sechsteilige Plan](../superpowers/plans/2026-09-20-persistent-purchases.md) bleiben Grundlage; keine erneute allgemeine Startentscheidung nötig.
 
 ## Übernommener Stand
@@ -29,6 +31,7 @@ Task 3 ist in `5f73008` implementiert, aber **noch nicht freigegeben**. [Umsetzu
 - Falls bereits Task 3 oder 4 neue Kaufmodule über die ausgelieferte Befehls-/Migrationsschicht lädt, werden Serverfreigabe, Worker-Assetliste und Cachekennung im selben Task ergänzt und Offline-/Updatepfad geprüft. Die engere Dateiliste des Plans darf diese bestehende Projektregel nicht bis Task 5 verschieben. Kosten: zusätzliche fokussierte Browserprüfung, keine Erweiterung des Produktumfangs.
 - Der Einrichtungsauftrag erhält den vollständigen Pointerinhalt zusätzlich zur ursprünglichen ETag; nur eine ausdrückliche Fortsetzung darf diesen identischen PUT wiederholen. Die Schreibgrenze prüft gespeicherten Konfigurationshash und tatsächlich installierte Konfigurationsreferenz frisch. Dies konkretisiert die vorgeschriebene Dauerhaftigkeit und Bindung. Kosten: zusätzliche Drive-Lesezugriffe und gegebenenfalls Schema-/API-Nacharbeit vor Auslieferung.
 - Task 3 ergänzt einen eigenen dauerhaften Steuerauftrag für Initialisierung/Restore und vollständige Pointerproperties für Kaufversuche. Ein offener Steuerauftrag sperrt neue Käufe; die bisher ausschließlich für Käufe vorgesehenen Aufträge werden dafür nicht umgedeutet. Task 4 erhält den gespeicherten Steuerauftrag und die vollständige geprüfte Historie zur atomaren Aktivierung; Marker-/Epochenabsichten müssen vor Veröffentlichung ebenfalls dauerhaft vorliegen. Kosten: lokale Schema-/Schnittstellenanpassung vor Auslieferung und zusätzliche Wiederaufnahmetests, keine neue Produktentscheidung.
+- Die Task-3-Korrektur verlangt einen gesonderten Lernabgleich über `sync.syncLearning()`. Nur ein erfolgreicher Abgleich mit widerspruchsfreiem, vollständig übertragenem Zustand erlaubt eine neue Kaufbasis. Task 4 muss diesen Adapter ohne Rückruf in die laufende Kaufwarteschlange anbinden. Konten werden aus dem geprüften aktuellen Ledger und bestätigtem Besitz/Ausgaben neu aufgebaut; der Kandidat wird vor Veröffentlichung vollständig geprüft. Kosten: zusätzlicher Abgleich und gegebenenfalls Adapter-Nacharbeit, keine neue Punktequelle.
 
 ## Grenzen
 
