@@ -11,9 +11,9 @@ Der Nutzer hat nach dem Abgleich mit GitHub ausdrücklich die Weiterarbeit an de
 
 ## Laufende Arbeit
 
-Task 1 ist in `7ec80fd` vorhanden, aber noch nicht zur Integration freigegeben. Korrekturrunde 1 bearbeitet die vier wichtigen Befunde aus der [vollständigen Review](../reports/2026-09-20-persistent-purchases-task1-review.md): unerlaubter Epochenwechsel beim Kauf, Wiederverwendung alter Restoreepochen, unvollständige Herkunft bei erneutem Fremdrestore und unzureichend gebundene gespeicherte Schreibversuche. Jede Fehlerklasse erhält einen gezielten Negativtest vor der Korrektur und danach eine unabhängige Nachprüfung.
+Task 1 ist in `7ec80fd` vorhanden; Korrekturrunde 1 ist in `5904dec` implementiert und unabhängig nachgeprüft. Alle vier wichtigen Befunde sind behoben: unerlaubter Epochenwechsel beim Kauf, Wiederverwendung alter Restoreepochen, unvollständige Herkunft bei erneutem Fremdrestore und unzureichend gebundene gespeicherte Schreibversuche. Jede Fehlerklasse wurde vor der Korrektur gezielt reproduziert. **49/49 fokussierte und 391/391 vollständige Node-Tests bestanden**, darunter 1.000 Restoretransaktionen auf neuen Zielepochen. [Umsetzungs- und Korrekturbericht](../reports/2026-09-21-persistent-purchases-task1-fix.md), [unabhängige Nachprüfung](../reports/2026-09-21-persistent-purchases-task1-review.md). Task 2 beginnt auf diesem geprüften Kern; das gesamte Kaufpaket ist damit noch nicht freigegeben.
 
-Die beiden kleineren Reviewbefunde bleiben ausdrücklich für Task 3 vorgemerkt: tatsächliche Eventloop-Abgabe bei langen Historien sowie Erhaltung maschinenlesbarer Auth-/Netzfehler. Task 2 darf erst nach der Freigabe des korrigierten Kerns beginnen. Danach folgen Transport/Einrichtung, persistenter Service, gemeinsame Sync-/Restore-/Backupintegration, Oberfläche und Gesamtprüfung.
+Die beiden kleineren Reviewbefunde bleiben ausdrücklich für Task 3 vorgemerkt: tatsächliche Eventloop-Abgabe bei langen Historien sowie Erhaltung maschinenlesbarer Auth-/Netzfehler. Aktuell entsteht Task 2, Transport/Einrichtung. Danach folgen persistenter Service, gemeinsame Sync-/Restore-/Backupintegration, Oberfläche und Gesamtprüfung.
 
 ## Ausführungsentscheidungen
 
@@ -21,6 +21,7 @@ Die beiden kleineren Reviewbefunde bleiben ausdrücklich für Task 3 vorgemerkt:
 - Der auf diesem Rechner fehlende Aufgabenstand wird aus den versionierten Berichten rekonstruiert. PowerShell ersetzt die hier zuvor an Sandbox-Pipes gescheiterten Bash-Helfer. Die temporäre Koordination ist neu erzeugbar; alle wesentlichen Ergebnisse werden dauerhaft dokumentiert.
 - Die abschließende Paketreview beginnt vor dem Kaufkern bei `f54bd5d`, nicht beim historischen `main`. Der langlebige Featurebranch enthält bereits geprüfte frühere Pakete. Zusätzliche Querschnittsprüfung bleibt bei konkreten Integrationsrisiken erforderlich.
 - Umsetzung mit GPT-5.6 Sol/hoch; unabhängige Prüfung der Datenverträge und abschließende Paketreview mit GPT-6 Astra/hoch. Jeweils nur ein Produkt-Implementierer, keine parallelen Änderungen an denselben Modulen.
+- Falls bereits Task 3 oder 4 neue Kaufmodule über die ausgelieferte Befehls-/Migrationsschicht lädt, werden Serverfreigabe, Worker-Assetliste und Cachekennung im selben Task ergänzt und Offline-/Updatepfad geprüft. Die engere Dateiliste des Plans darf diese bestehende Projektregel nicht bis Task 5 verschieben. Kosten: zusätzliche fokussierte Browserprüfung, keine Erweiterung des Produktumfangs.
 
 ## Grenzen
 
