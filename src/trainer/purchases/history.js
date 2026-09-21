@@ -1,4 +1,5 @@
 import {resolveEpochs} from '../model/epochs.js';
+import {ProductError} from '../model/errors.js';
 import {project} from '../learning/progress.js';
 import {readBasisRecord, verifyBasisRecord} from './basis.js';
 import {purchaseOffer, rebuildAccounts} from './projection.js';
@@ -387,12 +388,13 @@ export async function replayHistory({entries, bases, binding}) {
   });
 }
 
-async function verifyCachedValues(cache) {
+async function verifyCachedValues(cache, onWork) {
   const byId = new Map();
   for (const entry of cache.values) {
     const actual = await digest(entry.value);
     if (actual !== entry.ref.sha256) fail('integrity', `Der Cachewert ${entry.ref.id} hat einen falschen Hash.`);
     byId.set(entry.ref.id, copy(entry));
+    await onWork();
   }
   return byId;
 }
@@ -418,24 +420,32 @@ export async function readHistory({head, read, cache, binding, onProgress}) {
   const checkedCache = assertCache(cache);
   if (typeof read !== 'function') fail('invalid', 'Die Lesefunktion für die Historie fehlt.');
   if (typeof onProgress !== 'function') fail('invalid', 'Die Fortschrittsfunktion für die Historie fehlt.');
-  const values = await verifyCachedValues(checkedCache);
+  const yieldToEventLoop = () => new Promise((resolve) => setTimeout(resolve, 0));
+  let work = 0;
+  const recordWork = async () => {
+    work += 1;
+    if (work % 32 === 0) await yieldToEventLoop();
+  };
+  const values = await verifyCachedValues(checkedCache, recordWork);
   const aliases = new Map();
   const proofs = new Map();
   let verified = 0;
 
-  async function getById(id) {
+  async function getById(id, ref = null) {
     const cached = values.get(id);
     if (cached) {
       return copy(cached.value);
     }
     let value;
     try {
-      value = await read(id);
-    } catch {
+      value = await read(id, ref === null ? null : copy(ref));
+    } catch (error) {
+      if (error instanceof ProductError) throw error;
       fail('history', `Ein unveränderlicher Historienwert fehlt: ${id}.`);
     }
     const sha256 = await digest(value);
     values.set(id, {ref: {id, sha256}, value: copy(value)});
+    await recordWork();
     return copy(value);
   }
 
@@ -445,7 +455,7 @@ export async function readHistory({head, read, cache, binding, onProgress}) {
       if (!sameRef(alias.logical, ref)) fail('integrity', 'Ein logischer Herkunftsverweis hat einen anderen Hash.');
       return copy(alias.value);
     }
-    const value = await getById(ref.id);
+    const value = await getById(ref.id, ref);
     const cached = values.get(ref.id);
     if (!sameRef(cached.ref, ref)) fail('integrity', 'Eine bekannte Datei-ID wird mit anderem Hash referenziert.');
     return value;
@@ -499,7 +509,7 @@ export async function readHistory({head, read, cache, binding, onProgress}) {
       }
       queue.push({ref: source.head, binding: source.binding});
     }
-    if (verified % 32 === 0) await Promise.resolve();
+    if (verified % 32 === 0) await yieldToEventLoop();
   }
   assertExtendsCachedHead(checkedHead, checkedCache.head, receipts);
 
@@ -507,14 +517,14 @@ export async function readHistory({head, read, cache, binding, onProgress}) {
   for (const {value} of receipts.values()) basisRefs.set(value.basis.id, value.basis);
   const bases = [];
   for (const ref of basisRefs.values()) {
-    const record = await readBasisRecord(ref, async (id) => {
+    const record = await readBasisRecord(ref, async (id, expectedRef) => {
       const alias = aliases.get(id);
-      return alias ? copy(alias.value) : getById(id);
+      return alias ? copy(alias.value) : getById(id, expectedRef);
     });
     bases.push(record);
     verified += 1;
     onProgress({phase: 'bases', verified, total: receipts.size + basisRefs.size});
-    if (verified % 32 === 0) await Promise.resolve();
+    if (verified % 32 === 0) await yieldToEventLoop();
   }
   const entries = {
     head: copy(checkedHead),

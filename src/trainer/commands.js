@@ -22,7 +22,8 @@ import {assertLedger, assertEpoch, assertSnapshot, assertEvent} from './model/sc
 import {assertBackup} from './backup/format.js';
 import {CURRENT_VERSION as VERSION, assertContainedVersion, assertSupportedVersion, LEGACY_VERSION} from './model/versions.js';
 import {DEFAULT_POLICY, assertPolicy, currentPolicy, currentGenerations} from './model/policies.js';
-import {migrateProductStateV1} from './storage/migrate.js';
+import {migrateProductStateV1,migrateProductStateV2} from './storage/migrate.js';
+import {assertCommerce,emptyCommerce} from './purchases/schema.js';
 import {validatePacket} from './sync/packets.js';
 
 const STATE_KEYS = [
@@ -105,7 +106,7 @@ function assertRestoreRecords(state) {
   for (const copy of state.safetyCopies) {
     assertExactKeys(copy, ['id','createdAt','purpose','backup','hash','driveManifestFileId','verified']);
     assertId(copy.id); assertBackup(copy.backup);
-    if (copy.createdAt !== copy.backup.exportedAt || !['safety','restore','join',...(state.storageVersion===2?['format-migration']:[])].includes(copy.purpose)
+    if (copy.createdAt !== copy.backup.exportedAt || !['safety','restore','join',...(state.storageVersion>=2?['format-migration']:[])].includes(copy.purpose)
       || !HASH_PATTERN.test(copy.hash) || typeof copy.verified !== 'boolean') invalid('Die lokale Sicherheitskopie ist ungültig.');
     if (copy.driveManifestFileId !== null) assertId(copy.driveManifestFileId);
   }
@@ -223,7 +224,7 @@ function cloneRoundMap(rounds) {
 }
 
 function assertRound(round, profileId, storageVersion) {
-  const v2=storageVersion===2;
+  const v2=storageVersion>=2;
   assertExactKeys(round, [...ROUND_KEYS,...(v2?['policy','policyEventId','schedulingMode']:[])], 'Eine lokale Runde ist ungültig.');
   if(v2) {
     assertPolicy(round.policy);
@@ -296,8 +297,8 @@ function assertRound(round, profileId, storageVersion) {
 }
 
 export function assertProductState(value, expectedDeviceId = null) {
-  assertExactKeys(value, STATE_KEYS, 'Der lokale Produktzustand ist ungültig.');
-  if (![1,2].includes(value.storageVersion)) fail('version', 'Diese lokale Speicherversion wird nicht unterstützt.');
+  if (![1,2,3].includes(value?.storageVersion)) fail('version', 'Diese lokale Speicherversion wird nicht unterstützt.');
+  assertExactKeys(value, [...STATE_KEYS,...(value.storageVersion===3?['commerce']:[])], 'Der lokale Produktzustand ist ungültig.');
   assertId(value.deviceId, 'Die Geräte-ID ist ungültig.');
   if (expectedDeviceId !== null && value.deviceId !== expectedDeviceId) {
     invalid('Der lokale Produktzustand gehört zu einem anderen Gerät.');
@@ -339,7 +340,7 @@ export function assertProductState(value, expectedDeviceId = null) {
       ...value.restoreJobs.flatMap(j=>[j.backup,...j.uploads.map(u=>u.value),...(j.epoch?[j.epoch]:[])])];
     assertContainedVersion(LEGACY_VERSION,objects);
   }
-  if(value.storageVersion===2)for(const round of Object.values(rounds)) {
+  if(value.storageVersion>=2)for(const round of Object.values(rounds)) {
     const start=ledger.events.find(e=>e.type==='round.started' && e.payload.roundId===round.id);
     if(!start || start.payload.profileId!==round.profileId)invalid('Der lokale Rundenstart fehlt.');
     const policy=start.formatVersion===1?DEFAULT_POLICY:start.payload.policy;
@@ -359,6 +360,7 @@ export function assertProductState(value, expectedDeviceId = null) {
       }
     }
   }
+  if(value.storageVersion===3)assertCommerce(value.commerce);
   if (value.pinVerifier !== null) assertRecord(value.pinVerifier, 'Der lokale PIN-Prüfwert ist ungültig.');
   return {
     ...structuredClone(value),
@@ -465,8 +467,9 @@ export async function createCommands({store, now, id, deviceId, onChange}) {
   assertId(deviceId, 'Die Geräte-ID ist ungültig.');
   const loaded = await store.load();
   let state = loaded === null ? null : assertProductState(normalizeProductState(loaded), deviceId);
-  if(state?.storageVersion===1) {
-    const migrated=await migrateProductStateV1(state,{now});
+  if(state?.storageVersion===1 || (state?.storageVersion===2 && state.restoreJobs.length===0)) {
+    let migrated=state.storageVersion===1?await migrateProductStateV1(state,{now}):state;
+    if(migrated.restoreJobs.length===0)migrated=await migrateProductStateV2(migrated,{now,createSafetyCopy:state.storageVersion===2});
     try { await store.save(migrated); }
     catch { throw new ProductError('storage','Die Formatumstellung konnte nicht gespeichert werden. Die bisherigen Daten bleiben erhalten.'); }
     state=migrated;
@@ -631,7 +634,7 @@ export async function createCommands({store, now, id, deviceId, onChange}) {
         const datasetId = id();
         const rootEpochId = id();
         const initial = {
-          storageVersion: 2,
+          storageVersion: 3,
           deviceId,
           clock: 0,
           ledger: {
@@ -672,6 +675,7 @@ export async function createCommands({store, now, id, deviceId, onChange}) {
           restoreJobs: [],
           snapshotManifests: [],
           pinVerifier: null,
+          commerce: emptyCommerce(),
         };
         await commit(initial);
       });

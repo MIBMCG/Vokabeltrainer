@@ -20,6 +20,8 @@ import {readSnapshot} from '../../src/trainer/backup/transport.js';
 import {exportBackup,validateBackup,backupLedger,dependencies,previewBackup} from '../../src/trainer/backup/format.js';
 import {buildPackets} from '../../src/trainer/sync/packets.js';
 import {productStateHash} from '../../src/trainer/commands.js';
+import {migrateProductStateV1,migrateProductStateV2} from '../../src/trainer/storage/migrate.js';
+import {emptyCommerce} from '../../src/trainer/purchases/schema.js';
 import {createFixture} from './fixtures.js';
 import {memoryStore,productState,sequenceIds,SyntheticDrive} from './backup-fixtures.js';
 
@@ -27,6 +29,38 @@ const now=()=>new Date('2026-09-19T10:00:00.000Z');
 const open=(store,old=false)=> (old?oldCommands:createCommands)({store,now,id:sequenceIds('local'),deviceId:'dev1',onChange(){}});
 let syncNumber=0;
 const syncFor=(commands,drive,old=false)=> (old?oldSync:createProductSync)({commands,drive,store:{},now,id:sequenceIds(`sync-${++syncNumber}`),onStatus(){}});
+
+test('v2 purchase-storage migration preserves product identities and adds a verified safety copy',async()=>{
+  const source=await migrateProductStateV1(productState(createFixture().base),{now});
+  source.pinVerifier={synthetic:'verifier'};
+  source.pendingPackets=[];
+  const before={};
+  for(const key of ['ledger','rounds','binding','outboxEventIds','pendingPackets','datasetSetup','packetIntegrity','knownFiles','quarantinedFiles','restoreJobs','snapshotManifests','pinVerifier']) {
+    before[key]=await digest(source[key]);
+  }
+
+  const migrated=await migrateProductStateV2(source,{now});
+
+  assert.equal(migrated.storageVersion,3);
+  assert.deepEqual(migrated.commerce,emptyCommerce());
+  for(const [key,hash] of Object.entries(before))assert.equal(await digest(migrated[key]),hash,key);
+  assert.deepEqual(migrated.safetyCopies.slice(0,source.safetyCopies.length),source.safetyCopies);
+  const copy=migrated.safetyCopies.at(-1);
+  assert.equal(copy.purpose,'format-migration');
+  assert.equal(copy.backup.formatVersion,2);
+  assert.equal(copy.hash,await digest(copy.backup));
+  assert.equal(copy.verified,true);
+  await validateBackup(copy.backup);
+});
+
+test('v2 purchase-storage migration defers while a legacy restore job is open',async()=>{
+  const source=await migrateProductStateV1(productState(createFixture().base),{now});
+  source.restoreJobs=[{
+    id:'restore-open',phase:'preparing',backup:await exportBackup(source,now().toISOString()),
+    previewId:null,parentHeads:null,safetyCopyId:null,snapshot:null,uploads:[],epoch:null,
+  }];
+  await assert.rejects(migrateProductStateV2(source,{now}),{code:'restore-pending'});
+});
 test('frozen v1 import closure is byte-identical to the historical product',async()=>{
   const base=new URL('../compat/v1/',import.meta.url);
   const manifest=JSON.parse(await readFile(new URL('source-manifest.json',base),'utf8'));
@@ -47,7 +81,8 @@ for(const feedback of [false,true])test(`v1 migration preserves open round ${fee
   source.safetyCopies.push({id:'prior-copy',createdAt:backup.exportedAt,purpose:'safety',backup,hash:await digest(backup),verified:true,driveManifestFileId:null});
   await store.save(source);
   const commands=await open(store);const result=commands.getState();
-  assert.equal(result.storageVersion,2);
+  assert.equal(result.storageVersion,3);
+  assert.deepEqual(result.commerce,emptyCommerce());
   for(const key of ['ledger','pendingPackets','pinVerifier','outboxEventIds','packetIntegrity','restoreJobs','binding']) {
     assert.equal(await digest(result[key]),await digest(source[key]),key);
   }
@@ -70,7 +105,7 @@ test('failed migration commit or unknown storage version preserves all persisted
   const source=productState(createFixture().base),store=memoryStore(source);
   store.save=async()=>{throw new Error('synthetic failed save');};
   await assert.rejects(open(store),e=>e.code==='storage');assert.deepEqual(store.snapshot(),source);
-  for(const storageVersion of [0,3,99]) {
+  for(const storageVersion of [0,4,99]) {
     const unknown=memoryStore({...source,storageVersion});
     await assert.rejects(open(unknown),e=>e.code==='version');assert.equal(unknown.snapshot().storageVersion,storageVersion);
   }
@@ -134,7 +169,7 @@ test('conflicted v1 migration retains both heads, produces old-reader backups, a
   })));
   source.clock=32;
   const store=memoryStore(source),commands=await open(store),migrated=commands.getState();
-  assert.equal(migrated.storageVersion,2);assert.deepEqual(migrated.ledger,source.ledger);
+  assert.equal(migrated.storageVersion,3);assert.deepEqual(migrated.ledger,source.ledger);
   assert.equal(migrated.safetyCopies.length,2);
   const selections=[];
   for(const copy of migrated.safetyCopies) {

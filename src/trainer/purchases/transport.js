@@ -442,6 +442,32 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
     return {config: commerce.config, configRef: commerce.configRef, attempt, upload};
   }
 
+  function controlAuthorization({commerce: rawCommerce, operationId}, ref, value) {
+    const commerce=assertCommerce(rawCommerce);
+    if(!sameBinding(commerce.binding,checkedBinding)||commerce.config?.descriptorHash!==descriptorHash) {
+      error('binding','Der Steuerauftrag gehört zu einer anderen Konfiguration.');
+    }
+    const control=commerce.control;
+    if(control===null||control.operationId!==operationId) {
+      error('binding','Der Steuerauftrag wurde nicht in diesem Kaufzustand registriert.');
+    }
+    const candidateUpload=control.uploads.find(entry=>sameRef(entry.ref,control.candidate));
+    const receipt=assertReceipt(candidateUpload?.value);
+    const manifestUpload=control.uploads.find(entry=>sameRef(entry.ref,receipt.basis));
+    if(receipt.datasetId!==checkedBinding.datasetId
+      ||receipt.coordinatorId!==commerce.config.coordinatorId
+      ||receipt.operation!==control.operation
+      ||receipt.operationId!==control.operationId
+      ||manifestUpload?.value?.datasetId!==checkedBinding.datasetId) {
+      error('binding','Der gespeicherte Steuerauftrag gehört nicht zur konfigurierten Belegfolge.');
+    }
+    const upload=control.uploads.find(entry=>sameRef(entry.ref,ref));
+    if(!upload||canonical(upload.value)!==canonical(value)) {
+      error('binding','Die Datei ist nicht im gespeicherten Steuerauftrag registriert.');
+    }
+    return {config:commerce.config,configRef:commerce.configRef,control,upload};
+  }
+
   async function verifyInstalledConfig(configRef, config) {
     const checkedRef = assertRef(configRef);
     const checkedConfig = assertConfig(config);
@@ -477,6 +503,9 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
     } else if (authorization?.kind === 'attempt') {
       const checked = attemptAuthorization(authorization, ref, value);
       authorizedConfig = await verifyInstalledConfig(checked.configRef, checked.config);
+    } else if (authorization?.kind === 'control') {
+      const checked=controlAuthorization(authorization,ref,value);
+      authorizedConfig=await verifyInstalledConfig(checked.configRef,checked.config);
     } else {
       error('binding', 'Der unveränderlichen Datei fehlt ein gespeicherter Schreibauftrag.');
     }
@@ -516,6 +545,8 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
   async function putPointer({snapshot, configRef = null, head = null, headValue = null, authorization} = {}) {
     let expected;
     let additions;
+    let storedProperties;
+    let storedEtag;
     if (authorization?.kind === 'setup') {
       const setup = setupAuthorization(authorization.setup, checkedBinding, descriptorHash);
       if (!sameRef(configRef, setup.configRef) || head !== null) {
@@ -572,19 +603,25 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
         error('binding', 'Drive hat einen anderen Pointer geändert.', response.status);
       }
       return {id: checkedBinding.folderId, status: response.status};
-    } else if (authorization?.kind === 'attempt') {
+    } else if (authorization?.kind === 'attempt' || authorization?.kind === 'control') {
       const commerce = assertCommerce(authorization.commerce);
-      const checked = attemptAuthorization(authorization, head, headValue);
+      const checked = authorization.kind==='attempt'
+        ? attemptAuthorization(authorization,head,headValue)
+        : controlAuthorization(authorization,head,headValue);
       const config = await verifyInstalledConfig(checked.configRef, checked.config);
-      const {attempt} = checked;
-      if (!sameRef(attempt.candidate, head)
-        || attempt.phase !== 'pointer-pending'
-        || attempt.etag !== snapshot?.etag
+      const stored = authorization.kind==='attempt'?checked.attempt:checked.control;
+      if (!sameRef(stored.candidate, head)
+        || stored.phase !== 'pointer-pending'
+        || stored.etag !== snapshot?.etag
         || await digest(headValue) !== head.sha256) {
         error('binding', 'Der Kopfpointer stimmt nicht mit dem gespeicherten Kaufversuch überein.');
       }
       expected = {id: config.coordinatorId, kind: 'coordinator', config};
       additions = {purchaseHeadId: head.id, purchaseHeadSha256: head.sha256};
+      storedProperties = stored.pointerProperties;
+      storedEtag = stored.etag;
+      requiredProperties(storedProperties, {...configProperties(config, 'coordinator'), ...additions});
+      propertiesBody(storedProperties);
       if (!same(commerce.config, config) || configRef !== null) error('binding', 'Der Kopfpointer ist falsch autorisiert.');
     } else {
       error('binding', 'Dem Pointer fehlt ein gespeicherter Schreibauftrag.');
@@ -599,11 +636,11 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
       }
       return {id: snapshot.id, status: null, unchanged: true};
     }
-    const properties = {...snapshot.properties, ...additions};
+    const properties = storedProperties;
     const body = {properties: propertiesBody(properties)};
     const response = await boundRequest(`${API_V2}/${encodeURIComponent(snapshot.id)}?fields=id,version,etag,properties`, {
       method: 'PUT',
-      headers: {'Content-Type': 'application/json; charset=UTF-8', 'If-Match': snapshot.etag},
+      headers: {'Content-Type': 'application/json; charset=UTF-8', 'If-Match': storedEtag},
       body: JSON.stringify(body),
     });
     const updated = await responseJson(response);

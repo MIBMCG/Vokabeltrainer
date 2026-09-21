@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 import {project} from '../../src/trainer/learning/progress.js';
+import {ProductError} from '../../src/trainer/model/errors.js';
 import {
   assertCommerce,
   assertIntent,
@@ -158,6 +159,7 @@ test('a reserved attempt owns every immutable upload and cannot borrow write aut
       head: {id: 'previous-receipt', sha256: '1'.repeat(64)},
       etag: '"opaque-etag"',
       candidate: candidate.ref,
+      pointerProperties: null,
       uploads: [],
     }],
   });
@@ -200,6 +202,66 @@ test('a reserved attempt owns every immutable upload and cannot borrow write aut
   restoreCandidateCommerce.jobs[0].attempts[0].uploads = restoreCandidateCommerce.jobs[0].attempts[0].uploads
     .map((upload) => upload.ref.id === candidate.ref.id ? restoreCandidate : upload);
   assert.throws(() => assertCommerce(restoreCandidateCommerce), {code: 'collision'});
+});
+
+test('control journal keeps initialize separate from purchases and persists an exact pointer body', async () => {
+  const ledger = earnedLedger();
+  const bundle = await packed(ledger, 'control');
+  const candidateValue = receipt({basis: bundle.ref, operationId: 'initialize-control'});
+  const candidate = await referenced(candidateValue, 'control-receipt');
+  const pointerProperties = {
+    app: 'vokabeltrainer-purchases',
+    kind: 'coordinator',
+    datasetId: BINDING.datasetId,
+    descriptorFileId: BINDING.descriptorFileId,
+    descriptorHash: 'a'.repeat(64),
+    coordinatorId: 'coordinator-a',
+    contentFolderId: 'content-a',
+    foreign: 'preserved',
+    purchaseHeadId: candidate.ref.id,
+    purchaseHeadSha256: candidate.ref.sha256,
+  };
+  const commerce = emptyCommerce();
+  commerce.mode = 'migrating';
+  commerce.binding = BINDING;
+  commerce.config = {
+    version:1,kind:'purchase-config',binding:BINDING,descriptorHash:'a'.repeat(64),
+    coordinatorId:'coordinator-a',contentFolderId:'content-a',
+  };
+  commerce.configRef = {id:'config-a',sha256:await digest(commerce.config)};
+  commerce.control = {
+    version: 1,
+    operationId: 'initialize-control',
+    operation: 'initialize',
+    phase: 'pointer-pending',
+    epochId: 'e0',
+    head: null,
+    etag: '"opaque-etag"',
+    candidate: candidate.ref,
+    pointerProperties,
+    uploads: [...bundle.parts,{ref:bundle.ref,value:bundle.manifest},candidate],
+  };
+
+  assert.deepEqual(assertCommerce(commerce).control, commerce.control);
+  assert.throws(() => assertCommerce({
+    ...commerce,
+    control: {...commerce.control,pointerProperties:{...pointerProperties,purchaseHeadId:'other'}},
+  }), {code:'binding'});
+  assert.throws(() => assertCommerce({
+    ...commerce,
+    jobs:[{version:1,intent:intent(),status:'open',attempts:[{
+      version:1,attemptId:'blocked',phase:'intent',head:null,etag:null,candidate:null,
+      pointerProperties:null,uploads:[],
+    }]}],
+  }), {code:'invalid'});
+  assert.throws(() => assertCommerce({
+    ...commerce,
+    control:{...commerce.control,uploads:commerce.control.uploads.filter(entry=>entry.ref.id!==bundle.parts[0].ref.id)},
+  }), {code:'invalid'});
+  assert.throws(() => assertCommerce({
+    ...commerce,
+    control:{...commerce.control,uploads:[...commerce.control.uploads,{ref:{id:'extra',sha256:'f'.repeat(64)},value:{extra:true}}]},
+  }), {code:'invalid'});
 });
 
 test('basis packing round-trips a validated ledger and detects changed manifest or part content', async () => {
@@ -703,6 +765,8 @@ test('iterative history reading verifies 1000 transactions, fresh epochs, all ID
   ];
   let reads = 0;
   let progress = 0;
+  let macrotaskYielded = false;
+  setTimeout(() => { macrotaskYielded = true; }, 0);
   const read = memoryReader(stored);
   const result = await readHistory({
     head: previous,
@@ -720,6 +784,7 @@ test('iterative history reading verifies 1000 transactions, fresh epochs, all ID
   assert.equal(result.projection.accounts.p1.availablePoints, 100);
   assert.ok(progress >= 1001);
   assert.ok(reads >= 1001);
+  assert.equal(macrotaskYielded, true);
 
   let cachedReads = 0;
   const cached = await readHistory({
@@ -751,4 +816,15 @@ test('iterative history reading verifies 1000 transactions, fresh epochs, all ID
     binding: BINDING,
     onProgress: () => {},
   }), {code: 'history'});
+});
+
+test('history reader preserves machine-readable authentication and network failures', async()=>{
+  const initial=await initialHistory();
+  for(const code of ['auth','network']) {
+    await assert.rejects(readHistory({
+      head:initial.entry.ref,
+      read:async()=>{throw new ProductError(code,`synthetic ${code}`);},
+      cache:{version:1,head:null,values:[]},binding:BINDING,onProgress:()=>{},
+    }),{code});
+  }
 });

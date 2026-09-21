@@ -14,6 +14,7 @@ import {
   fail,
   sameRef,
 } from './value.js';
+import {assertProofManifest} from './proof.js';
 
 const OPERATIONS = ['initialize', 'purchase', 'restore'];
 const MODES = ['inactive', 'migrating', 'active', 'blocked'];
@@ -143,10 +144,21 @@ function assertUpload(value) {
   return copy(value);
 }
 
+function assertPointerProperties(value) {
+  if (value === null) return null;
+  assertPlainObject(value, 'Der gespeicherte Pointerbody ist ungültig.');
+  for (const [key, propertyValue] of Object.entries(value)) {
+    if (key.length === 0 || typeof propertyValue !== 'string') {
+      fail('invalid', 'Der gespeicherte Pointerbody ist ungültig.');
+    }
+  }
+  return copy(value);
+}
+
 function assertAttempt(value) {
   assertExactKeys(
     value,
-    ['version', 'attemptId', 'phase', 'head', 'etag', 'candidate', 'uploads'],
+    ['version', 'attemptId', 'phase', 'head', 'etag', 'candidate', 'pointerProperties', 'uploads'],
     'Der Kaufversuch ist ungültig.',
   );
   assertVersion(value);
@@ -155,6 +167,7 @@ function assertAttempt(value) {
   assertNullableRef(value.head);
   assertNullableString(value.etag, 2048);
   assertNullableRef(value.candidate);
+  assertPointerProperties(value.pointerProperties);
   assertArray(value.uploads, 'Die gespeicherten Uploads sind ungültig.');
   const uploads = new Map();
   for (const upload of value.uploads) {
@@ -163,7 +176,8 @@ function assertAttempt(value) {
     uploads.set(checked.ref.id, checked);
   }
   if (value.phase === 'intent'
-    && (value.head !== null || value.etag !== null || value.candidate !== null || value.uploads.length !== 0)) {
+    && (value.head !== null || value.etag !== null || value.candidate !== null
+      || value.pointerProperties !== null || value.uploads.length !== 0)) {
     fail('invalid', 'Ein noch nicht reservierter Kaufversuch enthält Schreibdaten.');
   }
   if (value.phase !== 'intent' && (value.candidate === null || !uploads.has(value.candidate.id))) {
@@ -171,6 +185,10 @@ function assertAttempt(value) {
   }
   if (value.phase !== 'intent' && (value.head === null || value.etag === null)) {
     fail('invalid', 'Dem Kaufversuch fehlt die gespeicherte Pointerbedingung.');
+  }
+  if (['pointer-pending', 'reconciling', 'confirmed'].includes(value.phase)
+    && value.pointerProperties === null) {
+    fail('invalid', 'Dem Kaufversuch fehlt der vollständige gespeicherte Pointerbody.');
   }
   if (value.candidate !== null) {
     const candidate = uploads.get(value.candidate.id);
@@ -203,6 +221,84 @@ function assertAttempt(value) {
       fail('invalid', 'Der Kaufversuch enthält einen nicht autorisierten unveränderlichen Upload.');
     }
   }
+  return copy(value);
+}
+
+function assertControl(value) {
+  assertExactKeys(value, [
+    'version', 'operationId', 'operation', 'phase', 'epochId', 'head', 'etag',
+    'candidate', 'pointerProperties', 'uploads',
+  ], 'Der Steuerauftrag ist ungültig.');
+  assertVersion(value);
+  assertId(value.operationId);
+  assertEnum(value.operation, ['initialize', 'restore'], 'Die Steueroperation ist ungültig.');
+  assertEnum(value.phase, PHASES, 'Die Steuerphase ist ungültig.');
+  if (value.epochId !== null) assertId(value.epochId);
+  assertNullableRef(value.head);
+  assertNullableString(value.etag, 2048);
+  assertNullableRef(value.candidate);
+  assertPointerProperties(value.pointerProperties);
+  assertArray(value.uploads, 'Die gespeicherten Steueruploads sind ungültig.');
+  const uploads = new Map();
+  for (const upload of value.uploads) {
+    const checked = assertUpload(upload);
+    if (uploads.has(checked.ref.id)) fail('collision', 'Eine Steuerupload-ID wird mehrfach gespeichert.');
+    uploads.set(checked.ref.id, checked);
+  }
+  if (value.phase === 'intent') {
+    if (value.epochId !== null || value.head !== null || value.etag !== null
+      || value.candidate !== null || value.pointerProperties !== null || value.uploads.length !== 0) {
+      fail('invalid', 'Ein noch nicht reservierter Steuerauftrag enthält Schreibdaten.');
+    }
+    return copy(value);
+  }
+  if (value.epochId === null || value.etag === null || value.etag.length === 0
+    || value.candidate === null || !uploads.has(value.candidate.id)) {
+    fail('invalid', 'Dem Steuerauftrag fehlen reservierte Schreibdaten.');
+  }
+  if (value.operation === 'initialize' ? value.head !== null : value.head === null) {
+    fail('invalid', 'Der Steuerauftrag hat einen ungültigen Ausgangskopf.');
+  }
+  if (['pointer-pending', 'reconciling', 'confirmed'].includes(value.phase)
+    && value.pointerProperties === null) {
+    fail('invalid', 'Dem Steuerauftrag fehlt der vollständige gespeicherte Pointerbody.');
+  }
+  const candidate = uploads.get(value.candidate.id);
+  if (candidate.ref.sha256 !== value.candidate.sha256) fail('integrity', 'Der Steuerkandidat hat einen anderen Hash.');
+  const receipt = assertReceipt(candidate.value);
+  if (receipt.operation !== value.operation || receipt.operationId !== value.operationId
+    || receipt.epochId !== value.epochId || !sameRef(receipt.previous, value.head)) {
+    fail('reference', 'Steuerauftrag und Belegkandidat passen nicht zusammen.');
+  }
+  const manifest = uploads.get(receipt.basis.id);
+  if (!manifest || manifest.ref.sha256 !== receipt.basis.sha256) {
+    fail('invalid', 'Dem Steuerauftrag fehlt das gespeicherte Basismodellmanifest.');
+  }
+  assertExactKeys(manifest.value, [
+    'version','kind','datasetId','byteLength','ledgerHash','parts',
+  ], 'Das gespeicherte Steuerbasismodell ist ungültig.');
+  if(manifest.value.version!==1||manifest.value.kind!=='basis')fail('version','Diese Basisversion wird nicht unterstützt.');
+  assertArray(manifest.value.parts,'Die gespeicherten Steuerbasisteile sind ungültig.');
+  const required=new Set([candidate.ref.id,manifest.ref.id]);
+  for(const rawPartRef of manifest.value.parts) {
+    const partRef=assertRef(rawPartRef),part=uploads.get(partRef.id);
+    if(!part||part.ref.sha256!==partRef.sha256)fail('invalid','Dem Steuerauftrag fehlt ein Basismodellteil.');
+    required.add(partRef.id);
+  }
+  if(receipt.economy?.source?.proof!==null&&receipt.economy?.source?.proof!==undefined) {
+    const proofRef=receipt.economy.source.proof,proofUpload=uploads.get(proofRef.id);
+    if(!proofUpload||proofUpload.ref.sha256!==proofRef.sha256)fail('invalid','Dem Restoreauftrag fehlt sein Herkunftsmanifest.');
+    const proof=assertProofManifest(proofUpload.value);
+    if(canonical(proof.binding)!==canonical(receipt.economy.source.binding)
+      ||!sameRef(proof.head,receipt.economy.source.head))fail('binding','Das Restore-Herkunftsmanifest ist falsch gebunden.');
+    required.add(proofRef.id);
+    for(const mapping of proof.objects) {
+      const stored=uploads.get(mapping.stored.id);
+      if(!stored||stored.ref.sha256!==mapping.stored.sha256)fail('invalid','Dem Restoreauftrag fehlt ein Herkunftsobjekt.');
+      required.add(mapping.stored.id);
+    }
+  }
+  if(required.size!==uploads.size)fail('invalid','Der Steuerauftrag enthält einen nicht autorisierten unveränderlichen Upload.');
   return copy(value);
 }
 
@@ -290,6 +386,7 @@ export function emptyCommerce() {
     head: null,
     cache: {version: 1, head: null, values: []},
     setup: null,
+    control: null,
     jobs: [],
     selection: [],
   };
@@ -298,7 +395,7 @@ export function emptyCommerce() {
 export function assertCommerce(value) {
   assertExactKeys(value, [
     'version', 'mode', 'binding', 'configRef', 'config', 'head', 'cache', 'setup',
-    'jobs', 'selection',
+    'control', 'jobs', 'selection',
   ], 'Der Kaufzustand ist ungültig.');
   assertVersion(value);
   assertEnum(value.mode, MODES, 'Der Kaufmodus ist ungültig.');
@@ -308,12 +405,17 @@ export function assertCommerce(value) {
   assertNullableRef(value.head);
   assertCache(value.cache);
   if (value.setup !== null) assertSetup(value.setup);
+  const control = value.control === null ? null : assertControl(value.control);
   assertArray(value.jobs);
   const operationIds = new Set();
   for (const job of value.jobs) {
     const checked = assertJob(job);
     if (operationIds.has(checked.intent.operationId)) fail('collision', 'Eine Kaufoperation wird mehrfach gespeichert.');
     operationIds.add(checked.intent.operationId);
+  }
+  if (control !== null && !['confirmed', 'rejected', 'superseded'].includes(control.phase)
+    && value.jobs.some((job) => job.status === 'open')) {
+    fail('invalid', 'Ein offener Steuerauftrag sperrt Kaufaufträge.');
   }
   assertArray(value.selection);
   const profiles = new Set();
@@ -335,11 +437,43 @@ export function assertCommerce(value) {
     && (value.binding === null || !configPairComplete || value.head === null)) {
     fail('invalid', 'Der aktive Kaufzustand ist unvollständig.');
   }
-  if (value.mode === 'migrating' && (value.binding === null || value.setup === null)) {
+  if (value.mode === 'migrating' && (value.binding === null
+    || (value.setup === null && value.control === null))) {
     fail('invalid', 'Der vorbereitende Kaufzustand ist unvollständig.');
   }
   if (value.mode === 'inactive' && value.head !== null) {
     fail('invalid', 'Ein inaktiver Kaufzustand darf keinen aktiven Kopf haben.');
+  }
+  if (control !== null && control.pointerProperties !== null && value.config !== null) {
+    const properties = control.pointerProperties;
+    if (properties.app !== 'vokabeltrainer-purchases'
+      || properties.kind !== 'coordinator'
+      || properties.datasetId !== value.binding?.datasetId
+      || properties.descriptorFileId !== value.binding?.descriptorFileId
+      || properties.descriptorHash !== value.config.descriptorHash
+      || properties.coordinatorId !== value.config.coordinatorId
+      || properties.contentFolderId !== value.config.contentFolderId
+      || properties.purchaseHeadId !== control.candidate?.id
+      || properties.purchaseHeadSha256 !== control.candidate?.sha256) {
+      fail('binding', 'Der gespeicherte Steuerpointer gehört nicht zur Konfiguration.');
+    }
+  }
+  if (value.config !== null) {
+    for (const job of value.jobs) for (const attempt of job.attempts) {
+      if (attempt.pointerProperties === null) continue;
+      const properties = attempt.pointerProperties;
+      if (properties.app !== 'vokabeltrainer-purchases'
+        || properties.kind !== 'coordinator'
+        || properties.datasetId !== value.binding?.datasetId
+        || properties.descriptorFileId !== value.binding?.descriptorFileId
+        || properties.descriptorHash !== value.config.descriptorHash
+        || properties.coordinatorId !== value.config.coordinatorId
+        || properties.contentFolderId !== value.config.contentFolderId
+        || properties.purchaseHeadId !== attempt.candidate?.id
+        || properties.purchaseHeadSha256 !== attempt.candidate?.sha256) {
+        fail('binding', 'Der gespeicherte Kaufpointer gehört nicht zur Konfiguration.');
+      }
+    }
   }
   return copy(value);
 }

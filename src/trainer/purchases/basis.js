@@ -117,7 +117,7 @@ async function checkedRead(ref, read) {
   if (typeof read !== 'function') fail('invalid', 'Die Lesefunktion für die Basis fehlt.');
   let value;
   try {
-    value = await read(ref.id);
+    value = await read(ref.id, copy(ref));
   } catch (error) {
     if (typeof error?.code === 'string') throw error;
     fail('history', `Ein Basismodellteil fehlt: ${ref.id}.`);

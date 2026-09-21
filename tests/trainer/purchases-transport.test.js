@@ -441,6 +441,17 @@ async function pointerCommerce(configRef, config, etag) {
     head: previous,
     etag,
     candidate,
+    pointerProperties: {
+      app: 'vokabeltrainer-purchases',
+      kind: 'coordinator',
+      datasetId: binding.datasetId,
+      descriptorFileId: binding.descriptorFileId,
+      descriptorHash: config.descriptorHash,
+      coordinatorId: config.coordinatorId,
+      contentFolderId: config.contentFolderId,
+      purchaseHeadId: candidate.id,
+      purchaseHeadSha256: candidate.sha256,
+    },
     uploads: [
       {ref: candidate, value: receipt},
       {ref: basisRef, value: manifest},
@@ -457,6 +468,7 @@ async function pointerCommerce(configRef, config, etag) {
       head: previous,
       cache: {version: 1, head: previous, values: []},
       setup: null,
+      control: null,
       jobs: [{version: 1, intent, status: 'open', attempts: [attempt]}],
       selection: [],
     },
@@ -507,6 +519,78 @@ test('purchase pointer accepts only the persisted receipt candidate with its per
     headValue: prepared.receipt,
     authorization,
   }), {id: confirmed.coordinatorId, status: 200});
+});
+
+test('purchase pointer sends the exact persisted property body instead of reconstructing it from a caller snapshot', async () => {
+  const {fixture, transport, coordinator, prepared} = await configuredPointerCase();
+  prepared.attempt.pointerProperties.foreign = 'persisted-before-send';
+  const callerSnapshot = structuredClone(coordinator);
+  callerSnapshot.properties.foreign = 'changed-in-caller';
+  await transport.putPointer({
+    snapshot: callerSnapshot,
+    head: prepared.candidate,
+    headValue: prepared.receipt,
+    authorization: {
+      kind: 'attempt', commerce: prepared.commerce,
+      operationId: 'purchase-a', attemptId: 'attempt-a',
+    },
+  });
+  const body = JSON.parse(fixture.calls.filter(({method}) => method === 'PUT').at(-1).body);
+  const properties = Object.fromEntries(body.properties.map(({key,value}) => [key,value]));
+  assert.equal(properties.foreign, 'persisted-before-send');
+  assert.equal(properties.purchaseHeadId, prepared.candidate.id);
+});
+
+async function initializationControl(confirmed,coordinator,{coordinatorId=confirmed.coordinatorId}={}) {
+  const part={version:1,kind:'basis-part',index:0,count:1,content:'{}'};
+  const partRef={id:'control-part',sha256:await digest(part)};
+  const manifest={version:1,kind:'basis',datasetId:binding.datasetId,byteLength:2,ledgerHash:'2'.repeat(64),parts:[partRef]};
+  const basisRef={id:'control-basis',sha256:await digest(manifest)};
+  const value={
+    version:1,kind:'receipt',datasetId:binding.datasetId,coordinatorId,sequence:0,previous:null,
+    operationId:'activation-a',operation:'initialize',epochId:'epoch-a',basis:basisRef,intent:null,
+    economy:{version:1,kind:'economic-snapshot',source:null},
+  };
+  const candidate={id:'control-receipt',sha256:await digest(value)};
+  const pointerProperties={...coordinator.properties,purchaseHeadId:candidate.id,purchaseHeadSha256:candidate.sha256};
+  return {
+    version:1,mode:'migrating',binding,configRef:confirmed.configRef,config:confirmed.config,head:null,
+    cache:{version:1,head:null,values:[]},setup:confirmed,
+    control:{
+      version:1,operationId:'activation-a',operation:'initialize',phase:'pointer-pending',epochId:'epoch-a',
+      head:null,etag:coordinator.etag,candidate,pointerProperties,
+      uploads:[{ref:partRef,value:part},{ref:basisRef,value:manifest},{ref:candidate,value}],
+    },
+    jobs:[],selection:[],
+  };
+}
+
+test('control uploads and pointer require the exact persisted operation and configured coordinator', async()=>{
+  const {fixture,transport,descriptorHash}=await setupFixture();
+  const saved=recorder();
+  const setup=await prepareBootstrap({transport,binding,descriptorHash,operationId:'setup-a',persist:saved.persist});
+  const confirmed=await resumeBootstrap({transport,setup,persist:saved.persist});
+  const coordinator=await transport.readFolder({id:confirmed.coordinatorId,kind:'coordinator',config:confirmed.config});
+  const commerce=await initializationControl(confirmed,coordinator);
+  const receiptUpload=commerce.control.uploads.at(-1);
+  await assert.rejects(()=>transport.writeImmutable({
+    ...receiptUpload,kind:'content',config:commerce.config,
+    authorization:{kind:'control',commerce,operationId:'different-operation'},
+  }),{code:'binding'});
+  const foreign=await initializationControl(confirmed,coordinator,{coordinatorId:'foreign-coordinator'});
+  await assert.rejects(()=>transport.writeImmutable({
+    ...foreign.control.uploads.at(-1),kind:'content',config:foreign.config,
+    authorization:{kind:'control',commerce:foreign,operationId:'activation-a'},
+  }),{code:'binding'});
+  await transport.writeImmutable({
+    ...receiptUpload,kind:'content',config:commerce.config,
+    authorization:{kind:'control',commerce,operationId:'activation-a'},
+  });
+  await transport.putPointer({
+    snapshot:coordinator,head:commerce.control.candidate,headValue:receiptUpload.value,
+    authorization:{kind:'control',commerce,operationId:'activation-a'},
+  });
+  assert.equal(fixture.files.get(confirmed.coordinatorId).properties.purchaseHeadId,commerce.control.candidate.id);
 });
 
 async function configuredPointerCase() {

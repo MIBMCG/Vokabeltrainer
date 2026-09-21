@@ -10,6 +10,7 @@ import {createFixture} from './fixtures.js';
 import {currentPolicy, currentGenerations, DEFAULT_POLICY} from '../../src/trainer/model/policies.js';
 import {projectSchedule} from '../../src/trainer/learning/schedule.js';
 import {createCommands as createOldCommands} from '../compat/v1/src/trainer/commands.js';
+import {emptyCommerce} from '../../src/trainer/purchases/schema.js';
 
 function sequenceIds(prefix = 'local') {
   let value = 0;
@@ -238,7 +239,7 @@ test('normalizes legacy storage-version-one state with absent Task 9 transport i
   assert.deepEqual(commands.getState().packetIntegrity, []);
 });
 
-test('setup creates the version-two product state and publishes only its committed clone', async () => {
+test('setup creates the version-three local state and publishes only its committed clone', async () => {
   const store = makeMemoryStore(null);
   const changed = [];
   const commands = await createCommands({
@@ -252,7 +253,8 @@ test('setup creates the version-two product state and publishes only its committ
   await commands.setup({name: 'Familienwortschatz', timeZone: 'Europe/Berlin'});
 
   const state = commands.getState();
-  assert.equal(state.storageVersion, 2);
+  assert.equal(state.storageVersion, 3);
+  assert.deepEqual(state.commerce, emptyCommerce());
   assert.equal(state.deviceId, 'device-a');
   assert.equal(state.ledger.descriptor.name, 'Familienwortschatz');
   assert.equal(state.ledger.descriptor.timeZone, 'Europe/Berlin');

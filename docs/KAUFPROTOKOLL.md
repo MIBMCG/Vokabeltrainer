@@ -385,6 +385,7 @@ Commerce = {
   head:Ref|null,
   cache:Cache,
   setup:SetupJob|null,
+  control:ControlJob|null,
   jobs:[PurchaseJob, ...],
   selection:[{profileId:Id, figureId:Id, stage:1|2|3|4}, ...]
 }
@@ -426,6 +427,20 @@ Attempt = {
   head:Ref|null,
   etag:string|null,
   candidate:Ref|null,
+  pointerProperties:null|{[key:string]:string},
+  uploads:[{ref:Ref, value:JSON}, ...]
+}
+
+ControlJob = {
+  version:1,
+  operationId:Id,
+  operation:'initialize'|'restore',
+  phase:Phase,
+  epochId:Id|null,
+  head:Ref|null,
+  etag:string|null,
+  candidate:Ref|null,
+  pointerProperties:null|{[key:string]:string},
   uploads:[{ref:Ref, value:JSON}, ...]
 }
 
@@ -443,6 +458,15 @@ referenzierten Teile, keine zusätzliche Datei. Diese persistierte Closure ist
 die einzige Schreibmenge des Versuchs. Jeder Transport-/Service-Schritt muss
 vor einem Upload zusätzlich `digest(value) === ref.sha256` prüfen. Weder Cache,
 fremde Provenienz noch ein importiertes Backup können Schreib-IDs ergänzen.
+
+`pointerProperties` hält spätestens vor `pointer-pending` den vollständigen
+Kopfpointerbody einschließlich fremder unveränderter Eigenschaften. Ein
+ausdrücklicher Wiederholungsversuch verwendet ausschließlich diesen Body und
+die ursprüngliche opake ETag. `ControlJob` hält Initialisierung und Restore
+getrennt von Kaufintents; es kann höchstens einen solchen Steuerauftrag geben.
+Ein nicht abgeschlossener Steuerauftrag sperrt Käufe. `initialize` hat auch ab
+`reserved` keinen Ausgangskopf, `restore` dagegen exakt den bestätigten alten
+Kopf. Die Belegfolge bewahrt alle abgeschlossenen Operationskennungen.
 
 Der Einrichtungsauftrag hält bis `uploaded` noch keinen Pointerbody. Vor dem
 ersten Pointerversand werden die vollständigen privaten Eigenschaften des
@@ -587,8 +611,11 @@ Snapshot-ETag muss exakt `Attempt.etag` sein. Vor dem PUT wird dieselbe frisch
 nachgelesene installierte Configautorität wie beim Upload geprüft. Die Rückgabe
 eines HTTP-200 ist kein Kaufabschluss; Service und Bootstrap lesen den Pointer
 anschließend neu.
-Restore-Pointeraufträge werden erst mit ihrem eigenen dauerhaften Vertrag in
-Task 3 ergänzt und nicht als Kaufjob ausgegeben.
+Initialisierung und Restore verwenden entsprechend
+`authorization:{kind:'control',commerce,operationId}`. Der Transport akzeptiert
+nur den exakten `Commerce.control`, dessen gespeicherte Uploadclosure,
+Konfigurationsbindung, Receiptoperation und Kandidatenpointer. Steueraufträge
+werden nicht als Kaufjobs ausgegeben.
 
 Vor jedem Metadaten-PUT werden alle vorhandenen privaten Properties erhalten.
 Es gelten höchstens 30 private Properties und höchstens 124 UTF-8-Bytes für
@@ -644,3 +671,44 @@ nachgelesene Configref samt gehashtem Configbody. Der Verlierer übernimmt deren
 bestätigten Setupstand; seine eigenen unreferenzierten Dateien verleihen keine
 Wirkung. Die Configref wird nie ersetzt. Erst nach dieser Prüfung wird
 `confirmed` persistiert und zurückgegeben.
+
+## Dauerhafter Kaufdienst
+
+```text
+createPurchaseService({commands,transport,sync,now,id,onStatus}) -> {
+  prepareActivation, confirmActivation,
+  refresh, preview, confirm, resume,
+  getStatus, getView, select,
+  prepareRestore, confirmRestore
+}
+```
+
+`commands.commitExternal(next,expectedHash)` bleibt der einzige lokale
+Schreibweg. Vorschauen binden den vollständigen lokalen Zustand und den
+bestätigten Kopf; eine Änderung vor `confirm` erzeugt `stale`, ohne einen
+Kaufauftrag anzulegen. Jeder weitere Übergang wird einzeln gespeichert. Nach
+`pointer-pending` und `reconciling` liest `refresh` ausschließlich. Nur
+`confirm`, `confirmActivation`, `confirmRestore` oder ein ausdrückliches
+`resume(operationId)` dürfen den exakt gespeicherten Pointerbody mit der exakt
+gespeicherten ETag senden beziehungsweise wiederholen.
+
+Der injizierte Task-4-Port hat folgende Grenze:
+
+```text
+sync.prepareActivationCandidate({state,control,input,history,reserve})
+sync.prepareRestoreCandidate({state,control,input,history,reserve})
+  -> {epochId,candidate,uploads}
+
+sync.applyConfirmedControl({state,control,history}) -> ProductState
+```
+
+Vor `prepare*Candidate` ist der `ControlJob` in Phase `intent` dauerhaft
+gespeichert. Die Candidate-Ports dürfen nur die vollständige gehashte Closure
+vorbereiten; sie veröffentlichen keine Epoche und keinen Formatmarker. Der
+Aktivierungszielstand muss aus `control.uploads` und der vollständig geprüften
+Historie wiederherstellbar sein. Erst wenn der neue gemeinsame Kopf vollständig
+nachgelesen wurde, ruft der Dienst `applyConfirmedControl` auf und speichert
+dessen Ergebnis gemeinsam mit dem bestätigten Commerce-Kopf. Ein fehlender Port
+schließt den Ablauf mit `not-ready`; der Shop wird in diesem Paket nicht
+automatisch sichtbar. Markerabsichten gehören in den dauerhaften Produkt-Outbox
+oder in eine später ausdrücklich validierte Schemaerweiterung, nie nur in RAM.
