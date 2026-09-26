@@ -1,6 +1,18 @@
 # Vokabeltrainer benutzen
 
-**Stand: 19.09.2026.** Diese Anleitung beschreibt die überarbeitete App einschließlich vorbereitetem Google-Zugang, Lernregeln je Kind und Statistiken. Aktuelle Prüfbelege stehen im [Arbeitsstand](../ARBEITSSTAND.md). Reale Produktprüfungen mit Google Drive auf zwei physischen Geräten sowie iPhone/iPad folgen getrennt.
+**Stand vom 27.09.2026:** Task 5 hat „Meine Figur“, „Entwicklung“ und „Shop“
+in die Produktoberfläche eingebunden. Fixrunde 1 korrigiert berichtsgemäß die
+fünf Reviewbefunde; 127 Node-, 6 Kaufbrowser- und 3
+Offline-/Updatebrowserfälle sind grün. Die scoped Nachprüfung ist PASS mit
+einem Minor zur Fokusrückgabe nach „Stale → Abbrechen“. Die zwei Fehler des
+vollständigen Task-6-Browserlaufs sind gezielt 2/2 grün korrigiert; der
+vollständige Wiederholungslauf steht noch aus. Diese Anleitung ist deshalb noch
+keine abschließende Freigabe- oder Gerätebehauptung. Maßgeblich werden nach dem
+Gate der [Arbeitsstand](../ARBEITSSTAND.md), der
+[Abschlussbericht](reports/2026-09-27-persistent-purchases-final.md) und die
+[Abschlussübergabe](handoffs/2026-09-27-persistent-purchases-abschluss.md).
+Reale Produktprüfungen mit Google Drive auf zwei physischen Geräten sowie
+iPhone/iPad folgen getrennt.
 
 ## Lokal starten
 
@@ -48,9 +60,87 @@ Jede richtige Antwort gibt zehn Punkte. Eine volle Runde oder eine nach mindeste
 
 Alle zweihundert Punkte steigt das Level. Die Reise führt über fünfzehn Etappen: zunächst am Strand, ab tausend Punkten durch den Wald, ab zweitausend in die Berge. Bei dreitausend Punkten ist die Reise abgeschlossen; weiterüben und weitere Level sind trotzdem möglich.
 
-Im Avatarbereich stehen vier Hauttöne und sechs Kleidungsfarben zur Wahl. Mit höheren Leveln werden Kappe, Rucksack, Sonnenhut, Fernglas, Bergmütze und Kompass freigeschaltet. Sechs Abzeichen würdigen Lernmeilensteine. Animationen können abgeschaltet werden. Die Hemdbilder sind so korrigiert, dass der Hals in allen sechs Farben sichtbar bleibt.
+Der bisherige Avatar bleibt vollständig erhalten. Unter den neuen Registern
+öffnet **Klassischen Avatar gestalten** den aufklappbaren Bereich mit vier
+Hauttönen, sechs Kleidungsfarben, freigeschalteter Ausrüstung und der
+Einstellung für kurze Bewegungen. Käufe verändern diese Auswahl nicht und
+ziehen keine Lernpunkte oder Level ab.
 
-Die beauftragte Erweiterung mit Entdeckerin, Tier- und Fantasiefiguren sowie Punkteshop ist noch in Entwicklung. Die neuen Grafiken allein schalten noch keine Auswahl oder Käufe in der App frei. Der [aktuelle Arbeitsstand](../ARBEITSSTAND.md) trennt diese Vorbereitung von bereits nutzbaren Funktionen.
+### Figuren und Käufe einmalig vorbereiten
+
+Nur Erwachsene dürfen den gemeinsamen Lernbereich auf das Kaufprotokoll
+aktualisieren:
+
+1. Zuerst unter **Für Erwachsene → Einstellungen → Abgleich** denselben
+   gemeinsamen Lernbereich mit Google Drive verbinden.
+2. Im Abschnitt **Figuren und Käufe** auf
+   **Daten für Figuren und Käufe aktualisieren** drücken. Dieser erste Schritt
+   zeigt nur eine Vorschau und verändert noch keine Cloudobjekte.
+3. Lernbereich, Kinder, Lernpunkte und Level prüfen. Die Vorschau erinnert
+   daran, dass andere Geräte vor dem nächsten gemeinsamen Abgleich ebenfalls
+   das Appupdate benötigen.
+4. Erst mit **Aktualisierung jetzt durchführen** die Aktualisierung bestätigen.
+   Hat sich der Datenstand seit der Vorschau geändert, eine neue Vorschau öffnen
+   und erneut prüfen.
+
+Bleibt der Ausgang wegen Netzunterbrechung unbekannt, zeigt die App
+**Datenaktualisierung fortsetzen**. Diesen Weg verwenden, statt eine zweite
+Aktualisierung zu beginnen. Die App liest den gespeicherten Auftrag zuerst nach
+und setzt ihn mit denselben Daten fort. Die klassische Figur und das Lernen
+bleiben währenddessen verfügbar.
+
+### Meine Figur, Entwicklung und Shop
+
+Nach bestätigter Aktualisierung zuerst das Kinderprofil wählen und in der
+Hauptnavigation **Mein Avatar** öffnen. Oben im Avatarbereich stehen drei
+Register; darunter lässt sich der klassische Avatar mit **Klassischen Avatar
+gestalten** aufklappen:
+
+- **Meine Figur** zeigt die gewählte gekaufte Figur groß sowie „Klassisch“ und
+  bereits freigeschaltete Grundfiguren. Mit **Grundform auswählen** wird die
+  Grundform der aktuellen Reihe aktiv.
+- **Entwicklung** zeigt die vier Stufen der aktuell gewählten Figur. Stufe 1 ist
+  die Grundform; weitere Stufen kosten nacheinander 200, 400 und 800 Punkte.
+  Eine gehörende Stufe wird mit **Diese Form auswählen** aktiv. Eine spätere
+  Stufe wird erst angeboten, wenn die vorherige gehört.
+- **Shop** zeigt weitere Grundfiguren und ihren Preis. Bereits gekaufte Figuren
+  sind als **Ausgewählt** oder auswählbar gekennzeichnet.
+
+Oben stehen zwei getrennte Werte: **Verfügbare Punkte** können ausgegeben
+werden; **Lernpunkte** bestimmen weiterhin Level und Reise. Ausgeben verändert
+das Level nicht. Besitz, Guthaben und Figurenauswahl gelten jeweils nur für das
+ausgewählte Kinderprofil.
+
+Nur Formen mit einem tatsächlich vorhandenen Bild können gekauft werden.
+Fehlende Motive bleiben sichtbar als **Bild folgt** und sind nicht kaufbar.
+Der aktuelle Zwischenstand enthält ausschließlich die vier bestätigten
+Drachenbilder. Die übrigen 72 Motive, kleinere responsive Bildvarianten und die
+vollständige Galeriegestaltung gehören zum Folgeumfang. Dazu zählen ein weiter
+ausgebauter Wechsel zwischen Klassisch und Entwicklung und zusätzliche
+Fortschrittsdarstellung; aus dem aktuellen Paket keine vollständige
+EV05-Galerie ableiten.
+
+### Kaufen und fortsetzen
+
+Neue Käufe benötigen Internet und einen erfolgreichen Abgleich. Je nach Stand
+zeigt die Karte:
+
+- **Noch … Punkte sammeln**, wenn das verfügbare Guthaben nicht reicht;
+- **Vorherige Stufe fehlt**, wenn die Entwicklungsreihenfolge nicht erfüllt ist;
+- **Offline – Kauf nicht möglich**, wenn keine Verbindung besteht;
+- **Bild noch nicht verfügbar**, solange das Motiv fehlt;
+- **Kauf fortsetzen**, wenn ein bereits gespeicherter Kauf noch geprüft wird.
+
+Bei **Für … Punkte freischalten** öffnet sich zuerst **Kauf prüfen**. Dort stehen
+Preis und danach verbleibendes Guthaben. Erst
+**Kauf verbindlich bestätigen** startet den Kauf; **Abbrechen** verändert
+nichts. Nach erfolgreicher Bestätigung gehört die Figur oder Form dem Kind,
+wird aber erst durch eine eigene Auswahl aktiv.
+
+Bei Netzfehler oder unbekanntem Ausgang nicht erneut von vorn kaufen. Die App
+zeigt, dass der Kauf geprüft wird, und bietet **Kauf fortsetzen** für genau den
+gespeicherten Auftrag an. Vorhandener bestätigter Besitz bleibt offline
+auswählbar; neue Käufe sind offline gesperrt.
 
 ## Lernstand und Änderungen
 
@@ -100,9 +190,9 @@ Widersprüchliche Änderungen bleiben in der Erwachsenenansicht sichtbar. Die pa
 
 ## Sichern und wiederherstellen
 
-Unter „Sicherung“ eine vollständige JSON-Datei herunterladen. Sie enthält den fachlichen Datenbestand einschließlich noch nicht übertragener Ergebnisse. Google-Zugriff, PIN und persönliche Anmeldesitzungen gehören nicht hinein. „Download gestartet“ bedeutet, dass der Browser die Datei entgegengenommen hat; den tatsächlichen Ablageort im Browser prüfen.
+Unter „Sicherung“ eine vollständige JSON-Datei herunterladen. Sie enthält den fachlichen Datenbestand einschließlich noch nicht übertragener Ergebnisse. Bei einem aktivierten Kaufbestand enthält sie zusätzlich die vollständig geprüfte Herkunft von Guthaben, Besitz und Figurenauswahl. Google-Zugriff, PIN, persönliche Anmeldesitzungen, offene Kaufaufträge und technische Pointerdaten gehören nicht hinein. „Download gestartet“ bedeutet, dass der Browser die Datei entgegengenommen hat; den tatsächlichen Ablageort im Browser prüfen.
 
-Vor einer Wiederherstellung zeigt die App die Unterschiede und verlangt eine ausdrückliche Bestätigung. Sie legt vorher eine separate Sicherheitskopie an. Bei verbundenem Drive-Bestand sind dafür Internet und gültiger Zugriff erforderlich; die vorherige Sicherung wird auch in Drive geprüft. Scheitert die Sicherung, wird nicht zurückgesetzt.
+Vor einer Wiederherstellung zeigt die App die Unterschiede und verlangt eine ausdrückliche Bestätigung. Für eine aktuelle Sicherung nennt die Vorschau zusätzlich Änderungen an verfügbaren Punkten, Anzahl der Käufe und Figurenauswahl. Eine ältere Sicherung ohne bestätigte Kaufhistorie wird ausdrücklich so gekennzeichnet. Die App legt vorher eine separate Sicherheitskopie an. Bei verbundenem Drive-Bestand sind dafür Internet und gültiger Zugriff erforderlich; die vorherige Sicherung wird auch in Drive geprüft. Scheitert die Sicherung, wird nicht zurückgesetzt.
 
 Eine Wiederherstellung setzt den gemeinsamen Fortschritt auf den gewählten Sicherungsstand. Alte laufende Runden werden beendet, ohne zusätzlichen Bonus. Später eintreffende Antworten eines bislang offline gebliebenen Geräts gehen nicht verloren: Sie bleiben separat sichtbar. Erwachsene entscheiden, welche übernommen werden. Nicht gewählte Ereignisse bleiben sicherbar.
 

@@ -1,100 +1,125 @@
 # Arbeitsstand
 
-**Fortsetzung am 26.09.2026:** Tasks 1–4 des Kaufplans sind implementiert und unabhängig geprüft. Die [Task-4-Nachprüfung](docs/reports/2026-09-26-persistent-purchases-task4-fix2-review.md) schließt alle drei Ablaufbefunde; neue Autoritäts-/Syncprüfungen bestehen mit 48/48 Fällen. Task 5 bindet jetzt die Kaufoberfläche an, danach folgt die Gesamtprüfung. Maßgeblich ist die [Fortsetzungsübergabe](docs/handoffs/2026-09-26-persistent-purchases-fortsetzung.md). Frühere datierte Abschnitte sind historische Nachweise, keine aktuellen Startaufträge.
+Stand: **27.09.2026**. Arbeitszweig:
+`codex/vokabeltrainer-v1`.
 
-**Echte Kaufprobe 10 bestanden (20.09.2026):** Der vom Nutzer übergebene Google-Bericht bestätigt alle sechs synthetischen Kaufabläufe: Initialisierung, Konkurrenz, Wiederholung, simulierten Antwortverlust und beide Reset-Reihenfolgen. [Auswertung](docs/reports/2026-09-20-shop-v10-reallauf.md), [Auswertungsübergabe](docs/handoffs/2026-09-20-shop-v10-auswertung.md). Keinen identischen 10er-Lauf erneut anfordern. Nächster Schritt ist der konkrete Integrationsentwurf für dauerhafte Aufträge, Wiederaufnahme und Produktdaten. Browserneustart, getrennte Geräte und Produktshop sind noch nicht geprüft beziehungsweise integriert; C und EV01–EV05 bleiben bestätigt. Bericht9s künstlicher ETag-/HTTP500-Fall bleibt separat bestehen.
+Version 1 und die Überarbeitung A1–C2 bleiben die Produktbasis. Tasks 1–5 des bestätigten Kaufplans sind implementiert und unabhängig
+geprüft. Aus Task 5 bleibt ein kleiner Tastaturfokusbefund für die
+Abschlussprüfung offen. Task 6 läuft: 499/499 Node-Tests bestanden; im jüngsten
+vollständigen Browserlauf bestanden 38/39 Fälle. Der Wiederanmeldetest I3
+meldet einen wiederholten Upload und wird gezielt untersucht. Eine endgültige
+Freigabe, der Abschlusscommit und der bestätigte Abschlusspush stehen noch aus.
+Die ausführlichen Belege stehen im
+[Abschlussbericht](docs/reports/2026-09-27-persistent-purchases-final.md).
 
-**Aktueller Stand (20.09.2026):** EV01–EV05 sind bestätigt: vollständige Stufenkäufe für 200 / 400 / 800 Punkte, je vier kostenlose menschliche Hauttöne, zusätzliche klassische Gestaltung und die Bereiche „Meine Figur“, „Entwicklung“, „Shop“. Der reine Stufenkatalog und die ersten vier freigestellten Drachenbilder sind in `650cee7` implementiert beziehungsweise erzeugt und unabhängig geprüft. 379/379 Produkttests bestanden; 4 von 76 Bildmotiven sind vorbereitet. Neue Stufenwahl und Käufe sind noch nicht im Produkt eingebunden. [Grundlagenbericht](docs/reports/2026-09-20-avatar-evolution-foundation.md), [Auswertungsübergabe](docs/handoffs/2026-09-20-shop-v10-auswertung.md).
+## Kaufpaket Tasks 1–6
 
-**Historischer Diagnose-6-/7-Stand:** 6 bestanden, 5 fehlgeschlagen. Vier Abbrüche betreffen veränderte File-Versionen bei gleichbleibender ETag und gleichen verfügbaren Zusatzmerkmalen. Die absichtlich falsche Kennung scheitert mehrdeutig; ein anderer Fall belegt dagegen eine 412-Ablehnung eines alten Tokens. Sichere parallele Käufe bleiben unbewiesen. [Auswertung](docs/reports/2026-09-20-shop-v6-reallauf.md). Keine neue unveränderte Probe anfordern. [Richtungsentscheidung C](docs/design/2026-09-20-kaufkoordination-nach-diagnose6.md) ist bestätigt: direkten Drive-Ansatz gezielt weiter untersuchen. Diagnose 7 trennt jetzt Schreibantwort und Nachlese des Negativfalls; lokal sind 84/84 Shop-Node-Tests und 13/13 Browserfälle bestanden. Die unabhängige Review ist ohne offene relevante Befunde abgeschlossen. Kein zusätzlicher Dienst, keine Änderung des Punktesystems und keine Produktkäufe.
+| Task | Stand | Ergebnis / Nachweis |
+| --- | --- | --- |
+| 1 – Vertrag und Historie | abgeschlossen und unabhängig freigegeben | Strikte Schemata, echte Lernpunkte, vollständige Beleg-/Basis-/Proofhistorie, portable Fremdherkunft. [Bericht](docs/reports/2026-09-21-persistent-purchases-task1-fix.md), [Review](docs/reports/2026-09-21-persistent-purchases-task1-review.md) |
+| 2 – Transport und Einrichtung | abgeschlossen und unabhängig freigegeben | Gebundener Drive-Transport, persistierte Reservierungen und eindeutige Configinstallation. [Bericht](docs/reports/2026-09-21-persistent-purchases-task2-implementation.md), [Review](docs/reports/2026-09-21-persistent-purchases-task2-fix2-review.md) |
+| 3 – Kaufdienst und Recovery | abgeschlossen und unabhängig freigegeben | `storageVersion:3`, atomare Migration, persistierte Aufträge, Wiederaufnahme und unveränderte Kandidaten/IDs. [Bericht](docs/reports/2026-09-21-persistent-purchases-task3-implementation.md), [letzte Nachprüfung](docs/reports/2026-09-26-persistent-purchases-task3-fix2-review.md) |
+| 4 – Produktintegration, Restore und Backup | abgeschlossen und unabhängig freigegeben | Format-3-Aktivierung, dauerhafte Entdeckung vor Download, autoritativer Kopf nach Reconcile, v3-Sicherungsclosure und Offline-Quellcheckpoint. [Bericht](docs/reports/2026-09-26-persistent-purchases-task4-implementation.md), [letzte Nachprüfung](docs/reports/2026-09-26-persistent-purchases-task4-fix2-review.md) |
+| 5 – Bedienoberfläche und Laufzeit | scoped PASS mit Minor | Implementierung `4eac721`, Fix `ae9ef27`, Bericht/Kopf `bdb65ad`; alle Important-Befunde geschlossen, Minor: Fokus nach „Stale → Abbrechen“ |
+| 6 – Gesamtprüfung und Übergabe | läuft | 499/499 Node-Tests; Browser 38/39, I3-Wiederanmeldung in Diagnose; Gesamtprüfung und Abschlusspush offen |
 
-**Entscheidung vor dem Grundlagenpaket:** Die künftige Avatar-Erweiterung wechselt von modularer Ausrüstung zu vier vollständig gerenderten Entwicklungsformen je Figur. Erspielte Punkte dienen der Avatarentwicklung; Level und Lernfortschritt bleiben erhalten. Freigeschaltete Formen bleiben dauerhaft auswählbar. Der erste Bogen v1 wurde wegen eines zu kleinen Unterschieds zwischen Stufe 3 und 4 nicht abgenommen. Der Nutzer hat den [überarbeiteten Drachenbogen v2](docs/design/avatar-evolution/dragon-stages-concept-v2.png) mit „ja, viel besser“ persönlich bestätigt; die epische, mythische Endverwandlung ist damit als Stilvorlage gesetzt. Freigestellte Produktionsgrafiken, weitere Gestaltungsdetails, Datenvertrag, Produktintegration und die weiteren Figuren bleiben im Detaildesign zu konkretisieren; die allgemeine Entwicklungsfreigabe besteht fort. [Entscheidung](docs/design/2026-09-20-avatar-entwicklungsstufen.md), [damalige Übergabe](docs/handoffs/2026-09-20-avatar-evolution-prototype.md).
+Die historischen Testzahlen 379/389/403/471/489/492 gehören zu den jeweils
+datierten Zwischenberichten. Sie sind kein Ersatz für den frischen finalen
+Task-6-Gesamtlauf.
 
-**Echter Drive-Lauf Diagnose 4:** 3 Fälle bestanden, 8 fehlgeschlagen, 0 unsupported. Bei Initialisierung und zwei parallelen Käufen wurden jeweils beide Schreibversuche angenommen (`accepted: 2`, `stale: 0`). Damit ist der gemischte v2-JSON-ETag-/v3-Schreibkandidat kein nachgewiesener exklusiver Kauf-Guard. Kein unveränderter Wiederholungslauf erforderlich; ein späterer Technikschritt braucht einen neuen, ausdrücklich benannten Kandidaten. [Auswertung](docs/reports/2026-09-20-shop-v4-reallauf.md).
+## Tatsächlicher Daten- und Kaufstand nach Task 5
 
-**Historischer Ausgangspunkt des vorherigen Passformpakets:** `24ce5a38b561c6012d7307603fc378ca339ab58c` auf `codex/vokabeltrainer-v1`. Neue Änderungen und Prüfungen: [aktuelle Übergabe](docs/handoffs/2026-09-20-avatar-fit-v3-und-probe-v4.md). Die endgültige Paket-SHA ist in der Git-Historie ablesbar; Remote vor einer Fortsetzung frisch vergleichen.
+- Neue Lernereignisse und Pakete bleiben im Fachformat v2. Unveränderte
+  v1/v2-Objekte, Upload-IDs und Hashes werden nicht umgeschrieben.
+- Der lokale Produktzustand verwendet `storageVersion:3`. Aktivierte
+  Kaufepochen, wirtschaftliche Köpfe und portable wirtschaftliche Sicherungen
+  verwenden Format 3.
+- Lernpunkte bleiben unverändert: 10 pro richtiger Antwort und 20 pro
+  abgeschlossener Runde. Ausgaben verringern weder Lernpunkte noch Level.
+  Guthaben, Besitz und Auswahl werden je Profil aus der vollständigen
+  bestätigten Historie abgeleitet.
+- Kauf, Aktivierung und Restore speichern Intent, Kandidat, vollständige
+  Uploadclosure, reservierte Datei-IDs und Pointerdaten vor der ersten davon
+  abhängigen Netzoperation. Nach unbekanntem Ausgang wird zuerst gelesen;
+  eine Pointerwiederholung erfolgt nur ausdrücklich mit identischem Auftrag.
+- ProductSync verankert Configref und Config über `commerce.discover` dauerhaft
+  vor dem Produktdownload. Erst `commerce.reconcile` darf nach Prüfung von
+  Koordinator, Kopf und Historie die gemeinsame Epoche atomar aktivieren.
+- Backups enthalten die vollständige wirtschaftliche Herkunft, aber keine
+  Tokens, ETags, Pointerbodies oder ausführbaren Jobs. Ein neutraler Checkpoint
+  darf ausschließlich im Offline-Backupexport und Quellreplay vorkommen. Die
+  autoritative Zielkette lehnt ihn als Kopf oder Vorgänger ab. Auch bei gleicher
+  Bindung werden checkpointlokale Objekte über reservierte physische IDs
+  portabel abgebildet.
+- Die Beleggeschichte wird vollständig erhalten. Es gibt keine feste
+  64-Belege-Lebenszeitgrenze und keine automatische Löschung.
+- Die Laufzeit bindet den Kaufdienst über schmale Commerce-Ports ein. Erwachsene
+  sehen vor der Aktivierung eine rein lokale Vorschau; erst die ausdrückliche
+  Bestätigung startet die dauerhaft vorbereitete Veröffentlichung.
+- Im Avatarbereich stehen „Meine Figur“, „Entwicklung“ und „Shop“ oben. Der
+  klassische Avatar folgt darunter im aufklappbaren Bereich „Klassischen Avatar
+  gestalten“. Verfügbares Guthaben, Besitz und Auswahl werden je Profil aus dem
+  bestätigten Ledger angezeigt; unklare Kaufantworten lassen sich mit „Kauf
+  fortsetzen“ wiederaufnehmen.
+- Der Service Worker verwendet Cacheversion `v24`. Server-Allowlist und
+  Pflicht-Precache enthalten die neuen Laufzeitmodule und vier Drachenbilder;
+  Google-Antworten und Tokens werden nicht gecacht.
 
-**Vorheriger gesicherter Avatar-Zwischenstand:** `2b4c47f202486a6c63407acae6ba38b677e27409` ist auf `codex/vokabeltrainer-v1` gepusht und per Remote-SHA bestätigt. Bildquellen, Halskorrektur, Prüfnachweise und [Gesamtvorschau](docs/design/avatar-shop-preview.png) sind enthalten. Nächster abhängiger Schritt: echte Google-Kaufprobe, danach Besitz-/Guthaben- und Oberflächenintegration.
+## Bestätigter Produktumfang
 
-**Historischer Bild- und Probestand vor dem Richtungswechsel:** Klassische Bildbearbeitung ist ausdrücklich freigegeben. Die körperbezogene Nacharbeit aller 13 Figuren / 62 kompatiblen Artikelpaare ist im [Bildbericht v3](docs/reports/2026-09-20-avatar-fit-v3.md) dokumentiert; frühere pauschale Passformurteile bleiben zurückgenommen. Der damalige echte v2-JSON-Bericht belegte eine lesbare Versionskennung, aber keine sichere Kaufkoordination (5 bestanden, 6 fehlgeschlagen). Diagnoseversion 4 ergänzte konkrete Fehlerstellen und Antwortklassen. [Frühere Google-Auswertung](docs/reports/2026-09-20-shop-v2-reallauf.md). Neue Figurenwahl und Käufe sind weiterhin nicht im Produkt aktiviert. [Historische Übergabe](docs/handoffs/2026-09-20-avatar-fit-v3-und-probe-v4.md).
+Die Anforderungen R01–R33, E01–E10 und U01–U07 bleiben bestätigt. Für die
+Avatar-/Shop-Erweiterung gelten AV01–AV12, O-AV01 und EV01–EV05: Käufe nur
+online nach erfolgreichem Abgleich, getrennte Konten je Profil, ein gemeinsamer
+Kopf je Datensatz und vollständige Entwicklungsstufenkäufe für 200/400/800
+Punkte. Die Bereiche heißen „Meine Figur“, „Entwicklung“ und „Shop“.
 
-**Historische Grundlage der Shop-Erweiterung:** Mädchen-/Jungenfiguren, mystische Avatare und ein Punkteshop; Entscheidungen AV01–AV12 sind [dokumentiert](docs/design/2026-09-19-avatar-shop-entscheidungen.md). Der Halsfehler ist mit neuen Hemdquellen und fester Registrierung behoben und unabhängig nachgeprüft. Neue Käufe bleiben nur online nach erfolgreichem Abgleich vorgesehen. Der [damalige Gesamtentwurf](docs/superpowers/specs/2026-09-19-avatar-shop-design.md) bleibt als Vorgeschichte erhalten; sein modularer Ausrüstungsumfang ist für künftige Avatarbilder durch die aktuelle Entwicklungsstufen-Richtung ersetzt. Der folgende Abschluss A1–C2 bleibt unverändert; die neue Erweiterung ist noch nicht im Produkt integriert.
+Vier vom Nutzer bestätigte freigestellte Drachenquellen werden unverändert als
+erste kaufbare Entwicklungsreihe verwendet und im Offlinecache vorgehalten.
+Sie belegen zusammen 6.898.398 Bytes; kleinere responsive Varianten wurden
+nicht erzeugt. **72 weitere Motive** einschließlich responsiver
+Produktionsvarianten bleiben ein getrenntes Bildpaket. Die vollständige
+Galeriegestaltung mit weiter ausgebautem Klassisch-/Entwicklungswechsel und
+zusätzlicher Fortschrittsdarstellung bleibt Folgeumfang. Daraus darf keine
+vollständige EV05-Galerie oder visuelle Abnahme abgeleitet werden.
 
-Stand: **19.09.2026**
+## Noch offen
 
-Aktuelle [Übergabe zur Überarbeitung](docs/handoffs/2026-09-19-ueberarbeitung.md).
+- I3-Wiederanmeldetest diagnostizieren und gegebenenfalls korrigieren;
+- unabhängige Gesamtprüfung einschließlich Minor-Fokusrest, Dokumentations-
+  und Diffprüfung;
+- Abschlusscommit und bestätigter Push auf den bestehenden Entwicklungszweig;
 
-**Aktueller Auftrag:** Nach dem Praxistest hat der Nutzer eine Überarbeitung von Gestaltung, Avatar/Inselreise, Einrichtung, Moduswahl, Wiederholungsregeln, Vokabelverwaltung und Statistik beauftragt. Der [schriftliche Entwurf](docs/design/2026-09-19-ueberarbeitung.md) ist mit „Ja, Freigabe erteilt“ vollständig bestätigt. Der [Implementierungsplan in drei Etappen](docs/superpowers/plans/2026-09-19-ueberarbeitung.md) ist erstellt, selbstgeprüft und mit Nutzerantwort A zur Ausführung mit Aufgabenagenten/Einzelreviews bestätigt. Aktueller Paketfortschritt steht unten. Google Drive mit vorbereiteter App und Regeln je Kind bleiben beschlossen; kein Excel-Wechsel. Der nachfolgende v1-Abschluss bleibt als bisheriger Funktionsnachweis erhalten und ist keine visuelle Abnahme dieser Überarbeitung.
+- realer Produktabgleich mit Google Drive auf zwei physischen Geräten;
+- iPhone-/iPad-, Safari- und Home-Bildschirm-Abnahme einschließlich
+  Wiederaufnahme nach App-/Browserneustart;
+- Produktion und persönliche Sichtprüfung der 72 übrigen Bildmotive;
+- HTTPS-Bereitstellung und Hostingfreigabe;
+- allgemeine Lizenzentscheidung.
 
-## Fortschritt der Überarbeitung
+Automatisierte Tests verwenden synthetische Daten und eine simulierte
+Google-Grenze. Der historische echte Bericht 10 bestätigt 6/6 Szenarien der
+damaligen isolierten Probe; er wird nicht unverändert wiederholt und ersetzt
+keine reale Abnahme des integrierten Produkts.
 
-- A1 ist in `0eb4099` implementiert, Reviewkorrekturen in `004392c`: Rasterwelt, geschichteter Avatar, responsive Bilder und kleiner Offline-Bildsatz. Die unabhängige Nachprüfung bestätigt alle drei Korrekturen; keine wesentlichen offenen Befunde. [Umsetzungsnachweis](docs/reports/2026-09-19-a1-rasterwelt.md), [Review](docs/reports/2026-09-19-a1-review.md), [Bildbericht](docs/reports/2026-09-19-illustrationen.md).
-- Auf dem A1-Ausgangscode bestanden 280/280 Node-Tests. Nach den Reviewkorrekturen bestanden 13/13 betroffene Node-Tests, 1/1 Reise-Browsertest und 1/1 Worker-Updatefall. Produktcache `v7`, synthetischer Updateworker `v8`.
-- A2 ist in `10987b5` umgesetzt und in `e0c237f` unabhängig nachgeprüft: erklärte Moduskarten, ein Startbutton, klare Leerzustände und kompakte Übungsansicht. 285/285 Node-, 15/15 Trainer- und 3/3 Überarbeitungs-Browsertests bestanden; anschließend bestand der gezielte Retryfall nach Speicherfehler sowie der Worker-Updatefall jeweils 1/1. Produktcache `v9`, synthetischer Updateworker `v10`. [Bericht](docs/reports/2026-09-19-a2-rundenstart.md), [Review](docs/reports/2026-09-19-a2-review.md).
-- A3 ist mit `2d30c73` umgesetzt und unabhängig ohne Befunde geprüft: vorbereitete Google-ID, bewusste Anmeldung und Bestandswahl, geschützte Altverbindungen. 291/291 Node-, 15/15 Trainer-, 5/5 Überarbeitungsfälle und 1/1 Updatefall bestanden; Cache v10 / synthetisch v11. [Bericht](docs/reports/2026-09-19-a3-einrichtung.md), [Review](docs/reports/2026-09-19-a3-review.md).
-- A4 ist mit `af5c095` umgesetzt, in `28287e7` gezielt korrigiert und unabhängig freigegeben: vier Elternbereiche, kompakte Wortverwaltung, vollständiger Importentwurf und Suchfokus. Dazu Start-Levelkarte und mobile Reisekorrekturen. 291/291 Node, 15/15 Trainer und 6/6 Überarbeitungsfälle bestanden vor der gezielten Fixrunde; danach bestanden die betroffenen Verwaltungs-, Import- und Updatefälle (Details im Bericht). Cache v12 / synthetisch v13. [Bericht](docs/reports/2026-09-19-a4-verwaltung.md), [Review](docs/reports/2026-09-19-a4-review.md).
-- B1 ist mit `36335b9` und Fix `f6d6158` abgeschlossen und unabhängig freigegeben: kompatible v1/v2-Verträge, atomare Migration mit echten Altformat-Sicherungen und korrekte frühe Versionsbarriere. Nach dem Fix: 324/324 Node-Tests, 4/4 betroffene Browserfälle; davor 16/16 vollständige Trainerregression. Cache v14 / synthetisch v15. [Bericht](docs/reports/2026-09-19-b1-datenuebergang.md), [Review](docs/reports/2026-09-19-b1-review.md).
-- B2 ist in `68909b5` implementiert und unabhängig ohne Befunde freigegeben: getrennte Wiederholungsplanung, eingefrorene Regeln/Generationen und unveränderte Belohnungen. 339/339 Node- und 4/4 betroffene Browserprüfungen bestanden; Cache v15 / synthetisch v16. [Bericht](docs/reports/2026-09-19-b2-lernplanung.md), [Review](docs/reports/2026-09-19-b2-review.md).
-- B3 ist mit `c04ffd9` und Fix `2f0a126` unabhängig freigegeben: Elternregler, Vorschau, Entwürfe und Wiederüben. Nach Fix 4/4 B3-Browser, 1/1 Update und 15/15 Server/Worker; vorher 339/339 Node. Cache v17 / synthetisch v18. [Bericht](docs/reports/2026-09-19-b3-elternregler.md), [Review](docs/reports/2026-09-19-b3-review.md). Ein bestehender Offline-Diagnosetest war im breiten Lauf 11/12 einmal fehlerhaft, einzeln 1/1 grün; C2 schließt diesen konkreten Prüfhinweis durch stabile Diagnose und frischen vollständigen 15/15-Lauf.
-- C1 ist in `9457ced` unabhängig ohne Befunde freigegeben: Statistik samt erhaltener Wortdetailübersicht; 343/343 Node, 19/19 fokussierte und 6/6 betroffene Browserprüfungen bestanden. Cache v18 / synthetisch v19. [Bericht](docs/reports/2026-09-19-c1-statistik.md), [Review](docs/reports/2026-09-19-c1-review.md). C2 ist in `6ffcdfa` implementiert: 343/343 Node, 18/18 Trainer und 15/15 Überarbeitungs-Browser frisch bestanden, 13 echte Bildnachweise geöffnet, Cache v19 / synthetisch v20. Der Offline-Diagnosehinweis und 320px/200%-Überlauf sind geschlossen. Unabhängige Gesamtprüfung und Nachprüfung sind ohne offene Befunde abgeschlossen; Prüfwerkzeugfix `7ef2bb4` erhält alle 13 veröffentlichten Bild-Hashes unverändert. [Abschlussreview](docs/reports/2026-09-19-abschlussreview.md). [Zusammengeführter Prüfbericht](docs/reports/2026-09-19-ueberarbeitung.md). Der A1-Desktop-Bildnachweis ist durch eine nach vollständigem Bildladen erzeugte Aufnahme ersetzt. [Ausführungsentscheidungen](docs/reports/2026-09-19-ausfuehrungsentscheidungen.md) halten begründete Werkzeug-/Agentenabweichungen fest.
-- Alle Aufnahmen und Browsertests verwenden synthetische Daten in Chromium/Edge. Physische iOS- und Zwei-Geräte-Abnahmen bleiben offen.
+## Historische Nachweise
 
-Die vollständige Version 1 gemäß [bestätigtem Gesamtentwurf](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md) und [Produkt-Datenvertrag](docs/PRODUKT-DATENFORMAT.md) ist auf `codex/vokabeltrainer-v1` implementiert. Task 13 schloss letzte Bedienungsbefunde, portable Browserwerkzeuge, vollständige Regression, visuelle Prüfung und die portable Dokumentation ab. Ausgangscode: `3b1d16d`; Reviewfix-1-Produktcode `11e3128` korrigiert zusätzlich die Profilweiterleitung. Der [Abschlussbericht](docs/reports/2026-09-18-vokabeltrainer-v1.md) enthält die vollständige Evidenz einschließlich der korrigierten Abschlussmatrix; die [Übergabe](docs/handoffs/2026-09-18-vokabeltrainer-v1.md) nennt den nächsten Schritt.
+- [v1-Abschluss](docs/reports/2026-09-18-vokabeltrainer-v1.md)
+- [Überarbeitung A1–C2](docs/reports/2026-09-19-ueberarbeitung.md)
+- [Avatar-/Shop-Entscheidungen](docs/design/2026-09-19-avatar-shop-entscheidungen.md)
+- [Entwicklungsstufen EV01–EV05](docs/design/2026-09-20-avatar-entwicklungsstufen.md)
+- [echte isolierte Kaufprobe 10](docs/reports/2026-09-20-shop-v10-reallauf.md)
+- [Kaufplan und Taskberichte](docs/superpowers/plans/2026-09-20-persistent-purchases.md)
 
-Die unabhängige [Task-13-Nachprüfung](docs/reports/2026-09-18-vokabeltrainer-v1-task-13-fix-1-review.md) ist abgeschlossen; alle Befunde sind behoben. Auch die [Gesamtprüfung mit anschließender Nachprüfung](docs/reports/2026-09-18-vokabeltrainer-v1-final-fix-review.md) ist abgeschlossen: alle vier Integrationsbefunde sind behoben, keine neuen offenen Reviewbefunde. Reale Produktprüfungen mit Google Drive auf zwei physischen Geräten, Safari und Home-Bildschirm-App auf iPhone/iPad sowie eine HTTPS-Bereitstellung bleiben offen.
-
-## Bestätigter Umfang
-
-Die Anforderungen R01–R33, Entscheidungen Q1–Q14 und Entwurfsergänzungen E01–E10 sind bestätigt. Zielgruppe sind 10–13-Jährige in Klasse 4–7. Die statische Web-App bietet getrennte Lernprofile, adaptive Deutsch-Englisch-Übungen, fortsetzbare Runden, Erwachsenenverwaltung, Inselreise, Avatar, Offlinebetrieb, konfliktfesten Drive-Abgleich sowie vollständige Sicherung und Wiederherstellung. Kein zusätzliches kostenpflichtiges Cloudabo ist vorgesehen.
-
-Die Produktoberfläche liegt unter `/trainer/`; die technische Drive-Probe bleibt getrennt unter `/`. Persönliche Lerninhalte und Browserdaten gehören nicht ins Repository.
-
-## Bisheriger v1-Prüfstand
-
-Finaler Produktcode `cc079cb`: **277/277 Node- und 15/15 Trainer-Browsertests bestanden**, einschließlich vier neuer Regressionen zu PIN-Wiederherstellung, Verwaltungsentwürfen, erneutem Google-Verbinden und offenem Antworttext bei Wiederherstellungskonflikten. Produktcache `v5`, synthetischer Updateworker `v6`. [Fixbericht](docs/reports/2026-09-18-vokabeltrainer-v1-final-fixes.md) und [unabhängige Nachprüfung](docs/reports/2026-09-18-vokabeltrainer-v1-final-fix-review.md) belegen den Abschluss.
-
-### Historische Vorläufe
-
-Auf dem Task-13-Ausgangscode `3b1d16d` liefen frisch:
-
-- `npm test`: **277/277 Tests bestanden**, Node.js 22.23.2.
-- Trainer-Browserregression: **11/11 Tests bestanden**, Playwright 1.62.1, Edge 153.0.4234.46.
-- Bestehende Drive-Probe: **12/12 Szenarien bestanden**, keine Seitenfehler.
-- Offline-Neustart mit geschlossenem Testserver für `/trainer/` und `/repo/trainer/` sowie ein echter verzögerter Service-Worker-Wechsel sind Bestandteil der Trainerregression.
-- Desktop-, Mobil-, Reise-, Avatar-, Konflikt- und Wiederherstellungsansichten wurden mit synthetischen Daten erzeugt und visuell geprüft.
-
-Reviewfix 1 wurde gezielt geprüft: Profilweiterleitung RED 0/1 und GREEN 1/1, Service-Worker 8/8. Danach bestand auf `0ea9502` einschließlich Produktfix `11e3128` die [aktuelle vollständige Abschlussverifikation](docs/reports/2026-09-18-abschluss-verifikation.md): erneut 277/277 Node- und 11/11 Trainer-Browsertests. Die unveränderte Probe wurde nicht wiederholt. Die unabhängige Korrekturreview ist ohne offene Befunde abgeschlossen.
-
-Browserregression und Node-Tests simulieren Google Identity Services und Drive-HTTP. Die frühere manuelle Probe bestätigte echte Google-Anmeldung und Drive-Abgleich zwischen zwei Browsern desselben Rechners; das ist kein Nachweis für das Produktprotokoll auf zwei physischen Geräten.
-
-## Umgesetzte Arbeitspakete
-
-Tasks 1–12 sind implementiert, korrigiert und jeweils unabhängig nachgeprüft. Die frühen finalen Kommandos, Zählungen und Reviewurteile stehen in der [dauerhaften Prüfhistorie Tasks 1–6](docs/reports/history/2026-09-18-tasks-1-6-evidence.md); die späteren Detailberichte stehen unter [docs/reports](docs/reports/). Task 13 ergänzt unter anderem:
-
-- wahrheitsgemäße Texte für ausgeschöpfte Übungsrunden,
-- Fokus auf den nach asynchronem Rendern tatsächlich neuen Avatar-Schalter,
-- eine gemeinsame Statusformatierung,
-- Browserfälle für ungebundene Authentifizierungsfehler,
-- klare Profil- und Wiederherstellungstexte,
-- verständliche Bezeichnungen für alte Ereignisse,
-- portable Playwright-/Chromium-Standardwerte mit optionalen Umgebungsvariablen,
-- Produktcache `v4` einschließlich des neuen Statusmoduls und der korrigierten Profilweiterleitung.
-
-Der [Benutzungsleitfaden](docs/BENUTZUNG.md) beschreibt den aktuellen Ablauf. [Architektur](docs/ARCHITEKTUR.md), [Qualitätsmatrix](docs/QUALITAET-UND-ABNAHME.md) und [Google-Einrichtung](docs/GOOGLE-DRIVE-EINRICHTUNG.md) trennen implementierte Funktionen von noch offenen Realnachweisen.
-
-## Offen und bewusst zurückgestellt
-
-
-- realer Produktabgleich über Google Drive auf zwei physischen Geräten,
-- iPhone-/iPad-Abnahme in Safari und als Home-Bildschirm-App einschließlich Tastatur, Fokus, Offline-Neustart und erneutem Verbinden,
-- festgelegte und nachgewiesene Browser-/OS-Mindestversionen,
-- autorisierte HTTPS-Bereitstellung und veröffentlichte Trainer-URL,
-- allgemeine Lizenzentscheidung und Änderung der Repository-Sichtbarkeit.
-
-Keine dieser Grenzen ist eine neue Produktentscheidung. Hosting, Kontenänderungen, Veröffentlichung und Kosten bleiben gesondert zu beauftragen.
+Ältere Pausenübergaben und Diagnoseberichte bleiben Belege ihres Datums. Ihre
+damaligen nächsten Schritte gelten nicht als aktuelle Arbeitsanweisung.
 
 ## Nächster Schritt
 
-Die Überarbeitung A1–C2 und die historischen Bildkorrekturen v3 nicht erneut beginnen. Der [Drachenbogen v2](docs/design/avatar-evolution/dragon-stages-concept-v2.png) ist als Stilvorlage bestätigt; weder Vier-Stufen-Grundsatz noch Bildrichtung erneut abfragen. Nächster konkreter Schritt ist der zusammengeführte Detailentwurf. EV01–EV05 sind bestätigt, einschließlich der zusätzlichen klassischen Avataransicht mit Farben und Zubehör. Keine weitere unveränderte Drive-Probe anfordern; ein späterer Technikschritt braucht einen neuen, ausdrücklich benannten Kandidaten. Figuren-/Shop-Integration folgt erst einem sicheren Kaufvertrag und dem noch auszuarbeitenden Detaildesign. Die [Geräte-Prüfliste](docs/GERAETE-ABNAHME.md), echter Google-Abgleich auf zwei Geräten sowie reale App-/Geräteabnahmen bleiben offen. HTTPS-Bereitstellung erfordert einen eigenen Auftrag. Bestätigte Produktentscheidungen nicht erneut abfragen.
+1. I3-Diagnose abschließen und das vollständige Paket unabhängig prüfen lassen.
+2. Relevante Befunde in einer gemeinsamen Fixwelle beheben und gezielt nachprüfen.
+3. Finale Prüfbelege und Übergabe aktualisieren, committen und den bestehenden
+   Zweig pushen; lokalen HEAD und Remote-SHA exakt vergleichen.
 
-Aktueller Branch: `codex/vokabeltrainer-v1`. Der geprüfte A1-Zwischenstand einschließlich Freigabe, Berichten und Übergabe wurde als `b0e826c5b7e78d4aa5fa9727e317bf991c905a2c` nach GitHub übertragen und mit `git ls-remote` exakt bestätigt. Auch A2 einschließlich Korrektur, Review und sechs tatsächlichen Ansichten ist als `7b109cfee381e6c4de849e8007b563408d57200a` nach GitHub übertragen und per `git ls-remote` exakt bestätigt. Auch A3 ist als `c695994fbf87ea65660ed03604217241ae830146` nach GitHub übertragen und exakt bestätigt. Auch der abgeschlossene Oberflächenabschnitt A1–A4 einschließlich Reviewkorrekturen und Bildnachweisen wurde als `9277a02c938bf0d88a03f43c866138e39fe28953` gepusht und exakt per `git ls-remote` bestätigt. Auch B1 einschließlich Reviewkorrektur und Nachweisen wurde als `d1cf3027834057ed5ce0e23740f3bd1cc6987928` gepusht und exakt per `git ls-remote` bestätigt. Auch B2 einschließlich Review und Nachweisen wurde als `552f0222414f48c588ff2bbc627ac10f12fa678e` gepusht und exakt per `git ls-remote` bestätigt. Auch B3 einschließlich Reviewkorrektur und Mobilansicht wurde als `d30f11c16bc22630efe72329d0d04e91ccd0b80a` gepusht und exakt per `git ls-remote` bestätigt. Auch C1 wurde einschließlich Review und Ansichten als `6f998b41cd3e1a254677fff1c912d84e9bdeaa59` gepusht und exakt per `git ls-remote` bestätigt. Der unabhängig freigegebene Gesamtstand einschließlich Prüfwerkzeugfix und Belegen wurde als `f354dc3512ef4e61eb090ec968e817bd6925b7c9` gepusht und exakt per `git ls-remote` bestätigt. Dieser abschließende Dokumentationsschritt ergänzt das freigegebene Urteil; seine eigene SHA ergibt sich aus der Git-Historie. Der frühere v1-Produktcode bleibt über `cc079cb` nachvollziehbar.
+Keine weitere allgemeine Startfreigabe verlangen. Merge nach `main`, Hosting,
+Cloudkontenänderungen und die reale Geräteabnahme sind durch diesen Ablauf nicht
+automatisch autorisiert.

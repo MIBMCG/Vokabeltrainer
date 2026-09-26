@@ -1,15 +1,16 @@
 # Kaufprotokoll: Verträge der reinen Kernmodule
 
-**Task 1 im geprüften Umfang freigegeben:** Die erneute unabhängige
-[Nachprüfung der vier wichtigen Befunde](reports/2026-09-21-persistent-purchases-task1-review.md)
-bestätigt alle vier Korrekturen. Diese Freigabe gilt für den reinen Kern und
-ist keine Freigabe der noch laufenden Transport-/Serviceintegration oder eines
-realen Gerätebetriebs.
+**Aktueller Vertragsstand vom 27.09.2026:** Tasks 1–4 sind implementiert und
+unabhängig freigegeben. Task 5 einschließlich Fixrunde 1 ist scoped PASS mit
+einem verbliebenen Minor zur Fokusrückgabe nach „Stale → Abbrechen“; alle
+Important-Befunde sind geschlossen. Task 6 läuft, die vollständige
+Abschlussprüfung und Veröffentlichung stehen noch aus. Der aktuelle Nachweis
+steht im [fortzuschreibenden Abschlussbericht](reports/2026-09-27-persistent-purchases-final.md).
 
-Stand: 20.09.2026. Dieses Dokument bindet die nachfolgenden Transport-, Service-,
-Speicher- und Restore-Tasks an die öffentlichen Formen aus
-`src/trainer/purchases/`. Alle Formen sind JSON-Daten. Unbekannte Felder sind
-ungültig. Öffentliche Rückgaben sind Kopien.
+Dieses Dokument bindet Kern, Transport, Service, Speicher, Restore und
+Produktoberfläche an die öffentlichen Formen aus `src/trainer/purchases/`.
+Alle Formen sind JSON-Daten. Unbekannte Felder sind ungültig. Öffentliche
+Rückgaben sind Kopien.
 
 Task 1 enthält keine Speicherung, keine HTTP-Aufrufe und keine Oberfläche.
 `ProductError.code` ist an allen Fehlergrenzen maschinenlesbar.

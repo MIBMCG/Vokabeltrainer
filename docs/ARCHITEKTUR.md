@@ -1,44 +1,112 @@
 # Architektur
 
-## Bestätigter Integrationsentwurf
+## Aktueller Produktstand
 
-Der [neue Entwurf](superpowers/specs/2026-09-20-persistent-purchases-design.md) empfiehlt einen gemeinsamen Bestätigungspunkt je Lernbestand, getrennte Profilkonten im Inhalt und dauerhafte Aufträge im atomaren Produktzustand. Er verbindet Kauf und Wiederherstellung mit demselben Kopfwechsel. Die einmalige Ordnerbindung, neue Sitzungen, v1/v2-Übergang, alte Clients und Belegwachstum sind darin ausdrücklich behandelt. **Mit „ja“ bestätigt; Umsetzung auf Nutzerwunsch pausiert**; aktueller ausführbarer Stand bleibt die nachfolgend dokumentierte Probe und das unveränderte Produkt. Der neue reine Kaufkern ist noch nicht integriert und hat [offene Reviewbefunde](reports/2026-09-20-persistent-purchases-task1-review.md).
+Version 1 und die Überarbeitung A1–C2 bleiben die Produktbasis. Die Tasks 1–5
+des bestätigten Kaufplans sind implementiert; Task 6 mit endgültiger Prüfung
+und Push läuft. Der aktuelle Nachweis steht im
+[Abschlussbericht](reports/2026-09-27-persistent-purchases-final.md).
 
-## Echter Nachweis des isolierten Kaufablaufs
+Die Anwendung bleibt eine statische PWA ohne eigenen kostenpflichtigen Server.
+Der Produktcode liegt unter `src/trainer/`; die historische Kaufprobe unter
+`src/shop-probe/` ist kein Laufzeitimport. Die Laufzeit setzt die vorhandenen
+Commands, ProductSync und RestoreService mit den Modulen unter
+`src/trainer/purchases/` zusammen:
 
-[Bericht10](reports/2026-09-20-shop-v10-reallauf.md) bestätigt am 20.09.2026 alle sechs Szenarien des unten beschriebenen synthetischen Vertrags. Ordnerkoordination, vollständige Belegprüfung, Wiederholung, lokal simulierter Antwortverlust und beide Reset-Reihenfolgen sind in diesem einen echten Google-Lauf bestanden. Die Prüfung verwendet zwei logische Clients und eine gemeinsame Registrierung innerhalb derselben Sitzung.
+- `schema.js`, `value.js`, `basis.js`, `proof.js`, `projection.js` und
+  `history.js` definieren und prüfen Belege, Basen, portable Proofs und die
+  getrennten Profilkonten.
+- `transport.js` bindet jeden Zugriff an Google-Konto, Datensatzordner,
+  Descriptorhash, Koordinator und Inhaltsordner.
+- `bootstrap.js` reserviert und speichert den vollständigen Einrichtungsauftrag,
+  bevor Ordner, Config oder Pointer geschrieben werden.
+- `service.js` hält Kauf-, Aktivierungs- und Restoreaufträge im atomaren
+  Produktzustand. Er verwendet Commands als einzigen Schreiber und besitzt
+  keine zweite Queue oder Zustandskopie.
+- `integration.js` stellt die schmalen Ports zwischen Kaufdienst, ProductSync
+  und Restore bereit. Die Ports sind lazy und nicht rekursiv: Vorbereitung
+  erzeugt nur einen vollständigen Publikationsentwurf; der aufrufende Dienst
+  speichert ihn dauerhaft, bevor die erste abhängige Datei oder ein Marker
+  veröffentlicht wird.
 
-Der nächste Entwurf muss diese Grenze mit dauerhaften Aufträgen, Wiederanbindung, Produktpunkten, Katalog und dem bestehenden Epochen-/Backupvertrag verbinden. Die Registrierung im Speicher und die Grenze von 64 Belegen sind keine fertige Produktlösung. Der Produktadapter bleibt unverändert; weder ein Backendwechsel noch eine Freischaltung von Käufen folgt automatisch aus dem positiven Bericht. [Aktuelle Übergabe](handoffs/2026-09-20-shop-v10-auswertung.md).
+`main.js` reicht der Oberfläche einen schmalen Commerce-Port mit
+`previewActivation()`, `activate(ticket)`, `getView()`, `refresh()`,
+`preview(input)`, `confirm(preview)`, `resume(operationId)` und `select(input)`.
+`previewActivation()` liefert `{ticket, previewState:{ledger}}`; Ticket und
+sichtbares Modell stammen damit aus demselben aktuellen Commands-Stand. Die
+Aktivierungsvorschau ist rein lokal. Für die
+fachliche Bindung einer Vorschau wird `purchasePreviewStateHash` verwendet;
+der vollständige dauerhafte Schreibschutz bleibt `productStateHash`. Die UI
+führt weder eine zweite Kaufqueue noch eine zweite wirtschaftliche Autorität.
+Der Restore-Vorschauweg bereitet mit `prepareRestorePreview` zuerst die frische
+Restorebasis vor und berechnet danach aus dem aktuellen Zustand die
+wirtschaftliche Ansicht. Die bestätigte Restoreauswahl wird erst nach
+bestätigtem gemeinsamem Kopf und `authoritativeState` gegen dessen Konten
+geprüft und vollständig ersetzt; eine leere Auswahl leert den Zielstand.
 
-## Neuer isolierter Kaufvertrag (20.09.2026)
+Der Service Worker verwendet Cacheversion `v24`; die Pflichtliste enthält die
+neuen Laufzeitmodule und vier Drachenbilder, aber keine Google-Antworten oder
+Tokens.
 
-Die Fortsetzung nach Bericht 9 konkretisiert den [Ordnerverweis auf unveränderliche Belege](superpowers/specs/2026-09-20-immutable-purchase-probe-design.md). Ein eigener SHA-256-Inhaltsvertrag ergänzt den bestehenden Transport, ohne den Versions-/ETag-Guard veränderlicher Snapshots zu lockern. Käufe, Initialisierung und Reset teilen innerhalb der synthetischen Probe denselben Anker. Ein Schreibbefund allein bestätigt keinen Besitz; dazu muss die genaue Operation in der vollständig geprüften Belegkette stehen.
+## Gemeinsame Autorität
 
-Der [Umsetzungsplan](superpowers/plans/2026-09-20-immutable-purchase-probe.md) umfasst nur diese getrennte Probe. Der Produkt-Epochen-DAG, offline veröffentlichte Wiederherstellungen, alte Clients und dauerhafte Wiederaufnahme nach Browserneustart sind nicht in diesen neuen Vertrag migriert. Daher bleibt eine spätere Produktintegration ein gesondertes Arbeitspaket. Die folgenden Diagnoseberichte sind die historische Herleitung, keine Aussage über bereits integrierte Produktkäufe.
+Jeder aktivierte Datensatz besitzt genau einen gemeinsamen wirtschaftlichen
+Kopf. Derselbe Kopf bestimmt Belegfolge, Besitz, ausgebbares Guthaben und aktive
+Produkt-Epoche. Ein lokal heruntergeladener Kandidat, eine alte v1/v2-Epoche
+oder ein Cacheeintrag darf diese Autorität nicht ersetzen.
 
-## Ergänzung: Entwicklungsformen und isolierte Kaufprobe
+ProductSync führt bei einem gebundenen Kaufbestand zwei getrennte Schritte aus:
 
-Der [Grundlagenentwurf](superpowers/specs/2026-09-20-avatar-evolution-foundation.md) trennt Formkennungen und kostenlose menschliche Bildvarianten. Das reine Katalogmodul ist implementiert, wird aber noch nicht vom Produkt importiert. Die ersten vier Drachenquellen sind geprüft; Produktdatenmigration, Kaufbelege und Auswahlzustand bleiben ein eigenes Folgepaket.
+1. `commerce.discover` prüft Configref und unveränderliche Config und speichert
+   diesen Anker über Commands dauerhaft **vor** dem Produktdownload.
+2. `commerce.reconcile` liest anschließend Koordinator, Kopf und vollständige
+   Historie. Erst der vollständig geprüfte gemeinsame Kopf wird zusammen mit
+   seinem Fachstand atomar aktiviert.
 
-Der [Shop-Probe-v5-Entwurf](superpowers/specs/2026-09-20-shop-probe-v5.md) prüft einen kohärenten Drive-v2-Schreibkandidaten ausschließlich mit eigenen synthetischen Daten. Der echte Diagnose-6-Bericht ergibt inzwischen 6 bestandene und 5 fehlgeschlagene Szenarien, weiterhin ohne Gesamtnachweis sicherer Kaufkoordination. [Auswertung](reports/2026-09-20-shop-v6-reallauf.md). Ein lokaler oder einzelner realer Probe-Erfolg aktiviert keine Produktkäufe. Klassische Gestaltung, Lernereignisse und bestehende Synchronisation bleiben davon getrennt.
+Dadurch bleiben unbestätigte und späte Epochen über Netzwerkfehler,
+Metadatencache, Neustart und Datensatzbeitritt hinweg historische Herkunft. Ein
+reiner Legacybestand ohne installierten Configanker und ohne v3-Kandidat behält
+seinen bisherigen Syncpfad.
 
-Der Nutzer hat aus der [Architekturvorlage A/B/C](design/2026-09-20-kaufkoordination-nach-diagnose6.md) **C** gewählt: direkte Drive-Koordination gezielt weiter untersuchen. Ein Apps-Script-Backend und eine Änderung des Punktesystems sind damit nicht gewählt. Der [begrenzte Diagnose-7-Schritt](superpowers/plans/2026-09-20-shop-probe-v7-invalid-token.md) trennt Schreibausgang und Nachlese des Negativfalls; bestehende Snapshot-Guards bleiben erhalten. Der damalige Stand ist in der [Übergabe zu Bericht 9](handoffs/2026-09-20-shop-v9-auswertung.md) festgehalten.
-Der [echte Bericht 7](reports/2026-09-20-shop-v7-reallauf.md) erreicht den bedingten Schreibversuch wegen instabiler Erstellungsnachlese nicht. Die [Diagnose-8-Lesekontrolle](superpowers/plans/2026-09-20-shop-probe-v8-read-observation.md) darf deshalb ausschließlich Beobachtungen liefern, keine gültigen Snapshots oder Produktkaufgrundlage. Der normale Transportguard bleibt unverändert.
+## Dauerhafte Veröffentlichung und Recovery
 
-Der [echte Bericht 8](reports/2026-09-20-shop-v8-reallauf.md) grenzt die Versionsänderung auf das Medienfenster ein. Der [Diagnose-9-Metadatenversuch](superpowers/plans/2026-09-20-shop-probe-v9-metadata-coordination.md) lässt Medienzugriffe vollständig weg und prüft einen gebundenen, cachefreien v2-Ordner-Snapshot gegen falsche, verbrauchte und konkurrierende Schreibkennungen. Kleine private Marker dienen nur als synthetische Koordinationswerte, nicht als Produktguthaben. Diagnose9 implementierte noch keinen Verweis auf unveränderliche Inhalte und belegte weder Wiederanlauf noch sichere Käufe. Der neue getrennte Folgevertrag steht am Anfang dieses Dokuments.
+Kauf, Initialisierung und koordinierter Restore speichern zuerst Intent,
+Ausgangskopf, opake ETag, Kandidatenref, unveränderliche Uploadclosure,
+reservierte Datei-IDs und den späteren Pointerbody. Erst danach beginnt eine
+abhängige Netzoperation. Nach einer verlorenen Antwort oder einem Neustart wird
+zuerst nachgelesen. Eine Pointerwiederholung erfolgt nur ausdrücklich mit dem
+identischen gespeicherten Kandidaten und derselben ETag. Aktivierte Journale
+bleiben als Historie erhalten; nur tatsächlich offene fremde Aufträge sperren
+eine neue Operation.
 
-**Befund vom 20.09.2026:** [Bericht 9](reports/2026-09-20-shop-v9-reallauf.md) enthält 3 bestandene und 1 fehlgeschlagenen Check. Die Ordner-Metadatenänderung mit verbrauchter Kennung wird abgewiesen; im Parallelfall gibt es genau einen bestätigten und nachgelesenen Gewinner. Der künstliche Token ergibt 500 statt 412 und bleibt ungeklärt. Das stützt die Weiterentwicklung des schmalen Kandidaten, beweist aber keinen gesamten Kaufvertrag. Daraus entstand die oben beschriebene synthetische Kaufprobe. Dauerhafte Vorgangskennungen und die gemeinsame Epochen-/Kaufgrenze im Produkt bleiben als Integrationsaufgabe offen. Der bestehende Produktadapter und seine Guards sind unverändert; kein zusätzlicher Dienst ist gewählt.
+Ein Restore hängt genau einen neuen Beleg an und aktiviert erst dessen
+bestätigten gemeinsamen Kopf. V1/V2-Dateien und ihre Upload-IDs bleiben
+unverändert. Vor der lokalen Migration wird eine validierte Sicherheitskopie
+angelegt; lokale Migration und Cloudaktivierung sind getrennte Schritte.
 
-## Aktuelle Umsetzung vom 19.09.2026
+## Versionen und portable Sicherungen
 
-Der [Überarbeitungsplan](superpowers/plans/2026-09-19-ueberarbeitung.md) und der [Produkt-Datenvertrag v1/v2](PRODUKT-DATENFORMAT.md) konkretisieren den bestätigten Entwurf. Die Produkt-App ist getrennt von der Probe unter `trainer/` umgesetzt, mit eigenen Lernereignissen, Inhaltsfassungen, Datenepochen, Browserdaten und Drive-Kennungen. Die aktuelle Implementierung ergänzt Rasterbilder, vorbereiteten Google-Zugang, Regeln je Kind und gemeinsame Statistikprojektionen. Prüfbelege stehen im [Arbeitsstand](../ARBEITSSTAND.md); der [v1-Abschluss](reports/2026-09-18-vokabeltrainer-v1.md) bleibt historische Grundlage.
+Neue Lernereignisse und Pakete behalten das fachliche Versionspaar `(2,2)`.
+`storageVersion:3` bezeichnet ausschließlich den lokalen Produktzustand. Nur
+aktivierte Kaufepochen, wirtschaftliche Köpfe und die wirtschaftliche
+Sicherungsclosure verwenden Format 3. Die bestehende Datensatzbeschreibung wird
+nicht blind auf Version 3 umgeschrieben.
 
-Der Nutzer bestätigte die echte Google-Anmeldung und den Probe-Abgleich zwischen zwei Browsern desselben Rechners. Physische Zwei-Geräte- und Apple-Abnahme folgen ausdrücklich erst nach der vollständigen Umsetzung. Eine bereitgestellte HTTPS-App und neue Cloudkontenänderungen sind damit nicht automatisch beauftragt.
+Eine v3-Sicherung enthält die vollständige Lern- und Wirtschaftshistorie,
+Basen, Besitz und Figurenauswahl, aber keine Tokens, ETags, Pointerbodies oder
+ausführbaren Jobs. Neu offline erworbene Lernpunkte können durch einen neutralen
+Provenienzcheckpoint belegt werden. Dieser Checkpoint ist ausschließlich im
+Backupexport und im von einer Restore-Quellkante erreichten Quellreplay zulässig.
+Die normale Zielhistorie, Discovery, Join und `readHistory` lehnen ihn als Kopf
+oder Vorgänger der autoritativen Kette ab. Checkpointlokale und verschachtelte
+Objekte werden auch bei gleicher Bindung über reservierte physische IDs
+portabel abgebildet; fehlender oder abweichender Proof blockiert den Export.
 
-
-Die verbindlichen Nutzeranforderungen stehen in [ANFORDERUNGEN.md](ANFORDERUNGEN.md). Implementierung, automatisierte Prüfung und physische Geräteabnahme bleiben getrennte Nachweisstufen.
-
-Die Ergänzungen E01–E10 sind im [bestätigten Gesamtentwurf](superpowers/specs/2026-09-16-vokabeltrainer-design.md) zusammengeführt. Er präzisiert diesen Architekturüberblick. Erste Umsetzung: [Plan der Google-Drive-Probe](superpowers/plans/2026-09-16-google-drive-probe.md), mit separatem synthetischem Datenformat und ohne fertige Produktfunktionen.
+Es gibt keine feste 64-Belege-Lebenszeitgrenze und keine automatische Löschung.
+Die Historie wird vollständig gehasht und iterativ geprüft. Historische
+Diagnoseberichte 2–10 erklären die Herleitung, sind aber keine aktuelle
+Architektur oder Produktabnahme. Reale Drive-, Zwei-Geräte- und Apple-Nachweise
+bleiben offen.
 
 ## Aufbau
 
@@ -65,6 +133,9 @@ Der Programmcode wird getrennt von den persönlichen Lerninhalten bereitgestellt
 | Lokaler Speicher | Vokabeln, Lernereignisse, Einstellungen und ausstehende Änderungen speichern | Erfolgreichen Cloudupload behaupten |
 | Google-Anbindung | Zugriff anfordern, Drive-Dateien lesen/schreiben, Fehler klassifizieren | Datenverlust durch blindes Überschreiben akzeptieren |
 | Synchronisation | Lokale und entfernte Änderungen zusammenführen, Wiederholungsversuche steuern | Ein Ereignis mehrfach zählen |
+| Kaufprojektion | Guthaben und Besitz je Profil aus vollständigen Lern- und Belegfakten ableiten | Punkte frei übernehmen oder Ausgaben von Lernpunkten abziehen |
+| Kaufdienst | Durable Intents, Kandidaten und Wiederaufnahme über Commands steuern | Eine zweite Zustandskopie, Queue oder versteckte Pointerwiederholung führen |
+| Kaufintegration | Vollständige Publikationsentwürfe und schmale Sync-/Restoreports liefern | Vor dauerhafter Speicherung Cloudobjekte veröffentlichen |
 | PWA/Offlinefunktion | Programmdateien zwischenspeichern und Updates kontrolliert übernehmen | Dauerhafte Hintergrundausführung voraussetzen |
 
 Probe und Produkt setzen E01 mit nativen JavaScript-Modulen ohne UI-Framework und ohne Buildschritt um. Node.js ab 22.8 führt Tests und lokalen Server aus; npm-Laufzeitabhängigkeiten gibt es nicht.
@@ -85,7 +156,17 @@ Die strikte Validierung und der Migrationsvertrag sind in [PRODUKT-DATENFORMAT.m
 
 Getippter Antworttext bleibt in der lokalen Runde; synchronisiert werden bewertetes Ergebnis und Vokabelrevision. Das gemeinsame Belohnungssystem ist mit R11/R23/R24 gewählt; Schwellen und Inhalte stehen als E04 im Gesamtentwurf.
 
-Neue Austauschobjekte verwenden das Versionspaar `(2,2)`. Unveränderte v1-Objekte behalten ihre IDs, Hüllen und Hashes; vorbereitete Uploadkörper werden nicht umgeschrieben. Der lokale Übergang validiert zuerst den vollständigen Originalzustand, erzeugt eine lesbare v1-Sicherung (bei mehreren Epochenköpfen je Kopf) und speichert Migration und Sicherungen gemeinsam atomar. Ein Fehler erhält den Originalzustand. Unbekannte wohlgeformte Versionspaare stoppen den Abgleich vor einem Upload; gewöhnlich beschädigte Dateien werden gesondert behandelt. Datenbank und exklusive Schreibsperre behalten ihre Namen, sodass alte und neue Tabs nicht gleichzeitig in denselben lokalen Bestand schreiben.
+Neue Lernereignisse und Pakete verwenden weiterhin das Versionspaar `(2,2)`.
+Unveränderte v1/v2-Objekte behalten ihre IDs, Hüllen und Hashes; vorbereitete
+Uploadkörper werden nicht umgeschrieben. `storageVersion:3` ist die lokale
+Produktzustandsversion. Aktivierte Kaufepochen und wirtschaftliche
+Backupobjekte verwenden das Paar `(3,3)`. Der lokale Übergang validiert zuerst
+den vollständigen Originalzustand, erzeugt eine lesbare v1/v2-Sicherung und
+speichert Migration und Sicherung gemeinsam atomar. Ein Fehler erhält den
+Originalzustand. Unbekannte wohlgeformte Versionspaare stoppen den Abgleich vor
+einem Upload; gewöhnlich beschädigte Dateien werden gesondert behandelt.
+Datenbank und exklusive Schreibsperre behalten ihre Namen, sodass alte und neue
+Tabs nicht gleichzeitig in denselben lokalen Bestand schreiben.
 
 Lernregeln und Wiederaktivierungen sind eigene v2-Ereignisse. Die deterministische Wiederholungsprojektion ist von der unveränderten Belohnungsprojektion getrennt. Neue Runden frieren Regelwerte und Wortgenerationen ein; bereits offene v1-Runden behalten ihre Legacy-Planung. Späte Antworten einer früheren Generation bleiben einmalig für Versuche und Punkte erhalten, verändern aber nicht die neue Wiederholungsserie. Sicherung und Übernahme schließen notwendige Regel-/Generationsreferenzen transitiv ein; reine Unterstützung wird nicht zum aktuellen Gewinner.
 
@@ -103,6 +184,9 @@ Das implementierte Protokoll folgt diesen Grundregeln:
 6. Parallele Änderungen erkennen. Bei widersprüchlichen Vokabeländerungen gemäß R29 beide Fassungen erhalten, Unterschiede in der Erwachsenenansicht zeigen und dort die richtige Fassung auswählen lassen. Keine automatische Auswahl nach der Übertragungsreihenfolge. Konfliktbehaftete Wörter bleiben bis zur Klärung außerhalb der normalen Wortauswahl.
 7. Konto-/Datensatzwechsel darf keine ausstehenden Änderungen in ein anderes Konto hochladen.
 8. Cloudlöschungen und beschädigte Dateien nicht als leeren, gültigen Ersatz über lokale Daten schreiben.
+9. Bei installiertem Kaufprotokoll Configref und Config vor dem Download dauerhaft entdecken; unbestätigte Epochen nur als Herkunft speichern.
+10. Erst den vollständig geprüften gemeinsamen Kaufkopf samt Historie atomar als aktive Epoche übernehmen.
+11. Kauf-, Aktivierungs- und Restorekandidaten einschließlich reservierter IDs vor jeder abhängigen Netzoperation speichern; nach unbekanntem Ausgang zuerst lesen.
 
 Ein einfaches „Datei laden, lokal ändern, vollständig hochladen“ ist ohne weiteren Schutz bei zwei Geräten nicht ausreichend. Das Produkt implementiert unveränderliche Ereignispakete, Deduplizierung, kausale Zusammenführung, getrennte Epochen sowie sichtbare Inhalts- und Wiederherstellungskonflikte. Die synthetische Probe bleibt ein begrenzter Prüfstand; ihr [Probe-Datenformat](PROBE-DATENFORMAT.md) ist kein Produkt- oder Sicherungsformat. Reales Drive mit dem Produktprotokoll auf zwei physischen Geräten ist noch nicht nachgewiesen.
 

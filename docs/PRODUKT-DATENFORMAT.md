@@ -1,13 +1,21 @@
-# Produkt-Datenvertrag v1/v2
+# Produkt-Datenvertrag v1/v2/v3
 
-Stand: 19.09.2026. B1 ergänzt kompatible v2-Verträge und die lokale Migration; B2 implementiert die getrennte konfigurierbare Lernplanung und ihre Commands. B3 stellt die Erwachsenenbedienung bereit, C1 die gemeinsame Statistikprojektion. Die folgenden v1-Grundregeln bleiben gültig, soweit die ausdrücklich genannten v2-Ergänzungen sie nicht erweitern. Ursprüngliche Ausführungsgrundlage für den [v1-Plan](superpowers/plans/2026-09-17-vokabeltrainer-v1.md), **Funktionsnachweise stehen in den jeweiligen Umsetzungsberichten**. Der [bestätigte Entwurf](superpowers/specs/2026-09-16-vokabeltrainer-design.md) und die [bestätigte Überarbeitung](design/2026-09-19-ueberarbeitung.md) bestimmen das Produktverhalten. Dieses Dokument konkretisiert seine internen Verträge ohne Änderung des Konten-, Kosten- oder Funktionsumfangs.
+Stand: 27.09.2026. B1–C1 ergänzten die kompatiblen v2-Lernverträge. Das
+Kaufpaket ergänzt lokalen Speicher sowie wirtschaftliche Autoritäts- und
+Backupgrenzen um Version 3; neue Lernfakten bleiben v2. Tasks 1–5 sind
+implementiert, die endgültige Prüfung läuft. Siehe
+[Abschlussbericht](reports/2026-09-27-persistent-purchases-final.md),
+[bestätigten Entwurf](superpowers/specs/2026-09-16-vokabeltrainer-design.md),
+[Überarbeitung](design/2026-09-19-ueberarbeitung.md),
+[Kaufentwurf](superpowers/specs/2026-09-20-persistent-purchases-design.md) und
+[Kaufprotokoll](KAUFPROTOKOLL.md).
 
 Die während der Umsetzung präzisierten Schnittstellen und ihre Gründe sind in [Entwicklungsentscheidungen](ENTWICKLUNGSENTSCHEIDUNGEN.md) dokumentiert.
 
 ## Trennung und Versionen
 
 - Neue App unter `trainer/`, Module unter `src/trainer/`, Datenbank `vokabeltrainer-product-v1`, Web-Lock `vokabeltrainer-product-v1-writer`, Cachepräfix `vokabeltrainer-product-`. Keine Probe-Daten lesen oder migrieren. Die bisherige Probe am Web-Root bleibt erreichbar.
-- Alle Austauschobjekte haben `format: 'vokabeltrainer-product'` und einen unten definierten `kind`. Unterstützt sind ausschließlich die Paare `(formatVersion, ruleVersion) = (1,1)` und `(2,2)`. Neue Writer erzeugen v2, Leser erhalten die tatsächliche Eingangsversion. Ein v1-Paket, -Backup oder -Snapshotteil darf keine v2-Ereignisse verstecken; v2 darf unveränderte v1-Historie enthalten. Bestehende Descriptoren und Epochen behalten ihre Version auch bei neuen v2-Ereignissen. Unbekannte und gemischte Versionspaare benötigen ein App-Update. Die Probe ist keine Produktvorgängerversion.
+- Alle Austauschobjekte haben `format: 'vokabeltrainer-product'` und einen unten definierten `kind`. Unterstützt sind ausschließlich die Paare `(formatVersion, ruleVersion) = (1,1)`, `(2,2)` und für die ausdrücklich genannten Kauf-/Sicherungsobjekte `(3,3)`. Neue Lernereignisse, Commands-Pakete und gewöhnliche Produktdateien bleiben v2. Bestehende Descriptoren und v1/v2-Hüllen behalten ihre Version; es gibt keinen globalen Versionssprung. Nur eine aktivierte wirtschaftliche Epoche und eine vollständige wirtschaftliche Backupsicherung verwenden v3. Leser erhalten die tatsächliche Eingangsversion. Unbekannte und gemischte Versionspaare benötigen ein App-Update. Die Probe ist keine Produktvorgängerversion.
 - IDs sind nichtleere ASCII-Zeichenfolgen aus `[A-Za-z0-9_-]`, höchstens 128 Zeichen. Produktion verwendet `crypto.randomUUID()`, Tests dürfen lesbare IDs verwenden. Datum ist ein validiertes `YYYY-MM-DD`, Zeit ein gültiger ISO-UTC-Zeitpunkt. Zähler sind nichtnegative sichere Ganzzahlen. Objektschlüssel sind fest vorgegeben; zusätzliche unbekannte Felder und gefährliche Schlüssel wie `__proto__` führen zur Ablehnung des gesamten Austauschobjekts mit `invalid`, nicht zu stillem Entfernen einzelner Felder.
 - Mengen werden als eindeutige, lexikografisch sortierte ID-Arrays serialisiert. Kanonisches JSON sortiert Objektschlüssel, erhält normale Array-Reihenfolge und verbietet nichtendliche Zahlen. Hashes sind SHA-256 über UTF-8 dieses kanonischen JSON, als 64 kleine Hexzeichen. Hashes sind Integritätsprüfungen, keine Signaturen oder Zugriffsrechte.
 - Grenzen: 64 KiB UTF-8 pro Änderungs-Paket einschließlich Hülle, höchstens 100 Ereignisse pro Paket; höchstens 16 KiB pro einzelnes Ereignis. Eingaben: Anzeigename/Lektion 80 Zeichen, deutsches Wort 200, Hinweis 300, englische Variante 200, höchstens 20 Varianten. Überschreitungen werden vor dem Speichern sichtbar gemeldet. Eine Sicherung darf 25 MiB und 100.000 Ereignisse nicht überschreiten; diese Schutzgrenzen werden in der Importvorschau verständlich genannt, ohne vorhandene Daten abzuschneiden.
@@ -15,7 +23,7 @@ Die während der Umsetzung präzisierten Schnittstellen und ihre Gründe sind in
 ## Datensatz, Ereignis und Ledger
 
 ```js
-// Neue Austauschobjekte verwenden v2; gespeicherte v1-Hüllen bleiben unverändert.
+// Neue Lernobjekte verwenden v2; gespeicherte v1-Hüllen bleiben unverändert.
 const VERSION = {format: 'vokabeltrainer-product', formatVersion: 2, ruleVersion: 2};
 // Descriptor (kind: 'dataset')
 {...VERSION, kind: 'dataset', datasetId, name, timeZone, rootEpochId, createdAt}
@@ -130,10 +138,11 @@ Für `commitExternal` wird der erwartete lokale Zustands-Hash ausschließlich mi
 // Packet
 {...VERSION, kind: 'packet', datasetId, epochId, packetId, events: Event[]}
 // Persistierter Zustand; niemals als Ganzes exportieren!
-{storageVersion: 2, deviceId, clock, ledger, rounds, binding,
+{storageVersion: 3, deviceId, clock, ledger, rounds, binding,
  outboxEventIds, pendingPackets, datasetSetup, packetIntegrity,
  knownFiles, quarantinedFiles,
- safetyCopies, restoreJobs, snapshotManifests, pinVerifier}
+ safetyCopies, restoreJobs, snapshotManifests, pinVerifier,
+ commerce}
 // binding: null | {accountId, folderId, descriptorFileId, datasetId}
 // pendingPackets entry: {packet, driveFileId: null | string, confirmed: false}
 // datasetSetup: null | {accountId,name,folderId,descriptorFileId,epochFileId,
@@ -144,11 +153,27 @@ Für `commitExternal` wird der erwartete lokale Zustands-Hash ausschließlich mi
 // pinVerifier: null | {salt,hash,iterations}; Base64werte, PBKDF2-SHA-256
 // snapshotManifests: {snapshotId, fileId}[]; geprüfter lokaler Transportindex, kein Fachinhalt
 // restoreJobs: persistierte Versuche mit Phasen und stabilen Datei-IDs, siehe unten
+// commerce: validierter Kaufzustand samt Config, Kopf, Cache, dauerhaften Jobs
+//   und getrennten Auswahlwerten je Profil
 ```
+
+`storageVersion:3` ist eine lokale Container-/Migrationsversion und keine
+Behauptung, alle enthaltenen Fachobjekte seien v3. Der Zustand enthält weiterhin
+v1/v2-Ledgerobjekte, v2-Pakete und unveränderte vorbereitete Uploadkörper. Die
+exakten strikten Formen von `Commerce`, `ControlJob`, `Attempt`, Config, Receipt,
+EconomicSnapshot, Basis-/Proofmanifest und Auswahl stehen in
+[KAUFPROTOKOLL.md](KAUFPROTOKOLL.md). Zusätzliche Felder oder frei übermittelte
+Punktesummen werden nicht als Autorität akzeptiert.
 
 `rounds` ist ein Objekt nach Profil-ID. `datasetSetup` ist ein eigener lokaler Transportauftrag für die erste Veröffentlichung und wird nicht in `restoreJobs` abgelegt: Konto-ID, unveränderlicher Ordnername, Datensatz-ID, die drei vorab reservierten Drive-IDs sowie die exakten Descriptor-/Wurzelepochenwerte werden nach der ID-Reservierung und vor `createFolder` oder `putJson` atomar gespeichert. Ein Wiederholungsversuch verwendet genau diese IDs und Werte; erst die bestätigte Bindung setzt den Auftrag auf `null`. `packetIntegrity` ordnet jede logische Paket-ID ihrem SHA-256-Hash über den kanonischen vollständigen Paketinhalt zu. Gleiche Paket-ID mit anderem Hash ist eine Kollision, unabhängig von Drive-Datei-ID oder Sitzung. Beide Felder sind lokaler Transportzustand und gehören nicht in portable Backups.
 
-Alte gültige Zustände mit `storageVersion: 1`, denen nur `datasetSetup` und/oder `packetIntegrity` fehlen, werden beim Laden kompatibel zu `null` beziehungsweise `[]` normalisiert. Ein leerer alter Paketindex wird beim nächsten Abgleich dadurch sicher aufgebaut, dass bekannte Dateien ohne sitzungsintern bestätigte Version/Hash-Zuordnung erneut gelesen werden; erst vollständig validierte oder lokal dauerhaft erzeugte Pakete erhalten einen Indexeintrag. Andere fehlende, zusätzliche oder ungültige Felder bleiben ein Formatfehler.
+Alte gültige Zustände mit `storageVersion:1` werden zunächst nach dem
+beschriebenen v1/v2-Vertrag normalisiert. Ein vollständig validierter
+`storageVersion:2`-Zustand wird erst nach einer lokal geprüften
+Formatsicherheitskopie atomar auf Version 3 migriert. Bestehende Ledgerobjekte,
+IDs, Hashes, PIN-Daten, Pending-Pakete und Restorejobs bleiben unverändert. Ein
+Fehler erhält den alten Zustand. Andere fehlende, zusätzliche oder ungültige
+Felder bleiben ein Formatfehler.
 
 `restoreJobs` ist ein Array aus `{id,phase,backup,previewId,parentHeads,safetyCopyId,snapshot,uploads,epoch}`; optionale noch nicht erreichte Werte sind `null`. Phasen: `preparing/preview/uploading/published/activated`; `uploads` enthält `{kind,logicalId,fileId,value,verified}` und wird vor jedem Netzaufruf gesichert. `safetyCopies` enthält `{id,createdAt,purpose,backup,hash,driveManifestFileId,verified}`; Backup muss lokal rücklesbar sein, Drivebezug ist lokal und wird nicht als gebundene Verbindung exportiert. `quarantinedFiles` enthält ausschließlich Inhalts-/Versions-/Referenzprobleme als `{fileId,code,message,value}` ohne Token/HTTP-Header. Konto-/Ordnerbindung, Authentifizierung, Berechtigung und vorübergehende Transportfehler stoppen den Lauf sichtbar und werden nicht als dauerhafte Inhaltsquarantäne gespeichert. PIN-Iterationszahl wird im Prüfeintrag gespeichert; die technische Hürde bleibt ausdrücklich kein Kontenschutz.
 
@@ -172,12 +197,41 @@ Aktiver Abgleich: sofort beim Öffnen, Vordergrund, online und Rundenabschluss; 
 
 Statusverbraucher erhalten lokale Änderungen unmittelbar über `createCommands().subscribe(listener)`. `createProductSync` verwendet dieses Abonnement, berechnet `pendingCount` bei jedem Commit aus dem bestätigten Zustand neu und meldet den Wechsel von `synced` zu `pending` über `onStatus`. Wer den Synccontroller ersetzt oder die Anwendung abbaut, ruft dessen `destroy()` auf; damit wird ausschließlich dieses Abonnement gelöst. Task 11 verbindet den bereits vorhandenen UI-/Scheduler-Lebenszyklus mit diesem Vertrag, ohne eine zweite Status- oder Authentifizierungslogik einzuführen.
 
+## Format-3-Kaufautorität
+
+Das Format-3-Protokoll ergänzt die frühere Regel „eine eindeutige aktive
+Epoche“ um eine engere Autoritätsgrenze: In einem aktivierten Kaufbestand ist
+nur die Epoche des vollständig geprüften gemeinsamen Kaufkopfs aktiv. Gewöhnlich
+heruntergeladene, alte oder unbestätigte Epochen werden als historische
+Herkunft erhalten und dürfen auch dann keine Runde abbrechen oder Punktebasis
+wechseln, wenn sie allein einen DAG-Kopf bilden.
+
+Vor dem Download prüft und speichert `commerce.discover` den gebundenen
+Configref samt unveränderlicher Config. Nach dem Download liest
+`commerce.reconcile` Koordinator, gemeinsamen Kopf, Belege, Basen und Proofs.
+Nur dieser vollständig geprüfte Stand darf in einem gemeinsamen Commands-Commit
+Kaufkopf, wirtschaftliche Projektion und aktive Epoche übernehmen. Die Grenze
+bleibt über übersprungene bekannte Dateien, Netzfehler, Prozessneustart und
+Datensatzbeitritt erhalten.
+
+Jeder wirtschaftliche Kopf bindet vollständige Konto-/Ordner-/Datensatz-/
+Descriptor-/Koordinatoridentität, seinen Vorgänger, seine Operation und seine
+kanonische Ledgerbasis. Erwerb und Ausgabe werden nicht als Summen übernommen,
+sondern aus vollständigen Fakten rekonstruiert. Es gibt keine feste Begrenzung
+auf 64 Belege und keine automatische Historienlöschung.
+
 ## Sicherung, Epochen und Rückkehr alter Geräte
 
 ```js
 // Portable Backupdatei
 {...VERSION, kind: 'backup', exportedAt, descriptor, snapshot, events,
  epochHistory, safetyCopyIndex}
+// Aktiver Kaufbestand: Backuphülle ist v3 und ergänzt genau economy.
+{...COMMERCE_VERSION, kind: 'backup', exportedAt, descriptor, snapshot, events,
+ epochHistory, safetyCopyIndex, economy: EconomyBackup}
+// Vollständige portable wirtschaftliche Herkunft; exakte Untertypen im Kaufprotokoll.
+EconomyBackup = {version:1, kind:'economy-backup', binding, head,
+ entries, bases, selection}
 // Snapshot ist eine vollständige Auswahl, keine additiven Zähler.
 {id, datasetId, effectiveEventIds, supportEventIds, contentHash}
 // Epoch; root epoch ohne Eltern/Snapshot, alle späteren vollständig belegt
@@ -192,6 +246,29 @@ Statusverbraucher erhalten lokale Änderungen unmittelbar über `createCommands(
 // Snapshot part, UTF-8 JSON <=64KiB; keine einzelnen Ereignisse aufspalten
 {...VERSION, kind: 'snapshot-part', snapshotId, datasetId, index, events, epochHistory}
 ```
+
+Ein nicht aktivierter Bestand exportiert standardmäßig die bisherige v2-Hülle.
+Ein aktiver Kaufbestand exportiert standardmäßig eine v3-Hülle mit exakt einem
+`economy`-Feld. `head` ist ein deterministisch aus vollständiger Binding,
+vorherigem geprüftem Kopf und kanonischem aktuellem Ledger abgeleiteter neutraler
+Checkpoint. `entries` enthält die vollständige Herkunftsclosure, `bases` alle
+vollständigen Basisrecords und `selection` ausschließlich validierte
+`{profileId,figureId,stage}`-Einträge.
+
+Der Export mutiert weder Produktzustand, Commerce-Kopf, Cache noch Jobs und
+führt keine Netzoperation aus. Er verlangt exakte Gleichheit von normalisiertem
+Exportsnapshot und Checkpointbasis. Fehlende Herkunft, entfernte Fakten,
+kollidierende Antwortslots oder ID-Kollisionen brechen den Export ab. Control-
+und Kaufjobs, Tokens, HTTP-ETags, Pointerbodies, PIN und lokale Runden sind nie
+Teil der wirtschaftlichen Sicherung.
+
+Ein Checkpoint ist nur als Quellprovenienz zulässig. Normales `readHistory`,
+Discovery, Join und jede autoritative Zielkettenprüfung weisen ihn als Kopf oder
+Vorgänger zurück. Eine Restore-Quellkante darf ihn nur mit vollständig geprüftem
+Proof erreichen. Beim Restore werden alle lokalen und verschachtelten
+Proofobjekte unter neu reservierte physische IDs abgebildet, auch bei gleicher
+Binding. Originalbodies, logische Refs und Hashes bleiben unverändert; dadurch
+bleibt auch A→B→C ohne Zugriff auf das ursprüngliche Konto rekonstruierbar.
 
 Snapshotteile transportieren neben Ereignissen auch die deduplizierten `EpochHistory`-Herkunftseinträge. Jeder Teil bleibt einschließlich Hülle <=64 KiB; eine Reihenfolge über `index` und Teilhashes prüft die Vollständigkeit. `totalHash` umfasst kanonisch `{snapshot,events,epochHistory,backupMetadata}` nach Zusammenfügen aller Teile, Ereignisse/Herkunft dabei nach ID sortiert. `backupMetadata` hat exakt `exportedAt` und `safetyCopyIndex`, für beide Zwecke verpflichtend und ohne lokale Konten-/PIN-/Transportdaten. Ein neues Gerät benötigt dadurch keine fremden Drive-Steuerdateien und kann Datum sowie Fachinhalt einer Sicherheitskopie rekonstruieren. `purpose` des Manifests ist `restore/safety`; der Index einer exportierten Sicherheitskopie enthält nur `{id,createdAt,purpose,hash}`, keine eingebetteten alten Backupdateien. Lokale Kopienzwecke umfassen zusätzlich `join` und in v2 `format-migration`. Vor Task 10 gab es keine veröffentlichten Produktmanifeste; es gibt keinen stillen Altformatfallback ohne Metadaten.
 
@@ -219,7 +296,7 @@ Restore-Protokoll:
 
 `previewBackup` ergänzt `learningChanges: {added, removed}` mit den wirksamen Regel- und Wiederaktivierungsereignissen, die beim gewählten Restore hinzukommen oder entfallen. Rein unterstützende Referenzen erscheinen darin nicht als aktivierte Regeln. Die Vorschau benennt diese Ereignisse lesbar. Aktuelle Regel-/Generationsgewinner werden seit B2 ausschließlich aus wirksamen Ereignissen gewählt.
 
-- `exportBackup(state, exportedAt, {selectedEpochId, version} = {}): Promise<Backup>` wählt bei einem eindeutigen Kopf dessen Stand. Bei mehreren Köpfen ist die explizite Kopf-ID erforderlich; sonst `conflict`. Die Ausgabeversion ist standardmäßig v2; ausschließlich die v1-Formatmigration fordert ausdrücklich v1 an. Export und Parser prüfen vollständige Referenzen, Versionen, Größen, Auswahl und Hash. `parseBackup(text)` verändert keinen Zustand.
+- `exportBackup(state, exportedAt, {selectedEpochId, version} = {}): Promise<Backup>` wählt bei einem eindeutigen Kopf dessen Stand. Bei mehreren Köpfen ist die explizite Kopf-ID erforderlich; sonst `conflict`. Die Ausgabeversion ist für einen aktiven Kaufbestand v3, sonst v2; ausschließlich die alte Formatmigration fordert ausdrücklich v1 an. Export und Parser prüfen vollständige Referenzen, Versionen, Größen, Auswahl, Economy und Hash. `parseBackup(text)` verändert keinen Zustand.
 - `previewBackup({current,backup})` liefert `profiles` und `wordCount` als `{before,after}`, `answerCount`, `contentChanges: [{entityType,entityId,before,after}]`, `progressChanges: [{profileId,points:{before,after},words:{before,after}}]`, `conflicts`, `affectsConnectedDevices`, `foreignDataset`, `timeZoneChange: null | {from,to}` und `limits`. Wort-Lernstände stehen als `[id,value]`-Eintragslisten in der Vorschau, damit Spezial-IDs gewöhnliche Daten bleiben. Die UI zeigt Inhalte als Text und bestätigt Fremdimport/Zeitzonenabweichung ausdrücklich.
 - `createRestoreService({commands,store,sync,drive,now,id})` bietet die im Taskbrief benannten asynchronen Methoden. `prepare(backup)` und `resolveEpochConflict({selectedEpochId,expectedHeads})` liefern ausschließlich `{previewId,summary}`. `confirm(previewId)` aktiviert erst nach erneuter Aktualitätsprüfung und bestätigten Uploads. Bei `stale` eine neue Vorschau öffnen und erneut ausdrücklich bestätigen. Ein bestätigter Auftrag in Phase `uploading/published` wird nach Neustart über dieselbe persistierte `previewId` fortgesetzt; seine Datei-IDs und Inhalte bleiben gleich. Die UI muss diesen offenen Auftrag anbieten. Eine neue Wiederherstellung bleibt bis dahin gesperrt.
 - Der Vorschauhash verwendet den vollständigen Fachstand, Zielbindung, lokale Runden und gewählten Import; nur eigene Transportbuchführung und Sicherheitskopien-/Auftragslisten sind aus der Vorschauidentität ausgenommen. Alle Speicher-CAS verwenden weiterhin `productStateHash`. Sicherheitskopie und Vorschau dürfen nicht durch einen zwischenzeitlichen lokalen Lernschritt auseinanderlaufen.

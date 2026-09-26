@@ -1,12 +1,54 @@
 # Anforderungen und Entscheidungen
 
-**Integrationsentwurf bestätigt (Nutzerantwort „ja“, 20.09.2026):** Der [Entwurf für dauerhafte Käufe](superpowers/specs/2026-09-20-persistent-purchases-design.md) konkretisiert nach der Nutzerfortsetzung die Speicherung von Aufträgen, gemeinsame Kauf-/Restorekoordination und gesicherte Datenumstellung. Seine technischen Festlegungen sind bestätigt; Implementierungsnachweise folgen getrennt. C, Onlinekäufe, EV01–EV05 und die bestehenden Wiederherstellungsregeln bleiben die Grundlage.
+## Aktueller Umsetzungsnachweis
 
-**Nachweis vom 20.09.2026:** Der echte [Google-Bericht10](reports/2026-09-20-shop-v10-reallauf.md) enthält sechs bestandene synthetische Kaufprüfungen. Dies bestätigt keine neuen Produktentscheidungen und ersetzt keine Integration. Die nächste technische Aufgabe ist der konkrete Vertrag für dauerhaft gespeicherte Kaufaufträge, Wiederaufnahme und Produktmigration; bestehende C-/EV-Entscheidungen bleiben erhalten. Kein identischer Probelauf nötig.
+Der [Entwurf für dauerhafte Käufe](superpowers/specs/2026-09-20-persistent-purchases-design.md)
+ist bestätigt und in Tasks 1–5 implementiert. Die endgültige Task-6-Prüfung
+läuft. Den überprüfbaren Stand mit Tests, Review und Gitgrenzen enthält der
+[Abschlussbericht](reports/2026-09-27-persistent-purchases-final.md).
 
-**Technische Fortsetzung nach Bericht 9:** Der [zusammenhängende Kaufversuch](superpowers/specs/2026-09-20-immutable-purchase-probe-design.md) untersucht einen gemeinsamen Ordnerverweis und unveränderliche Belege. Er erweitert ausschließlich die synthetische Probe innerhalb der bestätigten Richtung C. Produktregeln, Punktepreise, Anbieter und die fehlende Produktshopfreigabe bleiben unverändert. Der [Plan](superpowers/plans/2026-09-20-immutable-purchase-probe.md) enthält Initialisierung, Konkurrenz, Wiederholung, Antwortverlust und beide Reset-Reihenfolgen; dauerhafte Wiederaufnahme und Produktmigration bleiben gesondert.
+Die fachlichen Entscheidungen bleiben unverändert: Lernpunkte entstehen mit 10
+Punkten pro richtiger Antwort und 20 pro abgeschlossener Runde; Käufe verändern
+weder Lernpunkte noch Level. Guthaben, Besitz und Auswahl sind je Profil
+getrennt. Neue Käufe sind nur online nach erfolgreichem Abgleich zulässig.
+Vier freigestellte Drachenquellen sind als erste kaufbare Entwicklungsreihe
+integriert; 72 weitere Motive, deren responsive Produktionsvarianten und die
+vollständige Galeriegestaltung mit weiter ausgebautem
+Klassisch-/Entwicklungswechsel und zusätzlicher Fortschrittsdarstellung bleiben
+Folgeumfang. Reale Produktprüfung mit Google
+Drive auf zwei physischen Geräten, iPhone/iPad, Safari, Home-Bildschirm-App und
+HTTPS bleibt eine getrennte Abnahme und blockiert die autorisierte Entwicklung
+nicht.
 
-## Bestätigter Richtungswechsel: Avatar-Entwicklungsstufen (20.09.2026)
+Neue Lernereignisse und Pakete behalten das Versionspaar `(2,2)`.
+`storageVersion:3` ist davon getrennt die lokale Zustandsversion. Nur aktivierte
+Kaufepochen, wirtschaftliche Köpfe und die portable wirtschaftliche
+Sicherungsclosure verwenden Format 3. Der Offline-Provenienzcheckpoint ist nur
+im Backupexport und Quellreplay zulässig; die autoritative Zielkette lehnt ihn
+als Kopf oder Vorgänger ab.
+
+## Historische Herleitung der Kaufentscheidung
+
+**Integrationsentwurf bestätigt (Nutzerantwort „ja“, 20.09.2026):** Der
+[Entwurf für dauerhafte Käufe](superpowers/specs/2026-09-20-persistent-purchases-design.md)
+konkretisierte die Speicherung von Aufträgen, gemeinsame Kauf-/Restorekoordination
+und gesicherte Datenumstellung. C, Onlinekäufe, EV01–EV05 und die bestehenden
+Wiederherstellungsregeln bilden weiterhin die Grundlage. Die damalige Aussage,
+dass Implementierungsnachweise noch folgen, ist durch die oben genannten
+Task-1–4-Berichte überholt.
+
+**Historischer Nachweis vom 20.09.2026:** Der echte
+[Google-Bericht 10](reports/2026-09-20-shop-v10-reallauf.md) enthält sechs
+bestandene synthetische Kaufprüfungen. Er bestätigt keine reale Abnahme der
+integrierten Produktpfade und wird nicht unverändert wiederholt.
+
+**Historische Fortsetzung nach Bericht 9:** Der
+[zusammenhängende Kaufversuch](superpowers/specs/2026-09-20-immutable-purchase-probe-design.md)
+untersuchte einen gemeinsamen Ordnerverweis und unveränderliche Belege. Der
+[damalige Plan](superpowers/plans/2026-09-20-immutable-purchase-probe.md) bleibt
+als Herleitung erhalten; sein nächster Schritt ist kein aktueller Auftrag.
+
+## Bestätigter Richtungswechsel: Avatar-Entwicklungsstufen (20.09.2026, Entscheidungshistorie)
 
 **EV01–EV05 bestätigt:** Das Kind spart Guthaben an und schaltet die nächste Entwicklungsstufe mit einem bewussten Kauf vollständig frei. Keine Teilbeträge pro Avatar. Einheitliche Einzelpreise je Aufstieg: **200 / 400 / 800 Punkte**, insgesamt 1.400 ab vorhandener Grundform, zusätzlich zu einem etwaigen Kaufpreis der Grundfigur. Mädchen und Jungen behalten jeweils vier kostenlose Hauttöne; Kleidung/Rüstung ist je neuer Stufe fest gestaltet, ohne zusätzliche Kleidungsfarbwahl (EV03: Nutzerantwort a). Der bisherige menschliche Avatar bleibt zusätzlich als **„Klassisch“** mit seinen Farben, Zubehörteilen und bisherigen kostenlosen Freischaltungen nutzbar (EV04: Nutzerantwort B). Klassisches Zubehör wird nicht auf neue Stufenbilder montiert. [Laufende Entscheidungen](design/2026-09-20-avatar-entwicklungsstufen.md).
 
@@ -16,7 +58,7 @@ Der Nutzer hat die Empfehlung „vier vollständig gerenderte Entwicklungsformen
 
 **Bestätigtes Bildkriterium vom 20.09.2026:** Der Unterschied von Stufe 3 zu Stufe 4 muss deutlich größer, epischer und mythischer wirken. Eine Endstufe, die hauptsächlich zusätzliche Rüstung trägt, genügt nicht. Konzeptbogen v1 wurde aus diesem Grund nicht abgenommen. Der Nutzer hat v2 mit „ja, viel besser“ persönlich bestätigt; diese Drachenbildrichtung mit klar epischer Finalstufe ist damit die Stilvorlage und nicht erneut zur Bildfreigabe vorzulegen. Datenvertrag, konkrete Oberflächengestaltung und die Produktion weiterer Figuren bleiben im Detaildesign offen; Kaufprinzip und Preise sind durch EV01/EV02 geklärt.
 
-Für neue Entwicklungsformen ersetzt diese Entscheidung den modularen Ausrüstungsumfang aus AV02 und die Kompatibilitätsgruppen aus AV11; die bisherige menschliche Avataransicht bleibt nach EV04 als klassische Alternative nutzbar. Bisherige Bildquellen und Passformnachweise werden erhalten; die Produktoberfläche ist noch unverändert. Datenmodell, Shopintegration, endgültige Namen und die vollständige Bildproduktion sind im Detaildesign zu konkretisieren. EV03 ergibt bei den bisherigen 13 Figuren einschließlich menschlicher Hauttonvarianten 76 neue Bildmotive statt der zuvor vereinfacht genannten 52. Vorhandene klassische Bilder werden zusätzlich weiterverwendet. Die bereits bestätigte allgemeine Entwicklungsfreigabe und die übrigen Produktentscheidungen bleiben bestehen. Die alten AV01–AV12-Unterlagen bleiben als Entscheidungshistorie erhalten, soweit sie nicht durch diese Präzisierung ersetzt werden.
+Für neue Entwicklungsformen ersetzt diese Entscheidung den modularen Ausrüstungsumfang aus AV02 und die Kompatibilitätsgruppen aus AV11; die bisherige menschliche Avataransicht bleibt nach EV04 als klassische Alternative nutzbar. Zum Entscheidungszeitpunkt war die Produktoberfläche noch unverändert und Datenmodell, Shopintegration sowie Bildproduktion waren zu konkretisieren. Der aktuelle Implementierungsstand steht ausschließlich im Abschnitt „Aktueller Umsetzungsnachweis“. EV03 ergibt bei den bisherigen 13 Figuren einschließlich menschlicher Hauttonvarianten 76 neue Bildmotive statt der zuvor vereinfacht genannten 52. Vorhandene klassische Bilder werden zusätzlich weiterverwendet. Die bereits bestätigte allgemeine Entwicklungsfreigabe und die übrigen Produktentscheidungen bleiben bestehen. Die alten AV01–AV12-Unterlagen bleiben als Entscheidungshistorie erhalten, soweit sie nicht durch diese Präzisierung ersetzt werden.
 
 Der echte Drive-Probelauf mit Diagnoseversion 4 ergab 3 bestandene und 8 fehlgeschlagene Fälle. Zwei parallele Initialisierungen und zwei parallele Käufe wurden jeweils beide angenommen. Damit ist der bisherige gemischte v2-ETag-/v3-Schreibkandidat kein nachgewiesener exklusiver Kauf-Guard. [Auswertung](reports/2026-09-20-shop-v4-reallauf.md).
 
@@ -28,15 +70,15 @@ Der [echte Diagnose-5-Lauf](reports/2026-09-20-shop-v5-reallauf.md) ergibt vier 
 
 **Technischer Befund nach Bericht 8:** Die vollständige Messung mit umgangenem HTTP-Cache zeigt stabile Kontrollabrufe vor dem Inhalt, aber eine gestiegene Version im Medienfenster; ETag und verfügbare Inhaltsmerkmale bleiben gleich. Das belegt keine Ursache. [Auswertung](reports/2026-09-20-shop-v8-reallauf.md). Der [begrenzte Metadatenversuch](superpowers/plans/2026-09-20-shop-probe-v9-metadata-coordination.md) innerhalb von C prüft ausschließlich neue synthetische Ordner ohne Inhaltsabruf. Produktentscheidungen, strenge Versions-/ETag-Guards und fehlende Shopfreigabe bleiben bestehen; eine hypothetische spätere Pointer-Architektur ist damit nicht umgesetzt.
 
-**Technischer Befund nach Bericht 9:** Drei Checks bestanden, einer fehlgeschlagen. Der v2-Ordner-Metadatenpfad weist eine verbrauchte echte Kennung mit 412 ab und bestätigt im Parallelfall genau einen Gewinner mit vollständiger Nachlese. Die künstlich veränderte Kennung ergibt 500 bei unveränderten nachgelesenen Properties; dieser Check bleibt fehlgeschlagen. [Auswertung](reports/2026-09-20-shop-v9-reallauf.md). Positiver Teilnachweis innerhalb C, keine Änderung der Produktanforderungen oder Shopfreigabe. Den vollständigen Kaufvertrag mit Ordnerverweis auf unveränderlichen Inhalt als nächste technische Aufgabe konkretisieren; keine unveränderte Probe erneut anfordern.
+**Historischer technischer Befund nach Bericht 9:** Drei Checks bestanden, einer fehlgeschlagen. Der v2-Ordner-Metadatenpfad weist eine verbrauchte echte Kennung mit 412 ab und bestätigt im Parallelfall genau einen Gewinner mit vollständiger Nachlese. Die künstlich veränderte Kennung ergibt 500 bei unveränderten nachgelesenen Properties; dieser Check bleibt fehlgeschlagen. [Auswertung](reports/2026-09-20-shop-v9-reallauf.md). Der damals nächste Schritt war die Konkretisierung des vollständigen Kaufvertrags; dieser Vertrag ist inzwischen in Tasks 1–4 umgesetzt. Keine unveränderte Probe erneut anfordern.
 
-## Neuer Auftrag: Avatare und Punkteshop (19.09.2026)
+## Avatare und Punkteshop (19.09.2026, Entscheidungshistorie)
 
-Die [bestätigten Entscheidungen AV01–AV12](design/2026-09-19-avatar-shop-entscheidungen.md) erweitern den bisherigen Umfang: Mädchen-/Jungenfiguren, Tiere und mystische Avatare, passende Ausstattung je Figurenart, kostenlose Levelbelohnungen und ein Shop mit erspieltem Guthaben. Der Nutzer hat R24/Q6d ausdrücklich geändert: Der frühere Ausschluss eines Münzladens gilt für diese Erweiterung nicht mehr. Gesamte Lernpunkte und ausgebbares Guthaben werden getrennt; bisherige Punkte zählen vollständig als Startguthaben. O-AV01 ist mit A beantwortet: Kaufen nur online nach erfolgreichem Abgleich, vorhandenen Besitz offline verwenden. Der [Gesamtentwurf](superpowers/specs/2026-09-19-avatar-shop-design.md) ist freigegeben. Bildpipeline und isolierte Kaufprobe sind vorbereitet, die Produktintegration steht aus; die abgeschlossene Überarbeitung U01–U07 bleibt davon getrennt.
+Die [bestätigten Entscheidungen AV01–AV12](design/2026-09-19-avatar-shop-entscheidungen.md) erweitern den bisherigen Umfang: Mädchen-/Jungenfiguren, Tiere und mystische Avatare, passende Ausstattung je Figurenart, kostenlose Levelbelohnungen und ein Shop mit erspieltem Guthaben. Der Nutzer hat R24/Q6d ausdrücklich geändert: Der frühere Ausschluss eines Münzladens gilt für diese Erweiterung nicht mehr. Gesamte Lernpunkte und ausgebbares Guthaben werden getrennt; bisherige Punkte zählen vollständig als Startguthaben. O-AV01 ist mit A beantwortet: Kaufen nur online nach erfolgreichem Abgleich, vorhandenen Besitz offline verwenden. Der [Gesamtentwurf](superpowers/specs/2026-09-19-avatar-shop-design.md) ist freigegeben. Zum damaligen Stand waren Bildpipeline und isolierte Kaufprobe vorbereitet; der aktuelle Implementierungsstand steht oben. Die abgeschlossene Überarbeitung U01–U07 bleibt davon getrennt.
 
 **Präzisierung vom 20.09.2026:** Alle Figuren und kompatiblen Ausrüstungsteile körperbezogen nacharbeiten. Vollständig sichtbare Ringöffnungen vor Beinen, überstehende Umhänge und unplausible Verdeckungen sind ausdrücklich beanstandet. Klassische Bildbearbeitung ist mit „Ja, du darfst die Bildbearbeitung dafür verwenden“ erlaubt. [Bildnacharbeit v3](reports/2026-09-20-avatar-fit-v3.md). Die Methodenfreigabe ist keine persönliche visuelle Abnahme.
 
-## Neuer Auftrag vom 19.09.2026
+## Überarbeitung vom 19.09.2026 (Entscheidungshistorie)
 
 Nach eigenem Test beauftragt der Nutzer eine größere Überarbeitung: bessere Nähe zum Inselkonzept, illustrierte Rasterbilder für Avatar und Reise in passenden Auflösungen, einfachere Cloud-Einrichtung, verständlich erklärte Übungsmodi, leicht zugängliche Wiederholungseinstellungen einschließlich Ausschluss gelernter Wörter, einfachere Vokabelverwaltung und grafische Lernstatistiken. Diese Anforderungen sind im [bestätigten Entwurf U01–U07](design/2026-09-19-ueberarbeitung.md) vollständig festgehalten.
 

@@ -28,6 +28,25 @@ node --test tests/browser/trainer.browser.mjs
 node --test tests/browser/overhaul.browser.mjs
 ```
 
+Die vollständige Abschlussprüfung einschließlich der Kaufwege startet alle drei
+Dateien gemeinsam ohne Testisolation zwischen den importierten Modulen:
+
+```sh
+node --test --experimental-test-isolation=none \
+  tests/browser/trainer.browser.mjs \
+  tests/browser/overhaul.browser.mjs \
+  tests/browser/purchases.browser.mjs
+```
+
+`purchases.browser.mjs` prüft mit dem wirklichen Produkt- und Kaufdienst an
+einer synthetischen Drive-Grenze unter anderem Format-3-Aktivierung, tatsächlich
+erspielte Punkte, Kauf und Auswahl, erneutes Öffnen, Offlinebesitz, veraltete
+Vorschau, verlorene Antwort mit Wiederaufnahme sowie getrennte Profile. Der
+Lauf verwendet keine echten Google-Zugänge und ersetzt keine reale
+Zwei-Geräte-, Safari-, iPhone-/iPad- oder Hostingabnahme. Der aktuelle
+fortzuschreibende Gesamtstand einschließlich noch offener Fehler steht im
+[Abschlussbericht zu dauerhaften Käufen](../../docs/reports/2026-09-27-persistent-purchases-final.md).
+
 Normale Läufe schreiben die 13 C2-Ansichten ausschließlich nach `test-results/overhaul-c2/`; dieser Ordner ist ignoriert und verändert den Checkout nicht. Die bewusst ausgewählten und geprüften Nachweise liegen versioniert unter [`docs/design/2026-09-19-ueberarbeitung-app/`](../../docs/design/2026-09-19-ueberarbeitung-app/). Nur für eine neue Veröffentlichung werden die gewünschten Laufzeitbilder nach Sichtprüfung ausdrücklich in diesen Dokumentationsordner übernommen. Die Matrix umfasst 1280×900, 390×844, 320×568 und 844×390, eine Schriftgröße von 200 Prozent sowie einen getrennten DPR-2-Kontext. Die Browserfälle prüfen dabei auch alle vier Hauttöne, sechs Kleidungsfarben und sechs sichtbaren Ausrüstungsoptionen samt verständlicher Sperren.
 
 ## Technische Google-Drive-Probe

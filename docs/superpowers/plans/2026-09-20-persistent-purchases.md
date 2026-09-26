@@ -1,6 +1,10 @@
 # Dauerhafte Käufe: Implementierungsplan
 
-**Fortsetzung am 26.09.2026 beauftragt.** Tasks 1–3 sind unabhängig geprüft; [Task-3-Nachprüfung](../../reports/2026-09-26-persistent-purchases-task3-fix2-review.md). Task 4 wird umgesetzt, Tasks 5–6 bleiben offen. [Aktuelle Fortsetzungsübergabe](../../handoffs/2026-09-26-persistent-purchases-fortsetzung.md). Ältere Pausen-/Aufgabenstände sind historische Vorgeschichte.
+**Stand 27.09.2026:** Tasks 1–5 sind implementiert und unabhängig geprüft;
+der Task-5-Fokusrest wird in der Gesamtprüfung nachgeführt. Task 6 läuft.
+Prüfbelege, offene Befunde und späterer Pushnachweis stehen zentral im
+[Abschlussbericht](../../reports/2026-09-27-persistent-purchases-final.md).
+Ältere Pausen-, Aufgaben- und Zwischenstände sind historische Vorgeschichte.
 
 > Ausführung mit `subagent-driven-development`; konkrete Zustimmung des Nutzers: „ja“ nach Vorlage des Integrationsentwurfs. Keine weitere Startfreigabe erforderlich.
 
@@ -46,11 +50,11 @@ Netzwerkfehler und Integritätsfehler tragen maschinenlesbare `code`-Werte über
 
 **Interfaces produced:** `assertIntent`, `assertReceipt`, `assertCommerce`, `emptyCommerce`; `purchaseOffer({ledger, economic, profileId, articleId})`; `replayHistory({entries, bases, binding})`; `readHistory({head, read, cache, binding, onProgress})`; `packBasis(ledger, reserve)` und `readBasis(ref, read)`; kanonischer JSON-/Hash-Helfer. Genaue Rückgabeformen im Schnittstellendokument festhalten und spätere Tasks daran binden.
 
-- [ ] RED: erst Schema-/Kauf-/Kettenfälle schreiben. Zentrale Assertion: Zwei Kinder mit je 300 echten Lernpunkten; Kind A kauft Stufe 2 für 200, A verbleiben 100, B 300; `project(ledger)` und Level unverändert. Ohne Vorgängerstufe, falscher Preis, Punktbehauptung, geänderte Intent-ID und kollidierende Antwort bleiben abgewiesen.
-- [ ] `node --test --experimental-test-isolation=none tests/trainer/purchases-contract.test.js` ausführen, erwarteten fehlenden Vertrag belegen.
-- [ ] GREEN: exakte Datenvalidierung, Basismanifest/Teile, reine Katalogberechtigung, Kauf-/Restore-Replay und Historienlesung implementieren. Erwerbe nur aus Belegen; freie Grundfiguren aus Level. Frühere aktive Fakten müssen in späteren Kaufbasen erhalten bleiben. Neue Fakten dürfen bestehende Antwortidentität nicht verdrängen. Provenienz einer Wiederherstellung unabhängig prüfen, bevor Ausgaben/Besitz übernommen werden.
-- [ ] Kette iterativ und in Arbeitsabschnitten lesen. Cacheinhalt bei Verwendung erneut hashen; Kopf muss geprüfte Vorgängerkette erweitern. Kreise, abgeschnittene/alternative Ketten, falsche Bindungen und Belege blockieren. Mindestens 1000 synthetische gültige Transaktionen und >64 Käufe/Restores über mehrere Epochen mit vollständigen IDs prüfen; keine reine Längen-Mockassertion.
-- [ ] Fokuslauf grün, vorhandene Lern-/Avatarfälle unverändert grün; Diff selbst prüfen, committen, Bericht mit RED/GREEN und konkreten Schnittstellen ablegen. Review vor Task 2.
+- [x] RED: erst Schema-/Kauf-/Kettenfälle schreiben. Zentrale Assertion: Zwei Kinder mit je 300 echten Lernpunkten; Kind A kauft Stufe 2 für 200, A verbleiben 100, B 300; `project(ledger)` und Level unverändert. Ohne Vorgängerstufe, falscher Preis, Punktbehauptung, geänderte Intent-ID und kollidierende Antwort bleiben abgewiesen.
+- [x] `node --test --experimental-test-isolation=none tests/trainer/purchases-contract.test.js` ausführen, erwarteten fehlenden Vertrag belegen.
+- [x] GREEN: exakte Datenvalidierung, Basismanifest/Teile, reine Katalogberechtigung, Kauf-/Restore-Replay und Historienlesung implementieren. Erwerbe nur aus Belegen; freie Grundfiguren aus Level. Frühere aktive Fakten müssen in späteren Kaufbasen erhalten bleiben. Neue Fakten dürfen bestehende Antwortidentität nicht verdrängen. Provenienz einer Wiederherstellung unabhängig prüfen, bevor Ausgaben/Besitz übernommen werden.
+- [x] Kette iterativ und in Arbeitsabschnitten lesen. Cacheinhalt bei Verwendung erneut hashen; Kopf muss geprüfte Vorgängerkette erweitern. Kreise, abgeschnittene/alternative Ketten, falsche Bindungen und Belege blockieren. Mindestens 1000 synthetische gültige Transaktionen und >64 Käufe/Restores über mehrere Epochen mit vollständigen IDs prüfen; keine reine Längen-Mockassertion.
+- [x] Fokuslauf grün, vorhandene Lern-/Avatarfälle unverändert grün; Diff selbst prüfen, committen, Bericht mit RED/GREEN und konkreten Schnittstellen ablegen. Review vor Task 2.
 
 ### Task 2: Gebundener Produkttransport und eindeutige Einrichtung
 
@@ -60,11 +64,11 @@ Netzwerkfehler und Integritätsfehler tragen maschinenlesbare `code`-Werte über
 
 **Interfaces produced:** `createPurchaseTransport({fetchImpl,getToken,binding,descriptorHash})` mit `accountId`, `reserveId`, `readFolder`, `createFolder`, `readImmutable`, `writeImmutable`, `putPointer`; `prepareBootstrap`/`resumeBootstrap` arbeiten über injizierten `persist`-Callback und aktuelle gespeicherte Setupdaten. Transport erzeugt keine Kaufabsichten.
 
-- [ ] RED: synthetische HTTP-Fälle für starke opake ETags, zwei kohärente Metadatenreads, genaue Eltern/App/Datensatz/Konfigurationsbindung, verändertes Konto, Properties-Erhaltung und -Grenzen schreiben.
-- [ ] Fokuslauf `node --test --experimental-test-isolation=none tests/trainer/purchases-transport.test.js` vor Implementierung dokumentieren.
-- [ ] GREEN: neues Markerpräfix `vokabeltrainer-purchases`; V2-Metadaten-GET/PUT und reservierte V3-Erstellung. HTTP200 allein bestätigt keinen Kauf. 409 nach verlorenem Create akzeptiert nur vollständige Bindung plus Inhaltshash. Persistierte Kandidaten müssen aus validiertem Auftrag registriert werden; entfernte Referenz erlaubt nur Lesen. Keine freien Write-IDs.
-- [ ] Bootstrapjob speichert reservierte zwei Ordner und Config vor Upload/Pointer; bestehenden Deskriptor unverändert prüfen. Ein einmaliger bedingter Bestandsordner-PUT installiert vollständige Configref; zwei Konkurrenten wählen exakt den Gewinner, ungewisser Ausgang wird mit ursprünglichem Job nachgelesen. Configref darf niemals ersetzt werden. Spätere Kopfwechsel nur im Koordinationsordner.
-- [ ] Grenzen 30 private Properties und 124 UTF-8-Bytes je Schlüssel+Wert testen; fremde Properties erhalten. Alte Produktmetadatenwächter und Shop-Probe unverändert lassen. Fokus grün, Review/Commit.
+- [x] RED: synthetische HTTP-Fälle für starke opake ETags, zwei kohärente Metadatenreads, genaue Eltern/App/Datensatz/Konfigurationsbindung, verändertes Konto, Properties-Erhaltung und -Grenzen schreiben.
+- [x] Fokuslauf `node --test --experimental-test-isolation=none tests/trainer/purchases-transport.test.js` vor Implementierung dokumentieren.
+- [x] GREEN: neues Markerpräfix `vokabeltrainer-purchases`; V2-Metadaten-GET/PUT und reservierte V3-Erstellung. HTTP200 allein bestätigt keinen Kauf. 409 nach verlorenem Create akzeptiert nur vollständige Bindung plus Inhaltshash. Persistierte Kandidaten müssen aus validiertem Auftrag registriert werden; entfernte Referenz erlaubt nur Lesen. Keine freien Write-IDs.
+- [x] Bootstrapjob speichert reservierte zwei Ordner und Config vor Upload/Pointer; bestehenden Deskriptor unverändert prüfen. Ein einmaliger bedingter Bestandsordner-PUT installiert vollständige Configref; zwei Konkurrenten wählen exakt den Gewinner, ungewisser Ausgang wird mit ursprünglichem Job nachgelesen. Configref darf niemals ersetzt werden. Spätere Kopfwechsel nur im Koordinationsordner.
+- [x] Grenzen 30 private Properties und 124 UTF-8-Bytes je Schlüssel+Wert testen; fremde Properties erhalten. Alte Produktmetadatenwächter und Shop-Probe unverändert lassen. Fokus grün, Review/Commit.
 
 ### Task 3: Atomarer Speicher und wiederaufnehmbare Kaufaufträge
 
@@ -74,11 +78,11 @@ Netzwerkfehler und Integritätsfehler tragen maschinenlesbare `code`-Werte über
 
 **Interfaces produced:** `createPurchaseService({commands,transport,sync,now,id,onStatus})` mit `prepareActivation`, `confirmActivation`, `refresh`, `preview`, `confirm`, `resume`, `getStatus`, `getView`, `select`, sowie koordiniertem `prepareRestore`/`confirmRestore` als von Task 4 benutzter Operationsport. Preview ist zustandsgebunden; veraltete Bestätigung schreibt nicht.
 
-- [ ] RED: Neustart durch vollständig neue Store-/Command-/Service-/Transportobjekte nach jedem Speicher-/Netzschritt testen. Speicherfehler verhindert nächsten Netzschritt; Pointer-200 ohne Abschluss, verlorene Antwort mit späterem Kauf und exakte Wiederaufnahme prüfen.
-- [ ] Fokuslauf `node --test --experimental-test-isolation=none tests/trainer/purchases-recovery.test.js` erwartetes Fehlen belegen.
-- [ ] GREEN: storageVersion3 mit exaktem `commerce`, atomarer und validierter v1/v2-Sicherungs-/Migrationspfad, keine Umschreibung alter Objekte/IDs/PIN/Pakete. Offene alte Restorejobs blockieren Umstellung. Lokale Migration allein aktiviert kein Cloudkonto. Fachformat bleibt bis Task 4 getrennt von lokaler Version.
-- [ ] Auftragsübergänge einzeln speichern. `refresh` liest nur und gleicht ursprüngliche IDs mit vollständiger Historie ab. Kein automatischer Pointerretry bei `pointer-pending`/`reconciling`. Nur explizites `resume(operationId)` wiederholt identischen Kandidaten/ETag nach Identitätsprüfung. 412 oder bewiesene Weiterentwicklung ohne Intent verlangt neue Vorschau. Doppelklick/Kauf eines besessenen Artikels erzeugt keine neue Belastung.
-- [ ] Kaufbasis ausschließlich nach erfolgreichem Abgleich; offline neue Käufe blockieren, vorhandenen Besitz lesbar lassen. Sperren je gemeinsamem Kopf, getrennte Profile, keine Parallelmutation am serialisierten Writer vorbei. Tests für geänderten Intent, falsches Profil, Konto-/Ordnerwechsel, Speicher voll. Fokus und bestehende Commands/Migration grün; Review/Commit.
+- [x] RED: Neustart durch vollständig neue Store-/Command-/Service-/Transportobjekte nach jedem Speicher-/Netzschritt testen. Speicherfehler verhindert nächsten Netzschritt; Pointer-200 ohne Abschluss, verlorene Antwort mit späterem Kauf und exakte Wiederaufnahme prüfen.
+- [x] Fokuslauf `node --test --experimental-test-isolation=none tests/trainer/purchases-recovery.test.js` erwartetes Fehlen belegen.
+- [x] GREEN: storageVersion3 mit exaktem `commerce`, atomarer und validierter v1/v2-Sicherungs-/Migrationspfad, keine Umschreibung alter Objekte/IDs/PIN/Pakete. Offene alte Restorejobs blockieren Umstellung. Lokale Migration allein aktiviert kein Cloudkonto. Fachformat bleibt bis Task 4 getrennt von lokaler Version.
+- [x] Auftragsübergänge einzeln speichern. `refresh` liest nur und gleicht ursprüngliche IDs mit vollständiger Historie ab. Kein automatischer Pointerretry bei `pointer-pending`/`reconciling`. Nur explizites `resume(operationId)` wiederholt identischen Kandidaten/ETag nach Identitätsprüfung. 412 oder bewiesene Weiterentwicklung ohne Intent verlangt neue Vorschau. Doppelklick/Kauf eines besessenen Artikels erzeugt keine neue Belastung.
+- [x] Kaufbasis ausschließlich nach erfolgreichem Abgleich; offline neue Käufe blockieren, vorhandenen Besitz lesbar lassen. Sperren je gemeinsamem Kopf, getrennte Profile, keine Parallelmutation am serialisierten Writer vorbei. Tests für geänderten Intent, falsches Profil, Konto-/Ordnerwechsel, Speicher voll. Fokus und bestehende Commands/Migration grün; Review/Commit.
 
 ### Task 4: Gemeinsame Epoche, v3-Sicherungen und alte Geräte
 
@@ -88,13 +92,13 @@ Netzwerkfehler und Integritätsfehler tragen maschinenlesbare `code`-Werte über
 
 **Interfaces produced:** neuer Format-/Regelmodus3, portable v3-Economy mit vollständigen Belegen/Basen/Auswahl ohne Journal/ETags/Token, `createProductSync` und `createRestoreService` mit optionalem Commerceport; kein Kreis durch Import gegenseitiger Serviceimplementierungen (Ports injizieren).
 
-- [ ] RED: gleichzeitiger Kauf/Restore in beiden Reihenfolgen, leeres zweites Gerät, bestehende v1/v2-Historie, alter Client und verspätete Epochen-/Antwortdateien prüfen.
-- [ ] `node --test --experimental-test-isolation=none tests/trainer/purchases-integration.test.js` ausführen.
-- [ ] GREEN: v3-Marker vor Aktivierung, ursprünglicher Descriptor unverändert; Aktivierung durch neuen gemeinsamen Initializebeleg samt vollständig gebundener neuer Epoche. Neue App entdeckt die gespeicherte Config auch mit leerem Cache. Unkoordinierte alte Epochen/Snapshots erhalten, aber niemals aktive neue Epoche auswählen. Späte Lernereignisse als ausdrücklich übernehmbare Alt-Ereignisse behandeln.
-- [ ] Restore: erst Sicherheitskopie, Besitz-/Guthabenvorschau und offene Aufträge klären; Kandidaten hochladen; dann gemeinsamen Kopf bestätigen. Nur bestätigten Restore lokal atomar aktivieren, alte Runden ohne Bonus beenden. 412 verlangt neue Vorschau. Verbindungsausfall darf nicht in Offline-Restore fallen. Rein unverbundener Offline-Restore bleibt.
-- [ ] Backup v3 genau validieren, vollständige wirtschaftliche Herkunft einschließlich Restoreimport prüfen. Fremde Sicherung liefert wirtschaftliches Ziel ohne fremde Drivekontrolle/ausführbare Jobs. Fehlende Belege, manipulierter Besitz, zirkuläre Herkunft, >25MiB und voller Store müssen bisherigen Zustand erhalten.
-- [ ] Protokolladdendum: v3-Export hängt offline und ohne Produktmutation einen deterministischen neutralen Checkpoint an den bestätigten Quellkopf. Er muss den vollständigen aktuellen Fachstand monoton übernehmen, Ausgaben/Käufe erhalten und Punkte/freie Berechtigungen neu ableiten. Nur eigenständiges Backup- oder über `restore.economy.source` erreichtes Quellreplay akzeptiert ihn; autoritative Zielketten lehnen ihn als Kopf und Vorgänger ab. Auch bei gleicher Binding muss Restore alle checkpointlokalen Objekte per Proof auf neue physische IDs abbilden.
-- [ ] Legacy-Schreibbarriere mit eingefrorenen v1/v2-Fällen beweisen, einschließlich vor Marker bereits laufender Uploads/Restores. Fokus plus bestehende Sync/Backup/Restore/Migrationtests grün; Review/Commit.
+- [x] RED: gleichzeitiger Kauf/Restore in beiden Reihenfolgen, leeres zweites Gerät, bestehende v1/v2-Historie, alter Client und verspätete Epochen-/Antwortdateien prüfen.
+- [x] `node --test --experimental-test-isolation=none tests/trainer/purchases-integration.test.js` ausführen.
+- [x] GREEN: v3-Marker vor Aktivierung, ursprünglicher Descriptor unverändert; Aktivierung durch neuen gemeinsamen Initializebeleg samt vollständig gebundener neuer Epoche. Neue App entdeckt die gespeicherte Config auch mit leerem Cache. Unkoordinierte alte Epochen/Snapshots erhalten, aber niemals aktive neue Epoche auswählen. Späte Lernereignisse als ausdrücklich übernehmbare Alt-Ereignisse behandeln.
+- [x] Restore: erst Sicherheitskopie, Besitz-/Guthabenvorschau und offene Aufträge klären; Kandidaten hochladen; dann gemeinsamen Kopf bestätigen. Nur bestätigten Restore lokal atomar aktivieren, alte Runden ohne Bonus beenden. 412 verlangt neue Vorschau. Verbindungsausfall darf nicht in Offline-Restore fallen. Rein unverbundener Offline-Restore bleibt.
+- [x] Backup v3 genau validieren, vollständige wirtschaftliche Herkunft einschließlich Restoreimport prüfen. Fremde Sicherung liefert wirtschaftliches Ziel ohne fremde Drivekontrolle/ausführbare Jobs. Fehlende Belege, manipulierter Besitz, zirkuläre Herkunft, >25MiB und voller Store müssen bisherigen Zustand erhalten.
+- [x] Protokolladdendum: v3-Export hängt offline und ohne Produktmutation einen deterministischen neutralen Checkpoint an den bestätigten Quellkopf. Er muss den vollständigen aktuellen Fachstand monoton übernehmen, Ausgaben/Käufe erhalten und Punkte/freie Berechtigungen neu ableiten. Nur eigenständiges Backup- oder über `restore.economy.source` erreichtes Quellreplay akzeptiert ihn; autoritative Zielketten lehnen ihn als Kopf und Vorgänger ab. Auch bei gleicher Binding muss Restore alle checkpointlokalen Objekte per Proof auf neue physische IDs abbilden.
+- [x] Legacy-Schreibbarriere mit eingefrorenen v1/v2-Fällen beweisen, einschließlich vor Marker bereits laufender Uploads/Restores. Fokus plus bestehende Sync/Backup/Restore/Migrationtests grün; Review/Commit.
 
 ### Task 5: Anbindung, Status und nutzbare Kaufaktionen
 
@@ -104,11 +108,11 @@ Netzwerkfehler und Integritätsfehler tragen maschinenlesbare `code`-Werte über
 
 **Interfaces produced:** Einrichtung der Datenaktualisierung im Erwachsenenbereich mit Vorschau und bewusster Bestätigung; Guthaben, Kaufvorschau/Bestätigung, Besitz und „Kauf wird geprüft“/„Kauf fortsetzen“ in Avatarbereich; sichtbare Fehlermeldung ohne technische Journalfelder.
 
-- [ ] RED: Browserfall nach Kauf echter synthetisch erspielter Punkte, Seite schließen/neu öffnen, Besitz und Guthaben unverändert; offline Besitz sichtbar, Kauf gesperrt. Getrennte Kinder unverändert.
-- [ ] `node --test --experimental-test-isolation=none tests/browser/purchases.browser.mjs` mit vorhandenem Playwright/Edge ausführen.
-- [ ] GREEN: echte Serviceanbindung, Anmeldungstoken nur flüchtig, Status aus bestätigter Historie. Erklären, dass Lernpunkte/Level erhalten bleiben. Bei fehlendem Produktionsbild keine fertige Entwicklungsillustration vortäuschen; verfügbare Drachenformen einsetzen, übrige Produktionsbilder als ausstehend behandeln. Vollständige Galeriegestaltung bleibt Folgeumfang.
-- [ ] Backupvorschau um wirtschaftliche Änderungen ergänzen. Konkrete Datenaktualisierung statt Client-ID-Neueinrichtung; alte Geräte brauchen Appupdate. Ungewisser Kauf bleibt nach Reload mit gezielter Fortsetzenaktion erkennbar.
-- [ ] Cachekennung erhöhen und alle neuen Runtime-Dateien explizit precachen; kein Token/Googleantworten im Cache. Schmale/mobile Ansicht, Tastaturbedienung, Offline-Neustart und Workerupdate prüfen. Fokus, Produktbrowser-/Offlinefälle grün; Review/Commit.
+- [x] RED: Browserfall nach Kauf echter synthetisch erspielter Punkte, Seite schließen/neu öffnen, Besitz und Guthaben unverändert; offline Besitz sichtbar, Kauf gesperrt. Getrennte Kinder unverändert.
+- [x] `node --test --experimental-test-isolation=none tests/browser/purchases.browser.mjs` mit vorhandenem Playwright/Edge ausführen.
+- [x] GREEN: echte Serviceanbindung, Anmeldungstoken nur flüchtig, Status aus bestätigter Historie. Erklären, dass Lernpunkte/Level erhalten bleiben. Bei fehlendem Produktionsbild keine fertige Entwicklungsillustration vortäuschen; verfügbare Drachenformen einsetzen, übrige Produktionsbilder als ausstehend behandeln. Vollständige Galeriegestaltung bleibt Folgeumfang.
+- [x] Backupvorschau um wirtschaftliche Änderungen ergänzen. Konkrete Datenaktualisierung statt Client-ID-Neueinrichtung; alte Geräte brauchen Appupdate. Ungewisser Kauf bleibt nach Reload mit gezielter Fortsetzenaktion erkennbar.
+- [x] Cachekennung erhöhen und alle neuen Runtime-Dateien explizit precachen; kein Token/Googleantworten im Cache. Schmale/mobile Ansicht, Tastaturbedienung, Offline-Neustart und Workerupdate prüfen. Fokus, Produktbrowser-/Offlinefälle grün; Review/Commit.
 
 ### Task 6: Gesamtprüfung und portable Übergabe
 

@@ -1,18 +1,32 @@
 # Vokabeltrainer
 
-**Fortsetzung am 26.09.2026:** Tasks 1–4 des Kaufplans sind implementiert und unabhängig geprüft. Die [Task-4-Nachprüfung](docs/reports/2026-09-26-persistent-purchases-task4-fix2-review.md) schließt alle drei Ablaufbefunde; neue Autoritäts-/Syncprüfungen bestehen mit 48/48 Fällen. Task 5 bindet jetzt die Kaufoberfläche an, danach folgt die Gesamtprüfung. Maßgeblich ist die [Fortsetzungsübergabe](docs/handoffs/2026-09-26-persistent-purchases-fortsetzung.md). Frühere datierte Abschnitte sind historische Nachweise, keine aktuellen Startaufträge.
-
-**Echte Kaufprobe 10 bestanden (20.09.2026):** Der vom Nutzer übergebene Google-Bericht bestätigt alle sechs synthetischen Kaufabläufe: Initialisierung, Konkurrenz, Wiederholung, simulierten Antwortverlust und beide Reset-Reihenfolgen. [Auswertung](docs/reports/2026-09-20-shop-v10-reallauf.md), [Auswertungsübergabe](docs/handoffs/2026-09-20-shop-v10-auswertung.md). Keinen identischen 10er-Lauf erneut anfordern. Nächster Schritt ist der konkrete Integrationsentwurf für dauerhafte Aufträge, Wiederaufnahme und Produktdaten. Browserneustart, getrennte Geräte und Produktshop sind noch nicht geprüft beziehungsweise integriert; C und EV01–EV05 bleiben bestätigt. Bericht9s künstlicher ETag-/HTTP500-Fall bleibt separat bestehen.
-
 Ein Deutsch-Englisch-Vokabeltrainer für Kinder von **10 bis 13 Jahren, Klasse 4 bis 7**. Die Web-App ist für Smartphones, Tablets und Computer gestaltet; **iPhone und iPad haben Vorrang**.
 
-**Avatar-Entwicklung, Stand 20. September 2026:** Die bestätigte Erweiterung ergänzt vier vollständige Entwicklungsformen je Figur und behält die bisherige Gestaltung als „Klassisch“. Der Stufenkatalog ist implementiert und geprüft; die ersten vier Drachenbilder sind als transparente Einzelillustrationen vorbereitet. [Bildvorschau und Nachweise](docs/reports/2026-09-20-avatar-evolution-foundation.md). Neue Figurenwahl und Punktekäufe sind noch nicht in der App aktiviert. Der echte Bericht10 bestätigt alle sechs synthetischen Kaufabläufe. Dauerhafte Wiederaufnahme und Produktintegration stehen weiterhin aus; Bericht9s künstlicher HTTP500-Negativfall bleibt als eigener historischer Befund erhalten. Keine Backend- oder Punkteänderung. Aktueller Stand, offene Bildproduktion und nächste Schritte stehen in der [Übergabe](docs/handoffs/2026-09-20-shop-v10-auswertung.md). Der folgende Abschluss beschreibt die vorherige Überarbeitung A1–C2.
+**Stand vom 27. September 2026:** Die App verbindet den Vokabeltrainer mit
+profilgetrenntem Guthaben, dauerhaften Käufen und den Bereichen „Meine Figur“,
+„Entwicklung“ und „Shop“. Vier bestätigte Drachenformen sind integriert.
+Die abschließende Prüfung läuft; das Paket ist noch nicht abschließend
+freigegeben. Aktuelle Ergebnisse und nächste Schritte stehen in
+[ARBEITSSTAND.md](ARBEITSSTAND.md) und der
+[Übergabe](docs/handoffs/2026-09-27-persistent-purchases-abschluss.md).
 
-**Stand: 19. September 2026 — die Überarbeitung ist implementiert, vollständig automatisiert geprüft und unabhängig nachgeprüft.** Rasterillustrationen, erklärte Moduswahl, vorbereiteter Google-Zugang, einfachere Wortverwaltung, Lernregeln je Kind und grafische Statistiken ergänzen die Offline-App. Frische Abschlussläufe: 343/343 Kernprüfungen, 18/18 Trainer- und 15/15 Überarbeitungs-Browserprüfungen bestanden. [Abschlussnachweise und echte Ansichten](docs/reports/2026-09-19-ueberarbeitung.md). Aktuelle Belege und Grenzen stehen in [ARBEITSSTAND.md](ARBEITSSTAND.md) und der [Übergabe](docs/handoffs/2026-09-19-ueberarbeitung.md). Reales Produkt-Google auf zwei physischen Geräten, Safari/Home-Bildschirm auf iPhone/iPad und HTTPS-Bereitstellung bleiben offen. Es gibt noch keine veröffentlichte Trainer-URL.
+Käufe verändern weder Lernpunkte noch Level. Punkte entstehen weiter mit 10
+Punkten pro richtiger Antwort und 20 pro abgeschlossener Runde; ausgebbares
+Guthaben und Besitz bleiben je Lernprofil getrennt. Die bestätigte Erweiterung
+verwendet vier vollständige Entwicklungsformen je Figur und behält die
+bisherige Gestaltung im aufklappbaren Bereich „Klassischen Avatar gestalten“.
+Die Register „Meine Figur“, „Entwicklung“ und „Shop“ stehen oben im
+Avatarbereich. Vier Drachenquellen sind als erste kaufbare Reihe integriert;
+**72 weitere Motive**, responsive Produktionsvarianten und die vollständige
+Galeriegestaltung bleiben offen. Dazu zählen ein weiter ausgebauter Wechsel
+zwischen Klassisch und Entwicklung sowie zusätzliche Fortschrittsdarstellung.
 
-Das [bestätigte Inselkonzept](docs/design/2026-09-17-insel-konzept.md) bleibt als Gestaltungsvorlage erhalten. Tatsächliche neue App-Ansichten zeigen den [Rundenstart und die Reise](docs/reports/2026-09-19-a4-verwaltung.md), die [Lernregeln](docs/reports/2026-09-19-b3-elternregler.md) und die [Statistik](docs/reports/2026-09-19-c1-statistik.md).
-
-Der frühere [v1-Abschluss](docs/reports/2026-09-18-vokabeltrainer-v1.md) dokumentiert den Ausgangsstand `cc079cb`, nicht die aktuelle Überarbeitung.
+Reale Google-Drive-Prüfung des integrierten Produkts auf zwei physischen
+Geräten, iPhone/iPad, Safari, Home-Bildschirm-App und HTTPS-Bereitstellung sind
+noch nicht abgenommen. Automatisierte Prüfungen verwenden synthetische Daten.
+Der echte [Google-Bericht 10](docs/reports/2026-09-20-shop-v10-reallauf.md)
+mit 6/6 Fällen ist ein historischer Nachweis der isolierten Probe und wird
+nicht als aktuelle Produkt- oder Geräteabnahme ausgegeben.
 
 ## Lernablauf
 
@@ -48,6 +62,12 @@ Erwachsene ordnen jede Lektion einem oder mehreren Kindern zu. Alle drei Übungs
 
 Im Erwachsenenbereich ist eine vollständige Sicherung als JSON-Datei umgesetzt: Wortschatz, Lektionen, Zuordnungen, Profile, Lernstände und Belohnungsfortschritt lassen sich herunterladen und bei Bedarf wiederherstellen. Vor der Wiederherstellung werden eine Vorschau und Bestätigung angezeigt.
 
+Bei einem aktivierten Kaufbestand enthält die Sicherung zusätzlich die
+vollständige geprüfte wirtschaftliche Herkunft, Besitz und Figurenauswahl. Sie
+enthält keine Google-Tokens, ETags, Pointerdaten oder ausführbaren Kaufaufträge.
+Auch nach dem letzten bestätigten Kauf offline erworbene Lernpunkte bleiben über
+einen ausschließlich für Quellprovenienz zulässigen Checkpoint belegbar.
+
 Vor einer Wiederherstellung sichert die App den aktuellen Stand automatisch separat. Danach ersetzt der ausgewählte Sicherungsstand den aktiven Bestand, auch über Google Drive auf verbundenen Geräten. Der vorherige Stand bleibt zurückholbar. Verspätete Offlineantworten bleiben getrennt erhalten und können bewusst übernommen werden.
 
 ## Vereinbarte Richtung
@@ -58,6 +78,7 @@ Vor einer Wiederherstellung sichert die App den aktuellen Stand automatisch sepa
 - Eigene Lernprofile innerhalb der App mit getrennten Lernständen.
 - Eine Erwachsenenansicht zum Ergänzen und Verwalten von Vokabeln und zum Einsehen des Lernfortschritts. Sie öffnet sich über „Für Erwachsene“ und eine selbst festgelegte vierstellige PIN als Hürde gegen versehentliche Änderungen.
 - JSON als besprochene Grundlage für strukturierte Daten; der [Produkt-Datenvertrag](docs/PRODUKT-DATENFORMAT.md) konkretisiert Ereignisse, lokale Zustände und Sicherungen.
+- Bestätigte Entwicklungsstufen und weitere Grundfiguren werden mit erspieltem, je Profil getrenntem Guthaben gekauft. Neue Käufe sind nur online nach erfolgreichem Abgleich möglich; vorhandener Besitz bleibt offline nutzbar.
 - Keine zusätzlichen kostenpflichtigen Cloudabos. Die vorhandene Google-Drive-Kapazität soll ausreichen.
 - Offline üben und Änderungen später abgleichen als besprochene technische Arbeitsbasis.
 
@@ -80,11 +101,10 @@ Bei Googles direkter Browseranbindung laufen Zugriffstokens ab. Eine erneute Nut
 1. [START-HIER.md](START-HIER.md): Einstieg auf einem anderen Gerät oder mit einer anderen KI.
 2. [AGENTS.md](AGENTS.md): Regeln für die Mitarbeit im Repository.
 3. [ARBEITSSTAND.md](ARBEITSSTAND.md): aktueller Stand und nächster Schritt.
-4. [Anforderungen](docs/ANFORDERUNGEN.md): bestätigte Wünsche und offene Produktentscheidungen.
-5. [Architektur](docs/ARCHITEKTUR.md): technischer Entwurf und Grenzen.
-6. [Roadmap](docs/ROADMAP.md): Reihenfolge der nächsten Arbeitspakete.
-7. [Bestätigter Gesamtentwurf](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md): verbindlicher Umfang und Abläufe.
-8. [Plan der technischen Probe](docs/superpowers/plans/2026-09-16-google-drive-probe.md) und [Einrichtung/Prüfablauf](docs/GOOGLE-DRIVE-PROBE.md).
+4. [Abschlussübergabe](docs/handoffs/2026-09-27-persistent-purchases-abschluss.md): Branch, Commit, Prüfungen und offene Grenzen.
+5. [Anforderungen](docs/ANFORDERUNGEN.md): bestätigte Wünsche und offene Produktentscheidungen.
+6. [Architektur](docs/ARCHITEKTUR.md), [Produkt-Datenvertrag](docs/PRODUKT-DATENFORMAT.md) und [Kaufprotokoll](docs/KAUFPROTOKOLL.md): tatsächliche technische Verträge.
+7. [Plan für dauerhafte Käufe](docs/superpowers/plans/2026-09-20-persistent-purchases.md): Arbeitspakete und Prüfgrenzen.
 
 Weitere Dokumente:
 
@@ -96,7 +116,7 @@ Weitere Dokumente:
 - [Qualität und Abnahme](docs/QUALITAET-UND-ABNAHME.md)
 - [Technische Quellen](docs/QUELLEN.md)
 - [Datenformat der technischen Probe](docs/PROBE-DATENFORMAT.md)
-- [Aktuelle Übergabe](docs/handoffs/2026-09-19-ueberarbeitung.md)
+- [Historische Übergabe der Überarbeitung](docs/handoffs/2026-09-19-ueberarbeitung.md)
 - [Prüfbericht der Verbindungsprobe](docs/reports/2026-09-17-google-drive-probe.md)
 - [Prüfbericht der Dokumentation](docs/reports/2026-09-16-dokumentation.md)
 - [Prüfbericht zum Gesamtentwurf](docs/reports/2026-09-16-gesamtentwurf.md)
@@ -119,9 +139,16 @@ git switch codex/vokabeltrainer-v1
 npm test
 ```
 
-Die Node-Tests benötigen weder npm-Zusatzpakete noch ein Google-Konto oder Internetzugriff. Danach startet `npm start` den lokalen Server auf `http://localhost:4173`: die technische Probe liegt unter `/`, der Trainer unter `/trainer/`. Ein Buildschritt oder Laufzeitpakete sind nicht nötig. Anschließend [START-HIER.md](START-HIER.md) und die [aktuelle Übergabe](docs/handoffs/2026-09-19-ueberarbeitung.md) lesen. Die zusätzliche Browserprüfung und ihre einmalige Playwright-Einrichtung sind in [tests/browser/README.md](tests/browser/README.md) beschrieben.
+Die Node-Tests benötigen weder npm-Zusatzpakete noch ein Google-Konto oder Internetzugriff. Danach startet `npm start` den lokalen Server auf `http://localhost:4173`: die technische Probe liegt unter `/`, der Trainer unter `/trainer/`. Ein Buildschritt oder Laufzeitpakete sind nicht nötig. Anschließend [START-HIER.md](START-HIER.md) und die [aktuelle Abschlussübergabe](docs/handoffs/2026-09-27-persistent-purchases-abschluss.md) lesen. Die zusätzliche Browserprüfung und ihre einmalige Playwright-Einrichtung sind in [tests/browser/README.md](tests/browser/README.md) beschrieben.
 
-Vorhandene v1-Lernstände werden geprüft, separat im bisherigen Format gesichert und atomar auf den lokalen v2-Stand übernommen. Historische Ereignisse und bereits vorbereitete Uploads behalten ihren Inhalt und ihre Prüfsummen. Danach auf allen Geräten die aktuelle App verwenden: alte Programme verstehen neue Lernregeln nicht. Git überträgt Programmdateien und Dokumentation, keine Browserdaten oder Google-Anmeldungen.
+Vorhandene v1-Lernstände werden geprüft, separat im bisherigen Format gesichert
+und zunächst nach dem kompatiblen v2-Fachvertrag übernommen. Die Kaufmigration
+führt den vollständig validierten lokalen Zustand nach einer weiteren
+Sicherheitskopie atomar auf `storageVersion:3`. Historische Ereignisse,
+Descriptoren und bereits vorbereitete Uploads behalten Inhalt, IDs und
+Prüfsummen. Danach auf allen Geräten die aktuelle App verwenden: alte Programme
+verstehen neue Lern- und Kaufverträge nicht. Git überträgt Programmdateien und
+Dokumentation, keine Browserdaten oder Google-Anmeldungen.
 
 ## Bereitstellung und Kosten
 

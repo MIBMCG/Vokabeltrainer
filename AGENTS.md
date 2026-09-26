@@ -1,22 +1,27 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-**Fortsetzung am 26.09.2026:** Tasks 1–4 des Kaufplans sind implementiert und unabhängig geprüft. Die [Task-4-Nachprüfung](docs/reports/2026-09-26-persistent-purchases-task4-fix2-review.md) schließt alle drei Ablaufbefunde; neue Autoritäts-/Syncprüfungen bestehen mit 48/48 Fällen. Task 5 bindet jetzt die Kaufoberfläche an, danach folgt die Gesamtprüfung. Maßgeblich ist die [Fortsetzungsübergabe](docs/handoffs/2026-09-26-persistent-purchases-fortsetzung.md). Frühere datierte Abschnitte sind historische Nachweise, keine aktuellen Startaufträge.
+**Aktueller Stand am 27.09.2026:** Version 1 und die Überarbeitung A1–C2
+sind abgeschlossen. Tasks 1–5 des bestätigten Kaufplans sind implementiert und unabhängig
+geprüft. Aus Task 5 bleibt ein kleiner Tastaturfokusbefund für die
+Abschlussprüfung offen. Task 6 läuft: 499/499 Node-Tests bestanden; im jüngsten
+vollständigen Browserlauf bestanden 38/39 Fälle. Der Wiederanmeldetest I3
+meldet einen wiederholten Upload und wird gezielt untersucht. Eine endgültige
+Freigabe, der Abschlusscommit und der bestätigte Abschlusspush stehen noch aus.
+Maßgeblich sind [Arbeitsstand](ARBEITSSTAND.md) und
+[Abschlussbericht](docs/reports/2026-09-27-persistent-purchases-final.md).
 
-**Echte Kaufprobe 10 bestanden (20.09.2026):** Der vom Nutzer übergebene Google-Bericht bestätigt alle sechs synthetischen Kaufabläufe: Initialisierung, Konkurrenz, Wiederholung, simulierten Antwortverlust und beide Reset-Reihenfolgen. [Auswertung](docs/reports/2026-09-20-shop-v10-reallauf.md), [Auswertungsübergabe](docs/handoffs/2026-09-20-shop-v10-auswertung.md). Keinen identischen 10er-Lauf erneut anfordern. Nächster Schritt ist der konkrete Integrationsentwurf für dauerhafte Aufträge, Wiederaufnahme und Produktdaten. Browserneustart, getrennte Geräte und Produktshop sind noch nicht geprüft beziehungsweise integriert; C und EV01–EV05 bleiben bestätigt. Bericht9s künstlicher ETag-/HTTP500-Fall bleibt separat bestehen.
-
-**Aktueller Stand (20.09.2026):** EV01–EV05 sind bestätigt: vollständige Stufenkäufe für 200 / 400 / 800 Punkte, je vier kostenlose menschliche Hauttöne, zusätzliche klassische Gestaltung und die Bereiche „Meine Figur“, „Entwicklung“, „Shop“. Der reine Stufenkatalog und die ersten vier freigestellten Drachenbilder sind in `650cee7` implementiert beziehungsweise erzeugt und unabhängig geprüft. 379/379 Produkttests bestanden; 4 von 76 Bildmotiven sind vorbereitet. Neue Stufenwahl und Käufe sind noch nicht im Produkt eingebunden. [Grundlagenbericht](docs/reports/2026-09-20-avatar-evolution-foundation.md), [Auswertungsübergabe](docs/handoffs/2026-09-20-shop-v10-auswertung.md).
-
-**Historischer Diagnose-6-/7-Stand:** 6 bestanden, 5 fehlgeschlagen. Vier Abbrüche betreffen veränderte File-Versionen bei gleichbleibender ETag und gleichen verfügbaren Zusatzmerkmalen. Die absichtlich falsche Kennung scheitert mehrdeutig; ein anderer Fall belegt dagegen eine 412-Ablehnung eines alten Tokens. Sichere parallele Käufe bleiben unbewiesen. [Auswertung](docs/reports/2026-09-20-shop-v6-reallauf.md). Keine neue unveränderte Probe anfordern. [Richtungsentscheidung C](docs/design/2026-09-20-kaufkoordination-nach-diagnose6.md) ist bestätigt: direkten Drive-Ansatz gezielt weiter untersuchen. Diagnose 7 trennt jetzt Schreibantwort und Nachlese des Negativfalls; lokal sind 84/84 Shop-Node-Tests und 13/13 Browserfälle bestanden. Die unabhängige Review ist ohne offene relevante Befunde abgeschlossen. Kein zusätzlicher Dienst, keine Änderung des Punktesystems und keine Produktkäufe.
-
-**Entscheidung vor dem Grundlagenpaket:** Die künftige Avatar-Erweiterung verwendet vier vollständig gerenderte Entwicklungsformen je Figur statt modularer Ausrüstung. Der erste Bogen v1 wurde nicht abgenommen, weil Stufe 4 gegenüber Stufe 3 noch nicht deutlich genug episch und mythisch wirkte. Der Nutzer hat den [überarbeiteten Drachenbogen v2](docs/design/avatar-evolution/dragon-stages-concept-v2.png) mit „ja, viel besser“ persönlich bestätigt; diese Drachenbildrichtung mit klar epischer Finalstufe ist die Stilvorlage und nicht erneut freizugeben. Produktionsgrafiken, weitere Bedienungsdetails, Datenmodell, Produktintegration und alle weiteren Figuren bleiben im Detaildesign offen. Bestehende Bildquellen bleiben historische Artefakte, die Produktoberfläche bleibt unverändert. Der echte Diagnose-4-Lauf zeigt außerdem, dass der bisherige v2-ETag-/v3-Schreibkandidat keinen exklusiven Kauf-Guard belegt (3 bestanden, 8 fehlgeschlagen). [Entscheidung](docs/design/2026-09-20-avatar-entwicklungsstufen.md), [Auswertung](docs/reports/2026-09-20-shop-v4-reallauf.md), [damalige Übergabe](docs/handoffs/2026-09-20-avatar-evolution-prototype.md).
-
-**Historischer Bild- und Probestand vor dem Richtungswechsel:** Klassische Bildbearbeitung ist ausdrücklich freigegeben. Die körperbezogene Nacharbeit aller 13 Figuren / 62 kompatiblen Artikelpaare ist im [Bildbericht v3](docs/reports/2026-09-20-avatar-fit-v3.md) dokumentiert; frühere pauschale Passformurteile bleiben zurückgenommen. Der damalige echte v2-JSON-Bericht belegte eine lesbare Versionskennung, aber keine sichere Kaufkoordination (5 bestanden, 6 fehlgeschlagen). Die anschließende Diagnoseversion 4 ergänzte konkrete Fehlerstellen und Antwortklassen, ohne Schreibwege oder Sperren zu ändern. [Frühere Google-Auswertung](docs/reports/2026-09-20-shop-v2-reallauf.md). Neue Figurenwahl und Käufe sind weiterhin nicht im Produkt aktiviert. [Historische Übergabe](docs/handoffs/2026-09-20-avatar-fit-v3-und-probe-v4.md).
-
-**Neuer Folgeauftrag vom 19.09.2026:** [Avatar-/Shop-Entscheidungen AV01–AV12](docs/design/2026-09-19-avatar-shop-entscheidungen.md) sind bestätigt. Die neue ausdrückliche Shop-Anforderung ersetzt für dieses Paket den älteren Ausschluss eines Münzladens. Die Regel zu getrennter, kompatibler Ausstattung je Figurenart ist mit A bestätigt. O-AV01 ist mit A beantwortet: neue Käufe nur online nach erfolgreichem Abgleich. Der [konkrete Gesamtentwurf](docs/superpowers/specs/2026-09-19-avatar-shop-design.md) ist freigegeben. Technische Kaufkoordination und Bildpipeline werden nach dem neuen Plan umgesetzt. Der vorhandene A1–C2-Abschluss ist kein Implementierungsnachweis für diese Erweiterung.
-
-Version 1 ist am 18.09.2026 implementiert und automatisiert geprüft. Die freigegebene Überarbeitung vom 19.09.2026 ist implementiert, vollständig automatisiert geprüft und unabhängig nachgeprüft. Maßgeblich sind [Arbeitsstand](ARBEITSSTAND.md), [bisheriger v1-Abschlussbericht](docs/reports/2026-09-18-vokabeltrainer-v1.md) und [aktuelle Übergabe](docs/handoffs/2026-09-19-ueberarbeitung.md). Die unabhängige Gesamtprüfung der bisherigen Version einschließlich der vier Abschlusskorrekturen ist bestanden. Reale Produkt-Google-, Zwei-Geräte-, iPhone-/iPad- und HTTPS-Nachweise bleiben offen.
-
-Änderung der Prüfungsreihenfolge am 17.09.2026: Der Nutzer beauftragt ausdrücklich, zuerst die vollständige App gemäß bestätigtem Gesamtentwurf umzusetzen und erst danach beim Freund auf iPhone/iPad zu testen. Die bisherige Geräteprüfung vor umfangreicher Lernoberfläche ist damit als Entwicklungssperre aufgehoben. Reale Geräteabnahme bleibt offen und darf nicht als bestanden gelten. Bereits bestätigte manuelle Google-/Drive-Tests in zwei Browsern gelten weiter. Keine neue pauschale Startfreigabe verlangen; Hosting/Veröffentlichung und Kostenmodell werden dadurch nicht automatisch geändert.
+Bestätigt bleiben R01–R33, E01–E10, U01–U07, AV01–AV12, O-AV01 sowie
+EV01–EV05 einschließlich Onlinekauf, Preisen 200/400/800 und der persönlich
+bestätigten Drachenrichtung. Vier freigestellte Drachenquellen sind vorhanden;
+72 weitere Motive, deren responsive Produktionsvarianten und die vollständige
+Galeriegestaltung bleiben Folgeumfang. Das schließt einen weiter ausgebauten
+Klassisch-/Entwicklungswechsel und zusätzliche Fortschrittsdarstellung ein.
+Reale Google-Drive-Prüfung auf zwei physischen Geräten, iPhone/iPad, Safari,
+Home-Bildschirm-App und HTTPS-Bereitstellung bleiben eigenständige offene
+Nachweise. Der echte Google-Bericht 10 mit 6/6 Fällen ist ein historischer
+Probe-Nachweis und wird nicht unverändert wiederholt. Frühere datierte
+Probe-, Pause- und Zwischenstandsberichte sind Vorgeschichte, keine aktuellen
+Startaufträge.
 
 Diese Datei gilt für das gesamte Repository. Sie ist anbieterunabhängig und setzt weder Codex noch lokale Skills, Erinnerungen oder bestimmte Betriebssysteme voraus.
 
@@ -32,11 +37,35 @@ Bei Widersprüchen hat die aktuelle ausdrückliche Nutzeranweisung Vorrang. Best
 
 ## Aktueller Projektzustand
 
-Die statische Produkt-App liegt unter `trainer/`; die technische Drive-Probe bleibt getrennt unter der Wurzel. Tasks 1–13 setzen den bestätigten v1-Umfang um. Automatisierte Node- und Browserprüfungen sind bestanden; sie verwenden synthetische Daten und eine simulierte Google-Grenze. Die unabhängige Gesamtprüfung ist abgeschlossen. Reale Produktverbindung mit Google Drive auf zwei physischen Geräten, Apple-Geräteabnahme und HTTPS-Bereitstellung stehen noch aus.
+Die statische Produkt-PWA liegt unter `trainer/`; die historische technische
+Drive-Probe bleibt getrennt unter der Wurzel. Version 1 und A1–C2 sind
+abgeschlossen und werden nicht neu umgesetzt. Der Kaufkern unter
+`src/trainer/purchases/` besitzt strikte Beleg-, Basis-, Proof-, Transport-,
+Bootstrap-, Service- und Integrationsgrenzen. Neue Lernereignisse und Pakete
+bleiben im Fachformat v2. `storageVersion:3` ist die lokale Zustandsversion;
+nur aktivierte Kaufepochen und die wirtschaftliche Sicherungsclosure verwenden
+Format 3.
 
-Die Einzelfragen Q1–Q14 sowie der [Gesamtentwurf](docs/superpowers/specs/2026-09-16-vokabeltrainer-design.md) einschließlich E01–E10 sind bestätigt (Nutzerantwort A vom 16.09.2026). Die Entwicklung beginnt nach dem [Plan zur Google-Drive-Probe](docs/superpowers/plans/2026-09-16-google-drive-probe.md). Keine erneute Entwurfs- oder pauschale Startfreigabe einholen. Reale Google-/Geräteprüfungen bleiben gesonderte Nachweise. Die frühe Verbindungsprobe wurde durchgeführt. Die restliche echte Geräteprüfung erfolgt auf Nutzerwunsch erst nach Umsetzung der vollständigen App.
+ProductSync speichert die gebundene Kaufkonfiguration vor dem Download über
+`commerce.discover` und übernimmt erst nach `commerce.reconcile` den vollständig
+geprüften gemeinsamen Kopf. Aktivierung, Kauf und Restore speichern Auftrag,
+Kandidaten und IDs vor abhängigen Netzoperationen. Der neutrale
+Provenienzcheckpoint ist ausschließlich für Offline-Backupexport und
+Quellreplay zulässig; er darf nie Kopf oder Vorgänger der autoritativen
+Zielkette werden. Die Bedienintegration zeigt die drei neuen Register oben im
+Avatarbereich, den klassischen Avatar darunter aufklappbar, profilgetrennte
+Guthaben, Besitz und Auswahl sowie eine ausdrückliche Wiederaufnahme unklarer
+Käufe. Fixrunde 1 korrigiert berichtsgemäß den Rootwechsel, die gemeinsame Basis
+von sichtbarer Vorschau und Ticket, die bestätigte Restoreauswahl einschließlich
+Leerung, den Grundformstatus und die Portdokumentation. Vier Drachenformen sind
+in Laufzeit und Offlinecache eingebunden. Diese funktionale Anbindung ist keine
+vollständig ausgelieferte EV05-Galerie. Die scoped Nachprüfung ist PASS mit dem
+verbliebenen Minor zur Fokusrückgabe nach „Stale → Abbrechen“.
 
-Aktuelle Steuerung vom 19.09.2026: Tasks 1–13 und Abschlussreview der bisherigen Version sind abgeschlossen. Der Nutzer hat nach eigenem Test den [Überarbeitungsentwurf](docs/design/2026-09-19-ueberarbeitung.md) mit „Ja, Freigabe erteilt“ bestätigt. Gestaltung näher am Konzept, Rasterillustrationen, einfachere Einrichtung und Verwaltung, erklärte Modi, Regeln je Kind und Statistiken sind damit konkret abgestimmt. Google Drive mit vorbereiteter App-Konfiguration bleibt; kein Excel-Wechsel. Der [Implementierungsplan in drei Etappen](docs/superpowers/plans/2026-09-19-ueberarbeitung.md) ist erstellt, selbstgeprüft und mit Nutzerantwort A zur Ausführung mit Aufgabenagenten und Einzelreviews freigegeben. A1–C2 sind einschließlich unabhängiger Gesamtprüfung, gezielter Korrekturen und Nachprüfung abgeschlossen. Die Umsetzung nicht neu beginnen. Aktuelle Nachweise stehen im [Überarbeitungsbericht](docs/reports/2026-09-19-ueberarbeitung.md); reale Geräteabnahme und HTTPS-Bereitstellung bleiben eigenständige nächste Schritte. Ältere Pausen- und Zwischenstandsnotizen sind historische Vorgeschichte; keine erneute Entwurfs- oder allgemeine Startfreigabe verlangen.
+Alle bisherigen Nutzerentscheidungen sind bereits bestätigt. Keine erneute
+Entwurfs- oder pauschale Startfreigabe verlangen. Automatisierte Tests verwenden
+synthetische Daten; grüne Node- oder Browserprüfungen ersetzen keine reale
+Drive-, Zwei-Geräte- oder Apple-Abnahme.
 
 ## Feste Leitplanken
 
@@ -48,7 +77,7 @@ Aktuelle Steuerung vom 19.09.2026: Tasks 1–13 und Abschlussreview der bisherig
 - Google Drive; gemeinsamer, von Eltern eingerichteter Google-Zugang auf beiden Geräten; getrennte Lernprofile in der App.
 - Kein zusätzliches kostenpflichtiges Cloudabo, kein stillschweigender Anbieterwechsel.
 - Die allgemeine Lizenzentscheidung ist bewusst zurückgestellt (R31). Vorerst keine allgemeine Open-Source-Lizenz hinzufügen und daraus keine Änderung der Repository-Sichtbarkeit ableiten. Die beauftragte private Entwicklung und portable Weiterarbeit bleiben möglich.
-- Altersgerechte Gestaltung und ein gemeinsames Belohnungssystem aus Lernreise/Landkarte, Punkten/Leveln/Abzeichen und einfachem gestaltbarem Avatar gehören zur ersten Version. Gewähltes Thema: Insel-Abenteuer mit unterschiedlichen Landschaften. Beim Avatar zunächst wenige Farben und Zubehörteile vorsehen. Punktevergabe: 10 je richtiger Antwort, 20 zusätzlich je abgeschlossener Runde, keine Punktabzüge bei Fehlern (R23). Level-Meilensteine schalten Reiseabschnitte und Ausstattung automatisch frei; Abzeichen für Meilensteine, kein zusätzlicher Münzladen (R24). Umfang und Schwellenwerte sind mit E04 bestätigt; die tatsächlichen Grafiken werden innerhalb dieses Umfangs gestaltet.
+- Altersgerechte Gestaltung und ein gemeinsames Belohnungssystem aus Lernreise/Landkarte, Punkten/Leveln/Abzeichen und Avatar gehören zur ersten Version. Gewähltes Thema: Insel-Abenteuer mit unterschiedlichen Landschaften. Punktevergabe: 10 je richtiger Antwort, 20 zusätzlich je abgeschlossener Runde, keine Punktabzüge bei Fehlern (R23). Die spätere, ausdrücklich bestätigte Shop-Erweiterung AV01–AV12/EV01–EV05 ersetzt für Entwicklungsformen den früheren Ausschluss eines Münzladens aus R24. Ausgaben verringern weder Lernpunkte noch Level; Guthaben und Besitz bleiben je Profil getrennt.
 
 ## Planen und umsetzen
 
