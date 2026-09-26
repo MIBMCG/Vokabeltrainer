@@ -156,7 +156,7 @@ async function makeCommands(state, {deviceId = state.deviceId, ids = sequenceIds
   });
 }
 
-async function setupSyntheticSync({drive = new SyntheticDrive(), ledger = createFixture().base, outbox} = {}) {
+async function setupSyntheticSync({drive = new SyntheticDrive(), ledger = createFixture().base, outbox, commerce = null} = {}) {
   const commands = await makeCommands(productState(ledger, {
     outbox: outbox ?? ledger.events.map(({id}) => id),
   }));
@@ -166,10 +166,26 @@ async function setupSyntheticSync({drive = new SyntheticDrive(), ledger = create
     now: () => new Date('2026-09-18T10:00:00.000Z'),
     id: sequenceIds('sync'),
     onStatus: (status) => statuses.push(status),
+    commerce,
   });
   await sync.createDataset('Familienwortschatz');
   return {sync, drive, commands, statuses};
 }
+
+test('optional commerce port reconciles after learning download and syncLearning uses the same non-recursive path', async () => {
+  const calls = [];
+  const commerce = {async reconcile(input) {
+    calls.push(input);
+    return structuredClone(input.state);
+  }};
+  const {sync, commands} = await setupSyntheticSync({outbox: [], commerce});
+  const before = calls.length;
+  const result = await sync.syncLearning();
+  assert.equal(result.phase, 'synced');
+  assert.equal(calls.length, before + 1);
+  assert.deepEqual(calls.at(-1).binding, commands.getState().binding);
+  assert.equal(calls.at(-1).descriptorHash.length, 64);
+});
 
 test('createDataset publishes the real root epoch and immutable descriptor before binding', async () => {
   const {drive, commands} = await setupSyntheticSync({outbox: []});
@@ -675,7 +691,7 @@ test('later future files block writes even after an ordinary malformed remote fi
   const {sync, drive, commands} = await setupSyntheticSync({outbox: []});
   await commands.setAnimations({profileId: 'p1', animations: false});
   for (const [id, value] of [['broken-first', {}], ['future-later', {
-    format: VERSION.format, formatVersion: 3, ruleVersion: 3, futureField: {newSchema: true},
+    format: VERSION.format, formatVersion: 4, ruleVersion: 4, futureField: {newSchema: true},
   }]]) drive.addJson({id, parentId: commands.getState().binding.folderId, value,
     appProperties: {app: 'vokabeltrainer-product', kind: 'packet', datasetId: 'd1', epochId: 'e0', packetId: id}});
   const offset = drive.calls.length;

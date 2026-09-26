@@ -28,8 +28,7 @@ export async function localSafetyCopy({commands,store,now,id,purpose='safety',se
 export async function planSnapshotUploads(backup,purpose,drive) {
   await validateBackup(backup);
   const {snapshot}=backup,parts=[];
-  const transportVersion=versionOf(backup);
-  const fresh=()=>({...transportVersion,kind:'snapshot-part',snapshotId:snapshot.id,datasetId:snapshot.datasetId,index:parts.length,events:[],epochHistory:[]});
+  const fresh=()=>({...VERSION,kind:'snapshot-part',snapshotId:snapshot.id,datasetId:snapshot.datasetId,index:parts.length,events:[],epochHistory:[]});
   let part=fresh();
   for(const [key,entries] of [['events',sorted(backup.events)],['epochHistory',sorted(backup.epochHistory)]]) {
     for(const entry of entries) {
@@ -45,9 +44,8 @@ export async function planSnapshotUploads(backup,purpose,drive) {
   parts.push(part);
   const uploads=[];
   for(const value of parts) uploads.push({kind:value.kind,logicalId:snapshot.id,fileId:await drive.generateId(),value,verified:false});
-  const backupMetadata={exportedAt:backup.exportedAt,safetyCopyIndex:backup.safetyCopyIndex,
-    ...(backup.formatVersion===3?{economy:structuredClone(backup.economy)}:{})};
-  const manifest={...transportVersion,kind:'snapshot-manifest',snapshotId:snapshot.id,datasetId:snapshot.datasetId,purpose,snapshot,backupMetadata,
+  const backupMetadata={exportedAt:backup.exportedAt,safetyCopyIndex:backup.safetyCopyIndex};
+  const manifest={...VERSION,kind:'snapshot-manifest',snapshotId:snapshot.id,datasetId:snapshot.datasetId,purpose,snapshot,backupMetadata,
     parts:await Promise.all(uploads.map(async(u,index)=>({fileId:u.fileId,hash:await digest(u.value),index}))),
     totalHash:await digest({snapshot,events:sorted(backup.events),epochHistory:sorted(backup.epochHistory),backupMetadata})};
   uploads.push({kind:manifest.kind,logicalId:snapshot.id,fileId:await drive.generateId(),value:manifest,verified:false});
@@ -83,7 +81,7 @@ export async function readSnapshot({drive,binding,fileId,descriptor}) {
   const manifest=await readVerifiedFile(drive,fileId,binding,'snapshot-manifest');
   assertSupportedVersion(manifest);
   exact(manifest,[...Object.keys(VERSION),'kind','snapshotId','datasetId','purpose','snapshot','parts','totalHash','backupMetadata']);
-  exact(manifest.backupMetadata,['exportedAt','safetyCopyIndex',...(manifest.formatVersion===3?['economy']:[])]);
+  exact(manifest.backupMetadata,['exportedAt','safetyCopyIndex']);
   version(manifest,'snapshot-manifest');
   assertSnapshot(manifest.snapshot);
   if(manifest.datasetId!==binding.datasetId || manifest.snapshotId!==manifest.snapshot?.id

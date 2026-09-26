@@ -1,0 +1,120 @@
+{
+  "revision": "777b3511e280f37de7aa0a940ca86b6b16a5fdbf",
+  "roots": [
+    "src/trainer/commands.js",
+    "src/trainer/sync/drive.js",
+    "src/trainer/backup/restore.js"
+  ],
+  "files": [
+    {
+      "path": "src/trainer/backup/format.js",
+      "sha256": "8d1a30fac9b3b64643d1967070c3238e8e9b814f669982d38b731e3104942aeb",
+      "bytes": 11976
+    },
+    {
+      "path": "src/trainer/backup/restore.js",
+      "sha256": "90c8775006c31e737735a80794c984ef9a3688d44717d3d5fd60ae75f8bd36af",
+      "bytes": 13657
+    },
+    {
+      "path": "src/trainer/backup/transport.js",
+      "sha256": "52231cf5f743550846bfb4181027761fa4fda8632ea135bc4326ea306e31fa9d",
+      "bytes": 7702
+    },
+    {
+      "path": "src/trainer/commands.js",
+      "sha256": "20cbd3d834ede5f554f00094f3f3e1df2c7812c485d3e0a7fde54088739797a8",
+      "bytes": 39649
+    },
+    {
+      "path": "src/trainer/learning/answers.js",
+      "sha256": "61c705d77977457a1291e78c93a6e907368eee660f839db9ba8137ab0e2652eb",
+      "bytes": 382
+    },
+    {
+      "path": "src/trainer/learning/calendar.js",
+      "sha256": "cbf7150afb8f24ddd118d3d94c2d6d25d5a0e95062685cdde02174165307dbc0",
+      "bytes": 915
+    },
+    {
+      "path": "src/trainer/learning/facts.js",
+      "sha256": "ac63361000befc4cda6e95b28e35d0ea31f7162fe6a199e42505457a090c33fd",
+      "bytes": 1091
+    },
+    {
+      "path": "src/trainer/learning/progress.js",
+      "sha256": "90ce4525a94dac8d44271c71493c4570def23cbbd87bbe822144d4ad58e6fe94",
+      "bytes": 14272
+    },
+    {
+      "path": "src/trainer/learning/rewards.js",
+      "sha256": "c39411630ddea3782bbb7f54c75a3f1d880da41b267d7ef3702fb8a451ae6a64",
+      "bytes": 1590
+    },
+    {
+      "path": "src/trainer/learning/rounds.js",
+      "sha256": "f4b9fc538866e243167bdef08a079f1333e203ff51c4025c8f4261eec9c5e49f",
+      "bytes": 16854
+    },
+    {
+      "path": "src/trainer/learning/schedule.js",
+      "sha256": "54815436cdafbe19fb30b14e6634cbe4af79cd6d960701b7579a87d62c9c39a1",
+      "bytes": 2394
+    },
+    {
+      "path": "src/trainer/learning/statistics.js",
+      "sha256": "e13368820083bef3eab5127130c9516b96fa1d876ff9fd2d3045e224f49d557e",
+      "bytes": 2554
+    },
+    {
+      "path": "src/trainer/model/canonical.js",
+      "sha256": "cc07a92d2c1dd665c329587e214ec66bf78fd9e5f2940110308d97675a9972ff",
+      "bytes": 2115
+    },
+    {
+      "path": "src/trainer/model/epochs.js",
+      "sha256": "a8565a50ae257535bf02415e3574cd2f5b8919bc759b6ca7487851bd40a9e1a6",
+      "bytes": 2906
+    },
+    {
+      "path": "src/trainer/model/errors.js",
+      "sha256": "b0cd812fc10b03524fe5dfce1c57553e84f7602a897987f6d8df61dcd00fab2c",
+      "bytes": 153
+    },
+    {
+      "path": "src/trainer/model/policies.js",
+      "sha256": "7908bee9b448d387206852e78c23566731f8453391400a2799ed7d0c17b4df88",
+      "bytes": 2253
+    },
+    {
+      "path": "src/trainer/model/revisions.js",
+      "sha256": "5bbf5900763cacc5ca8e1e710fb6c80ea6d759fd8798134db01fc33c187708b7",
+      "bytes": 5246
+    },
+    {
+      "path": "src/trainer/model/schema.js",
+      "sha256": "b25ff4a4e08a966c5eaada75332287f568035271422c1cb98e7da60c3beeb004",
+      "bytes": 29206
+    },
+    {
+      "path": "src/trainer/model/versions.js",
+      "sha256": "fad4b27dfc505316c697449b5830001d1eeda0191a7885cde848f2834549d5bc",
+      "bytes": 2028
+    },
+    {
+      "path": "src/trainer/storage/migrate.js",
+      "sha256": "98822510bb6ac912c3497243f54b6694dd9347ce7e885d524aa2246ad391b769",
+      "bytes": 2706
+    },
+    {
+      "path": "src/trainer/sync/drive.js",
+      "sha256": "b53018c2b6be8feb0f175af3f326b1d44254d410551bf88322293f82ee15059b",
+      "bytes": 51336
+    },
+    {
+      "path": "src/trainer/sync/packets.js",
+      "sha256": "7761ca29a82bdd303f043f1f4f021720f9579da06e2c8928cfab30960a8a11aa",
+      "bytes": 4170
+    }
+  ]
+}

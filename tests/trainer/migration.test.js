@@ -143,7 +143,7 @@ test('later unsupported event headers in packets and orphan parts still block al
     const drive=new SyntheticDrive(),commands=await open(memoryStore(productState(createFixture().base)));
     const sync=syncFor(commands,drive);await sync.createDataset('Synthetic');
     await commands.setAnimations({profileId:'p1',animations:false});
-    const future={...commands.getState().ledger.events[0],formatVersion:3,ruleVersion:3,futureField:true};
+    const future={...commands.getState().ledger.events[0],formatVersion:4,ruleVersion:4,futureField:true};
     const header={format:'vokabeltrainer-product',formatVersion:2,ruleVersion:2,kind,datasetId:'d1'};
     const value=kind==='packet'?{...header,epochId:'e0',packetId:'future-events',events:[null,future]}
       :{...header,snapshotId:'future-events',index:0,events:[null,future],epochHistory:[]};
@@ -246,7 +246,7 @@ test('unknown versions replacing known files also stop writes and retain the ins
     const drive=new SyntheticDrive(),commands=await open(memoryStore(productState(createFixture().base))),sync=syncFor(commands,drive);
     await sync.createDataset('Synthetic');
     const entry=[...drive.files.values()].find(f=>f.value?.kind===kind);
-    entry.value.formatVersion=3;entry.value.ruleVersion=3;entry.value.futureField=true;entry.meta.version='2';
+    entry.value.formatVersion=4;entry.value.ruleVersion=4;entry.value.futureField=true;entry.meta.version='2';
     await commands.setAnimations({profileId:'p1',animations:false});const offset=drive.calls.length;
     await assert.rejects(sync.sync(),e=>e.code==='version');
     assert.equal(drive.calls.slice(offset).some(([method])=>method==='putJson'),false);

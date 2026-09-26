@@ -2,7 +2,6 @@ import {ProductError} from './errors.js';
 
 export const CURRENT_VERSION = Object.freeze({format:'vokabeltrainer-product',formatVersion:2,ruleVersion:2});
 export const LEGACY_VERSION = Object.freeze({...CURRENT_VERSION,formatVersion:1,ruleVersion:1});
-export const COMMERCE_VERSION = Object.freeze({...CURRENT_VERSION,formatVersion:3,ruleVersion:3});
 
 export function assertSupportedVersion(value) {
   // A damaged header is not evidence of a newer client. Only an explicit,
@@ -14,8 +13,7 @@ export function assertSupportedVersion(value) {
     throw new ProductError('invalid','Die Datenversion ist ungültig.');
   }
   if (!((value.formatVersion === 1 && value.ruleVersion === 1)
-      || (value.formatVersion === 2 && value.ruleVersion === 2)
-      || (value.formatVersion === 3 && value.ruleVersion === 3))) {
+      || (value.formatVersion === 2 && value.ruleVersion === 2))) {
     throw new ProductError('version','Diese Daten benötigen eine neuere App-Version.');
   }
   return value.formatVersion;

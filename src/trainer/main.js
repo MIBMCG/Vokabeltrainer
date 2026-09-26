@@ -5,6 +5,10 @@ import {createTokenSession, DriveError} from '../drive/auth.js';
 import {createDriveClient} from '../drive/client.js';
 import {openProductStore} from './storage/store.js';
 import {createProductSync} from './sync/drive.js';
+import {createPurchaseTransport} from './purchases/transport.js';
+import {createPurchaseService} from './purchases/service.js';
+import {createCommerceIntegration} from './purchases/integration.js';
+import {digest} from './model/canonical.js';
 import {createSyncScheduler} from './sync/scheduler.js';
 import {createUpdateController} from './updates.js';
 import {mountShell} from './ui/shell.js';
@@ -250,15 +254,50 @@ async function start() {
   });
   auth = createProductAuth();
   const drive = createDriveClient({getToken: () => auth.getToken()});
-  const rawSync = createProductSync({
+  const purchaseTransportFor = ({binding, descriptorHash}) => createPurchaseTransport({
+    getToken: () => auth.getToken(), binding, descriptorHash,
+  });
+  let rawSync;
+  const commerceIntegration = createCommerceIntegration({
+    commands, drive, transportFor: purchaseTransportFor,
+    learningSync: () => rawSync.syncLearning(),
+    now: () => new Date(), id: () => crypto.randomUUID(),
+  });
+  rawSync = createProductSync({
     drive, store, commands, now: () => new Date(), id: () => crypto.randomUUID(),
+    commerce: commerceIntegration,
     onStatus: (status) => {
       shell?.syncStatusChanged(status);
     },
   });
   syncController = invalidateOnAuth(rawSync, auth);
+  let purchaseRuntime = null;
+  let purchaseRuntimeKey = null;
+  async function currentPurchaseService() {
+    const state = commands.getState();
+    if (!state || state.binding === null || state.commerce?.config === null) {
+      throw new Error('Die gemeinsame Kaufhistorie ist noch nicht eingerichtet.');
+    }
+    const descriptorHash = await digest(state.ledger.descriptor);
+    const key = JSON.stringify({binding: state.binding, descriptorHash});
+    if (purchaseRuntime === null || purchaseRuntimeKey !== key) {
+      purchaseRuntime = createPurchaseService({
+        commands,
+        transport: purchaseTransportFor({binding: state.binding, descriptorHash}),
+        sync: commerceIntegration,
+        now: () => new Date(), id: () => crypto.randomUUID(), onStatus: () => {},
+      });
+      purchaseRuntimeKey = key;
+    }
+    return purchaseRuntime;
+  }
+  const commerceRestore = {
+    async prepareRestore(input) { return (await currentPurchaseService()).prepareRestore(input); },
+    async confirmRestore(operationId) { return (await currentPurchaseService()).confirmRestore(operationId); },
+  };
   const restore = createRestoreService({
     commands, store, sync: syncController, drive, now: () => new Date(), id: () => crypto.randomUUID(),
+    commerce: () => commerceRestore,
   });
   scheduler = createSyncScheduler({
     sync: () => syncController.sync(),

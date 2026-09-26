@@ -95,6 +95,9 @@ test('worker installs the complete scoped trainer app without Google or personal
     'https://example.test/repo/src/trainer/ui/art.js',
     'https://example.test/repo/src/trainer/ui/preview.js',
     'https://example.test/repo/src/trainer/ui/status.js',
+    'https://example.test/repo/src/trainer/purchases/integration.js',
+    'https://example.test/repo/src/trainer/purchases/service.js',
+    'https://example.test/repo/src/trainer/purchases/transport.js',
     'https://example.test/repo/src/drive/auth.js',
   ]) assert.ok(installed.includes(expected), expected);
   assert.equal(installed.filter((url) => url.includes('/assets/art/')).length, 18);

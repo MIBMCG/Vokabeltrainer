@@ -176,12 +176,12 @@ function assertEntityRevision(payload) {
 }
 
 function assertRoundStarted(payload, version) {
-  assertExactKeys(payload, ['roundId', 'profileId', 'mode', 'size', ...(version>=2?['policyEventId','policy']:[])], 'Der Rundenstart ist ungültig.');
+  assertExactKeys(payload, ['roundId', 'profileId', 'mode', 'size', ...(version===2?['policyEventId','policy']:[])], 'Der Rundenstart ist ungültig.');
   assertId(payload.roundId);
   assertId(payload.profileId);
   assertEnum(payload.mode, ['all', 'latest', 'new'], 'Der Lernmodus ist ungültig.');
   assertEnum(payload.size, [10, 20, 30], 'Die Rundengröße ist ungültig.');
-  if(version>=2) {
+  if(version===2) {
     assertNullableId(payload.policyEventId); assertPolicy(payload.policy);
     if(payload.policyEventId===null && canonical(payload.policy)!==canonical(DEFAULT_POLICY)) {
       reference('Ohne Regelereignis gelten ausschließlich die Standardregeln.');
@@ -192,7 +192,7 @@ function assertRoundStarted(payload, version) {
 function assertAnswer(payload, version) {
   assertExactKeys(
     payload,
-    ['roundId', 'profileId', 'ordinal', 'wordId', 'revisionId', 'learningId', 'correct', ...(version>=2?['schedulingGenerationId']:[])],
+    ['roundId', 'profileId', 'ordinal', 'wordId', 'revisionId', 'learningId', 'correct', ...(version===2?['schedulingGenerationId']:[])],
     'Die Antwort ist ungültig.',
   );
   assertId(payload.roundId);
@@ -202,7 +202,7 @@ function assertAnswer(payload, version) {
   assertId(payload.revisionId);
   assertId(payload.learningId);
   assertBoolean(payload.correct);
-  if(version>=2)assertNullableId(payload.schedulingGenerationId);
+  if(version===2)assertNullableId(payload.schedulingGenerationId);
 }
 
 function assertRoundCompleted(payload) {
@@ -483,7 +483,7 @@ function validateRoundReferences(events, eventsById, entityIds) {
   for (const event of events.filter((entry) => entry.type === 'round.started')) {
     const {roundId, profileId} = event.payload;
     if (!entityIds.profile.has(profileId)) reference('Eine Runde verweist auf ein unbekanntes Profil.');
-    if(event.formatVersion>=2 && event.payload.policyEventId!==null) {
+    if(event.formatVersion===2 && event.payload.policyEventId!==null) {
       const rule=eventsById.get(event.payload.policyEventId);
       if(!rule || rule.type!=='learning.rules.changed' || rule.payload.profileId!==profileId) reference('Das passende Regelereignis fehlt.');
       const {profileId:ignored,...policy}=rule.payload;
@@ -510,7 +510,7 @@ function validateRoundReferences(events, eventsById, entityIds) {
       || revision.payload.value.learningId !== payload.learningId) {
       reference('Eine Antwort verweist nicht auf die passende Wortfassung.');
     }
-    if(event.formatVersion>=2 && payload.schedulingGenerationId!==null) {
+    if(event.formatVersion===2 && payload.schedulingGenerationId!==null) {
       const reset=eventsById.get(payload.schedulingGenerationId);
       if(!reset || reset.type!=='word.reactivated' || reset.payload.profileId!==payload.profileId
         || reset.payload.wordId!==payload.wordId || reset.payload.learningId!==payload.learningId) {

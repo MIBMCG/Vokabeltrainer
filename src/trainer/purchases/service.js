@@ -157,6 +157,19 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     };
   }
 
+  async function previewStateHash(state) {
+    const commerce=state.commerce;
+    return digest({
+      version:1,kind:'purchase-preview-state',
+      binding:state.binding,
+      ledger:state.ledger,
+      commerce:{
+        mode:commerce.mode,binding:commerce.binding,configRef:commerce.configRef,config:commerce.config,
+        head:commerce.head,control:commerce.control,jobs:commerce.jobs,selection:commerce.selection,
+      },
+    });
+  }
+
   async function preflightCandidate({candidate,uploads,history,binding}) {
     const local=new Map(uploads.map(entry=>[entry.ref.id,copy(entry.value)]));
     return readHistory({
@@ -275,7 +288,7 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     }
     if(commerce.jobs.some(job=>job.status==='open'))fail('pending','Ein Kauf wird bereits geprüft.');
     const offer=purchaseOffer({ledger:state.ledger,economic:economicForLedger(history,state),profileId,articleId});
-    const stateHash=await productStateHash(state);
+    const stateHash=await previewStateHash(state);
     const previewId=await digest({version:1,kind:'purchase-preview',stateHash,head:commerce.head,offer});
     return {...copy(offer),previewId,stateHash,head:copy(commerce.head)};
   }
@@ -380,7 +393,7 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     await syncLearning();
     await refreshInternal();
     const state=current();
-    if(await productStateHash(state)!==preview.stateHash||!sameRef(state.commerce.head,preview.head)) {
+    if(await previewStateHash(state)!==preview.stateHash||!sameRef(state.commerce.head,preview.head)) {
       fail('stale','Die Kaufvorschau ist nicht mehr aktuell.');
     }
     const offer=purchaseOffer({
@@ -427,7 +440,14 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     const storedControl=current().commerce.control;
     if(storedControl?.operationId===operationId) {
       if(['rejected','superseded','confirmed'].includes(storedControl.phase))return copy(storedControl);
-      if(storedControl.phase==='intent')await prepareControl(storedControl.operation);
+      if(storedControl.phase==='intent') {
+        let input=null;
+        if(storedControl.operation==='restore') {
+          const job=current().restoreJobs.find(({id:jobId})=>jobId===storedControl.operationId);
+          input={restoreJobId:storedControl.operationId,previewId:job?.previewId};
+        }
+        await prepareControl(storedControl.operation,input);
+      }
       return sendControl(operationId,storedControl.operation);
     }
     await refreshInternal();
@@ -438,11 +458,21 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     return {operationId,status:result.status};
   }
 
-  async function persistControl(mutate) {
+  async function persistControl(mutate,{publication=null}={}) {
     const state=current(),commerce=copy(state.commerce);
     if(commerce.control===null)fail('reference','Der Steuerauftrag wurde nicht gefunden.');
     mutate({control:commerce.control,commerce});
-    await replaceCommerce(commerce,{base:state});
+    if(publication===null)await replaceCommerce(commerce,{base:state});
+    else {
+      const expected=await productStateHash(state),next=copy(state);
+      next.commerce=assertCommerce(commerce);
+      const existing=next.restoreJobs.findIndex(job=>job.id===publication.id);
+      if(existing===-1)next.restoreJobs.push(copy(publication));
+      else if(commerce.control.operation==='restore'&&next.restoreJobs[existing].phase==='preview') {
+        next.restoreJobs[existing]=copy(publication);
+      } else fail('collision','Der Publikationsauftrag ist bereits mit anderen Daten gespeichert.');
+      await commitState(next,expected);
+    }
     return copy(current().commerce.control);
   }
 
@@ -477,6 +507,16 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     let state=current(),control=state.commerce.control;
     if(control===null||control.operationId!==operationId)fail('reference','Der Steuerauftrag wurde nicht gefunden.');
     if(control.phase==='reserved') {
+      const publication=state.restoreJobs.find(job=>job.id===operationId);
+      if(publication) {
+        if(typeof sync.publishControl!=='function')fail('not-ready','Die dauerhafte Epochenpublikation ist noch nicht angebunden.');
+        await sync.publishControl({state:copy(state),control:copy(control)});
+        state=current();control=state.commerce.control;
+        const durable=state.restoreJobs.find(job=>job.id===operationId);
+        if(!durable||!['published','activated'].includes(durable.phase)) {
+          fail('pending','Die dauerhafte Epochenpublikation ist noch nicht vollständig bestätigt.');
+        }
+      }
       for(const upload of control.uploads) {
         state=current();
         await transport.writeImmutable({
@@ -496,7 +536,12 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
       await refreshInternal();
       state=current();
     }
-    if(state.restoreJobs.length>0)fail('restore-pending','Eine ältere Wiederherstellung muss zuerst abgeschlossen werden.');
+    const coordinatedRestoreId=operation==='restore'?input?.restoreJobId:null;
+    const blockingRestores=state.restoreJobs.filter(job=>job.id!==coordinatedRestoreId);
+    if(blockingRestores.length>0)fail('restore-pending','Eine ältere Wiederherstellung muss zuerst abgeschlossen werden.');
+    if(operation==='restore'&&!state.restoreJobs.some(job=>job.id===coordinatedRestoreId&&job.phase==='preview')) {
+      fail('stale','Die koordinierte Wiederherstellungsvorschau ist nicht mehr verfügbar.');
+    }
     if(state.commerce.jobs.some(job=>job.status==='open'))fail('pending','Ein offener Kaufauftrag sperrt die Steueroperation.');
     if(operation==='initialize') {
       if(state.commerce.mode==='inactive') {
@@ -515,7 +560,7 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     let control=existing;
     if(control===null||control.phase!=='intent') {
       control={
-        version:1,operationId:id(),operation,phase:'intent',epochId:null,head:null,
+        version:1,operationId:operation==='restore'?coordinatedRestoreId:id(),operation,phase:'intent',epochId:null,head:null,
         etag:null,candidate:null,pointerProperties:null,uploads:[],
       };
       const commerce=copy(state.commerce);commerce.control=control;
@@ -548,7 +593,7 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
       target.head=operation==='initialize'?null:copy(head);target.etag=snapshot.etag;
       target.candidate=copy(prepared.candidate);target.uploads=copy(prepared.uploads);
       target.pointerProperties=exactPointerProperties(snapshot,prepared.candidate);
-    });
+    },{publication:prepared.publication??null});
     return copy(await uploadControl(control.operationId));
   }
 
@@ -586,12 +631,13 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     if(typeof profileId!=='string'||typeof figureId!=='string'
       ||!Number.isSafeInteger(stage)||stage<1||stage>4)fail('invalid','Die Figurenauswahl ist ungültig.');
     const history=lastHistory??await loadCachedHistory();
-    const account=history?.projection.accounts?.[profileId];
+    const state=current();
+    const account=history===null?null:economicForLedger(history,state).accounts?.[profileId];
     if(!account)fail('reference','Das Lernprofil ist nicht vorhanden.');
     if(!account.entitledFigureIds.includes(figureId))fail('entitlement','Die Figur ist nicht freigeschaltet.');
     const evolutionId=`evolution:${figureId}:${stage}`;
     if(!account.entitledEvolutionIds.includes(evolutionId))fail('entitlement','Die Entwicklungsform ist nicht freigeschaltet.');
-    const state=current(),commerce=copy(state.commerce);
+    const commerce=copy(state.commerce);
     commerce.selection=commerce.selection.filter(entry=>entry.profileId!==profileId);
     commerce.selection.push({profileId,figureId,stage});
     commerce.selection.sort((left,right)=>left.profileId.localeCompare(right.profileId));
@@ -600,11 +646,11 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
   }
 
   function view() {
-    const commerce=current().commerce;
+    const state=current(),commerce=state.commerce;
     return {
       mode:commerce.mode,
       head:copy(commerce.head),
-      accounts:copy(lastHistory?.projection.accounts??{}),
+      accounts:copy(lastHistory===null?{}:economicForLedger(lastHistory,state).accounts),
       jobs:copy(commerce.jobs),
       selection:copy(commerce.selection),
       control:copy(commerce.control),

@@ -111,6 +111,10 @@ Es gibt im ersten Integrationspaket keine automatische Verdichtung oder Löschun
 
 Portable v3-Sicherungen enthalten sämtliche fachlich notwendigen Belege, Punktgrundlagen, aktive Auswahl und Herkunft. Sie enthalten keine Tokens, Kontoanmeldungen, lokalen HTTP-Schreibkennungen oder ausführbaren Kaufaufträge. Ein unklarer lokaler Auftrag darf durch Backupimport nicht nochmals ausgeführt werden. Vor vollständiger Wiederherstellung wird er mit seinem ursprünglichen Konto geklärt. Fremde Sicherungen übernehmen validierten wirtschaftlichen Zustand als Ziel des bewussten Restorevorgangs, keine fremden Drive-Steuerdateien.
 
+**Protokolladdendum vom 26.09.2026:** Damit vollständig bestätigte, aber nach dem letzten Kauf hinzugekommene Lernfakten offline nicht verloren gehen, endet jede portable v3-Economy mit einem neutralen `checkpoint`-Beleg. Er erweitert den bestätigten Quellkopf um den vollständigen aktuellen Ledger, behält Epoche, Ausgaben und Käufe unverändert und leitet Lernpunkte sowie kostenlose Berechtigungen neu ab. Seine IDs binden deterministisch die vollständige Binding, den bisherigen Kopf und das kanonische Ledger. Der Export schreibt weder Cloudpointer noch Produktzustand.
+
+Dieser Checkpoint ist ausschließlich Quellprovenienz. Normales Kopf-Replay, Discovery und Join lehnen ihn sowohl als Zielkopf als auch in der `previous`-Zielkette ab. Restore darf ihn nur über `economy.source` erreichen und transportiert seine gesamte Closure mit einem Proofmanifest auf neu reservierte physische IDs; das gilt auch bei gleicher Binding. Fehlende Herkunft, Faktenverlust, Antwortslot-Kollision oder eine Abweichung zwischen exportiertem Snapshot und Checkpointbasis sperren Export beziehungsweise Import.
+
 ## 10. Prüfung und Auslieferungsgrenze
 
 Das Integrationspaket wird in drei überprüfbaren Schritten umgesetzt:

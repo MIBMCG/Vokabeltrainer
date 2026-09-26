@@ -38,7 +38,7 @@ test('v2 round and answer references require the matching policy and generation'
   const mixed=f.withEvents(f.roundStarted,{...answer,payload:{...answer.payload,schedulingGenerationId:null}});
   assert.doesNotThrow(()=>assertLedger(mixed));
   assert.throws(()=>assertEvent({...policy,formatVersion:1,ruleVersion:1}));
-  for(const [formatVersion,ruleVersion] of [[1,2],[2,1],[3,3]]) {
+  for(const [formatVersion,ruleVersion] of [[1,2],[2,1],[4,4]]) {
     assert.throws(()=>assertEvent({...policy,formatVersion,ruleVersion}),e=>e.code==='version');
   }
 });

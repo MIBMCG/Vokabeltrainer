@@ -9,6 +9,8 @@ import {digest} from '../../src/trainer/purchases/value.js';
 import {earnedLedger,receipt,rebindLedger,BINDING} from './purchases-fixtures.js';
 import {memoryStore,productState,sequenceIds} from './backup-fixtures.js';
 import {createFixture} from './fixtures.js';
+import {exportBackup,snapshotHash} from '../../src/trainer/backup/format.js';
+import {CURRENT_VERSION} from '../../src/trainer/model/versions.js';
 
 const CONFIG={
   version:1,kind:'purchase-config',binding:BINDING,descriptorHash:'a'.repeat(64),
@@ -103,7 +105,7 @@ async function seedRemote(remote,ledger=earnedLedger()){
   return ref;
 }
 
-async function openHarness({store,remote,ids=sequenceIds('purchase')}={}){
+async function openHarness({store,remote,ids=sequenceIds('purchase'),syncForCommands=learningSync}={}){
   store??=memoryStore(productState(earnedLedger()));remote??=new PurchaseRemote();
   const commands=await createCommands({store,now:()=>new Date('2026-09-21T10:00:00Z'),id:sequenceIds('command'),deviceId:'dev1',onChange(){}});
   let head=remote.coordinator.properties.purchaseHeadId?{
@@ -117,7 +119,7 @@ async function openHarness({store,remote,ids=sequenceIds('purchase')}={}){
     await commands.commitExternal(next,await productStateHash(commands.getState()));
   }
   const statuses=[];
-  const service=createPurchaseService({commands,transport:remote,sync:learningSync(commands),now:()=>new Date('2026-09-21T10:00:00Z'),id:ids,onStatus:s=>statuses.push(s)});
+  const service=createPurchaseService({commands,transport:remote,sync:syncForCommands(commands),now:()=>new Date('2026-09-21T10:00:00Z'),id:ids,onStatus:s=>statuses.push(s)});
   return {store,remote,commands,service,statuses};
 }
 
@@ -189,7 +191,7 @@ function restorePorts(commands) {
   return {
     ...learningSync(commands),
     calls,
-    async prepareRestoreCandidate({state,control,history,reserve}) {
+    async prepareRestoreCandidate({state,control,input,history,reserve}) {
       calls.prepared+=1;
       calls.sawPersistedIntent=commands.getState().commerce.control?.phase==='intent';
       assert.equal(history.projection.head.id,state.commerce.head.id);
@@ -202,7 +204,14 @@ function restorePorts(commands) {
         economy:{version:1,kind:'economic-snapshot',source:null},
       });
       const candidate={id:await reserve(),sha256:await digest(value)};
-      return {epochId:'e1',candidate,uploads:[...bundle.parts,{ref:bundle.ref,value:bundle.manifest},{ref:candidate,value}]};
+      const source=state.restoreJobs.find(({id})=>id===input.restoreJobId);
+      return {epochId:'e1',candidate,uploads:[...bundle.parts,{ref:bundle.ref,value:bundle.manifest},{ref:candidate,value}],
+        publication:{...structuredClone(source),phase:'uploading',epoch:structuredClone(ledger.epochs[0])}};
+    },
+    async publishControl({control}) {
+      const state=commands.getState(),next=structuredClone(state);
+      next.restoreJobs.find(({id})=>id===control.operationId).phase='published';
+      await commands.commitExternal(next,await productStateHash(state));
     },
     async applyConfirmedControl({state,control,history}) {
       calls.applied+=1;
@@ -210,9 +219,21 @@ function restorePorts(commands) {
       state.ledger=structuredClone(basis.ledger);
       state.outboxEventIds=[];
       state.clock=Math.max(state.clock,...state.ledger.events.map(entry=>entry.clock),...state.ledger.epochs.map(entry=>entry.clock));
+      state.restoreJobs.find(({id})=>id===control.operationId).phase='activated';
       return state;
     },
   };
+}
+
+async function installRestorePreview(commands,{id='durable-restore',previewId='d'.repeat(64)}={}) {
+  const state=commands.getState();
+  const backup=await exportBackup(state,'2026-09-21T10:00:00.000Z',{version:CURRENT_VERSION});
+  const snapshot={...structuredClone(backup.snapshot),id:`${id}-snapshot`,datasetId:state.ledger.descriptor.datasetId};
+  snapshot.contentHash=await snapshotHash(snapshot,backup.events);
+  const next=structuredClone(state);
+  next.restoreJobs.push({id,phase:'preview',backup,previewId,parentHeads:['e0'],safetyCopyId:null,
+    snapshot,uploads:[],epoch:null});
+  await commands.commitExternal(next,await productStateHash(state));
 }
 
 async function migratingHarness({remote=new PurchaseRemote(),store=memoryStore(productState(earnedLedger())),ids=sequenceIds('control')}={}) {
@@ -237,6 +258,7 @@ async function migratingHarness({remote=new PurchaseRemote(),store=memoryStore(p
 
 async function restoreHarness({remote=new PurchaseRemote(),store=memoryStore(productState(earnedLedger())),ids=sequenceIds('restore')}={}) {
   const base=await openHarness({remote,store,ids});
+  if(!base.commands.getState().restoreJobs.some(({id})=>id==='durable-restore'))await installRestorePreview(base.commands);
   const sync=restorePorts(base.commands);
   const service=createPurchaseService({commands:base.commands,transport:remote,sync,
     now:()=>new Date('2026-09-21T10:00:00Z'),id:ids,onStatus(){}});
@@ -260,6 +282,25 @@ test('a confirmed purchase survives completely new command and service objects',
   assert.equal(job.status,'confirmed');
   assert.equal((await reopened.service.getView()).accounts.p1.spentPoints,200);
   assert.equal(first.remote.putCalls.length,1);
+});
+
+test('purchase preview ignores advancing sync bookkeeping but remains bound to economic facts',async()=>{
+  let syncRun=0;
+  const harness=await openHarness({syncForCommands:commands=>({
+    async syncLearning(){
+      const state=commands.getState(),next=structuredClone(state);
+      syncRun+=1;
+      next.outboxEventIds=[];next.pendingPackets=[];
+      next.knownFiles=next.knownFiles.filter(({fileId})=>fileId!=='sync-diagnostic');
+      next.knownFiles.push({fileId:'sync-diagnostic',contentHash:syncRun.toString(16).padStart(64,'0'),kind:'packet'});
+      await commands.commitExternal(next,await productStateHash(state));
+      return {phase:'synced',lastConfirmedAt:new Date(1_000*syncRun).toISOString()};
+    },
+  })});
+  const preview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
+  const confirmed=await harness.service.confirm(preview);
+  assert.equal(confirmed.status,'confirmed');
+  assert.ok(syncRun>=3);
 });
 
 test('a storage failure before reservation prevents the dependent network write',async()=>{
@@ -541,7 +582,7 @@ test('fresh-process control recovery covers initialize and restore persistence a
     const open=operation==='initialize'?migratingHarness:restoreHarness;
     const prepare=(service)=>operation==='initialize'
       ? service.prepareActivation()
-      : service.prepareRestore({previewId:'durable-preview'});
+      : service.prepareRestore({restoreJobId:'durable-restore',previewId:'d'.repeat(64)});
     const finalState=(commands)=>operation==='initialize'
       ? commands.getState().commerce.mode==='active'
       : commands.getState().ledger.epochs[0].id==='e1';
@@ -687,10 +728,11 @@ test('confirmed ownership stays readable and selectable offline after restart',a
 
 test('restore control uses the same persisted head and activates its epoch only after confirmed history replay',async()=>{
   const harness=await openHarness();
+  await installRestorePreview(harness.commands,{id:'synthetic-restore',previewId:'e'.repeat(64)});
   const sync=restorePorts(harness.commands);
   const service=createPurchaseService({commands:harness.commands,transport:harness.remote,sync,
     now:()=>new Date('2026-09-21T10:00:00Z'),id:sequenceIds('restore-control'),onStatus(){}});
-  const prepared=await service.prepareRestore({previewId:'synthetic-preview'});
+  const prepared=await service.prepareRestore({restoreJobId:'synthetic-restore',previewId:'e'.repeat(64)});
   assert.equal(prepared.operation,'restore');
   assert.equal(prepared.phase,'pointer-pending');
   assert.equal(sync.calls.sawPersistedIntent,true);
@@ -702,6 +744,29 @@ test('restore control uses the same persisted head and activates its epoch only 
   assert.equal(sync.calls.applied,1);
   assert.equal(harness.commands.getState().ledger.epochs[0].id,'e1');
   assert.equal(harness.commands.getState().commerce.head.id,confirmed.candidate.id);
+});
+
+test('purchase and coordinated restore exclude each other in both orderings',async()=>{
+  const restoreFirst=await openHarness();
+  await installRestorePreview(restoreFirst.commands,{id:'restore-first',previewId:'f'.repeat(64)});
+  const restoreSync=restorePorts(restoreFirst.commands);
+  const restoreService=createPurchaseService({commands:restoreFirst.commands,transport:restoreFirst.remote,sync:restoreSync,
+    now:()=>new Date('2026-09-21T10:00:00Z'),id:sequenceIds('restore-first'),onStatus(){}});
+  await restoreService.prepareRestore({restoreJobId:'restore-first',previewId:'f'.repeat(64)});
+  await assert.rejects(
+    restoreService.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'}),
+    {code:'pending'},
+  );
+
+  const purchaseFirst=await openHarness();
+  purchaseFirst.remote.pointerFailure='before';
+  const preview=await purchaseFirst.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
+  await assert.rejects(purchaseFirst.service.confirm(preview),{code:'network'});
+  await installRestorePreview(purchaseFirst.commands,{id:'purchase-first-restore',previewId:'9'.repeat(64)});
+  await assert.rejects(
+    purchaseFirst.service.prepareRestore({restoreJobId:'purchase-first-restore',previewId:'9'.repeat(64)}),
+    {code:'pending'},
+  );
 });
 
 test('changed intent, unknown profile and account or folder switch fail before a purchase write',async()=>{

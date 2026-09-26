@@ -68,7 +68,7 @@ Receipt = {
   sequence:nonNegativeSafeInteger,
   previous:Ref|null,
   operationId:Id,
-  operation:'initialize'|'purchase'|'restore',
+  operation:'initialize'|'purchase'|'restore'|'checkpoint',
   epochId:Id,
   basis:Ref,
   intent:Intent|null,
@@ -81,7 +81,7 @@ Artikel-IDs sind entweder die ID einer bezahlten Grundfigur oder
 bei vorhandener Grundfigur kostenlos. Modulare Ausrüstungsartikel sind kein
 neues Kaufangebot.
 
-Die drei Belegarten sind enger als die gemeinsame Form:
+Die vier Belegarten sind enger als die gemeinsame Form:
 
 - `initialize`: Sequenz 0, kein Vorgänger, kein Intent,
   `economy.source === null`.
@@ -93,6 +93,13 @@ Die drei Belegarten sind enger als die gemeinsame Form:
   wirtschaftliche Zielstand eines bewusst gewählten, validierten v1/v2-Backups:
   null Ausgaben und null bezahlte Artikel; Lernpunkte stammen weiterhin aus der
   Zielbasis.
+- `checkpoint`: Sequenz größer 0, Vorgänger, kein Intent und `economy:null`.
+  Dieser neutrale Knoten existiert ausschließlich in einer portablen
+  v3-Sicherung. Er erhält Binding, Koordinationsordner und aktive Epoche seines
+  Vorgängers, erweitert dessen vollständige Fakten monoton und übernimmt nur
+  bestätigte Ausgaben und Käufe. Lernpunkte und kostenlose Berechtigungen
+  werden aus seiner Basis neu abgeleitet. Er wird nie in Drive veröffentlicht
+  und kann nie Bestandteil der autoritativen `previous`-Zielkette sein.
 
 Die Herkunft ist eine flache, ref-adressierte DAG. Sie bettet keine frühere
 Historie rekursiv in einen neuen Beleg ein. Mehrere Restorebelege und portable
@@ -102,7 +109,8 @@ unter ihrer eigenen gespeicherten `Binding` geprüft. Drive-Steuerdateien oder
 lokale Journale der Quelle werden nicht übernommen.
 
 Bei derselben Binding darf `proof:null` direkt auf bereits erreichbare
-unveränderliche Objekte zeigen. Bei einer fremden Binding ist `proof` Pflicht.
+unveränderliche Objekte zeigen. Für einen Sicherungscheckpoint und bei einer
+fremden Binding ist `proof` Pflicht.
 Er verweist auf ein im Ziel-Inhaltsordner gespeichertes portables
 Herkunftsmanifest. So benötigt ein leeres Folgegerät keinen Zugriff auf das
 ursprüngliche Google-Konto und keine der dortigen physischen Datei-IDs.
@@ -255,7 +263,8 @@ Entries = {
 replayHistory({
   entries:Entries,
   bases:[BasisRecord, ...],
-  binding:Binding
+  binding:Binding,
+  sourceProvenance?:boolean
 }) -> Promise<EconomicProjection>
 ```
 
@@ -265,6 +274,12 @@ nicht erreichbare Belege oder Basen sind ein Fehler. Die Reihenfolge der Arrays
 ist bedeutungslos. `head` bestimmt die Zielkette. `entries.proofs` enthält
 genau die von erreichbaren fremden Restorekanten referenzierten Nachweise;
 fehlende oder zusätzliche Proofrecords sperren Replay.
+Der Standardwert `sourceProvenance:false` bezeichnet die autoritative
+Zielkette. Nur die Validierung einer eigenständigen portablen Economy setzt
+`sourceProvenance:true`. Eine über `restore.economy.source` erreichte Kette
+wird auch im normalen Replay automatisch als Quellprovenienz markiert. Ein
+Checkpoint mit Zielrolle wird unabhängig davon abgewiesen, ob er Kopf oder
+Vorgänger eines späteren Zielbelegs ist.
 
 ```text
 EconomicProjection = {
@@ -289,7 +304,7 @@ EconomicProjection = {
   receipts:[{
     ref:Ref,
     operationId:Id,
-    operation:'initialize'|'purchase'|'restore',
+    operation:'initialize'|'purchase'|'restore'|'checkpoint',
     sequence:nonNegativeSafeInteger,
     datasetId:Id,
     epochId:Id
@@ -320,6 +335,11 @@ Die Replayprüfung ist iterativ und prüft vor wirtschaftlicher Projektion:
 9. bei fremder Binding ein gehashtes Proofmanifest, das exakt alle logisch
    erreichbaren Quellbelege, Basisdateien und gegebenenfalls verschachtelten
    Proofartefakte auf unveränderte Bodies unter neuen physischen Refs abbildet.
+10. Checkpoints nur im Quellkontext: nächste Sequenz, dieselbe Epoche,
+    monotone Faktenerweiterung ohne kollidierenden Antwortslot, unveränderte
+    Ausgaben/Käufe und neu abgeleitete Lernpunkte/Berechtigungen. Eine
+    Restorekante auf einen Checkpoint benötigt auch bei gleicher Binding ein
+    Proofmanifest mit neu reservierten physischen IDs.
 
 Die vollständige `receipts`-Liste bleibt erhalten. Es gibt keine 64-Beleg-Grenze
 und keine automatische Löschung oder Verdichtung.
@@ -697,23 +717,29 @@ Der injizierte Task-4-Port hat folgende Grenze:
 ```text
 sync.prepareActivationCandidate({state,control,input,history,reserve})
 sync.prepareRestoreCandidate({state,control,input,history,reserve})
-  -> {epochId,candidate,uploads}
+  -> {epochId,candidate,uploads,publication:RestoreJob}
 
 sync.applyConfirmedControl({state,control,history}) -> ProductState
+sync.publishControl({state,control}) -> RestoreJob
+sync.reconcile({state,binding,descriptorHash}) -> ProductState
 
 sync.syncLearning() -> {phase:'synced', ...}
 ```
 
 Vor `prepare*Candidate` ist der `ControlJob` in Phase `intent` dauerhaft
 gespeichert. Die Candidate-Ports dürfen nur die vollständige gehashte Closure
-vorbereiten; sie veröffentlichen keine Epoche und keinen Formatmarker. Der
-Aktivierungszielstand muss aus `control.uploads` und der vollständig geprüften
+und den kompletten `publication`-Entwurf vorbereiten; sie veröffentlichen keine
+Epoche und keinen Formatmarker. Kaufdienst und Commands speichern Control und
+Publication atomar, bevor `publishControl` die erste abhängige Produktdatei
+hochladen darf. Alle reservierten IDs und Bodies bleiben bei unbekanntem Ausgang
+unverändert; erst die vollständig nachgelesene Publicationphase `published`
+erlaubt die Kaufclosure und anschließend den gemeinsamen Pointer. Der
+Aktivierungszielstand muss aus `control.uploads`, `publication` und der vollständig geprüften
 Historie wiederherstellbar sein. Erst wenn der neue gemeinsame Kopf vollständig
 nachgelesen wurde, ruft der Dienst `applyConfirmedControl` auf und speichert
 dessen Ergebnis gemeinsam mit dem bestätigten Commerce-Kopf. Ein fehlender Port
 schließt den Ablauf mit `not-ready`; der Shop wird in diesem Paket nicht
-automatisch sichtbar. Markerabsichten gehören in den dauerhaften Produkt-Outbox
-oder in eine später ausdrücklich validierte Schemaerweiterung, nie nur in RAM.
+automatisch sichtbar.
 
 `syncLearning` ist ein enger Adapter auf den vollständigen Produktabgleich. Er
 darf insbesondere nicht erneut `PurchaseService.refresh` aufrufen, weil er aus
@@ -738,3 +764,51 @@ Kandidaten, der unveränderliche Kaufintent beziehungsweise Operation und Epoche
 des ControlJobs müssen exakt mit dem tatsächlich gelesenen Beleg übereinstimmen.
 Gleichnamige Operations-IDs in einer Herkunftskette bestätigen keinen lokalen
 Zielauftrag; eine abweichende Zielkettenverwendung wird als `collision` gesperrt.
+
+## Task-4-Produktintegration und v3-Sicherung
+
+`createCommerceIntegration({commands,learningSync,drive,transportFor,now,id})`
+liefert genau die sechs oben beschriebenen Ports
+`prepareActivationCandidate`, `prepareRestoreCandidate`,
+`applyConfirmedControl`, `publishControl`, `reconcile` und `syncLearning`.
+Der Adapter hält keine zweite Zustandskopie und keine eigene Warteschlange.
+`reconcile` entdeckt den installierten Configref am Datensatz, liest Config,
+Koordinator und vollständige Historie und übernimmt ausschließlich den
+verifizierten gemeinsamen Kopf als Epochenautorität. Nicht koordinierte lokale
+Epochen bleiben historische Herkunft; späte Ereignisse bleiben zur späteren
+ausdrücklichen Übernahme erhalten.
+
+`createProductSync({... ,commerce:null|{reconcile}})` ruft den optionalen Port
+nach dem Lern-Download und vor neuen Uploads auf und liefert `syncLearning` als
+denselben nicht rekursiven vollständigen Abgleich. `createRestoreService`
+erhält optional `commerce:()=>({prepareRestore,confirmRestore})`. Bei aktivem
+Commerce wird ausschließlich dieser koordinierte Weg verwendet; Netz- oder
+Integritätsfehler fallen nicht auf lokalen Offline-Restore zurück.
+
+Eine aktive Format-3-Sicherung ergänzt das bisherige Backup exakt um:
+
+```text
+EconomyBackup = {
+  version:1,
+  kind:'economy-backup',
+  binding:Binding,
+  head:Ref,                 // neutraler checkpoint
+  entries:Entries,          // vollständige Herkunftsclosure
+  bases:[BasisRecord, ...],
+  selection:[{profileId:Id, figureId:Id, stage:1|2|3|4}, ...]
+}
+```
+
+Der Export liest ausschließlich die lokal vollständig geprüfte Closure. Er
+erzeugt deterministisch aus vollständiger Binding, vorherigem bestätigtem Kopf
+und kanonischem aktuellem Ledger einen Checkpoint samt Basis und Teilen. Er
+mutiert weder Produktzustand noch Commerce-Kopf und führt keine Netzoperation
+aus. Die Validierung verlangt exakte Gleichheit der normalisierten Fakten von
+Checkpointbasis und exportiertem Snapshot. Fehlende Herkunft, entfernte Fakten,
+kollidierende Antwortslots oder ID-Kollisionen brechen den Export ab. Journal,
+Control-/Kaufjobs, Tokens, HTTP-ETags und Pointerbodies sind nicht enthalten.
+
+Beim Restore wird die vollständige Economy immer durch `packProof` unter neu
+reservierte physische IDs abgebildet, auch wenn Quell- und Ziel-Binding gleich
+sind. Originalbodies und Hashes bleiben unverändert. Dadurch funktionieren
+verschachtelte A→B→C-Restores allein aus den Objekten des jeweils letzten Ziels.

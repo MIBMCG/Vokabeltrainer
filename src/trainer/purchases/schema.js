@@ -16,7 +16,7 @@ import {
 } from './value.js';
 import {assertProofManifest} from './proof.js';
 
-const OPERATIONS = ['initialize', 'purchase', 'restore'];
+const OPERATIONS = ['initialize', 'purchase', 'restore', 'checkpoint'];
 const MODES = ['inactive', 'migrating', 'active', 'blocked'];
 const PHASES = ['intent', 'reserved', 'uploaded', 'pointer-pending', 'reconciling', 'confirmed', 'rejected', 'superseded'];
 const FINAL_JOB_STATUSES = ['open', 'confirmed', 'rejected', 'superseded'];
@@ -97,11 +97,13 @@ export function assertReceipt(value) {
       || checked.epochId !== value.epochId) {
       fail('reference', 'Kaufbeleg und Kaufauftrag passen nicht zusammen.');
     }
-  } else {
+  } else if (value.operation === 'restore') {
     if (value.sequence === 0 || previous === null || value.intent !== null || value.economy === null) {
       fail('invalid', 'Der Wiederherstellungsbeleg ist ungültig.');
     }
     assertEconomicSnapshot(value.economy);
+  } else if (value.sequence === 0 || previous === null || value.intent !== null || value.economy !== null) {
+    fail('invalid', 'Der portable Sicherungscheckpoint ist ungültig.');
   }
   return copy(value);
 }

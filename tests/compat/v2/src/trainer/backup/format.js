@@ -4,10 +4,7 @@ import {assertDescriptor, assertLedger, assertSnapshot, assertEpochHistory} from
 import {resolveEpochs} from '../model/epochs.js';
 import {project} from '../learning/progress.js';
 
-import {CURRENT_VERSION, COMMERCE_VERSION, assertSupportedVersion, assertContainedVersion, versionOf} from '../model/versions.js';
-import {packBasis} from '../purchases/basis.js';
-import {readHistory, replayHistory} from '../purchases/history.js';
-import {assertBinding as assertPurchaseBinding, assertRef as assertPurchaseRef, copy as purchaseCopy} from '../purchases/value.js';
+import {CURRENT_VERSION, assertSupportedVersion, assertContainedVersion, versionOf} from '../model/versions.js';
 export const VERSION = CURRENT_VERSION;
 export const MAX_BACKUP_BYTES = 25 * 1024 * 1024;
 export const sorted = values => [...values].sort((a,b)=>a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
@@ -97,102 +94,9 @@ export function backupLedger(backup) {
         deviceId:root.deviceId,clock:root.clock,occurredAt:root.occurredAt,snapshotId:backup.snapshot.id,snapshotManifestFileId:null},
     ]});
 }
-function assertEconomyBackup(value) {
-  exact(value,['version','kind','binding','head','entries','bases','selection']);
-  if(value.version!==1||value.kind!=='economy-backup')fail('version','Diese wirtschaftliche Sicherungsversion wird nicht unterstützt.');
-  const binding=assertPurchaseBinding(value.binding),head=assertPurchaseRef(value.head);
-  exact(value.entries,['head','values','proofs']);
-  assertPurchaseRef(value.entries.head);
-  if(!Array.isArray(value.entries.values)||!Array.isArray(value.entries.proofs)||!Array.isArray(value.bases)||!Array.isArray(value.selection)) {
-    fail('invalid','Die wirtschaftliche Sicherung ist unvollständig.');
-  }
-  for(const entry of value.selection) {
-    exact(entry,['profileId','figureId','stage']);
-    if(typeof entry.profileId!=='string'||typeof entry.figureId!=='string'||!Number.isSafeInteger(entry.stage)||entry.stage<1||entry.stage>4) {
-      fail('invalid','Die gesicherte Figurenauswahl ist ungültig.');
-    }
-  }
-  if(new Set(value.selection.map(({profileId})=>profileId)).size!==value.selection.length)fail('collision','Ein Profil hat mehrere gesicherte Figurenauswahlen.');
-  return {version:1,kind:'economy-backup',binding,head,entries:purchaseCopy(value.entries),
-    bases:purchaseCopy(value.bases),selection:purchaseCopy(value.selection)};
-}
-
-const checkpointId = (kind, seed, index = null) => index === null
-  ? `backup-checkpoint-${kind}-${seed}`
-  : `backup-checkpoint-${kind}-${seed}-${index}`;
-
-function economyObjectIds(history) {
-  const ids = new Set();
-  const add = ref => ids.add(assertPurchaseRef(ref).id);
-  for (const entry of history.entries.values) add(entry.ref);
-  for (const basis of history.bases) {
-    add(basis.ref);
-    for (const part of basis.parts) add(part.ref);
-  }
-  for (const proof of history.entries.proofs) {
-    add(proof.ref);
-    for (const object of proof.objects) {
-      add(object.logical);
-      add(object.stored);
-    }
-  }
-  return ids;
-}
-
-function normalizedLearningFacts(ledger) {
-  const resolved = resolveEpochs(ledger);
-  if (resolved.epochConflict || resolved.activeEpochId === null) {
-    fail('incomplete','Der wirtschaftliche Sicherungsstand hat keine eindeutige aktive Epoche.');
-  }
-  return resolved.effectiveEvents.map(event => {
-    const value = structuredClone(event);
-    delete value.datasetId;
-    delete value.epochId;
-    return value;
-  }).sort((left,right)=>left.id.localeCompare(right.id));
-}
-
-async function economyBackupFromState(state) {
-  const commerce=state?.commerce;
-  if(commerce?.mode!=='active'||commerce.head===null||commerce.binding===null) {
-    fail('not-ready','Eine v3-Sicherung benötigt einen bestätigten gemeinsamen Kaufkopf.');
-  }
-  const history=await readHistory({head:commerce.head,binding:commerce.binding,cache:commerce.cache,
-    read:async()=>fail('history','Die vollständige wirtschaftliche Herkunft ist lokal nicht verfügbar.'),onProgress:()=>{}});
-  const ledger=assertLedger(state.ledger);
-  if(resolveEpochs(ledger).activeEpochId!==history.projection.activeEpochId) {
-    fail('binding','Der lokale Lernstand gehört nicht zur bestätigten wirtschaftlichen Epoche.');
-  }
-  const seed=await digest({version:1,kind:'backup-economy-checkpoint',binding:commerce.binding,
-    previous:commerce.head,ledger});
-  const basis=await packBasis(ledger,({kind,index})=>{
-    if(kind==='basis')return checkpointId('basis',seed);
-    if(kind==='basis-part')return checkpointId('part',seed,index);
-    fail('invalid','Die Checkpoint-ID-Anforderung ist ungültig.');
-  });
-  const occupied=economyObjectIds(history);
-  for(const ref of [basis.ref,...basis.parts.map(({ref})=>ref)]) {
-    if(occupied.has(ref.id))fail('collision','Eine deterministische Checkpoint-ID kollidiert mit der Herkunft.');
-    occupied.add(ref.id);
-  }
-  const receipt={version:1,kind:'receipt',datasetId:ledger.descriptor.datasetId,
-    coordinatorId:history.projection.coordinatorId,sequence:history.projection.sequence+1,
-    previous:purchaseCopy(commerce.head),operationId:checkpointId('operation',seed),operation:'checkpoint',
-    epochId:history.projection.activeEpochId,basis:purchaseCopy(basis.ref),intent:null,economy:null};
-  const checkpointRef={id:checkpointId('receipt',seed),sha256:await digest(receipt)};
-  if(occupied.has(checkpointRef.id))fail('collision','Die deterministische Checkpoint-ID kollidiert mit der Herkunft.');
-  const entries=purchaseCopy(history.entries);
-  entries.head=purchaseCopy(checkpointRef);
-  entries.values.push({ref:purchaseCopy(checkpointRef),value:purchaseCopy(receipt)});
-  const bases=[...purchaseCopy(history.bases),{ref:purchaseCopy(basis.ref),manifest:purchaseCopy(basis.manifest),
-    parts:purchaseCopy(basis.parts),ledger:purchaseCopy(ledger)}];
-  return assertEconomyBackup({version:1,kind:'economy-backup',binding:commerce.binding,head:checkpointRef,
-    entries,bases,selection:commerce.selection});
-}
 export function assertBackup(value) {
   assertSupportedVersion(value);
-  exact(value,[...Object.keys(VERSION),'kind','exportedAt','descriptor','snapshot','events','epochHistory','safetyCopyIndex',
-    ...(value.formatVersion===3?['economy']:[])]);
+  exact(value,[...Object.keys(VERSION),'kind','exportedAt','descriptor','snapshot','events','epochHistory','safetyCopyIndex']);
   version(value,'backup');
   if(bytes(value)>MAX_BACKUP_BYTES || !Array.isArray(value.events) || value.events.length>100000) {
     fail('invalid','Eine Sicherung darf höchstens 25 MiB und 100.000 Ereignisse enthalten.');
@@ -206,7 +110,7 @@ export function assertBackup(value) {
   for(const item of value.safetyCopyIndex) {
     exact(item,['id','createdAt','purpose','hash']);
     if(!/^[A-Za-z0-9_-]{1,128}$/.test(item.id) || !/^[0-9a-f]{64}$/.test(item.hash)
-      || ![ 'restore','safety','join',...(value.formatVersion>=2?['format-migration']:[])].includes(item.purpose) || seen.has(item.id)) fail('invalid','Der Sicherheitskopienindex ist ungültig.');
+      || ![ 'restore','safety','join',...(value.formatVersion===2?['format-migration']:[])].includes(item.purpose) || seen.has(item.id)) fail('invalid','Der Sicherheitskopienindex ist ungültig.');
     seen.add(item.id); assertDescriptor({...value.descriptor,createdAt:item.createdAt});
   }
   const ledger=backupLedger(value);
@@ -221,43 +125,11 @@ export function assertBackup(value) {
   for(const e of ledger.events.filter(e=>effective.has(e.id) && e.type==='round.completed')) {
     if(e.payload.answerIds.some(id=>!effective.has(id))) fail('reference','Ein Abschluss benötigt die vollständige wirksame Antwortmenge.');
   }
-  if(value.formatVersion===3)assertEconomyBackup(value.economy);
   return structuredClone(value);
 }
 export async function validateBackup(value) {
   const checked=assertBackup(value);
   if(await snapshotHash(checked.snapshot,checked.events)!==checked.snapshot.contentHash)fail('invalid','Der Sicherungshash stimmt nicht.');
-  if(checked.formatVersion===3) {
-    const projection=await replayHistory({entries:checked.economy.entries,bases:checked.economy.bases,
-      binding:checked.economy.binding,sourceProvenance:true});
-    if(projection.head.id!==checked.economy.head.id||projection.head.sha256!==checked.economy.head.sha256) {
-      fail('history','Der wirtschaftliche Sicherungskopf stimmt nicht mit seiner Herkunft überein.');
-    }
-    const checkpoint=checked.economy.entries.values.find(({ref})=>ref.id===projection.head.id);
-    const checkpointBasis=checked.economy.bases.find(({ref})=>ref.id===projection.basis.id);
-    if(checkpoint?.value.operation!=='checkpoint'||checkpointBasis===undefined) {
-      fail('history','Der wirtschaftliche Sicherungskopf ist kein vollständiger portabler Checkpoint.');
-    }
-    const seed=await digest({version:1,kind:'backup-economy-checkpoint',binding:checked.economy.binding,
-      previous:checkpoint.value.previous,ledger:checkpointBasis.ledger});
-    if(checkpoint.value.operationId!==checkpointId('operation',seed)
-      ||checkpoint.ref.id!==checkpointId('receipt',seed)
-      ||checkpointBasis.ref.id!==checkpointId('basis',seed)
-      ||checkpointBasis.parts.some(({ref},index)=>ref.id!==checkpointId('part',seed,index))) {
-      fail('integrity','Die Identität des portablen Sicherungscheckpoints ist nicht reproduzierbar.');
-    }
-    if(canonical(normalizedLearningFacts(checkpointBasis.ledger))
-      !==canonical(normalizedLearningFacts(backupLedger(checked)))) {
-      fail('history','Checkpointbasis und exportierter Fachstand stimmen nicht exakt überein.');
-    }
-    for(const {profileId,figureId,stage} of checked.economy.selection) {
-      const account=projection.accounts[profileId];
-      if(!account||!account.entitledFigureIds.includes(figureId)
-        ||!account.entitledEvolutionIds.includes(`evolution:${figureId}:${stage}`)) {
-        fail('entitlement','Die gesicherte Figurenauswahl ist wirtschaftlich nicht belegt.');
-      }
-    }
-  }
   return checked;
 }
 export async function parseBackup(text) {
@@ -265,8 +137,7 @@ export async function parseBackup(text) {
   let value; try {value=JSON.parse(text);} catch {fail('invalid','Die Sicherung ist kein gültiges JSON.');}
   return validateBackup(value);
 }
-export async function exportBackup(state,exportedAt,{selectedEpochId,version:requestedVersion}={}) {
-  const outputVersion=requestedVersion??(state?.commerce?.mode==='active'?COMMERCE_VERSION:VERSION);
+export async function exportBackup(state,exportedAt,{selectedEpochId,version:outputVersion=VERSION}={}) {
   assertSupportedVersion(outputVersion);
   const ledger=assertLedger(state.ledger);
   let selection=ledger;
@@ -284,10 +155,8 @@ export async function exportBackup(state,exportedAt,{selectedEpochId,version:req
   const snapshot={id:'pending',datasetId:ledger.descriptor.datasetId,effectiveEventIds,supportEventIds,contentHash:''};
   snapshot.contentHash=await snapshotHash(snapshot,ledger.events);
   snapshot.id=`backup-${await digest({contentHash:snapshot.contentHash,events:sorted(ledger.events),epochHistory:epochHistory(ledger),exportedAt})}`;
-  const result={...versionOf(outputVersion),kind:'backup',exportedAt,descriptor:ledger.descriptor,snapshot,events:sorted(ledger.events),
-    epochHistory:epochHistory(ledger),safetyCopyIndex:(state.safetyCopies??[]).map(({id,createdAt,purpose,hash})=>({id,createdAt,purpose,hash}))};
-  if(outputVersion.formatVersion===3)result.economy=await economyBackupFromState(state);
-  return validateBackup(result);
+  return validateBackup({...versionOf(outputVersion),kind:'backup',exportedAt,descriptor:ledger.descriptor,snapshot,events:sorted(ledger.events),
+    epochHistory:epochHistory(ledger),safetyCopyIndex:(state.safetyCopies??[]).map(({id,createdAt,purpose,hash})=>({id,createdAt,purpose,hash}))});
 }
 export function previewBackup({current,backup}) {
   const before=project(current.ledger),after=project(backupLedger(backup));

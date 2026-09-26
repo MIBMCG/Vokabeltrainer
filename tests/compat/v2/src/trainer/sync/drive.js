@@ -151,14 +151,13 @@ function safeMessage(error, fallback = 'Der Drive-Abgleich ist fehlgeschlagen.')
   return fallback;
 }
 
-export function createProductSync({drive, store, commands, now, id, onStatus, commerce = null} = {}) {
+export function createProductSync({drive, store, commands, now, id, onStatus} = {}) {
   const driveMethods = ['accountId', 'generateId', 'listFiles', 'metadata', 'readJson', 'createFolder', 'putJson'];
   if (!drive || driveMethods.some((method) => typeof drive[method] !== 'function')
     || !store || !commands || typeof commands.getState !== 'function'
     || typeof commands.subscribe !== 'function'
     || typeof commands.commitExternal !== 'function' || typeof now !== 'function'
-    || typeof id !== 'function' || typeof onStatus !== 'function'
-    || (commerce !== null && typeof commerce?.reconcile !== 'function')) {
+    || typeof id !== 'function' || typeof onStatus !== 'function') {
     throw productError('invalid', 'Der Produktabgleich ist nicht vollständig konfiguriert.');
   }
 
@@ -232,20 +231,6 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
       }
     }
     throw productError('stale', 'Der lokale Stand ändert sich fortlaufend; der Abgleich wurde angehalten.');
-  }
-
-  async function reconcileCommerce(binding) {
-    if (commerce === null) return;
-    await mutate(async (next, current) => {
-      const reconciled = await commerce.reconcile({
-        state: structuredClone(current), binding: structuredClone(binding),
-        descriptorHash: await digest(current.ledger.descriptor),
-      });
-      if (await productStateHash(reconciled) === await productStateHash(current)) return false;
-      for (const key of Object.keys(next)) delete next[key];
-      Object.assign(next, structuredClone(reconciled));
-      return true;
-    });
   }
 
   async function contentHash(value) {
@@ -676,7 +661,7 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
         if(await productStateHash(value)!==expected)throw productError('stale','Die Datensatzvorschau wurde geändert.');
         assertLedger(next.ledger);await scratch.save(next);
       }};
-    const probe=createProductSync({drive,store:scratch,commands:reader,now,id,onStatus:()=>{},commerce});
+    const probe=createProductSync({drive,store:scratch,commands:reader,now,id,onStatus:()=>{}});
     try {await probe.sync();return reader.getState();} finally {probe.destroy();}
   }
 
@@ -1049,7 +1034,6 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
     const remoteProblem = await download(state.binding);
     const versionProblem=commands.getState().quarantinedFiles.find(entry=>entry.code==='version');
     if(versionProblem)throw productError('version',versionProblem.message);
-    await reconcileCommerce(state.binding);
     await publishLocalEpochs(state.binding);
     await preparePackets(state.binding);
     await uploadPending(state.binding);
@@ -1106,5 +1090,5 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
     unsubscribe();
   }
 
-  return {discover, createDataset, joinDataset, sync, syncLearning:sync, retry, getStatus, destroy};
+  return {discover, createDataset, joinDataset, sync, retry, getStatus, destroy};
 }

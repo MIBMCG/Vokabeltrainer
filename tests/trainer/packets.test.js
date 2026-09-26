@@ -16,7 +16,7 @@ test('distinguishes malformed version headers from well-formed unsupported pairs
     {...header, formatVersion: -1}, {...header, ruleVersion: null}, {...header, ruleVersion: 1.5}]) {
     assert.throws(() => validatePacket(value), {code: 'invalid'});
   }
-  for (const [formatVersion, ruleVersion] of [[1, 2], [2, 1], [3, 3], [99, 7]]) {
+  for (const [formatVersion, ruleVersion] of [[1, 2], [2, 1], [4, 4], [99, 7]]) {
     assert.throws(() => validatePacket({...header, formatVersion, ruleVersion, futureField: true}), {code: 'version'});
   }
 });
@@ -24,7 +24,7 @@ test('distinguishes malformed version headers from well-formed unsupported pairs
 test('an invalid earlier event does not hide a later unsupported event version', () => {
   const f = createFixture();
   const packet = buildPackets({events: f.base.events, datasetId: 'd1', epochId: 'e0', id: ids('versions')})[0];
-  packet.events = [null, {...packet.events[0], formatVersion: 3, ruleVersion: 3, futureField: true}];
+  packet.events = [null, {...packet.events[0], formatVersion: 4, ruleVersion: 4, futureField: true}];
   assert.throws(() => validatePacket(packet), {code: 'version'});
 });
 

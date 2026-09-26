@@ -19,7 +19,7 @@ function combinedLedger(current,backup,snapshot,epoch=null) {
     historicalEpochs:mergeById(current.historicalEpochs,backup.epochHistory.map(e=>({...e,datasetId}))),
     snapshots:mergeById(current.snapshots,[snapshot]),epochs:epoch?mergeById(current.epochs,[epoch]):current.epochs});
 }
-export function createRestoreService({commands,store,sync,drive,now,id,commerce=null}) {
+export function createRestoreService({commands,store,sync,drive,now,id}) {
   let tail=Promise.resolve(); const adoptions=new Map();
   const enqueue=fn=>{const p=tail.then(fn);tail=p.catch(()=>{});return p;};
   const jobFor=jobId=>commands.getState().restoreJobs.find(j=>j.id===jobId);
@@ -95,21 +95,6 @@ export function createRestoreService({commands,store,sync,drive,now,id,commerce=
     if(!job)fail('stale','Die Wiederherstellungsvorschau ist nicht mehr verfügbar.');
     await validateBackup(job.backup);
     if(job.phase==='activated')return;
-    const stateBeforeControl=commands.getState();
-    if(stateBeforeControl.binding!==null&&stateBeforeControl.commerce?.mode==='active') {
-      const port=typeof commerce==='function'?commerce():commerce;
-      if(!port||typeof port.prepareRestore!=='function'||typeof port.confirmRestore!=='function') {
-        fail('not-ready','Die gemeinsame Wiederherstellung ist noch nicht angebunden.');
-      }
-      if(job.phase==='preview') {
-        await syncFresh({allowConflict:job.parentHeads.length>1});
-        const current=commands.getState();
-        if(await previewHash(current,job.backup)!==previewId)fail('stale','Der Stand hat sich geändert. Bitte eine neue Vorschau öffnen.');
-      }
-      const control=await port.prepareRestore({restoreJobId:job.id,previewId});
-      await port.confirmRestore(control.operationId);
-      return;
-    }
     if(job.phase==='preview') {
       await syncFresh({allowConflict:job.parentHeads.length>1});
       const current=commands.getState();

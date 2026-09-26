@@ -84,17 +84,23 @@ function reachableOrder(head, byId) {
   return order;
 }
 
-function bindingContexts(head, byId, targetBinding) {
+function bindingContexts(head, byId, targetBinding, rootRole) {
   const contexts = new Map();
+  const roles = new Map();
   const coordinators = new Map();
-  const queue = [{id: head.id, binding: targetBinding}];
+  const processed = new Set();
+  const queue = [{id: head.id, binding: targetBinding, role: rootRole}];
   while (queue.length > 0) {
-    const {id, binding} = queue.shift();
+    const {id, binding, role} = queue.shift();
     const key = canonical(binding);
     const previous = contexts.get(id);
     if (previous && previous !== key) fail('binding', 'Ein Beleg wird aus widersprüchlichen Bindungen verwendet.');
-    if (previous) continue;
-    contexts.set(id, key);
+    if (!previous) contexts.set(id, key);
+    if (!roles.has(id)) roles.set(id, new Set());
+    roles.get(id).add(role);
+    const visitKey = `${id}\u0000${role}`;
+    if (processed.has(visitKey)) continue;
+    processed.add(visitKey);
     const receipt = byId.get(id).value;
     if (receipt.datasetId !== binding.datasetId) fail('binding', 'Ein Beleg gehört zu einem anderen Datensatz.');
     const coordinator = coordinators.get(key);
@@ -102,12 +108,12 @@ function bindingContexts(head, byId, targetBinding) {
       fail('binding', 'Eine Belegkette wechselt ihren Koordinationsordner.');
     }
     coordinators.set(key, receipt.coordinatorId);
-    if (receipt.previous !== null) queue.push({id: receipt.previous.id, binding});
+    if (receipt.previous !== null) queue.push({id: receipt.previous.id, binding, role});
     if (receipt.economy?.source) {
-      queue.push({id: receipt.economy.source.head.id, binding: receipt.economy.source.binding});
+      queue.push({id: receipt.economy.source.head.id, binding: receipt.economy.source.binding, role: 'source'});
     }
   }
-  return {contexts, coordinators};
+  return {contexts, coordinators, roles};
 }
 
 async function verifyReceiptHashes(byId) {
@@ -174,6 +180,9 @@ function verifySourceProofs(order, receipts, bases, contexts, proofs) {
     if (!source) continue;
     const sourceDiffers = canonical(source.binding) !== contexts.get(id);
     if (source.proof === null) {
+      if (receipts.get(source.head.id)?.value.operation === 'checkpoint') {
+        fail('history', 'Ein lokaler Sicherungscheckpoint benötigt auch bei gleicher Bindung ein portables Herkunftsmanifest.');
+      }
       if (sourceDiffers) fail('history', 'Eine fremde Herkunft hat kein portables Herkunftsmanifest.');
       continue;
     }
@@ -281,11 +290,14 @@ function stateResult({binding, coordinatorId, head, receipt, basis, accounts, re
   };
 }
 
-export async function replayHistory({entries, bases, binding}) {
+export async function replayHistory({entries, bases, binding, sourceProvenance = false}) {
   const targetBinding = assertBinding(binding);
   const {head, byId, proofs} = assertEntries(entries);
   const order = reachableOrder(head, byId);
-  const {contexts, coordinators} = bindingContexts(head, byId, targetBinding);
+  if (typeof sourceProvenance !== 'boolean') fail('invalid', 'Der Herkunftskontext ist ungültig.');
+  const {contexts, coordinators, roles} = bindingContexts(
+    head, byId, targetBinding, sourceProvenance ? 'source' : 'target',
+  );
   await verifyReceiptHashes(byId);
   const basisById = await basisMap(bases);
   const proofById = await proofMap(proofs);
@@ -316,10 +328,18 @@ export async function replayHistory({entries, bases, binding}) {
       if (receipt.sequence !== previous.receipt.sequence + 1) {
         fail('history', 'Die Belegsequenz ist nicht lückenlos.');
       }
-      if (receipt.operation === 'restore' && contextEpochs.has(receipt.epochId)) {
+      if (receipt.operation === 'checkpoint') {
+        if (roles.get(id).has('target')) {
+          fail('history', 'Ein portabler Sicherungscheckpoint darf nicht Teil der autoritativen Zielkette sein.');
+        }
+        if (receipt.epochId !== previous.receipt.epochId) {
+          fail('history', 'Ein Sicherungscheckpoint darf die aktive Epoche nicht wechseln.');
+        }
+        assertExtends(previous.basis.ledger, basis.ledger);
+        accounts = rebuildAccounts(learning, previous.accounts);
+      } else if (receipt.operation === 'restore' && contextEpochs.has(receipt.epochId)) {
         fail('history', 'Eine Wiederherstellung muss eine neue Zielepoche aktivieren.');
-      }
-      if (receipt.operation === 'purchase') {
+      } else if (receipt.operation === 'purchase') {
         if (receipt.epochId !== previous.receipt.epochId) {
           fail('history', 'Ein Kauf darf die aktive Epoche nicht wechseln.');
         }

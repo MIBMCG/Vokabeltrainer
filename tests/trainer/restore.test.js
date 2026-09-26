@@ -3,7 +3,10 @@ import assert from 'node:assert/strict';
 import {createRestoreService} from '../../src/trainer/backup/restore.js';
 import {exportBackup} from '../../src/trainer/backup/format.js';
 import {planSnapshotUploads,uploadVerified,readSnapshot} from '../../src/trainer/backup/transport.js';
-import {createCommands} from '../../src/trainer/commands.js';
+import {createCommands,productStateHash} from '../../src/trainer/commands.js';
+import {digest} from '../../src/trainer/model/canonical.js';
+import {emptyCommerce} from '../../src/trainer/purchases/schema.js';
+import {packBasis} from '../../src/trainer/purchases/basis.js';
 import {createProductSync} from '../../src/trainer/sync/drive.js';
 import {project} from '../../src/trainer/learning/progress.js';
 import {createFixture} from './fixtures.js';
@@ -37,6 +40,35 @@ test('local offline restore preserves old facts, ends old rounds without bonus a
   assert.equal(state.ledger.epochs.at(-1).snapshotManifestFileId,null);
   const copies=(await h.restore.listSafetyCopies()).filter(c=>c.purpose==='safety');assert.equal(copies.length,1);
   const copy=await h.restore.downloadSafetyCopy(copies[0].id);assert.ok(copy.events.some(e=>e.id==='recent'));
+});
+test('connected active commerce restore delegates its confirmed preview without local fallback activation',async()=>{
+  const h=await setupRestoreFixture(),current=h.commands.getState(),next=structuredClone(current);
+  const reserve=sequenceIds('commerce-history');
+  const basis=await packBasis(current.ledger,()=>reserve());
+  const config={version:1,kind:'purchase-config',binding:current.binding,
+    descriptorHash:await digest(current.ledger.descriptor),coordinatorId:'commerce-coordinator',contentFolderId:'commerce-content'};
+  const receipt={version:1,kind:'receipt',datasetId:current.binding.datasetId,coordinatorId:config.coordinatorId,
+    sequence:0,previous:null,operationId:'commerce-initialize',operation:'initialize',
+    epochId:current.ledger.epochs[0].id,basis:basis.ref,intent:null,
+    economy:{version:1,kind:'economic-snapshot',source:null}};
+  const head={id:reserve(),sha256:await digest(receipt)};
+  const cacheValues=[...basis.parts,{ref:basis.ref,value:basis.manifest},{ref:head,value:receipt}]
+    .sort((left,right)=>left.ref.id.localeCompare(right.ref.id));
+  next.commerce={...emptyCommerce(),mode:'active',binding:current.binding,config,configRef:{id:'commerce-config',sha256:await digest(config)},
+    head,cache:{version:1,head,values:cacheValues}};
+  await h.commands.commitExternal(next,await productStateHash(current));
+  const calls=[];
+  const commerce={
+    async prepareRestore(input){calls.push(['prepare',input]);return {operationId:input.restoreJobId};},
+    async confirmRestore(operationId){calls.push(['confirm',operationId]);},
+  };
+  const restore=createRestoreService({commands:h.commands,store:h.store,sync:h.sync,drive:h.drive,now,
+    id:sequenceIds('commerce-restore'),commerce:()=>commerce});
+  const preview=await restore.prepare(h.olderBackup),before=h.commands.getState().ledger;
+  await restore.confirm(preview.previewId);
+  assert.deepEqual(calls,[['prepare',{restoreJobId:h.commands.getState().restoreJobs[0].id,previewId:preview.previewId}],
+    ['confirm',h.commands.getState().restoreJobs[0].id]]);
+  assert.deepEqual(h.commands.getState().ledger,before);
 });
 test('change after preview requires fresh explicit confirmation',async()=>{
   const h=await setupRestoreFixture({connected:false}),p=await h.restore.prepare(h.olderBackup);
