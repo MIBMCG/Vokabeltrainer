@@ -10,6 +10,11 @@ import {createFixture} from './fixtures.js';
 import {projectSchedule} from '../../src/trainer/learning/schedule.js';
 import {DEFAULT_POLICY} from '../../src/trainer/model/policies.js';
 import {buildPackets as oldPackets} from '../compat/v1/src/trainer/sync/packets.js';
+import {createCommerceIntegration} from '../../src/trainer/purchases/integration.js';
+import {emptyCommerce} from '../../src/trainer/purchases/schema.js';
+import {digest} from '../../src/trainer/model/canonical.js';
+import {uploadVerified} from '../../src/trainer/backup/transport.js';
+import {resolveEpochs} from '../../src/trainer/model/epochs.js';
 
 const VERSION = {format: 'vokabeltrainer-product', formatVersion: 1, ruleVersion: 1};
 
@@ -185,6 +190,86 @@ test('optional commerce port reconciles after learning download and syncLearning
   assert.equal(calls.length, before + 1);
   assert.deepEqual(calls.at(-1).binding, commands.getState().binding);
   assert.equal(calls.at(-1).descriptorHash.length, 64);
+});
+
+test('commerce epochs remain inactive until the shared head is durably verified', async () => {
+  const {sync, drive, commands} = await setupSyntheticSync({outbox: []});
+  await commands.start({profileId: 'p1', mode: 'all', size: 10});
+  const before = commands.getState();
+  const binding = before.binding;
+  const descriptorHash = await digest(before.ledger.descriptor);
+  const config = {
+    version: 1, kind: 'purchase-config', binding, descriptorHash,
+    coordinatorId: 'commerce-coordinator', contentFolderId: 'commerce-content',
+  };
+  const configRef = {id: 'commerce-config', sha256: await digest(config)};
+  const source = structuredClone(before);
+  source.commerce = emptyCommerce();
+  source.commerce.mode = 'migrating';
+  source.commerce.binding = structuredClone(binding);
+  source.commerce.config = structuredClone(config);
+  source.commerce.configRef = structuredClone(configRef);
+  source.commerce.control = {
+    version: 1, operationId: 'activate-authority', operation: 'initialize', phase: 'intent',
+    epochId: null, head: null, etag: null, candidate: null, pointerProperties: null, uploads: [],
+  };
+  const prepare = createCommerceIntegration({
+    now: () => new Date('2026-09-26T10:00:00.000Z'), id: sequenceIds('authority'),
+  });
+  const activation = await prepare.prepareActivationCandidate({
+    state: source, control: source.commerce.control, reserve: sequenceIds('commerce-file'),
+  });
+  for (const upload of activation.publication.uploads) await uploadVerified(drive, binding, upload);
+  const values = new Map([
+    [configRef.id, config],
+    ...activation.uploads.map(({ref, value}) => [ref.id, value]),
+  ]);
+  let coordinatorHead = null;
+  let offline = false;
+  const transport = {
+    binding, descriptorHash,
+    async readFolder({kind}) {
+      if (offline) throw Object.assign(new Error('synthetic coordinator unavailable'), {code: 'network'});
+      if (kind === 'dataset') return {properties: {
+        purchaseApp: 'vokabeltrainer-purchases', purchaseConfigId: configRef.id,
+        purchaseConfigSha256: configRef.sha256,
+      }};
+      return {properties: coordinatorHead === null ? {} : {
+        purchaseHeadId: coordinatorHead.id, purchaseHeadSha256: coordinatorHead.sha256,
+      }};
+    },
+    async readImmutable(ref) { return structuredClone(values.get(ref.id)); },
+  };
+  const commerce = createCommerceIntegration({
+    transportFor: async () => transport,
+    now: () => new Date('2026-09-26T10:05:00.000Z'), id: sequenceIds('discover'),
+  });
+  const guarded = createProductSync({
+    drive, store: {}, commands, commerce,
+    now: () => new Date('2026-09-26T10:05:00.000Z'), id: sequenceIds('guarded-sync'), onStatus() {},
+  });
+
+  await guarded.sync();
+  let staged = commands.getState();
+  assert.equal(resolveEpochs(staged.ledger).activeEpochId, resolveEpochs(before.ledger).activeEpochId);
+  assert.deepEqual(staged.rounds, before.rounds);
+  assert.equal(staged.ledger.historicalEpochs.some(({id}) => id === activation.epochId), true);
+
+  offline = true;
+  await assert.rejects(guarded.sync(), {code: 'network'});
+  staged = commands.getState();
+  assert.equal(resolveEpochs(staged.ledger).activeEpochId, resolveEpochs(before.ledger).activeEpochId);
+  assert.deepEqual(staged.rounds, before.rounds);
+
+  offline = false;
+  coordinatorHead = activation.candidate;
+  await guarded.sync();
+  const confirmed = commands.getState();
+  assert.equal(resolveEpochs(confirmed.ledger).activeEpochId, activation.epochId);
+  assert.equal(confirmed.rounds.p1.status, 'abandoned');
+  assert.equal(project(confirmed.ledger).profiles.p1.points, project(before.ledger).profiles.p1.points);
+  guarded.destroy();
+  sync.destroy();
 });
 
 test('createDataset publishes the real root epoch and immutable descriptor before binding', async () => {

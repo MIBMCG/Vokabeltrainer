@@ -106,8 +106,13 @@ export function createRestoreService({commands,store,sync,drive,now,id,commerce=
         const current=commands.getState();
         if(await previewHash(current,job.backup)!==previewId)fail('stale','Der Stand hat sich geändert. Bitte eine neue Vorschau öffnen.');
       }
-      const control=await port.prepareRestore({restoreJobId:job.id,previewId});
-      await port.confirmRestore(control.operationId);
+      if(job.phase==='preview') {
+        const control=await port.prepareRestore({restoreJobId:job.id,previewId});
+        await port.confirmRestore(control.operationId);
+      } else {
+        if(typeof port.resume!=='function')fail('not-ready','Die gemeinsame Wiederherstellungsfortsetzung ist noch nicht angebunden.');
+        await port.resume(job.id);
+      }
       return;
     }
     if(job.phase==='preview') {

@@ -17,6 +17,11 @@ function productError(code, message) {
   return new ProductError(code, message);
 }
 
+function inactiveEpoch(epoch) {
+  const {id, datasetId, parents, deviceId, clock, occurredAt} = epoch;
+  return {id, datasetId, parents: structuredClone(parents), deviceId, clock, occurredAt};
+}
+
 function assertId(value, label) {
   if (typeof value !== 'string' || !ID_PATTERN.test(value)) {
     throw productError('invalid', `${label} ist ungültig.`);
@@ -841,6 +846,9 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
       }
       completeEpochs.push({...entry,backup:selected.backup,manifestId:selected.fileId});
     }
+    const guardEpochAuthority = before.commerce?.config != null
+      || before.commerce?.mode === 'active'
+      || completeEpochs.some(({epoch}) => epoch.formatVersion >= 3);
 
     for (const entry of before.quarantinedFiles) {
       if (entry.code !== 'reference' || entry.value?.kind !== 'packet') continue;
@@ -870,10 +878,16 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
         for(const entry of controls) {
           try {
             const backup=entry.backup;
-            next.ledger=assertLedger({...next.ledger,epochs:mergeById(next.ledger.epochs,[entry.epoch]),
+            const alreadyActive=next.ledger.epochs.some(({id:epochId})=>epochId===entry.epoch.id);
+            const keepInactive=guardEpochAuthority&&!alreadyActive;
+            next.ledger=assertLedger({...next.ledger,
+              epochs:keepInactive?next.ledger.epochs:mergeById(next.ledger.epochs,[entry.epoch]),
               events:backup?mergeEvents(next.ledger.events,backup.events):next.ledger.events,
               snapshots:backup?mergeById(next.ledger.snapshots,[backup.snapshot]):next.ledger.snapshots,
-              historicalEpochs:backup?mergeById(next.ledger.historicalEpochs,backup.epochHistory):next.ledger.historicalEpochs});
+              historicalEpochs:mergeById(
+                backup?mergeById(next.ledger.historicalEpochs,backup.epochHistory):next.ledger.historicalEpochs,
+                keepInactive?[inactiveEpoch(entry.epoch)]:[],
+              )});
             if(backup && !next.snapshotManifests.some(m=>m.snapshotId===backup.snapshot.id))next.snapshotManifests.push({snapshotId:backup.snapshot.id,fileId:entry.manifestId});
             verifiedKnown.push({fileId:entry.fileId,contentHash:entry.hash,kind:'epoch'});controlProgress=true;
           } catch(error) {

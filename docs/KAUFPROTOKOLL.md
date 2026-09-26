@@ -780,10 +780,26 @@ ausdrücklichen Übernahme erhalten.
 
 `createProductSync({... ,commerce:null|{reconcile}})` ruft den optionalen Port
 nach dem Lern-Download und vor neuen Uploads auf und liefert `syncLearning` als
-denselben nicht rekursiven vollständigen Abgleich. `createRestoreService`
-erhält optional `commerce:()=>({prepareRestore,confirmRestore})`. Bei aktivem
-Commerce wird ausschließlich dieser koordinierte Weg verwendet; Netz- oder
-Integritätsfehler fallen nicht auf lokalen Offline-Restore zurück.
+denselben nicht rekursiven vollständigen Abgleich. Sobald eine lokale
+Kaufkonfiguration bekannt ist oder der Download eine Format-3-Epoche enthält,
+speichert der Download neu gelesene Epochen zunächst ausschließlich als
+inaktive Herkunft. Das gilt im selben Download auch für verspätete v1/v2-Dateien.
+Ein fehlender oder nicht lesbarer Koordinatorkopf lässt aktive Epoche, laufende
+Runden und Punkte unverändert. Erst `reconcile` übernimmt den vollständig
+geprüften Kopf und dessen Basis in einem gemeinsamen Commands-Commit als aktive
+Epoche.
+
+`createRestoreService` erhält optional
+`commerce:()=>({prepareRestore,confirmRestore,resume})`. Nur eine gespeicherte
+Vorschau erzeugt über `prepareRestore` einen neuen Kandidaten. Ein bereits
+`uploading` oder `published` gespeicherter Auftrag wird über `resume(job.id)`
+mit denselben IDs, Bodies, Pointerproperties und derselben ursprünglichen ETag
+fortgesetzt; nach unbekanntem Pointerausgang liest der Kaufdienst zuerst und
+wiederholt erst durch diese ausdrückliche Bestätigung. `activated`-Journale
+bleiben als Historie erhalten und sperren spätere Restores nicht; alle noch
+offenen anderen Restorephasen sperren weiterhin. Bei aktivem Commerce wird
+ausschließlich dieser koordinierte Weg verwendet; Netz- oder Integritätsfehler
+fallen nicht auf lokalen Offline-Restore zurück.
 
 Eine aktive Format-3-Sicherung ergänzt das bisherige Backup exakt um:
 

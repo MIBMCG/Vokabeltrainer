@@ -7,10 +7,12 @@ import {packBasis} from '../../src/trainer/purchases/basis.js';
 import {emptyCommerce} from '../../src/trainer/purchases/schema.js';
 import {digest} from '../../src/trainer/purchases/value.js';
 import {earnedLedger,receipt,rebindLedger,BINDING} from './purchases-fixtures.js';
-import {memoryStore,productState,sequenceIds} from './backup-fixtures.js';
+import {memoryStore,productState,sequenceIds,SyntheticDrive} from './backup-fixtures.js';
 import {createFixture} from './fixtures.js';
 import {exportBackup,snapshotHash} from '../../src/trainer/backup/format.js';
 import {CURRENT_VERSION} from '../../src/trainer/model/versions.js';
+import {createCommerceIntegration} from '../../src/trainer/purchases/integration.js';
+import {createRestoreService} from '../../src/trainer/backup/restore.js';
 
 const CONFIG={
   version:1,kind:'purchase-config',binding:BINDING,descriptorHash:'a'.repeat(64),
@@ -265,8 +267,88 @@ async function restoreHarness({remote=new PurchaseRemote(),store=memoryStore(pro
   return {...base,sync,service};
 }
 
+function actualCommerceRuntime({commands,store,remote,drive,prefix}) {
+  const integration=createCommerceIntegration({
+    commands,drive,learningSync:()=>learningSync(commands).syncLearning(),
+    now:()=>new Date('2026-09-26T10:00:00Z'),id:sequenceIds(`${prefix}-integration`),
+  });
+  const service=createPurchaseService({
+    commands,transport:remote,sync:integration,
+    now:()=>new Date('2026-09-26T10:00:00Z'),id:sequenceIds(`${prefix}-service`),onStatus(){},
+  });
+  const restore=createRestoreService({
+    commands,store,drive,sync:{sync:()=>integration.syncLearning()},
+    now:()=>new Date('2026-09-26T10:00:00Z'),id:sequenceIds(`${prefix}-restore`),commerce:service,
+  });
+  return {integration,service,restore};
+}
+
 test('purchase service rejects creation without the durable command boundary', () => {
   assert.throws(() => createPurchaseService({}), {code: 'invalid'});
+});
+
+test('public restore confirmation resumes the saved candidate after an accepted upload response is lost',async()=>{
+  const store=byteStore(productState(earnedLedger())),remote=new PurchaseRemote(),drive=new SyntheticDrive();
+  drive.account=BINDING.accountId;
+  const opened=await openHarness({store,remote,ids:sequenceIds('public-restore-open')});
+  const firstRuntime=actualCommerceRuntime({...opened,drive,prefix:'public-restore-first'});
+  await firstRuntime.service.refresh();
+  const backup=await exportBackup(opened.commands.getState(),'2026-09-26T10:00:00.000Z');
+  const preview=await firstRuntime.restore.prepare(backup);
+  drive.loseUploadKind='epoch';
+  await assert.rejects(firstRuntime.restore.confirm(preview.previewId),{code:'network'});
+  const saved=structuredClone(store.snapshot().commerce.control);
+  const savedJob=structuredClone(store.snapshot().restoreJobs.find(({id})=>id===saved.operationId));
+  assert.equal(savedJob.phase,'uploading');
+
+  const commands=await createCommands({
+    store,now:()=>new Date('2026-09-26T10:01:00Z'),id:sequenceIds('public-restart-command'),deviceId:'dev1',onChange(){},
+  });
+  const restarted=actualCommerceRuntime({commands,store,remote,drive,prefix:'public-restore-restart'});
+  await restarted.restore.confirm(preview.previewId);
+
+  const confirmed=commands.getState();
+  assert.equal(confirmed.commerce.control.phase,'confirmed');
+  assert.deepEqual(confirmed.commerce.control.candidate,saved.candidate);
+  assert.deepEqual(confirmed.commerce.control.uploads,saved.uploads);
+  assert.deepEqual(confirmed.restoreJobs.find(({id})=>id===saved.operationId).uploads.map(({fileId})=>fileId),
+    savedJob.uploads.map(({fileId})=>fileId));
+  assert.equal(confirmed.restoreJobs.find(({id})=>id===saved.operationId).phase,'activated');
+});
+
+test('activated initialization and restore journals do not block the next coordinated restore',async()=>{
+  const store=byteStore(productState(earnedLedger())),remote=new PurchaseRemote(),drive=new SyntheticDrive();
+  drive.account=BINDING.accountId;
+  const base=await migratingHarness({store,remote,ids:sequenceIds('journal-base')});
+  let runtime=actualCommerceRuntime({...base,drive,prefix:'journal-initialize'});
+  const activation=await runtime.service.prepareActivation();
+  await runtime.service.confirmActivation(activation.operationId);
+  assert.deepEqual(base.commands.getState().restoreJobs.map(({phase})=>phase),['activated']);
+
+  const firstBackup=await exportBackup(base.commands.getState(),'2026-09-26T10:05:00.000Z');
+  const first=await runtime.restore.prepare(firstBackup);
+  await runtime.restore.confirm(first.previewId);
+  assert.deepEqual(base.commands.getState().restoreJobs.map(({phase})=>phase),['activated','activated']);
+
+  const secondBackup=await exportBackup(base.commands.getState(),'2026-09-26T10:10:00.000Z');
+  const second=await runtime.restore.prepare(secondBackup);
+  remote.pointerFailure='before';
+  await assert.rejects(runtime.restore.confirm(second.previewId),{code:'network'});
+  const saved=structuredClone(store.snapshot().commerce.control);
+  const putsBeforeRetry=remote.putCalls.length;
+  remote.pointerFailure=null;
+
+  const commands=await createCommands({
+    store,now:()=>new Date('2026-09-26T10:11:00Z'),id:sequenceIds('journal-restart-command'),deviceId:'dev1',onChange(){},
+  });
+  runtime=actualCommerceRuntime({commands,store,remote,drive,prefix:'journal-restart'});
+  await runtime.restore.confirm(second.previewId);
+  const final=commands.getState();
+  assert.deepEqual(final.restoreJobs.map(({phase})=>phase),['activated','activated','activated']);
+  assert.equal(remote.putCalls.length,putsBeforeRetry+1);
+  assert.equal(remote.putCalls.at(-1).etag,saved.etag);
+  assert.deepEqual(remote.putCalls.at(-1).properties,saved.pointerProperties);
+  assert.deepEqual(final.commerce.control.candidate,saved.candidate);
 });
 
 test('a confirmed purchase survives completely new command and service objects',async()=>{

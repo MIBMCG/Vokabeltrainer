@@ -294,6 +294,7 @@ async function start() {
   const commerceRestore = {
     async prepareRestore(input) { return (await currentPurchaseService()).prepareRestore(input); },
     async confirmRestore(operationId) { return (await currentPurchaseService()).confirmRestore(operationId); },
+    async resume(operationId) { return (await currentPurchaseService()).resume(operationId); },
   };
   const restore = createRestoreService({
     commands, store, sync: syncController, drive, now: () => new Date(), id: () => crypto.randomUUID(),

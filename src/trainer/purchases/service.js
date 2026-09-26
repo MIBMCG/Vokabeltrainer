@@ -537,7 +537,7 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
       state=current();
     }
     const coordinatedRestoreId=operation==='restore'?input?.restoreJobId:null;
-    const blockingRestores=state.restoreJobs.filter(job=>job.id!==coordinatedRestoreId);
+    const blockingRestores=state.restoreJobs.filter(job=>job.id!==coordinatedRestoreId&&job.phase!=='activated');
     if(blockingRestores.length>0)fail('restore-pending','Eine ältere Wiederherstellung muss zuerst abgeschlossen werden.');
     if(operation==='restore'&&!state.restoreJobs.some(job=>job.id===coordinatedRestoreId&&job.phase==='preview')) {
       fail('stale','Die koordinierte Wiederherstellungsvorschau ist nicht mehr verfügbar.');

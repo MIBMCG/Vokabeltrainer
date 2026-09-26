@@ -7,7 +7,7 @@ import {assertLedger} from '../../src/trainer/model/schema.js';
 import {assertSupportedVersion, COMMERCE_VERSION} from '../../src/trainer/model/versions.js';
 import {DEFAULT_POLICY} from '../../src/trainer/model/policies.js';
 import {digest} from '../../src/trainer/model/canonical.js';
-import {assertProductState, productStateHash} from '../../src/trainer/commands.js';
+import {assertProductState, createCommands, productStateHash} from '../../src/trainer/commands.js';
 import {readBasis} from '../../src/trainer/purchases/basis.js';
 import {readHistory, replayHistory} from '../../src/trainer/purchases/history.js';
 import {createCommerceIntegration} from '../../src/trainer/purchases/integration.js';
@@ -23,6 +23,8 @@ import {createCommands as frozenV2Commands} from '../compat/v2/src/trainer/comma
 import {createProductSync as frozenV2Sync} from '../compat/v2/src/trainer/sync/drive.js';
 import {createRestoreService as frozenV2Restore} from '../compat/v2/src/trainer/backup/restore.js';
 import {exportBackup as frozenV2Backup} from '../compat/v2/src/trainer/backup/format.js';
+import {createProductSync} from '../../src/trainer/sync/drive.js';
+import {resolveEpochs} from '../../src/trainer/model/epochs.js';
 
 function ids(prefix) {
   let value = 0;
@@ -576,6 +578,7 @@ test('frozen v2 commands, sync and restore closure is byte exact and stops an in
   const drive = new SyntheticDrive();
   const sync = frozenV2Sync({drive, store, commands, now, id: sequenceIds('v2-sync'), onStatus() {}});
   await sync.createDataset('Frozen v2');
+  const sharedBase = commands.getState();
   const restore = frozenV2Restore({commands, store, sync, drive, now, id: sequenceIds('v2-restore')});
   const backup = await frozenV2Backup(commands.getState(), now().toISOString());
   const preview = await restore.prepare(backup);
@@ -584,16 +587,71 @@ test('frozen v2 commands, sync and restore closure is byte exact and stops an in
   assert.equal(commands.getState().restoreJobs.some(({phase}) => phase === 'uploading'), true);
 
   const binding = commands.getState().binding;
-  drive.addJson({
-    id: 'commerce-v3-marker', parentId: binding.folderId,
-    appProperties: {app: 'vokabeltrainer-product', kind: 'epoch', datasetId: binding.datasetId, epochId: 'commerce-v3-epoch'},
-    value: {...COMMERCE_VERSION, kind: 'epoch', id: 'commerce-v3-epoch', datasetId: binding.datasetId,
-      parents: [commands.getState().ledger.descriptor.rootEpochId], deviceId: 'new-client', clock: 1000,
-      occurredAt: '2026-09-20T11:00:00.000Z', snapshotId: null, snapshotManifestFileId: null},
+  const currentState = structuredClone(sharedBase);
+  currentState.deviceId = 'new-client';
+  const currentStore = memoryStore(currentState);
+  const currentCommands = await createCommands({
+    store: currentStore, now, id: sequenceIds('current-command'), deviceId: 'new-client', onChange() {},
+  });
+  const descriptorHash = await digest(currentCommands.getState().ledger.descriptor);
+  const config = {
+    version: 1, kind: 'purchase-config', binding, descriptorHash,
+    coordinatorId: 'v3-coordinator', contentFolderId: 'v3-content',
+  };
+  const configRef = {id: 'v3-config', sha256: await digest(config)};
+  const activationState = currentCommands.getState();
+  activationState.commerce = emptyCommerce();
+  activationState.commerce.mode = 'migrating';
+  activationState.commerce.binding = structuredClone(binding);
+  activationState.commerce.config = structuredClone(config);
+  activationState.commerce.configRef = structuredClone(configRef);
+  activationState.commerce.control = {
+    version: 1, operationId: 'v3-activation', operation: 'initialize', phase: 'intent',
+    epochId: null, head: null, etag: null, candidate: null, pointerProperties: null, uploads: [],
+  };
+  const prepare = createCommerceIntegration({now, id: sequenceIds('v3-prepare')});
+  const activation = await prepare.prepareActivationCandidate({
+    state: activationState, control: activationState.commerce.control, reserve: sequenceIds('v3-file'),
+  });
+  for (const upload of activation.publication.uploads) await uploadVerified(drive, binding, upload);
+  const values = new Map([
+    [configRef.id, config],
+    ...activation.uploads.map(({ref, value}) => [ref.id, value]),
+  ]);
+  const purchaseTransport = {
+    binding, descriptorHash,
+    async readFolder({kind}) {
+      if (kind === 'dataset') return {properties: {
+        purchaseApp: 'vokabeltrainer-purchases', purchaseConfigId: configRef.id,
+        purchaseConfigSha256: configRef.sha256,
+      }};
+      return {properties: {
+        purchaseHeadId: activation.candidate.id, purchaseHeadSha256: activation.candidate.sha256,
+      }};
+    },
+    async readImmutable(ref) { return structuredClone(values.get(ref.id)); },
+  };
+  const commerce = createCommerceIntegration({transportFor: async () => purchaseTransport, now, id: sequenceIds('v3-commerce')});
+  const currentSync = createProductSync({
+    drive, store: currentStore, commands: currentCommands, commerce, now,
+    id: sequenceIds('current-sync'), onStatus() {},
   });
   const offset = drive.calls.length;
   await assert.rejects(sync.sync(), {code: 'version'});
   assert.equal(drive.calls.slice(offset).some(([method]) => method === 'putJson'), false);
   assert.equal(commands.getState().restoreJobs.some(({phase}) => phase === 'uploading'), true);
+  await currentSync.sync();
+  assert.equal(resolveEpochs(currentCommands.getState().ledger).activeEpochId, activation.epochId);
+
+  await restore.confirm(preview.previewId);
+  const lateEpoch = commands.getState().restoreJobs.find(({previewId}) => previewId === preview.previewId).epoch;
+  assert.equal(commands.getState().restoreJobs.some(({phase}) => phase === 'activated'), true);
+  await currentSync.sync();
+  const afterLateUpload = currentCommands.getState();
+  assert.equal(resolveEpochs(afterLateUpload.ledger).activeEpochId, activation.epochId);
+  assert.equal(afterLateUpload.ledger.epochs.some(({id}) => id === lateEpoch.id), false);
+  assert.equal(afterLateUpload.ledger.historicalEpochs.some(({id}) => id === lateEpoch.id), true);
+  assert.equal([...drive.files.values()].some(({value}) => value?.kind === 'epoch' && value.id === lateEpoch.id), true);
+  currentSync.destroy();
   sync.destroy();
 });
