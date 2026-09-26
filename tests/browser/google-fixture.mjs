@@ -15,6 +15,7 @@ export function createGoogleFixture() {
       offline: false,
       account: 'synthetic-account',
       loseNextUpload: false,
+      loseNextPointerResponse: false,
       rejectNextAbout401: false,
       cancelNextOauth: false,
       oauthClientIds: [],
@@ -71,8 +72,8 @@ export function createGoogleFixture() {
       const url = new URL(request.url());
       const method = request.method();
       const headers = {'access-control-allow-origin': '*',
-        'access-control-allow-headers': 'authorization,content-type',
-        'access-control-allow-methods': 'GET,POST,OPTIONS'};
+        'access-control-allow-headers': 'authorization,content-type,if-match',
+        'access-control-allow-methods': 'GET,POST,PUT,OPTIONS'};
       const respond = (value, status = 200) => route.fulfill({status, headers,
         contentType: 'application/json', body: JSON.stringify(value)});
       if (method === 'OPTIONS') return respond({});
@@ -113,7 +114,8 @@ export function createGoogleFixture() {
         assert.match(metadata.id, /^file-\d+$/);
         writes.push({id: metadata.id, duplicate: files.has(metadata.id)});
         if (files.has(metadata.id)) return respond({error: {code: 409}}, 409);
-        const normalized = {...metadata, parents: metadata.parents || ['root'], trashed: false};
+        const normalized = {...metadata, parents: metadata.parents || ['root'], trashed: false,
+          version: '1', etag: `"${metadata.id}-v1"`};
         files.set(metadata.id, {metadata: normalized, value});
         if (controls.loseNextUpload && value) {
           controls.loseNextUpload = false;
@@ -126,6 +128,44 @@ export function createGoogleFixture() {
         const file = files.get(fileId);
         if (!file) return respond({error: {code: 404}}, 404);
         return respond(url.searchParams.get('alt') === 'media' ? file.value : file.metadata);
+      }
+      const v2FileId = url.pathname.match(/^\/drive\/v2\/files\/([A-Za-z0-9_-]+)$/)?.[1];
+      if (v2FileId && method === 'GET') {
+        const file = files.get(v2FileId);
+        if (!file) return respond({error: {code: 404}}, 404);
+        if (url.searchParams.get('alt') === 'media') return respond(file.value);
+        return respond({
+          id: v2FileId,
+          title: file.metadata.name,
+          mimeType: file.metadata.mimeType,
+          parents: file.metadata.parents.map((id) => ({id})),
+          properties: Object.entries(file.metadata.appProperties || {})
+            .map(([key, value]) => ({key, value, visibility: 'PRIVATE'})),
+          labels: {trashed: file.metadata.trashed === true},
+          version: file.metadata.version,
+          etag: file.metadata.etag,
+        });
+      }
+      if (v2FileId && method === 'PUT') {
+        const file = files.get(v2FileId);
+        if (!file) return respond({error: {code: 404}}, 404);
+        if (request.headers()['if-match'] !== file.metadata.etag) return respond({error: {code: 412}}, 412);
+        const body = request.postDataJSON();
+        assert.ok(Array.isArray(body.properties));
+        file.metadata.appProperties = Object.fromEntries(body.properties.map(({key, value, visibility}) => {
+          assert.equal(visibility, 'PRIVATE');
+          return [key, value];
+        }));
+        file.metadata.version = String(Number(file.metadata.version) + 1);
+        file.metadata.etag = `"${v2FileId}-v${file.metadata.version}"`;
+        writes.push({id: v2FileId, pointer: true});
+        const updated = {id: v2FileId, version: file.metadata.version, etag: file.metadata.etag,
+          properties: body.properties};
+        if (controls.loseNextPointerResponse) {
+          controls.loseNextPointerResponse = false;
+          return route.abort('connectionreset');
+        }
+        return respond(updated);
       }
       unexpected.push(`${method} ${url.pathname}`);
       return respond({error: {code: 400}}, 400);

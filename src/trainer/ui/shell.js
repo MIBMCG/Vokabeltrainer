@@ -48,7 +48,7 @@ function wordFields(index, draft) {
   ]);
 }
 
-export function mountShell({root, commands, pinGate, sync, restore, auth, onDownload, onConnected}) {
+export function mountShell({root, commands, pinGate, sync, restore, auth, commerce, onDownload, onConnected}) {
   const restored = restoredShellState();
   let currentView = restored?.view ?? 'profiles';
   let activeProfileId = restored?.profileId ?? null;
@@ -314,7 +314,7 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, onDown
     else if (currentView === 'profiles') renderProfiles(state);
     else if (currentView === 'adult') {
       if (!pinGate.isUnlocked()) renderAdultGate();
-      else renderAdult({root, state, commands, pinGate, onNavigate: show, sync, restore, auth, onDownload, onConnected});
+      else renderAdult({root, state, commands, pinGate, onNavigate: show, sync, restore, auth, commerce, onDownload, onConnected});
     } else if (currentView === 'practice' && activeProfileId !== null) {
       const projection = project(state.ledger);
       const profile = projection.entities.profiles[activeProfileId];
@@ -348,7 +348,7 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, onDown
       } else {
         const profile = projection.profiles[activeProfileId];
         if (currentView === 'journey') renderJourney({root, profile});
-        else renderAvatar({root, profile, profileId: activeProfileId, commands});
+        else renderAvatar({root, state, profile, profileId: activeProfileId, commands, commerce});
         root.firstElementChild?.prepend(button('Profil wechseln', () => show('profiles'), {
           class: 'secondary profile-switch',
         }));

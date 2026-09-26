@@ -834,3 +834,26 @@ Beim Restore wird die vollständige Economy immer durch `packProof` unter neu
 reservierte physische IDs abgebildet, auch wenn Quell- und Ziel-Binding gleich
 sind. Originalbodies und Hashes bleiben unverändert. Dadurch funktionieren
 verschachtelte A→B→C-Restores allein aus den Objekten des jeweils letzten Ziels.
+
+## Task-5-Oberflächenbindung
+
+`src/trainer/main.js` reicht einen schmalen Commerce-Port an Erwachsenen- und
+Avataransicht weiter: `previewActivation`, `activate`, `getView`, `refresh`,
+`preview`, `confirm`, `resume` und `select`. Das Öffnen der Einstellungen erstellt
+nur eine lokale, konkrete Vorschau. Erst die ausdrückliche Bestätigung ruft
+`prepareActivation` und anschließend `confirmActivation` auf.
+
+`purchasePreviewStateHash(state)` ist aus `purchases/service.js` exportiert und
+wird von Dienst und UI-Aktivierung gemeinsam verwendet. Der Fingerprint bindet
+Binding, vollständiges Ledger und wirtschaftliche Fachfelder, lässt aber reine
+Uploadbuchhaltung wie Outbox, PendingPackets und KnownFiles aus. Dadurch macht
+ein laufender Lernabgleich die Elternvorschau nicht fälschlich ungültig; jede
+Änderung am Lernstand, Kaufkopf, Auftrag, Besitz oder an der Auswahl verlangt
+weiterhin eine neue Vorschau. Die normalen `productStateHash`-CAS-Schreibgrenzen
+bleiben unverändert.
+
+Die Avataransicht liest Guthaben, Besitz, Auswahl und offene Aufträge nur über
+den Kaufdienst. Unbekannte Ergebnisse heißen sichtbar „Kauf wird geprüft“ und
+werden ausschließlich über „Kauf fortsetzen“ erneut angestoßen. Die
+Wiederherstellungsvorschau stellt außerdem bestätigte verfügbare Punkte,
+Kaufanzahl und übernommene Figurenauswahlen als Vorher-/Nachher-Werte dar.

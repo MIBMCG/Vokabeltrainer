@@ -12,6 +12,7 @@ import {readBasis} from '../../src/trainer/purchases/basis.js';
 import {readHistory, replayHistory} from '../../src/trainer/purchases/history.js';
 import {createCommerceIntegration} from '../../src/trainer/purchases/integration.js';
 import {createPurchaseService} from '../../src/trainer/purchases/service.js';
+import {economicBackupPreview} from '../../src/trainer/ui/purchases.js';
 import {emptyCommerce} from '../../src/trainer/purchases/schema.js';
 import {BINDING, earnedLedger} from './purchases-fixtures.js';
 import {SyntheticDrive} from './backup-fixtures.js';
@@ -520,6 +521,15 @@ test('v3 backup carries the complete verified economy without local jobs, etags 
   assert.equal(backup.formatVersion, 3);
   assert.equal(backup.economy.kind, 'economy-backup');
   assert.deepEqual(backup.economy.selection, active.commerce.selection);
+  const economyPreview = await economicBackupPreview({state: source, backup});
+  assert.equal(economyPreview.included, true);
+  assert.deepEqual(economyPreview.changes.map(({profileId, before, after}) => [
+    profileId, before, after.availablePoints,
+  ]), [
+    ['p1', null, history.projection.accounts.p1.availablePoints + 30],
+    ['p2', null, history.projection.accounts.p2.availablePoints],
+  ]);
+  assert.equal(economyPreview.selectionChanges, 1);
   const checkpoint = backup.economy.entries.values.find(({ref}) => ref.id === backup.economy.head.id);
   assert.equal(checkpoint.value.operation, 'checkpoint');
   assert.deepEqual(checkpoint.value.previous, activation.candidate);

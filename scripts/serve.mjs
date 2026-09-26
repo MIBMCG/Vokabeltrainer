@@ -20,6 +20,16 @@ const ART_RENDITIONS = [
   ['avatar-hand-compass', [256, 512, 768]],
 ];
 
+const AVATAR_BASE_ART = [
+  'figure-explorer-girl-skin-0-256.webp', 'figure-explorer-girl-clothing-0-256.webp',
+  'figure-explorer-boy-skin-0-256.webp', 'figure-explorer-boy-clothing-0-256.webp',
+  'figure-horse-base-256.webp', 'figure-tiger-base-256.webp', 'figure-dragon-base-256.webp',
+  'figure-deer-mist-base-256.webp', 'figure-wolf-aurora-base-256.webp',
+  'figure-panther-shadow-base-256.webp', 'figure-unicorn-moon-base-256.webp',
+  'figure-griffin-storm-base-256.webp', 'figure-dragon-crystal-base-256.webp',
+  'figure-pegasus-star-base-256.webp', 'figure-phoenix-base-256.webp',
+];
+
 const ASSETS = new Map([
   ['/shop-probe/', ['shop-probe/index.html', 'text/html; charset=utf-8']],
   ['/shop-probe/index.html', ['shop-probe/index.html', 'text/html; charset=utf-8']],
@@ -56,6 +66,7 @@ const ASSETS = new Map([
   ['/src/trainer/ui/shell.js', ['src/trainer/ui/shell.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/ui/practice.js', ['src/trainer/ui/practice.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/ui/rewards.js', ['src/trainer/ui/rewards.js', 'text/javascript; charset=utf-8']],
+  ['/src/trainer/ui/purchases.js', ['src/trainer/ui/purchases.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/ui/adult.js', ['src/trainer/ui/adult.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/ui/learning-rules.js', ['src/trainer/ui/learning-rules.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/ui/statistics.js', ['src/trainer/ui/statistics.js', 'text/javascript; charset=utf-8']],
@@ -80,6 +91,8 @@ const ASSETS = new Map([
   ['/src/trainer/purchases/transport.js', ['src/trainer/purchases/transport.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/avatar/catalog.js', ['src/trainer/avatar/catalog.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/avatar/evolution.js', ['src/trainer/avatar/evolution.js', 'text/javascript; charset=utf-8']],
+  ['/src/trainer/avatar/art.js', ['src/trainer/avatar/art.js', 'text/javascript; charset=utf-8']],
+  ['/src/trainer/avatar/art-manifest.js', ['src/trainer/avatar/art-manifest.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/backup/format.js', ['src/trainer/backup/format.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/backup/restore.js', ['src/trainer/backup/restore.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/backup/transport.js', ['src/trainer/backup/transport.js', 'text/javascript; charset=utf-8']],
@@ -108,6 +121,14 @@ const ASSETS = new Map([
     `/trainer/assets/art/${key}-${width}.webp`,
     [`trainer/assets/art/${key}-${width}.webp`, 'image/webp'],
   ])),
+  ...AVATAR_BASE_ART.map((name) => [
+    `/trainer/assets/avatar-shop/${name}`,
+    [`trainer/assets/avatar-shop/${name}`, 'image/webp'],
+  ]),
+  ...[1, 2, 3, 4].map((stage) => [
+    `/trainer/assets/avatar-evolution/dragon-stage-${stage}.png`,
+    [`trainer/assets/avatar-evolution/dragon-stage-${stage}.png`, 'image/png'],
+  ]),
 ]);
 
 const SECURITY_HEADERS = {

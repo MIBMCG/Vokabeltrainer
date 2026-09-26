@@ -36,7 +36,7 @@ export function adultStateChanged(root, state) {
 
 export {pinResetForm};
 
-export function renderAdult({root, state, commands, pinGate, onNavigate, sync, restore, auth, onDownload, onConnected}) {
+export function renderAdult({root, state, commands, pinGate, onNavigate, sync, restore, auth, commerce, onDownload, onConnected}) {
   const ui = viewState(root);
   const projection = project(state.ledger);
   const rerender = () => {
@@ -47,7 +47,7 @@ export function renderAdult({root, state, commands, pinGate, onNavigate, sync, r
     }
     renderAdult({
       root, state: commands.getState(), commands, pinGate, onNavigate,
-      sync, restore, auth, onDownload, onConnected,
+      sync, restore, auth, commerce, onDownload, onConnected,
     });
   };
   ui.renderedLedger = JSON.stringify(state.ledger);
@@ -90,7 +90,7 @@ export function renderAdult({root, state, commands, pinGate, onNavigate, sync, r
     root, state, commands, profileId: null, onRefresh: rerender,
   });
   else renderSettings({
-    root, state, commands, pinGate, sync, restore, auth, onRefresh: rerender,
+    root, state, commands, pinGate, sync, restore, auth, commerce, onRefresh: rerender,
     onConnected, onDownload, ui,
   });
 }

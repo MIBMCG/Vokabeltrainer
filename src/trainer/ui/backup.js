@@ -2,6 +2,7 @@ import {exportBackup, parseBackup} from '../backup/format.js';
 import {resolveEpochs} from '../model/epochs.js';
 import {el, field, button, message} from './dom.js';
 import {previewSummaryNodes} from './preview.js';
+import {economicBackupPreview} from './purchases.js';
 
 const stateByRoot = new WeakMap();
 
@@ -33,7 +34,7 @@ function keepFocusInside(dialog, event) {
   }
 }
 
-function showRestorePreview({summary, state, events, onConfirm, onCancel, trigger, title = 'Wiederherstellung prüfen', staleNotice = ''}) {
+function showRestorePreview({summary, economy, state, events, onConfirm, onCancel, trigger, title = 'Wiederherstellung prüfen', staleNotice = ''}) {
   const dialog = el('dialog', {attrs: {class: 'restore-dialog', 'aria-labelledby': 'restore-dialog-title'}});
   const close = () => {
     dialog.close();
@@ -70,6 +71,17 @@ function showRestorePreview({summary, state, events, onConfirm, onCancel, trigge
       ? 'Nach der Bestätigung wird diese Sicherung zum gemeinsamen Datenstand der verbundenen Geräte.'
       : 'Diese Sicherung ersetzt nur den aktiven Datenstand auf diesem Gerät und wird nicht automatisch zum gemeinsamen Datenstand in Drive.'}),
     ...previewSummaryNodes({summary, state, events}),
+    economy?.included ? el('section', {attrs: {class: 'subpanel', 'aria-label': 'Figuren und Käufe'}}, [
+      el('h3', {text: 'Figuren und Käufe'}),
+      economy.changes.length === 0
+        ? el('p', {text: 'Verfügbare Punkte und Besitz bleiben unverändert.'})
+        : el('ul', {}, economy.changes.map(({profileId, before, after}) => el('li', {text:
+          `${state.ledger.events.find((entry) => entry.type === 'entity.revised' && entry.payload.entityType === 'profile' && entry.payload.entityId === profileId)?.payload.value.name ?? profileId}: `
+          + `${before?.availablePoints ?? 0} → ${after?.availablePoints ?? 0} verfügbare Punkte, `
+          + `${before?.purchasedArticleIds.length ?? 0} → ${after?.purchasedArticleIds.length ?? 0} Käufe`,
+        }))),
+      economy.selectionChanges > 0 ? el('p', {text: `${economy.selectionChanges} Figurenauswahl(en) werden übernommen.`}) : null,
+    ]) : message('Diese ältere Sicherung enthält keine bestätigte Historie für Figuren und Käufe.', 'info'),
     ...warnings.map((text) => message(text, 'error')),
     el('div', {attrs: {class: 'dialog-actions'}}, [confirm, cancel]),
   );
@@ -162,10 +174,11 @@ export function renderBackup({root, state, restore, onDownload, isUnlocked = () 
       const backup = await parseBackup(await selected.text());
       assertUnlocked(isUnlocked);
       ui.pendingBackup = backup;
+      const economy = await economicBackupPreview({state: getState(), backup});
       const prepared = await restore.prepare(backup);
       assertUnlocked(isUnlocked);
-      const openPreview = (result, staleNotice = '') => showRestorePreview({
-        summary: result.summary,
+      const openPreview = (result, economyPreview, staleNotice = '') => showRestorePreview({
+        summary: result.summary, economy: economyPreview,
         state: getState(),
         events: ui.pendingBackup?.events ?? [],
         trigger: file,
@@ -182,15 +195,16 @@ export function renderBackup({root, state, restore, onDownload, isUnlocked = () 
             if (error?.code !== 'stale') throw error;
             const refreshed = await restore.prepare(ui.pendingBackup);
             assertUnlocked(isUnlocked);
+            const refreshedEconomy = await economicBackupPreview({state: getState(), backup: ui.pendingBackup});
             return {replace: () => openPreview(
-              refreshed,
+              refreshed, refreshedEconomy,
               'Der Datenstand hat sich geändert. Die aktualisierten Unterschiede werden neu angezeigt und müssen erneut bestätigt werden.',
             )};
           }
         },
         onCancel: () => { ui.pendingBackup = null; },
       });
-      openPreview(prepared);
+      openPreview(prepared, economy);
     } catch (error) {
       ui.notice = error?.message || 'Die Sicherungsdatei konnte nicht geprüft werden.';
       ui.tone = 'error';

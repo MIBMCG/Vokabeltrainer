@@ -2,6 +2,7 @@ import {project} from '../learning/progress.js';
 import {el, field, button, message} from './dom.js';
 import {renderBackup} from './backup.js';
 import {renderSync} from './sync.js';
+import {renderCommerceSettings} from './purchases.js';
 
 function input(name, {value = '', maxlength = 80, required = true, type = 'text'} = {}) {
   return el('input', {attrs: {name, value, maxlength, required, type}});
@@ -159,7 +160,7 @@ function renderPinSettings(container, pinGate, onRefresh, ui) {
 }
 
 export function renderSettings({
-  root, state, commands, pinGate, sync, restore, auth, onRefresh, onConnected, onDownload,
+  root, state, commands, pinGate, sync, restore, auth, commerce, onRefresh, onConnected, onDownload,
   ui = {},
 }) {
   const container = root.querySelector('#adult-content') ?? root;
@@ -177,6 +178,15 @@ export function renderSettings({
     root: syncHost, state, sync, restore, auth, commands,
     isUnlocked: () => pinGate.isUnlocked(), onRefresh, onConnected,
   });
+
+  if (commerce) {
+    const commerceHost = el('section', {attrs: {class: 'settings-service', 'aria-label': 'Figuren und Käufe'}});
+    container.append(commerceHost);
+    renderCommerceSettings({
+      root: commerceHost, state, commerce,
+      isUnlocked: () => pinGate.isUnlocked(), onRefresh,
+    });
+  }
 
   const backupHost = el('section', {attrs: {class: 'settings-service', 'aria-label': 'Sicherung'}});
   container.append(backupHost);

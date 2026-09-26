@@ -1,6 +1,7 @@
 import {rewardState} from '../learning/rewards.js';
 import {avatarPicture, picture} from './art.js';
 import {el} from './dom.js';
+import {renderPurchases} from './purchases.js';
 
 const BADGE_ART = new URL('../../../trainer/assets/badges.svg', import.meta.url).href;
 
@@ -233,15 +234,15 @@ export function renderJourney({root, profile}) {
   ]));
 }
 
-export function renderAvatar({root, profile, profileId, commands}) {
-  const state = stateFor(profile);
+export function renderAvatar({root, state: productState, profile, profileId, commands, commerce}) {
+  const rewards = stateFor(profile);
   const parts = avatarParts(profile);
-  const allEquipmentUnlocked = state.unlocked.head.length === 3
-    && state.unlocked.back.length === 1
-    && state.unlocked.hand.length === 2;
+  const allEquipmentUnlocked = rewards.unlocked.head.length === 3
+    && rewards.unlocked.back.length === 1
+    && rewards.unlocked.hand.length === 2;
   const form = el('form', {attrs: {class: 'avatar-controls', 'aria-label': 'Avatar gestalten'}});
   const notice = el('p', {attrs: {class: 'message avatar-message', role: 'status', hidden: true}});
-  form.append(...colourChoices(parts), ...equipmentChoices(parts, state));
+  form.append(...colourChoices(parts), ...equipmentChoices(parts, rewards));
 
   let saving = false;
   form.addEventListener('change', async (event) => {
@@ -289,21 +290,30 @@ export function renderAvatar({root, profile, profileId, commands}) {
     }
   });
 
+  const commerceHost = el('section', {attrs: {class: 'avatar-commerce', 'aria-label': 'Meine Figur, Entwicklung und Shop'}});
   root.replaceChildren(el('section', {attrs: {class: 'reward-screen avatar-screen'}}, [
     el('header', {attrs: {class: 'reward-header'}}, [
-      el('p', {text: `Level ${state.level}`, attrs: {class: 'eyebrow'}}),
+      el('p', {text: `Level ${rewards.level}`, attrs: {class: 'eyebrow'}}),
       el('h1', {text: 'Mein Avatar'}),
-      el('p', {text: allEquipmentUnlocked
-        ? 'Alle sechs Ausrüstungsteile sind freigeschaltet. Wähle deine Favoriten.'
-        : 'Farben sind sofort verfügbar. Neue Ausrüstung wartet auf deinen nächsten Reiselevel.'}),
+      el('p', {text: 'Wähle deine Figur, entdecke Entwicklungsformen oder gestalte deinen klassischen Avatar.'}),
     ]),
-    el('div', {attrs: {class: 'avatar-layout'}}, [
+    commerceHost,
+    el('details', {attrs: {class: 'classic-avatar', open: productState?.commerce?.mode !== 'active'}}, [
+      el('summary', {attrs: {id: 'classic-avatar-title'}}, [
+        el('strong', {text: 'Klassischen Avatar gestalten'}),
+        el('span', {text: allEquipmentUnlocked
+          ? 'Alle sechs Ausrüstungsteile sind freigeschaltet. Wähle deine Favoriten.'
+          : 'Farben und Zubehör bleiben vollständig erhalten.'}),
+      ]),
+      el('div', {attrs: {class: 'avatar-layout'}}, [
       el('section', {attrs: {class: 'avatar-preview', 'aria-label': 'Vorschau des Avatars'}}, [
         avatarPicture(parts, {sizes: '(max-width: 700px) 86vw, 360px', animations: profile.animations}),
-        el('p', {text: `Entdecker auf Level ${state.level}`}),
+        el('p', {text: `Entdecker auf Level ${rewards.level}`}),
         motion,
       ]),
       el('section', {attrs: {class: 'avatar-customizer'}}, [notice, form]),
+      ]),
     ]),
   ]));
+  if (commerce) renderPurchases({root: commerceHost, profileId, commerce, onRefresh: () => {}, online: navigator.onLine});
 }

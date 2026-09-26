@@ -6,7 +6,7 @@ import {createDriveClient} from '../drive/client.js';
 import {openProductStore} from './storage/store.js';
 import {createProductSync} from './sync/drive.js';
 import {createPurchaseTransport} from './purchases/transport.js';
-import {createPurchaseService} from './purchases/service.js';
+import {createPurchaseService, purchasePreviewStateHash} from './purchases/service.js';
 import {createCommerceIntegration} from './purchases/integration.js';
 import {digest} from './model/canonical.js';
 import {createSyncScheduler} from './sync/scheduler.js';
@@ -275,8 +275,8 @@ async function start() {
   let purchaseRuntimeKey = null;
   async function currentPurchaseService() {
     const state = commands.getState();
-    if (!state || state.binding === null || state.commerce?.config === null) {
-      throw new Error('Die gemeinsame Kaufhistorie ist noch nicht eingerichtet.');
+    if (!state || state.binding === null) {
+      throw new Error('Der gemeinsame Lernbereich ist noch nicht verbunden.');
     }
     const descriptorHash = await digest(state.ledger.descriptor);
     const key = JSON.stringify({binding: state.binding, descriptorHash});
@@ -291,6 +291,44 @@ async function start() {
     }
     return purchaseRuntime;
   }
+  async function purchaseCall(name, ...args) {
+    try {
+      const service = await currentPurchaseService();
+      return await service[name](...args);
+    } catch (error) {
+      if (error?.code === 'auth') auth.invalidate();
+      throw error;
+    }
+  }
+  const commerce = Object.freeze({
+    async previewActivation() {
+      const state = commands.getState();
+      if (!state?.binding) throw new Error('Der gemeinsame Lernbereich ist noch nicht verbunden.');
+      return {
+        stateHash: await purchasePreviewStateHash(state),
+        binding: structuredClone(state.binding),
+        descriptorHash: await digest(state.ledger.descriptor),
+      };
+    },
+    async activate(ticket) {
+      const state = commands.getState();
+      if (!ticket || await purchasePreviewStateHash(state) !== ticket.stateHash) {
+        const error = new Error('Der Datenstand hat sich seit der Vorschau geändert.');
+        error.code = 'stale';
+        throw error;
+      }
+      const prepared = await purchaseCall('prepareActivation', {
+        binding: ticket.binding, descriptorHash: ticket.descriptorHash,
+      });
+      return purchaseCall('confirmActivation', prepared.operationId);
+    },
+    getView: (...args) => purchaseCall('getView', ...args),
+    refresh: (...args) => purchaseCall('refresh', ...args),
+    preview: (...args) => purchaseCall('preview', ...args),
+    confirm: (...args) => purchaseCall('confirm', ...args),
+    resume: (...args) => purchaseCall('resume', ...args),
+    select: (...args) => purchaseCall('select', ...args),
+  });
   const commerceRestore = {
     async prepareRestore(input) { return (await currentPurchaseService()).prepareRestore(input); },
     async confirmRestore(operationId) { return (await currentPurchaseService()).confirmRestore(operationId); },
@@ -309,7 +347,7 @@ async function start() {
     now: () => Date.now(),
   });
   shell = mountShell({
-    root, commands, pinGate, sync: syncController, restore, auth,
+    root, commands, pinGate, sync: syncController, restore, auth, commerce,
     onDownload: downloadBlob,
     onConnected: () => {
       if (!closing && pinGate.isUnlocked() && commands.getState()?.binding) scheduler?.online();

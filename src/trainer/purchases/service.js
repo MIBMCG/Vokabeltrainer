@@ -12,6 +12,19 @@ function invalid(message) {
   throw new ProductError('invalid', message);
 }
 
+export function purchasePreviewStateHash(state) {
+  const commerce=state.commerce;
+  return digest({
+    version:1,kind:'purchase-preview-state',
+    binding:state.binding,
+    ledger:state.ledger,
+    commerce:{
+      mode:commerce.mode,binding:commerce.binding,configRef:commerce.configRef,config:commerce.config,
+      head:commerce.head,control:commerce.control,jobs:commerce.jobs,selection:commerce.selection,
+    },
+  });
+}
+
 export function createPurchaseService({commands, transport, sync, now, id, onStatus} = {}) {
   if (!commands || typeof commands.getState !== 'function' || typeof commands.commitExternal !== 'function') {
     invalid('Dem Kaufdienst fehlt der serialisierte Produktspeicherweg.');
@@ -157,19 +170,6 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     };
   }
 
-  async function previewStateHash(state) {
-    const commerce=state.commerce;
-    return digest({
-      version:1,kind:'purchase-preview-state',
-      binding:state.binding,
-      ledger:state.ledger,
-      commerce:{
-        mode:commerce.mode,binding:commerce.binding,configRef:commerce.configRef,config:commerce.config,
-        head:commerce.head,control:commerce.control,jobs:commerce.jobs,selection:commerce.selection,
-      },
-    });
-  }
-
   async function preflightCandidate({candidate,uploads,history,binding}) {
     const local=new Map(uploads.map(entry=>[entry.ref.id,copy(entry.value)]));
     return readHistory({
@@ -288,7 +288,7 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     }
     if(commerce.jobs.some(job=>job.status==='open'))fail('pending','Ein Kauf wird bereits geprüft.');
     const offer=purchaseOffer({ledger:state.ledger,economic:economicForLedger(history,state),profileId,articleId});
-    const stateHash=await previewStateHash(state);
+    const stateHash=await purchasePreviewStateHash(state);
     const previewId=await digest({version:1,kind:'purchase-preview',stateHash,head:commerce.head,offer});
     return {...copy(offer),previewId,stateHash,head:copy(commerce.head)};
   }
@@ -393,7 +393,7 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     await syncLearning();
     await refreshInternal();
     const state=current();
-    if(await previewStateHash(state)!==preview.stateHash||!sameRef(state.commerce.head,preview.head)) {
+    if(await purchasePreviewStateHash(state)!==preview.stateHash||!sameRef(state.commerce.head,preview.head)) {
       fail('stale','Die Kaufvorschau ist nicht mehr aktuell.');
     }
     const offer=purchaseOffer({
