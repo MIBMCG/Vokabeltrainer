@@ -1,6 +1,6 @@
 # Dauerhafte Käufe: Implementierungsplan
 
-**Aktuell pausiert auf Nutzerwunsch.** Task 1 implementiert, Review mit vier wichtigen offenen Befunden; Tasks 2–6 offen. Bei ausdrücklicher Fortsetzung zuerst [Reviewbefunde](../../reports/2026-09-20-persistent-purchases-task1-review.md) korrigieren. [Pausenübergabe](../../handoffs/2026-09-20-pause-persistent-purchases.md).
+**Fortsetzung am 26.09.2026 beauftragt.** Tasks 1 und 2 sind unabhängig geprüft. Task 3: Korrekturcheckpoint `1ecddd6`, unabhängige Nachprüfung R3-1 bis R3-4 steht noch aus. Danach Tasks 4–6; [aktuelle Fortsetzungsübergabe](../../handoffs/2026-09-26-persistent-purchases-fortsetzung.md). Ältere Pausen-/Aufgabenstände sind historische Vorgeschichte.
 
 > Ausführung mit `subagent-driven-development`; konkrete Zustimmung des Nutzers: „ja“ nach Vorlage des Integrationsentwurfs. Keine weitere Startfreigabe erforderlich.
 
