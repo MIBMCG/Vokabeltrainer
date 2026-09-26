@@ -163,7 +163,8 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
     || typeof commands.subscribe !== 'function'
     || typeof commands.commitExternal !== 'function' || typeof now !== 'function'
     || typeof id !== 'function' || typeof onStatus !== 'function'
-    || (commerce !== null && typeof commerce?.reconcile !== 'function')) {
+    || (commerce !== null && (typeof commerce?.discover !== 'function'
+      || typeof commerce?.reconcile !== 'function'))) {
     throw productError('invalid', 'Der Produktabgleich ist nicht vollständig konfiguriert.');
   }
 
@@ -249,6 +250,20 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
       if (await productStateHash(reconciled) === await productStateHash(current)) return false;
       for (const key of Object.keys(next)) delete next[key];
       Object.assign(next, structuredClone(reconciled));
+      return true;
+    });
+  }
+
+  async function discoverCommerce(binding) {
+    if (commerce === null) return;
+    await mutate(async (next, current) => {
+      const discovered = await commerce.discover({
+        state: structuredClone(current), binding: structuredClone(binding),
+        descriptorHash: await digest(current.ledger.descriptor),
+      });
+      if (await productStateHash(discovered) === await productStateHash(current)) return false;
+      for (const key of Object.keys(next)) delete next[key];
+      Object.assign(next, structuredClone(discovered));
       return true;
     });
   }
@@ -643,6 +658,7 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
           next.datasetSetup=null;
           next.knownFiles=remoteState?.knownFiles??[];
           next.packetIntegrity=remoteState?.packetIntegrity??[];
+          if(remoteState?.commerce)next.commerce=structuredClone(remoteState.commerce);
           if(remoteState)next.safetyCopies=mergeById(next.safetyCopies,remoteState.safetyCopies);
           next.clock=Math.max(next.clock,remoteState?.clock??0);
         } else {
@@ -1060,6 +1076,7 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
       return getStatus();
     }
     publish('pending', 'Änderungen werden abgeglichen.');
+    await discoverCommerce(state.binding);
     const remoteProblem = await download(state.binding);
     const versionProblem=commands.getState().quarantinedFiles.find(entry=>entry.code==='version');
     if(versionProblem)throw productError('version',versionProblem.message);

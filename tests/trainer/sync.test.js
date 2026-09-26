@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 import {DriveError} from '../../src/drive/client.js';
-import {createCommands} from '../../src/trainer/commands.js';
+import {createCommands, productStateHash} from '../../src/trainer/commands.js';
 import {project} from '../../src/trainer/learning/progress.js';
 import {buildPackets} from '../../src/trainer/sync/packets.js';
 import {createProductSync} from '../../src/trainer/sync/drive.js';
@@ -179,10 +179,13 @@ async function setupSyntheticSync({drive = new SyntheticDrive(), ledger = create
 
 test('optional commerce port reconciles after learning download and syncLearning uses the same non-recursive path', async () => {
   const calls = [];
-  const commerce = {async reconcile(input) {
-    calls.push(input);
-    return structuredClone(input.state);
-  }};
+  const commerce = {
+    async discover(input) { return structuredClone(input.state); },
+    async reconcile(input) {
+      calls.push(input);
+      return structuredClone(input.state);
+    },
+  };
   const {sync, commands} = await setupSyntheticSync({outbox: [], commerce});
   const before = calls.length;
   const result = await sync.syncLearning();
@@ -229,11 +232,11 @@ test('commerce epochs remain inactive until the shared head is durably verified'
   const transport = {
     binding, descriptorHash,
     async readFolder({kind}) {
-      if (offline) throw Object.assign(new Error('synthetic coordinator unavailable'), {code: 'network'});
       if (kind === 'dataset') return {properties: {
         purchaseApp: 'vokabeltrainer-purchases', purchaseConfigId: configRef.id,
         purchaseConfigSha256: configRef.sha256,
       }};
+      if (offline) throw Object.assign(new Error('synthetic coordinator unavailable'), {code: 'network'});
       return {properties: coordinatorHead === null ? {} : {
         purchaseHeadId: coordinatorHead.id, purchaseHeadSha256: coordinatorHead.sha256,
       }};
@@ -249,27 +252,154 @@ test('commerce epochs remain inactive until the shared head is durably verified'
     now: () => new Date('2026-09-26T10:05:00.000Z'), id: sequenceIds('guarded-sync'), onStatus() {},
   });
 
-  await guarded.sync();
+  offline = true;
+  await assert.rejects(guarded.sync(), {code: 'network'});
   let staged = commands.getState();
   assert.equal(resolveEpochs(staged.ledger).activeEpochId, resolveEpochs(before.ledger).activeEpochId);
   assert.deepEqual(staged.rounds, before.rounds);
   assert.equal(staged.ledger.historicalEpochs.some(({id}) => id === activation.epochId), true);
 
-  offline = true;
+  const late = {
+    ...structuredClone(activation.publication.epoch),
+    formatVersion: 2, ruleVersion: 2, id: 'late-v2', deviceId: 'old-client', clock: 2000,
+  };
+  drive.addJson({
+    id: 'late-v2-file', parentId: binding.folderId,
+    appProperties: {app: 'vokabeltrainer-product', kind: 'epoch', datasetId: binding.datasetId, epochId: late.id},
+    value: late,
+  });
   await assert.rejects(guarded.sync(), {code: 'network'});
   staged = commands.getState();
   assert.equal(resolveEpochs(staged.ledger).activeEpochId, resolveEpochs(before.ledger).activeEpochId);
   assert.deepEqual(staged.rounds, before.rounds);
+  assert.notEqual(staged.commerce.config, null);
+  assert.equal(staged.ledger.historicalEpochs.some(({id}) => id === late.id), true);
+
+  guarded.destroy();
+  const restartedStore = memoryStore(staged);
+  const restartedCommands = await createCommands({
+    store: restartedStore, now: () => new Date('2026-09-26T10:06:00.000Z'),
+    id: sequenceIds('restarted-command'), deviceId: before.deviceId, onChange() {},
+  });
+  const restartedCommerce = createCommerceIntegration({
+    transportFor: async () => transport,
+    now: () => new Date('2026-09-26T10:06:00.000Z'), id: sequenceIds('restarted-discover'),
+  });
+  const restarted = createProductSync({
+    drive, store: restartedStore, commands: restartedCommands, commerce: restartedCommerce,
+    now: () => new Date('2026-09-26T10:06:00.000Z'), id: sequenceIds('restarted-sync'), onStatus() {},
+  });
+  const lateAfterRestart = {...late, id: 'late-v2-after-restart', clock: 2001};
+  drive.addJson({
+    id: 'late-v2-after-restart-file', parentId: binding.folderId,
+    appProperties: {
+      app: 'vokabeltrainer-product', kind: 'epoch', datasetId: binding.datasetId, epochId: lateAfterRestart.id,
+    },
+    value: lateAfterRestart,
+  });
+  await assert.rejects(restarted.sync(), {code: 'network'});
+  assert.equal(resolveEpochs(restartedCommands.getState().ledger).activeEpochId,
+    resolveEpochs(before.ledger).activeEpochId);
+  assert.deepEqual(restartedCommands.getState().rounds, before.rounds);
 
   offline = false;
   coordinatorHead = activation.candidate;
-  await guarded.sync();
-  const confirmed = commands.getState();
+  await restarted.sync();
+  const confirmed = restartedCommands.getState();
   assert.equal(resolveEpochs(confirmed.ledger).activeEpochId, activation.epochId);
   assert.equal(confirmed.rounds.p1.status, 'abandoned');
   assert.equal(project(confirmed.ledger).profiles.p1.points, project(before.ledger).profiles.p1.points);
-  guarded.destroy();
+  restarted.destroy();
   sync.destroy();
+});
+
+test('join staging transfers the commerce anchor before a late legacy epoch can activate', async () => {
+  const drive = new SyntheticDrive();
+  const remote = await setupSyntheticSync({drive, outbox: []});
+  const remoteState = remote.commands.getState();
+  const binding = remoteState.binding;
+  const descriptorHash = await digest(remoteState.ledger.descriptor);
+  const config = {
+    version: 1, kind: 'purchase-config', binding, descriptorHash,
+    coordinatorId: 'join-coordinator', contentFolderId: 'join-content',
+  };
+  const configRef = {id: 'join-config', sha256: await digest(config)};
+  const activationState = structuredClone(remoteState);
+  activationState.commerce = emptyCommerce();
+  activationState.commerce.mode = 'migrating';
+  activationState.commerce.binding = structuredClone(binding);
+  activationState.commerce.config = structuredClone(config);
+  activationState.commerce.configRef = structuredClone(configRef);
+  activationState.commerce.control = {
+    version: 1, operationId: 'join-activation', operation: 'initialize', phase: 'intent',
+    epochId: null, head: null, etag: null, candidate: null, pointerProperties: null, uploads: [],
+  };
+  const prepare = createCommerceIntegration({
+    now: () => new Date('2026-09-26T12:00:00.000Z'), id: sequenceIds('join-authority'),
+  });
+  const activation = await prepare.prepareActivationCandidate({
+    state: activationState, control: activationState.commerce.control, reserve: sequenceIds('join-file'),
+  });
+  for (const upload of activation.publication.uploads) await uploadVerified(drive, binding, upload);
+  const values = new Map([
+    [configRef.id, config],
+    ...activation.uploads.map(({ref, value}) => [ref.id, value]),
+  ]);
+  const commerce = createCommerceIntegration({
+    transportFor: async () => ({
+      binding, descriptorHash,
+      async readFolder({kind}) {
+        if (kind === 'dataset') return {properties: {
+          purchaseApp: 'vokabeltrainer-purchases', purchaseConfigId: configRef.id,
+          purchaseConfigSha256: configRef.sha256,
+        }};
+        return {properties: {}};
+      },
+      async readImmutable(ref) { return structuredClone(values.get(ref.id)); },
+    }),
+    now: () => new Date('2026-09-26T12:00:00.000Z'), id: sequenceIds('join-discover'),
+  });
+  const localStore = memoryStore(productState(createFixture().base, {deviceId: 'join-device', outbox: []}));
+  const localCommands = await createCommands({
+    store: localStore, now: () => new Date('2026-09-26T12:00:00.000Z'),
+    id: sequenceIds('join-command'), deviceId: 'join-device', onChange() {},
+  });
+  const local = localCommands.getState();
+  local.ledger.descriptor.datasetId = 'local-before-join';
+  local.ledger.descriptor.rootEpochId = 'local-root';
+  local.ledger.events = [];
+  local.ledger.epochs = [{...local.ledger.epochs[0], id: 'local-root', datasetId: 'local-before-join'}];
+  await localCommands.commitExternal(local, await productStateHash(localCommands.getState()));
+  await localCommands.revise({
+    entityType: 'profile', entityId: 'local-profile', expectedHeads: [], value: {name: 'Lokal', archived: false},
+  });
+  const joining = createProductSync({
+    drive, store: localStore, commands: localCommands, commerce,
+    now: () => new Date('2026-09-26T12:00:00.000Z'), id: sequenceIds('joining-sync'), onStatus() {},
+  });
+  const [selection] = await joining.discover();
+  const preview = await joining.joinDataset(selection, 'preview');
+  await joining.joinDataset({...selection, previewId: preview.previewId, safetyCopyId: preview.safetyCopyId}, 'confirm');
+  const joined = localCommands.getState();
+  assert.deepEqual(joined.commerce.configRef, configRef);
+  assert.equal(resolveEpochs(joined.ledger).activeEpochId, joined.ledger.descriptor.rootEpochId);
+  assert.equal(joined.ledger.historicalEpochs.some(({id}) => id === activation.epochId), true);
+
+  const late = {
+    ...structuredClone(activation.publication.epoch),
+    formatVersion: 2, ruleVersion: 2, id: 'join-late-v2', deviceId: 'old-client', clock: 3000,
+  };
+  drive.addJson({
+    id: 'join-late-v2-file', parentId: binding.folderId,
+    appProperties: {app: 'vokabeltrainer-product', kind: 'epoch', datasetId: binding.datasetId, epochId: late.id},
+    value: late,
+  });
+  await joining.sync();
+  const afterLate = localCommands.getState();
+  assert.equal(resolveEpochs(afterLate.ledger).activeEpochId, afterLate.ledger.descriptor.rootEpochId);
+  assert.equal(afterLate.ledger.historicalEpochs.some(({id}) => id === late.id), true);
+  joining.destroy();
+  remote.sync.destroy();
 });
 
 test('createDataset publishes the real root epoch and immutable descriptor before binding', async () => {

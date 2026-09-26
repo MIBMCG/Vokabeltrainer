@@ -721,6 +721,7 @@ sync.prepareRestoreCandidate({state,control,input,history,reserve})
 
 sync.applyConfirmedControl({state,control,history}) -> ProductState
 sync.publishControl({state,control}) -> RestoreJob
+sync.discover({state,binding,descriptorHash}) -> ProductState
 sync.reconcile({state,binding,descriptorHash}) -> ProductState
 
 sync.syncLearning() -> {phase:'synced', ...}
@@ -768,26 +769,31 @@ Zielauftrag; eine abweichende Zielkettenverwendung wird als `collision` gesperrt
 ## Task-4-Produktintegration und v3-Sicherung
 
 `createCommerceIntegration({commands,learningSync,drive,transportFor,now,id})`
-liefert genau die sechs oben beschriebenen Ports
+liefert genau die sieben oben beschriebenen Ports
 `prepareActivationCandidate`, `prepareRestoreCandidate`,
-`applyConfirmedControl`, `publishControl`, `reconcile` und `syncLearning`.
+`applyConfirmedControl`, `publishControl`, `discover`, `reconcile` und
+`syncLearning`.
 Der Adapter hält keine zweite Zustandskopie und keine eigene Warteschlange.
-`reconcile` entdeckt den installierten Configref am Datensatz, liest Config,
-Koordinator und vollständige Historie und übernimmt ausschließlich den
-verifizierten gemeinsamen Kopf als Epochenautorität. Nicht koordinierte lokale
-Epochen bleiben historische Herkunft; späte Ereignisse bleiben zur späteren
-ausdrücklichen Übernahme erhalten.
+`discover({state,binding,descriptorHash})` liest ausschließlich den installierten
+Configref und dessen unveränderliche Config. ProductSync speichert diesen Anker
+vor dem Epochendownload. `reconcile` prüft anschließend Koordinator und
+vollständige Historie und übernimmt ausschließlich den verifizierten gemeinsamen
+Kopf als Epochenautorität. Nicht koordinierte lokale Epochen bleiben historische
+Herkunft; späte Ereignisse bleiben zur späteren ausdrücklichen Übernahme erhalten.
 
-`createProductSync({... ,commerce:null|{reconcile}})` ruft den optionalen Port
-nach dem Lern-Download und vor neuen Uploads auf und liefert `syncLearning` als
-denselben nicht rekursiven vollständigen Abgleich. Sobald eine lokale
-Kaufkonfiguration bekannt ist oder der Download eine Format-3-Epoche enthält,
+`createProductSync({... ,commerce:null|{discover,reconcile}})` ruft `discover`
+vor dem Lern-Download und `reconcile` danach vor neuen Uploads auf. Es liefert
+`syncLearning` als denselben nicht rekursiven vollständigen Abgleich. Sobald dadurch eine lokale
+Kaufkonfiguration bekannt ist oder der Download erstmals eine Format-3-Epoche enthält,
 speichert der Download neu gelesene Epochen zunächst ausschließlich als
-inaktive Herkunft. Das gilt im selben Download auch für verspätete v1/v2-Dateien.
+inaktive Herkunft. Der gespeicherte Configanker erhält diese Grenze über
+fehlgeschlagene Kopflesungen, übersprungene bekannte Dateien, Neustarts und die
+Beitrittsvorschau hinweg. Das gilt auch für später gelesene v1/v2-Dateien.
 Ein fehlender oder nicht lesbarer Koordinatorkopf lässt aktive Epoche, laufende
 Runden und Punkte unverändert. Erst `reconcile` übernimmt den vollständig
 geprüften Kopf und dessen Basis in einem gemeinsamen Commands-Commit als aktive
-Epoche.
+Epoche. Fehlt am Datensatz jeder Configanker und jede v3-Epoche, bleibt der
+reine Legacy-/Offlineabgleich unverändert.
 
 `createRestoreService` erhält optional
 `commerce:()=>({prepareRestore,confirmRestore,resume})`. Nur eine gespeicherte

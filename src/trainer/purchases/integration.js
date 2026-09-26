@@ -322,7 +322,7 @@ export function createCommerceIntegration({
     return next;
   }
 
-  async function reconcile({state, binding, descriptorHash} = {}) {
+  async function discoverInstalled({state, binding, descriptorHash} = {}) {
     const commerce = assertCommerce(state?.commerce);
     if (typeof transportFor !== 'function') fail('not-ready', 'Die Kaufentdeckung ist nicht angebunden.');
     if (!sameBinding(binding, state?.binding) || await digest(state.ledger.descriptor) !== descriptorHash) {
@@ -338,7 +338,7 @@ export function createCommerceIntegration({
       if (commerce.mode === 'active' || commerce.config !== null) {
         fail('history', 'Die installierte Kaufkonfiguration fehlt am verbundenen Datensatz.');
       }
-      return copy(state);
+      return {state: copy(state), transport};
     }
     const config = assertConfig(await transport.readImmutable(configRef, {kind: 'config'}));
     if (!sameBinding(config.binding, binding) || config.descriptorHash !== descriptorHash) {
@@ -348,14 +348,29 @@ export function createCommerceIntegration({
       || !sameRef(commerce.configRef, configRef))) {
       fail('binding', 'Die lokale Kaufkonfiguration widerspricht dem installierten Anker.');
     }
+    const next = copy(state);
+    next.commerce = assertCommerce({...commerce, binding: copy(binding), configRef: copy(configRef), config: copy(config)});
+    return {state: next, transport};
+  }
+
+  async function discover(input = {}) {
+    return (await discoverInstalled(input)).state;
+  }
+
+  async function reconcile(input = {}) {
+    const discovered = await discoverInstalled(input);
+    let next = discovered.state;
+    const commerce = assertCommerce(next.commerce);
+    if (commerce.config === null) return next;
+    const {binding} = input;
+    const {transport} = discovered;
+    const {config, configRef} = commerce;
     const coordinator = await transport.readFolder({id: config.coordinatorId, kind: 'coordinator', config});
     const head = headFromCoordinator(coordinator);
     if (head === null) {
       if (commerce.mode === 'active' || commerce.head !== null) {
         fail('history', 'Der gemeinsame Kaufkopf fehlt.');
       }
-      const next = copy(state);
-      next.commerce = assertCommerce({...commerce, binding: copy(binding), configRef: copy(configRef), config: copy(config)});
       return next;
     }
     const history = await readHistory({
@@ -366,7 +381,6 @@ export function createCommerceIntegration({
       },
       onProgress: () => {},
     });
-    let next = copy(state);
     next.commerce = assertCommerce({
       ...commerce,
       mode: 'active', binding: copy(binding), configRef: copy(configRef), config: copy(config),
@@ -433,6 +447,7 @@ export function createCommerceIntegration({
     prepareRestoreCandidate,
     applyConfirmedControl,
     publishControl,
+    discover,
     reconcile,
     async syncLearning() {
       if (typeof learningSync !== 'function') fail('not-ready', 'Der Lernabgleich ist nicht angebunden.');

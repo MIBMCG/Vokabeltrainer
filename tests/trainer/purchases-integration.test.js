@@ -176,6 +176,37 @@ test('empty second device discovers installed commerce and applies only the shar
   assert.equal(discovered.ledger.historicalEpochs.some(({id}) => id === orphan.id), true);
 });
 
+test('commerce discovery persists the installed config without reading or activating the coordinator head', async () => {
+  const source = await migratingState();
+  const descriptorHash = source.commerce.config.descriptorHash;
+  const values = new Map([[source.commerce.configRef.id, source.commerce.config]]);
+  let coordinatorReads = 0;
+  const transport = {
+    binding: BINDING, descriptorHash,
+    async readFolder({kind}) {
+      if (kind === 'dataset') return {properties: {
+        purchaseApp: 'vokabeltrainer-purchases', purchaseConfigId: source.commerce.configRef.id,
+        purchaseConfigSha256: source.commerce.configRef.sha256,
+      }};
+      coordinatorReads += 1;
+      throw Object.assign(new Error('coordinator must not be read during discovery'), {code: 'network'});
+    },
+    async readImmutable(ref) { return structuredClone(values.get(ref.id)); },
+  };
+  const integration = createCommerceIntegration({
+    transportFor: async () => transport,
+    now: () => new Date('2026-09-26T11:00:00.000Z'), id: ids('discover-anchor'),
+  });
+  const local = structuredClone(source);
+  local.commerce = emptyCommerce();
+  const anchored = await integration.discover({state: local, binding: BINDING, descriptorHash});
+  assert.deepEqual(anchored.commerce.configRef, source.commerce.configRef);
+  assert.deepEqual(anchored.commerce.config, source.commerce.config);
+  assert.equal(anchored.commerce.mode, 'inactive');
+  assert.equal(resolveActive(anchored), resolveActive(local));
+  assert.equal(coordinatorReads, 0);
+});
+
 function resolveActive(state) {
   const parents = new Set(state.ledger.epochs.flatMap(({parents: values}) => values));
   return state.ledger.epochs.find(({id}) => !parents.has(id))?.id ?? null;
