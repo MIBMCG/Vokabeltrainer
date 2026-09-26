@@ -1139,6 +1139,10 @@ test('C2 final views cover the responsive matrix, readable zoom and all avatar o
     assert.equal(await highDpr.page.getByRole('group', {name: 'Kleidungsfarbe'}).getByRole('radio').count(), 6);
     assert.equal(await highDpr.page.locator('.equipment-group input[type="radio"]').count(), 9);
     assert.equal(await highDpr.page.locator('.equipment-group input:disabled').count(), 6);
+    const classicArt = highDpr.page.locator('.classic-avatar [data-art-key] img');
+    for (let index = 0; index < await classicArt.count(); index += 1) {
+      await classicArt.nth(index).scrollIntoViewIfNeeded();
+    }
     await loadedArt(highDpr.page);
     await highDpr.page.screenshot({path: resolve(c2EvidenceDirectory, 'avatar-mobile-390-dpr2.png'), fullPage: true});
   } finally {

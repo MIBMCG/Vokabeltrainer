@@ -1742,6 +1742,7 @@ test('trainer sync and restore keeps concurrent word versions until an adult res
 
     await first.page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
     await first.page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).click();
+    await first.page.getByText('Abgeglichen', {exact: true}).waitFor();
     await second.page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
     await second.page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).click();
     await second.page.getByRole('heading', {name: 'Inhaltskonflikte'}).waitFor();
