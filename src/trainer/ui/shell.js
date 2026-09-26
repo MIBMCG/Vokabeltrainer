@@ -348,7 +348,10 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, commer
       } else {
         const profile = projection.profiles[activeProfileId];
         if (currentView === 'journey') renderJourney({root, profile});
-        else renderAvatar({root, state, profile, profileId: activeProfileId, commands, commerce});
+        else renderAvatar({
+          root, state, profile, profileId: activeProfileId, commands, commerce,
+          onRefresh: () => { if (currentView === 'avatar') render(); },
+        });
         root.firstElementChild?.prepend(button('Profil wechseln', () => show('profiles'), {
           class: 'secondary profile-switch',
         }));

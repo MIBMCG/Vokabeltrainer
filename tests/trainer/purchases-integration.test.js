@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 
 import {assertLedger} from '../../src/trainer/model/schema.js';
-import {assertSupportedVersion, COMMERCE_VERSION} from '../../src/trainer/model/versions.js';
+import {assertSupportedVersion, COMMERCE_VERSION, CURRENT_VERSION} from '../../src/trainer/model/versions.js';
 import {DEFAULT_POLICY} from '../../src/trainer/model/policies.js';
 import {digest} from '../../src/trainer/model/canonical.js';
 import {assertProductState, createCommands, productStateHash} from '../../src/trainer/commands.js';
@@ -333,7 +333,9 @@ test('restore preparation binds the existing durable preview job to a fresh shar
     version: 1, operationId: 'restore-1', operation: 'restore', phase: 'intent', epochId: null,
     head: null, etag: null, candidate: null, pointerProperties: null, uploads: [],
   };
+  active.commerce.selection = [{profileId: 'p1', figureId: 'explorer-girl', stage: 1}];
   const imported = await exportBackup(active, '2026-09-25T10:00:00.000Z');
+  active.commerce.selection = [{profileId: 'p1', figureId: 'explorer-boy', stage: 1}];
   const targetSnapshot = {...imported.snapshot, id: 'restore-snapshot', datasetId: 'd1'};
   targetSnapshot.contentHash = await snapshotHash(targetSnapshot, imported.events);
   active.restoreJobs.push({
@@ -345,6 +347,7 @@ test('restore preparation binds the existing durable preview job to a fresh shar
     input: {restoreJobId: 'restore-1', previewId: 'a'.repeat(64)}, history: activationHistory,
     reserve: ids('restore-upload'),
   });
+  assert.deepEqual(active.commerce.selection, [{profileId: 'p1', figureId: 'explorer-boy', stage: 1}]);
   const values = new Map(prepared.uploads.map(({ref, value}) => [ref.id, value]));
   const receipt = values.get(prepared.candidate.id);
   assert.deepEqual(receipt.previous, activation.candidate);
@@ -381,7 +384,17 @@ test('restore preparation binds the existing durable preview job to a fresh shar
     },
   };
   const activeB = await integration.applyConfirmedControl({state: stagedB, control: stagedB.commerce.control, history: restoredHistory});
-  const backupB = await exportBackup(activeB, '2026-09-26T12:00:00.000Z');
+  assert.deepEqual(activeB.commerce.selection, [{profileId: 'p1', figureId: 'explorer-girl', stage: 1}]);
+  const legacyState = structuredClone(stagedB);
+  legacyState.commerce.selection = [{profileId: 'p1', figureId: 'explorer-boy', stage: 1}];
+  legacyState.restoreJobs[0].backup = await exportBackup(active, '2026-09-26T11:30:00.000Z', {version: CURRENT_VERSION});
+  const legacyApplied = await integration.applyConfirmedControl({
+    state: legacyState, control: legacyState.commerce.control, history: restoredHistory,
+  });
+  assert.deepEqual(legacyApplied.commerce.selection, []);
+  const emptySelectionSource = structuredClone(activeB);
+  emptySelectionSource.commerce.selection = [];
+  const backupB = await exportBackup(emptySelectionSource, '2026-09-26T12:00:00.000Z');
   const targetC = structuredClone(active);
   targetC.restoreJobs = [];
   targetC.commerce.control = {
@@ -399,6 +412,7 @@ test('restore preparation binds the existing durable preview job to a fresh shar
     input: {restoreJobId: 'restore-2', previewId: 'c'.repeat(64)}, history: activationHistory,
     reserve: ids('restore-c-upload'),
   });
+  assert.deepEqual(targetC.commerce.selection, [{profileId: 'p1', figureId: 'explorer-boy', stage: 1}]);
   const receiptC = preparedC.uploads.find(({ref}) => ref.id === preparedC.candidate.id).value;
   const outerProof = preparedC.uploads.find(({ref}) => ref.id === receiptC.economy.source.proof.id).value;
   assert.ok(outerProof.objects.some(({logical}) => logical.id === receipt.economy.source.proof.id));
@@ -411,6 +425,29 @@ test('restore preparation binds the existing durable preview job to a fresh shar
     read: async fileId => valuesC.get(fileId), onProgress: () => {},
   });
   assert.deepEqual(historyC.projection.accounts, restoredHistory.projection.accounts);
+  const stagedC = structuredClone(targetC);
+  stagedC.restoreJobs = [preparedC.publication];
+  stagedC.commerce.head = preparedC.candidate;
+  stagedC.commerce.cache = historyC.cache;
+  stagedC.commerce.control = {
+    version: 1, operationId: 'restore-2', operation: 'restore', phase: 'confirmed',
+    epochId: preparedC.epochId, head: activation.candidate, etag: '"etag-c"',
+    candidate: preparedC.candidate, uploads: preparedC.uploads, pointerProperties: {
+      app: 'vokabeltrainer-purchases', kind: 'coordinator', datasetId: 'd1',
+      descriptorFileId: 'descriptor-file-1', descriptorHash: active.commerce.config.descriptorHash,
+      coordinatorId: 'coordinator-1', contentFolderId: 'content-1',
+      purchaseHeadId: preparedC.candidate.id, purchaseHeadSha256: preparedC.candidate.sha256,
+    },
+  };
+  const activeC = await integration.applyConfirmedControl({state: stagedC, control: stagedC.commerce.control, history: historyC});
+  assert.deepEqual(activeC.commerce.selection, []);
+  const resumedOlderRestore = structuredClone(activeC);
+  resumedOlderRestore.restoreJobs.push(prepared.publication);
+  resumedOlderRestore.commerce.control = structuredClone(stagedB.commerce.control);
+  const afterOlderResume = await integration.applyConfirmedControl({
+    state: resumedOlderRestore, control: resumedOlderRestore.commerce.control, history: historyC,
+  });
+  assert.deepEqual(afterOlderResume.commerce.selection, []);
   assert.equal(prepared.publication.id, 'restore-1');
   assert.equal(prepared.publication.safetyCopyId, 'safety-1');
   assert.equal(prepared.publication.epoch.id, receipt.epochId);
@@ -530,6 +567,11 @@ test('v3 backup carries the complete verified economy without local jobs, etags 
     ['p2', null, history.projection.accounts.p2.availablePoints],
   ]);
   assert.equal(economyPreview.selectionChanges, 1);
+  const withoutSelection = structuredClone(backup);
+  withoutSelection.economy.selection = [];
+  const currentSelection = structuredClone(active);
+  currentSelection.commerce.selection = [{profileId: 'p1', figureId: 'explorer-girl', stage: 1}];
+  assert.equal((await economicBackupPreview({state: currentSelection, backup: withoutSelection})).selectionChanges, 1);
   const checkpoint = backup.economy.entries.values.find(({ref}) => ref.id === backup.economy.head.id);
   assert.equal(checkpoint.value.operation, 'checkpoint');
   assert.deepEqual(checkpoint.value.previous, activation.candidate);

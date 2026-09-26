@@ -6,6 +6,14 @@ import {economicBackupPreview} from './purchases.js';
 
 const stateByRoot = new WeakMap();
 
+export async function prepareRestorePreview({
+  backup, restore, getState, economicPreview = economicBackupPreview,
+}) {
+  const prepared = await restore.prepare(backup);
+  const economy = await economicPreview({state: getState(), backup});
+  return {prepared, economy};
+}
+
 function uiState(root) {
   const owner = root.closest?.('#app') ?? root;
   if (!stateByRoot.has(owner)) stateByRoot.set(owner, {
@@ -174,8 +182,7 @@ export function renderBackup({root, state, restore, onDownload, isUnlocked = () 
       const backup = await parseBackup(await selected.text());
       assertUnlocked(isUnlocked);
       ui.pendingBackup = backup;
-      const economy = await economicBackupPreview({state: getState(), backup});
-      const prepared = await restore.prepare(backup);
+      const {prepared, economy} = await prepareRestorePreview({backup, restore, getState});
       assertUnlocked(isUnlocked);
       const openPreview = (result, economyPreview, staleNotice = '') => showRestorePreview({
         summary: result.summary, economy: economyPreview,
@@ -193,9 +200,10 @@ export function renderBackup({root, state, restore, onDownload, isUnlocked = () 
             queueMicrotask(() => onRefresh?.());
           } catch (error) {
             if (error?.code !== 'stale') throw error;
-            const refreshed = await restore.prepare(ui.pendingBackup);
+            const {prepared: refreshed, economy: refreshedEconomy} = await prepareRestorePreview({
+              backup: ui.pendingBackup, restore, getState,
+            });
             assertUnlocked(isUnlocked);
-            const refreshedEconomy = await economicBackupPreview({state: getState(), backup: ui.pendingBackup});
             return {replace: () => openPreview(
               refreshed, refreshedEconomy,
               'Der Datenstand hat sich geändert. Die aktualisierten Unterschiede werden neu angezeigt und müssen erneut bestätigt werden.',

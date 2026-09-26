@@ -843,6 +843,12 @@ Avataransicht weiter: `previewActivation`, `activate`, `getView`, `refresh`,
 nur eine lokale, konkrete Vorschau. Erst die ausdrückliche Bestätigung ruft
 `prepareActivation` und anschließend `confirmActivation` auf.
 
+`previewActivation()` liefert `{ticket,previewState:{ledger}}` aus genau einem
+aktuellen Commands-Stand. Die sichtbare Vorschau wird ausschließlich aus diesem
+`previewState` gebaut; `activate(ticket)` bestätigt denselben Fingerprint.
+`confirm(preview)` erhält die vollständige Kaufvorschau mit Kopf, Angebot und
+Fingerprint. Nur `resume(operationId)` verwendet eine Operations-ID.
+
 `purchasePreviewStateHash(state)` ist aus `purchases/service.js` exportiert und
 wird von Dienst und UI-Aktivierung gemeinsam verwendet. Der Fingerprint bindet
 Binding, vollständiges Ledger und wirtschaftliche Fachfelder, lässt aber reine
@@ -857,3 +863,11 @@ den Kaufdienst. Unbekannte Ergebnisse heißen sichtbar „Kauf wird geprüft“ 
 werden ausschließlich über „Kauf fortsetzen“ erneut angestoßen. Die
 Wiederherstellungsvorschau stellt außerdem bestätigte verfügbare Punkte,
 Kaufanzahl und übernommene Figurenauswahlen als Vorher-/Nachher-Werte dar.
+
+Die wirtschaftliche Restorevorschau wird erst nach `restore.prepare` aus dem
+dadurch frisch abgeglichenen Commands-Stand berechnet. Am bestätigten Abschluss
+übernimmt `applyConfirmedControl` die validierte v3-Auswahl vollständig und
+atomar, einschließlich einer leeren Auswahl. Ein altes Backup ohne Economy hat
+keine Auswahl und leert sie. Die Übernahme erfolgt nur, wenn die aktive Epoche
+des bestätigten Kopfes zur Restore-Control gehört; ein inzwischen bestätigter
+späterer Restore wird dadurch nicht mit der älteren Auswahl überschrieben.

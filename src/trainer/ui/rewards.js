@@ -234,7 +234,7 @@ export function renderJourney({root, profile}) {
   ]));
 }
 
-export function renderAvatar({root, state: productState, profile, profileId, commands, commerce}) {
+export function renderAvatar({root, state: productState, profile, profileId, commands, commerce, onRefresh}) {
   const rewards = stateFor(profile);
   const parts = avatarParts(profile);
   const allEquipmentUnlocked = rewards.unlocked.head.length === 3
@@ -315,5 +315,5 @@ export function renderAvatar({root, state: productState, profile, profileId, com
       ]),
     ]),
   ]));
-  if (commerce) renderPurchases({root: commerceHost, profileId, commerce, onRefresh: () => {}, online: navigator.onLine});
+  if (commerce) renderPurchases({root: commerceHost, profileId, commerce, onRefresh, online: navigator.onLine});
 }

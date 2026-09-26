@@ -18,9 +18,12 @@ Implementierungscommit:
 Erwachsenenansicht, Einstellungen, Backup und Avatarbereich:
 
 ```text
-previewActivation() -> {stateHash,binding,descriptorHash}
+previewActivation() -> {
+  ticket:{stateHash,binding,descriptorHash},
+  previewState:{ledger}
+}
 activate(ticket) -> Serviceergebnis
-getView(), refresh(), preview(input), confirm(operationId),
+getView(), refresh(), preview(input), confirm(preview),
 resume(operationId), select(input)
 ```
 
@@ -53,7 +56,7 @@ Uploadbuchhaltung entwertet die Vorschau nicht. Der vollständige
   Anmeldung oder fehlendem Netz, werden sichtbar erklärt.
 - Die Backupvorschau zeigt verfügbare Punkte, bestätigte Käufe und geänderte
   Figurenauswahlen. Alte Backups werden ehrlich als ohne Kaufhistorie benannt.
-- Workerkennung `v23`, Server-Allowlist und Pflicht-Precache enthalten die neue
+- Workerkennung `v24`, Server-Allowlist und Pflicht-Precache enthalten die neue
   UI und alle vier ausgelieferten Bilder. Googleantworten und Token werden nicht
   gecacht.
 

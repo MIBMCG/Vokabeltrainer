@@ -115,11 +115,19 @@ export async function economicBackupPreview({state, backup}) {
   return {
     included: true,
     changes: accountChanges(before, incoming.accounts),
-    selectionChanges: backup.economy.selection.filter((selection) => {
-      const current = state.commerce?.selection?.find(({profileId}) => profileId === selection.profileId);
-      return current?.figureId !== selection.figureId || current?.stage !== selection.stage;
-    }).length,
+    selectionChanges: selectionChangeCount(state.commerce?.selection ?? [], backup.economy.selection),
   };
+}
+
+function selectionChangeCount(before, after) {
+  const left = new Map(before.map((selection) => [selection.profileId, selection]));
+  const right = new Map(after.map((selection) => [selection.profileId, selection]));
+  const profileIds = new Set([...left.keys(), ...right.keys()]);
+  return [...profileIds].filter((profileId) => {
+    const current = left.get(profileId);
+    const incoming = right.get(profileId);
+    return current?.figureId !== incoming?.figureId || current?.stage !== incoming?.stage;
+  }).length;
 }
 
 const stateByOwner = new WeakMap();
@@ -130,6 +138,21 @@ function uiState(root) {
     tab: 'mine', view: null, busy: false, notice: '', tone: 'info', activationPreview: null,
   });
   return stateByOwner.get(owner);
+}
+
+function rerenderCurrentPurchase(ui, {focus = false} = {}) {
+  let target = ui.purchaseRender;
+  if (!target?.root.isConnected) {
+    target?.onRefresh?.();
+    target = ui.purchaseRender;
+  }
+  if (target?.root.isConnected) {
+    renderPurchases({...target, online: navigator.onLine});
+  }
+  if (focus) queueMicrotask(() => {
+    const current = ui.purchaseRoot;
+    if (current?.isConnected) current.querySelector('.commerce-tabs [aria-current="page"]')?.focus();
+  });
 }
 
 function figureCard(figure, controls = []) {
@@ -160,7 +183,7 @@ function purchaseActionLabel(entry) {
   return `Für ${entry.price} Punkte freischalten`;
 }
 
-function purchaseDialog({preview, name, onConfirm, trigger}) {
+function purchaseDialog({preview, name, onConfirm, trigger, onComplete}) {
   const dialog = el('dialog', {attrs: {class: 'purchase-dialog', 'aria-labelledby': 'purchase-dialog-title'}}, [
     el('h2', {text: 'Kauf prüfen', attrs: {id: 'purchase-dialog-title'}}),
     el('p', {text: name}),
@@ -175,7 +198,10 @@ function purchaseDialog({preview, name, onConfirm, trigger}) {
   }, {class: 'secondary'});
   const confirm = button('Kauf verbindlich bestätigen', async () => {
     confirm.disabled = true; cancel.disabled = true;
-    try { await onConfirm(); dialog.close(); dialog.remove(); trigger?.focus(); }
+    try {
+      await onConfirm(); dialog.close(); dialog.remove();
+      if (trigger?.isConnected) trigger.focus(); else onComplete?.();
+    }
     catch (error) {
       confirm.disabled = false; cancel.disabled = false;
       dialog.append(message(error?.message || 'Der Kauf konnte noch nicht bestätigt werden.', 'error'));
@@ -187,11 +213,12 @@ function purchaseDialog({preview, name, onConfirm, trigger}) {
 
 export function renderPurchases({root, profileId, commerce, onRefresh, online = navigator.onLine}) {
   const ui = uiState(root);
+  ui.purchaseRender = {root, profileId, commerce, onRefresh};
   if (ui.purchaseRoot !== root) {
     ui.purchaseRoot = root;
     ui.view = null;
   }
-  const rerender = () => renderPurchases({root, profileId, commerce, onRefresh, online: navigator.onLine});
+  const rerender = (options) => rerenderCurrentPurchase(ui, options);
   const load = async (refresh = false) => {
     if (ui.busy) return;
     ui.busy = true;
@@ -202,7 +229,7 @@ export function renderPurchases({root, profileId, commerce, onRefresh, online = 
       ui.notice = error?.message || 'Figuren und Käufe konnten nicht gelesen werden.';
       ui.tone = 'error';
       ui.view = {mode: 'inactive', head: null, accounts: {}, jobs: [], selection: [], control: null};
-    } finally { ui.busy = false; if (root.isConnected) rerender(); }
+    } finally { ui.busy = false; rerender(); }
   };
   if (ui.view === null && !ui.busy) void load();
 
@@ -242,12 +269,12 @@ export function renderPurchases({root, profileId, commerce, onRefresh, online = 
       ui.notice = success; ui.tone = 'info';
     } catch (error) {
       try { ui.view = await commerce.getView(); } catch {}
+      if (rethrowCodes.includes(error?.code)) throw error;
       ui.notice = error?.code === 'network' || error?.code === 'pending'
         ? 'Kauf wird geprüft. Der Ausgang ist noch unbekannt. Du kannst ihn gezielt fortsetzen.'
         : error?.message || 'Die Aktion konnte noch nicht abgeschlossen werden.';
       ui.tone = error?.code === 'network' || error?.code === 'pending' ? 'info' : 'error';
-      if (rethrowCodes.includes(error?.code)) throw error;
-    } finally { ui.busy = false; if (root.isConnected) rerender(); else onRefresh?.(); }
+    } finally { ui.busy = false; rerender({focus: true}); }
   };
   const buy = async (entry, trigger) => {
     if (entry.action === 'resume') {
@@ -256,7 +283,7 @@ export function renderPurchases({root, profileId, commerce, onRefresh, online = 
     }
     try {
       const preview = await commerce.preview({profileId, articleId: entry.id});
-      purchaseDialog({preview, name: entry.name, trigger, onConfirm: () => run(
+      purchaseDialog({preview, name: entry.name, trigger, onComplete: () => rerender({focus: true}), onConfirm: () => run(
         () => commerce.confirm(preview), 'Der Kauf ist bestätigt.', {rethrowCodes: ['stale']},
       )});
     } catch (error) {
@@ -291,7 +318,7 @@ export function renderPurchases({root, profileId, commerce, onRefresh, online = 
     for (const figureId of ui.view.accounts[profileId].entitledFigureIds) {
       const figure = FIGURES.find(({id}) => id === figureId);
       if (!figure) continue;
-      const selected = model.selected?.figureId === figureId;
+      const selected = model.selected?.figureId === figureId && model.selected.stage === 1;
       grid.append(figureCard(figure, [
         el('p', {text: selected ? 'Ausgewählt' : 'Freigeschaltet', attrs: {class: 'status-chip'}}),
         button(selected ? 'Ausgewählt' : 'Grundform auswählen', () => run(
@@ -364,8 +391,8 @@ export function renderCommerceSettings({root, state, commerce, isUnlocked, onRef
       button('Daten für Figuren und Käufe aktualisieren', async () => {
         try {
           if (!isUnlocked()) throw Object.assign(new Error('Bitte den Erwachsenenbereich erneut öffnen.'), {code: 'locked'});
-          const ticket = await commerce.previewActivation();
-          ui.activationPreview = {...activationPreviewModel(state), ticket};
+          const {ticket, previewState} = await commerce.previewActivation();
+          ui.activationPreview = {...activationPreviewModel(previewState), ticket};
           ui.notice = ''; onRefresh?.();
         } catch (error) { ui.notice = error?.message || 'Die Vorschau konnte nicht erstellt werden.'; ui.tone = 'error'; onRefresh?.(); }
       }, {class: 'primary'}),

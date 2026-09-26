@@ -305,9 +305,12 @@ async function start() {
       const state = commands.getState();
       if (!state?.binding) throw new Error('Der gemeinsame Lernbereich ist noch nicht verbunden.');
       return {
-        stateHash: await purchasePreviewStateHash(state),
-        binding: structuredClone(state.binding),
-        descriptorHash: await digest(state.ledger.descriptor),
+        ticket: {
+          stateHash: await purchasePreviewStateHash(state),
+          binding: structuredClone(state.binding),
+          descriptorHash: await digest(state.ledger.descriptor),
+        },
+        previewState: {ledger: structuredClone(state.ledger)},
       };
     },
     async activate(ticket) {

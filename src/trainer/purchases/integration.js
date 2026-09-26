@@ -318,7 +318,22 @@ export function createCommerceIntegration({
     }
     const next = await authoritativeState(state, history);
     const publication = next.restoreJobs.find(({id: jobId}) => jobId === control.operationId);
-    if (publication) publication.phase = 'activated';
+    if (publication) {
+      if (control.operation === 'restore' && history.projection.activeEpochId === control.epochId) {
+        const targetSelection = publication.backup?.formatVersion === 3
+          ? publication.backup.economy.selection
+          : [];
+        for (const {profileId, figureId, stage} of targetSelection) {
+          const account = history.projection.accounts[profileId];
+          if (!account?.entitledFigureIds.includes(figureId)
+            || !account.entitledEvolutionIds.includes(`evolution:${figureId}:${stage}`)) {
+            fail('entitlement', 'Die wiederhergestellte Figurenauswahl ist im bestätigten Kaufstand nicht belegt.');
+          }
+        }
+        next.commerce.selection = copy(targetSelection);
+      }
+      publication.phase = 'activated';
+    }
     return next;
   }
 

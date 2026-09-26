@@ -7,6 +7,7 @@ import {
 } from '../../src/trainer/ui/purchases.js';
 import {earnedLedger} from './purchases-fixtures.js';
 import {purchasePreviewStateHash} from '../../src/trainer/purchases/service.js';
+import {prepareRestorePreview} from '../../src/trainer/ui/backup.js';
 
 test('activation preview is local, concrete and explains the preserved learning economy', () => {
   const calls = [];
@@ -101,4 +102,25 @@ test('only approved dragon stages are visually available while base figure art s
   const pendingArt = purchaseProfileModel({view, profileId: 'p1', online: true});
   assert.equal(pendingArt.forms.length, 4);
   assert.equal(pendingArt.forms.every(({artAvailable, action}) => !artAvailable && action === 'unavailable'), true);
+});
+
+test('restore preview derives its economy after preparation has synchronized the current state', async () => {
+  let current = {version: 'before'};
+  const calls = [];
+  const result = await prepareRestorePreview({
+    backup: {kind: 'fixture'},
+    restore: {async prepare() {
+      calls.push('prepare');
+      current = {version: 'after'};
+      return {previewId: 'current-preview'};
+    }},
+    getState: () => current,
+    economicPreview: async ({state}) => {
+      calls.push(`economy:${state.version}`);
+      return {included: true, stateVersion: state.version};
+    },
+  });
+  assert.deepEqual(calls, ['prepare', 'economy:after']);
+  assert.equal(result.prepared.previewId, 'current-preview');
+  assert.equal(result.economy.stateVersion, 'after');
 });

@@ -189,6 +189,127 @@ test('purchase UI stays usable on desktop and narrow screens with keyboard focus
   }
 });
 
+test('purchase view follows a root replaced during its initial load', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page} = await harness.newDevice({viewport: {width: 1280, height: 900}});
+  try {
+    await page.goto(harness.baseUrl);
+    const result = await page.evaluate(async () => {
+      const {renderPurchases} = await import('/src/trainer/ui/purchases.js');
+      const productApp = document.querySelector('#app');
+      productApp.id = 'product-app';
+      const app = document.createElement('main');
+      app.id = 'app';
+      document.body.append(app);
+      let release;
+      const pending = new Promise((resolve) => { release = resolve; });
+      const commerce = {getView: () => pending};
+      const first = document.createElement('section');
+      app.append(first);
+      renderPurchases({root: first, profileId: 'p1', commerce, onRefresh: () => {}, online: true});
+      const replacement = document.createElement('section');
+      app.replaceChildren(replacement);
+      renderPurchases({root: replacement, profileId: 'p1', commerce, onRefresh: () => {}, online: true});
+      release({mode: 'inactive', head: null, accounts: {}, jobs: [], selection: [], control: null});
+      await pending;
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      const result = {text: replacement.innerText, connected: replacement.isConnected};
+      app.remove();
+      productApp.id = 'app';
+      return result;
+    });
+    assert.equal(result.connected, true);
+    assert.doesNotMatch(result.text, /werden geladen/);
+    assert.match(result.text, /Erwachsenenbereich/);
+  } finally {
+    await harness.close();
+  }
+});
+
+test('late purchase loading never rebuilds the adult view after leaving the avatar', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page} = await harness.newDevice({viewport: {width: 1280, height: 900}});
+  try {
+    await page.goto(harness.baseUrl);
+    await setup(page);
+    const state = await productState(page);
+    const profileId = Object.keys(project(state.ledger).profiles)[0];
+    const result = await page.evaluate(async ({initial, selectedProfileId}) => {
+      const {mountShell} = await import('/src/trainer/ui/shell.js');
+      sessionStorage.setItem('vokabeltrainer-shell-v1', JSON.stringify({
+        view: 'avatar', profileId: selectedProfileId, practiceActive: false,
+      }));
+      let release;
+      const pending = new Promise((resolve) => { release = resolve; });
+      const root = document.querySelector('#app');
+      const shell = mountShell({
+        root,
+        commands: {getState: () => structuredClone(initial)},
+        pinGate: {isUnlocked: () => true, lock() {}},
+        commerce: {getView: () => pending},
+      });
+      shell.render();
+      shell.show('adult');
+      const input = root.querySelector('input');
+      input.value = 'offener Erwachsenenentwurf';
+      release({mode: 'inactive', head: null, accounts: {}, jobs: [], selection: [], control: null});
+      await pending;
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      const result = {
+        sameNode: input === root.querySelector('input'),
+        value: root.querySelector('input')?.value,
+        adultVisible: root.querySelector('.adult-layout') !== null,
+      };
+      shell.destroy();
+      return result;
+    }, {initial: state, selectedProfileId: profileId});
+    assert.deepEqual(result, {
+      sameNode: true, value: 'offener Erwachsenenentwurf', adultVisible: true,
+    });
+  } finally {
+    await harness.close();
+  }
+});
+
+test('activation preview pairs its visible current state with the confirmed ticket', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page} = await harness.newDevice({viewport: {width: 1280, height: 900}});
+  try {
+    await page.goto(harness.baseUrl);
+    await setup(page);
+    const oldState = await productState(page);
+    const current = (await earnedState(oldState)).state;
+    const binding = {accountId: 'a1', folderId: 'f1', descriptorFileId: 'df1', datasetId: 'd1'};
+    oldState.binding = binding;
+    current.binding = binding;
+    await page.evaluate(({stale, fresh}) => {
+      window.__activationTicket = null;
+      return import('/src/trainer/ui/purchases.js').then(({renderCommerceSettings}) => {
+        const root = document.createElement('section');
+        document.querySelector('#app').replaceChildren(root);
+        const commerce = {
+          previewActivation: async () => ({
+            ticket: {stateHash: 'fresh-ticket'}, previewState: {ledger: fresh.ledger},
+          }),
+          activate: async (ticket) => { window.__activationTicket = ticket; },
+        };
+        const render = () => renderCommerceSettings({
+          root, state: stale, commerce, isUnlocked: () => true, onRefresh: render,
+        });
+        render();
+      });
+    }, {stale: oldState, fresh: current});
+    await page.getByRole('button', {name: 'Daten für Figuren und Käufe aktualisieren'}).click();
+    const preview = page.locator('[data-commerce-preview]');
+    await preview.waitFor();
+    assert.match(await preview.innerText(), /Ada: 1600 Lernpunkte/);
+    await page.getByRole('button', {name: 'Aktualisierung jetzt durchführen'}).click();
+    assert.deepEqual(await page.evaluate(() => window.__activationTicket), {stateHash: 'fresh-ticket'});
+  } finally {
+    await harness.close();
+  }
+});
+
 test('earned points buy through the real service and survive reopen, offline use, stale preview and lost response', {timeout: 180_000}, async () => {
   await mkdir(resultsDirectory, {recursive: true});
   const harness = await createTrainerHarness();
@@ -238,11 +359,22 @@ test('earned points buy through the real service and survive reopen, offline use
     }
     await page.getByRole('button', {name: 'Kauf verbindlich bestätigen'}).click();
     await page.getByText('Der Kauf ist bestätigt.', {exact: true}).waitFor({timeout: 30_000});
+    assert.equal(await page.evaluate(() => document.activeElement?.isConnected === true), true);
+    assert.equal(await page.evaluate(() => document.activeElement?.closest('.commerce-tabs') !== null), true);
     assert.match(await page.locator('.commerce-balance').innerText(), /1400 Verfügbare Punkte/);
     assert.equal(project((await productState(page)).ledger).profiles[earned.profileId].points, 1600);
     await page.locator('[data-stage="2"]').getByRole('button', {name: 'Diese Form auswählen'}).click();
+    await page.locator('[data-stage="2"]').getByRole('button', {name: 'Ausgewählt'}).waitFor({timeout: 5_000});
+    assert.equal(await page.evaluate(() => document.activeElement?.isConnected === true), true);
+    assert.equal(await page.evaluate(() => document.activeElement?.closest('.commerce-tabs') !== null), true);
     await page.getByRole('button', {name: 'Meine Figur', exact: true}).click();
     await page.locator('[data-selected-purchase-figure] img[src$="dragon-stage-2.png"]').waitFor();
+    const dragonCard = page.locator('.commerce-card').filter({
+      has: page.getByRole('heading', {name: 'Einfacher Drache', exact: true}),
+    });
+    const selectBaseDragon = dragonCard.getByRole('button', {name: 'Grundform auswählen'});
+    await selectBaseDragon.waitFor();
+    assert.equal(await selectBaseDragon.isEnabled(), true);
     await page.screenshot({path: resolve(resultsDirectory, 'desktop-owned.png'), fullPage: true});
     await page.locator('[data-selected-purchase-figure]').screenshot({path: resolve(resultsDirectory, 'desktop-selected-figure.png')});
 
@@ -286,6 +418,8 @@ test('earned points buy through the real service and survive reopen, offline use
     await reopened.getByText('Der Kauf wurde erneut geprüft.', {exact: true}).waitFor({timeout: 30_000});
     assert.match(await reopened.locator('.commerce-balance').innerText(), /1000 Verfügbare Punkte/);
     await reopened.locator('[data-stage="3"]').getByRole('button', {name: 'Diese Form auswählen'}).click();
+    await reopened.locator('[data-stage="3"]').getByRole('button', {name: 'Ausgewählt'}).waitFor({timeout: 5_000});
+    assert.equal(await reopened.evaluate(() => document.activeElement?.isConnected === true), true);
     await reopened.getByRole('button', {name: 'Meine Figur', exact: true}).click();
     await reopened.locator('[data-selected-purchase-figure] img[src$="dragon-stage-3.png"]').waitFor();
 
