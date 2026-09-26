@@ -19,3 +19,11 @@ Der technische Kaufservice ist noch nicht aus der Produktoberfläche erreichbar.
 ## Nächster Schritt
 
 Ergebnis der Task-3-Nachprüfung lesen und notwendige Korrekturen gezielt umsetzen. Danach Tasks 4–6 gemäß Plan und Desktop-Übergabe. Der aktuelle Auftrag erlaubt Fortsetzung und Sicherung auf dem vorhandenen Entwicklungszweig; kein Merge nach `main`, kein Anbieterwechsel und keine Veröffentlichung.
+
+## Abgeschlossener Task-3-Schritt
+
+Die unabhängige erste Nachprüfung bestätigte R3-1 bis R3-3 und fand konkrete Lücken im Testnachweis R3-4. Commit `b6abb4e` ergänzt ausschließlich Recoverytests: Teiluploads, verlorene Einzeluploadantwort, echte Snapshot-ETag-Bindung und fehlende Netzmutation nach Speicherfehler. Mutation RED 0/1, GREEN 1/1; final 57/57 Recoverytests bestanden. Der vollständige Bonus-/Zweitkauf-Neustart bestätigt 420 verdient, 400 ausgegeben, 20 verfügbar.
+
+[Fixbericht](../reports/2026-09-26-persistent-purchases-task3-fix2.md) und [unabhängige Nachprüfung](../reports/2026-09-26-persistent-purchases-task3-fix2-review.md) schließen den Befund. Keine offene relevante Task-3-Beanstandung; Gesamtpaket- und reale Geräteprüfung bleiben offen. Freigabecheckpoint `8b0a6d0` ist die Basis für Task 4.
+
+Task 4 läuft mit GPT-5.6 Sol/hoch. Task 5 wird ausschließlich lesend vorbereitet, bis Task 4 unabhängig geprüft ist. Lokale Koordinationsdateien sind weiterhin nur Hilfsmittel; die versionierten Berichte sind der portable Nachweis.
