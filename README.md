@@ -5,8 +5,8 @@ Ein Deutsch-Englisch-Vokabeltrainer für Kinder von **10 bis 13 Jahren, Klasse 4
 **Stand vom 27. September 2026:** Die App verbindet den Vokabeltrainer mit
 profilgetrenntem Guthaben, dauerhaften Käufen und den Bereichen „Meine Figur“,
 „Entwicklung“ und „Shop“. Vier bestätigte Drachenformen sind integriert.
-Die abschließende Prüfung läuft; das Paket ist noch nicht abschließend
-freigegeben. Aktuelle Ergebnisse und nächste Schritte stehen in
+Automatisierte Prüfungen und unabhängige Abschlussreviews sind bestanden.
+Prüfbelege, offene Geräteabnahmen und nächste Schritte stehen in
 [ARBEITSSTAND.md](ARBEITSSTAND.md) und der
 [Übergabe](docs/handoffs/2026-09-27-persistent-purchases-abschluss.md).
 

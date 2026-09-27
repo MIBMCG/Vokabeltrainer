@@ -2,13 +2,13 @@
 
 Stand: **27.09.2026**.
 
-Version 1 und die Überarbeitung A1–C2 bleiben die Produktbasis. Tasks 1–5 des bestätigten Kaufplans sind implementiert und unabhängig
-geprüft. Aus Task 5 bleibt ein kleiner Tastaturfokusbefund für die
-Abschlussprüfung offen. Task 6 läuft: 499/499 Node-Tests bestanden; im jüngsten
-vollständigen Browserlauf bestanden 38/39 Fälle. Der Wiederanmeldetest I3
-meldet einen wiederholten Upload und wird gezielt untersucht. Eine endgültige
-Freigabe, der Abschlusscommit und der bestätigte Abschlusspush stehen noch aus.
-Prüfbelege, Commitgrenzen und das spätere Reviewurteil stehen zentral im
+Version 1 und die Überarbeitung A1–C2 bleiben die Produktbasis. Das bestätigte Kaufpaket (Tasks 1–6) ist umgesetzt und unabhängig geprüft.
+Alle sechs Abschlussbefunde sind geschlossen. Auf Produktstand `1e29ac3`
+bestanden frisch 506/506 Node-Tests und 43/43 Browserfälle; die abschließende
+Nachprüfung bewertet Spec und Qualität mit PASS. Der Produktcommit ist auf
+GitHub exakt bestätigt. Die nachfolgende Dokumentation ergänzt Prüfbelege,
+Bedienungsanleitung und portable Übergabe auf demselben Entwicklungszweig.
+Prüfbelege, Commitgrenzen und Reviewurteile stehen zentral im
 [Abschlussbericht](docs/reports/2026-09-27-persistent-purchases-final.md).
 
 Die vier bestätigten Drachenquellen decken nur die erste Reihe ab. **72 weitere
@@ -89,7 +89,7 @@ vermeintlichen Reparatur löschen.
 > Arbeite im Repository MIBMCG/Vokabeltrainer auf codex/vokabeltrainer-v1
 > weiter. Lies AGENTS.md, ARBEITSSTAND.md und die dort verlinkte aktuelle
 > Übergabe. Prüfe Branch, Remote und lokale Änderungen; erhalte fremde Arbeit.
-> Tasks 1–5 sind implementiert; Task 6 mit Abschlussprüfung und Push läuft.
+> Das Kaufpaket Tasks 1–6 ist abgeschlossen und auf dem Entwicklungszweig gesichert.
 > Maßgeblich ist docs/reports/2026-09-27-persistent-purchases-final.md.
 > Bestätigte R-/E-/U-/AV-/EV-Entscheidungen nicht erneut aufrollen.
 > Neue Lernfakten bleiben v2, lokaler Speicher ist Version 3, aktivierte

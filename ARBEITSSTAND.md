@@ -3,12 +3,12 @@
 Stand: **27.09.2026**. Arbeitszweig:
 `codex/vokabeltrainer-v1`.
 
-Version 1 und die Überarbeitung A1–C2 bleiben die Produktbasis. Tasks 1–5 des bestätigten Kaufplans sind implementiert und unabhängig
-geprüft. Aus Task 5 bleibt ein kleiner Tastaturfokusbefund für die
-Abschlussprüfung offen. Task 6 läuft: 499/499 Node-Tests bestanden; im jüngsten
-vollständigen Browserlauf bestanden 38/39 Fälle. Der Wiederanmeldetest I3
-meldet einen wiederholten Upload und wird gezielt untersucht. Eine endgültige
-Freigabe, der Abschlusscommit und der bestätigte Abschlusspush stehen noch aus.
+Version 1 und die Überarbeitung A1–C2 bleiben die Produktbasis. Das bestätigte Kaufpaket (Tasks 1–6) ist umgesetzt und unabhängig geprüft.
+Alle sechs Abschlussbefunde sind geschlossen. Auf Produktstand `1e29ac3`
+bestanden frisch 506/506 Node-Tests und 43/43 Browserfälle; die abschließende
+Nachprüfung bewertet Spec und Qualität mit PASS. Der Produktcommit ist auf
+GitHub exakt bestätigt. Die nachfolgende Dokumentation ergänzt Prüfbelege,
+Bedienungsanleitung und portable Übergabe auf demselben Entwicklungszweig.
 Die ausführlichen Belege stehen im
 [Abschlussbericht](docs/reports/2026-09-27-persistent-purchases-final.md).
 
@@ -20,14 +20,14 @@ Die ausführlichen Belege stehen im
 | 2 – Transport und Einrichtung | abgeschlossen und unabhängig freigegeben | Gebundener Drive-Transport, persistierte Reservierungen und eindeutige Configinstallation. [Bericht](docs/reports/2026-09-21-persistent-purchases-task2-implementation.md), [Review](docs/reports/2026-09-21-persistent-purchases-task2-fix2-review.md) |
 | 3 – Kaufdienst und Recovery | abgeschlossen und unabhängig freigegeben | `storageVersion:3`, atomare Migration, persistierte Aufträge, Wiederaufnahme und unveränderte Kandidaten/IDs. [Bericht](docs/reports/2026-09-21-persistent-purchases-task3-implementation.md), [letzte Nachprüfung](docs/reports/2026-09-26-persistent-purchases-task3-fix2-review.md) |
 | 4 – Produktintegration, Restore und Backup | abgeschlossen und unabhängig freigegeben | Format-3-Aktivierung, dauerhafte Entdeckung vor Download, autoritativer Kopf nach Reconcile, v3-Sicherungsclosure und Offline-Quellcheckpoint. [Bericht](docs/reports/2026-09-26-persistent-purchases-task4-implementation.md), [letzte Nachprüfung](docs/reports/2026-09-26-persistent-purchases-task4-fix2-review.md) |
-| 5 – Bedienoberfläche und Laufzeit | scoped PASS mit Minor | Implementierung `4eac721`, Fix `ae9ef27`, Bericht/Kopf `bdb65ad`; alle Important-Befunde geschlossen, Minor: Fokus nach „Stale → Abbrechen“ |
-| 6 – Gesamtprüfung und Übergabe | läuft | 499/499 Node-Tests; Browser 38/39, I3-Wiederanmeldung in Diagnose; Gesamtprüfung und Abschlusspush offen |
+| 5 – Bedienoberfläche und Laufzeit | abgeschlossen und unabhängig geprüft | Drei Figurenbereiche, echte Kaufaktionen, aktuelle Sicherung und profilgetrennte Auswahl; sämtliche Important- und Minor-Befunde geschlossen |
+| 6 – Gesamtprüfung und Übergabe | abgeschlossen | 506/506 Node, 43/43 Browser auf 1e29ac3; alle RF-Befunde geschlossen; Produktstand exakt auf GitHub bestätigt, Dokumentationsabschluss folgt auf demselben Zweig |
 
 Die historischen Testzahlen 379/389/403/471/489/492 gehören zu den jeweils
 datierten Zwischenberichten. Sie sind kein Ersatz für den frischen finalen
 Task-6-Gesamtlauf.
 
-## Tatsächlicher Daten- und Kaufstand nach Task 5
+## Tatsächlicher Daten- und Kaufstand
 
 - Neue Lernereignisse und Pakete bleiben im Fachformat v2. Unveränderte
   v1/v2-Objekte, Upload-IDs und Hashes werden nicht umgeschrieben.
@@ -61,7 +61,7 @@ Task-6-Gesamtlauf.
   gestalten“. Verfügbares Guthaben, Besitz und Auswahl werden je Profil aus dem
   bestätigten Ledger angezeigt; unklare Kaufantworten lassen sich mit „Kauf
   fortsetzen“ wiederaufnehmen.
-- Der Service Worker verwendet Cacheversion `v24`. Server-Allowlist und
+- Der Service Worker verwendet Cacheversion `v25`. Server-Allowlist und
   Pflicht-Precache enthalten die neuen Laufzeitmodule und vier Drachenbilder;
   Google-Antworten und Tokens werden nicht gecacht.
 
@@ -83,11 +83,6 @@ zusätzlicher Fortschrittsdarstellung bleibt Folgeumfang. Daraus darf keine
 vollständige EV05-Galerie oder visuelle Abnahme abgeleitet werden.
 
 ## Noch offen
-
-- I3-Wiederanmeldetest diagnostizieren und gegebenenfalls korrigieren;
-- unabhängige Gesamtprüfung einschließlich Minor-Fokusrest, Dokumentations-
-  und Diffprüfung;
-- Abschlusscommit und bestätigter Push auf den bestehenden Entwicklungszweig;
 
 - realer Produktabgleich mit Google Drive auf zwei physischen Geräten;
 - iPhone-/iPad-, Safari- und Home-Bildschirm-Abnahme einschließlich
@@ -115,11 +110,14 @@ damaligen nächsten Schritte gelten nicht als aktuelle Arbeitsanweisung.
 
 ## Nächster Schritt
 
-1. I3-Diagnose abschließen und das vollständige Paket unabhängig prüfen lassen.
-2. Relevante Befunde in einer gemeinsamen Fixwelle beheben und gezielt nachprüfen.
-3. Finale Prüfbelege und Übergabe aktualisieren, committen und den bestehenden
-   Zweig pushen; lokalen HEAD und Remote-SHA exakt vergleichen.
+1. Am bestätigten Bild- und Galeriekonzept ansetzen: 72 übrige Motive und
+   responsive Varianten produzieren, anschließend vollständige EV05-Galerie
+   integrieren und visuell prüfen.
+2. Das integrierte Produkt auf zwei realen Geräten einschließlich iPhone/iPad
+   prüfen; die historische Probe 10 nicht unverändert wiederholen.
+3. Hosting/HTTPS und allgemeine Lizenz nur im dafür bestätigten Umfang angehen.
 
 Keine weitere allgemeine Startfreigabe verlangen. Merge nach `main`, Hosting,
-Cloudkontenänderungen und die reale Geräteabnahme sind durch diesen Ablauf nicht
-automatisch autorisiert.
+Cloudkontenänderungen und reale Geräteabnahme sind durch den Abschluss dieses
+Kaufpakets nicht automatisch autorisiert. Einstieg über die
+[aktuelle Übergabe](docs/handoffs/2026-09-27-persistent-purchases-abschluss.md).

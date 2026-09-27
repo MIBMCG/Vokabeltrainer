@@ -1,16 +1,11 @@
 # Vokabeltrainer benutzen
 
-**Stand vom 27.09.2026:** Task 5 hat „Meine Figur“, „Entwicklung“ und „Shop“
-in die Produktoberfläche eingebunden. Fixrunde 1 korrigiert berichtsgemäß die
-fünf Reviewbefunde; 127 Node-, 6 Kaufbrowser- und 3
-Offline-/Updatebrowserfälle sind grün. Die scoped Nachprüfung ist PASS mit
-einem Minor zur Fokusrückgabe nach „Stale → Abbrechen“. Die zwei Fehler des
-vollständigen Task-6-Browserlaufs sind gezielt 2/2 grün korrigiert; der
-vollständige Wiederholungslauf steht noch aus. Diese Anleitung ist deshalb noch
-keine abschließende Freigabe- oder Gerätebehauptung. Maßgeblich werden nach dem
-Gate der [Arbeitsstand](../ARBEITSSTAND.md), der
+**Stand vom 27.09.2026:** Die Anleitung beschreibt Lernen, Verwaltung,
+Google-Abgleich, Sicherungen sowie „Meine Figur“, „Entwicklung“ und „Shop“.
+Den aktuellen Prüfstand und offene Arbeiten dokumentieren der
+[Arbeitsstand](../ARBEITSSTAND.md), der
 [Abschlussbericht](reports/2026-09-27-persistent-purchases-final.md) und die
-[Abschlussübergabe](handoffs/2026-09-27-persistent-purchases-abschluss.md).
+[Übergabe](handoffs/2026-09-27-persistent-purchases-abschluss.md).
 Reale Produktprüfungen mit Google Drive auf zwei physischen Geräten sowie
 iPhone/iPad folgen getrennt.
 
@@ -113,8 +108,9 @@ ausgewählte Kinderprofil.
 
 Nur Formen mit einem tatsächlich vorhandenen Bild können gekauft werden.
 Fehlende Motive bleiben sichtbar als **Bild folgt** und sind nicht kaufbar.
-Der aktuelle Zwischenstand enthält ausschließlich die vier bestätigten
-Drachenbilder. Die übrigen 72 Motive, kleinere responsive Bildvarianten und die
+Neben den vorhandenen Grundfiguren sind die vier bestätigten Drachenbilder
+als erste vollständige Entwicklungsreihe eingebunden. Die übrigen 72 Motive,
+kleinere responsive Bildvarianten und die
 vollständige Galeriegestaltung gehören zum Folgeumfang. Dazu zählen ein weiter
 ausgebauter Wechsel zwischen Klassisch und Entwicklung und zusätzliche
 Fortschrittsdarstellung; aus dem aktuellen Paket keine vollständige

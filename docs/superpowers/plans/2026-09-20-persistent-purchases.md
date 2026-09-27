@@ -1,8 +1,10 @@
 # Dauerhafte Käufe: Implementierungsplan
 
-**Stand 27.09.2026:** Tasks 1–5 sind implementiert und unabhängig geprüft;
-der Task-5-Fokusrest wird in der Gesamtprüfung nachgeführt. Task 6 läuft.
-Prüfbelege, offene Befunde und späterer Pushnachweis stehen zentral im
+**Stand 27.09.2026:** Tasks 1–6 sind umgesetzt und geprüft. Frisch 506/506
+Node-Tests und 43/43 Browserfälle auf Produktcommit `1e29ac3`; alle RF-Befunde
+der unabhängigen Gesamt-/Nachprüfungen sind geschlossen. Produktstand auf dem
+Entwicklungszweig exakt mit GitHub verglichen. Prüfbelege, Gitgrenzen und offene
+Bild-/Gerätearbeiten stehen im
 [Abschlussbericht](../../reports/2026-09-27-persistent-purchases-final.md).
 Ältere Pausen-, Aufgaben- und Zwischenstände sind historische Vorgeschichte.
 
@@ -118,10 +120,10 @@ Netzwerkfehler und Integritätsfehler tragen maschinenlesbare `code`-Werte über
 
 **Files:** `ARBEITSSTAND.md`, `START-HIER.md`, `AGENTS.md`, `README.md`, `docs/{ANFORDERUNGEN,ARCHITEKTUR,PRODUKT-DATENFORMAT,KAUFPROTOKOLL}.md`, neuer Bericht und Übergabe unter `docs/reports/` und `docs/handoffs/`.
 
-- [ ] Gesamte geänderte Funktion mit `npm test`, Produkt-/Kaufbrowserfällen und `npm run check:docs`, `git diff --check` frisch prüfen. Unveränderte reale Probe nicht erneut anfordern.
-- [ ] Unabhängige Gesamtprüfung des vollständigen Paketdiffs durch GPT-6 Astra/hoch; relevante Befunde korrigieren und gezielt nachprüfen.
-- [ ] Umgesetzte Bedienung, Testergebnisse, offene Bildproduktion und reale Geräte-/Wiederaufnahmeabnahme getrennt dokumentieren. Kein grüner Unit-Test ersetzt Drive-/Apple-Nachweis.
-- [ ] Explizit eigene Dateien committen und im bestehenden beauftragten Entwicklungszweig pushen; anschließend Remote-SHA mit lokalem HEAD vergleichen. Kurze Anleitung und überprüfbaren Stand an den Nutzer zurückgeben, keine weitere Startfrage.
+- [x] Gesamte geänderte Funktion mit `npm test`, Produkt-/Kaufbrowserfällen und `npm run check:docs`, `git diff --check` frisch prüfen. Unveränderte reale Probe nicht erneut anfordern.
+- [x] Unabhängige Gesamtprüfung des vollständigen Paketdiffs durch GPT-6 Astra/hoch; relevante Befunde korrigieren und gezielt nachprüfen.
+- [x] Umgesetzte Bedienung, Testergebnisse, offene Bildproduktion und reale Geräte-/Wiederaufnahmeabnahme getrennt dokumentieren. Kein grüner Unit-Test ersetzt Drive-/Apple-Nachweis.
+- [x] Explizit eigene Dateien committen und im bestehenden beauftragten Entwicklungszweig pushen; anschließend Remote-SHA mit lokalem HEAD vergleichen. Kurze Anleitung und überprüfbaren Stand an den Nutzer zurückgeben, keine weitere Startfrage.
 
 ## Selbstprüfung des Plans
 

@@ -2,8 +2,8 @@
 
 Stand: 27.09.2026. B1–C1 ergänzten die kompatiblen v2-Lernverträge. Das
 Kaufpaket ergänzt lokalen Speicher sowie wirtschaftliche Autoritäts- und
-Backupgrenzen um Version 3; neue Lernfakten bleiben v2. Tasks 1–5 sind
-implementiert, die endgültige Prüfung läuft. Siehe
+Backupgrenzen um Version 3; neue Lernfakten bleiben v2. Das Kaufpaket ist
+implementiert und abschließend automatisiert sowie unabhängig geprüft. Siehe
 [Abschlussbericht](reports/2026-09-27-persistent-purchases-final.md),
 [bestätigten Entwurf](superpowers/specs/2026-09-16-vokabeltrainer-design.md),
 [Überarbeitung](design/2026-09-19-ueberarbeitung.md),

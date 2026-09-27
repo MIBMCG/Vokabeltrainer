@@ -3,8 +3,8 @@
 ## Aktueller Umsetzungsnachweis
 
 Der [Entwurf für dauerhafte Käufe](superpowers/specs/2026-09-20-persistent-purchases-design.md)
-ist bestätigt und in Tasks 1–5 implementiert. Die endgültige Task-6-Prüfung
-läuft. Den überprüfbaren Stand mit Tests, Review und Gitgrenzen enthält der
+ist bestätigt und im Kaufpaket Tasks 1–6 umgesetzt und geprüft.
+Den überprüfbaren Stand mit Tests, Review und Gitgrenzen enthält der
 [Abschlussbericht](reports/2026-09-27-persistent-purchases-final.md).
 
 Die fachlichen Entscheidungen bleiben unverändert: Lernpunkte entstehen mit 10

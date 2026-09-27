@@ -1,12 +1,12 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
 **Aktueller Stand am 27.09.2026:** Version 1 und die Überarbeitung A1–C2
-sind abgeschlossen. Tasks 1–5 des bestätigten Kaufplans sind implementiert und unabhängig
-geprüft. Aus Task 5 bleibt ein kleiner Tastaturfokusbefund für die
-Abschlussprüfung offen. Task 6 läuft: 499/499 Node-Tests bestanden; im jüngsten
-vollständigen Browserlauf bestanden 38/39 Fälle. Der Wiederanmeldetest I3
-meldet einen wiederholten Upload und wird gezielt untersucht. Eine endgültige
-Freigabe, der Abschlusscommit und der bestätigte Abschlusspush stehen noch aus.
+sind abgeschlossen. Das bestätigte Kaufpaket (Tasks 1–6) ist umgesetzt und unabhängig geprüft.
+Alle sechs Abschlussbefunde sind geschlossen. Auf Produktstand `1e29ac3`
+bestanden frisch 506/506 Node-Tests und 43/43 Browserfälle; die abschließende
+Nachprüfung bewertet Spec und Qualität mit PASS. Der Produktcommit ist auf
+GitHub exakt bestätigt. Die nachfolgende Dokumentation ergänzt Prüfbelege,
+Bedienungsanleitung und portable Übergabe auf demselben Entwicklungszweig.
 Maßgeblich sind [Arbeitsstand](ARBEITSSTAND.md) und
 [Abschlussbericht](docs/reports/2026-09-27-persistent-purchases-final.md).
 
@@ -59,8 +59,8 @@ Käufe. Fixrunde 1 korrigiert berichtsgemäß den Rootwechsel, die gemeinsame Ba
 von sichtbarer Vorschau und Ticket, die bestätigte Restoreauswahl einschließlich
 Leerung, den Grundformstatus und die Portdokumentation. Vier Drachenformen sind
 in Laufzeit und Offlinecache eingebunden. Diese funktionale Anbindung ist keine
-vollständig ausgelieferte EV05-Galerie. Die scoped Nachprüfung ist PASS mit dem
-verbliebenen Minor zur Fokusrückgabe nach „Stale → Abbrechen“.
+vollständig ausgelieferte EV05-Galerie. Die Abschlussnachprüfungen schließen auch den Fokusrest und sämtliche
+Integrationsbefunde; die Belege stehen im Abschlussbericht.
 
 Alle bisherigen Nutzerentscheidungen sind bereits bestätigt. Keine erneute
 Entwurfs- oder pauschale Startfreigabe verlangen. Automatisierte Tests verwenden

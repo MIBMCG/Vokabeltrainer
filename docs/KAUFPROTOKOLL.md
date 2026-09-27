@@ -1,11 +1,9 @@
-# Kaufprotokoll: Verträge der reinen Kernmodule
+# Kaufprotokoll: Verträge für Kern, Synchronisation und Oberfläche
 
-**Aktueller Vertragsstand vom 27.09.2026:** Tasks 1–4 sind implementiert und
-unabhängig freigegeben. Task 5 einschließlich Fixrunde 1 ist scoped PASS mit
-einem verbliebenen Minor zur Fokusrückgabe nach „Stale → Abbrechen“; alle
-Important-Befunde sind geschlossen. Task 6 läuft, die vollständige
-Abschlussprüfung und Veröffentlichung stehen noch aus. Der aktuelle Nachweis
-steht im [fortzuschreibenden Abschlussbericht](reports/2026-09-27-persistent-purchases-final.md).
+**Aktueller Vertragsstand vom 27.09.2026:** Das Kaufpaket Tasks 1–6 ist
+implementiert und unabhängig geprüft. Die Abschlusskorrekturen schließen alle
+sechs Integrations-/Prüfbefunde. Aktuelle Tests und Gitnachweise stehen im
+[Abschlussbericht](reports/2026-09-27-persistent-purchases-final.md).
 
 Dieses Dokument bindet Kern, Transport, Service, Speicher, Restore und
 Produktoberfläche an die öffentlichen Formen aus `src/trainer/purchases/`.

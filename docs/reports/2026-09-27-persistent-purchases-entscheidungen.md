@@ -1,6 +1,6 @@
 # Dauerhafte Käufe – dokumentierte Ausführungsentscheidungen
 
-Stand: **27.09.2026**. Dieser Bericht überträgt die 14 vorhandenen
+Stand: **27.09.2026**. Dieser Bericht überträgt die 15 vorhandenen
 `Ruling:`-Einträge aus dem Fortschrittsledger in zeitlicher Reihenfolge. Er
 ergänzt keine Produktentscheidung. Anforderungen, Kontenmodell, Kostenmodell,
 Bildumfang und reale Abnahmegrenzen bleiben unverändert.
@@ -167,6 +167,22 @@ Bildumfang und reale Abnahmegrenzen bleiben unverändert.
   Restore-Regression sowie unabhängige Nachprüfung. Eine zu breite Korrektur
   könnte die strikte Autorität des bestätigten Kopfes oder die
   Einzelschreibergrenze verletzen; beide Grenzen bleiben deshalb unverändert.
+
+## 15. Zwei belegte Restverträge gezielt vervollständigen
+
+- **Entscheidung:** Die nach der scoped Nachprüfung belegten Restfälle RF-4
+  (direkter Control-Resume vor bestätigter Einrichtung) und RF-6 (zu frühe
+  Pollabschlussassertion) werden in einem eng begrenzten Nachtrag korrigiert.
+- **Grund:** Beide gehören ausdrücklich zum ursprünglichen bestätigten Auftrag.
+  Konkrete Reproduktionen und Abschlusskriterien liegen vor; eine neue
+  Produktentscheidung oder Nutzerfreigabe ist nicht erforderlich. Die lokale
+  SDD-Vorgabe einer einzigen finalen Fixwelle wird dafür bewusst überschritten,
+  um die höherrangige Vorgabe zur vollständigen Erledigung autorisierter Arbeit
+  zu erfüllen und keinen wissentlich unvollständigen Abschluss zu behaupten.
+- **Kosten/Risiko bei Irrtum:** Ein zusätzlicher enger Umsetzungs- und Prüfpass.
+  Keine zweite Gesamtprüfung des ganzen Zweigs; die Grenze bleibt bei diesen
+  beiden Befunden und ihren konkreten Änderungen. Eine Ausweitung darüber
+  hinaus würde unnötige Zeit und Modellkosten verursachen.
 
 ## Unveränderte Grenzen
 

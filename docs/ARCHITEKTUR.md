@@ -2,9 +2,9 @@
 
 ## Aktueller Produktstand
 
-Version 1 und die Überarbeitung A1–C2 bleiben die Produktbasis. Die Tasks 1–5
-des bestätigten Kaufplans sind implementiert; Task 6 mit endgültiger Prüfung
-und Push läuft. Der aktuelle Nachweis steht im
+Version 1 und die Überarbeitung A1–C2 bleiben die Produktbasis. Das bestätigte
+Kaufpaket Tasks 1–6 ist implementiert, geprüft und auf dem Entwicklungszweig
+gesichert. Der aktuelle Nachweis steht im
 [Abschlussbericht](reports/2026-09-27-persistent-purchases-final.md).
 
 Die Anwendung bleibt eine statische PWA ohne eigenen kostenpflichtigen Server.
@@ -21,8 +21,9 @@ Commands, ProductSync und RestoreService mit den Modulen unter
 - `bootstrap.js` reserviert und speichert den vollständigen Einrichtungsauftrag,
   bevor Ordner, Config oder Pointer geschrieben werden.
 - `service.js` hält Kauf-, Aktivierungs- und Restoreaufträge im atomaren
-  Produktzustand. Er verwendet Commands als einzigen Schreiber und besitzt
-  keine zweite Queue oder Zustandskopie.
+  Produktzustand. Sämtliche dauerhaften Änderungen laufen über Commands.
+  Die lokal geprüfte Historie ist an Kopf, Binding und Config gekoppelt;
+  ein externer Sync/Restore wird auch von derselben Serviceinstanz übernommen.
 - `integration.js` stellt die schmalen Ports zwischen Kaufdienst, ProductSync
   und Restore bereit. Die Ports sind lazy und nicht rekursiv: Vorbereitung
   erzeugt nur einen vollständigen Publikationsentwurf; der aufrufende Dienst
@@ -44,9 +45,16 @@ wirtschaftliche Ansicht. Die bestätigte Restoreauswahl wird erst nach
 bestätigtem gemeinsamem Kopf und `authoritativeState` gegen dessen Konten
 geprüft und vollständig ersetzt; eine leere Auswahl leert den Zielstand.
 
-Der Service Worker verwendet Cacheversion `v24`; die Pflichtliste enthält die
+Der Service Worker verwendet Cacheversion `v25`; die Pflichtliste enthält die
 neuen Laufzeitmodule und vier Drachenbilder, aber keine Google-Antworten oder
 Tokens.
+
+Der Backupdownload erfasst beim Klick einen frischen Commands-Snapshot und
+verwendet ihn gemeinsam für Epochenentscheidung und Export. Eine bewusste
+Auswahl bei Konflikten ist an die sichtbare Kopfmenge gebunden; Änderungen
+verlangen erneute Auswahl. Die bewahrte Erwachsenenansicht verliert dadurch
+keine fremden Eingaben. Die Einrichtungsgrenze gilt unmittelbar vor jeder
+abhängigen Controlpublikation, auch bei direktem Resume eines alten Auftrags.
 
 ## Gemeinsame Autorität
 
