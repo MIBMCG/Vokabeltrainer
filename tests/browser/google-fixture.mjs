@@ -112,7 +112,13 @@ export function createGoogleFixture() {
           assert.equal(metadata.mimeType, folderMime);
         }
         assert.match(metadata.id, /^file-\d+$/);
-        writes.push({id: metadata.id, duplicate: files.has(metadata.id)});
+        writes.push({
+          id: metadata.id,
+          duplicate: files.has(metadata.id),
+          kind: metadata.appProperties?.kind ?? value?.kind ?? (metadata.mimeType === folderMime ? 'folder' : null),
+          name: metadata.name ?? null,
+          packetId: metadata.appProperties?.packetId ?? value?.packetId ?? null,
+        });
         if (files.has(metadata.id)) return respond({error: {code: 409}}, 409);
         const normalized = {...metadata, parents: metadata.parents || ['root'], trashed: false,
           version: '1', etag: `"${metadata.id}-v1"`};
@@ -158,7 +164,7 @@ export function createGoogleFixture() {
         }));
         file.metadata.version = String(Number(file.metadata.version) + 1);
         file.metadata.etag = `"${v2FileId}-v${file.metadata.version}"`;
-        writes.push({id: v2FileId, pointer: true});
+        writes.push({id: v2FileId, duplicate: false, kind: 'pointer', name: file.metadata.name, packetId: null, pointer: true});
         const updated = {id: v2FileId, version: file.metadata.version, etag: file.metadata.etag,
           properties: body.properties};
         if (controls.loseNextPointerResponse) {

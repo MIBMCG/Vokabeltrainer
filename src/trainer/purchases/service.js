@@ -38,6 +38,7 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
   }
   let tail=Promise.resolve();
   let lastHistory=null;
+  let lastHistoryContext=null;
   let status={phase:'idle',code:null,message:null,operationId:null};
 
   function publish(next) {
@@ -170,6 +171,18 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     };
   }
 
+  function historyContext(commerce) {
+    return canonical({
+      binding:commerce.binding,configRef:commerce.configRef,config:commerce.config,head:commerce.head,
+    });
+  }
+
+  function rememberHistory(history,commerce=current().commerce) {
+    lastHistory=history;
+    lastHistoryContext=history===null?null:historyContext(commerce);
+    return history;
+  }
+
   async function preflightCandidate({candidate,uploads,history,binding}) {
     const local=new Map(uploads.map(entry=>[entry.ref.id,copy(entry.value)]));
     return readHistory({
@@ -186,7 +199,7 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
   async function refreshInternal() {
     let state=current();
     let commerce=state.commerce;
-    if(commerce.mode==='inactive' || commerce.config===null)return null;
+    if(commerce.mode==='inactive' || commerce.config===null)return rememberHistory(null,commerce);
     if((transport.binding!==undefined&&canonical(transport.binding)!==canonical(commerce.binding))
       ||(transport.descriptorHash!==undefined&&transport.descriptorHash!==commerce.config.descriptorHash)) {
       fail('binding','Der Laufzeittransport gehört zu einem anderen Konto oder Bestandsordner.');
@@ -198,6 +211,7 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     const head=pointerHead(snapshot);
     if(head===null) {
       if(commerce.mode==='active'||commerce.mode==='blocked')fail('history','Dem aktiven Kaufzustand fehlt der gemeinsame Kopf.');
+      rememberHistory(null,commerce);
       publish({phase:'ready',code:null,message:null,operationId:null});
       return null;
     }
@@ -211,7 +225,7 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
       },
       onProgress:(progress)=>publish({phase:'refreshing',code:null,message:JSON.stringify(progress),operationId:null}),
     });
-    lastHistory=history;
+    rememberHistory(history,{...commerce,head,cache:history.cache});
     const nextCommerce=copy(commerce);
     nextCommerce.head=copy(head);
     nextCommerce.cache=copy(history.cache);
@@ -268,14 +282,20 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
 
   async function loadCachedHistory() {
     const commerce=current().commerce;
-    if(commerce.head===null)return null;
+    if(commerce.head===null)return rememberHistory(null,commerce);
     const history=await readHistory({
       head:commerce.head,binding:commerce.binding,cache:commerce.cache,
       read:async()=>{throw new ProductError('network','Der bestätigte Besitz ist lokal nicht vollständig verfügbar.');},
       onProgress:()=>{},
     });
-    lastHistory=history;
-    return history;
+    return rememberHistory(history,commerce);
+  }
+
+  async function currentCachedHistory() {
+    const commerce=current().commerce;
+    if(commerce.head===null)return rememberHistory(null,commerce);
+    if(lastHistory===null||lastHistoryContext!==historyContext(commerce))return loadCachedHistory();
+    return lastHistory;
   }
 
   async function previewInternal({profileId,articleId}={}) {
@@ -536,6 +556,12 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
       await refreshInternal();
       state=current();
     }
+    const openSetup=operation==='initialize'&&state.commerce.setup!==null
+      &&state.commerce.setup.phase!=='confirmed'?state.commerce.setup:null;
+    if(openSetup!==null) {
+      await installSetup(openSetup.binding,openSetup.descriptorHash);
+      state=current();
+    }
     const coordinatedRestoreId=operation==='restore'?input?.restoreJobId:null;
     const blockingRestores=state.restoreJobs.filter(job=>job.id!==coordinatedRestoreId&&job.phase!=='activated');
     if(blockingRestores.length>0)fail('restore-pending','Eine ältere Wiederherstellung muss zuerst abgeschlossen werden.');
@@ -630,7 +656,7 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
   async function selectInternal({profileId,figureId,stage}={}) {
     if(typeof profileId!=='string'||typeof figureId!=='string'
       ||!Number.isSafeInteger(stage)||stage<1||stage>4)fail('invalid','Die Figurenauswahl ist ungültig.');
-    const history=lastHistory??await loadCachedHistory();
+    const history=await currentCachedHistory();
     const state=current();
     const account=history===null?null:economicForLedger(history,state).accounts?.[profileId];
     if(!account)fail('reference','Das Lernprofil ist nicht vorhanden.');
@@ -665,7 +691,7 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     confirm(input){return enqueue(()=>confirmInternal(input));},
     resume(operationId){return enqueue(()=>resumeInternal(operationId));},
     getStatus(){return copy(status);},
-    async getView(){if(lastHistory===null)await enqueue(loadCachedHistory);return view();},
+    async getView(){await enqueue(currentCachedHistory);return view();},
     select(input){return enqueue(()=>selectInternal(input));},
     prepareRestore(input){return enqueue(()=>prepareControl('restore',input));},
     confirmRestore(operationId){return enqueue(()=>sendControl(operationId,'restore'));},

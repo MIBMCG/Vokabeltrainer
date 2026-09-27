@@ -8,6 +8,7 @@ import {planSnapshotUploads, uploadVerified} from '../backup/transport.js';
 import {productStateHash} from '../commands.js';
 import {packBasis, verifyBasisRecord} from './basis.js';
 import {packProof} from './proof.js';
+import {rebuildAccounts} from './projection.js';
 import {readHistory} from './history.js';
 import {PURCHASE_APP} from './transport.js';
 import {assertCommerce, assertConfig} from './schema.js';
@@ -402,7 +403,7 @@ export function createCommerceIntegration({
       head: copy(head), cache: copy(history.cache),
     });
     next = await authoritativeState(next, history);
-    const accounts = history.projection.accounts;
+    const accounts = rebuildAccounts(project(next.ledger), history.projection.accounts);
     next.commerce.selection = next.commerce.selection.filter(({profileId, figureId, stage}) => {
       const account = accounts[profileId];
       return Boolean(account?.entitledFigureIds.includes(figureId)

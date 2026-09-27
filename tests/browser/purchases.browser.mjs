@@ -310,6 +310,37 @@ test('activation preview pairs its visible current state with the confirmed tick
   }
 });
 
+test('an unclear setup is the activation operation offered for explicit continuation', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page} = await harness.newDevice({viewport: {width: 1280, height: 900}});
+  try {
+    await page.goto(harness.baseUrl);
+    await setup(page);
+    const state = await productState(page);
+    state.binding = {accountId: 'a1', folderId: 'f1', descriptorFileId: 'df1', datasetId: 'd1'};
+    state.commerce.mode = 'migrating';
+    state.commerce.setup = {operationId: 'setup-recovery', phase: 'reconciling'};
+    state.commerce.control = {operationId: 'old-control', operation: 'initialize', phase: 'reserved'};
+    await page.evaluate((current) => {
+      window.__resumedCommerceOperation = null;
+      return import('/src/trainer/ui/purchases.js').then(({renderCommerceSettings}) => {
+        const root = document.createElement('section');
+        document.querySelector('#app').replaceChildren(root);
+        const commerce = {resume: async (operationId) => { window.__resumedCommerceOperation = operationId; }};
+        const render = () => renderCommerceSettings({
+          root, state: current, commerce, isUnlocked: () => true, onRefresh: render,
+        });
+        render();
+      });
+    }, state);
+
+    await page.getByRole('button', {name: 'Datenaktualisierung fortsetzen'}).click();
+    assert.equal(await page.evaluate(() => window.__resumedCommerceOperation), 'setup-recovery');
+  } finally {
+    await harness.close();
+  }
+});
+
 test('earned points buy through the real service and survive reopen, offline use, stale preview and lost response', {timeout: 180_000}, async () => {
   await mkdir(resultsDirectory, {recursive: true});
   const harness = await createTrainerHarness();
@@ -407,6 +438,8 @@ test('earned points buy through the real service and survive reopen, offline use
     await reopened.getByText('Die Kaufvorschau ist nicht mehr aktuell.', {exact: true}).waitFor();
     assert.equal((await productState(reopened)).commerce.jobs.length, 1);
     await reopened.getByRole('button', {name: 'Abbrechen'}).click();
+    assert.equal(await reopened.evaluate(() => document.activeElement?.isConnected === true), true);
+    assert.equal(await reopened.evaluate(() => document.activeElement?.closest('.commerce-tabs') !== null), true);
 
     await waitForOutbox(reopened, 0);
 

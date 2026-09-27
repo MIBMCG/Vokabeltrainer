@@ -147,8 +147,14 @@ export function renderBackup({root, state, restore, onDownload, isUnlocked = () 
       assertUnlocked(isUnlocked);
       ui.busy = true;
       exportButton.disabled = true;
-      const backup = await exportBackup(state, new Date().toISOString(), {
-        selectedEpochId: resolved.epochConflict ? ui.selectedEpochId || undefined : undefined,
+      const currentState = getState();
+      const currentResolved = resolveEpochs(currentState.ledger);
+      if (currentResolved.epochConflict && !currentResolved.heads.includes(ui.selectedEpochId)) {
+        ui.selectedEpochId = '';
+        throw new Error('Der aktuelle Datenstand hat mehrere offene Köpfe. Bitte wählen Sie den Sicherungsstand neu aus.');
+      }
+      const backup = await exportBackup(currentState, new Date().toISOString(), {
+        selectedEpochId: currentResolved.epochConflict ? ui.selectedEpochId : undefined,
       });
       assertUnlocked(isUnlocked);
       const day = backup.exportedAt.slice(0, 10);
@@ -160,7 +166,7 @@ export function renderBackup({root, state, restore, onDownload, isUnlocked = () 
     } finally {
       ui.busy = false;
       if (isUnlocked()) {
-        if (root.isConnected) renderBackup({root, state, restore, onDownload, isUnlocked, onRefresh, getState});
+        if (root.isConnected) renderBackup({root, state: getState(), restore, onDownload, isUnlocked, onRefresh, getState});
         else onRefresh?.();
       }
     }

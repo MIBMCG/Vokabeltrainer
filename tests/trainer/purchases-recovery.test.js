@@ -13,6 +13,8 @@ import {exportBackup,snapshotHash} from '../../src/trainer/backup/format.js';
 import {CURRENT_VERSION} from '../../src/trainer/model/versions.js';
 import {createCommerceIntegration} from '../../src/trainer/purchases/integration.js';
 import {createRestoreService} from '../../src/trainer/backup/restore.js';
+import {createPurchaseTransport} from '../../src/trainer/purchases/transport.js';
+import {purchasesHttpFixture} from './purchases-http-fixture.js';
 
 const CONFIG={
   version:1,kind:'purchase-config',binding:BINDING,descriptorHash:'a'.repeat(64),
@@ -123,6 +125,79 @@ async function openHarness({store,remote,ids=sequenceIds('purchase'),syncForComm
   const statuses=[];
   const service=createPurchaseService({commands,transport:remote,sync:syncForCommands(commands),now:()=>new Date('2026-09-21T10:00:00Z'),id:ids,onStatus:s=>statuses.push(s)});
   return {store,remote,commands,service,statuses};
+}
+
+async function actualCommerceAdapter(harness) {
+  const state=harness.commands.getState();
+  const descriptorHash=await digest(state.ledger.descriptor);
+  const config={...CONFIG,descriptorHash};
+  const configRef={id:'config-a',sha256:await digest(config)};
+  const next=structuredClone(state);
+  next.commerce.config=config;next.commerce.configRef=configRef;
+  await harness.commands.commitExternal(next,await productStateHash(state));
+  harness.remote.descriptorHash=descriptorHash;
+  harness.remote.coordinator.properties.descriptorHash=descriptorHash;
+  harness.remote.files.set(configRef.id,structuredClone(config));
+  const transport={
+    binding:structuredClone(BINDING),descriptorHash,
+    async readFolder(input) {
+      if(input.kind==='dataset')return {
+        id:BINDING.folderId,etag:'"dataset-1"',properties:{
+          purchaseApp:'vokabeltrainer-purchases',purchaseConfigId:configRef.id,
+          purchaseConfigSha256:configRef.sha256,
+        },
+      };
+      return harness.remote.readFolder(input);
+    },
+    async readImmutable(ref,input) {
+      if(ref.id===configRef.id)return structuredClone(config);
+      return harness.remote.readImmutable(ref,input);
+    },
+  };
+  const integration=createCommerceIntegration({
+    transportFor:async()=>transport,
+    now:()=>new Date('2026-09-21T10:00:00Z'),id:sequenceIds('actual-commerce'),
+  });
+  return {config,configRef,descriptorHash,transport,integration};
+}
+
+async function actualActivationHarness({store=null,fixture=null,drive=null,suffix='first'}={}) {
+  const ledger=earnedLedger();
+  const descriptorHash=await digest(ledger.descriptor);
+  fixture??=purchasesHttpFixture({accountId:BINDING.accountId});
+  if(!fixture.files.has(BINDING.folderId)) {
+    fixture.seed({
+      id:BINDING.folderId,name:'Vokabeltrainer',mimeType:fixture.FOLDER,
+      properties:{app:'vokabeltrainer-product',kind:'dataset-folder',datasetId:BINDING.datasetId},
+    });
+    fixture.seed({
+      id:BINDING.descriptorFileId,name:'dataset.json',parentId:BINDING.folderId,
+      properties:{app:'vokabeltrainer-product',kind:'dataset',datasetId:BINDING.datasetId},
+      value:ledger.descriptor,
+    });
+  }
+  if(store===null) {
+    const initial=productState(ledger,{outbox:[]});
+    initial.binding=structuredClone(BINDING);
+    store=byteStore(initial);
+  }
+  drive??=new SyntheticDrive();drive.account=BINDING.accountId;
+  const commands=await createCommands({
+    store,now:()=>new Date('2026-09-21T10:00:00Z'),id:sequenceIds(`setup-command-${suffix}`),
+    deviceId:'dev1',onChange(){},
+  });
+  const transport=createPurchaseTransport({
+    fetchImpl:fixture.fetch,getToken:async()=>`synthetic-token-${suffix}`,binding:BINDING,descriptorHash,
+  });
+  const integration=createCommerceIntegration({
+    commands,drive,transportFor:async()=>transport,learningSync:async()=>({phase:'synced'}),
+    now:()=>new Date('2026-09-21T10:00:00Z'),id:sequenceIds(`setup-integration-${suffix}`),
+  });
+  const service=createPurchaseService({
+    commands,transport,sync:integration,now:()=>new Date('2026-09-21T10:00:00Z'),
+    id:sequenceIds(`setup-service-${suffix}`),onStatus(){},
+  });
+  return {store,fixture,drive,commands,transport,integration,service,descriptorHash};
 }
 
 function learningSync(commands) {
@@ -641,6 +716,100 @@ test('activation persists its control intent before candidate preparation and pu
   assert.equal(harness.remote.putCalls.length,1);
 });
 
+test('an unclear setup stays read-only until its saved operation is explicitly resumed',async()=>{
+  const first=await actualActivationHarness({suffix:'unclear-first'});
+  first.fixture.dropPointerResponse();
+  await assert.rejects(first.service.prepareActivation({
+    binding:BINDING,descriptorHash:first.descriptorHash,
+  }),{code:'network'});
+  const unclear=first.commands.getState().commerce.setup;
+  assert.equal(unclear.phase,'reconciling');
+  assert.equal(first.commands.getState().commerce.control,null);
+  const pointerWrites=first.fixture.calls.filter(({method})=>method==='PUT').length;
+  const productUploads=first.drive.files.size;
+
+  const fresh=await actualActivationHarness({
+    store:first.store,fixture:first.fixture,drive:first.drive,suffix:'unclear-fresh',
+  });
+  await assert.rejects(fresh.service.prepareActivation({
+    binding:BINDING,descriptorHash:fresh.descriptorHash,
+  }),{code:'pending'});
+  assert.equal(fresh.fixture.calls.filter(({method})=>method==='PUT').length,pointerWrites);
+  assert.equal(fresh.drive.files.size,productUploads);
+  assert.equal(fresh.commands.getState().commerce.control,null);
+
+  const setupResult=await fresh.service.resume(unclear.operationId);
+  assert.equal(setupResult.status,'confirmed');
+  assert.equal(fresh.fixture.calls.filter(({method})=>method==='PUT').length,pointerWrites+1);
+  const prepared=await fresh.service.prepareActivation({
+    binding:BINDING,descriptorHash:fresh.descriptorHash,
+  });
+  const confirmed=await fresh.service.confirmActivation(prepared.operationId);
+  assert.equal(confirmed.phase,'confirmed');
+  assert.equal(fresh.commands.getState().commerce.mode,'active');
+});
+
+test('an accepted setup pointer with a lost response is read back before activation publication',async()=>{
+  const harness=await actualActivationHarness({suffix:'accepted-response-loss'});
+  harness.fixture.losePointerResponse();
+
+  const prepared=await harness.service.prepareActivation({
+    binding:BINDING,descriptorHash:harness.descriptorHash,
+  });
+
+  assert.equal(harness.commands.getState().commerce.setup.phase,'confirmed');
+  assert.equal(harness.fixture.calls.filter(({method})=>method==='PUT').length,1);
+  assert.equal(prepared.phase,'pointer-pending');
+  assert.ok(harness.drive.files.size>0);
+});
+
+test('a reserved activation left beside an unclear setup remains resumable after setup confirmation',async()=>{
+  const first=await actualActivationHarness({suffix:'legacy-reserved'});
+  first.fixture.dropPointerResponse();
+  await assert.rejects(first.service.prepareActivation({
+    binding:BINDING,descriptorHash:first.descriptorHash,
+  }),{code:'network'});
+  const unclear=first.commands.getState().commerce.setup;
+  const state=first.commands.getState();
+  const control={
+    version:1,operationId:'legacy-control',operation:'initialize',phase:'intent',epochId:null,
+    head:null,etag:null,candidate:null,pointerProperties:null,uploads:[],
+  };
+  state.commerce.control=control;
+  const candidate=await first.integration.prepareActivationCandidate({
+    state,control,reserve:()=>first.transport.reserveId(),
+  });
+  const coordinator=await first.transport.readFolder({
+    id:state.commerce.config.coordinatorId,kind:'coordinator',config:state.commerce.config,
+  });
+  state.commerce.control={
+    ...control,phase:'reserved',epochId:candidate.epochId,etag:coordinator.etag,
+    candidate:candidate.candidate,uploads:candidate.uploads,pointerProperties:{
+      ...coordinator.properties,purchaseHeadId:candidate.candidate.id,
+      purchaseHeadSha256:candidate.candidate.sha256,
+    },
+  };
+  state.restoreJobs.push(candidate.publication);
+  await first.commands.commitExternal(state,await productStateHash(first.commands.getState()));
+  await first.integration.publishControl({state:first.commands.getState(),control:state.commerce.control});
+  const publishedCount=first.drive.files.size;
+
+  const fresh=await actualActivationHarness({
+    store:first.store,fixture:first.fixture,drive:first.drive,suffix:'legacy-reserved-fresh',
+  });
+  const pointerWrites=fresh.fixture.calls.filter(({method})=>method==='PUT').length;
+  await assert.rejects(fresh.service.prepareActivation({
+    binding:BINDING,descriptorHash:fresh.descriptorHash,
+  }),{code:'pending'});
+  assert.equal(fresh.fixture.calls.filter(({method})=>method==='PUT').length,pointerWrites);
+  assert.equal(fresh.drive.files.size,publishedCount);
+  assert.equal((await fresh.service.resume(unclear.operationId)).status,'confirmed');
+  const confirmed=await fresh.service.resume('legacy-control');
+  assert.equal(confirmed.phase,'confirmed');
+  assert.equal(fresh.commands.getState().commerce.mode,'active');
+  assert.equal(fresh.drive.files.size,publishedCount);
+});
+
 test('activation resumes its exact reserved closure after an upload failure and restart',async()=>{
   const harness=await migratingHarness();
   harness.remote.writeFailure=true;
@@ -806,6 +975,64 @@ test('confirmed ownership stays readable and selectable offline after restart',a
     reopened.service.select({profileId:'p2',figureId:'explorer-girl',stage:2}),
     {code:'entitlement'},
   );
+});
+
+test('a running service adopts an externally reconciled purchase head without reload or network refresh',async()=>{
+  const first=await openHarness({ids:sequenceIds('running-service')});
+  const actual=await actualCommerceAdapter(first);
+  await first.service.refresh();
+
+  const secondStore=memoryStore(first.store.snapshot());
+  const secondRemote=new PurchaseRemote(first.remote.server);
+  secondRemote.descriptorHash=actual.descriptorHash;
+  const second=await openHarness({store:secondStore,remote:secondRemote,ids:sequenceIds('foreign-purchase')});
+  const preview=await second.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
+  await second.service.confirm(preview);
+
+  const before=first.commands.getState();
+  const reconciled=await actual.integration.reconcile({
+    state:before,binding:BINDING,descriptorHash:actual.descriptorHash,
+  });
+  await first.commands.commitExternal(reconciled,await productStateHash(before));
+
+  const view=await first.service.getView();
+  assert.equal(view.head.id,reconciled.commerce.head.id);
+  assert.equal(view.accounts.p1.spentPoints,200);
+  assert.deepEqual(view.accounts.p1.purchasedArticleIds,['evolution:explorer-girl:2']);
+  await first.service.select({profileId:'p1',figureId:'explorer-girl',stage:2});
+  assert.deepEqual(first.commands.getState().commerce.selection,[
+    {profileId:'p1',figureId:'explorer-girl',stage:2},
+  ]);
+});
+
+test('normal reconcile keeps a selection unlocked by learning earned after the last purchase head',async()=>{
+  const harness=await openHarness({ids:sequenceIds('current-learning-selection')});
+  const actual=await actualCommerceAdapter(harness);
+  await harness.service.refresh();
+  const fixture=createFixture();
+  const before=harness.commands.getState(),next=structuredClone(before);
+  next.ledger.events.push(fixture.event('round.started',{
+    roundId:'selection-round',profileId:'p1',mode:'all',size:10,
+  },{id:'selection-round-start',deviceId:'selection-device',clock:2000}));
+  for(let index=0;index<10;index+=1)next.ledger.events.push(fixture.answer({
+    id:`selection-answer-${index+1}`,roundId:'selection-round',profileId:'p1',ordinal:index+1,
+    wordId:`w${(index%3)+1}`,deviceId:'selection-device',clock:2001+index,
+  }));
+  next.clock=2010;
+  await harness.commands.commitExternal(next,await productStateHash(before));
+  await harness.service.select({profileId:'p1',figureId:'horse',stage:1});
+  assert.deepEqual(harness.commands.getState().commerce.selection,[
+    {profileId:'p1',figureId:'horse',stage:1},
+  ]);
+
+  const current=harness.commands.getState();
+  const reconciled=await actual.integration.reconcile({
+    state:current,binding:BINDING,descriptorHash:actual.descriptorHash,
+  });
+
+  assert.deepEqual(reconciled.commerce.selection,[
+    {profileId:'p1',figureId:'horse',stage:1},
+  ]);
 });
 
 test('restore control uses the same persisted head and activates its epoch only after confirmed history replay',async()=>{

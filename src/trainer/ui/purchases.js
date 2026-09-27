@@ -194,7 +194,8 @@ function purchaseDialog({preview, name, onConfirm, trigger, onComplete}) {
     el('p', {text: 'Ausgeben verändert dein Level nicht.'}),
   ]);
   const cancel = button('Abbrechen', () => {
-    dialog.close(); dialog.remove(); trigger?.focus();
+    dialog.close(); dialog.remove();
+    if (trigger?.isConnected) trigger.focus(); else onComplete?.();
   }, {class: 'secondary'});
   const confirm = button('Kauf verbindlich bestätigen', async () => {
     confirm.disabled = true; cancel.disabled = true;
@@ -372,6 +373,17 @@ export function renderCommerceSettings({root, state, commerce, isUnlocked, onRef
   const mode = state.commerce?.mode ?? 'inactive';
   if (mode === 'active') {
     section.append(message('Figuren und Käufe sind bereit. Käufe verwenden nur bestätigte Lernpunkte.'));
+  } else if (state.commerce?.setup && state.commerce.setup.phase !== 'confirmed') {
+    section.append(
+      message('Die Einrichtung wird geprüft. Ihr Ausgang ist noch nicht bestätigt.'),
+      button('Datenaktualisierung fortsetzen', async () => {
+        try {
+          if (!isUnlocked()) throw Object.assign(new Error('Bitte den Erwachsenenbereich erneut öffnen.'), {code: 'locked'});
+          await commerce.resume(state.commerce.setup.operationId); ui.notice = 'Die Einrichtung wurde fortgesetzt.'; ui.tone = 'info';
+        } catch (error) { ui.notice = error?.message || 'Die Einrichtung konnte noch nicht fortgesetzt werden.'; ui.tone = 'error'; }
+        onRefresh?.();
+      }, {class: 'primary'}),
+    );
   } else if (state.commerce?.control && !['confirmed', 'rejected', 'superseded'].includes(state.commerce.control.phase)) {
     section.append(
       message('Die Datenaktualisierung wird geprüft. Ihr Ausgang ist noch nicht bestätigt.'),

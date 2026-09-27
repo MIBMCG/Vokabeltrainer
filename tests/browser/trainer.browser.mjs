@@ -4,7 +4,7 @@ import {mkdir, mkdtemp, rm} from 'node:fs/promises';
 import {resolve, sep} from 'node:path';
 
 import {createTrainerHarness} from './trainer-harness.mjs';
-import {snapshotHash} from '../../src/trainer/backup/format.js';
+import {backupLedger, parseBackup, snapshotHash} from '../../src/trainer/backup/format.js';
 import {project as projectState} from '../../src/trainer/learning/progress.js';
 
 const resultsDirectory = resolve('test-results');
@@ -55,7 +55,7 @@ test('C2 rejected required precache install keeps the active offline app and for
     assert.equal(await page.evaluate(() => devicePixelRatio), 2);
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null, null, {timeout: 10_000});
     await page.evaluate(async () => { await caches.open('synthetic-foreign-cache'); });
-    harness.setServiceWorkerVersion('v25');
+    harness.setServiceWorkerVersion('v26');
     harness.failNextPrecacheAsset('styles.css');
     await page.evaluate(async () => {
       const registration = await navigator.serviceWorker.getRegistration('./');
@@ -67,7 +67,7 @@ test('C2 rejected required precache install keeps the active offline app and for
     });
     const cacheNames = await page.evaluate(async () => (await caches.keys()).sort());
     assert.equal(cacheNames.includes('synthetic-foreign-cache'), true, JSON.stringify(cacheNames));
-    assert.equal(cacheNames.includes('vokabeltrainer-product:%2Ftrainer%2F:v24'), true, JSON.stringify(cacheNames));
+    assert.equal(cacheNames.includes('vokabeltrainer-product:%2Ftrainer%2F:v25'), true, JSON.stringify(cacheNames));
     await context.setOffline(true);
     await page.reload({waitUntil: 'domcontentloaded'});
     await page.locator('#profile-list').waitFor();
@@ -152,7 +152,11 @@ async function mountFixIntegration(page, initial) {
     document.body.append(root);
     let unlocked = true;
     const pinGate = {isUnlocked: () => unlocked, lock: () => { unlocked = false; }};
-    shell = mountShell({root, commands, pinGate, sync, restore,
+    const onDownload = (blob, filename) => {
+      void blob.text().then((text) => { window.__fixDownloadedBackup = {filename, text}; });
+      return `Gespeichert: ${filename}`;
+    };
+    shell = mountShell({root, commands, pinGate, sync, restore, onDownload,
       auth: {clientId: () => '', invalidate() {}}});
     shell.show('adult');
     window.__fix = {root, commands, shell, sync, restore, pinGate, project, productStateHash};
@@ -234,6 +238,36 @@ test('final I2 adult drafts retain focus and original revision heads across unch
   } finally { await harness.close(); }
 });
 
+test('final RF1 connected backup action exports the current Commands snapshot', {timeout: 60_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page} = await harness.newDevice();
+  try {
+    await page.goto(harness.baseUrl);
+    await setupPractice(page);
+    await mountFixIntegration(page, await productState(page));
+    const root = page.locator('#fix-app');
+    await root.getByRole('button', {name: 'Einstellungen', exact: true}).click();
+    const downloadButton = root.getByRole('button', {name: 'Sicherung herunterladen'});
+    await downloadButton.evaluate((node) => { window.__connectedBackupButton = node; });
+    const earned = await page.evaluate(async () => {
+      const {commands, project} = window.__fix;
+      const profileId = Object.keys(project(commands.getState().ledger).profiles)[0];
+      const before = project(commands.getState().ledger).profiles[profileId].points;
+      await commands.start({profileId, mode: 'all', size: 10});
+      await commands.submit({roundId: commands.getState().rounds[profileId].id, typed: 'dog'});
+      return {profileId, before, after: project(commands.getState().ledger).profiles[profileId].points};
+    });
+    assert.equal(earned.after, earned.before + 10);
+    assert.equal(await downloadButton.evaluate((node) => node === window.__connectedBackupButton), true);
+
+    await downloadButton.click();
+    await page.waitForFunction(() => window.__fixDownloadedBackup?.text);
+    const backup = await parseBackup(await page.evaluate(() => window.__fixDownloadedBackup.text));
+    const exported = projectState(backupLedger(backup)).profiles[earned.profileId].points;
+    assert.equal(exported, earned.after);
+  } finally { await harness.close(); }
+});
+
 test('final I3 deliberate reconnect wakes pending bound sync without another lifecycle event', {timeout: 90_000}, async () => {
   const harness = await createTrainerHarness();
   const {page, controls} = await harness.newDevice();
@@ -260,17 +294,28 @@ test('final I3 deliberate reconnect wakes pending bound sync without another lif
     const requests = await page.evaluate(() => window.__syntheticOauthRequests);
     await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
     await page.getByText('Google ist für diese Sitzung verbunden.', {exact: true}).waitFor();
-    await page.waitForTimeout(1200);
-    assert.equal((await productState(page)).outboxEventIds.length, 0, 'successful reconnect must wake stopped scheduler');
+    await page.getByText('Abgeglichen', {exact: true}).waitFor({timeout: 15_000});
+    let synced = null;
+    for(let attempt=0;attempt<150;attempt+=1) {
+      synced = await productState(page);
+      if(synced.outboxEventIds.length===0&&synced.pendingPackets.length===0)break;
+      await page.waitForTimeout(100);
+    }
+    assert.equal(synced.outboxEventIds.length, 0, 'successful reconnect must drain the event outbox');
+    assert.equal(synced.pendingPackets.length, 0, 'successful reconnect must confirm every pending packet');
     assert.equal(await page.evaluate(() => window.__syntheticOauthRequests), requests + 1);
     for (const id of pending) assert.equal([...harness.google.files.values()].flatMap(({value}) => value?.kind === 'packet' ? value.events : []).filter((event) => event.id === id).length, 1);
     // Advancing the browser clock exercises normal polling without visibility/focus triggers.
-    let polls = 0;
+    const writeBaseline = harness.google.writes.length;
+    let polls = 0, completedPolls = 0;
     page.on('request', (request) => { if (request.url().includes('/drive/v3/about')) polls += 1; });
+    page.on('response', (response) => { if (response.url().includes('/drive/v3/about')) completedPolls += 1; });
     await page.clock.runFor(61_000);
-    await page.waitForTimeout(100);
+    for(let attempt=0;attempt<100&&completedPolls===0;attempt+=1)await page.waitForTimeout(50);
     assert.ok(polls > 0, 'normal polling resumes');
-    assert.equal(harness.google.writes.some(({duplicate}) => duplicate), false);
+    assert.ok(completedPolls > 0, 'normal polling completes');
+    assert.equal(harness.google.writes.length, writeBaseline,
+      JSON.stringify({baseline:writeBaseline,writes:harness.google.writes}));
   } finally { await harness.close(); }
 });
 
@@ -2052,7 +2097,7 @@ test('trainer offline update UI blocks typing and pending answers before control
   try {
     await page.goto(harness.baseUrl);
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null, null, {timeout: 10_000});
-    harness.setServiceWorkerVersion('v25', {activationDelayMs: 750});
+    harness.setServiceWorkerVersion('v26', {activationDelayMs: 750});
     await page.evaluate(async () => {
       const registration = await navigator.serviceWorker.getRegistration('./');
       await registration.update();
@@ -2110,8 +2155,8 @@ test('trainer offline update UI blocks typing and pending answers before control
     const beforeReload = await productState(page);
     assert.equal(beforeReload.ledger.events.some(({type}) => type === 'round.completed' || type === 'round.abandoned'), false);
     assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product:')).sort()), [
-      'vokabeltrainer-product:%2Ftrainer%2F:v24',
       'vokabeltrainer-product:%2Ftrainer%2F:v25',
+      'vokabeltrainer-product:%2Ftrainer%2F:v26',
     ]);
     const navigation = page.waitForNavigation();
     await updateButton.click();
@@ -2126,7 +2171,7 @@ test('trainer offline update UI blocks typing and pending answers before control
     await navigation;
     await page.getByText('Richtig!', {exact: true}).waitFor();
     assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product:')).sort()), [
-      'vokabeltrainer-product:%2Ftrainer%2F:v25',
+      'vokabeltrainer-product:%2Ftrainer%2F:v26',
     ]);
   } finally {
     await context.close();
