@@ -18,6 +18,10 @@ function viewState(root) {
   return localState.get(root);
 }
 
+export function openAdultSettings(root) {
+  viewState(root).section = 'settings';
+}
+
 // Background commits never replace the live editor: its controls and closures
 // retain both the draft and the revision heads with which editing began.
 export function adultStateChanged(root, state) {
@@ -62,15 +66,25 @@ export function renderAdult({root, state, commands, pinGate, onNavigate, sync, r
     button('Zur Profilauswahl', leave, {class: 'secondary'}),
   ]);
   const nav = el('nav', {attrs: {id: 'adult-nav', class: 'adult-nav', 'aria-label': 'Erwachsenenverwaltung'}});
-  for (const [key, label] of [
-    ['vocabulary', 'Vokabeln'], ['progress', 'Lernstand'],
-    ['rules', 'Lernregeln'], ['settings', 'Einstellungen'],
+  for (const [key, label, description] of [
+    ['vocabulary', 'Vokabeln', 'Wörter und Lektionen'],
+    ['progress', 'Lernstand', 'Fortschritt ansehen'],
+    ['rules', 'Lernregeln', 'Wiederholen einstellen'],
+    ['settings', 'Einstellungen', 'Gerät und Familie'],
   ]) {
-    nav.append(button(label, () => requestVocabularyNavigation(root, () => {
+    const item = el('button', {attrs: {
+      type: 'button', class: ui.section === key ? 'active' : '',
+      'aria-label': label, 'aria-current': ui.section === key ? 'page' : null,
+    }}, [
+      el('span', {text: label, attrs: {class: 'adult-nav-label'}}),
+      el('span', {text: description, attrs: {class: 'adult-nav-description', 'aria-hidden': 'true'}}),
+    ]);
+    item.addEventListener('click', () => requestVocabularyNavigation(root, () => {
       discardVocabularyDraft(root);
       ui.section = key;
       rerender();
-    }), {class: ui.section === key ? 'active' : '', 'aria-current': ui.section === key ? 'page' : null}));
+    }));
+    nav.append(item);
   }
   const content = el('section', {attrs: {
     id: 'adult-content', tabindex: '-1', 'aria-label': 'Inhalt der Erwachsenenverwaltung',

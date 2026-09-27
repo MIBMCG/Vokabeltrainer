@@ -55,7 +55,7 @@ test('C2 rejected required precache install keeps the active offline app and for
     assert.equal(await page.evaluate(() => devicePixelRatio), 2);
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null, null, {timeout: 10_000});
     await page.evaluate(async () => { await caches.open('synthetic-foreign-cache'); });
-    harness.setServiceWorkerVersion('v26');
+    harness.setServiceWorkerVersion('v27');
     harness.failNextPrecacheAsset('styles.css');
     await page.evaluate(async () => {
       const registration = await navigator.serviceWorker.getRegistration('./');
@@ -67,7 +67,7 @@ test('C2 rejected required precache install keeps the active offline app and for
     });
     const cacheNames = await page.evaluate(async () => (await caches.keys()).sort());
     assert.equal(cacheNames.includes('synthetic-foreign-cache'), true, JSON.stringify(cacheNames));
-    assert.equal(cacheNames.includes('vokabeltrainer-product:%2Ftrainer%2F:v25'), true, JSON.stringify(cacheNames));
+    assert.equal(cacheNames.includes('vokabeltrainer-product:%2Ftrainer%2F:v26'), true, JSON.stringify(cacheNames));
     await context.setOffline(true);
     await page.reload({waitUntil: 'domcontentloaded'});
     await page.locator('#profile-list').waitFor();
@@ -247,6 +247,7 @@ test('final RF1 connected backup action exports the current Commands snapshot', 
     await mountFixIntegration(page, await productState(page));
     const root = page.locator('#fix-app');
     await root.getByRole('button', {name: 'Einstellungen', exact: true}).click();
+    await root.locator('#settings-task-backup > summary').click();
     const downloadButton = root.getByRole('button', {name: 'Sicherung herunterladen'});
     await downloadButton.evaluate((node) => { window.__connectedBackupButton = node; });
     const earned = await page.evaluate(async () => {
@@ -291,6 +292,7 @@ test('final RF1 v3 backup exports the current economy selection through the pres
       };
     }))?.binding !== null);
     await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
+    await page.locator('#settings-task-advanced > summary').click();
     await page.getByRole('button', {name: 'Daten für Figuren und Käufe aktualisieren'}).click();
     await page.getByRole('button', {name: 'Aktualisierung jetzt durchführen'}).click();
     await page.getByText('Figuren und Käufe sind bereit.', {exact: true}).waitFor({timeout: 60_000});
@@ -298,6 +300,7 @@ test('final RF1 v3 backup exports the current economy selection through the pres
     await mountFixIntegration(page, await productState(page), {createDataset: false});
     const root = page.locator('#fix-app');
     await root.getByRole('button', {name: 'Einstellungen', exact: true}).click();
+    await root.locator('#settings-task-backup > summary').click();
     const downloadButton = root.getByRole('button', {name: 'Sicherung herunterladen'});
     await downloadButton.evaluate((node) => { window.__connectedV3BackupButton = node; });
     const selected = await page.evaluate(async () => {
@@ -347,6 +350,7 @@ test('final RF1 changed visible head set requires a new deliberate backup choice
     await mountFixIntegration(page, state, {createDataset: false});
     const root = page.locator('#fix-app');
     await root.getByRole('button', {name: 'Einstellungen', exact: true}).click();
+    await root.locator('#settings-task-backup > summary').click();
     await root.locator('#backup-epoch').selectOption('visible-head-a');
     const downloadButton = root.getByRole('button', {name: 'Sicherung herunterladen'});
     await downloadButton.evaluate((node) => { window.__connectedConflictBackupButton = node; });
@@ -393,6 +397,7 @@ test('final I3 deliberate reconnect wakes pending bound sync without another lif
     await page.getByRole('button', {name: 'Neuen Lernbereich anlegen'}).click();
     await page.getByText('Abgeglichen', {exact: true}).waitFor();
     await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
+    await page.locator('#settings-task-children > summary').click();
     await page.locator('summary').filter({hasText: 'Kind hinzufügen'}).click();
     const form = page.locator('#adult-content form').filter({has: page.getByRole('button', {name: 'Kind hinzufügen'})});
     await form.locator('[name="name"]').fill('Bea');
@@ -405,7 +410,7 @@ test('final I3 deliberate reconnect wakes pending bound sync without another lif
     assert.ok(pending.length > 0);
     const requests = await page.evaluate(() => window.__syntheticOauthRequests);
     await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
-    await page.getByText('Google ist für diese Sitzung verbunden.', {exact: true}).waitFor();
+    await page.getByText('Google-Verbindung ist aktiv.', {exact: true}).waitFor();
     await page.getByText('Abgeglichen', {exact: true}).waitFor({timeout: 15_000});
     let synced = null;
     for(let attempt=0;attempt<150;attempt+=1) {
@@ -1361,14 +1366,15 @@ test('trainer setup, adult decisions, persistence and BFCache lifecycle', {timeo
     const resumableState = await productState(page);
 
     await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
-    const changePin = page.locator('details').filter({has: page.locator('summary', {hasText: 'PIN ändern'})});
-    await changePin.locator('summary').click();
-    await changePin.locator('input[name="current"]').fill('1234');
-    await changePin.locator('input[name="next"]').fill('5678');
-    await changePin.locator('input[name="repeat"]').fill('5678');
+    const changePin = page.locator('#settings-task-pin');
+    await changePin.locator(':scope > summary').click();
+    const changePinForm = changePin.locator('form').filter({has: page.getByRole('button', {name: 'PIN ändern'})});
+    await changePinForm.locator('input[name="current"]').fill('1234');
+    await changePinForm.locator('input[name="next"]').fill('5678');
+    await changePinForm.locator('input[name="repeat"]').fill('5678');
     const beforeChangeHash = (await productState(page)).pinVerifier.hash;
     await holdNextPinDerivation(page);
-    await changePin.getByRole('button', {name: 'PIN ändern'}).click();
+    await changePinForm.getByRole('button', {name: 'PIN ändern'}).click();
     await backgroundDuringPinDerivation(page);
     await waitForVerifierChange(page, beforeChangeHash);
     await page.locator('#profile-list').waitFor();
@@ -1379,7 +1385,9 @@ test('trainer setup, adult decisions, persistence and BFCache lifecycle', {timeo
     await page.locator('#adult-nav').waitFor();
 
     await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
-    const resetPin = page.locator('details').filter({has: page.locator('summary', {hasText: 'PIN vergessen'})});
+    const pinTask = page.locator('#settings-task-pin');
+    if (await pinTask.getAttribute('open') === null) await pinTask.locator(':scope > summary').click();
+    const resetPin = pinTask.locator('details').filter({has: page.locator('summary', {hasText: 'PIN vergessen'})});
     await resetPin.locator('summary').click();
     await resetPin.locator('input[name="confirmation"]').fill('PIN zurücksetzen');
     await resetPin.locator('input[name="next"]').fill('9012');
@@ -1604,7 +1612,7 @@ test('trainer sync and restore exposes deliberate Google, download and import fl
     await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
 
     await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
-    await page.getByText('Google ist für diese Sitzung verbunden.', {exact: true}).waitFor({timeout: 5_000}).catch(async (error) => {
+    await page.getByText('Google-Verbindung ist aktiv.', {exact: true}).waitFor({timeout: 5_000}).catch(async (error) => {
       const diagnostics = await page.evaluate(() => ({
         googleReady: Boolean(window.google?.accounts?.oauth2),
         oauthRequests: window.__syntheticOauthRequests,
@@ -1635,9 +1643,10 @@ test('trainer sync and restore exposes deliberate Google, download and import fl
     await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
     await page.locator('[data-sync-status]').filter({hasText: 'Mit Google verbinden'}).waitFor();
     await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
-    await page.getByText('Google ist für diese Sitzung verbunden.', {exact: true}).waitFor();
+    await page.getByText('Google-Verbindung ist aktiv.', {exact: true}).waitFor();
 
     await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
+    await page.locator('#settings-task-backup > summary').click();
     const downloading = page.waitForEvent('download');
     await page.getByRole('button', {name: 'Sicherung herunterladen', exact: true}).click();
     const download = await downloading;
@@ -1688,7 +1697,7 @@ test('trainer sync and restore exposes deliberate Google, download and import fl
     await page.getByRole('dialog', {name: 'Wiederherstellung prüfen'}).waitFor();
     const eventsBeforeStaleChange = (await productState(page)).ledger.events.length;
     await page.evaluate(() => {
-      [...document.querySelectorAll('#adult-nav button')].find((node) => node.textContent === 'Vokabeln').click();
+      document.querySelector('#adult-nav button[aria-label="Vokabeln"]').click();
     });
     await page.locator('[data-word-german="Hund"]').waitFor();
     await page.locator('[data-word-german="Hund"]').evaluate((row) => {
@@ -1727,7 +1736,8 @@ test('trainer sync and restore exposes deliberate Google, download and import fl
     await page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).click();
     await page.locator('[data-sync-status]').filter({hasText: 'Mit Google verbinden'}).waitFor();
     const requests = await page.evaluate(() => window.__syntheticOauthRequests);
-    await page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).click();
+    assert.equal(await page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).count(), 0);
+    assert.equal(await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).count(), 1);
     assert.equal(await page.evaluate(() => window.__syntheticOauthRequests), requests);
 
     await page.evaluate(() => {
@@ -1755,8 +1765,9 @@ test('trainer sync and restore exposes deliberate Google, download and import fl
     await page.locator('#adult-unlock').click();
     await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
     const afterLockedPopup = await page.evaluate(() => window.__syntheticOauthRequests);
-    await page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).click();
     await page.locator('[data-sync-status]').filter({hasText: 'Mit Google verbinden'}).waitFor();
+    assert.equal(await page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).count(), 0);
+    assert.equal(await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).count(), 1);
     assert.equal(await page.evaluate(() => window.__syntheticOauthRequests), afterLockedPopup);
 
     assert.deepEqual(pageErrors, []);
@@ -1788,7 +1799,7 @@ test('trainer unbound discovery, create and join require an explicit reconnect a
   };
   const reconnect = async ({page}) => {
     await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
-    await page.getByText('Google ist für diese Sitzung verbunden.', {exact: true}).waitFor();
+    await page.getByText('Google-Verbindung ist aktiv.', {exact: true}).waitFor();
   };
 
   try {
@@ -1855,7 +1866,7 @@ test('trainer sync and restore keeps concurrent word versions until an adult res
   const connect = async (page) => {
     await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
     await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
-    await page.getByText('Google ist für diese Sitzung verbunden.', {exact: true}).waitFor();
+    await page.getByText('Google-Verbindung ist aktiv.', {exact: true}).waitFor();
   };
   const reviseHund = async (page, answer) => {
     await page.getByRole('button', {name: 'Vokabeln', exact: true}).click();
@@ -1918,6 +1929,7 @@ test('trainer sync and restore keeps concurrent word versions until an adult res
       return exportBackup(current, '2026-09-18T13:30:00.000Z');
     }, await productState(second.page));
     await second.page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
+    await second.page.locator('#settings-task-backup > summary').click();
     await second.page.locator('#backup-file').setInputFiles({
       name: 'unambiguous-target.json',
       mimeType: 'application/json',
@@ -1952,6 +1964,7 @@ test('trainer sync and restore keeps concurrent word versions until an adult res
     await first.page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).click();
     await first.page.getByText('Abgeglichen', {exact: true}).waitFor();
     await first.page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
+    await first.page.locator('#settings-task-backup > summary').click();
     await first.page.locator('#backup-file').setInputFiles({
       name: 'conflicting-words.json',
       mimeType: 'application/json',
@@ -1991,6 +2004,7 @@ test('trainer sync and restore keeps concurrent word versions until an adult res
     await openAdult(first.page);
     await connect(first.page);
     await first.page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
+    await first.page.locator('#settings-task-backup > summary').click();
     await first.page.getByRole('button', {name: 'Bestätigte Wiederherstellung fortsetzen', exact: true}).click();
     await first.page.getByText('Die bestätigte Wiederherstellung wurde fortgesetzt.', {exact: true}).waitFor();
     assert.ok(await first.page.getByRole('button', {name: 'Sicherheitskopie herunterladen', exact: true}).count() >= 1);
@@ -2089,6 +2103,7 @@ test('trainer sync and restore renders a mobile epoch conflict without choosing 
     assert.equal(await page.getByText(/browser-restore|browser-snapshot/).count(), 0);
     await page.screenshot({path: resolve(resultsDirectory, 'trainer-epoch-conflict-mobile.png'), fullPage: true});
     await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
+    await page.locator('#settings-task-backup > summary').click();
     const epochOptions = page.locator('#backup-epoch option');
     assert.equal(await epochOptions.count(), 3);
     assert.equal(await page.getByText(/browser-restore|browser-snapshot/).count(), 0);
@@ -2217,7 +2232,7 @@ test('trainer offline update UI blocks typing and pending answers before control
   try {
     await page.goto(harness.baseUrl);
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null, null, {timeout: 10_000});
-    harness.setServiceWorkerVersion('v26', {activationDelayMs: 750});
+    harness.setServiceWorkerVersion('v27', {activationDelayMs: 750});
     await page.evaluate(async () => {
       const registration = await navigator.serviceWorker.getRegistration('./');
       await registration.update();
@@ -2275,8 +2290,8 @@ test('trainer offline update UI blocks typing and pending answers before control
     const beforeReload = await productState(page);
     assert.equal(beforeReload.ledger.events.some(({type}) => type === 'round.completed' || type === 'round.abandoned'), false);
     assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product:')).sort()), [
-      'vokabeltrainer-product:%2Ftrainer%2F:v25',
       'vokabeltrainer-product:%2Ftrainer%2F:v26',
+      'vokabeltrainer-product:%2Ftrainer%2F:v27',
     ]);
     const navigation = page.waitForNavigation();
     await updateButton.click();
@@ -2291,7 +2306,7 @@ test('trainer offline update UI blocks typing and pending answers before control
     await navigation;
     await page.getByText('Richtig!', {exact: true}).waitFor();
     assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product:')).sort()), [
-      'vokabeltrainer-product:%2Ftrainer%2F:v26',
+      'vokabeltrainer-product:%2Ftrainer%2F:v27',
     ]);
   } finally {
     await context.close();

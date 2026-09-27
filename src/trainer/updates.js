@@ -18,10 +18,12 @@ export function createUpdateController({
   pauseAndSave,
   reload,
   onAvailable,
+  onUnavailable = () => {},
 }) {
   const serviceWorker = globalThis.navigator?.serviceWorker;
   let destroyed = false;
   let installing = null;
+  let watchedWaiting = null;
   let pendingActivation = null;
   let lockedRelease = null;
 
@@ -39,18 +41,35 @@ export function createUpdateController({
     pending.reject(error);
   };
 
-  const reportWaiting = () => {
-    if (!destroyed && registration.waiting) onAvailable();
+  const onWaitingStateChange = () => {
+    setTimeout(reportAvailability, 0);
+  };
+  const watchWaiting = () => {
+    const waiting = registration.waiting;
+    if (watchedWaiting === waiting) return;
+    watchedWaiting?.removeEventListener('statechange', onWaitingStateChange);
+    watchedWaiting = waiting && waiting !== installing ? waiting : null;
+    watchedWaiting?.addEventListener('statechange', onWaitingStateChange);
+  };
+  const reportAvailability = () => {
+    if (destroyed) return;
+    watchWaiting();
+    if (registration.waiting) onAvailable();
+    else onUnavailable();
   };
   const onStateChange = () => {
-    if (installing?.state === 'installed') setTimeout(reportWaiting, 0);
+    if (['installed', 'activating', 'activated', 'redundant'].includes(installing?.state)) {
+      setTimeout(reportAvailability, 0);
+    }
   };
   const onUpdateFound = () => {
     installing?.removeEventListener('statechange', onStateChange);
     installing = registration.installing;
     installing?.addEventListener('statechange', onStateChange);
+    onStateChange();
   };
   const onControllerChange = () => {
+    reportAvailability();
     const pending = pendingActivation;
     if (destroyed || !pending) return;
     pendingActivation = null;
@@ -74,7 +93,7 @@ export function createUpdateController({
   return {
     async check() {
       await registration.update();
-      reportWaiting();
+      reportAvailability();
     },
     async activate({pauseConfirmed = false} = {}) {
       if (pendingActivation || lockedRelease) {
@@ -82,7 +101,10 @@ export function createUpdateController({
       }
       const worker = registration.waiting;
       const activeWorker = registration.active;
-      if (!worker) throw updateError('not-ready', 'Es wartet noch keine neue Programmversion.');
+      if (!worker) {
+        reportAvailability();
+        throw updateError('not-ready', 'Es wartet noch keine neue Programmversion.');
+      }
       if (!serviceWorker?.controller || !activeWorker || serviceWorker.controller !== activeWorker) {
         throw updateError('not-ready', 'Die geöffnete App wird noch nicht vom Programmcache gesteuert.');
       }
@@ -130,6 +152,7 @@ export function createUpdateController({
       releaseBoundary(lockedRelease);
       registration.removeEventListener('updatefound', onUpdateFound);
       installing?.removeEventListener('statechange', onStateChange);
+      watchedWaiting?.removeEventListener('statechange', onWaitingStateChange);
       serviceWorker?.removeEventListener('controllerchange', onControllerChange);
       serviceWorker?.removeEventListener('message', onMessage);
     },

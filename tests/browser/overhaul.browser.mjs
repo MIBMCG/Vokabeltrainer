@@ -346,7 +346,7 @@ test('prepared Google access connects without family configuration and waits for
     assert.equal(harness.google.writes.length, 0);
 
     await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
-    await page.getByText('Google ist für diese Sitzung verbunden.', {exact: true}).waitFor();
+    await page.getByText('Google-Verbindung ist aktiv.', {exact: true}).waitFor();
     assert.deepEqual(controls.oauthClientIds, [preparedGoogleClientId, preparedGoogleClientId]);
     assert.equal((await productState(page)).binding, null);
     assert.equal(harness.google.writes.length, 0);
@@ -366,7 +366,7 @@ test('compact vocabulary management opens editors deliberately and preserves the
     await setupPractice(page);
     await openAdult(page);
 
-    assert.deepEqual(await page.locator('#adult-nav button').allTextContents(), [
+    assert.deepEqual(await page.locator('#adult-nav button').evaluateAll((buttons) => buttons.map((button) => button.getAttribute('aria-label'))), [
       'Vokabeln', 'Lernstand', 'Lernregeln', 'Einstellungen',
     ]);
     assert.equal(await page.locator('#adult-nav button').evaluateAll((buttons) => (
@@ -552,7 +552,8 @@ test('learning rules stay separate per child and save only after an explicit sub
     await setupPractice(page);
     await openAdult(page);
     await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
-    const addChild = page.locator('details').filter({has: page.getByText('Kind hinzufügen', {exact: true})});
+    await page.locator('#settings-task-children > summary').click();
+    const addChild = page.locator('#settings-task-children details').filter({has: page.getByText('Kind hinzufügen', {exact: true})});
     await addChild.locator('summary').click();
     await addChild.getByLabel('Name', {exact: true}).fill('Ben');
     await addChild.getByRole('button', {name: 'Kind hinzufügen', exact: true}).click();
@@ -802,7 +803,8 @@ test('learning statistics stay per child, expose accessible 14 and 30 day facts,
 
     await openAdult(page);
     await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
-    const addChild = page.locator('details').filter({has: page.getByText('Kind hinzufügen', {exact: true})});
+    await page.locator('#settings-task-children > summary').click();
+    const addChild = page.locator('#settings-task-children details').filter({has: page.getByText('Kind hinzufügen', {exact: true})});
     await addChild.locator('summary').click();
     await addChild.getByLabel('Name', {exact: true}).fill('Ben');
     await addChild.getByRole('button', {name: 'Kind hinzufügen', exact: true}).click();
@@ -872,7 +874,7 @@ test('a differing browser client stays explicit and a bound learning area cannot
     await unbound.page.getByText('Erweiterte Einstellungen', {exact: true}).click();
     await unbound.page.getByText(/andere Client-ID gespeichert/i).waitFor();
     await unbound.page.getByRole('button', {name: 'Vorbereiteten Zugang verwenden und verbinden', exact: true}).click();
-    await unbound.page.getByText('Google ist für diese Sitzung verbunden.', {exact: true}).waitFor();
+    await unbound.page.getByText('Google-Verbindung ist aktiv.', {exact: true}).waitFor();
     assert.deepEqual(unbound.controls.oauthClientIds, [preparedGoogleClientId]);
     assert.equal(await unbound.page.evaluate(() => localStorage.getItem('vokabeltrainer-google-client-id')), preparedGoogleClientId);
     assert.equal((await productState(unbound.page)).binding, null);
@@ -884,7 +886,7 @@ test('a differing browser client stays explicit and a bound learning area cannot
     await setupPractice(bound.page);
     await openSync(bound.page);
     await bound.page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
-    await bound.page.getByText('Google ist für diese Sitzung verbunden.', {exact: true}).waitFor();
+    await bound.page.getByText('Google-Verbindung ist aktiv.', {exact: true}).waitFor();
     await bound.page.getByRole('button', {name: 'Neuen Lernbereich anlegen', exact: true}).click();
     await bound.page.getByText('Abgeglichen', {exact: true}).waitFor();
     await bound.page.getByText('Erweiterte Einstellungen', {exact: true}).click();

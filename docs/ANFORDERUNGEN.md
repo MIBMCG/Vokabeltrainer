@@ -27,6 +27,27 @@ Sicherungsclosure verwenden Format 3. Der Offline-Provenienzcheckpoint ist nur
 im Backupexport und Quellreplay zulässig; die autoritative Zielkette lehnt ihn
 als Kopf oder Vorgänger ab.
 
+## Nachbesserungen aus dem Nutzertest (27.09.2026)
+
+Der Nutzer beauftragt die Korrektur falscher Update- und Verbindungsanzeigen,
+die einheitliche Darstellung der ausgewählten Figur beim Üben und auf der
+Inselreise sowie eine wesentlich einfachere Erwachsenenverwaltung.
+Vokabeln, Lernstand und Lernregeln bleiben direkt erreichbar. Die Einstellungen
+gliedern sich nach den Aufgaben Kinderverwaltung, Google-Verbindung,
+Sicherung und PIN; seltene technische Angaben bleiben aufklappbar.
+
+Die erneute Bitte um Kleidungswahl präzisiert EV03 für die menschlichen
+**Grundformen**: Entdeckerin und Entdecker verwenden die vorhandenen Haut-
+und Kleidungsfarben. Höhere Entwicklungsformen behalten feste Outfits.
+„Klassisch“ bleibt ausdrücklich wieder auswählbar; Figurenauswahl und Farben
+gelten getrennt je Kind und auch nach Offline-Neustart.
+
+Genügend Punkte ersetzen keine aktive Google-Verbindung. Fehlt diese oder
+läuft sie beim Kauf ab, muss die App verständlich zum erneuten Verbinden im
+Erwachsenenbereich führen. Es gibt keine automatische Anmeldung und keine
+Käufe ohne vorherigen bestätigten Abgleich. Die Prüfbelege dieser Korrekturen
+stehen im [Bedienbericht](reports/2026-09-27-bedienkorrekturen.md).
+
 ## Historische Herleitung der Kaufentscheidung
 
 **Integrationsentwurf bestätigt (Nutzerantwort „ja“, 20.09.2026):** Der

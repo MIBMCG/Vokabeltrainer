@@ -1,6 +1,6 @@
 const SCOPE = self.registration.scope;
 const CACHE_OWNER = `vokabeltrainer-product:${encodeURIComponent(new URL(SCOPE).pathname)}:`;
-const CACHE_NAME = `${CACHE_OWNER}v25`;
+const CACHE_NAME = `${CACHE_OWNER}v26`;
 const APP_ASSETS = [
   './',
   './index.html',
@@ -29,10 +29,10 @@ const APP_ASSETS = [
   './assets/art/avatar-back-backpack-256.webp',
   './assets/art/avatar-hand-binoculars-256.webp',
   './assets/art/avatar-hand-compass-256.webp',
-  './assets/avatar-shop/figure-explorer-girl-skin-0-256.webp',
-  './assets/avatar-shop/figure-explorer-girl-clothing-0-256.webp',
-  './assets/avatar-shop/figure-explorer-boy-skin-0-256.webp',
-  './assets/avatar-shop/figure-explorer-boy-clothing-0-256.webp',
+  ...['girl', 'boy'].flatMap((figure) => [
+    ...[0, 1, 2, 3].map((skin) => `./assets/avatar-shop/figure-explorer-${figure}-skin-${skin}-256.webp`),
+    ...[0, 1, 2, 3, 4, 5].map((clothing) => `./assets/avatar-shop/figure-explorer-${figure}-clothing-${clothing}-256.webp`),
+  ]),
   './assets/avatar-shop/figure-horse-base-256.webp',
   './assets/avatar-shop/figure-tiger-base-256.webp',
   './assets/avatar-shop/figure-dragon-base-256.webp',
@@ -85,6 +85,7 @@ const APP_ASSETS = [
   '../src/trainer/purchases/transport.js',
   '../src/trainer/avatar/catalog.js',
   '../src/trainer/avatar/evolution.js',
+  '../src/trainer/avatar/display.js',
   '../src/trainer/avatar/art.js',
   '../src/trainer/avatar/art-manifest.js',
   '../src/trainer/backup/format.js',

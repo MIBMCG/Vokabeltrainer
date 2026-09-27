@@ -19,7 +19,18 @@ Erwachsene legen den gemeinsamen Datenbestand und auf jedem Gerät eine vierstel
 
 Eine Lektion erhält einen Namen, zum Beispiel „Unit 1“, und wird den gewünschten Kindern zugeordnet. Vokabeln bestehen aus deutschem Wort und mindestens einer englischen Lösung. Ein Hinweis hilft bei Mehrdeutigkeiten, etwa „Bank — Sitzplatz“. Mehrere Lösungen wie `bicycle` und `bike` sind möglich.
 
-Unter **Für Erwachsene** stehen vier Bereiche bereit: **Vokabeln**, **Lernstand**, **Lernregeln** und **Einstellungen**. Vokabeln lassen sich nach Kind und Lektion filtern, suchen und zwischen aktiven und archivierten Einträgen umschalten. Neue Wörter, Lektionen und Tabellenimport öffnen gezielte Formulare. Kinder, PIN, Google-Abgleich und Sicherung liegen unter **Einstellungen**. Ungespeicherte Wort-/Importentwürfe werden beim Verlassen ausdrücklich behandelt.
+Unter **Für Erwachsene** stehen vier Bereiche bereit: **Vokabeln**, **Lernstand**, **Lernregeln** und **Einstellungen**. Kurze Unterzeilen erklären deren Zweck. Vokabeln lassen sich nach Kind und Lektion filtern, suchen und zwischen aktiven und archivierten Einträgen umschalten. Neue Wörter, Lektionen und Tabellenimport öffnen gezielte Formulare. Ungespeicherte Wort-/Importentwürfe werden beim Verlassen ausdrücklich behandelt.
+
+Unter **Einstellungen** die gewünschte Aufgabe aufklappen:
+
+- **Kinder verwalten:** hinzufügen, umbenennen oder archivieren.
+- **Google-Verbindung:** anmelden und abgleichen; der aktuelle Status bleibt auch zugeklappt sichtbar.
+- **Sicherung:** Daten herunterladen oder wiederherstellen.
+- **PIN ändern:** die PIN dieses Geräts ändern oder zurücksetzen.
+- **Erweitert:** bei Bedarf die Daten für Figuren und Käufe vorbereiten.
+
+Geöffnete Aufgaben bleiben nach dem Speichern geöffnet. Ein automatischer
+Abgleich ersetzt keine offenen Eingaben in anderen Bereichen.
 
 ## Wörter aus einer Tabelle übernehmen
 
@@ -66,9 +77,9 @@ ziehen keine Lernpunkte oder Level ab.
 Nur Erwachsene dürfen den gemeinsamen Lernbereich auf das Kaufprotokoll
 aktualisieren:
 
-1. Zuerst unter **Für Erwachsene → Einstellungen → Abgleich** denselben
+1. Zuerst unter **Für Erwachsene → Einstellungen → Google-Verbindung** denselben
    gemeinsamen Lernbereich mit Google Drive verbinden.
-2. Im Abschnitt **Figuren und Käufe** auf
+2. Unter **Erweitert → Figuren und Käufe** auf
    **Daten für Figuren und Käufe aktualisieren** drücken. Dieser erste Schritt
    zeigt nur eine Vorschau und verändert noch keine Cloudobjekte.
 3. Lernbereich, Kinder, Lernpunkte und Level prüfen. Die Vorschau erinnert
@@ -93,7 +104,8 @@ gestalten** aufklappen:
 
 - **Meine Figur** zeigt die gewählte gekaufte Figur groß sowie „Klassisch“ und
   bereits freigeschaltete Grundfiguren. Mit **Grundform auswählen** wird die
-  Grundform der aktuellen Reihe aktiv.
+  Grundform der aktuellen Reihe aktiv. **Klassisch auswählen** wechselt wieder
+  zum bisherigen gestaltbaren Avatar.
 - **Entwicklung** zeigt die vier Stufen der aktuell gewählten Figur. Stufe 1 ist
   die Grundform; weitere Stufen kosten nacheinander 200, 400 und 800 Punkte.
   Eine gehörende Stufe wird mit **Diese Form auswählen** aktiv. Eine spätere
@@ -105,6 +117,17 @@ Oben stehen zwei getrennte Werte: **Verfügbare Punkte** können ausgegeben
 werden; **Lernpunkte** bestimmen weiterhin Level und Reise. Ausgeben verändert
 das Level nicht. Besitz, Guthaben und Figurenauswahl gelten jeweils nur für das
 ausgewählte Kinderprofil.
+
+Bei der Grundform **Entdeckerin** oder **Entdecker** stehen die Haut- und
+Kleidungsfarben direkt unter der Figurenauswahl. Änderungen werden automatisch
+gespeichert. Dieselbe gewählte Figur erscheint auch beim Übungsstart und auf
+der Inselreise. Entwicklungsformen behalten ihre fertigen Outfits.
+
+Bei **Google erneut verbinden** ist das Guthaben weiterhin vorhanden, aber
+die Anmeldung muss erneuert werden. Der Knopf führt über die Erwachsenen-PIN
+direkt zu **Google-Verbindung**. Dort **Mit Google verbinden** drücken und
+den Abgleich abwarten; anschließend im Kinderprofil den Kauf erneut öffnen.
+Die App öffnet kein Anmeldefenster ohne diesen bewussten Klick.
 
 Nur Formen mit einem tatsächlich vorhandenen Bild können gekauft werden.
 Fehlende Motive bleiben sichtbar als **Bild folgt** und sind nicht kaufbar.
@@ -162,7 +185,7 @@ Die Erwachsenenansicht sperrt beim Verlassen, Neuladen und Wechsel in den Hinter
 
 Für beide Geräte denselben von Erwachsenen eingerichteten Google-Zugang verwenden. Familien müssen im normalen Ablauf keine technische Client-ID eintragen:
 
-1. In der Erwachsenenansicht **Einstellungen** öffnen, dann im Abschnitt **Abgleich** auf **Mit Google verbinden** klicken.
+1. In der Erwachsenenansicht **Einstellungen → Google-Verbindung** öffnen und auf **Mit Google verbinden** klicken.
 2. Auf dem ersten Gerät **Neuen Lernbereich anlegen** wählen.
 3. Auf dem zweiten Gerät **Vorhandenen Lernbereich verwenden**, den richtigen Eintrag prüfen und bewusst bestätigen.
 

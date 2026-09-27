@@ -1,8 +1,9 @@
 import {project} from '../learning/progress.js';
 import {el, field, button, message} from './dom.js';
-import {adultStateChanged, pinResetForm, renderAdult} from './adult.js';
+import {adultStateChanged, openAdultSettings, pinResetForm, renderAdult} from './adult.js';
 import {practiceRenderKey, practiceUpdateBlocker, renderPractice, renderPracticeLanding} from './practice.js';
 import {renderAvatar, renderJourney} from './rewards.js';
+import {refreshSyncConnection} from './sync.js';
 import {syncStatusLabel} from './status.js';
 
 const MAX_ANSWERS_TEXT_LENGTH = 4_200;
@@ -56,6 +57,7 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, commer
   let lastPracticeKey = null;
   let profileNotice = '';
   let pendingProfileView = null;
+  let focusGoogleConnection = false;
   let destroyed = false;
   let setupBusy = false;
   let updateLocked = false;
@@ -314,7 +316,17 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, commer
     else if (currentView === 'profiles') renderProfiles(state);
     else if (currentView === 'adult') {
       if (!pinGate.isUnlocked()) renderAdultGate();
-      else renderAdult({root, state, commands, pinGate, onNavigate: show, sync, restore, auth, commerce, onDownload, onConnected});
+      else {
+        renderAdult({root, state, commands, pinGate, onNavigate: show, sync, restore, auth, commerce, onDownload, onConnected});
+        if (focusGoogleConnection) {
+          focusGoogleConnection = false;
+          const connection = root.querySelector('#settings-task-connection');
+          if (connection) {
+            connection.open = true;
+            connection.querySelector('summary')?.focus();
+          }
+        }
+      }
     } else if (currentView === 'practice' && activeProfileId !== null) {
       const projection = project(state.ledger);
       const profile = projection.entities.profiles[activeProfileId];
@@ -347,10 +359,17 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, commer
         renderProfiles(state);
       } else {
         const profile = projection.profiles[activeProfileId];
-        if (currentView === 'journey') renderJourney({root, profile});
+        if (currentView === 'journey') renderJourney({
+          root, productState: state, profile, profileId: activeProfileId,
+        });
         else renderAvatar({
           root, state, profile, profileId: activeProfileId, commands, commerce,
           onRefresh: () => { if (currentView === 'avatar') render(); },
+          onReconnect: () => {
+            openAdultSettings(root);
+            focusGoogleConnection = true;
+            show('adult');
+          },
         });
         root.firstElementChild?.prepend(button('Profil wechseln', () => show('profiles'), {
           class: 'secondary profile-switch',
@@ -385,6 +404,7 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, commer
     if (currentView === 'adult' && view !== 'adult') {
       closeAdultDialogs();
       pinGate.lock();
+      focusGoogleConnection = false;
     }
     if (view === 'profiles') practiceActive = false;
     currentView = view;
@@ -432,6 +452,7 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, commer
       node.dataset.phase = status?.phase ?? 'local';
       const detail = node.nextElementSibling;
       if (detail?.classList.contains('hint')) detail.textContent = status?.message ?? '';
+      refreshSyncConnection(root, status);
     },
     async pauseForUpdate() {
       if (destroyed) throw updateBoundaryError('not-ready', 'Die App wird gerade geschlossen.');

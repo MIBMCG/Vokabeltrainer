@@ -172,6 +172,11 @@ function refreshUpdateNotice(commands) {
   activate.textContent = activeRound ? 'Runde pausieren und aktualisieren' : 'Jetzt aktualisieren';
 }
 
+function hideUpdateAvailable() {
+  updateNotice?.remove();
+  updateNotice = null;
+}
+
 function showUpdateAvailable(commands) {
   if (updateNotice?.isConnected) return;
   const notice = document.createElement('aside');
@@ -221,6 +226,7 @@ async function startUpdates(commands) {
       pauseAndSave: () => shell.pauseForUpdate(),
       reload: () => location.reload(),
       onAvailable: () => showUpdateAvailable(commands),
+      onUnavailable: hideUpdateAvailable,
     });
     await updates.check();
   } catch {
@@ -267,6 +273,7 @@ async function start() {
     drive, store, commands, now: () => new Date(), id: () => crypto.randomUUID(),
     commerce: commerceIntegration,
     onStatus: (status) => {
+      if (status.phase === 'connect') auth.invalidate();
       shell?.syncStatusChanged(status);
     },
   });
@@ -301,6 +308,14 @@ async function start() {
     }
   }
   const commerce = Object.freeze({
+    isConnected() {
+      try {
+        auth.getToken();
+        return true;
+      } catch {
+        return false;
+      }
+    },
     async previewActivation() {
       const state = commands.getState();
       if (!state?.binding) throw new Error('Der gemeinsame Lernbereich ist noch nicht verbunden.');
@@ -331,6 +346,7 @@ async function start() {
     confirm: (...args) => purchaseCall('confirm', ...args),
     resume: (...args) => purchaseCall('resume', ...args),
     select: (...args) => purchaseCall('select', ...args),
+    clearSelection: (...args) => purchaseCall('clearSelection', ...args),
   });
   const commerceRestore = {
     async prepareRestore(input) { return (await currentPurchaseService()).prepareRestore(input); },

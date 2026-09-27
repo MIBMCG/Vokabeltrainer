@@ -3,6 +3,7 @@ import {el, field, button, message} from './dom.js';
 import {renderBackup} from './backup.js';
 import {renderSync} from './sync.js';
 import {renderCommerceSettings} from './purchases.js';
+import {syncStatusLabel} from './status.js';
 
 function input(name, {value = '', maxlength = 80, required = true, type = 'text'} = {}) {
   return el('input', {attrs: {name, value, maxlength, required, type}});
@@ -32,6 +33,29 @@ function entityForm({legend, value, onSubmit, submitText = 'Speichern'}) {
 function report(ui, text, tone = 'info') {
   ui.notice = text;
   ui.tone = tone;
+}
+
+function settingsTask(container, ui, {id, title, description, status = null, open = false}) {
+  if (!(ui.settingsOpen instanceof Set)) ui.settingsOpen = new Set(['connection']);
+  if (open) ui.settingsOpen.add(id);
+  const summary = el('summary', {attrs: {class: 'settings-task-summary'}}, [
+    el('span', {text: title, attrs: {class: 'settings-task-title'}}),
+    el('span', {text: status ?? description, attrs: {
+      class: status === null ? 'settings-task-description' : 'settings-task-status',
+      ...(id === 'connection' ? {'data-settings-sync-summary': ''} : {}),
+    }}),
+    ...(status === null ? [] : [el('span', {text: description, attrs: {class: 'settings-task-description'}})]),
+  ]);
+  const body = el('div', {attrs: {class: 'settings-task-body'}});
+  const details = el('details', {attrs: {
+    id: `settings-task-${id}`, class: 'settings-task', open: ui.settingsOpen.has(id),
+  }}, [summary, body]);
+  details.addEventListener('toggle', () => {
+    if (details.open) ui.settingsOpen.add(id);
+    else ui.settingsOpen.delete(id);
+  });
+  container.append(details);
+  return body;
 }
 
 function renderChildren(container, projection, commands, onRefresh, ui) {
@@ -151,7 +175,7 @@ function renderPinSettings(container, pinGate, onRefresh, ui) {
     }
     onRefresh();
   });
-  section.append(el('details', {}, [el('summary', {text: 'PIN ändern'}), change]));
+  section.append(change);
   section.append(pinResetForm({pinGate, onSuccess: () => {
     report(ui, 'Die lokale PIN wurde zurückgesetzt. Die Lerndaten blieben erhalten.');
     onRefresh();
@@ -167,32 +191,54 @@ export function renderSettings({
   const projection = project(state.ledger);
   container.append(el('header', {attrs: {class: 'section-heading'}}, [
     el('h1', {text: 'Einstellungen'}),
-    el('p', {text: 'Kinder, Geräteschutz, Google-Verbindung und Sicherung an einem Ort.'}),
+    el('p', {text: 'Wählen Sie die Aufgabe, die Sie gerade erledigen möchten.'}),
   ]));
-  renderChildren(container, projection, commands, onRefresh, ui);
-  renderPinSettings(container, pinGate, onRefresh, ui);
 
-  const syncHost = el('section', {attrs: {class: 'settings-service', 'aria-label': 'Google-Abgleich'}});
-  container.append(syncHost);
+  const childrenHost = settingsTask(container, ui, {
+    id: 'children', title: 'Kinder verwalten', description: 'Hinzufügen, umbenennen oder archivieren',
+  });
+  renderChildren(childrenHost, projection, commands, onRefresh, ui);
+
+  const syncHost = settingsTask(container, ui, {
+    id: 'connection', title: 'Google-Verbindung',
+    description: 'Gemeinsamen Lernbereich verbinden und abgleichen',
+    status: `Status: ${syncStatusLabel(sync.getStatus())}`,
+  });
+  syncHost.classList.add('settings-service');
+  syncHost.setAttribute('aria-label', 'Google-Abgleich');
   renderSync({
     root: syncHost, state, sync, restore, auth, commands,
     isUnlocked: () => pinGate.isUnlocked(), onRefresh, onConnected,
   });
 
-  if (commerce) {
-    const commerceHost = el('section', {attrs: {class: 'settings-service', 'aria-label': 'Figuren und Käufe'}});
-    container.append(commerceHost);
-    renderCommerceSettings({
-      root: commerceHost, state, commerce,
-      isUnlocked: () => pinGate.isUnlocked(), onRefresh,
-    });
-  }
-
-  const backupHost = el('section', {attrs: {class: 'settings-service', 'aria-label': 'Sicherung'}});
-  container.append(backupHost);
+  const backupHost = settingsTask(container, ui, {
+    id: 'backup', title: 'Sicherung', description: 'Daten herunterladen oder wiederherstellen',
+  });
+  backupHost.classList.add('settings-service');
+  backupHost.setAttribute('aria-label', 'Sicherung');
   renderBackup({
     root: backupHost, state, restore, onDownload,
     isUnlocked: () => pinGate.isUnlocked(), onRefresh,
     getState: () => commands.getState(),
   });
+
+  const pinHost = settingsTask(container, ui, {
+    id: 'pin', title: 'PIN ändern', description: 'Geräteschutz verwalten oder PIN zurücksetzen',
+  });
+  renderPinSettings(pinHost, pinGate, onRefresh, ui);
+
+  if (commerce) {
+    const commerceReady = state.commerce?.mode === 'active';
+    const commerceHost = settingsTask(container, ui, {
+      id: 'advanced', title: 'Erweitert',
+      description: 'Technische Einrichtung für Figuren und Käufe',
+      status: commerceReady ? 'Figuren und Käufe bereit' : 'Einrichtung bei Bedarf',
+    });
+    commerceHost.classList.add('settings-service');
+    commerceHost.setAttribute('aria-label', 'Figuren und Käufe');
+    renderCommerceSettings({
+      root: commerceHost, state, commerce,
+      isUnlocked: () => pinGate.isUnlocked(), onRefresh,
+    });
+  }
 }

@@ -29,7 +29,7 @@ function fakeRegistration(calls) {
     },
   };
   registration.active = active;
-  registration.waiting = {};
+  registration.waiting = new FakeTarget();
   registration.installing = null;
   registration.update = async () => {
     calls.push('check');
@@ -95,11 +95,15 @@ test('failed pause leaves the waiting worker untouched', async () => {
       throw error;
     },
     reload: () => calls.push('reload'),
-    onAvailable: () => {},
+    onAvailable: () => calls.push('available'),
+    onUnavailable: () => calls.push('unavailable'),
   });
 
+  await updates.check();
   await assert.rejects(updates.activate({pauseConfirmed: true}), updateError('typed-answer-present'));
   assert.equal(calls.some((call) => call?.type === 'REQUEST_UPDATE_ACTIVATION'), false);
+  assert.equal(calls.includes('available'), true);
+  assert.equal(calls.includes('unavailable'), false);
   serviceWorker.dispatch('controllerchange');
   assert.equal(calls.includes('reload'), false);
   updates.destroy();
@@ -126,6 +130,171 @@ test('check reports an already waiting worker and destroy unregisters lifecycle 
   serviceWorker.dispatch('controllerchange');
   registration.dispatch('updatefound');
   assert.deepEqual(calls, ['check', 'available']);
+  delete globalThis.navigator;
+});
+
+test('check reports no available update when no worker is waiting', async () => {
+  const calls = [];
+  const serviceWorker = new FakeTarget();
+  Object.defineProperty(globalThis, 'navigator', {configurable: true, value: {serviceWorker}});
+  const registration = fakeRegistration(calls);
+  registration.waiting = null;
+  serviceWorker.controller = registration.active;
+  const updates = createUpdateController({
+    registration,
+    hasActiveRound: () => false,
+    pauseAndSave: async () => {},
+    reload: () => calls.push('reload'),
+    onAvailable: () => calls.push('available'),
+    onUnavailable: () => calls.push('unavailable'),
+  });
+
+  await updates.check();
+  assert.deepEqual(calls, ['check', 'unavailable']);
+  updates.destroy();
+  delete globalThis.navigator;
+});
+
+test('controller change withdraws a stale update notice after the waiting worker activated elsewhere', async () => {
+  const calls = [];
+  const serviceWorker = new FakeTarget();
+  Object.defineProperty(globalThis, 'navigator', {configurable: true, value: {serviceWorker}});
+  const registration = fakeRegistration(calls);
+  serviceWorker.controller = registration.active;
+  const updates = createUpdateController({
+    registration,
+    hasActiveRound: () => false,
+    pauseAndSave: async () => {},
+    reload: () => calls.push('reload'),
+    onAvailable: () => calls.push('available'),
+    onUnavailable: () => calls.push('unavailable'),
+  });
+
+  await updates.check();
+  registration.waiting = null;
+  registration.active = {};
+  serviceWorker.controller = registration.active;
+  serviceWorker.dispatch('controllerchange');
+
+  assert.deepEqual(calls, ['check', 'available', 'unavailable']);
+  assert.equal(calls.includes('reload'), false);
+  updates.destroy();
+  delete globalThis.navigator;
+});
+
+test('worker lifecycle withdraws availability when an installed update disappears', async () => {
+  const calls = [];
+  const serviceWorker = new FakeTarget();
+  Object.defineProperty(globalThis, 'navigator', {configurable: true, value: {serviceWorker}});
+  const registration = fakeRegistration(calls);
+  const installing = new FakeTarget();
+  installing.state = 'installing';
+  registration.waiting = null;
+  registration.installing = installing;
+  serviceWorker.controller = registration.active;
+  const updates = createUpdateController({
+    registration,
+    hasActiveRound: () => false,
+    pauseAndSave: async () => {},
+    reload: () => calls.push('reload'),
+    onAvailable: () => calls.push('available'),
+    onUnavailable: () => calls.push('unavailable'),
+  });
+
+  registration.dispatch('updatefound');
+  registration.waiting = installing;
+  installing.state = 'installed';
+  installing.dispatch('statechange');
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  registration.waiting = null;
+  installing.state = 'redundant';
+  installing.dispatch('statechange');
+  await new Promise((resolve) => setTimeout(resolve, 0));
+
+  assert.deepEqual(calls, ['available', 'unavailable']);
+  updates.destroy();
+  delete globalThis.navigator;
+});
+
+test('updatefound reports a worker that was already installed before its listener attached', async () => {
+  const calls = [];
+  const serviceWorker = new FakeTarget();
+  Object.defineProperty(globalThis, 'navigator', {configurable: true, value: {serviceWorker}});
+  const registration = fakeRegistration(calls);
+  const installed = new FakeTarget();
+  installed.state = 'installed';
+  registration.installing = installed;
+  registration.waiting = installed;
+  serviceWorker.controller = registration.active;
+  const updates = createUpdateController({
+    registration,
+    hasActiveRound: () => false,
+    pauseAndSave: async () => {},
+    reload: () => calls.push('reload'),
+    onAvailable: () => calls.push('available'),
+    onUnavailable: () => calls.push('unavailable'),
+  });
+
+  registration.dispatch('updatefound');
+  await new Promise((resolve) => setTimeout(resolve, 0));
+
+  assert.deepEqual(calls, ['available']);
+  updates.destroy();
+  delete globalThis.navigator;
+});
+
+test('activation withdraws a stale notice when the waiting worker disappeared without an event', async () => {
+  const calls = [];
+  const serviceWorker = new FakeTarget();
+  Object.defineProperty(globalThis, 'navigator', {configurable: true, value: {serviceWorker}});
+  const registration = fakeRegistration(calls);
+  serviceWorker.controller = registration.active;
+  const updates = createUpdateController({
+    registration,
+    hasActiveRound: () => false,
+    pauseAndSave: async () => {},
+    reload: () => calls.push('reload'),
+    onAvailable: () => calls.push('available'),
+    onUnavailable: () => calls.push('unavailable'),
+  });
+
+  await updates.check();
+  registration.waiting = null;
+  await assert.rejects(updates.activate(), (error) => (
+    error?.code === 'not-ready' && /keine neue Programmversion/i.test(error.message)
+  ));
+
+  assert.deepEqual(calls, ['check', 'available', 'unavailable']);
+  updates.destroy();
+  delete globalThis.navigator;
+});
+
+test('an initially waiting worker withdraws availability when it becomes redundant without controller change', async () => {
+  const calls = [];
+  const serviceWorker = new FakeTarget();
+  Object.defineProperty(globalThis, 'navigator', {configurable: true, value: {serviceWorker}});
+  const registration = fakeRegistration(calls);
+  const waiting = new FakeTarget();
+  waiting.state = 'installed';
+  registration.waiting = waiting;
+  serviceWorker.controller = registration.active;
+  const updates = createUpdateController({
+    registration,
+    hasActiveRound: () => false,
+    pauseAndSave: async () => {},
+    reload: () => calls.push('reload'),
+    onAvailable: () => calls.push('available'),
+    onUnavailable: () => calls.push('unavailable'),
+  });
+
+  await updates.check();
+  registration.waiting = null;
+  waiting.state = 'redundant';
+  waiting.dispatch('statechange');
+  await new Promise((resolve) => setTimeout(resolve, 0));
+
+  assert.deepEqual(calls, ['check', 'available', 'unavailable']);
+  updates.destroy();
   delete globalThis.navigator;
 });
 

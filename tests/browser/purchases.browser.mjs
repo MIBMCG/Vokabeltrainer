@@ -148,6 +148,7 @@ test('parent sees a local upgrade preview before any commerce setup write', {tim
     while ((await productState(page)).binding === null) await page.waitForTimeout(50);
     await waitForOutbox(page, 0);
     await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
+    await page.locator('#settings-task-advanced > summary').click();
 
     const commerceFiles = () => [...harness.google.files.values()]
       .filter(({metadata}) => metadata.appProperties?.app === 'vokabeltrainer-purchases').length;
@@ -362,6 +363,7 @@ test('earned points buy through the real service and survive reopen, offline use
     while ((await productState(page)).binding === null) await page.waitForTimeout(50);
     await waitForOutbox(page, 0);
     await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
+    await page.locator('#settings-task-advanced > summary').click();
     await page.getByRole('button', {name: 'Daten für Figuren und Käufe aktualisieren'}).click();
     await page.getByRole('button', {name: 'Aktualisierung jetzt durchführen'}).click();
     try {

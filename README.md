@@ -5,10 +5,14 @@ Ein Deutsch-Englisch-Vokabeltrainer für Kinder von **10 bis 13 Jahren, Klasse 4
 **Stand vom 27. September 2026:** Die App verbindet den Vokabeltrainer mit
 profilgetrenntem Guthaben, dauerhaften Käufen und den Bereichen „Meine Figur“,
 „Entwicklung“ und „Shop“. Vier bestätigte Drachenformen sind integriert.
+Die anschließenden Bedienkorrekturen vereinfachen die Erwachsenen-Einstellungen,
+übernehmen die gewählte Figur auch beim Üben und führen bei abgelaufener
+Google-Verbindung direkt zum Wiederverbinden. Details und aktuelle Prüfbelege:
+[Bedienbericht](docs/reports/2026-09-27-bedienkorrekturen.md).
 Automatisierte Prüfungen und unabhängige Abschlussreviews sind bestanden.
 Prüfbelege, offene Geräteabnahmen und nächste Schritte stehen in
 [ARBEITSSTAND.md](ARBEITSSTAND.md) und der
-[Übergabe](docs/handoffs/2026-09-27-persistent-purchases-abschluss.md).
+[Übergabe](docs/handoffs/2026-09-27-bedienkorrekturen.md).
 
 Käufe verändern weder Lernpunkte noch Level. Punkte entstehen weiter mit 10
 Punkten pro richtiger Antwort und 20 pro abgeschlossener Runde; ausgebbares
@@ -101,7 +105,7 @@ Bei Googles direkter Browseranbindung laufen Zugriffstokens ab. Eine erneute Nut
 1. [START-HIER.md](START-HIER.md): Einstieg auf einem anderen Gerät oder mit einer anderen KI.
 2. [AGENTS.md](AGENTS.md): Regeln für die Mitarbeit im Repository.
 3. [ARBEITSSTAND.md](ARBEITSSTAND.md): aktueller Stand und nächster Schritt.
-4. [Abschlussübergabe](docs/handoffs/2026-09-27-persistent-purchases-abschluss.md): Branch, Commit, Prüfungen und offene Grenzen.
+4. [Abschlussübergabe](docs/handoffs/2026-09-27-bedienkorrekturen.md): Branch, Commit, Prüfungen und offene Grenzen.
 5. [Anforderungen](docs/ANFORDERUNGEN.md): bestätigte Wünsche und offene Produktentscheidungen.
 6. [Architektur](docs/ARCHITEKTUR.md), [Produkt-Datenvertrag](docs/PRODUKT-DATENFORMAT.md) und [Kaufprotokoll](docs/KAUFPROTOKOLL.md): tatsächliche technische Verträge.
 7. [Plan für dauerhafte Käufe](docs/superpowers/plans/2026-09-20-persistent-purchases.md): Arbeitspakete und Prüfgrenzen.
@@ -139,7 +143,7 @@ git switch codex/vokabeltrainer-v1
 npm test
 ```
 
-Die Node-Tests benötigen weder npm-Zusatzpakete noch ein Google-Konto oder Internetzugriff. Danach startet `npm start` den lokalen Server auf `http://localhost:4173`: die technische Probe liegt unter `/`, der Trainer unter `/trainer/`. Ein Buildschritt oder Laufzeitpakete sind nicht nötig. Anschließend [START-HIER.md](START-HIER.md) und die [aktuelle Abschlussübergabe](docs/handoffs/2026-09-27-persistent-purchases-abschluss.md) lesen. Die zusätzliche Browserprüfung und ihre einmalige Playwright-Einrichtung sind in [tests/browser/README.md](tests/browser/README.md) beschrieben.
+Die Node-Tests benötigen weder npm-Zusatzpakete noch ein Google-Konto oder Internetzugriff. Danach startet `npm start` den lokalen Server auf `http://localhost:4173`: die technische Probe liegt unter `/`, der Trainer unter `/trainer/`. Ein Buildschritt oder Laufzeitpakete sind nicht nötig. Anschließend [START-HIER.md](START-HIER.md) und die [aktuelle Abschlussübergabe](docs/handoffs/2026-09-27-bedienkorrekturen.md) lesen. Die zusätzliche Browserprüfung und ihre einmalige Playwright-Einrichtung sind in [tests/browser/README.md](tests/browser/README.md) beschrieben.
 
 Vorhandene v1-Lernstände werden geprüft, separat im bisherigen Format gesichert
 und zunächst nach dem kompatiblen v2-Fachvertrag übernommen. Die Kaufmigration

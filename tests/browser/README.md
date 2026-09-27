@@ -28,14 +28,19 @@ node --test tests/browser/trainer.browser.mjs
 node --test tests/browser/overhaul.browser.mjs
 ```
 
-Die vollständige Abschlussprüfung einschließlich der Kaufwege startet alle drei
+Die vollständige Abschlussprüfung einschließlich der Kauf- und Bedienwege startet diese
 Dateien gemeinsam ohne Testisolation zwischen den importierten Modulen:
 
 ```sh
 node --test --experimental-test-isolation=none \
   tests/browser/trainer.browser.mjs \
   tests/browser/overhaul.browser.mjs \
-  tests/browser/purchases.browser.mjs
+  tests/browser/purchases.browser.mjs \
+  tests/browser/avatar-selection.browser.mjs \
+  tests/browser/status-feedback.browser.mjs \
+  tests/browser/sync-settings.browser.mjs \
+  tests/browser/adult-settings-usability.browser.mjs \
+  tests/browser/purchase-reconnect.browser.mjs
 ```
 
 `purchases.browser.mjs` prüft mit dem wirklichen Produkt- und Kaufdienst an

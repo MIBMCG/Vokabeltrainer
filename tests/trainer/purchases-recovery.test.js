@@ -1153,6 +1153,20 @@ test('normal reconcile keeps a selection unlocked by learning earned after the l
   ]);
 });
 
+test('classic selection clears only the current profile without a network request',async()=>{
+  const harness=await openHarness();
+  await harness.service.refresh();
+  await harness.service.select({profileId:'p1',figureId:'explorer-girl',stage:1});
+  await harness.service.select({profileId:'p2',figureId:'explorer-boy',stage:1});
+  harness.remote.offline=true;
+
+  await harness.service.clearSelection({profileId:'p1'});
+
+  assert.deepEqual(harness.commands.getState().commerce.selection,[
+    {profileId:'p2',figureId:'explorer-boy',stage:1},
+  ]);
+});
+
 test('restore control uses the same persisted head and activates its epoch only after confirmed history replay',async()=>{
   const harness=await openHarness();
   await installRestorePreview(harness.commands,{id:'synthetic-restore',previewId:'e'.repeat(64)});

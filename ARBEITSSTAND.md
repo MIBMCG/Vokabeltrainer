@@ -3,6 +3,16 @@
 Stand: **27.09.2026**. Arbeitszweig:
 `codex/vokabeltrainer-v1`.
 
+## Aktuelle Nachbesserung aus dem Nutzertest
+
+Die Bedienkorrekturen vom 27.09. umfassen den Updatehinweis, die einheitliche
+Figurendarstellung mit direkt erreichbaren Farben, den Google-Wiederverbindenweg
+im Shop und kompakte Erwachsenen-Einstellungen. Prüfstand und Ursachen stehen
+im [Bedienbericht](docs/reports/2026-09-27-bedienkorrekturen.md), Einstieg und
+Grenzen in der [aktuellen Übergabe](docs/handoffs/2026-09-27-bedienkorrekturen.md).
+
+## Vorheriger Abschlussstand
+
 Version 1 und die Überarbeitung A1–C2 bleiben die Produktbasis. Das bestätigte Kaufpaket (Tasks 1–6) ist umgesetzt und unabhängig geprüft.
 Alle sechs Abschlussbefunde sind geschlossen. Auf Produktstand `1e29ac3`
 bestanden frisch 506/506 Node-Tests und 43/43 Browserfälle; die abschließende
@@ -61,8 +71,9 @@ Task-6-Gesamtlauf.
   gestalten“. Verfügbares Guthaben, Besitz und Auswahl werden je Profil aus dem
   bestätigten Ledger angezeigt; unklare Kaufantworten lassen sich mit „Kauf
   fortsetzen“ wiederaufnehmen.
-- Der Service Worker verwendet Cacheversion `v25`. Server-Allowlist und
-  Pflicht-Precache enthalten die neuen Laufzeitmodule und vier Drachenbilder;
+- Der Service Worker verwendet Cacheversion `v26`. Server-Allowlist und
+  Pflicht-Precache enthalten die neuen Laufzeitmodule, vier Drachenbilder und
+  alle 20 kleinen Haut-/Kleidungsbilder der menschlichen Grundfiguren;
   Google-Antworten und Tokens werden nicht gecacht.
 
 ## Bestätigter Produktumfang
@@ -110,14 +121,16 @@ damaligen nächsten Schritte gelten nicht als aktuelle Arbeitsanweisung.
 
 ## Nächster Schritt
 
-1. Am bestätigten Bild- und Galeriekonzept ansetzen: 72 übrige Motive und
+1. Die korrigierten Bedienwege mit dem Nutzer nachtesten; besonders
+   Figurenfarben, Wiederverbinden im Shop und die Erwachsenen-Einstellungen.
+2. Am bestätigten Bild- und Galeriekonzept ansetzen: 72 übrige Motive und
    responsive Varianten produzieren, anschließend vollständige EV05-Galerie
    integrieren und visuell prüfen.
-2. Das integrierte Produkt auf zwei realen Geräten einschließlich iPhone/iPad
+3. Das integrierte Produkt auf zwei realen Geräten einschließlich iPhone/iPad
    prüfen; die historische Probe 10 nicht unverändert wiederholen.
-3. Hosting/HTTPS und allgemeine Lizenz nur im dafür bestätigten Umfang angehen.
+4. Hosting/HTTPS und allgemeine Lizenz nur im dafür bestätigten Umfang angehen.
 
 Keine weitere allgemeine Startfreigabe verlangen. Merge nach `main`, Hosting,
 Cloudkontenänderungen und reale Geräteabnahme sind durch den Abschluss dieses
 Kaufpakets nicht automatisch autorisiert. Einstieg über die
-[aktuelle Übergabe](docs/handoffs/2026-09-27-persistent-purchases-abschluss.md).
+[aktuelle Übergabe](docs/handoffs/2026-09-27-bedienkorrekturen.md).

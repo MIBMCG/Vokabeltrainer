@@ -5,9 +5,14 @@ import {eventLabel, previewSummaryNodes, revisionChoiceNodes} from './preview.js
 import {syncStatusLabel} from './status.js';
 
 const stateByRoot = new WeakMap();
+const connectionViewByRoot = new WeakMap();
+
+function stateOwner(root) {
+  return root.closest?.('#app') ?? root.closest?.('.site-shell') ?? root;
+}
 
 function uiState(root, auth) {
-  const owner = root.closest?.('#app') ?? root;
+  const owner = stateOwner(root);
   if (!stateByRoot.has(owner)) {
     stateByRoot.set(owner, {
       manualClientId: auth.clientId?.() ?? '',
@@ -25,6 +30,28 @@ function uiState(root, auth) {
   return stateByRoot.get(owner);
 }
 
+export function refreshSyncConnection(root, status) {
+  const owner = stateOwner(root);
+  const view = connectionViewByRoot.get(owner);
+  if (!view || !view.root.isConnected) return;
+  const summary = owner.querySelector?.('[data-settings-sync-summary]');
+  if (summary) summary.textContent = `Status: ${syncStatusLabel(status)}`;
+  const connected = status?.phase === 'connect' ? false : activeSession(view.auth, view.ui.connected);
+  if (connected === view.ui.connected) return;
+  view.ui.connected = connected;
+  view.rerender();
+}
+
+function activeSession(auth, fallback) {
+  if (typeof auth.getToken !== 'function') return fallback;
+  try {
+    auth.getToken();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function ensureUnlocked(isUnlocked, auth) {
   if (typeof isUnlocked === 'function' && !isUnlocked()) {
     auth.invalidate();
@@ -39,12 +66,14 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
   const projection = project(state.ledger);
   const resolved = resolveEpochs(state.ledger);
   const status = sync.getStatus();
+  ui.connected = status.phase === 'connect' ? false : activeSession(auth, ui.connected);
   const configuration = auth.configuration?.(Boolean(state.binding)) ?? {
     clientId: auth.clientId?.() ?? '', source: 'browser', requiresDecision: false,
   };
   const rerender = () => renderSync({
     root, state: commands.getState(), sync, restore, auth, commands, isUnlocked, onRefresh, onConnected,
   });
+  connectionViewByRoot.set(stateOwner(root), {root, auth, ui, rerender});
 
   async function run(action, {after} = {}) {
     if (ui.busy) return;
@@ -52,8 +81,9 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
       ensureUnlocked(isUnlocked, auth);
       ui.busy = true;
       ui.notice = '';
+      const pending = action();
       rerender();
-      const result = await action();
+      const result = await pending;
       ensureUnlocked(isUnlocked, auth);
       if (after) await after(result);
     } catch (error) {
@@ -81,26 +111,26 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
 
   const markConnected = () => {
     ui.connected = true;
-    ui.notice = 'Google ist für diese Sitzung verbunden.';
-    ui.tone = 'info';
     ui.manualClientId = auth.clientId?.() ?? ui.manualClientId;
     onConnected?.();
   };
-  const connection = el('form', {attrs: {class: 'subpanel stack compact'}});
-  connection.append(
-    el('h3', {text: 'Google Drive verbinden'}),
-    el('p', {text: configuration.source === 'missing'
-      ? 'Der Google-Zugang ist noch nicht vorbereitet. Lokal üben und speichern ist weiterhin möglich.'
-      : 'Verbinden Sie das gemeinsame Google-Konto der Familie. Danach wählen Sie bewusst einen neuen oder vorhandenen Lernbereich.'}),
-    el('button', {text: 'Mit Google verbinden', attrs: {
-      type: 'submit', class: 'primary', disabled: ui.busy || configuration.source === 'missing',
-    }}),
-  );
-  connection.addEventListener('submit', (event) => {
-    event.preventDefault();
-    void run(() => auth.connect(), {after: markConnected});
-  });
-  section.append(connection);
+  if (!ui.connected) {
+    const connection = el('form', {attrs: {class: 'subpanel stack compact'}});
+    connection.append(
+      el('h3', {text: 'Google Drive verbinden'}),
+      el('p', {text: configuration.source === 'missing'
+        ? 'Der Google-Zugang ist noch nicht vorbereitet. Lokal üben und speichern ist weiterhin möglich.'
+        : 'Verbinden Sie das gemeinsame Google-Konto der Familie. Danach wählen Sie bewusst einen neuen oder vorhandenen Lernbereich.'}),
+      el('button', {text: 'Mit Google verbinden', attrs: {
+        type: 'submit', class: 'primary', disabled: ui.busy || configuration.source === 'missing',
+      }}),
+    );
+    connection.addEventListener('submit', (event) => {
+      event.preventDefault();
+      void run(() => auth.connect(), {after: markConnected});
+    });
+    section.append(connection);
+  }
 
   const advanced = el('details', {attrs: {class: 'subpanel stack compact'}}, [
     el('summary', {text: 'Erweiterte Einstellungen'}),
@@ -144,10 +174,10 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
     folderName.addEventListener('input', () => { ui.folderName = folderName.value; });
     controls.append(
       el('h3', {text: state.binding ? 'Verbundener Lernbereich' : 'Lernbereich auswählen'}),
-      button('Jetzt abgleichen', () => run(() => sync.retry(), {after: () => {
-        ui.notice = 'Der Abgleich wurde ausgeführt.';
-        ui.tone = 'info';
-      }}), {class: 'secondary', disabled: ui.busy || !state.binding}),
+      el('p', {text: 'Google-Verbindung ist aktiv.'}),
+      button('Jetzt abgleichen', () => run(() => sync.retry()), {
+        class: 'secondary', disabled: ui.busy || !state.binding,
+      }),
       button('Google-Verbindung trennen', () => {
         auth.disconnect();
         ui.connected = false;

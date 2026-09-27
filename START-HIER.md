@@ -2,6 +2,13 @@
 
 Stand: **27.09.2026**.
 
+Die aktuelle Fortsetzung betrifft die aus dem Nutzertest gemeldeten
+Bedienprobleme: Figurenauswahl/Farben, Updatehinweis, Google-Verbindung im Shop
+und einfachere Erwachsenen-Einstellungen. Zuerst die
+[aktuelle Übergabe](docs/handoffs/2026-09-27-bedienkorrekturen.md) und den
+[Bedienbericht](docs/reports/2026-09-27-bedienkorrekturen.md) lesen.
+Die folgenden Zahlen dokumentieren den vorherigen Kaufpaket-Abschluss.
+
 Version 1 und die Überarbeitung A1–C2 bleiben die Produktbasis. Das bestätigte Kaufpaket (Tasks 1–6) ist umgesetzt und unabhängig geprüft.
 Alle sechs Abschlussbefunde sind geschlossen. Auf Produktstand `1e29ac3`
 bestanden frisch 506/506 Node-Tests und 43/43 Browserfälle; die abschließende
@@ -24,7 +31,7 @@ und muss nicht unverändert wiederholt werden.
 
 1. [AGENTS.md](AGENTS.md)
 2. [ARBEITSSTAND.md](ARBEITSSTAND.md)
-3. [Abschlussübergabe](docs/handoffs/2026-09-27-persistent-purchases-abschluss.md)
+3. [Abschlussübergabe](docs/handoffs/2026-09-27-bedienkorrekturen.md)
 4. [Anforderungen und Entscheidungen](docs/ANFORDERUNGEN.md)
 5. [Architektur](docs/ARCHITEKTUR.md),
    [Produkt-Datenvertrag](docs/PRODUKT-DATENFORMAT.md) und

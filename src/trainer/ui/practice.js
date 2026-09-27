@@ -1,7 +1,8 @@
 import {project} from '../learning/progress.js';
+import {resolveAvatarDisplay} from '../avatar/display.js';
 import {picture} from './art.js';
 import {el, button, message} from './dom.js';
-import {avatarParts, levelCard} from './rewards.js';
+import {levelCard} from './rewards.js';
 
 const uiByRoot = new WeakMap();
 
@@ -179,6 +180,7 @@ function modeCard(choice, selected, alternative, onSelect) {
 function renderLanding({root, state, commands, profileId, onNavigate, projection, round, ui}) {
   const profile = projection.entities.profiles[profileId];
   const progress = projection.profiles[profileId];
+  const display = resolveAvatarDisplay({productState: state, profileId, profile: progress});
   const section = el('section', {attrs: {class: 'practice-home'}});
   section.append(
     profileHeader(profile.value.name, projection.profiles[profileId]?.points ?? 0, onNavigate),
@@ -187,7 +189,7 @@ function renderLanding({root, state, commands, profileId, onNavigate, projection
       el('h1', {text: `Hallo, ${profile.value.name}!`}),
       el('p', {text: 'Welche Vokabeln möchtest du heute entdecken?'}),
     ]),
-    levelCard(progress),
+    levelCard(progress, undefined, display),
     el('div', {attrs: {class: 'practice-art', 'aria-hidden': 'true'}}, [
       picture('island-beach', {className: 'practice-beach-art', sizes: '(max-width: 700px) 94vw, 720px', loading: 'eager'}),
     ]),

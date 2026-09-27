@@ -1,9 +1,15 @@
 import {rewardState} from '../learning/rewards.js';
+import {figureById} from '../avatar/catalog.js';
+import {avatarParts, resolveAvatarDisplay} from '../avatar/display.js';
+import {figurePicture} from '../avatar/art.js';
 import {avatarPicture, picture} from './art.js';
 import {el} from './dom.js';
-import {renderPurchases} from './purchases.js';
+import {evolutionArt, renderPurchases} from './purchases.js';
+
+export {avatarParts};
 
 const BADGE_ART = new URL('../../../trainer/assets/badges.svg', import.meta.url).href;
+const avatarUiByRoot = new WeakMap();
 
 const ISLANDS = [
   {id: 'beach', name: 'Strandinsel', symbol: 'island-beach', first: 1, last: 5, level: 1},
@@ -61,7 +67,31 @@ function illustration(asset, symbol, className) {
   return svg;
 }
 
-export function levelCard(profile, state = stateFor(profile)) {
+function evolvedPicture(display, {className = '', sizes = '256px'} = {}) {
+  const source = evolutionArt(display.figureId, display.stage);
+  if (source === null) return null;
+  const host = el('div', {attrs: {
+    class: ['avatar-evolution-display', className].filter(Boolean).join(' '),
+    role: 'img', 'aria-label': `${figureById(display.figureId)?.name ?? 'Figur'} – Stufe ${display.stage}`,
+    'data-figure-id': display.figureId, 'data-stage': String(display.stage), 'data-complete': 'true',
+  }});
+  host.append(el('img', {attrs: {
+    src: source, alt: '', loading: 'eager', decoding: 'async', sizes,
+    width: '1536', height: '1536',
+  }}));
+  return host;
+}
+
+export function avatarDisplayPicture(display, options = {}) {
+  if (display.kind === 'classic') return avatarPicture(display.parts, options);
+  const evolved = evolvedPicture(display, options);
+  if (evolved !== null) return evolved;
+  const figure = figurePicture(display, options);
+  if (options.className) figure.classList.add(options.className);
+  return figure;
+}
+
+export function levelCard(profile, state = stateFor(profile), display = {kind: 'classic', parts: avatarParts(profile)}) {
   const complete = state.journey.completedStages === 15;
   const levelProgress = profile.points % 200;
   const progress = el('div', {attrs: {
@@ -71,7 +101,7 @@ export function levelCard(profile, state = stateFor(profile)) {
   }}, [el('span', {attrs: {class: 'level-progress-fill'}})]);
   progress.firstElementChild.style.width = `${levelProgress / 2}%`;
   return el('section', {attrs: {class: 'level-card', 'aria-label': 'Punkte und Level'}}, [
-    avatarPicture(avatarParts(profile), {className: 'level-avatar', sizes: '76px', animations: false}),
+    avatarDisplayPicture(display, {className: 'level-avatar', sizes: '76px', animations: false}),
     el('div', {attrs: {class: 'level-card-copy'}}, [
       el('div', {attrs: {class: 'level-card-title'}}, [
         el('strong', {text: `Level ${state.level}`, attrs: {'data-level': ''}}),
@@ -145,18 +175,6 @@ function badgeShelfIntro(count) {
   return el('p', {text: `${count} von 6 Abzeichen gesammelt`, attrs: {class: 'journey-summary'}});
 }
 
-export function avatarParts(profile) {
-  const state = stateFor(profile);
-  const selected = profile.avatar ?? {skin: 0, clothing: 0, head: null, back: null, hand: null};
-  return {
-    skin: selected.skin,
-    clothing: selected.clothing,
-    head: selected.head !== null && state.unlocked.head.includes(selected.head) ? selected.head : null,
-    back: selected.back !== null && state.unlocked.back.includes(selected.back) ? selected.back : null,
-    hand: selected.hand !== null && state.unlocked.hand.includes(selected.hand) ? selected.hand : null,
-  };
-}
-
 function radioChoice({name, value, label, checked, disabled = false, dataOption, icon = null}) {
   const input = el('input', {attrs: {
     type: 'radio', name, value, checked, disabled,
@@ -203,8 +221,9 @@ function equipmentChoices(parts, state) {
   return groups;
 }
 
-export function renderJourney({root, profile}) {
+export function renderJourney({root, productState, profile, profileId}) {
   const state = stateFor(profile);
+  const display = resolveAvatarDisplay({productState, profileId, profile});
   const zones = el('div', {attrs: {class: 'journey-zones'}});
   for (const island of ISLANDS) {
     const unlocked = state.journey.islands.find(({id}) => id === island.id)?.unlocked === true;
@@ -227,52 +246,70 @@ export function renderJourney({root, profile}) {
       el('h1', {text: 'Deine Inselreise'}),
       el('p', {text: `${state.journey.completedStages} von 15 Etappen`, attrs: {'data-journey-progress': '', class: 'journey-summary'}}),
     ]),
-    levelCard(profile, state),
+    levelCard(profile, state, display),
     el('p', {text: '🔒 Gesperrt: Zahl = benötigtes Level', attrs: {class: 'journey-lock-key'}}),
     el('div', {attrs: {class: 'journey-map-scroll', tabindex: '0', 'aria-label': 'Illustrierte Inselkarte – horizontal verschiebbar'}}, [map]),
     badgeShelf(profile),
   ]));
 }
 
-export function renderAvatar({root, state: productState, profile, profileId, commands, commerce, onRefresh}) {
+export function renderAvatar({root, state: productState, profile, profileId, commands, commerce, onRefresh, onReconnect}) {
+  if (!avatarUiByRoot.has(root)) avatarUiByRoot.set(root, {classicOpen: undefined});
+  const ui = avatarUiByRoot.get(root);
   const rewards = stateFor(profile);
   const parts = avatarParts(profile);
+  const display = resolveAvatarDisplay({productState, profileId, profile});
   const allEquipmentUnlocked = rewards.unlocked.head.length === 3
     && rewards.unlocked.back.length === 1
     && rewards.unlocked.hand.length === 2;
-  const form = el('form', {attrs: {class: 'avatar-controls', 'aria-label': 'Avatar gestalten'}});
   const notice = el('p', {attrs: {class: 'message avatar-message', role: 'status', hidden: true}});
-  form.append(...colourChoices(parts), ...equipmentChoices(parts, rewards));
 
   let saving = false;
-  form.addEventListener('change', async (event) => {
-    if (saving || !(event.target instanceof HTMLInputElement)) return;
-    const data = new FormData(form);
-    const focusName = event.target.name;
-    const focusValue = event.target.value;
-    const lockedInputs = new Set([...form.querySelectorAll('input:disabled')]);
-    saving = true;
-    for (const input of form.querySelectorAll('input')) input.disabled = true;
-    try {
-      await commands.setAvatar({
-        profileId,
-        skin: Number(data.get('skin')),
-        clothing: Number(data.get('clothing')),
-        head: data.get('head') || null,
-        back: data.get('back') || null,
-        hand: data.get('hand') || null,
-      });
-      const nextFocus = [...root.querySelectorAll('input[type="radio"]')]
-        .find((input) => input.name === focusName && input.value === focusValue);
-      nextFocus?.focus();
-    } catch (error) {
-      saving = false;
-      for (const input of form.querySelectorAll('input')) input.disabled = lockedInputs.has(input);
-      notice.hidden = false;
-      notice.dataset.tone = 'error';
-      notice.textContent = error?.message || 'Die Avatar-Auswahl konnte nicht gespeichert werden.';
-    }
-  });
+  const appearanceForm = ({equipment = false, label}) => {
+    const form = el('form', {attrs: {class: 'avatar-controls', 'aria-label': label}});
+    const formNotice = el('p', {attrs: {class: 'message avatar-message', role: 'status', hidden: true}});
+    form.append(...colourChoices(parts));
+    if (equipment) form.append(...equipmentChoices(parts, rewards));
+    form.append(formNotice);
+    form.addEventListener('change', async (event) => {
+      if (saving || !(event.target instanceof HTMLInputElement)) return;
+      const data = new FormData(form);
+      const focusName = event.target.name;
+      const focusValue = event.target.value;
+      const appearanceInputs = [...root.querySelectorAll('form.avatar-controls input')];
+      const lockedInputs = new Set(appearanceInputs.filter((input) => input.disabled));
+      saving = true;
+      for (const input of appearanceInputs) input.disabled = true;
+      try {
+        await commands.setAvatar({
+          profileId,
+          skin: data.has('skin') ? Number(data.get('skin')) : parts.skin,
+          clothing: data.has('clothing') ? Number(data.get('clothing')) : parts.clothing,
+          head: data.has('head') ? data.get('head') || null : parts.head,
+          back: data.has('back') ? data.get('back') || null : parts.back,
+          hand: data.has('hand') ? data.get('hand') || null : parts.hand,
+        });
+        const nextForm = [...root.querySelectorAll('form.avatar-controls')]
+          .find((candidate) => candidate.getAttribute('aria-label') === label);
+        const nextFocus = [...(nextForm?.querySelectorAll('input[type="radio"]') ?? [])]
+          .find((input) => input.name === focusName && input.value === focusValue);
+        nextFocus?.focus();
+      } catch (error) {
+        saving = false;
+        for (const input of appearanceInputs) input.disabled = lockedInputs.has(input);
+        formNotice.hidden = false;
+        formNotice.dataset.tone = 'error';
+        formNotice.textContent = error?.message || 'Die Avatar-Auswahl konnte nicht gespeichert werden.';
+      }
+    });
+    return form;
+  };
+  const classicForm = appearanceForm({equipment: true, label: 'Klassischen Avatar gestalten'});
+  const selectedFigure = display.kind === 'figure' ? figureById(display.figureId) : null;
+  const selectedHumanBase = selectedFigure?.group === 'human' && display.stage === 1;
+  const selectedForm = selectedHumanBase
+    ? appearanceForm({label: `${selectedFigure.name} gestalten`})
+    : null;
 
   const motion = el('label', {attrs: {class: 'motion-switch'}}, [
     el('input', {attrs: {type: 'checkbox', role: 'switch', checked: profile.animations !== false}}),
@@ -291,6 +328,13 @@ export function renderAvatar({root, state: productState, profile, profileId, com
   });
 
   const commerceHost = el('section', {attrs: {class: 'avatar-commerce', 'aria-label': 'Meine Figur, Entwicklung und Shop'}});
+  const selectedAppearance = selectedHumanBase
+    ? el('section', {attrs: {class: 'avatar-customizer selected-human-appearance'}}, [
+      el('h2', {text: `${selectedFigure.name} gestalten`}),
+      el('p', {text: 'Haut- und Kleidungsfarbe gelten für deine menschliche Grundfigur.'}),
+      selectedForm,
+    ])
+    : null;
   root.replaceChildren(el('section', {attrs: {class: 'reward-screen avatar-screen'}}, [
     el('header', {attrs: {class: 'reward-header'}}, [
       el('p', {text: `Level ${rewards.level}`, attrs: {class: 'eyebrow'}}),
@@ -298,7 +342,8 @@ export function renderAvatar({root, state: productState, profile, profileId, com
       el('p', {text: 'Wähle deine Figur, entdecke Entwicklungsformen oder gestalte deinen klassischen Avatar.'}),
     ]),
     commerceHost,
-    el('details', {attrs: {class: 'classic-avatar', open: productState?.commerce?.mode !== 'active'}}, [
+    selectedAppearance,
+    el('details', {attrs: {class: 'classic-avatar', open: ui.classicOpen ?? display.kind === 'classic'}}, [
       el('summary', {attrs: {id: 'classic-avatar-title'}}, [
         el('strong', {text: 'Klassischen Avatar gestalten'}),
         el('span', {text: allEquipmentUnlocked
@@ -311,9 +356,19 @@ export function renderAvatar({root, state: productState, profile, profileId, com
         el('p', {text: `Entdecker auf Level ${rewards.level}`}),
         motion,
       ]),
-      el('section', {attrs: {class: 'avatar-customizer'}}, [notice, form]),
+      el('section', {attrs: {class: 'avatar-customizer'}}, [notice, classicForm]),
       ]),
     ]),
   ]));
-  if (commerce) renderPurchases({root: commerceHost, profileId, commerce, onRefresh, online: navigator.onLine});
+  const classicDetails = root.querySelector('.classic-avatar');
+  let lastClassicOpen = classicDetails.open;
+  classicDetails.addEventListener('toggle', () => {
+    if (classicDetails.isConnected && classicDetails.open !== lastClassicOpen) {
+      lastClassicOpen = classicDetails.open;
+      ui.classicOpen = classicDetails.open;
+    }
+  });
+  if (commerce) renderPurchases({
+    root: commerceHost, profileId, commerce, appearance: parts, onRefresh, onReconnect, online: navigator.onLine,
+  });
 }

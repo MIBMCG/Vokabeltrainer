@@ -47,7 +47,7 @@ export function evolutionArt(figureId, stage) {
   return path ? new URL(path, import.meta.url).href : null;
 }
 
-export function purchaseProfileModel({view, profileId, online}) {
+export function purchaseProfileModel({view, profileId, online, authenticated = true}) {
   const account = view.accounts?.[profileId] ?? null;
   if (!account) return null;
   const pending = pendingPurchase(view, profileId);
@@ -62,10 +62,13 @@ export function purchaseProfileModel({view, profileId, online}) {
     let action = 'locked';
     if (!artAvailable) action = 'unavailable';
     else if (owned) action = 'select';
-    else if (pending?.articleId === form.id) action = 'resume';
+    else if (pending?.articleId === form.id) {
+      action = !online ? 'offline' : !authenticated ? 'reauth' : 'resume';
+    }
     else if (!previousOwned) action = 'locked';
     else if (!online) action = 'offline';
     else if (account.availablePoints < form.price) action = 'saving';
+    else if (!authenticated) action = 'reauth';
     else action = 'buy';
     return {...form, owned, artAvailable, artUrl: evolutionArt(form.figureId, form.stage), action};
   });
@@ -75,8 +78,10 @@ export function purchaseProfileModel({view, profileId, online}) {
   const shop = FIGURES.filter(({unlock}) => unlock.kind === 'shop').map((figure) => {
     const owned = account.entitledFigureIds.includes(figure.id);
     let action = owned ? 'select' : !online ? 'offline'
-      : account.availablePoints < figure.unlock.price ? 'saving' : 'buy';
-    if (pending?.articleId === figure.id) action = 'resume';
+      : account.availablePoints < figure.unlock.price ? 'saving' : !authenticated ? 'reauth' : 'buy';
+    if (!owned && pending?.articleId === figure.id) {
+      action = !online ? 'offline' : !authenticated ? 'reauth' : 'resume';
+    }
     return {...figure, owned, action, baseArtAvailable: true};
   });
   return Object.freeze({
@@ -136,6 +141,7 @@ function uiState(root) {
   const owner = root.closest?.('#app') ?? root;
   if (!stateByOwner.has(owner)) stateByOwner.set(owner, {
     tab: 'mine', view: null, busy: false, notice: '', tone: 'info', activationPreview: null,
+    authRequired: false,
   });
   return stateByOwner.get(owner);
 }
@@ -176,6 +182,7 @@ function evolutionPicture(form) {
 
 function purchaseActionLabel(entry) {
   if (entry.action === 'resume') return 'Kauf fortsetzen';
+  if (entry.action === 'reauth') return 'Google erneut verbinden';
   if (entry.action === 'offline') return 'Offline – Kauf nicht möglich';
   if (entry.action === 'saving') return `Noch ${entry.price - entry.availablePoints} Punkte sammeln`;
   if (entry.action === 'locked') return 'Vorherige Stufe fehlt';
@@ -212,14 +219,27 @@ function purchaseDialog({preview, name, onConfirm, trigger, onComplete}) {
   document.body.append(dialog); dialog.showModal(); confirm.focus();
 }
 
-export function renderPurchases({root, profileId, commerce, onRefresh, online = navigator.onLine}) {
+export function renderPurchases({
+  root, profileId, commerce, appearance, onRefresh, onReconnect, online = navigator.onLine,
+}) {
   const ui = uiState(root);
-  ui.purchaseRender = {root, profileId, commerce, onRefresh};
+  ui.purchaseRender = {root, profileId, commerce, appearance, onRefresh, onReconnect};
   if (ui.purchaseRoot !== root) {
     ui.purchaseRoot = root;
     ui.view = null;
   }
   const rerender = (options) => rerenderCurrentPurchase(ui, options);
+  const authenticated = commerce.isConnected?.() ?? true;
+  if (authenticated && ui.authRequired) {
+    ui.authRequired = false;
+    ui.notice = '';
+    ui.tone = 'info';
+  }
+  const requireAuth = () => {
+    ui.authRequired = true;
+    ui.notice = '';
+    ui.tone = 'info';
+  };
   const load = async (refresh = false) => {
     if (ui.busy) return;
     ui.busy = true;
@@ -227,8 +247,11 @@ export function renderPurchases({root, profileId, commerce, onRefresh, online = 
       if (refresh) await commerce.refresh();
       ui.view = await commerce.getView();
     } catch (error) {
-      ui.notice = error?.message || 'Figuren und Käufe konnten nicht gelesen werden.';
-      ui.tone = 'error';
+      if (error?.code === 'auth') requireAuth();
+      else {
+        ui.notice = error?.message || 'Figuren und Käufe konnten nicht gelesen werden.';
+        ui.tone = 'error';
+      }
       ui.view = {mode: 'inactive', head: null, accounts: {}, jobs: [], selection: [], control: null};
     } finally { ui.busy = false; rerender(); }
   };
@@ -250,7 +273,7 @@ export function renderPurchases({root, profileId, commerce, onRefresh, online = 
     section.append(message('Die Daten für Figuren und Käufe werden im Erwachsenenbereich eingerichtet. Dein klassischer Avatar bleibt verfügbar.'));
     root.replaceChildren(section); return;
   }
-  const model = purchaseProfileModel({view: ui.view, profileId, online});
+  const model = purchaseProfileModel({view: ui.view, profileId, online, authenticated});
   if (!model) {
     section.append(message('Für dieses Lernprofil ist noch kein bestätigtes Punktekonto vorhanden.', 'error'));
     root.replaceChildren(section); return;
@@ -259,6 +282,14 @@ export function renderPurchases({root, profileId, commerce, onRefresh, online = 
     el('strong', {text: `${model.availablePoints} Verfügbare Punkte`}),
     el('span', {text: `${model.levelPoints} Lernpunkte · Ausgeben verändert dein Level nicht.`}),
   ]));
+  if (!authenticated) {
+    section.append(el('div', {attrs: {class: 'commerce-auth-notice'}}, [
+      message('Für neue Käufe muss Google erneut verbunden werden. Freigeschaltete Figuren bleiben verfügbar.'),
+      button('Google erneut verbinden', () => onReconnect?.(), {
+        class: 'secondary', disabled: typeof onReconnect !== 'function',
+      }),
+    ]));
+  }
   if (model.pending) section.append(message('Kauf wird geprüft. Sobald der Kauf bestätigt ist, gehört die Figur dir.'));
 
   const run = async (action, success = '', {rethrowCodes = []} = {}) => {
@@ -271,10 +302,13 @@ export function renderPurchases({root, profileId, commerce, onRefresh, online = 
     } catch (error) {
       try { ui.view = await commerce.getView(); } catch {}
       if (rethrowCodes.includes(error?.code)) throw error;
-      ui.notice = error?.code === 'network' || error?.code === 'pending'
-        ? 'Kauf wird geprüft. Der Ausgang ist noch unbekannt. Du kannst ihn gezielt fortsetzen.'
-        : error?.message || 'Die Aktion konnte noch nicht abgeschlossen werden.';
-      ui.tone = error?.code === 'network' || error?.code === 'pending' ? 'info' : 'error';
+      if (error?.code === 'auth') requireAuth();
+      else {
+        ui.notice = error?.code === 'network' || error?.code === 'pending'
+          ? 'Kauf wird geprüft. Der Ausgang ist noch unbekannt. Du kannst ihn gezielt fortsetzen.'
+          : error?.message || 'Die Aktion konnte noch nicht abgeschlossen werden.';
+        ui.tone = error?.code === 'network' || error?.code === 'pending' ? 'info' : 'error';
+      }
     } finally { ui.busy = false; rerender({focus: true}); }
   };
   const buy = async (entry, trigger) => {
@@ -288,10 +322,13 @@ export function renderPurchases({root, profileId, commerce, onRefresh, online = 
         () => commerce.confirm(preview), 'Der Kauf ist bestätigt.', {rethrowCodes: ['stale']},
       )});
     } catch (error) {
-      ui.notice = error?.code === 'network'
-        ? 'Für die Kaufprüfung wird wieder eine Internetverbindung benötigt.'
-        : error?.message || 'Der Kauf konnte noch nicht geprüft werden.';
-      ui.tone = 'error';
+      if (error?.code === 'auth') requireAuth();
+      else {
+        ui.notice = error?.code === 'network'
+          ? 'Für die Kaufprüfung wird wieder eine Internetverbindung benötigt.'
+          : error?.message || 'Der Kauf konnte noch nicht geprüft werden.';
+        ui.tone = 'error';
+      }
       rerender();
       trigger?.focus();
     }
@@ -303,7 +340,12 @@ export function renderPurchases({root, profileId, commerce, onRefresh, online = 
       const selectedFigure = FIGURES.find(({id}) => id === model.selected.figureId);
       const selectedPicture = model.selected.figureId === 'dragon'
         ? evolutionPicture(model.selected)
-        : figurePicture({figureId: model.selected.figureId, equipment: {}}, {sizes: '(max-width: 600px) 70vw, 320px'});
+        : figurePicture({
+          figureId: model.selected.figureId,
+          skin: appearance?.skin,
+          clothing: appearance?.clothing,
+          equipment: {},
+        }, {sizes: '(max-width: 600px) 70vw, 320px'});
       grid.append(el('article', {attrs: {class: 'commerce-card selected-purchase-figure', 'data-selected-purchase-figure': ''}}, [
         selectedPicture,
         el('h3', {text: model.selected.stage === 1
@@ -312,9 +354,14 @@ export function renderPurchases({root, profileId, commerce, onRefresh, online = 
         el('p', {text: 'Deine ausgewählte Figur'}),
       ]));
     }
+    const classicSelected = model.selected === null;
     grid.append(el('article', {attrs: {class: 'commerce-card classic-card'}}, [
       el('h3', {text: 'Klassisch'}),
       el('p', {text: 'Deine bisherigen Farben und Zubehörteile bleiben erhalten.'}),
+      el('p', {text: classicSelected ? 'Ausgewählt' : 'Verfügbar', attrs: {class: 'status-chip'}}),
+      button(classicSelected ? 'Ausgewählt' : 'Klassisch auswählen', () => run(
+        () => commerce.clearSelection({profileId}), 'Der klassische Avatar wurde ausgewählt.',
+      ), {class: 'secondary', disabled: classicSelected || ui.busy}),
     ]));
     for (const figureId of ui.view.accounts[profileId].entitledFigureIds) {
       const figure = FIGURES.find(({id}) => id === figureId);
@@ -335,9 +382,13 @@ export function renderPurchases({root, profileId, commerce, onRefresh, online = 
         ? button(model.selected?.id === form.id ? 'Ausgewählt' : 'Diese Form auswählen', () => run(
           () => commerce.select({profileId, figureId: form.figureId, stage: form.stage}), 'Die Entwicklungsform wurde ausgewählt.',
         ), {class: 'secondary', disabled: model.selected?.id === form.id || ui.busy})
-        : button(purchaseActionLabel(entry), (event) => buy(entry, event.currentTarget), {
-          class: form.action === 'buy' || form.action === 'resume' ? 'primary' : 'secondary',
-          disabled: !['buy', 'resume'].includes(form.action) || ui.busy,
+        : button(purchaseActionLabel(entry), (event) => {
+          if (form.action === 'reauth') onReconnect?.();
+          else void buy(entry, event.currentTarget);
+        }, {
+          class: ['buy', 'resume', 'reauth'].includes(form.action) ? 'primary' : 'secondary',
+          disabled: !['buy', 'resume', 'reauth'].includes(form.action) || ui.busy
+            || (form.action === 'reauth' && typeof onReconnect !== 'function'),
         });
       grid.append(el('article', {attrs: {class: 'commerce-card evolution-card', 'data-stage': String(form.stage)}}, [
         evolutionPicture(form), el('h3', {text: entry.name}),
@@ -353,9 +404,13 @@ export function renderPurchases({root, profileId, commerce, onRefresh, online = 
           ? button('Grundform auswählen', () => run(
             () => commerce.select({profileId, figureId: figure.id, stage: 1}), `${figure.name} wurde ausgewählt.`,
           ), {class: 'secondary', disabled: ui.busy})
-          : button(purchaseActionLabel(entry), (event) => buy(entry, event.currentTarget), {
-            class: ['buy', 'resume'].includes(figure.action) ? 'primary' : 'secondary',
-            disabled: !['buy', 'resume'].includes(figure.action) || ui.busy,
+          : button(purchaseActionLabel(entry), (event) => {
+            if (figure.action === 'reauth') onReconnect?.();
+            else void buy(entry, event.currentTarget);
+          }, {
+            class: ['buy', 'resume', 'reauth'].includes(figure.action) ? 'primary' : 'secondary',
+            disabled: !['buy', 'resume', 'reauth'].includes(figure.action) || ui.busy
+              || (figure.action === 'reauth' && typeof onReconnect !== 'function'),
           }),
       ]));
     }

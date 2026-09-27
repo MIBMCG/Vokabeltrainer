@@ -677,6 +677,16 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     return copy(commerce.selection.find(entry=>entry.profileId===profileId));
   }
 
+  async function clearSelectionInternal({profileId}={}) {
+    if(typeof profileId!=='string')fail('invalid','Die Figurenauswahl ist ungültig.');
+    const state=current();
+    if(!project(state.ledger).profiles?.[profileId])fail('reference','Das Lernprofil ist nicht vorhanden.');
+    const commerce=copy(state.commerce);
+    commerce.selection=commerce.selection.filter(entry=>entry.profileId!==profileId);
+    await replaceCommerce(commerce,{base:state});
+    return null;
+  }
+
   function view() {
     const state=current(),commerce=state.commerce;
     return {
@@ -699,6 +709,7 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     getStatus(){return copy(status);},
     async getView(){await enqueue(currentCachedHistory);return view();},
     select(input){return enqueue(()=>selectInternal(input));},
+    clearSelection(input){return enqueue(()=>clearSelectionInternal(input));},
     prepareRestore(input){return enqueue(()=>prepareControl('restore',input));},
     confirmRestore(operationId){return enqueue(()=>sendControl(operationId,'restore'));},
   });

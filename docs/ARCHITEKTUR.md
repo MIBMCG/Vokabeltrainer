@@ -45,9 +45,12 @@ wirtschaftliche Ansicht. Die bestätigte Restoreauswahl wird erst nach
 bestätigtem gemeinsamem Kopf und `authoritativeState` gegen dessen Konten
 geprüft und vollständig ersetzt; eine leere Auswahl leert den Zielstand.
 
-Der Service Worker verwendet Cacheversion `v25`; die Pflichtliste enthält die
-neuen Laufzeitmodule und vier Drachenbilder, aber keine Google-Antworten oder
-Tokens.
+Der Service Worker verwendet Cacheversion `v26`; die Pflichtliste enthält die
+neuen Laufzeitmodule, vier Drachenbilder und alle 20 kleinen Haut-/Kleidungsbilder
+der menschlichen Grundfiguren, aber keine Google-Antworten oder Tokens.
+Ein gemeinsamer Darstellungsresolver verbindet die gespeicherte Figurenauswahl
+mit den vorhandenen Profilfarben für Avataransicht, Übungsstart und Inselreise.
+Der Kauf-Auswahlvertrag bleibt dabei unverändert.
 
 Der Backupdownload erfasst beim Klick einen frischen Commands-Snapshot und
 verwendet ihn gemeinsam für Epochenentscheidung und Export. Eine bewusste
