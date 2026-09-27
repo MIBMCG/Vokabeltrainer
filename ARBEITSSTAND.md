@@ -11,7 +11,18 @@ und Ablauf des Zugriffs. Die kostenlose Cloudflare-Vorbereitung ist mit
 Nutzerantwort A bestätigt. Aktuelle Untersuchung und Umsetzung:
 [Übergabe zu Anmeldung und Tempo](docs/handoffs/2026-09-27-anmeldung-und-tempo.md).
 Ausgangspunkt ist Produktcommit `1c9e497`. Die optionale Serveranmeldung ist
-lokal implementiert; echte Einrichtung und Geräteprüfungen stehen noch aus.
+lokal implementiert. Im anschließend beauftragten gemeinsamen Anbietertest
+sind Worker und D1 einschließlich Tabellen/Indizes und Bindung eingerichtet.
+Google-Adressen sind nach Nutzerrückmeldung vorbereitet. Secret-Namen und
+D1-Struktur wurden beim Anbieter geprüft. Wrangler 4.142.0 hat Probelauf,
+Anmeldung und privaten App-Upload erfolgreich abgeschlossen; dabei wurden
+Worker-Logs ausdrücklich ausgeschaltet und Vorschauadressen ausgeschaltet
+belassen. Die App ist unter
+[der privaten Testadresse](https://vokabeltrainer.marco-civico.workers.dev/trainer/)
+erreichbar, der unangemeldete Sitzungsstatus und gesperrte interne Dateipfade
+sind geprüft. Version: `45b6cb48-486f-45c1-8afc-4425206af8b6`.
+Als Nächstes folgt der gemeinsame Google-Anmeldetest. Echte automatische
+Anmeldung und Geräteprüfungen stehen noch aus.
 Der Nutzer plant nur den Einsatz im Freundeskreis. Eine öffentliche
 Produktveröffentlichung ist nicht geplant; der private Serverbetrieb benötigt
 trotzdem eine erreichbare HTTPS-Adresse. [Entwurf](docs/superpowers/specs/2026-09-27-server-anmeldung-design.md)
@@ -131,14 +142,14 @@ vollständige EV05-Galerie oder visuelle Abnahme abgeleitet werden.
 
 ## Noch offen
 
-- echte Einrichtung und Providerprüfung der optionalen Serveranmeldung;
+- echte Google-Anmeldung, Neuladen und Tokenablauf der bereitgestellten Servervariante;
 - weitere Beschleunigung von Kauf und Abgleich, anschließend reale Laufzeitprüfung;
 - persönliche Nachprüfung von Figurenfarben, Auswahl und Erwachsenen-Einstellungen;
 - realer Produktabgleich mit Google Drive auf zwei physischen Geräten;
 - iPhone-/iPad-, Safari- und Home-Bildschirm-Abnahme einschließlich
   Wiederaufnahme nach App-/Browserneustart;
 - Produktion und persönliche Sichtprüfung der 72 übrigen Bildmotive;
-- private HTTPS-Bereitstellung für den Freundeskreis;
+- praktische HTTPS-Abnahme im Freundeskreis nach bestandenem Anmeldetest;
 - allgemeine Lizenzentscheidung weiterhin zurückgestellt, ohne Sperre für die private Entwicklung.
 
 Automatisierte Tests verwenden synthetische Daten und eine simulierte

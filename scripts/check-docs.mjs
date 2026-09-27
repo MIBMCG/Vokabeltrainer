@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const root = process.cwd();
-const excluded = new Set(['.git', '.worktrees', '.superpowers', 'node_modules', 'test-results', 'playwright-report']);
+const excluded = new Set(['.git', '.worktrees', '.superpowers', '.cloudflare', '.wrangler', 'node_modules', 'test-results', 'playwright-report']);
 const files = [];
 
 function walk(directory) {

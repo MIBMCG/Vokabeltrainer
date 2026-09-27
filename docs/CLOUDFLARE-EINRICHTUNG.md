@@ -1,16 +1,60 @@
-# Optionale Serveranmeldung: lokale Vorbereitung und spätere Einrichtung
+# Optionale Serveranmeldung: Vorbereitung und private Einrichtung
 
 Stand: 27.09.2026. Die bestehende lokale Trainer-App bleibt im Browsermodus.
 Dieses Paket bereitet eine zusätzliche Variante mit automatischer
-Google-Wiederaufnahme **lokal** vor. Es legt weder ein Cloudflare-Konto noch eine
-Datenbank an und veröffentlicht keine App. Eine spätere Nutzung ist zunächst nur
-im Freundeskreis geplant; auch dafür braucht die Servervariante eine erreichbare
-HTTPS-Adresse. Vokabeln, Lernstände und Käufe bleiben
+Google-Wiederaufnahme vor. Die geführte kostenlose Einrichtung für einen
+privaten Test im Freundeskreis ist beauftragt und die App inzwischen unter
+[Vokabeltrainer](https://vokabeltrainer.marco-civico.workers.dev/trainer/)
+bereitgestellt. **Die echte Google-Anmeldung ist noch nicht geprüft.** Auch der
+private Betrieb benötigt eine erreichbare HTTPS-Adresse. Eine öffentliche
+Produktvermarktung, eine Änderung der Repository-Sichtbarkeit oder der Lizenz
+sind damit nicht beauftragt. Vokabeln, Lernstände und Käufe bleiben
 in Google Drive; Cloudflare hält nur OAuth-Zustände und verschlüsselte
 Serversitzungen. Die Freigabe gilt für Workers Free, ohne kostenpflichtigen
-Tarif oder Domain. Preise und Freigrenzen müssen vor einer echten Einrichtung
-nochmals geprüft werden ([Workers](https://developers.cloudflare.com/workers/platform/pricing/),
+Tarif oder Domain. Maßgeblich sind die jeweils aktuellen Freigrenzen
+([Workers](https://developers.cloudflare.com/workers/platform/pricing/),
 [D1](https://developers.cloudflare.com/d1/platform/pricing/)).
+
+## Nachweisstand der geführten Einrichtung am 27.09.2026
+
+- Anhand der Einrichtungsansichten zunächst geprüft: Hello-World-Worker,
+  D1-Tabellen und Indizes gemäß `server/schema.sql` sowie die Bindung `SESSIONS`.
+- Vom Nutzer zunächst bestätigt: Worker-Logs ausgeschaltet, `APP_ORIGIN` und
+  `GOOGLE_CLIENT_ID` eingetragen, beide Secrets gespeichert sowie beim
+  vorhandenen Google-Client der HTTPS-JavaScript-Ursprung und die genaue
+  Rücksprungadresse mit `/api/auth/callback` ergänzt. Die Geheimniswerte wurden
+  nicht ausgelesen. Beim späteren Deploy zeigte die Remote-Konfiguration die
+  Logs noch als aktiviert; die bestätigte Übernahme der lokalen Konfiguration
+  setzte `observability.enabled` und die Logs auf `false`, vor dem ersten noch
+  ausstehenden Google-Anmeldeversuch.
+- Lokal geprüft: ignorierte `server/wrangler.local.jsonc` mit den tatsächlichen
+  öffentlichen Konfigurationswerten und ohne Secret-Werte; Wrangler 4.142.0
+  beendet den Dry-run aus `server/` erfolgreich. Das vorbereitete Paket enthält
+  161 Dateien ausschließlich unter `src/` und `trainer/`; die frischen
+  Servertests bestehen mit 24/24 Fällen.
+- Ebenfalls geprüft: Die lokale Wrangler-Anmeldung ist erfolgreich; `whoami`
+  bestätigt das vorgesehene Cloudflare-Konto. Die CLI-Zugangsdaten bleiben
+  außerhalb des Repositorys.
+- Echt bereitgestellt: Wrangler-Deploy mit Exitcode 0, aktive Version
+  `45b6cb48-486f-45c1-8afc-4425206af8b6`, 161 öffentliche Dateien
+  (155 hochgeladen, sechs inhaltsgleiche Dateien wiederverwendet).
+  `preview_urls: false` in der lokalen Konfiguration erhält die bereits
+  ausgeschalteten Vorschauadressen.
+- Über Cloudflare geprüft: aktive Version mit `ASSETS`, `SESSIONS`, zwei
+  Variablen und zwei Secrets vom Typ `secret_text`; nur Secret-Namen und Typen
+  wurden abgefragt. Eine lesende D1-Schemaabfrage bestätigt zwei Tabellen und
+  zwei Indizes, ohne Datenbankänderung.
+- Über die echte HTTPS-Adresse geprüft: `/trainer/` liefert HTML mit Status
+  200, `/src/trainer/config.js` den Servermodus und `/api/auth/session` Status
+  200 mit `{"connected":false}` sowie `Cache-Control: no-store`.
+  `/server/worker.js`, `/docs/ANFORDERUNGEN.md`, `/.git/config` und `/` liefern
+  jeweils 404.
+- Noch offen: Der Nutzer öffnet die App, meldet sich bei Google an und lädt
+  danach neu. Echte Google-Anmeldung, Token-Erneuerung und Geräteabnahme sind
+  durch die bisherigen Bereitstellungsprüfungen nicht nachgewiesen.
+
+Weitere Einzelheiten und Fehlerbefunde stehen in der
+[Einrichtungsfortsetzung der Übergabe](handoffs/2026-09-27-anmeldung-und-tempo.md#fortsetzung-der-geführten-privaten-einrichtung-am-27092026).
 
 ## Lokal vorbereiten und prüfen
 
@@ -39,10 +83,11 @@ enthalten. Der lokale Start mit `npm start` verwendet weiter den Browsermodus.
 Ein neues Browserprofil oder eine neue HTTPS-Adresse hat eigene lokale
 Browserdaten. Die Vorbereitung verschiebt oder löscht keinen Lernstand.
 
-## Spätere Betreiber-Einrichtung
+## Betreiber-Einrichtung
 
-Diese Schritte sind eine Anleitung für eine gesondert freigegebene echte
-Einrichtung. Die Namen und Oberflächen der Anbieter können sich ändern.
+Die folgende Anleitung gilt für die bestätigte private Einrichtung. Bereits
+belegte Schritte müssen nicht erneut angelegt werden. Die Namen und
+Oberflächen der Anbieter können sich ändern.
 
 1. Im kostenlosen Cloudflare-Konto eine Workers-Adresse und eine D1-Datenbank
    für Sitzungen vorsehen. Vor dem Anlegen die aktuellen
@@ -55,10 +100,16 @@ Einrichtung. Die Namen und Oberflächen der Anbieter können sich ändern.
    `server/wrangler.local.jsonc` kopieren. Den Worker-Namen, die **tatsächliche**
    HTTPS-Adresse in `APP_ORIGIN`, die vorhandene öffentliche
    `GOOGLE_CLIENT_ID` aus `src/trainer/config.js` und die D1-ID eintragen.
+   Für den vorhandenen Worker zusätzlich `preview_urls: false` in die lokale
+   Konfiguration aufnehmen, damit die bereits deaktivierten Vorschauadressen
+   beim Deploy deaktiviert bleiben. Diese Ergänzung ist lokal vorgenommen;
+   sie steht nicht in der ursprünglichen Beispielkonfiguration.
    Platzhalter dürfen nicht stehen bleiben. `main` und `assets.directory`
    beziehen sich auf den Speicherort der Konfiguration unter `server/`:
-   `./worker.js` beziehungsweise `../.cloudflare/public`. Der Build-Hook
-   startet vor `wrangler dev` oder `deploy` aus der Repositorywurzel erneut
+   `./worker.js` beziehungsweise `../.cloudflare/public`. Dagegen bezieht sich
+   `build.cwd: ".."` in Wrangler 4.142.0 auf dessen **Startverzeichnis**.
+   Wrangler deshalb aus `server/` aufrufen, wie unten gezeigt. Der Build-Hook
+   startet dann vor `wrangler dev` oder `deploy` aus der Repositorywurzel erneut
    `npm run prepare:cloudflare`. Wenn das Staging wegen unbekannter Dateien
    abbricht, darf Wrangler den vorhandenen Ausgabeordner nicht hochladen
    ([Cloudflare-Builds](https://developers.cloudflare.com/workers/wrangler/custom-builds/)).
@@ -80,13 +131,53 @@ Einrichtung. Die Namen und Oberflächen der Anbieter können sich ändern.
    Vorlage benennt beide Pflicht-Secrets ohne Werte. Cloudflare beschreibt die
    [Secret-Verwaltung](https://developers.cloudflare.com/workers/configuration/secrets/).
 5. Die Datenbanktabellen aus `server/schema.sql` einrichten, die
-   Beispielkonfiguration auf Platzhalter prüfen und erst danach einen
-   gesondert autorisierten Test unter der echten Adresse planen. Die Vorlage
+   Beispielkonfiguration auf Platzhalter prüfen und erst danach den bestätigten
+   privaten Test unter der echten Adresse durchführen. Die Vorlage
    setzt `assets.run_worker_first: true`: Jede Anfrage durchläuft den Worker,
    der `/api/` von den ausdrücklich erlaubten statischen Pfaden trennt.
    Dadurch können auch statische Abrufe das Worker-Kontingent nutzen.
    Ein SPA-Fallback, der API-Pfade als HTML ausliefert, ist nicht vorgesehen
    ([Cloudflare-Asset-Routing](https://developers.cloudflare.com/workers/static-assets/routing/worker-script/)).
+
+## Wrangler prüfen und bereitstellen
+
+Aus der Repositorywurzel zuerst nach `server/` wechseln. Die Versionsangabe
+verwendet das tatsächlich geprüfte Wrangler; es ist keine dauerhafte
+Projektabhängigkeit nötig. Die folgenden Befehle dokumentieren den
+Einrichtungsablauf; Dry-run, Anmeldung und Deploy sind inzwischen bestätigt.
+Eine bereits gültige Anmeldung muss nicht wiederholt werden:
+
+```sh
+cd server
+npx wrangler@4.142.0 deploy --config wrangler.local.jsonc --dry-run --keep-vars
+npx wrangler@4.142.0 login --use-keyring --scopes account:read user:read workers_scripts:write d1:write
+npx wrangler@4.142.0 deploy --config wrangler.local.jsonc --keep-vars
+```
+
+Den echten Deploy erst nach erfolgreichem Dry-run und erfolgreicher Anmeldung
+ausführen. `--keep-vars` erhält zusätzliche im Dashboard gesetzte Variablen;
+die ausdrücklich in der lokalen Konfiguration enthaltenen Werte müssen trotzdem
+stimmen. Bereits beim Worker gespeicherte Secrets bleiben bei Wrangler-Deploys
+erhalten und gehören nicht als Werte in diese Datei. Der Build-Hook bleibt
+aktiv; ein fehlgeschlagenes Staging darf nicht umgangen werden.
+`observability.enabled: false` bleibt ebenfalls gesetzt.
+
+Die Anmeldung verwendet nur die genannten Berechtigungen sowie das von Wrangler
+ergänzte `offline_access`. `--use-keyring` schützt die lokale CLI-Ablage mit dem
+Anmeldeinformationsspeicher des Betriebssystems. Unter Windows wurde die dafür
+benötigte Unterstützung `@napi-rs/keyring` 1.3.0 beim ersten interaktiven Aufruf
+eingerichtet; sie ist keine Abhängigkeit der App.
+
+Ein Aufruf aus der Repositorywurzel mit lediglich
+`--config server/wrangler.local.jsonc` ist mit dieser Vorlage falsch: Der
+Build-Hook startet dann eine Ebene oberhalb des Repositorys. Genau dieser Fehler
+wurde mit Wrangler 4.142.0 reproduziert; der Dry-run aus `server/` war erfolgreich.
+
+Die App liegt unter dem Pfad `/trainer/`; die bloße Ursprungsadresse `/` liefert
+absichtlich 404. Die oben protokollierten echten HTTP-Prüfungen bestätigen die
+Auslieferung im Servermodus, den unangemeldeten Sitzungsstatus und die gesperrten
+internen Pfade. Der Sitzungsabruf ohne Cookie prüft noch keinen Datenbankzugriff
+oder Google-Login; der separate D1-Nachweis prüft nur das Schema.
 
 Die Vorlage setzt `observability.enabled` ausdrücklich auf `false`, damit
 automatische Worker-Logs insbesondere OAuth-Callback-Adressen nicht speichern.

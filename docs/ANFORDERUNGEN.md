@@ -59,8 +59,12 @@ Nutzerantwort A bestätigt anschließend die lokale Vorbereitung einer
 **Cloudflare Workers Free**-Serverlösung für die automatische Anmeldung.
 Vokabeln bleiben in Google Drive, kostenpflichtige Angebote werden nicht
 aktiviert. Ein zusätzliches kostenloses Cloudflare-Konto ist für diesen Weg
-akzeptiert; echte Kontoanlage, Google-Konfiguration und Bereitstellung sind
-noch nicht durchgeführt. Freigegebener Umfang und Prüfgrenzen stehen im
+akzeptiert. Danach beauftragt der Nutzer den gemeinsamen schrittweisen
+Anbietertest. Konto/Worker und D1 sind inzwischen eingerichtet, die
+Google-Konfiguration ist nach Nutzerrückmeldung vorbereitet. Der private
+App-Upload ist erfolgt und die Erreichbarkeit geprüft. Die tatsächliche
+automatische Google-Anmeldung ist noch nicht belegt.
+Freigegebener Umfang und Prüfgrenzen stehen im
 [Anmeldeentwurf](superpowers/specs/2026-09-27-server-anmeldung-design.md), der Stand
 in der [aktuellen Übergabe](handoffs/2026-09-27-anmeldung-und-tempo.md).
 

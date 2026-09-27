@@ -11,7 +11,9 @@ Die lokale Anwendung bleibt eine statische PWA. Seit dem 27.09.2026 ist zusätzl
 die Vorbereitung einer kostenlosen Servervariante für automatische Anmeldung
 bestätigt. Deren Grenzen stehen im
 [Anmeldeentwurf](superpowers/specs/2026-09-27-server-anmeldung-design.md);
-eine echte Bereitstellung und Geräteprüfung stehen noch aus.
+die private Testbereitstellung ist inzwischen erfolgt. Echte Google-Anmeldung
+und Geräteprüfung stehen noch aus; Belege und aktuelle Grenze stehen in der
+[Einrichtungsfortsetzung](handoffs/2026-09-27-anmeldung-und-tempo.md#fortsetzung-der-geführten-privaten-einrichtung-am-27092026).
 Der Produktcode liegt unter `src/trainer/`; die historische Kaufprobe unter
 `src/shop-probe/` ist kein Laufzeitimport. Die Laufzeit setzt die vorhandenen
 Commands, ProductSync und RestoreService mit den Modulen unter
@@ -146,7 +148,8 @@ Elterngerät                          Schülergerät
 Der Programmcode wird getrennt von den persönlichen Lerninhalten bereitgestellt.
 Für die Servervariante ist Cloudflare vorgesehen; der historische Vorschlag
 GitHub Pages betrifft nur den Browsermodus. Google Drive ist Datenspeicher,
-nicht der Hostingort für die Web-App. Es gibt noch keine veröffentlichte Adresse.
+nicht der Hostingort für die Web-App. Die private Testbereitstellung ist unter
+`https://vokabeltrainer.marco-civico.workers.dev/trainer/` erreichbar.
 
 ## Verantwortlichkeiten
 

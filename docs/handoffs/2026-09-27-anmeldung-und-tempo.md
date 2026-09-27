@@ -162,3 +162,108 @@ Für den unveränderten Produktstart gelten die Anweisungen der vorherigen
 Browserursprung beibehalten; `localhost` und `127.0.0.1` haben getrennte Daten.
 Keine Browserdaten löschen. Git überträgt keine Lernstände oder Google-Sitzungen.
 Kein Merge nach `main` und keine Hostingbereitstellung vorgenommen.
+
+## Fortsetzung der geführten privaten Einrichtung am 27.09.2026
+
+Dieser spätere Abschnitt aktualisiert die oben dokumentierte lokale
+Vorbereitungsphase. Der Nutzer hat inzwischen die geführte kostenlose
+Einrichtung für einen privaten Test im Freundeskreis beauftragt und die
+Einzelschritte durchgeführt. Eine öffentliche Produktvermarktung, eine Änderung
+der Repository-Sichtbarkeit und eine Lizenzentscheidung gehören weiterhin
+nicht dazu. Die App ist inzwischen unter
+[Vokabeltrainer](https://vokabeltrainer.marco-civico.workers.dev/trainer/)
+bereitgestellt; die echte Google-Anmeldung ist noch nicht geprüft.
+
+**Anhand der Einrichtungsansichten zunächst geprüft:** Ein Worker lieferte „Hello World“;
+die D1-Datenbank enthält die Tabellen und Indizes aus `server/schema.sql` und ist
+als `SESSIONS` gebunden. **Vom Nutzer zunächst bestätigt:** Worker-Logs sind aus,
+`APP_ORIGIN` und `GOOGLE_CLIENT_ID` sind eingerichtet, `GOOGLE_CLIENT_SECRET` und
+der getrennt erzeugte `SESSION_ENCRYPTION_KEY` sind als Secrets gespeichert.
+Beim bisherigen Google-Web-Client sind der HTTPS-JavaScript-Ursprung und die
+exakte Rücksprungadresse mit `/api/auth/callback` bestätigt. Die Secret-Werte
+wurden nicht zur Kontrolle ausgelesen und sind nicht Bestandteil der
+Dokumentation oder der lokalen Wrangler-Konfiguration.
+
+Die ignorierte `server/wrangler.local.jsonc` ist mit den tatsächlichen
+öffentlichen Konfigurationswerten vorbereitet. Ein echter lokaler Dry-run mit
+**Wrangler 4.142.0** endet aus dem Arbeitsverzeichnis `server/` mit Exitcode 0.
+Der Build-Hook bleibt aktiv und erstellt **161 öffentliche Dateien** unter den
+beiden Wurzeln `src/` und `trainer/`, insgesamt 10.982.871 Bytes; die größte
+Datei umfasst 2.052.566 Bytes. Der frische Lauf
+`npm run test:server` besteht mit **24/24 Fällen**. Diese Prüfungen verwenden
+keine echten Lernprofile und belegen noch keine Anmeldung bei Google.
+
+Zwei konkrete Einrichtungsfehler wurden eingegrenzt:
+
+- Der erste Dry-run aus der Repositorywurzel startete den Build wegen
+  `build.cwd: ".."` eine Ebene zu hoch und fand dort keine `package.json`.
+  Das installierte Wrangler bestätigt: `build.cwd` bezieht sich auf das
+  Prozess-Startverzeichnis; `main` und `assets.directory` beziehen sich dagegen
+  auf die Konfiguration. Die Wiederholung aus `server/` war erfolgreich.
+  Die [Einrichtungsanleitung](../CLOUDFLARE-EINRICHTUNG.md) enthält jetzt die
+  eindeutigen, auf Wrangler 4.142.0 festgelegten Aufrufe. Der frühere lokale
+  Test zur Konfigurationsauflösung ersetzte diesen echten CLI-Nachweis nicht.
+- Der erste npm-Zugriff scheiterte mit `UNABLE_TO_VERIFY_LEAF_SIGNATURE`.
+  Der betroffene Node-Prozess konnte mit `--use-system-ca` und dem vorhandenen
+  System-Zertifikatsspeicher erfolgreich zugreifen. TLS-Prüfung blieb aktiv;
+  keine globalen Zertifikats-, npm-, Proxy- oder Sicherheitsregeln wurden
+  geändert.
+
+Anschließend war die ausdrücklich bestätigte lokale Wrangler-Anmeldung
+erfolgreich; `whoami` bestätigt das vorgesehene Cloudflare-Konto. Freigegeben sind
+`account:read`, `user:read`, `workers_scripts:write` und `d1:write`, ergänzt um
+das von Wrangler benötigte `offline_access`. Die CLI speichert ihre Zugangsdaten
+verschlüsselt außerhalb des Repositorys; der Schlüssel liegt im
+Windows-Anmeldeinformationsspeicher. Das dafür interaktiv eingerichtete
+`@napi-rs/keyring` 1.3.0 ist Werkzeugunterstützung für Wrangler und keine
+Produktabhängigkeit. Zugangsdaten wurden nicht ausgelesen oder dokumentiert.
+
+Der anschließende echte Deploy mit `--keep-vars` war mit Exitcode 0 erfolgreich.
+Aktive Worker-Version: `45b6cb48-486f-45c1-8afc-4425206af8b6`. Von 161 öffentlichen
+Dateien wurden 155 hochgeladen und sechs inhaltsgleiche Dateien wiederverwendet.
+Die CLI-Zählung von 178 Einträgen umfasst 161 Dateien und 17 Verzeichnisse.
+Der Build-Hook blieb aktiv. Die lokale Konfiguration ergänzt
+`preview_urls: false`, um die bereits deaktivierten Vorschauadressen zu
+erhalten. Beim Konfigurationsvergleich zeigte Cloudflare die Protokollierung
+trotz der vorherigen Nutzerbestätigung noch als aktiv. Die ausdrücklich
+bestätigte Übernahme der lokalen Konfiguration setzte Observability und Logs
+auf `false`; bis dahin hatte keine Google-Anmeldung über die App stattgefunden.
+
+Die aktive Version bestätigt die Bindungen `ASSETS`, `SESSIONS`, zwei Variablen
+und zwei Secrets vom Typ `secret_text`. Eine zusätzliche Secret-Liste bestätigt
+die beiden vorgesehenen Namen; es wurden keine Werte ausgelesen. Eine lesende
+D1-Abfrage von `sqlite_master` bestätigt die zwei Tabellen und zwei Indizes aus
+`server/schema.sql`, bei null Änderungen. Die Remote-Prüfungen ersetzen keine
+Prüfung persönlicher Lernstände.
+
+Lesende HTTP-Prüfungen an der echten Adresse bestätigen:
+
+- `/trainer/`: 200 und HTML;
+- `/src/trainer/config.js`: 200 und `authMode: 'server'`;
+- `/api/auth/session`: 200, `{"connected":false}` und `Cache-Control: no-store`;
+- `/server/worker.js`, `/docs/ANFORDERUNGEN.md`, `/.git/config` und `/`: jeweils 404.
+
+Der Dokumentationscheck erfasste nach den echten Wrangler-Aufrufen auch
+ignorierte erzeugte Dateien: eine Dry-run-README unter `.cloudflare/` und den
+Account-Cache unter `server/.wrangler/`, jeweils ohne Schlusszeilenumbruch.
+`scripts/check-docs.mjs` schließt deshalb jetzt `.cloudflare` und `.wrangler`
+wie andere Werkzeugausgaben aus. Die Projektquellen bleiben im Prüfbereich;
+erzeugte Wrangler-Dateien müssen nicht für den Dokumentationsstil umgeschrieben
+werden. Diese begrenzte Prüftool-Korrektur verändert keinen Produktcode.
+Der abschließende Dokumentationscheck prüft 238 Markdown-Dateien und 901
+lokale Links ohne Fehler; auch `git diff --check` ist sauber. Die begrenzte
+Prüftool-Änderung und die Einrichtungsnachträge wurden unabhängig nachgelesen.
+
+**Nächster Schritt:** Der Nutzer öffnet die App unter `/trainer/`, meldet sich
+bei Google an und lädt anschließend neu, um die Wiederaufnahme zu prüfen.
+Erst dieser reale Versuch kann die Google-Anmeldung bestätigen. Der alte lokale
+Browserursprung und seine Daten bleiben erhalten. Google-Teststatus,
+Refresh-Token-Lebensdauer, bestehender Drive-Bestand, Reload, Tokenablauf und
+die Zwei-Geräte-/Apple-Abnahme bleiben offene Nachweise.
+
+Zu Beginn dieser Einrichtung war `codex/vokabeltrainer-v1` auf `449aa2a` sauber
+und mit dem lokal bekannten Remote-Trackingstand synchron. Diese Ergänzung ist
+zunächst eine lokale Dokumentationsänderung. Die Worker-Versions-ID und die
+HTTP-Prüfungen belegen die Bereitstellung; Git-Commit und Remote-Abgleich des
+Dokumentationsabschlusses sind davon getrennt nachzuweisen. Kein Merge nach
+`main` wurde vorgenommen.

@@ -1,9 +1,16 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
 **Aktuelle Fortsetzung am 27.09.2026:** Vorrang hat die automatische Anmeldung.
-Nutzerantwort A bestätigt die lokale Vorbereitung einer optionalen kostenlosen
-Cloudflare-Servervariante; Google Drive bleibt Datenspeicher. Echte Kontoanlage,
-Google-Konfiguration, Bereitstellung und Geräteabnahme sind nicht erfolgt.
+Nutzerantwort A bestätigte zunächst die lokale Vorbereitung einer kostenlosen
+Cloudflare-Servervariante; Google Drive bleibt Datenspeicher. Anschließend hat
+der Nutzer den gemeinsamen schrittweisen Anbietertest beauftragt. Worker und
+D1 samt Tabellen/Bindung sind angelegt; Google-Adressen, Servervariablen und
+Secrets sind eingetragen; ihre Namen und die D1-Struktur wurden beim Anbieter
+geprüft. Probelauf, Wrangler-Anmeldung und privater App-Upload sind erfolgreich.
+Die HTTPS-App unter `/trainer/` und der unangemeldete Sitzungsstatus sind
+erreichbar; interne Dateipfade bleiben gesperrt. Als Nächstes erfolgt der
+gemeinsame Google-Anmeldetest. Echte automatische Google-Anmeldung und
+Geräteabnahme sind noch nicht belegt.
 Der Nutzer plant ausschließlich die Nutzung im Freundeskreis, keine öffentliche
 Veröffentlichung. Die dafür nötige private HTTPS-Bereitstellung ist von einer
 öffentlichen Produktfreigabe zu unterscheiden; Repository-Sichtbarkeit und
