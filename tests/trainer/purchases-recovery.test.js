@@ -15,6 +15,8 @@ import {createCommerceIntegration} from '../../src/trainer/purchases/integration
 import {createRestoreService} from '../../src/trainer/backup/restore.js';
 import {createPurchaseTransport} from '../../src/trainer/purchases/transport.js';
 import {purchasesHttpFixture} from './purchases-http-fixture.js';
+import {readHistory} from '../../src/trainer/purchases/history.js';
+import {resolveEpochs} from '../../src/trainer/model/epochs.js';
 
 const CONFIG={
   version:1,kind:'purchase-config',binding:BINDING,descriptorHash:'a'.repeat(64),
@@ -763,6 +765,50 @@ test('an accepted setup pointer with a lost response is read back before activat
   assert.ok(harness.drive.files.size>0);
 });
 
+test('an accepted setup pointer survives lost response and fresh commands service and transport objects',async()=>{
+  const first=await actualActivationHarness({suffix:'accepted-response-restart-first'});
+  first.fixture.losePointerResponse();
+  first.store.failWhen(next=>next.commerce.setup?.phase==='confirmed');
+
+  await assert.rejects(first.service.prepareActivation({
+    binding:BINDING,descriptorHash:first.descriptorHash,
+  }),{code:'storage'});
+  const saved=first.store.snapshot().commerce.setup;
+  assert.equal(saved.phase,'reconciling');
+  const setupWrites=first.fixture.calls.filter(({method,url})=>method==='PUT'&&url.includes(`/files/${BINDING.folderId}`));
+  assert.equal(setupWrites.length,1);
+  const writtenProperties=Object.fromEntries(JSON.parse(setupWrites[0].body).properties.map(({key,value})=>[key,value]));
+  assert.deepEqual(writtenProperties,saved.pointerProperties);
+  assert.equal(setupWrites[0].headers['If-Match'],saved.etag);
+  const durableIdentity={
+    operationId:saved.operationId,coordinatorId:saved.coordinatorId,contentFolderId:saved.contentFolderId,
+    configRef:saved.configRef,etag:saved.etag,pointerProperties:saved.pointerProperties,
+  };
+
+  const freshStore=byteStore(first.store.snapshot());
+  const fresh=await actualActivationHarness({
+    store:freshStore,fixture:first.fixture,drive:first.drive,suffix:'accepted-response-restart-fresh',
+  });
+  assert.notEqual(fresh.store,first.store);
+  assert.notEqual(fresh.commands,first.commands);
+  assert.notEqual(fresh.service,first.service);
+  assert.notEqual(fresh.transport,first.transport);
+  const prepared=await fresh.service.prepareActivation({
+    binding:BINDING,descriptorHash:fresh.descriptorHash,
+  });
+
+  assert.equal(prepared.phase,'pointer-pending');
+  assert.equal(first.fixture.calls.filter(({method,url})=>method==='PUT'&&url.includes(`/files/${BINDING.folderId}`)).length,1);
+  const confirmed=fresh.commands.getState().commerce.setup;
+  assert.equal(confirmed.phase,'confirmed');
+  assert.equal(confirmed.operationId,durableIdentity.operationId);
+  assert.equal(confirmed.coordinatorId,durableIdentity.coordinatorId);
+  assert.equal(confirmed.contentFolderId,durableIdentity.contentFolderId);
+  assert.deepEqual(confirmed.configRef,durableIdentity.configRef);
+  assert.deepEqual(confirmed.pointerProperties,durableIdentity.pointerProperties);
+  assert.notEqual(confirmed.etag,durableIdentity.etag);
+});
+
 test('a reserved activation left beside an unclear setup remains resumable after setup confirmation',async()=>{
   const first=await actualActivationHarness({suffix:'legacy-reserved'});
   first.fixture.dropPointerResponse();
@@ -1003,6 +1049,72 @@ test('a running service adopts an externally reconciled purchase head without re
   assert.deepEqual(first.commands.getState().commerce.selection,[
     {profileId:'p1',figureId:'explorer-girl',stage:2},
   ]);
+});
+
+test('a running service adopts a later confirmed restore that removes ownership and invalid selection',async()=>{
+  const first=await openHarness({ids:sequenceIds('running-restore')});
+  const actual=await actualCommerceAdapter(first);
+  await first.service.refresh();
+  const lowerRightsBackup=await exportBackup(first.commands.getState(),'2026-09-27T09:00:00.000Z');
+
+  const secondStore=memoryStore(first.store.snapshot());
+  const secondRemote=new PurchaseRemote(first.remote.server);
+  secondRemote.descriptorHash=actual.descriptorHash;
+  const second=await openHarness({store:secondStore,remote:secondRemote,ids:sequenceIds('restore-before-purchase')});
+  const preview=await second.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
+  await second.service.confirm(preview);
+
+  const beforePurchase=first.commands.getState();
+  const purchased=await actual.integration.reconcile({
+    state:beforePurchase,binding:BINDING,descriptorHash:actual.descriptorHash,
+  });
+  await first.commands.commitExternal(purchased,await productStateHash(beforePurchase));
+  assert.equal((await first.service.getView()).accounts.p1.spentPoints,200);
+  await first.service.select({profileId:'p1',figureId:'explorer-girl',stage:2});
+
+  const current=first.commands.getState();
+  const history=await readHistory({
+    head:current.commerce.head,binding:current.commerce.binding,cache:current.commerce.cache,
+    read:async()=>assert.fail('the confirmed current history must already be local'),onProgress:()=>{},
+  });
+  const activeEpochId=resolveEpochs(current.ledger).activeEpochId;
+  const restoreState=structuredClone(current);
+  const snapshot={...structuredClone(lowerRightsBackup.snapshot),id:'later-lower-rights-snapshot',datasetId:BINDING.datasetId};
+  snapshot.contentHash=await snapshotHash(snapshot,lowerRightsBackup.events);
+  restoreState.restoreJobs.push({
+    id:'later-lower-rights-restore',phase:'preview',backup:lowerRightsBackup,previewId:'9'.repeat(64),
+    parentHeads:[activeEpochId],safetyCopyId:'later-lower-rights-safety',snapshot,uploads:[],epoch:null,
+  });
+  restoreState.commerce.control={
+    version:1,operationId:'later-lower-rights-restore',operation:'restore',phase:'intent',
+    epochId:null,head:null,etag:null,candidate:null,pointerProperties:null,uploads:[],
+  };
+  const prepared=await actual.integration.prepareRestoreCandidate({
+    state:restoreState,control:restoreState.commerce.control,
+    input:{restoreJobId:'later-lower-rights-restore',previewId:'9'.repeat(64)},history,
+    reserve:()=>first.remote.reserveId(),
+  });
+  for(const {ref,value} of prepared.uploads)first.remote.files.set(ref.id,structuredClone(value));
+  first.remote.coordinator.properties.purchaseHeadId=prepared.candidate.id;
+  first.remote.coordinator.properties.purchaseHeadSha256=prepared.candidate.sha256;
+  first.remote.coordinator.version=String(Number(first.remote.coordinator.version)+1);
+  first.remote.coordinator.etag=`"head-${first.remote.coordinator.version}"`;
+
+  const restored=await actual.integration.reconcile({
+    state:restoreState,binding:BINDING,descriptorHash:actual.descriptorHash,
+  });
+  assert.equal(restored.commerce.head.id,prepared.candidate.id);
+  assert.deepEqual(restored.commerce.selection,[]);
+  await first.commands.commitExternal(restored,await productStateHash(current));
+
+  const view=await first.service.getView();
+  assert.equal(view.head.id,prepared.candidate.id);
+  assert.equal(view.accounts.p1.spentPoints,0);
+  assert.deepEqual(view.accounts.p1.purchasedArticleIds,[]);
+  await assert.rejects(
+    first.service.select({profileId:'p1',figureId:'explorer-girl',stage:2}),
+    {code:'entitlement'},
+  );
 });
 
 test('normal reconcile keeps a selection unlocked by learning earned after the last purchase head',async()=>{

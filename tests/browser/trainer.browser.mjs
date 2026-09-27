@@ -126,8 +126,8 @@ async function startPracticeRound(root, mode = 'Alle Vokabeln') {
 
 // A separate synthetic store allows background commits while a real DOM editor
 // remains focused. All mutations still use the production Commands/Sync services.
-async function mountFixIntegration(page, initial) {
-  await page.evaluate(async (state) => {
+async function mountFixIntegration(page, initial, {createDataset = true} = {}) {
+  await page.evaluate(async ({state, createDataset}) => {
     const {createCommands, productStateHash} = await import('/src/trainer/commands.js');
     const {mountShell} = await import('/src/trainer/ui/shell.js');
     const {createProductSync} = await import('/src/trainer/sync/drive.js');
@@ -143,7 +143,7 @@ async function mountFixIntegration(page, initial) {
     const drive = createDriveClient({getToken: () => 'synthetic-browser-token-1'});
     const sync = createProductSync({drive, store, commands, now: () => new Date(), id: () => crypto.randomUUID(),
       onStatus: (status) => shell?.syncStatusChanged(status)});
-    await sync.createDataset('Synthetic integration');
+    if (createDataset) await sync.createDataset('Synthetic integration');
     const restore = createRestoreService({commands, store, sync, drive, now: () => new Date(), id: () => crypto.randomUUID()});
     document.querySelector('#app').hidden = true;
     const root = document.createElement('main');
@@ -160,7 +160,7 @@ async function mountFixIntegration(page, initial) {
       auth: {clientId: () => '', invalidate() {}}});
     shell.show('adult');
     window.__fix = {root, commands, shell, sync, restore, pinGate, project, productStateHash};
-  }, initial);
+  }, {state: initial, createDataset});
 }
 
 test('final I1 forgotten PIN is recoverable from the locked gate without old PIN or data loss', {timeout: 60_000}, async () => {
@@ -265,6 +265,118 @@ test('final RF1 connected backup action exports the current Commands snapshot', 
     const backup = await parseBackup(await page.evaluate(() => window.__fixDownloadedBackup.text));
     const exported = projectState(backupLedger(backup)).profiles[earned.profileId].points;
     assert.equal(exported, earned.after);
+  } finally { await harness.close(); }
+});
+
+test('final RF1 v3 backup exports the current economy selection through the preserved shell action', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page} = await harness.newDevice();
+  try {
+    await page.goto(harness.baseUrl);
+    await setupPractice(page);
+    await page.locator('#adult-entry').click();
+    await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
+    await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
+    await page.getByRole('button', {name: 'Neuen Lernbereich anlegen'}).click();
+    await page.waitForFunction(async () => (await new Promise((resolveState, reject) => {
+      const request = indexedDB.open('vokabeltrainer-product-v1', 1);
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => {
+        const database = request.result;
+        const transaction = database.transaction('product-state', 'readonly');
+        const get = transaction.objectStore('product-state').get('current');
+        get.onerror = () => reject(get.error);
+        get.onsuccess = () => resolveState(get.result ?? null);
+        transaction.oncomplete = () => database.close();
+      };
+    }))?.binding !== null);
+    await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
+    await page.getByRole('button', {name: 'Daten für Figuren und Käufe aktualisieren'}).click();
+    await page.getByRole('button', {name: 'Aktualisierung jetzt durchführen'}).click();
+    await page.getByText('Figuren und Käufe sind bereit.', {exact: true}).waitFor({timeout: 60_000});
+
+    await mountFixIntegration(page, await productState(page), {createDataset: false});
+    const root = page.locator('#fix-app');
+    await root.getByRole('button', {name: 'Einstellungen', exact: true}).click();
+    const downloadButton = root.getByRole('button', {name: 'Sicherung herunterladen'});
+    await downloadButton.evaluate((node) => { window.__connectedV3BackupButton = node; });
+    const selected = await page.evaluate(async () => {
+      const {commands, productStateHash} = window.__fix;
+      const before = commands.getState();
+      const profileId = before.ledger.events.find((event) => event.type === 'entity.revised'
+        && event.payload.entityType === 'profile').payload.entityId;
+      const next = structuredClone(before);
+      next.commerce.selection = [{profileId, figureId: 'explorer-girl', stage: 1}];
+      await commands.commitExternal(next, await productStateHash(before));
+      return next.commerce.selection;
+    });
+    assert.equal(await downloadButton.evaluate((node) => node === window.__connectedV3BackupButton), true);
+
+    await downloadButton.click();
+    await page.waitForFunction(() => window.__fixDownloadedBackup?.text);
+    const backup = await parseBackup(await page.evaluate(() => window.__fixDownloadedBackup.text));
+    const current = await page.evaluate(() => window.__fix.commands.getState());
+    const checkpoint = backup.economy.entries.values.find(({ref}) => ref.id === backup.economy.head.id);
+    assert.equal(backup.formatVersion, 3);
+    assert.equal(checkpoint.value.operation, 'checkpoint');
+    assert.deepEqual(checkpoint.value.previous, current.commerce.head);
+    assert.deepEqual(backup.economy.selection, selected);
+  } finally { await harness.close(); }
+});
+
+test('final RF1 changed visible head set requires a new deliberate backup choice', {timeout: 60_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page} = await harness.newDevice();
+  try {
+    await page.goto(harness.baseUrl);
+    await setupPractice(page);
+    const state = await productState(page);
+    const addHead = async (target, epochId, clock) => {
+      const snapshot = {id: `snapshot-${epochId}`, datasetId: target.ledger.descriptor.datasetId,
+        effectiveEventIds: target.ledger.events.map(({id}) => id).sort(), supportEventIds: [], contentHash: ''};
+      snapshot.contentHash = await snapshotHash(snapshot, target.ledger.events);
+      target.ledger.snapshots.push(snapshot);
+      target.ledger.epochs.push({format: 'vokabeltrainer-product', formatVersion: 1, ruleVersion: 1, kind: 'epoch',
+        id: epochId, datasetId: target.ledger.descriptor.datasetId,
+        parents: [target.ledger.descriptor.rootEpochId], deviceId: 'foreign-restore', clock,
+        occurredAt: '2026-09-27T10:00:00.000Z', snapshotId: snapshot.id, snapshotManifestFileId: null});
+      target.clock = Math.max(target.clock, clock);
+    };
+    await addHead(state, 'visible-head-a', state.clock + 1);
+    await addHead(state, 'visible-head-b', state.clock + 1);
+    await mountFixIntegration(page, state, {createDataset: false});
+    const root = page.locator('#fix-app');
+    await root.getByRole('button', {name: 'Einstellungen', exact: true}).click();
+    await root.locator('#backup-epoch').selectOption('visible-head-a');
+    const downloadButton = root.getByRole('button', {name: 'Sicherung herunterladen'});
+    await downloadButton.evaluate((node) => { window.__connectedConflictBackupButton = node; });
+
+    await page.evaluate(async () => {
+      const {commands, productStateHash} = window.__fix;
+      const {snapshotHash} = await import('/src/trainer/backup/format.js');
+      const before = commands.getState();
+      const next = structuredClone(before);
+      const snapshot = {id: 'snapshot-visible-head-c', datasetId: next.ledger.descriptor.datasetId,
+        effectiveEventIds: next.ledger.events.map(({id}) => id).sort(), supportEventIds: [], contentHash: ''};
+      snapshot.contentHash = await snapshotHash(snapshot, next.ledger.events);
+      next.ledger.snapshots.push(snapshot);
+      next.ledger.epochs.push({format: 'vokabeltrainer-product', formatVersion: 1, ruleVersion: 1, kind: 'epoch',
+        id: 'visible-head-c', datasetId: next.ledger.descriptor.datasetId,
+        parents: [next.ledger.descriptor.rootEpochId], deviceId: 'foreign-restore', clock: next.clock + 1,
+        occurredAt: '2026-09-27T11:00:00.000Z', snapshotId: snapshot.id, snapshotManifestFileId: null});
+      next.clock += 1;
+      window.__fixDownloadedBackup = null;
+      await commands.commitExternal(next, await productStateHash(before));
+    });
+    assert.equal(await downloadButton.evaluate((node) => node === window.__connectedConflictBackupButton), true);
+
+    await downloadButton.click();
+    await root.getByText('Der aktuelle Datenstand hat mehrere offene Köpfe. Bitte wählen Sie den Sicherungsstand neu aus.', {exact: true}).waitFor();
+    assert.equal(await page.evaluate(() => window.__fixDownloadedBackup), null);
+    assert.equal(await root.locator('#backup-epoch').inputValue(), '');
+    await root.locator('#backup-epoch').selectOption('visible-head-a');
+    await root.getByRole('button', {name: 'Sicherung herunterladen'}).click();
+    await page.waitForFunction(() => window.__fixDownloadedBackup?.text);
   } finally { await harness.close(); }
 });
 

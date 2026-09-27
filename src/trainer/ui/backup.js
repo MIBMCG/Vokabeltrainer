@@ -17,9 +17,13 @@ export async function prepareRestorePreview({
 function uiState(root) {
   const owner = root.closest?.('#app') ?? root;
   if (!stateByRoot.has(owner)) stateByRoot.set(owner, {
-    notice: '', tone: 'info', busy: false, selectedEpochId: '', pendingBackup: null,
+    notice: '', tone: 'info', busy: false, selectedEpochId: '', selectedEpochHeads: '', pendingBackup: null,
   });
   return stateByRoot.get(owner);
+}
+
+function epochHeadsKey(resolved) {
+  return resolved.epochConflict ? JSON.stringify([...resolved.heads].sort()) : '';
 }
 
 function downloadBackup(onDownload, backup, filename) {
@@ -118,6 +122,11 @@ function assertUnlocked(isUnlocked) {
 export function renderBackup({root, state, restore, onDownload, isUnlocked = () => true, onRefresh = null, getState = () => state}) {
   const ui = uiState(root);
   const resolved = resolveEpochs(state.ledger);
+  const renderedEpochHeads = epochHeadsKey(resolved);
+  if (!resolved.epochConflict || (ui.selectedEpochId && ui.selectedEpochHeads !== renderedEpochHeads)) {
+    ui.selectedEpochId = '';
+    ui.selectedEpochHeads = '';
+  }
   const section = el('section', {attrs: {'aria-labelledby': 'backup-title', class: 'stack'}});
   section.append(
     el('h2', {text: 'Sicherung', attrs: {id: 'backup-title'}}),
@@ -136,6 +145,7 @@ export function renderBackup({root, state, restore, onDownload, isUnlocked = () 
     select.value = ui.selectedEpochId;
     select.addEventListener('change', () => {
       ui.selectedEpochId = select.value;
+      ui.selectedEpochHeads = select.value ? renderedEpochHeads : '';
       exportButton.disabled = ui.busy || !ui.selectedEpochId;
     });
     section.append(message('Mehrere Wiederherstellungsstände sind offen. Für die Sicherung muss ein Kopf ausdrücklich gewählt werden.', 'error'), field('Datenstand für die Sicherung', select));
@@ -149,8 +159,12 @@ export function renderBackup({root, state, restore, onDownload, isUnlocked = () 
       exportButton.disabled = true;
       const currentState = getState();
       const currentResolved = resolveEpochs(currentState.ledger);
-      if (currentResolved.epochConflict && !currentResolved.heads.includes(ui.selectedEpochId)) {
+      if (currentResolved.epochConflict && (
+        !currentResolved.heads.includes(ui.selectedEpochId)
+        || ui.selectedEpochHeads !== epochHeadsKey(currentResolved)
+      )) {
         ui.selectedEpochId = '';
+        ui.selectedEpochHeads = '';
         throw new Error('Der aktuelle Datenstand hat mehrere offene Köpfe. Bitte wählen Sie den Sicherungsstand neu aus.');
       }
       const backup = await exportBackup(currentState, new Date().toISOString(), {
