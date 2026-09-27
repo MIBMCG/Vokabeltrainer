@@ -31,8 +31,11 @@ bezahlter Tarif oder eine kostenpflichtige Domain wird nicht eingerichtet.
 - `/api/auth/session` (GET): vorhandene Sitzung wiederaufnehmen, kurz vor
   Tokenablauf serverseitig erneuern; nur Verbindungsstatus und öffentliche
   Konto-ID zurückgeben, keine Tokens.
-- `/api/auth/logout` (POST): Sitzung dauerhaft entfernen und Google-Widerruf
-  versuchen. Eine verspätete Antwort darf die Sitzung nicht wiederherstellen.
+- `/api/auth/logout` (POST): nur die angesprochene Serversitzung dauerhaft
+  entfernen. Kein projektweiter Google-Widerruf und kein bedingungsloses Löschen
+  des gemeinsamen Sitzungscookies: Eine verspätete Abmeldeantwort darf eine
+  neuere Anmeldung im selben Browser nicht beeinträchtigen. Der alte Cookie
+  ist nach dem Entfernen des Datensatzes ungültig; eine neue Anmeldung ersetzt ihn.
 - `/api/drive/...`: nur erlaubte Drive-v2/v3-Pfade und Methoden weiterleiten;
   Zugriffstoken serverseitig setzen, ETag/If-Match und Drive-Status erhalten.
 - `src/drive/server-auth.js`: optionaler Browseradapter. Er prüft beim Start
@@ -62,6 +65,13 @@ Die bestehende Konto-/Datensatzbindung, Hashprüfung, Kauf-ETags und dauerhaften
 Aufträge bleiben unverändert. Kein Zugriff auf echte private Daten im lokalen Test.
 Bei Netzwerkfehlern bleiben lokale Lernstände erhalten. Google-Widerruf verlangt
 erneute Verbindung; ein vorübergehender Netzwerkfehler ist kein Widerruf.
+
+Präzisierung aus der unabhängigen Prüfung: Googles
+[Token-Widerruf](https://developers.google.com/identity/protocols/oauth2/web-server#tokenrevoke)
+entzieht die projektweite Freigabe einschließlich der Tokens anderer Geräte.
+Das passt nicht zur angekündigten Trennung dieser Sitzung. Normales Abmelden
+entfernt daher nur deren gespeicherte Zugangsdaten. Ein ausdrücklich außerhalb
+der App bei Google vorgenommener Widerruf wird weiterhin erkannt.
 
 ## Prüfungen und Einrichtung
 

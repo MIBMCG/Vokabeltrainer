@@ -5,7 +5,6 @@ const STATE_MS = 10 * 60 * 1000;
 const SESSION_MS = 30 * 24 * 60 * 60 * 1000;
 const REFRESH_MARGIN_MS = 60 * 1000;
 const TOKEN_URL = 'https://oauth2.googleapis.com/token';
-const REVOKE_URL = 'https://oauth2.googleapis.com/revoke';
 const ABOUT_URL = 'https://www.googleapis.com/drive/v3/about?fields=user%28permissionId%29';
 const MAX_DRIVE_BODY = 12 * 1024 * 1024;
 
@@ -191,19 +190,10 @@ export function createAuthService({store, fetchImpl = globalThis.fetch, now = Da
   async function logout(request) {
     if (!browserMutation(request, appOrigin)) return error(403);
     const cookie = cookieValue(request, '__Host-vt_session');
-    if (cookie) {
-      const id = await sha256(cookie);
-      const record = await store.readSession(id);
-      await store.deleteSession(id);
-      if (record) {
-        try {
-          const state = await cipher.decrypt(record.payload);
-          await google(REVOKE_URL, {method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            body: new URLSearchParams({token: state.refreshToken}).toString()});
-        } catch { /* Local logout remains final even if revocation is unavailable. */ }
-      }
-    }
-    return json({connected: false}, 200, {'Set-Cookie': setCookie('__Host-vt_session', '', 0)});
+    if (cookie) await store.deleteSession(await sha256(cookie));
+    // Keep the browser cookie unchanged: a late logout response must not erase
+    // a newer login using the same cookie name. Its old value is invalid in D1.
+    return json({connected: false});
   }
   function driveTarget(url, method) {
     const path = url.pathname.slice('/api/drive'.length);

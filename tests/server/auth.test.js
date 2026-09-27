@@ -179,7 +179,6 @@ test('logout wins over a delayed refresh and cannot be resurrected', async () =>
       await delayed;
       return Response.json({access_token: 'synthetic-access', expires_in: 3600});
     }
-    if (url === 'https://oauth2.googleapis.com/revoke') return new Response(null, {status: 200});
     return fakeGoogle()(url, init);
   };
   const store = memoryStore();
@@ -196,6 +195,67 @@ test('logout wins over a delayed refresh and cannot be resurrected', async () =>
   release();
   assert.deepEqual(await (await pending).json(), {connected: false});
   assert.equal(store.dump().sessions.length, 0);
+});
+
+test('a delayed old logout response cannot clear the cookie from a newer login', async () => {
+  const base = memoryStore();
+  let signalDeleted;
+  let releaseDeletion;
+  const deleted = new Promise((resolve) => { signalDeleted = resolve; });
+  const hold = new Promise((resolve) => { releaseDeletion = resolve; });
+  let pause = true;
+  const store = {
+    ...base,
+    async deleteSession(id, version) {
+      await base.deleteSession(id, version);
+      if (pause) { pause = false; signalDeleted(); await hold; }
+    },
+  };
+  const older = serviceFor(store);
+  const {callback: callbackA} = await login(older);
+  const sessionA = cookie(callbackA, '__Host-vt_session');
+  const pendingLogout = older.fetch(new Request(origin + '/api/auth/logout', {
+    method: 'POST', headers: {Origin: origin, 'X-Vokabeltrainer': '1', Cookie: `__Host-vt_session=${sessionA}`},
+  }));
+  await deleted;
+  const newer = serviceFor(store);
+  const {callback: callbackB} = await login(newer);
+  const sessionB = cookie(callbackB, '__Host-vt_session');
+  assert.ok(sessionB && sessionB !== sessionA);
+  releaseDeletion();
+  const oldResponse = await pendingLogout;
+  assert.equal(oldResponse.headers.get('set-cookie'), null);
+  const resumed = await newer.fetch(new Request(origin + '/api/auth/session', {
+    headers: {Cookie: `__Host-vt_session=${sessionB}`},
+  }));
+  assert.deepEqual(await resumed.json(), {connected: true, accountId: 'account-1'});
+});
+
+test('logout removes only session A and never calls Google revoke; session B remains usable', async () => {
+  let revokes = 0;
+  const google = async (url, init) => {
+    if (url === 'https://oauth2.googleapis.com/revoke') revokes += 1;
+    return fakeGoogle()(url, init);
+  };
+  const store = memoryStore();
+  const service = serviceFor(store, google);
+  const {callback: callbackA} = await login(service);
+  const {callback: callbackB} = await login(service);
+  const sessionA = cookie(callbackA, '__Host-vt_session');
+  const sessionB = cookie(callbackB, '__Host-vt_session');
+  const logout = await service.fetch(new Request(origin + '/api/auth/logout', {
+    method: 'POST', headers: {Origin: origin, 'X-Vokabeltrainer': '1', Cookie: `__Host-vt_session=${sessionA}`},
+  }));
+  assert.equal(logout.status, 200);
+  assert.equal(revokes, 0);
+  const gone = await service.fetch(new Request(origin + '/api/auth/session', {
+    headers: {Cookie: `__Host-vt_session=${sessionA}`},
+  }));
+  assert.deepEqual(await gone.json(), {connected: false});
+  const kept = await service.fetch(new Request(origin + '/api/auth/session', {
+    headers: {Cookie: `__Host-vt_session=${sessionB}`},
+  }));
+  assert.deepEqual(await kept.json(), {connected: true, accountId: 'account-1'});
 });
 
 test('Drive proxy preserves conditional status and ETag, rejects foreign targets and never follows redirects', async () => {
