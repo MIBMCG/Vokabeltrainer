@@ -8,9 +8,11 @@
   },
   "scripts": {
     "start": "node scripts/serve.mjs",
+    "prepare:cloudflare": "node scripts/prepare-cloudflare.mjs",
+    "test:server": "node --experimental-sqlite --test --experimental-test-isolation=none tests/server/*.test.js",
     "test:shop-probe": "node --test --experimental-test-isolation=none tests/shop-probe/*.test.js",
     "test:shop-probe:browser": "node --test --experimental-test-isolation=none tests/shop-probe/browser.mjs",
-    "test": "node --test --experimental-test-isolation=none tests/drive/*.test.js tests/probe/*.test.js tests/trainer/*.test.js tests/serve.test.js",
+    "test": "node --experimental-sqlite --test --experimental-test-isolation=none tests/drive/*.test.js tests/probe/*.test.js tests/trainer/*.test.js tests/server/*.test.js tests/serve.test.js",
     "check:docs": "node scripts/check-docs.mjs"
   }
 }

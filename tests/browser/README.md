@@ -42,7 +42,8 @@ node --test --experimental-test-isolation=none \
   tests/browser/adult-settings-usability.browser.mjs \
   tests/browser/purchase-reconnect.browser.mjs \
   tests/browser/purchase-progress.browser.mjs \
-  tests/browser/auth-ui.browser.mjs
+  tests/browser/auth-ui.browser.mjs \
+  tests/browser/server-auth.browser.mjs
 ```
 
 `purchases.browser.mjs` prüft mit dem wirklichen Produkt- und Kaufdienst an
@@ -53,8 +54,16 @@ Lauf verwendet keine echten Google-Zugänge und ersetzt keine reale
 Zwei-Geräte-, Safari-, iPhone-/iPad- oder Hostingabnahme. Der aktuelle
 fortzuschreibende Gesamtstand einschließlich der Abgleich- und Anmeldekorrekturen steht im
 [Prüfbericht zu Abgleich und Käufen](../../docs/reports/2026-09-27-sync-und-kaeufe.md).
+Die zusätzliche optionale Serveranmeldung und ihre Ergebnisgrenzen stehen im
+[Anmeldebericht](../../docs/reports/2026-09-27-server-anmeldung.md).
 Der [Abschlussbericht zu dauerhaften Käufen](../../docs/reports/2026-09-27-persistent-purchases-final.md)
 beschreibt die vorherige Produktintegration.
+
+`server-auth.browser.mjs` verwendet die echte Produktoberfläche mit einem
+isolierten synthetischen Sitzungsdienst. Der lokale Standardmodus bleibt
+Bestandteil der übrigen Fälle. Es werden weder echte Google-Cookies noch
+Cloudflare-Zugangsdaten verwendet; ein erfolgreicher Browserlauf ersetzt
+keinen Test der später tatsächlich bereitgestellten HTTPS-Adresse.
 
 Normale Läufe schreiben die 13 C2-Ansichten ausschließlich nach `test-results/overhaul-c2/`; dieser Ordner ist ignoriert und verändert den Checkout nicht. Die bewusst ausgewählten und geprüften Nachweise liegen versioniert unter [`docs/design/2026-09-19-ueberarbeitung-app/`](../../docs/design/2026-09-19-ueberarbeitung-app/). Nur für eine neue Veröffentlichung werden die gewünschten Laufzeitbilder nach Sichtprüfung ausdrücklich in diesen Dokumentationsordner übernommen. Die Matrix umfasst 1280×900, 390×844, 320×568 und 844×390, eine Schriftgröße von 200 Prozent sowie einen getrennten DPR-2-Kontext. Die Browserfälle prüfen dabei auch alle vier Hauttöne, sechs Kleidungsfarben und sechs sichtbaren Ausrüstungsoptionen samt verständlicher Sperren.
 

@@ -2,6 +2,7 @@ import {createCommands, productStateHash} from './commands.js';
 import {createPinGate} from './adult/pin.js';
 import {createRestoreService} from './backup/restore.js';
 import {createTokenSession, DriveError, withFreshAuth} from '../drive/auth.js';
+import {createServerAuth} from '../drive/server-auth.js';
 import {createDriveClient} from '../drive/client.js';
 import {openProductStore} from './storage/store.js';
 import {createProductSync} from './sync/drive.js';
@@ -28,6 +29,8 @@ let schedulerOnline = null;
 let updates = null;
 let updateNotice = null;
 let closing = false;
+let resumeServerSession = null;
+let stopServerResume = null;
 
 function deviceId() {
   const key = 'vokabeltrainer-product-device-id';
@@ -264,10 +267,17 @@ async function start() {
       await commands.commitExternal(next, expectedStateHash);
     },
   });
-  auth = createProductAuth();
-  const drive = createDriveClient({getToken: () => auth.getToken()});
+  const serverMode = APP_CONFIG.authMode === 'server';
+  auth = serverMode
+    ? createServerAuth({
+      onChange: () => shell?.syncStatusChanged(syncController?.getStatus()),
+      onExpired: () => queueMicrotask(() => resumeServerSession?.()),
+    })
+    : createProductAuth();
+  const driveFetch = serverMode ? (url, init) => auth.fetchDrive(url, init) : globalThis.fetch;
+  const drive = createDriveClient({getToken: () => auth.getToken(), fetchImpl: driveFetch});
   const purchaseTransportFor = ({binding, descriptorHash}) => createPurchaseTransport({
-    getToken: () => auth.getToken(), binding, descriptorHash,
+    getToken: () => auth.getToken(), fetchImpl: driveFetch, binding, descriptorHash,
   });
   let rawSync;
   const commerceIntegration = createCommerceIntegration({
@@ -375,13 +385,46 @@ async function start() {
     },
   });
   shell.render();
+  if (serverMode) {
+    const delays = [1_000, 2_000, 4_000, 8_000, 16_000];
+    let retryIndex = 0;
+    let retryTimer = null;
+    let pending = null;
+    let confirmedAbsent = false;
+    resumeServerSession = () => {
+      if (closing || document.hidden || !navigator.onLine || confirmedAbsent || pending) return;
+      try { auth.getToken(); return; } catch { /* No local session yet. */ }
+      if (retryTimer !== null) { clearTimeout(retryTimer); retryTimer = null; }
+      pending = auth.resume().then((connected) => {
+        retryIndex = 0;
+        confirmedAbsent = !connected;
+        if (connected && !closing && commands.getState()?.binding) scheduler?.online();
+      }).catch((error) => {
+        if ((error?.code === 'network' || error?.code === 'retryable') && retryIndex < delays.length
+          && !closing && navigator.onLine && !document.hidden) {
+          const delay = delays[retryIndex++];
+          retryTimer = setTimeout(() => { retryTimer = null; resumeServerSession?.(); }, delay);
+        }
+      }).finally(() => { pending = null; });
+    };
+    stopServerResume = () => {
+      if (retryTimer !== null) clearTimeout(retryTimer);
+      retryTimer = null;
+      pending = null;
+      resumeServerSession = null;
+    };
+    resumeServerSession();
+  }
   await startUpdates(commands);
   const notifyLocalChange = createLocalChangeNotifier({scheduler, initialState: commands.getState()});
   unsubscribeScheduler = commands.subscribe((state) => {
     refreshUpdateNotice(commands);
     notifyLocalChange(state);
   });
-  schedulerVisibility = () => scheduler?.visibility(!document.hidden && navigator.onLine);
+  schedulerVisibility = () => {
+    scheduler?.visibility(!document.hidden && navigator.onLine);
+    if (!document.hidden && navigator.onLine) resumeServerSession?.();
+  };
   schedulerOnline = () => {
     schedulerVisibility();
     scheduler?.online();
@@ -398,6 +441,7 @@ function close() {
   closing = true;
   unsubscribeScheduler?.();
   scheduler?.stop();
+  stopServerResume?.();
   if (schedulerVisibility) {
     document.removeEventListener('visibilitychange', schedulerVisibility);
     removeEventListener('offline', schedulerVisibility);

@@ -45,6 +45,7 @@ const ASSETS = new Map([
   ['/sw.js', ['sw.js', 'text/javascript; charset=utf-8']],
   ['/src/drive/auth.js', ['src/drive/auth.js', 'text/javascript; charset=utf-8']],
   ['/src/drive/client.js', ['src/drive/client.js', 'text/javascript; charset=utf-8']],
+  ['/src/drive/server-auth.js', ['src/drive/server-auth.js', 'text/javascript; charset=utf-8']],
   ['/src/probe/controller.js', ['src/probe/controller.js', 'text/javascript; charset=utf-8']],
   ['/src/probe/main.js', ['src/probe/main.js', 'text/javascript; charset=utf-8']],
   ['/src/probe/model.js', ['src/probe/model.js', 'text/javascript; charset=utf-8']],
@@ -133,6 +134,12 @@ const ASSETS = new Map([
     [`trainer/assets/avatar-evolution/dragon-stage-${stage}.png`, 'image/png'],
   ]),
 ]);
+
+export function publicAssetFiles() {
+  return [...new Set([...ASSETS.values()].map(([file]) => file)
+    .filter((file) => file.startsWith('trainer/') || file.startsWith('src/trainer/') || file.startsWith('src/drive/')))]
+    .sort();
+}
 
 const SECURITY_HEADERS = {
   'Cache-Control': 'no-cache',

@@ -271,7 +271,7 @@ test('Drive proxy preserves conditional status and ETag, rejects foreign targets
   const {callback} = await login(service);
   const sessionCookie = cookie(callback, '__Host-vt_session');
   const headers = {Origin: origin, 'X-Vokabeltrainer': '1', Cookie: `__Host-vt_session=${sessionCookie}`,
-    'If-Match': 'etag-old', 'Content-Type': 'application/json'};
+    'X-Vokabeltrainer-Account': 'account-1', 'If-Match': 'etag-old', 'Content-Type': 'application/json'};
   const response = await service.fetch(new Request(origin + '/api/drive/drive/v2/files/file-a?fields=id,etag', {
     method: 'PUT', headers, body: '{}',
   }));
@@ -289,6 +289,31 @@ test('Drive proxy preserves conditional status and ETag, rejects foreign targets
     headers: {Origin: 'https://evil.example', 'X-Vokabeltrainer': '1', Cookie: `__Host-vt_session=${sessionCookie}`},
   }));
   assert.equal(foreign.status, 403);
+});
+
+test('Drive proxy rejects a stale tab after the browser cookie changes accounts', async () => {
+  let account = 'account-1';
+  let driveCalls = 0;
+  const google = async (url, init) => {
+    if (String(url).includes('/drive/v2/files/file-a')) { driveCalls++; return Response.json({id: 'file-a'}); }
+    return fakeGoogle({account})(url, init);
+  };
+  const service = serviceFor(memoryStore(), google);
+  await login(service);
+  account = 'account-2';
+  const {callback} = await login(service);
+  const cookieB = cookie(callback, '__Host-vt_session');
+  const response = await service.fetch(new Request(origin + '/api/drive/drive/v2/files/file-a', {
+    method: 'PUT', body: '{}', headers: {Origin: origin, 'X-Vokabeltrainer': '1',
+      'X-Vokabeltrainer-Account': 'account-1', Cookie: `__Host-vt_session=${cookieB}`},
+  }));
+  assert.equal(response.status, 409);
+  assert.equal(driveCalls, 0);
+  const missing = await service.fetch(new Request(origin + '/api/drive/drive/v2/files/file-a', {
+    headers: {'X-Vokabeltrainer': '1', Cookie: `__Host-vt_session=${cookieB}`},
+  }));
+  assert.equal(missing.status, 403);
+  assert.equal(driveCalls, 0);
 });
 
 test('Drive 401 makes the next session request refresh without replaying the write', async () => {
@@ -313,7 +338,7 @@ test('Drive 401 makes the next session request refresh without replaying the wri
   const sessionCookie = cookie(callback, '__Host-vt_session');
   const rejected = await service.fetch(new Request(origin + '/api/drive/drive/v2/files/file-a', {
     method: 'PUT', headers: {Origin: origin, 'X-Vokabeltrainer': '1', Cookie: `__Host-vt_session=${sessionCookie}`,
-      'Content-Type': 'application/json', 'If-Match': 'etag-old'}, body: '{}',
+      'X-Vokabeltrainer-Account': 'account-1', 'Content-Type': 'application/json', 'If-Match': 'etag-old'}, body: '{}',
   }));
   assert.equal(rejected.status, 401);
   const resumed = await service.fetch(new Request(origin + '/api/auth/session', {
@@ -353,7 +378,8 @@ test('Drive proxy rejects an oversized streamed write before contacting Google',
   const service = serviceFor(memoryStore(), google);
   const {callback} = await login(service);
   const response = await service.fetch(new Request(origin + '/api/drive/drive/v2/files/file-a', {
-    method: 'PUT', headers: {Origin: origin, 'X-Vokabeltrainer': '1', Cookie: `__Host-vt_session=${cookie(callback, '__Host-vt_session')}`},
+    method: 'PUT', headers: {Origin: origin, 'X-Vokabeltrainer': '1', 'X-Vokabeltrainer-Account': 'account-1',
+      Cookie: `__Host-vt_session=${cookie(callback, '__Host-vt_session')}`},
     body: new Uint8Array(12 * 1024 * 1024 + 1),
   }));
   assert.equal(response.status, 413);

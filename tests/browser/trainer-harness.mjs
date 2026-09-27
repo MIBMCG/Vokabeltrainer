@@ -14,18 +14,65 @@ function moduleUrl() {
   return playwrightPath;
 }
 
-export async function createTrainerHarness({basePath = ''} = {}) {
+export async function createTrainerHarness({basePath = '', serverAuth = false} = {}) {
   const {chromium} = await import(moduleUrl());
   const server = createProbeServer({basePath});
   const productWorker = await readFile(new URL('../../trainer/sw.js', import.meta.url), 'utf8');
-  let workerVersion = 'v27';
+  let workerVersion = 'v28';
   let workerActivationDelayMs = 0;
   let blockLargeArt = false;
   let failPrecacheAssetPath = null;
+  let serverSessionConnected = true;
+  let failedSessions = 0;
+  let failedLogouts = 0;
+  let sessionRequests = 0;
+  let nextSessionDelayMs = 0;
+  let serverProxyRequests = 0;
   const originalRequest = server.listeners('request')[0];
   server.removeAllListeners('request');
   server.on('request', (request, response) => {
     const pathname = new URL(request.url, 'http://127.0.0.1').pathname;
+    if (serverAuth && pathname === `${basePath}/src/trainer/config.js`) {
+      const body = "export const APP_CONFIG = Object.freeze({authMode: 'server', googleClientId: ''});\n";
+      response.writeHead(200, {'Content-Type': 'text/javascript; charset=utf-8', 'Content-Length': Buffer.byteLength(body)});
+      response.end(request.method === 'HEAD' ? undefined : body);
+      return;
+    }
+    if (serverAuth && pathname === `${basePath}/api/auth/session`) {
+      sessionRequests++;
+      if (failedSessions > 0) { failedSessions--; response.writeHead(503); response.end(); return; }
+      const body = JSON.stringify(serverSessionConnected
+        ? {connected: true, accountId: 'synthetic-account'} : {connected: false});
+      const send = () => {
+        response.writeHead(200, {'Content-Type': 'application/json', 'Cache-Control': 'no-store'});
+        response.end(body);
+      };
+      if (nextSessionDelayMs > 0) {
+        const delay = nextSessionDelayMs;
+        nextSessionDelayMs = 0;
+        setTimeout(send, delay);
+      } else send();
+      return;
+    }
+    if (serverAuth && pathname === `${basePath}/api/auth/logout`) {
+      if (failedLogouts > 0) { failedLogouts--; response.writeHead(503); response.end(); return; }
+      serverSessionConnected = false;
+      response.writeHead(200, {'Content-Type': 'application/json', 'Cache-Control': 'no-store'});
+      response.end('{"connected":false}');
+      return;
+    }
+    if (serverAuth && pathname.startsWith(`${basePath}/api/drive/`)) {
+      serverProxyRequests++;
+      const body = pathname.endsWith('/drive/v3/about')
+        ? '{"user":{"permissionId":"synthetic-account"}}' : '{}';
+      response.writeHead(pathname.endsWith('/drive/v3/about') ? 200 : 404,
+        {'Content-Type': 'application/json', 'Cache-Control': 'no-store'});
+      response.end(body);
+      return;
+    }
+    if (serverAuth && pathname.startsWith(`${basePath}/api/`)) {
+      response.writeHead(404); response.end(); return;
+    }
     if (failPrecacheAssetPath && pathname === failPrecacheAssetPath) {
       failPrecacheAssetPath = null;
       response.writeHead(503, {'Content-Type': 'text/plain; charset=utf-8'});
@@ -37,9 +84,9 @@ export async function createTrainerHarness({basePath = ''} = {}) {
       response.end('Synthetic large-art failure.');
       return;
     }
-    if (pathname === `${basePath}/trainer/sw.js` && workerVersion !== 'v27') {
+    if (pathname === `${basePath}/trainer/sw.js` && workerVersion !== 'v28') {
       let source = productWorker.replace(
-        'const CACHE_NAME = `${CACHE_OWNER}v27`;',
+        'const CACHE_NAME = `${CACHE_OWNER}v28`;',
         `const CACHE_NAME = \`\${CACHE_OWNER}${workerVersion}\`;`,
       );
       if (source === productWorker) throw new Error('Synthetic worker version marker was not replaced.');
@@ -92,6 +139,11 @@ export async function createTrainerHarness({basePath = ''} = {}) {
     baseUrl,
     browser,
     google,
+    failServerSessions(count = 1) { failedSessions += count; },
+    failServerLogouts(count = 1) { failedLogouts += count; },
+    delayNextServerSession(ms) { nextSessionDelayMs = ms; },
+    serverSessionRequests() { return sessionRequests; },
+    serverProxyRequests() { return serverProxyRequests; },
     async newDevice({viewport = {width: 390, height: 844}, deviceScaleFactor = 1} = {}) {
       const context = await browser.newContext({viewport, deviceScaleFactor});
       contexts.add(context);
@@ -115,8 +167,8 @@ export async function createTrainerHarness({basePath = ''} = {}) {
     },
     stopServer,
     setServiceWorkerVersion(version, {activationDelayMs = 0} = {}) {
-      if (!/^v(?:2[7-9]|[3-9][0-9]|[1-9][0-9]{2,})$/u.test(version)) {
-        throw new TypeError('Synthetic worker version must be v27 or later.');
+      if (!/^v(?:2[8-9]|[3-9][0-9]|[1-9][0-9]{2,})$/u.test(version)) {
+        throw new TypeError('Synthetic worker version must be v28 or later.');
       }
       if (!Number.isSafeInteger(activationDelayMs) || activationDelayMs < 0) {
         throw new TypeError('Synthetic activation delay must be a non-negative integer.');

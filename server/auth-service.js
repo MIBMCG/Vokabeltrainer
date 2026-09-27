@@ -224,6 +224,9 @@ export function createAuthService({store, fetchImpl = globalThis.fetch, now = Da
     const current = await sessionFor(request);
     if (current?.error) return error(current.error);
     if (!current) return error(401);
+    const expectedAccount = request.headers.get('x-vokabeltrainer-account');
+    if (!expectedAccount || !/^[A-Za-z0-9_-]{1,128}$/u.test(expectedAccount)) return error(403);
+    if (expectedAccount !== current.state.accountId) return error(409);
     let body;
     if (method !== 'GET') {
       try { body = await limitedBody(request); } catch { return error(400); }

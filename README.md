@@ -7,12 +7,20 @@ profilgetrenntem Guthaben, dauerhaften Käufen und den Bereichen „Meine Figur�
 „Entwicklung“ und „Shop“. Vier bestätigte Drachenformen sind integriert.
 Die anschließenden Bedienkorrekturen vereinfachen die Erwachsenen-Einstellungen,
 übernehmen die gewählte Figur auch beim Üben und führen bei abgelaufener
-Google-Verbindung direkt zum Wiederverbinden. Details und aktuelle Prüfbelege:
-[Bedienbericht](docs/reports/2026-09-27-bedienkorrekturen.md).
-Automatisierte Prüfungen und unabhängige Abschlussreviews sind bestanden.
+Google-Verbindung direkt zum Wiederverbinden. Der Nutzer bestätigt inzwischen
+einen erfolgreichen Kauf; die Laufzeit soll weiter verbessert werden. Vorrang
+hat die bestätigte Vorbereitung einer optionalen Serveranmeldung, die Zugriffe
+nach Neuladen und Ablauf automatisch wiederaufnimmt. Die neue Variante ist
+lokal umgesetzt; der echte Serverbetrieb ist noch nicht eingerichtet. Details:
+[Anmeldebericht](docs/reports/2026-09-27-server-anmeldung.md).
 Prüfbelege, offene Geräteabnahmen und nächste Schritte stehen in
 [ARBEITSSTAND.md](ARBEITSSTAND.md) und der
-[Übergabe](docs/handoffs/2026-09-27-bedienkorrekturen.md).
+[aktuellen Übergabe](docs/handoffs/2026-09-27-anmeldung-und-tempo.md).
+
+Die App ist für den privaten Freundeskreis vorgesehen. Eine öffentliche
+Produktveröffentlichung ist nicht geplant. Automatische Anmeldung auf mehreren
+Geräten braucht trotzdem einen erreichbaren HTTPS-Dienst; dessen Einrichtung
+beschreibt die [Cloudflare-Anleitung](docs/CLOUDFLARE-EINRICHTUNG.md).
 
 Käufe verändern weder Lernpunkte noch Level. Punkte entstehen weiter mit 10
 Punkten pro richtiger Antwort und 20 pro abgeschlossener Runde; ausgebbares
@@ -94,7 +102,10 @@ Die App führt bei geöffneter App, vorhandener Internetverbindung und gültigem
 
 Der öffentliche Google-Zugang ist zentral in der App vorbereitet. Familien melden sich bei Google an und wählen ihren vorhandenen Trainerbestand; einen neuen Bestand legen sie bewusst an. Eine eigene Client-ID oder Cloud-Console-Einrichtung ist im normalen Familienablauf nicht nötig. Eine bereits gespeicherte Konfiguration und Bestandsbindung werden erhalten. Betreiberaufgaben für eine spätere öffentliche App-Adresse stehen getrennt in der [Google-Anleitung](docs/GOOGLE-DRIVE-EINRICHTUNG.md).
 
-Erneutes Verbinden mit Google bei Bedarf ist grundsätzlich akzeptiert. Währenddessen soll mit bereits gespeicherten Vokabeln offline weitergeübt werden können; die Ergebnisse werden lokal erhalten und nach erneuter Verbindung automatisch abgeglichen.
+Die frühere Annahme, dass regelmäßiges erneutes Verbinden genügt, ist durch den
+Nutzerauftrag vom 27.09.2026 ersetzt. Automatische Wiederaufnahme ist jetzt
+priorisiert; dafür ist ein zusätzlicher kostenloser Cloudflare-Dienst bestätigt.
+Bereits gespeicherte Vokabeln bleiben offline nutzbar, Ergebnisse lokal erhalten.
 
 Bei widersprüchlichen Änderungen derselben Vokabel bleiben beide Fassungen erhalten. Die Erwachsenenansicht zeigt den Unterschied und lässt die richtige Fassung auswählen. Übungsergebnisse beider Geräte werden ohne doppelte Wertung zusammengeführt.
 
@@ -105,7 +116,7 @@ Bei Googles direkter Browseranbindung laufen Zugriffstokens ab. Eine erneute Nut
 1. [START-HIER.md](START-HIER.md): Einstieg auf einem anderen Gerät oder mit einer anderen KI.
 2. [AGENTS.md](AGENTS.md): Regeln für die Mitarbeit im Repository.
 3. [ARBEITSSTAND.md](ARBEITSSTAND.md): aktueller Stand und nächster Schritt.
-4. [Abschlussübergabe](docs/handoffs/2026-09-27-bedienkorrekturen.md): Branch, Commit, Prüfungen und offene Grenzen.
+4. [Aktuelle Übergabe](docs/handoffs/2026-09-27-anmeldung-und-tempo.md): Branch, Commit, Prüfungen und offene Grenzen.
 5. [Anforderungen](docs/ANFORDERUNGEN.md): bestätigte Wünsche und offene Produktentscheidungen.
 6. [Architektur](docs/ARCHITEKTUR.md), [Produkt-Datenvertrag](docs/PRODUKT-DATENFORMAT.md) und [Kaufprotokoll](docs/KAUFPROTOKOLL.md): tatsächliche technische Verträge.
 7. [Plan für dauerhafte Käufe](docs/superpowers/plans/2026-09-20-persistent-purchases.md): Arbeitspakete und Prüfgrenzen.
@@ -143,7 +154,7 @@ git switch codex/vokabeltrainer-v1
 npm test
 ```
 
-Die Node-Tests benötigen weder npm-Zusatzpakete noch ein Google-Konto oder Internetzugriff. Danach startet `npm start` den lokalen Server auf `http://localhost:4173`: die technische Probe liegt unter `/`, der Trainer unter `/trainer/`. Ein Buildschritt oder Laufzeitpakete sind nicht nötig. Anschließend [START-HIER.md](START-HIER.md) und die [aktuelle Abschlussübergabe](docs/handoffs/2026-09-27-bedienkorrekturen.md) lesen. Die zusätzliche Browserprüfung und ihre einmalige Playwright-Einrichtung sind in [tests/browser/README.md](tests/browser/README.md) beschrieben.
+Die Node-Tests benötigen weder npm-Zusatzpakete noch ein Google-Konto oder Internetzugriff. Danach startet `npm start` den lokalen Server auf `http://localhost:4173`: die technische Probe liegt unter `/`, der Trainer unter `/trainer/`. Ein Buildschritt oder Laufzeitpakete sind nicht nötig. Anschließend [START-HIER.md](START-HIER.md) und die [aktuelle Übergabe](docs/handoffs/2026-09-27-anmeldung-und-tempo.md) lesen. Die zusätzliche Browserprüfung und ihre einmalige Playwright-Einrichtung sind in [tests/browser/README.md](tests/browser/README.md) beschrieben.
 
 Vorhandene v1-Lernstände werden geprüft, separat im bisherigen Format gesichert
 und zunächst nach dem kompatiblen v2-Fachvertrag übernommen. Die Kaufmigration
@@ -156,9 +167,17 @@ Dokumentation, keine Browserdaten oder Google-Anmeldungen.
 
 ## Bereitstellung und Kosten
 
-GitHub Pages ist als kostenloser Hostingweg für die Programmdateien vorgeschlagen. Pages ist noch nicht eingerichtet; es gibt noch keine veröffentlichte Trainer-URL. Lernstände und Google-Zugangsdaten gehören nicht in das GitHub-Repository.
+Die bestätigte Cloudflare-Vorbereitung kombiniert Programmdateien und
+Anmeldedienst unter einer HTTPS-Adresse. Eine echte Bereitstellung ist noch
+nicht erfolgt. Der frühere Vorschlag GitHub Pages kann die statische
+Browservariante bereitstellen, ersetzt aber keinen Anmeldeserver.
+Lernstände und Google-Zugangsdaten gehören nicht in das GitHub-Repository.
 
-Die Google-Drive-Nutzung ist für den erwarteten privaten Umfang innerhalb der derzeitigen kostenlosen API-Limits vorgesehen. Eine Registrierung der App in einem Google-Cloud-Projekt ist erforderlich; ein kostenpflichtiger Server oder eine zusätzliche Datenbank ist dafür nicht vorgesehen. Quellen und Stand: [QUELLEN.md](docs/QUELLEN.md).
+Die Google-Drive-Nutzung ist für den erwarteten privaten Umfang innerhalb der
+kostenlosen API-Limits vorgesehen. Die optionale Anmeldung verwendet zusätzlich
+Cloudflare Workers Free und D1 für verschlüsselte Sitzungsdaten. Kostenpflichtige
+Tarife sind nicht freigegeben. Quellen und Grenzen stehen in der
+[aktuellen Übergabe](docs/handoffs/2026-09-27-anmeldung-und-tempo.md).
 
 ## Lizenz
 

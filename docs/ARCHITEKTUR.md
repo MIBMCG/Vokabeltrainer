@@ -7,7 +7,11 @@ Kaufpaket Tasks 1–6 ist implementiert, geprüft und auf dem Entwicklungszweig
 gesichert. Der aktuelle Nachweis steht im
 [Abschlussbericht](reports/2026-09-27-persistent-purchases-final.md).
 
-Die Anwendung bleibt eine statische PWA ohne eigenen kostenpflichtigen Server.
+Die lokale Anwendung bleibt eine statische PWA. Seit dem 27.09.2026 ist zusätzlich
+die Vorbereitung einer kostenlosen Servervariante für automatische Anmeldung
+bestätigt. Deren Grenzen stehen im
+[Anmeldeentwurf](superpowers/specs/2026-09-27-server-anmeldung-design.md);
+eine echte Bereitstellung und Geräteprüfung stehen noch aus.
 Der Produktcode liegt unter `src/trainer/`; die historische Kaufprobe unter
 `src/shop-probe/` ist kein Laufzeitimport. Die Laufzeit setzt die vorhandenen
 Commands, ProductSync und RestoreService mit den Modulen unter
@@ -45,7 +49,7 @@ wirtschaftliche Ansicht. Die bestätigte Restoreauswahl wird erst nach
 bestätigtem gemeinsamem Kopf und `authoritativeState` gegen dessen Konten
 geprüft und vollständig ersetzt; eine leere Auswahl leert den Zielstand.
 
-Der Service Worker verwendet Cacheversion `v26`; die Pflichtliste enthält die
+Der Service Worker verwendet Cacheversion `v28`; die Pflichtliste enthält die
 neuen Laufzeitmodule, vier Drachenbilder und alle 20 kleinen Haut-/Kleidungsbilder
 der menschlichen Grundfiguren, aber keine Google-Antworten oder Tokens.
 Ein gemeinsamer Darstellungsresolver verbindet die gespeicherte Figurenauswahl
@@ -121,7 +125,13 @@ bleiben offen.
 
 ## Aufbau
 
-Die Anwendung ist eine statisch bereitstellbare PWA aus HTML, CSS und JavaScript. Die gleiche Anwendung bietet eine Schüler- und eine Erwachsenenansicht. Die Geräte sprechen Google Drive direkt über dessen API an; ein eigener kostenpflichtiger Server ist nicht vorgesehen.
+Die Anwendung ist eine PWA aus HTML, CSS und JavaScript. Die gleiche Anwendung
+bietet eine Schüler- und eine Erwachsenenansicht. Im lokalen Browsermodus
+sprechen die Geräte Google Drive direkt an. Die optionale Servervariante
+vermittelt diese Anfragen unter derselben Herkunft über Cloudflare Workers Free;
+D1 hält ausschließlich verschlüsselte Anmeldedaten und Sitzungsmetadaten.
+Vokabeln, Lernstände und Käufe bleiben in Google Drive. Kostenpflichtige Dienste
+sind nicht vorgesehen.
 
 ```text
 Elterngerät                          Schülergerät
@@ -133,7 +143,10 @@ Elterngerät                          Schülergerät
        Vokabeldaten und Lernereignisse
 ```
 
-Der Programmcode wird getrennt von den persönlichen Lerninhalten bereitgestellt. GitHub Pages ist dafür vorgeschlagen, aber noch nicht aktiviert. Google Drive ist Datenspeicher, nicht der Hostingort für die Web-App.
+Der Programmcode wird getrennt von den persönlichen Lerninhalten bereitgestellt.
+Für die Servervariante ist Cloudflare vorgesehen; der historische Vorschlag
+GitHub Pages betrifft nur den Browsermodus. Google Drive ist Datenspeicher,
+nicht der Hostingort für die Web-App. Es gibt noch keine veröffentlichte Adresse.
 
 ## Verantwortlichkeiten
 
@@ -205,7 +218,12 @@ Zähler lassen sich nicht immer sinnvoll addieren: Auch Serien richtiger Antwort
 
 ## Google-Zugriff
 
-Die App verwendet Google Identity Services für den Browser und die Drive-API mit `drive.file`. Damit bearbeitet die Anwendung von ihr angelegte oder vom Nutzer ausdrücklich ausgewählte Dateien. Der Zugriff gilt nicht pauschal für beliebige vorhandene Dateien in einem ausgewählten Ordner. [Google: Berechtigungen](https://developers.google.com/workspace/drive/api/guides/api-specific-auth)
+Der Browsermodus verwendet Google Identity Services; die optionale
+Serveranmeldung den OAuth-Code-Ablauf. Beide verwenden ausschließlich
+`drive.file`. Damit bearbeitet die Anwendung von ihr angelegte oder vom Nutzer
+ausdrücklich ausgewählte Dateien. Der Zugriff gilt nicht pauschal für beliebige
+vorhandene Dateien in einem ausgewählten Ordner.
+[Google: Berechtigungen](https://developers.google.com/workspace/drive/api/guides/api-specific-auth)
 
 `src/trainer/config.js` enthält die vorbereitete öffentliche Web-Client-ID. Eine reine Auswahlfunktion verbindet diese Vorgabe mit der vorhandenen lokalen Konfiguration: gespeicherte IDs und Bindungen bleiben erhalten, Abweichungen werden ausdrücklich erklärt. Der normale Familienablauf benötigt kein technisches ID-Feld. Externe OAuth-Ursprünge, Testnutzer und Hosting sind Betreiberaufgaben, keine automatisch durch einen Code-Push erledigte Einrichtung.
 
@@ -216,6 +234,16 @@ Beide Geräte benötigen dieselbe Anwendungskonfiguration und die Zuordnung zum 
 ## Anmeldung und Offlinebetrieb
 
 Google Identity Services liefert in seinem Browser-Tokenmodell kurzlebige Zugriffstokens. Nach Ablauf kann eine neue Nutzeraktion erforderlich sein. Das Modell bietet der reinen statischen App keinen zugesagten unbegrenzten stillen Zugriff. Client-Secrets oder Service-Account-Schlüssel werden nicht in Browsercode eingebettet. [Google: Tokenmodell](https://developers.google.com/identity/oauth2/web/guides/use-token-model)
+
+Die optionale Servervariante verwendet einen HttpOnly-/Secure-Cookie und
+verschlüsselt gespeicherte Refresh-Tokens. Die Sitzung wird beim Start geprüft;
+abgelaufene Zugriffstokens werden serverseitig erneuert. Der Browser erhält
+keinen Google-Bearer. Proxyziele und Methoden sind begrenzt, Konto-/Datensatz-,
+Hash- und ETag-Prüfungen bleiben bestehen. Schreibaufrufe werden nach unklarem
+Ausgang nicht blind wiederholt. Normales Abmelden entfernt nur die betreffende
+Serversitzung, ein externer Google-Widerruf wird separat erkannt. Der
+[Plan](superpowers/plans/2026-09-27-server-anmeldung.md) enthält die konkreten
+Schnittstellen und Prüfgrenzen.
 
 Ohne Verbindung oder gültigen Google-Zugriff bleiben bereits gespeicherte Vokabeln nutzbar. Die Oberfläche unterscheidet die fachlichen Zustände „Auf diesem Gerät gespeichert“, „Abgleich ausstehend“, „Mit Google verbinden“, „Abgeglichen“ und „Abgleich fehlgeschlagen“.
 

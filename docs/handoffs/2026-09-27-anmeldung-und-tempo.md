@@ -17,7 +17,13 @@ kein vollständiger Nachweis über Geräte, Wiederholungen oder Laufzeiten.
    und Fortschrittsdarstellung gemäß bestehendem Bildkonzept.
 4. Persönliche Nachprüfung von Figurenfarben, Auswahl und Erwachsenen-Einstellungen.
 5. Reale Zwei-Geräte-, iPhone/iPad-, Safari-/Home-Bildschirm-Prüfung und HTTPS-Hosting.
-6. Allgemeine Lizenzentscheidung vor einer entsprechenden Veröffentlichung.
+6. Allgemeine Lizenzentscheidung bleibt zurückgestellt; eine öffentliche
+   Produktveröffentlichung ist ausdrücklich nicht geplant.
+
+Aktuelle Klarstellung des Nutzers: Nutzung voraussichtlich nur im Freundeskreis.
+Die lokale Servervorbereitung wird fortgesetzt. Eine erreichbare HTTPS-Adresse
+ist auch für diesen privaten Betrieb nötig; öffentliche Vermarktung,
+Repository-Sichtbarkeit oder allgemeine Open-Source-Freigabe gehören nicht dazu.
 
 ## Ergebnis der Anmeldeanalyse
 
@@ -52,13 +58,14 @@ werden nicht aktiviert. [Entwurf](../superpowers/specs/2026-09-27-server-anmeldu
 und [Umsetzungsplan](../superpowers/plans/2026-09-27-server-anmeldung.md) konkretisieren
 die Vorbereitung und optionale Traineranbindung.
 
-Ein zusätzlicher **Cloudflare Workers Free**-Dienst könnte App und Anmeldedienst
-unter derselben HTTPS-Adresse bereitstellen. Vorschlag: Google-Code-Ablauf mit
+Ein zusätzlicher **Cloudflare Workers Free**-Dienst soll App und Anmeldedienst
+unter derselben HTTPS-Adresse bereitstellen. Bestätigter Aufbau: Google-Code-Ablauf mit
 serverseitig verschlüsselt gespeichertem Refresh-Token, geschützter Sitzung im
 Browser und automatischer Erneuerung. Die Vokabel- und Kaufdaten bleiben in
 Google Drive; der Server übernimmt autorisierte Drive-Aufrufe. Geheimnisse
 gehören ausschließlich in die Serverkonfiguration, nicht in Browsercode/Git.
-Ein bewusstes Trennen und ein Widerruf müssen den Zugriff weiterhin beenden.
+Ein bewusstes Trennen beendet nur die betreffende Serversitzung. Ein bei Google
+ausgeführter Widerruf wird weiterhin erkannt; er kann andere Geräte mitbetreffen.
 
 Der kostenlose Einstieg wird ohne Kreditkarte angeboten. Workers und der
 vorgeschlagene Sitzungsspeicher D1 haben Freikontingente. Eine kostenlose
@@ -102,24 +109,51 @@ Prüfung der Kaufaktualität und ist nicht durch diesen kleinen Vorschlag gedeck
 
 ## Umsetzungs- und Prüfgrenze
 
-Die Analyse veränderte keine Browserdaten, Google-Konfiguration oder Tokens.
-Nach der Bestätigung beginnt die optionale lokale Servervorbereitung gemäß Plan.
-Der vorherige Produktnachweis umfasst 543/543 Node-Tests und 54/54 Browserfälle;
-das sind historische Belege für `1c9e497`, keine neu ausgeführten Tests einer
-automatischen Anmeldung. Für diese Dokumentationsänderung sind Verweisprüfung
-und Git-Diff-Prüfung maßgeblich.
+Die Arbeiten verändern keine persönlichen Browserdaten, Google-Konfiguration
+oder echten Tokens. Der Serverkern ist in `eefc985` implementiert; `29f3526`
+behebt die Abmeldebefunde der unabhängigen Prüfung. Alle 15 fokussierten
+Servertests sind grün, die gezielte Nachprüfung ist ohne offenen Befund. Details:
+[Anmeldebericht](../reports/2026-09-27-server-anmeldung.md).
+
+Der aktuelle Gesamtprüfstand umfasst **580/580 Node-Tests und 58/58 Browserfälle**,
+jeweils ohne Fehler oder übersprungene Fälle. Die getrennte Bereitstellungskopie
+enthält 161 öffentliche Dateien; ein zusätzlicher Shellversuch bestätigt den
+Abbruch bei einer unbekannten Ausgabedatei. Diese Nachweise belegen keine echte
+automatische Anmeldung auf Cloudflare oder iOS. Details und vollständige
+Grenzen stehen im Anmeldebericht.
 
 Arbeitsagenten: Anmeldeanalyse GPT-6 Sol / high; Kaufanalyse GPT-6 Sol / medium.
-Beide ausschließlich lesend, ohne echte Google-Zugriffe oder Kontoänderungen.
+Umsetzung und begrenzte Nachprüfung GPT-6 Sol / high; unabhängige erste
+Serverprüfung GPT-6 Astra / high. Ausschließlich synthetische Zugriffe.
 
-## Weiterarbeit
+## Lokale Umsetzung und Weiterarbeit
 
-Die bestätigte Anmeldevariante lokal umsetzen und Regressionstests für Reload,
-Ablauf, Widerruf, Kontowechsel und Offlinebetrieb ergänzen.
-Die neue Lösung muss bestehende Datenbindungen und Kaufprüfungen erhalten.
+Die optionale Traineranbindung ist implementiert: `src/drive/server-auth.js`
+nimmt die Sitzung ohne Popup wieder auf; Lern- und Kauftransport verwenden
+im Servermodus denselben kontogebundenen Proxy. Die Oberfläche bleibt bei
+Netzproblemen lokal bedienbar. Ein bewusstes Abmelden wird erst nach
+Serverbestätigung als erfolgreich angezeigt. Cacheversion ist `v28`.
+
+`npm run prepare:cloudflare` erstellt ausschließlich die getrennte ignorierte
+App-Kopie `.cloudflare/public/` mit `authMode: 'server'`. Es legt keine Konten
+oder Datenbanken an. Die Vorlage `server/wrangler.example.jsonc` erzwingt
+diesen Kopierschritt vor der Bereitstellung und deaktiviert automatische
+Worker-Logs. Unbekannte Ausgabedateien und Linkausbrüche stoppen den Vorgang.
+
+Die unabhängige Gesamtprüfung und gezielte Nachprüfung sind mit Spec/Qualität
+PASS abgeschlossen. Ein dabei reproduzierter Stillstand des Autoabgleichs
+bei verzögerter Sitzung und gesperrter Erwachsenen-PIN wurde behoben und mit
+einem zusätzlichen Browsertest abgesichert. Der konkrete nächste Schritt ist die
+einmalige private Einrichtung nach
+[Cloudflare-Anleitung](../CLOUDFLARE-EINRICHTUNG.md): kostenloses Konto,
+HTTPS-Adresse, D1-Sitzungsspeicher und bestehender Google-OAuth-Client mit
+passender Rücksprungadresse. Secrets ausschließlich beim Anbieter eintragen.
+Zunächst synthetisch mit dem echten Anbieter prüfen, dann bestehende Daten
+über den dokumentierten Sicherungs-/Bestandsweg übernehmen. Google-Teststatus,
+Reload, Ablauf, Widerruf und zwei echte Geräte bleiben gesonderte Nachweise.
 
 Für den unveränderten Produktstart gelten die Anweisungen der vorherigen
-Übergabe (`npm start`, `/trainer/`, Trainercache `v27`). Den bisherigen
+Übergabe (`npm start`, `/trainer/`, Trainercache `v28`). Den bisherigen
 Browserursprung beibehalten; `localhost` und `127.0.0.1` haben getrennte Daten.
 Keine Browserdaten löschen. Git überträgt keine Lernstände oder Google-Sitzungen.
 Kein Merge nach `main` und keine Hostingveröffentlichung vorgenommen.

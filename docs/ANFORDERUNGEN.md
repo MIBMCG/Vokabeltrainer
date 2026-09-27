@@ -59,7 +59,7 @@ Nutzerantwort A bestätigt anschließend die lokale Vorbereitung einer
 **Cloudflare Workers Free**-Serverlösung für die automatische Anmeldung.
 Vokabeln bleiben in Google Drive, kostenpflichtige Angebote werden nicht
 aktiviert. Ein zusätzliches kostenloses Cloudflare-Konto ist für diesen Weg
-akzeptiert; echte Kontoanlage, Google-Konfiguration und Veröffentlichung sind
+akzeptiert; echte Kontoanlage, Google-Konfiguration und Bereitstellung sind
 noch nicht durchgeführt. Freigegebener Umfang und Prüfgrenzen stehen im
 [Anmeldeentwurf](superpowers/specs/2026-09-27-server-anmeldung-design.md), der Stand
 in der [aktuellen Übergabe](handoffs/2026-09-27-anmeldung-und-tempo.md).
@@ -160,7 +160,7 @@ Grundentscheidungen vom 16.09.2026, ergänzt bis 19.09.2026. R08/R19 gelten als 
 | R12 | Automatischer Cloudaustausch | Google Drive wurde ausdrücklich ausgewählt. Seit der Rückmeldung vom 27.09.2026 ist automatische Wiederaufnahme des Zugriffs priorisiert (R28); die lokale Vorbereitung einer Cloudflare-Serverlösung ist bestätigt. |
 | R13 | Keine zusätzlichen kostenpflichtigen Cloudabos | Google Drive bleibt Datenspeicher. Nutzerantwort A vom 27.09.2026 erlaubt die Vorbereitung eines zusätzlichen kostenlosen Cloudflare-Dienstes für automatische Anmeldung. Kein kostenpflichtiger Tarif, keine stillschweigende weitere Anbieteränderung. |
 | R14 | Gemeinsamer Google-Zugang | Die Eltern richten denselben Zugang auf beiden Geräten ein; eigene Lernprofile trennen die Lernstände der Kinder. |
-| R15 | Privater Gebrauch | Keine öffentliche Schulplattform oder mandantenfähige Klassenverwaltung beauftragt. |
+| R15 | Privater Gebrauch | Am 27.09.2026 ausdrücklich bekräftigt: Nutzung voraussichtlich nur im Freundeskreis, keine öffentliche Produktveröffentlichung geplant. Eine technisch erreichbare HTTPS-Adresse für die bestätigte Serveranmeldung ist davon zu unterscheiden. Keine öffentliche Schulplattform oder mandantenfähige Klassenverwaltung beauftragt; Repository-Sichtbarkeit bleibt unverändert. |
 | R16 | Portable Dokumentation und GitHub | README, AGENTS.md und alle nötigen Übergabedokumente erstellen und pushen, sodass andere KIs/Systeme fortsetzen können. |
 | R17 | Anforderungen im Dialog klären | Jeweils eine Frage mit mehreren Optionen und einer Empfehlung stellen. Jede Antwort direkt dokumentieren. Erst alle offenen Punkte klären; anschließend ist der Beginn der Entwicklung beauftragt. |
 | R18 | Runden mit wählbarer Aufgabenzahl | Standardmäßig 10 Antworten, alternativ 20 oder 30. Wiederholungen zählen mit. Ein Fortschrittsbalken zeigt den Stand, beispielsweise „7 von 10“. Kein Zeitlimit als reguläres Rundenende. |

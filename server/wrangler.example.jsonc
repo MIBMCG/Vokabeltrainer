@@ -1,0 +1,34 @@
+{
+  // Copy to server/wrangler.local.jsonc and set the actual free-service values there.
+  // This checked-in example contains no database ID or server secret.
+  "name": "vokabeltrainer-example",
+  "main": "./worker.js",
+  "compatibility_date": "2026-09-27",
+  "workers_dev": true,
+  "build": {
+    "command": "npm run prepare:cloudflare",
+    "cwd": ".."
+  },
+  "observability": {
+    "enabled": false
+  },
+  "assets": {
+    "directory": "../.cloudflare/public",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  },
+  "vars": {
+    "APP_ORIGIN": "https://REPLACE-WITH-YOUR-WORKERS-DEV-ORIGIN.workers.dev",
+    "GOOGLE_CLIENT_ID": "REPLACE-WITH-EXISTING-PUBLIC-WEB-CLIENT-ID"
+  },
+  "secrets": {
+    "required": ["GOOGLE_CLIENT_SECRET", "SESSION_ENCRYPTION_KEY"]
+  },
+  "d1_databases": [
+    {
+      "binding": "SESSIONS",
+      "database_name": "vokabeltrainer-sessions",
+      "database_id": "REPLACE-WITH-D1-DATABASE-ID"
+    }
+  ]
+}

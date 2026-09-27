@@ -1,6 +1,20 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-**Aktueller Stand am 27.09.2026:** Version 1 und die Überarbeitung A1–C2
+**Aktuelle Fortsetzung am 27.09.2026:** Vorrang hat die automatische Anmeldung.
+Nutzerantwort A bestätigt die lokale Vorbereitung einer optionalen kostenlosen
+Cloudflare-Servervariante; Google Drive bleibt Datenspeicher. Echte Kontoanlage,
+Google-Konfiguration, Bereitstellung und Geräteabnahme sind nicht erfolgt.
+Der Nutzer plant ausschließlich die Nutzung im Freundeskreis, keine öffentliche
+Veröffentlichung. Die dafür nötige private HTTPS-Bereitstellung ist von einer
+öffentlichen Produktfreigabe zu unterscheiden; Repository-Sichtbarkeit und
+Lizenz werden dadurch nicht geändert.
+Einstieg und aktuelle Prüfergebnisse stehen in der
+[Anmeldeübergabe](docs/handoffs/2026-09-27-anmeldung-und-tempo.md).
+Der lokale Browsermodus bleibt erhalten. Keine neue pauschale Startfreigabe
+für den bestätigten lokalen Umfang verlangen und keine laufende Bereitstellung
+aus einem synthetischen Test ableiten.
+
+**Vorheriger Kaufabschluss:** Version 1 und die Überarbeitung A1–C2
 sind abgeschlossen. Das bestätigte Kaufpaket (Tasks 1–6) ist umgesetzt und unabhängig geprüft.
 Alle sechs Abschlussbefunde sind geschlossen. Auf Produktstand `1e29ac3`
 bestanden frisch 506/506 Node-Tests und 43/43 Browserfälle; die abschließende

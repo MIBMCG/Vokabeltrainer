@@ -10,19 +10,31 @@ zu lange. Vorrang hat jetzt die automatische Google-Anmeldung nach Neuladen
 und Ablauf des Zugriffs. Die kostenlose Cloudflare-Vorbereitung ist mit
 Nutzerantwort A bestätigt. Aktuelle Untersuchung und Umsetzung:
 [Übergabe zu Anmeldung und Tempo](docs/handoffs/2026-09-27-anmeldung-und-tempo.md).
-Ausgangspunkt ist Produktcommit `1c9e497`. Die optionale Serveranmeldung wird
-zunächst lokal vorbereitet; echte Einrichtung und Veröffentlichung folgen erst
-nach den technischen Prüfungen. [Entwurf](docs/superpowers/specs/2026-09-27-server-anmeldung-design.md)
+Ausgangspunkt ist Produktcommit `1c9e497`. Die optionale Serveranmeldung ist
+lokal implementiert; echte Einrichtung und Geräteprüfungen stehen noch aus.
+Der Nutzer plant nur den Einsatz im Freundeskreis. Eine öffentliche
+Produktveröffentlichung ist nicht geplant; der private Serverbetrieb benötigt
+trotzdem eine erreichbare HTTPS-Adresse. [Entwurf](docs/superpowers/specs/2026-09-27-server-anmeldung-design.md)
 und [Plan](docs/superpowers/plans/2026-09-27-server-anmeldung.md).
 
-Das neue Korrekturpaket behandelt Abgleichschleifen, langsame bzw. wiederholt
+Aktueller lokaler Gesamtprüfstand der Servervariante: **580/580 Node-Tests und
+58/58 Browserfälle**, jeweils ohne Fehler oder übersprungene Fälle. 161
+öffentliche Dateien werden getrennt für den privaten Serverbetrieb vorbereitet.
+[Prüfbericht](docs/reports/2026-09-27-server-anmeldung.md) und
+[Einrichtungsanleitung](docs/CLOUDFLARE-EINRICHTUNG.md) halten Grenzen und
+weiteren Ablauf fest. Die unabhängige Gesamtprüfung und gezielte Nachprüfung
+sind mit Spec/Qualität PASS abgeschlossen. Der normale lokale Start bleibt im
+Browsermodus.
+
+Das vorherige Korrekturpaket behandelt Abgleichschleifen, langsame bzw. wiederholt
 bestätigte Käufe, unerwartete Google-Trennungen und eine parallele Neuanlage.
 Der aktuelle Einstieg steht in der
 [Übergabe zu Abgleich und Käufen](docs/handoffs/2026-09-27-sync-und-kaeufe.md),
 Ursachen und Prüfgrenzen im [Prüfbericht](docs/reports/2026-09-27-sync-und-kaeufe.md).
 Finaler Prüfstand dieses Pakets: **543/543 Node-Tests und 54/54 Browserfälle**,
 unabhängige Nachprüfungen ohne verbleibenden Befund. Echte Drive-Laufzeit und
-iOS-/Zwei-Geräte-Abnahme bleiben offen; nach Reload bleibt ein Google-Klick nötig.
+iOS-/Zwei-Geräte-Abnahme bleiben offen; im unveränderten lokalen Browsermodus
+bleibt nach Reload ein Google-Klick nötig.
 
 Die Bedienkorrekturen vom 27.09. umfassen den Updatehinweis, die einheitliche
 Figurendarstellung mit direkt erreichbaren Farben, den Google-Wiederverbindenweg
@@ -90,10 +102,10 @@ Task-6-Gesamtlauf.
   gestalten“. Verfügbares Guthaben, Besitz und Auswahl werden je Profil aus dem
   bestätigten Ledger angezeigt; unklare Kaufantworten lassen sich mit „Kauf
   fortsetzen“ wiederaufnehmen.
-- Der Service Worker verwendet Cacheversion `v27`. Server-Allowlist und
+- Der Service Worker verwendet Cacheversion `v28`. Server-Allowlist und
   Pflicht-Precache enthalten die neuen Laufzeitmodule, vier Drachenbilder und
   alle 20 kleinen Haut-/Kleidungsbilder der menschlichen Grundfiguren;
-  Google-Antworten und Tokens werden nicht gecacht.
+  Google-Antworten, Sitzungs- und Proxyantworten werden nicht gecacht.
 
 ## Bestätigter Produktumfang
 
@@ -114,15 +126,15 @@ vollständige EV05-Galerie oder visuelle Abnahme abgeleitet werden.
 
 ## Noch offen
 
-- Umsetzung und Prüfung der bestätigten optionalen Serveranmeldung;
+- echte Einrichtung und Providerprüfung der optionalen Serveranmeldung;
 - weitere Beschleunigung von Kauf und Abgleich, anschließend reale Laufzeitprüfung;
 - persönliche Nachprüfung von Figurenfarben, Auswahl und Erwachsenen-Einstellungen;
 - realer Produktabgleich mit Google Drive auf zwei physischen Geräten;
 - iPhone-/iPad-, Safari- und Home-Bildschirm-Abnahme einschließlich
   Wiederaufnahme nach App-/Browserneustart;
 - Produktion und persönliche Sichtprüfung der 72 übrigen Bildmotive;
-- HTTPS-Bereitstellung und Hostingfreigabe;
-- allgemeine Lizenzentscheidung.
+- private HTTPS-Bereitstellung für den Freundeskreis;
+- allgemeine Lizenzentscheidung weiterhin zurückgestellt, ohne Sperre für die private Entwicklung.
 
 Automatisierte Tests verwenden synthetische Daten und eine simulierte
 Google-Grenze. Der historische echte Bericht 10 bestätigt 6/6 Szenarien der
@@ -143,10 +155,12 @@ damaligen nächsten Schritte gelten nicht als aktuelle Arbeitsanweisung.
 
 ## Nächster Schritt
 
-1. Die bestätigte lokale Vorbereitung nach dem Anmeldeplan umsetzen und prüfen;
-   echte Einrichtung und Geräteabnahme anschließend getrennt nachweisen.
-2. Den begrenzten Kauf-Optimierungsvorschlag umsetzen und prüfen, sobald der
-   konkrete Änderungsumfang abgestimmt ist; Kontobindung und Kaufprüfungen erhalten.
+1. Kostenlose private Einrichtung der geprüften optionalen Servervariante gemäß
+   [Cloudflare-Anleitung](docs/CLOUDFLARE-EINRICHTUNG.md) und Geräteabnahme
+   getrennt nachweisen.
+2. Den in der Übergabe beschriebenen begrenzten Kauf-Optimierungsvorschlag als
+   nächstes Codepaket konkretisieren, umsetzen und prüfen; Kontobindung und
+   Kaufprüfungen erhalten. Keine erneute pauschale Startfreigabe verlangen.
 3. Die korrigierten Bedienwege mit dem Nutzer nachtesten; besonders
    Figurenfarben, Wiederverbinden im Shop und die Erwachsenen-Einstellungen.
 4. Am bestätigten Bild- und Galeriekonzept ansetzen: 72 übrige Motive und
@@ -154,7 +168,8 @@ damaligen nächsten Schritte gelten nicht als aktuelle Arbeitsanweisung.
    integrieren und visuell prüfen.
 5. Das integrierte Produkt auf zwei realen Geräten einschließlich iPhone/iPad
    prüfen; die historische Probe 10 nicht unverändert wiederholen.
-6. Hosting/HTTPS und allgemeine Lizenz nur im dafür bestätigten Umfang angehen.
+6. Privates Hosting/HTTPS nur im dafür bestätigten Umfang angehen; keine
+   öffentliche Produktfreigabe oder allgemeine Lizenzentscheidung ableiten.
 
 Keine weitere allgemeine Startfreigabe verlangen. Merge nach `main`, Hosting,
 Cloudkontenänderungen und reale Geräteabnahme sind durch den Abschluss dieses

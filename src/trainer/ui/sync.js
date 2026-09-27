@@ -108,6 +108,8 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
       el('h3', {text: 'Google Drive verbinden'}),
       el('p', {text: configuration.source === 'missing'
         ? 'Der Google-Zugang ist noch nicht vorbereitet. Lokal üben und speichern ist weiterhin möglich.'
+        : configuration.source === 'server'
+          ? 'Die Google-Verbindung ist noch nicht aktiv. Lokal üben und speichern ist weiterhin möglich.'
         : state.binding
           ? 'Google-Verbindung erneuern. Ihr Lernbereich bleibt verbunden; ausstehende Änderungen werden danach automatisch abgeglichen.'
         : 'Verbinden Sie das gemeinsame Google-Konto der Familie. Danach wählen Sie bewusst einen neuen oder vorhandenen Lernbereich.'}),
@@ -122,41 +124,43 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
     section.append(connection);
   }
 
-  const advanced = el('details', {attrs: {class: 'subpanel stack compact'}}, [
-    el('summary', {text: 'Erweiterte Einstellungen'}),
-    el('p', {text: 'Diese Angaben sind nur für Projektverantwortliche. Familien benötigen normalerweise keine eigene Client-ID.'}),
-  ]);
-  if (configuration.requiresDecision) {
-    advanced.append(message(state.binding
-      ? 'In diesem Browser ist eine andere Client-ID gespeichert. Der bestehende Lernbereich behält seine bisherige Verbindung; ein schneller Wechsel wird deshalb nicht angeboten.'
-      : 'In diesem Browser ist eine andere Client-ID gespeichert. Sie bleibt aktiv, bis Sie bewusst den vorbereiteten Zugang wählen.'));
-    if (!state.binding) {
-      advanced.append(button('Vorbereiteten Zugang verwenden und verbinden', () => run(
-        () => auth.connect(auth.preparedClientId()), {after: markConnected},
-      ), {class: 'secondary', disabled: ui.busy}));
+  if (configuration.source !== 'server') {
+    const advanced = el('details', {attrs: {class: 'subpanel stack compact'}}, [
+      el('summary', {text: 'Erweiterte Einstellungen'}),
+      el('p', {text: 'Diese Angaben sind nur für Projektverantwortliche. Familien benötigen normalerweise keine eigene Client-ID.'}),
+    ]);
+    if (configuration.requiresDecision) {
+      advanced.append(message(state.binding
+        ? 'In diesem Browser ist eine andere Client-ID gespeichert. Der bestehende Lernbereich behält seine bisherige Verbindung; ein schneller Wechsel wird deshalb nicht angeboten.'
+        : 'In diesem Browser ist eine andere Client-ID gespeichert. Sie bleibt aktiv, bis Sie bewusst den vorbereiteten Zugang wählen.'));
+      if (!state.binding) {
+        advanced.append(button('Vorbereiteten Zugang verwenden und verbinden', () => run(
+          () => auth.connect(auth.preparedClientId()), {after: markConnected},
+        ), {class: 'secondary', disabled: ui.busy}));
+      }
     }
+    if (state.binding) {
+      advanced.append(el('p', {text: 'Für einen bereits verbundenen Lernbereich kann die Client-ID hier nicht gewechselt werden.'}));
+    } else {
+      const manual = el('form', {attrs: {class: 'stack compact'}});
+      const manualClientId = el('input', {attrs: {
+        id: 'google-client-id', name: 'clientId', value: ui.manualClientId, autocomplete: 'off',
+      }});
+      manualClientId.addEventListener('input', () => { ui.manualClientId = manualClientId.value; });
+      manual.append(
+        field('Öffentliche Google-Web-Client-ID', manualClientId),
+        el('button', {text: 'Eigene Client-ID verwenden und verbinden', attrs: {
+          type: 'submit', class: 'secondary', disabled: ui.busy,
+        }}),
+      );
+      manual.addEventListener('submit', (event) => {
+        event.preventDefault();
+        void run(() => auth.connect(ui.manualClientId), {after: markConnected});
+      });
+      advanced.append(manual);
+    }
+    section.append(advanced);
   }
-  if (state.binding) {
-    advanced.append(el('p', {text: 'Für einen bereits verbundenen Lernbereich kann die Client-ID hier nicht gewechselt werden.'}));
-  } else {
-    const manual = el('form', {attrs: {class: 'stack compact'}});
-    const manualClientId = el('input', {attrs: {
-      id: 'google-client-id', name: 'clientId', value: ui.manualClientId, autocomplete: 'off',
-    }});
-    manualClientId.addEventListener('input', () => { ui.manualClientId = manualClientId.value; });
-    manual.append(
-      field('Öffentliche Google-Web-Client-ID', manualClientId),
-      el('button', {text: 'Eigene Client-ID verwenden und verbinden', attrs: {
-        type: 'submit', class: 'secondary', disabled: ui.busy,
-      }}),
-    );
-    manual.addEventListener('submit', (event) => {
-      event.preventDefault();
-      void run(() => auth.connect(ui.manualClientId), {after: markConnected});
-    });
-    advanced.append(manual);
-  }
-  section.append(advanced);
 
   if (ui.connected) {
     const controls = el('div', {attrs: {class: 'subpanel stack compact'}});
@@ -168,13 +172,11 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
       button('Jetzt abgleichen', () => run(() => sync.retry()), {
         class: 'secondary', disabled: ui.busy || !state.binding,
       }),
-      button('Google-Verbindung trennen', () => {
-        auth.disconnect();
+      button('Google-Verbindung trennen', () => run(() => auth.disconnect(), {after: () => {
         ui.connected = false;
         ui.notice = 'Die Google-Verbindung dieser Sitzung wurde getrennt. Lokales Üben bleibt möglich.';
         ui.tone = 'info';
-        rerender();
-      }, {class: 'secondary', disabled: ui.busy}),
+      }}), {class: 'secondary', disabled: ui.busy}),
     );
     if (!state.binding) {
       controls.append(

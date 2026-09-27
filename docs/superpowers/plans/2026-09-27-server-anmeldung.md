@@ -25,12 +25,12 @@
 
 **Interfaces:** `createAuthService({store, fetchImpl, now, config})` liefert `{fetch(request)}`. `config` enthält `origin`, `clientId`, `clientSecret`, `encryptionKey` (32 Byte base64). `store` bietet bedingte, atomare Operationen für verschlüsselte Zustands- und Sitzungsdatensätze; Speicheradapter und Testadapter teilen den Vertrag. Worker bildet Bindings `SESSIONS`, `APP_ORIGIN`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `SESSION_ENCRYPTION_KEY`, `ASSETS` darauf ab.
 
-- [ ] Zuerst fehlschlagende Tests für einen vollständigen Callback und Wiederaufnahme schreiben. Weitere Fälle: fehlende/falsche Zustands-Cookies, Wiederholung, Ablauf, Google-Fehler, nicht gewährter Scope, widerrufener Zugriff und vorübergehendes Netzproblem.
-- [ ] `node --experimental-sqlite --test --experimental-test-isolation=none tests/server/*.test.js` ausführen und roten Ausgang dokumentieren.
-- [ ] API implementieren: Start-POST mit Origin und `X-Vokabeltrainer: 1`, Callback mit PKCE und Einmalzustand, GET-Sitzung ohne Tokens, POST-Abmelden, verschlüsselte Speicherung, 30-Tage-Sitzung/10-Minuten-Zustand. Gleichzeitige Erneuerungen und Abmelden bedingt speichern; keine Wiederbelebung gelöschter Sitzungen.
-- [ ] Proxy `/api/drive/drive/v2/...`, `/api/drive/drive/v3/...`, `/api/drive/upload/drive/v2/...`, `/api/drive/upload/drive/v3/...` auf `https://www.googleapis.com` beschränken. Nur fachlich benötigte Dateipfade/Methoden, keine fremden Redirects. Origin und Anfrageheader prüfen. If-Match/Content-Type weitergeben, ausschließlich serverseitigen Bearer verwenden. Drive-Fehlerstatus und ETag weitergeben, keine Schreibwiederholung.
-- [ ] Worker bietet API und ausschließlich vorbereitete statische Assets. Unbekannte API-Pfade liefern Fehler; Geheimnisse und Cookieheader nicht an Google oder Browser durchreichen. D1-Schema und atomare Adaptertests ergänzen.
-- [ ] Fokussierte Tests grün; Spec und Qualität unabhängig prüfen, Befunde beheben.
+- [x] Zuerst fehlschlagende Tests für einen vollständigen Callback und Wiederaufnahme schreiben. Weitere Fälle: fehlende/falsche Zustands-Cookies, Wiederholung, Ablauf, Google-Fehler, nicht gewährter Scope, widerrufener Zugriff und vorübergehendes Netzproblem.
+- [x] `node --experimental-sqlite --test --experimental-test-isolation=none tests/server/*.test.js` ausführen und roten Ausgang dokumentieren.
+- [x] API implementieren: Start-POST mit Origin und `X-Vokabeltrainer: 1`, Callback mit PKCE und Einmalzustand, GET-Sitzung ohne Tokens, POST-Abmelden, verschlüsselte Speicherung, 30-Tage-Sitzung/10-Minuten-Zustand. Gleichzeitige Erneuerungen und Abmelden bedingt speichern; keine Wiederbelebung gelöschter Sitzungen.
+- [x] Proxy `/api/drive/drive/v2/...`, `/api/drive/drive/v3/...`, `/api/drive/upload/drive/v2/...`, `/api/drive/upload/drive/v3/...` auf `https://www.googleapis.com` beschränken. Nur fachlich benötigte Dateipfade/Methoden, keine fremden Redirects. Origin und Anfrageheader prüfen. If-Match/Content-Type weitergeben, ausschließlich serverseitigen Bearer verwenden. Drive-Fehlerstatus und ETag weitergeben, keine Schreibwiederholung.
+- [x] Worker bietet API und ausschließlich vorbereitete statische Assets. Unbekannte API-Pfade liefern Fehler; Geheimnisse und Cookieheader nicht an Google oder Browser durchreichen. D1-Schema und atomare Adaptertests ergänzen.
+- [x] Fokussierte Tests grün; Spec und Qualität unabhängig prüfen, Befunde beheben.
 
 Testkern (Handler statt echter Google-Aufrufe, alle Cookies synthetisch):
 
@@ -48,11 +48,11 @@ assert.equal(JSON.stringify(await store.dump()).includes('synthetic-refresh'), f
 
 **Interfaces:** `createServerAuth({fetchImpl, navigate, onChange})` liefert die Auth-Schnittstelle des Trainers (`connect`, `getToken`, `snapshot`, `invalidateIfCurrent`, `clearLocal`, `disconnect`) plus `resume()` und `fetchDrive(url,init)`. `getToken()` liefert ausschließlich einen lokalen Sitzungsmarker; nur `fetchDrive` darf diesen Modus verwenden und entfernt lokale Authorization-Header vor dem Proxyaufruf. Öffentliche `configuration()` bleibt mit der Oberfläche kompatibel; keine änderbare Client-ID im Servermodus.
 
-- [ ] Tests für Reload-Wiederaufnahme, abgelaufene serverseitige Tokens, Offlinefehler und Abmelden zuerst rot sehen. `clearLocal()` trennt keine Serversitzung. Abmelden wartet auf den Server und zeigt einen Fehler, wenn die dauerhafte Trennung nicht bestätigt ist.
-- [ ] Optionalen Adapter integrieren, wenn `APP_CONFIG.authMode === 'server'`; normaler lokaler Start bleibt Browsermodus. Proxy-Fetch sowohl an Lern- als auch Kauftransport übergeben. Wiederaufnahme darf den lokalen Start bei Netzfehlern nicht blockieren. Keine Popupautomatik und kein Wechsel auf anderes Google-Konto bei bestehender Bindung.
-- [ ] Browserregression: synthetischen Servermodus laden, Sitzung bereits vorhanden, Google ohne Klick verfügbar, Reload weiterhin verbunden, Abmelden bleibt nach Reload getrennt; Netzfehler lässt lokale Oberfläche nutzbar. Bestehenden Browsermodus weiter prüfen.
-- [ ] Staging nur aus erlaubter öffentlicher Dateiliste, nie gesamtes Repository. Ignorierte Ausgabe `.cloudflare/public/`, dort konfigurierte Servervariante. Konfigurationsvorlage ohne echte Secrets/D1-ID; dokumentierter kostenloser manueller Einrichtungsweg und Rückkehrmöglichkeit.
-- [ ] Neue Dateien in Allowlist und Pflichtcache, Cacheversion auf v28 und synthetisches Update auf v29. Programmeffekte unter Wurzel und Unterpfad prüfen.
+- [x] Tests für Reload-Wiederaufnahme, abgelaufene serverseitige Tokens, Offlinefehler und Abmelden zuerst rot sehen. `clearLocal()` trennt keine Serversitzung. Abmelden wartet auf den Server und zeigt einen Fehler, wenn die dauerhafte Trennung nicht bestätigt ist.
+- [x] Optionalen Adapter integrieren, wenn `APP_CONFIG.authMode === 'server'`; normaler lokaler Start bleibt Browsermodus. Proxy-Fetch sowohl an Lern- als auch Kauftransport übergeben. Wiederaufnahme darf den lokalen Start bei Netzfehlern nicht blockieren. Keine Popupautomatik und kein Wechsel auf anderes Google-Konto bei bestehender Bindung.
+- [x] Browserregression: synthetischen Servermodus laden, Sitzung bereits vorhanden, Google ohne Klick verfügbar, Reload weiterhin verbunden, Abmelden bleibt nach Reload getrennt; Netzfehler lässt lokale Oberfläche nutzbar. Bestehenden Browsermodus weiter prüfen.
+- [x] Staging nur aus erlaubter öffentlicher Dateiliste, nie gesamtes Repository. Ignorierte Ausgabe `.cloudflare/public/`, dort konfigurierte Servervariante. Konfigurationsvorlage ohne echte Secrets/D1-ID; dokumentierter kostenloser manueller Einrichtungsweg und Rückkehrmöglichkeit.
+- [x] Neue Dateien in Allowlist und Pflichtcache, Cacheversion auf v28 und synthetisches Update auf v29. Programmeffekte unter Wurzel und Unterpfad prüfen.
 - [ ] Fokussierte und anschließend passende Gesamttests, Verweise, Diff und unabhängige Abschlussprüfung. Anforderungen/Übergabe aktualisieren, tatsächliche Grenzen und nächsten Einrichtungsschritt dokumentieren. Autorisierten Entwicklungszweig sichern und Remote-SHA nachweisen.
 
 Testkern für Browseradapter:
@@ -60,7 +60,9 @@ Testkern für Browseradapter:
 ```js
 await auth.resume();
 assert.doesNotThrow(() => auth.getToken());
-await auth.fetchDrive('https://www.googleapis.com/drive/v3/about?fields=user(permissionId)');
+await auth.fetchDrive('https://www.googleapis.com/drive/v3/about?fields=user(permissionId)', {
+  headers: {Authorization: `Bearer ${auth.getToken()}`},
+});
 assert.equal(calls.at(-1).url, '/api/drive/drive/v3/about?fields=user(permissionId)');
 assert.equal(calls.at(-1).init.headers.get('Authorization'), null);
 ```

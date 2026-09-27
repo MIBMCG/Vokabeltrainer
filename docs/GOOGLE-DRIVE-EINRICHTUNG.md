@@ -1,6 +1,6 @@
 # Google Drive: Einrichtung und Prüfungen
 
-Stand: 19.09.2026. **Einrichtung für die lokale Probe erfolgt: Projekt, Web-OAuth-Client, Testnutzer und echter Drive-Abgleich sind durch Nutzerangaben/Screenshots bestätigt.** Die öffentliche Web-Client-ID ist jetzt in der Produkt-App vorbereitet. Die Produkt-App ist mit simulierter Google-Grenze automatisiert geprüft. Realer Produktabgleich über zwei physische Geräte und die Apple-Geräteabnahme bleiben offen. Die genauen Google-Einstellungsnamen können sich ändern; maßgeblich sind die verlinkten offiziellen Anleitungen.
+Stand: 27.09.2026. **Einrichtung für die lokale Probe erfolgt: Projekt, Web-OAuth-Client, Testnutzer und echter Drive-Abgleich sind durch Nutzerangaben/Screenshots bestätigt.** Die öffentliche Web-Client-ID ist in der Produkt-App vorbereitet. Die Produkt-App ist mit simulierter Google-Grenze automatisiert geprüft. Die optionale Cloudflare-Serveranmeldung wird zusätzlich vorbereitet. Realer Produktabgleich über zwei physische Geräte und die Apple-Geräteabnahme bleiben offen. Die genauen Google-Einstellungsnamen können sich ändern; maßgeblich sind die verlinkten offiziellen Anleitungen.
 
 Die historischen Start-/Registrierungsschritte und der Prüfablauf der bestätigten lokalen Probe stehen in [GOOGLE-DRIVE-PROBE.md](GOOGLE-DRIVE-PROBE.md). Ihr Entwicklungsursprung ist `http://localhost:4173`. Die damalige Registrierung ist bestätigt; daraus folgt keine bereits registrierte oder bereitgestellte öffentliche HTTPS-Adresse für die Produkt-App.
 
@@ -20,7 +20,7 @@ Familien benötigen kein eigenes Google-Cloud-Projekt und tragen im normalen Abl
 2. Das gemeinsame Google-Konto der Familie bewusst bestätigen.
 3. Auf dem ersten Gerät **Neuen Lernbereich anlegen** wählen. Auf weiteren Geräten **Vorhandenen Lernbereich verwenden**, den passenden Eintrag prüfen und erst danach bestätigen.
 
-Die Anmeldung allein legt keinen Lernbereich an und verbindet keinen vorhandenen Bestand automatisch. Wird der Google-Dialog abgebrochen, bleiben die lokalen Lerndaten unverändert nutzbar. Nach Ablauf des Zugriffs erneut **Mit Google verbinden** wählen; ausstehende Änderungen werden bei geöffnetem Trainer anschließend automatisch abgeglichen.
+Die Anmeldung allein legt keinen Lernbereich an und verbindet keinen vorhandenen Bestand automatisch. Wird der Google-Dialog abgebrochen, bleiben die lokalen Lerndaten unverändert nutzbar. Im bisherigen Browsermodus nach Ablauf des Zugriffs erneut **Mit Google verbinden** wählen; ausstehende Änderungen werden bei geöffnetem Trainer anschließend automatisch abgeglichen. Die optionale Servervariante soll diese erneute Nutzeraktion bei normalem Tokenablauf vermeiden; ihre tatsächliche Einrichtung ist noch offen.
 
 Eine früher in diesem Browser gespeicherte gültige Client-ID bleibt zunächst erhalten. Weicht sie von der vorbereiteten App-Konfiguration ab, erklärt der erweiterte Bereich die Abweichung. Ohne verbundene Drive-Daten kann dort bewusst auf den vorbereiteten Zugang gewechselt werden. Ein bereits verbundener Lernbereich behält seine bisherige Client-ID; die Oberfläche bietet dafür keinen schnellen Wechsel an.
 
@@ -58,7 +58,7 @@ Historische Produktentscheidung Q10 vom 16.09.2026: Der Nutzer akzeptierte diese
 
 Nutzertest vom 27.09.2026: Erneutes Verbinden nach Reload und unerwartete
 Verbindungsabbrüche nach wenigen Minuten wurden als unbenutzerfreundlich
-beanstandet. Die Korrektur trennt Seitenende, PIN-Sperre und bewusstes Trennen:
+beanstandet. Die Korrektur im Browsermodus trennt Seitenende, PIN-Sperre und bewusstes Trennen:
 Nur „Google-Verbindung trennen“ widerruft die Google-Freigabe. Seitenende löscht
 lediglich die flüchtige Sitzung; verspätete Anmeldefehler dürfen keine neuere
 Sitzung entfernen. Die Anmeldung fordert mit `prompt: ''` keine unnötige
@@ -68,15 +68,22 @@ vom Konto und Browser ab ([Google-Referenz](https://developers.google.com/identi
 Nach vollständigem Neuladen oder regulärem Tokenablauf bleibt im bisherigen
 Browsermodell ein bewusster Klick auf „Mit Google verbinden“ nötig. Ein
 gebundener Lernbereich muss dabei nicht neu eingerichtet werden. Eine
-dauerhafte automatische Anmeldung ist damit nicht implementiert; es gibt
-keine Tokens in Browserdaten, Backups oder Repository und keinen zusätzlichen
-Cloudanbieter.
+dauerhafte automatische Anmeldung ist damit nicht implementiert. Die optionale
+Servervariante verwendet dagegen verschlüsselte Serversitzungen. Normales
+Abmelden entfernt dort nur diese Sitzung; andere Geräte behalten ihre Freigabe.
+Tokens gehören auch in dieser Variante weder in Browserdaten, Backups noch Git.
 
-Ein Wechsel des OAuth-Veröffentlichungsstatus auf „Production“ hebt die begrenzte Lebensdauer der Zugriffstokens nicht auf. Googles zusätzlich dokumentierte Sieben-Tage-Regel betrifft Refresh-Tokens bestimmter externer Apps im Teststatus; der implementierte Browserablauf verwendet kein eigenes serverseitiges Refresh-Token-Lager. Diese Sachverhalte nicht miteinander verwechseln.
+Ein Wechsel des OAuth-Veröffentlichungsstatus auf „Production“ hebt die begrenzte Lebensdauer der Zugriffstokens nicht auf. Googles zusätzlich dokumentierte Sieben-Tage-Regel betrifft Refresh-Tokens bestimmter externer Apps im Teststatus; sie muss bei der Servervariante vor dauerhaftem Betrieb berücksichtigt werden. Der bisherige Browserablauf verwendet keine serverseitigen Refresh-Tokens. Diese Sachverhalte nicht miteinander verwechseln.
 
 Quellen: [Browser-Tokenmodell](https://developers.google.com/identity/oauth2/web/guides/use-token-model), [Refresh-Token-Grenzen](https://developers.google.com/identity/protocols/oauth2).
 
 ## Teststatus und spätere Nutzung
+
+Der Nutzer plant ausschließlich private Nutzung im Freundeskreis. Der
+OAuth-Veröffentlichungsstatus in Google ist eine technische Einstellung der
+Anmeldung und von einer öffentlichen Produktveröffentlichung zu unterscheiden.
+Die private Zielgruppe hebt Anforderungen an Redirect-Adresse und Tokenlaufzeit
+nicht auf; Repository-Sichtbarkeit und allgemeine Lizenz bleiben unverändert.
 
 Den Teststatus nicht ungeprüft als dauerhafte Einrichtung ausgeben. Vor Alltagseinsatz den erforderlichen Veröffentlichungs-/Verifizierungsstatus anhand der tatsächlichen Zielgruppe, Scopes und Google-Vorgaben prüfen. `drive.file` ist als nicht sensitiver Scope dokumentiert; daraus folgt weder eine pauschale Befreiung von allen Anforderungen noch die Notwendigkeit einer aufwendigen Vollzugriffsprüfung.
 

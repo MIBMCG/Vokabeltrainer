@@ -18,6 +18,10 @@ test-results/
 playwright-report/
 .worktrees/
 .superpowers/
+.cloudflare/
+.wrangler/
+.dev.vars*
+wrangler.local.*
 *.log
 __pycache__/
 

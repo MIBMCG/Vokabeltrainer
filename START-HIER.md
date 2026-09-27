@@ -5,6 +5,9 @@ Stand: **27.09.2026**.
 Die aktuelle Fortsetzung priorisiert die automatische Google-Anmeldung und
 weitere Beschleunigung der Käufe. Der Nutzer bestätigt, dass der Kauf auf dem
 korrigierten Produktstand funktioniert, aber weiterhin zu lange dauert.
+Die optionale Serveranmeldung ist lokal umgesetzt; die tatsächliche
+Google-/Cloudflare-Einrichtung und Zielgeräteprüfung stehen noch aus.
+Vorgesehen ist ausschließlich die private Nutzung im Freundeskreis.
 Zuerst die [aktuelle Übergabe](docs/handoffs/2026-09-27-anmeldung-und-tempo.md) lesen.
 Das vorherige Korrekturpaket ist im
 [Prüfbericht](docs/reports/2026-09-27-sync-und-kaeufe.md) dokumentiert. Die vorherigen
@@ -103,8 +106,10 @@ vermeintlichen Reparatur löschen.
 > den funktionierenden Kauf, verlangt aber kürzere Wartezeit und priorisiert
 > automatische Google-Anmeldung. Die aktuelle Untersuchung steht in
 > docs/handoffs/2026-09-27-anmeldung-und-tempo.md. Nutzerantwort A bestätigt die
-> lokale Vorbereitung von Cloudflare Workers Free; echte Einrichtung und
-> Veröffentlichung sind noch nicht erfolgt. Den dort verlinkten Plan beachten.
+> lokale Vorbereitung von Cloudflare Workers Free. Die Servervariante ist lokal
+> implementiert, echte Einrichtung und Geräteprüfung sind noch nicht erfolgt.
+> Nur private Nutzung im Freundeskreis, keine öffentliche Produktveröffentlichung.
+> Den aktuellen Prüfbericht und docs/CLOUDFLARE-EINRICHTUNG.md beachten.
 > Bestätigte R-/E-/U-/AV-/EV-Entscheidungen nicht erneut aufrollen.
 > Neue Lernfakten bleiben v2, lokaler Speicher ist Version 3, aktivierte
 > Kaufepochen und wirtschaftliche Sicherungen sind v3. Vier Drachenquellen

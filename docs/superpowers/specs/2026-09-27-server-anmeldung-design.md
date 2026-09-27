@@ -15,7 +15,9 @@ bleiben unabhängig vom Server nutzbar.
 
 Die bestehende lokale Browservariante bleibt der Standard. Dieses Paket
 bereitet die Servervariante und ihre Prüfungen vor; eine echte Kontoanlage,
-Google-Konfiguration, Veröffentlichung und iOS-Abnahme sind weitere Schritte.
+Google-Konfiguration, private HTTPS-Bereitstellung und iOS-Abnahme sind weitere Schritte.
+Der Nutzer hat klargestellt, dass nur Nutzung im Freundeskreis und keine
+öffentliche Produktveröffentlichung vorgesehen ist.
 Keine automatische Datenmigration zwischen Browserursprüngen. Ein zusätzlicher
 bezahlter Tarif oder eine kostenpflichtige Domain wird nicht eingerichtet.
 
@@ -63,6 +65,10 @@ durch eine laufende Erneuerung rückgängig gemacht werden.
 
 Die bestehende Konto-/Datensatzbindung, Hashprüfung, Kauf-ETags und dauerhaften
 Aufträge bleiben unverändert. Kein Zugriff auf echte private Daten im lokalen Test.
+Der Browseradapter bindet jede Proxyanfrage an die zuletzt bestätigte Konto-ID;
+der Server vergleicht sie mit seiner Sitzung vor dem Drive-Aufruf. Ein in einem
+anderen Tab gewechselter Cookie darf dadurch keine bereits geprüfte Operation
+unbemerkt unter einem anderen Konto ausführen.
 Bei Netzwerkfehlern bleiben lokale Lernstände erhalten. Google-Widerruf verlangt
 erneute Verbindung; ein vorübergehender Netzwerkfehler ist kein Widerruf.
 
