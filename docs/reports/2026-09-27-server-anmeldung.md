@@ -94,7 +94,8 @@ Umfang; echte Provider-/Gerätenachweise sind davon getrennt.
 
 ## Aktueller Gesamtprüfstand
 
-Nach Zusammenführung der optionalen Trainerintegration und des Stagers wurden
+Nach Zusammenführung der optionalen Trainerintegration, des Stagers und der
+abschließenden RF-01-Korrektur wurden
 folgende Prüfungen frisch ausgeführt:
 
 - `npm test`: **580/580 Tests bestanden**, 0 Fehler, 0 übersprungen;
@@ -113,14 +114,17 @@ folgende Prüfungen frisch ausgeführt:
   `git diff --check`: keine Formatfehler.
 
 Die Gesamt-Browserfälle umfassen Reload ohne Google-Klick, zunächst fehlerhafte
-Sitzungsabfrage bei weiterhin nutzbarer Oberfläche und fehlgeschlagenes Logout.
+Sitzungsabfrage bei weiterhin nutzbarer Oberfläche, fehlgeschlagenes Logout
+und den automatischen Abgleichsanstoß bei verzögerter Sitzung und gesperrter PIN.
 Die Server-/Adaptertests decken außerdem Ablauf, Widerruf, alte Antworten,
 Kontowechsel, die Wiederaufnahme nach Proxy-401 und das Zeitlimit einschließlich
 Antwortbody ab. Das ist kein echter Anbieter- oder Gerätetest.
 
 Umsetzung: GPT-6 Sol / high für Serverkern, Trainerintegration und Staging.
 Die unabhängige Gesamtprüfung und gezielte Nachprüfung erfolgten durch
-GPT-6 Astra / high.
+GPT-6 Astra / high. Geprüfter und exakt auf GitHub bestätigter Produktcommit:
+`e270ae727c2da5e3b1ca7db71b28f014c3fb7de9`. Der nachfolgende Dokumentationscommit
+ändert keinen getesteten Programmcode.
 
 ## Prüfgrenzen
 

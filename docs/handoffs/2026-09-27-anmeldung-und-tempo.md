@@ -1,7 +1,12 @@
 # Fortsetzung: automatische Anmeldung und Kaufgeschwindigkeit
 
 Stand: 27.09.2026. Branch `codex/vokabeltrainer-v1`.
-Untersuchter Produktcommit: `1c9e4975db93b1630792c65472d4e9fdcbb4f98d`.
+Ausgangscommit: `1c9e4975db93b1630792c65472d4e9fdcbb4f98d`.
+Geprüfter Produktcommit: `e270ae727c2da5e3b1ca7db71b28f014c3fb7de9`,
+auf `origin/codex/vokabeltrainer-v1` gepusht und per `git ls-remote` exakt
+bestätigt. Der Dokumentationsabschluss folgt auf demselben Zweig; Programmcode
+und Tests bleiben dabei unverändert. Vor dem Weiterarbeiten den dann aktuellen
+HEAD und Remote erneut vergleichen.
 Vorheriges Paket: [Abgleich und Käufe](2026-09-27-sync-und-kaeufe.md).
 
 ## Auftrag und offene Arbeit
@@ -156,4 +161,4 @@ Für den unveränderten Produktstart gelten die Anweisungen der vorherigen
 Übergabe (`npm start`, `/trainer/`, Trainercache `v28`). Den bisherigen
 Browserursprung beibehalten; `localhost` und `127.0.0.1` haben getrennte Daten.
 Keine Browserdaten löschen. Git überträgt keine Lernstände oder Google-Sitzungen.
-Kein Merge nach `main` und keine Hostingveröffentlichung vorgenommen.
+Kein Merge nach `main` und keine Hostingbereitstellung vorgenommen.

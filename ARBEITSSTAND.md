@@ -26,6 +26,11 @@ weiteren Ablauf fest. Die unabhängige Gesamtprüfung und gezielte Nachprüfung
 sind mit Spec/Qualität PASS abgeschlossen. Der normale lokale Start bleibt im
 Browsermodus.
 
+Geprüfter Produktcommit: `e270ae727c2da5e3b1ca7db71b28f014c3fb7de9`.
+Dieser Stand wurde auf `origin/codex/vokabeltrainer-v1` gepusht und per
+Remote-SHA exakt bestätigt. Der anschließende Dokumentationsabschluss ergänzt
+nur diesen Nachweis. Kein Merge nach `main`, keine Kontoanlage oder Bereitstellung.
+
 Das vorherige Korrekturpaket behandelt Abgleichschleifen, langsame bzw. wiederholt
 bestätigte Käufe, unerwartete Google-Trennungen und eine parallele Neuanlage.
 Der aktuelle Einstieg steht in der

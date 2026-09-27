@@ -53,7 +53,12 @@ assert.equal(JSON.stringify(await store.dump()).includes('synthetic-refresh'), f
 - [x] Browserregression: synthetischen Servermodus laden, Sitzung bereits vorhanden, Google ohne Klick verfügbar, Reload weiterhin verbunden, Abmelden bleibt nach Reload getrennt; Netzfehler lässt lokale Oberfläche nutzbar. Bestehenden Browsermodus weiter prüfen.
 - [x] Staging nur aus erlaubter öffentlicher Dateiliste, nie gesamtes Repository. Ignorierte Ausgabe `.cloudflare/public/`, dort konfigurierte Servervariante. Konfigurationsvorlage ohne echte Secrets/D1-ID; dokumentierter kostenloser manueller Einrichtungsweg und Rückkehrmöglichkeit.
 - [x] Neue Dateien in Allowlist und Pflichtcache, Cacheversion auf v28 und synthetisches Update auf v29. Programmeffekte unter Wurzel und Unterpfad prüfen.
-- [ ] Fokussierte und anschließend passende Gesamttests, Verweise, Diff und unabhängige Abschlussprüfung. Anforderungen/Übergabe aktualisieren, tatsächliche Grenzen und nächsten Einrichtungsschritt dokumentieren. Autorisierten Entwicklungszweig sichern und Remote-SHA nachweisen.
+- [x] Fokussierte und anschließend passende Gesamttests, Verweise, Diff und unabhängige Abschlussprüfung. Anforderungen/Übergabe aktualisieren, tatsächliche Grenzen und nächsten Einrichtungsschritt dokumentieren. Autorisierten Entwicklungszweig sichern und Remote-SHA nachweisen.
+
+Abschlussbeleg: Produktcommit `e270ae7`, 580/580 Node-Tests, 58/58 Browserfälle,
+unabhängige Spec-/Qualitätsprüfung PASS, Remote-SHA exakt bestätigt. Siehe
+[Anmeldebericht](../../reports/2026-09-27-server-anmeldung.md). Echte private
+Einrichtung und Provider-/Geräteprüfungen bleiben getrennte nächste Schritte.
 
 Testkern für Browseradapter:
 
