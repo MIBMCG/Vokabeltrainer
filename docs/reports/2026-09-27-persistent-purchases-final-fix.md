@@ -2,7 +2,10 @@
 
 Datum: 27.09.2026
 FIX_BASE: `18e989c77b98e0f7394ca660ef7b0023dda6678c`
-Produkt-/Testcommit: `7fe16e7` (`fix(purchases): close final integration findings`)
+Produkt-/Testcommits:
+
+- `7fe16e7` (`fix(purchases): close final integration findings`)
+- `6b7e281` (`test(purchases): complete final integration evidence`)
 
 ## Ergebnis
 
@@ -13,8 +16,9 @@ Protokollobjekte oder Cloudoperationen eingeführt. Der Service Worker verwendet
 wegen der geänderten Laufzeitmodule nun Produktcache `v25`; die synthetische
 Updateversion der Browsertests ist `v26`.
 
-Die zentrale Vollsuite, die einzige scoped Nachprüfung, reale Google-/Geräteprüfungen
-und der Push bleiben beim Controller.
+Die zentrale Vollsuite auf `7fe16e7` ist unten als Controllerbeleg abgegrenzt.
+Die einzige scoped Nachprüfung, reale Google-/Geräteprüfungen und der Push
+bleiben beim Controller.
 
 ## RF-1 – aktueller Snapshot beim Backupdownload
 
@@ -31,6 +35,18 @@ frischen Zustand; die DOM-Erhaltung der Erwachsenenansicht bleibt bestehen.
 **Regression:** Tatsächliche Commands-, Shell-, Einstellungen- und Backupkette:
 Der verbundene ursprüngliche Button bleibt nach einer Hintergrundantwort
 erhalten, der exportierte Stand enthält dennoch die neuen zehn Punkte.
+
+**Vervollständigte Abschlussfälle:** Dieselbe echte Bedienkette aktiviert
+Commerce und exportiert danach ein v3-Backup. Dessen portabler Checkpoint zeigt
+mit `previous` auf den aktuellen bestätigten gemeinsamen Kaufkopf und enthält
+die erst nach dem Rendern atomar gespeicherte Figurenauswahl. Eine zweite
+Regression wählt bei zwei sichtbaren Restoreköpfen bewusst einen Kopf, fügt im
+Hintergrund einen dritten Kopf hinzu und lässt den alten Kopf weiterhin in der
+Menge. Der alte verbundene Button darf trotzdem nicht exportieren: Erst eine
+neue Auswahl gegen genau die jetzt sichtbare Kopfmenge gibt den Download frei.
+`renderBackup` hält dafür neben der ID einen kanonisch sortierten Schlüssel der
+angezeigten Kopfmenge; dieser ist reine lokale UI-Zustandsbindung und kein neues
+Protokollfeld.
 
 ## RF-2 – Historie des langlebigen Kaufdienstes
 
@@ -49,6 +65,12 @@ des zweiten Clients den neuen Kopf über tatsächliches `integration.reconcile`
 und `commands.commitExternal`; Ansicht und Auswahl sehen unmittelbar 200
 ausgegebene Punkte und den Besitz.
 
+**Vervollständigter Abschlussfall:** Dieselbe fortbestehende Serviceinstanz
+übernimmt anschließend über einen vollständig verifizierten Restorebeleg einen
+neuen Kopf mit niedrigeren Rechten. Ohne Reload, neues `refresh` oder Netzlesen
+meldet `getView` wieder 0 ausgegebene Punkte und keinen bezahlten Besitz;
+`select` lehnt die nicht mehr berechtigte Stufe ab.
+
 ## RF-3 – Auswahl aus aktuellen Lernfakten
 
 **Ursache:** `integration.reconcile` filterte die Auswahl mit den Konten der
@@ -63,6 +85,12 @@ kommen.
 **Regression:** Zehn neue Antworten erhöhen 300 auf 400 Punkte, `horse` wird
 ausgewählt, und ein normaler Abgleich mit unverändertem Kaufkopf erhält diese
 Auswahl.
+
+**Vervollständigter Abschlussfall:** Der in RF-2 ergänzte bestätigte Restore
+beginnt mit ausgewählter bezahlter Stufe, stellt einen wirtschaftlichen Stand
+ohne diesen Besitz her und entfernt die dadurch unberechtigte Auswahl bei
+`integration.reconcile`. Damit sind sowohl der Erhalt einer weiterhin gültigen
+Auswahl als auch das Entfernen nach tatsächlich niedrigeren Rechten belegt.
 
 ## RF-4 – explizite Wiederaufnahme der Einrichtung
 
@@ -90,6 +118,11 @@ CommerceIntegration, PurchaseService, Commands und Produktpublikation:**
   die Aktivierung bis `active` fort;
 - nach Anwendung verlorene Antwort wird durch Lesen bestätigt, ohne zweiten
   Setuppointer;
+- derselbe angenommene Antwortverlust bleibt auch nach einem simulierten
+  lokalen Speicherabbruch vor der Bestätigung und einem vollständigen Neustart
+  von Store, Commands, Service und HTTP-Transport heilbar; der Test vergleicht
+  den tatsächlich gesendeten Pointerbody, alle reservierten IDs und das
+  ursprüngliche `If-Match`-ETag mit dem dauerhaft gespeicherten Auftrag;
 - alter Zustand `setup=reconciling` plus `control=reserved` bleibt zunächst
   read-only und danach ohne neue Kandidatur vollständig fortsetzbar;
 - die UI priorisiert bei gleichzeitig offenem Setup und Control die Setup-ID.
@@ -144,6 +177,12 @@ Boolean.
    pauschalen Duplicate-Assertion rot. Die Diagnose konnte die konkrete alte
    Datei nicht nachträglich bestimmen und begründet deshalb keine weitergehende
    Ursachenbehauptung.
+7. Der neue kombinierte RF-1-Abschlusslauf war zunächst 0/2. Der Kopfmengefall
+   lief in den Timeout, weil der Download mit der alten weiterhin enthaltenen
+   Kopf-ID fortfuhr. Der v3-Fall traf zunächst eine zu enge Testannahme: Das
+   Backup muss als Kopf den lokalen Checkpoint tragen; der aktuelle gemeinsame
+   Kopf steht verbindlich in `checkpoint.previous`. Nach dieser fachlichen
+   Präzisierung blieb nur die echte Kopfmenge-Lücke als Produktfehler.
 
 ## GREEN-Belege
 
@@ -182,6 +221,64 @@ umfasst den aktuellen Backupdownload, die sichtbare Setupfortsetzung, den
 stale-Fokuspfad, den präzisen I3-Vertrag, fehlgeschlagene Precacheinstallation
 und kontrollierte Offlineaktualisierung.
 
+### Vervollständigte Node-Abschlussfälle
+
+```text
+node --test --experimental-test-isolation=none \
+  --test-name-pattern="running service adopts|normal reconcile keeps|accepted setup pointer" \
+  tests/trainer/purchases-recovery.test.js
+```
+
+Ergebnis auf `6b7e281`: **5 Tests, 5 bestanden, 0 fehlgeschlagen**, 2,272 s.
+Enthalten sind ursprünglicher und späterer Restorekopf derselben
+Serviceinstanz, Erhalt und Entzug von Auswahlrechten sowie angenommener
+Setup-Pointerverlust mit und ohne vollständigen Objektneustart.
+
+### Vervollständigte RF-1-Edge-Abschlussfälle
+
+Mit derselben vorhandenen Playwright-Laufzeit und System-Edge:
+
+```text
+node --test --experimental-test-isolation=none \
+  --test-name-pattern="final RF1" tests/browser/trainer.browser.mjs
+```
+
+Ergebnis auf `6b7e281`: **3 Tests, 3 bestanden, 0 fehlgeschlagen**, 4,533 s.
+Enthalten sind der ursprüngliche frische Lernsnapshot, der v3-Checkpoint mit
+aktueller wirtschaftlicher Auswahl und die erneute bewusste Auswahl nach einer
+geänderten sichtbaren Kopfmenge.
+
+### Zentrale Gesamtläufe vor der Belegvervollständigung
+
+Der Controller hat auf dem festen Produktstand `7fe16e7` **504/504 Node-Tests**
+und **41/41 Browserfälle** bestätigt. Diese Vollsuiten wurden nach dem eng
+begrenzten Commit `6b7e281` gemäß Auftrag nicht doppelt ausgeführt; die
+abschließende scoped Nachprüfung und ihre Einordnung bleiben zentral.
+
+## Abgleich der sechs Abschlussverträge mit konkreten Tests
+
+- **RF-1:** `final RF1 connected backup action exports the current Commands
+  snapshot`, `final RF1 v3 backup exports the current economy selection through
+  the preserved shell action`, `final RF1 changed visible head set requires a
+  new deliberate backup choice`.
+- **RF-2:** `a running service adopts an externally reconciled purchase head
+  without reload or network refresh`, `a running service adopts a later
+  confirmed restore that removes ownership and invalid selection`.
+- **RF-3:** `normal reconcile keeps a selection unlocked by learning earned
+  after the last purchase head` sowie der vorgenannte Restoretest mit
+  niedrigeren Rechten und entfernter Auswahl.
+- **RF-4:** `an unclear setup stays read-only until its saved operation is
+  explicitly resumed`, beide Tests mit `an accepted setup pointer ...`, `a
+  reserved activation left beside an unclear setup remains resumable after
+  setup confirmation` und der Browserfall `an unclear setup is the activation
+  operation offered for explicit continuation`.
+- **RF-5:** `earned points buy through the real service and survive reopen,
+  offline use, stale preview and lost response` prüft insbesondere den Fokus
+  nach `stale → Abbrechen`.
+- **RF-6:** `final I3 deliberate reconnect wakes pending bound sync without
+  another lifecycle event` prüft Outbox, Pendingpakete, fachliche Einmaligkeit
+  sowie begonnenen und abgeschlossenen Leerlaufpoll.
+
 ## Schnittstellen und Grenzen
 
 - Keine neue öffentliche Produkt- oder Commerce-Schnittstelle.
@@ -192,5 +289,5 @@ und kontrollierte Offlineaktualisierung.
   Storageformat 3 oder Commerce-/Backupformat 3.
 - Keine echten Google-Konten, privaten Daten, Geräte-, Safari-/iOS-, Hosting-
   oder vollständigen 72-Motive-Galerieprüfungen.
-- Keine vollständige Node-/Browser-Gesamtsuite in dieser Welle; sie folgt
-  zentral, ebenso die genau eine scoped Nachprüfung.
+- Nach dem eng begrenzten Ergänzungscommit keine doppelte vollständige
+  Node-/Browser-Gesamtsuite; die genau eine scoped Nachprüfung folgt zentral.
