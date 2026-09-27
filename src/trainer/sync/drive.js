@@ -12,6 +12,7 @@ const APP = 'vokabeltrainer-product';
 const FOLDER_MIME_TYPE = 'application/vnd.google-apps.folder';
 const JSON_MIME_TYPE = 'application/json';
 const ID_PATTERN = /^[A-Za-z0-9_-]{1,128}$/;
+const READ_CONCURRENCY = 4;
 
 function productError(code, message) {
   return new ProductError(code, message);
@@ -174,6 +175,7 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
     lastConfirmedAt);
   let active = null;
   let rerun = false;
+  let activeDatasetSetup = null;
   const sessionVersions = new Map();
   const joinPreviews = new Map();
 
@@ -201,6 +203,13 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
     } else if (measured.conflictCount > 0) {
       phase = 'conflict';
       message = 'Ein Datenkonflikt muss geklärt werden.';
+    } else if (phase === 'checking' || phase === 'syncing') {
+      // Internal commits must retain the running state. New local changes
+      // during a read-only poll turn it into a real upload operation.
+      if (measured.pendingCount > 0) {
+        phase = 'syncing';
+        message = 'Deine Änderungen werden mit Google Drive abgeglichen.';
+      }
     } else if (measured.pendingCount > 0) {
       phase = 'pending';
       message = 'Änderungen sind noch nicht vollständig abgeglichen.';
@@ -456,7 +465,7 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
     return commands.getState().datasetSetup;
   }
 
-  async function resumeDatasetSetup() {
+  async function performDatasetSetup() {
     const setup = commands.getState()?.datasetSetup;
     if (setup === null || setup === undefined) return false;
     const accountId = await drive.accountId();
@@ -514,6 +523,17 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
     });
     publish('pending', 'Der Datensatz ist verbunden; Änderungen werden abgeglichen.');
     return true;
+  }
+
+  function resumeDatasetSetup() {
+    if (activeDatasetSetup !== null) return activeDatasetSetup;
+    const task = performDatasetSetup();
+    activeDatasetSetup = task;
+    void task.then(
+      () => { if (activeDatasetSetup === task) activeDatasetSetup = null; },
+      () => { if (activeDatasetSetup === task) activeDatasetSetup = null; },
+    );
+    return task;
   }
 
   // Activated offline restore jobs own their reserved IDs even before a binding exists.
@@ -744,82 +764,97 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
     const packetIds = new Map(before.packetIntegrity.map(({packetId, contentHash: hash}) => (
       [packetId, {fileId: null, packet: null, hash, persisted: true}]
     )));
-    for (const rawMeta of files) {
-      let meta;
-      let inspectedValue = null;
-      try {
-        meta = assertMetadata(rawMeta, {
-          parentId: binding.folderId, datasetId: binding.datasetId, mimeType: JSON_MIME_TYPE,
-        });
-        const kind = meta.appProperties.kind;
-        if (kind === 'dataset') {
-          if (meta.id !== binding.descriptorFileId) throw productError('collision', 'Es gibt eine unerwartete zweite Datensatzbeschreibung.');
-          verifiedKnown.push({fileId: meta.id, contentHash: descriptorRead.hash, kind});
-          continue;
+    for (let offset = 0; offset < files.length; offset += READ_CONCURRENCY) {
+      // Only immutable file reads overlap. Capture failures and drain the
+      // whole batch before applying results in the original listing order.
+      const batch = await Promise.all(files.slice(offset, offset + READ_CONCURRENCY).map(async (rawMeta) => {
+        try {
+          const meta = assertMetadata(rawMeta, {
+            parentId: binding.folderId, datasetId: binding.datasetId, mimeType: JSON_MIME_TYPE,
+          });
+          const kind = meta.appProperties.kind;
+          const read = kind === 'dataset' ? null
+            : await readIfNeeded(meta, before, {force: kind === 'snapshot-manifest'});
+          return {rawMeta, meta, read};
+        } catch (error) {
+          return {rawMeta, error};
         }
-        // Snapshot identity is shared by all physical manifests, including newly
-        // discovered ones. A cached epoch/file must not bypass this fetch's group.
-        const read = await readIfNeeded(meta, before, {force: kind === 'snapshot-manifest'});
-        if (read.skipped) {
-          const known = knownFor(before, meta.id);
-          verifiedKnown.push(known);
-          continue;
-        }
-        meta = read.metadata;
-        inspectedValue = read.value;
-        assertSupportedVersion(read.value);
-        if (kind === 'epoch') {
-          const epoch=assertEpoch(read.value);
-          if(meta.appProperties.epochId!==epoch.id || epoch.datasetId!==binding.datasetId) throw productError('binding','Die Epochenkennung stimmt nicht.');
-          epochCandidates.push({epoch,backup:null,manifestId:null,fileId:meta.id,hash:read.hash});
-          continue;
-        }
-        if(kind==='snapshot-part' || kind==='snapshot-manifest') {
-          // Parts may arrive before their manifest/control; only a complete control activates them.
-          if(read.value?.kind!==kind || read.value.datasetId!==binding.datasetId
-            || read.value.snapshotId!==meta.appProperties.snapshotId)throw productError('invalid','Die Snapshot-Dateikennung stimmt nicht.');
-          if(kind==='snapshot-manifest') {
-            const checked=await readSnapshot({drive,binding,fileId:meta.id,descriptor:before.ledger.descriptor});
-            if(await digest(checked.manifest)!==read.hash)throw productError('stale','Das Snapshot-Manifest wurde während der Prüfung geändert.');
-            const snapshotId=checked.manifest.snapshotId;
-            if(!manifestGroups.has(snapshotId))manifestGroups.set(snapshotId,[]);
-            manifestGroups.get(snapshotId).push({...checked,fileId:meta.id,hash:read.hash});
-          } else {
-            if(!Array.isArray(read.value.events))throw productError('invalid','Die Snapshot-Ereignisse fehlen.');
-            assertContainedVersion(read.value,read.value.events);
-            verifiedKnown.push({fileId:meta.id,contentHash:read.hash,kind});
+      }));
+      for (const {rawMeta, meta: preparedMeta, read, error: readError} of batch) {
+        let meta;
+        let inspectedValue = null;
+        try {
+          if (readError) throw readError;
+          meta = preparedMeta;
+          const kind = meta.appProperties.kind;
+          if (kind === 'dataset') {
+            if (meta.id !== binding.descriptorFileId) throw productError('collision', 'Es gibt eine unerwartete zweite Datensatzbeschreibung.');
+            verifiedKnown.push({fileId: meta.id, contentHash: descriptorRead.hash, kind});
+            continue;
           }
-          continue;
+          // Snapshot identity is shared by all physical manifests, including newly
+          // discovered ones. A cached epoch/file must not bypass this fetch's group.
+          if (read.skipped) {
+            const known = knownFor(before, meta.id);
+            verifiedKnown.push(known);
+            continue;
+          }
+          meta = read.metadata;
+          inspectedValue = read.value;
+          assertSupportedVersion(read.value);
+          if (kind === 'epoch') {
+            const epoch=assertEpoch(read.value);
+            if(meta.appProperties.epochId!==epoch.id || epoch.datasetId!==binding.datasetId) throw productError('binding','Die Epochenkennung stimmt nicht.');
+            epochCandidates.push({epoch,backup:null,manifestId:null,fileId:meta.id,hash:read.hash});
+            continue;
+          }
+          if(kind==='snapshot-part' || kind==='snapshot-manifest') {
+            // Parts may arrive before their manifest/control; only a complete control activates them.
+            if(read.value?.kind!==kind || read.value.datasetId!==binding.datasetId
+              || read.value.snapshotId!==meta.appProperties.snapshotId)throw productError('invalid','Die Snapshot-Dateikennung stimmt nicht.');
+            if(kind==='snapshot-manifest') {
+              const checked=await readSnapshot({drive,binding,fileId:meta.id,descriptor:before.ledger.descriptor});
+              if(await digest(checked.manifest)!==read.hash)throw productError('stale','Das Snapshot-Manifest wurde während der Prüfung geändert.');
+              const snapshotId=checked.manifest.snapshotId;
+              if(!manifestGroups.has(snapshotId))manifestGroups.set(snapshotId,[]);
+              manifestGroups.get(snapshotId).push({...checked,fileId:meta.id,hash:read.hash});
+            } else {
+              if(!Array.isArray(read.value.events))throw productError('invalid','Die Snapshot-Ereignisse fehlen.');
+              assertContainedVersion(read.value,read.value.events);
+              verifiedKnown.push({fileId:meta.id,contentHash:read.hash,kind});
+            }
+            continue;
+          }
+          if (kind !== 'packet') throw productError('invalid', 'Der gebundene Ordner enthält eine unbekannte Produktdatei.');
+          const packet = validatePacket(read.value);
+          packetMetadataMatches(meta, packet, binding);
+          const pending = before.pendingPackets.find(({driveFileId}) => driveFileId === meta.id);
+          if (pending !== undefined && await contentHash(pending.packet) !== read.hash) {
+            throw productError('collision', 'Eine vorab reservierte Paketdatei enthält andere Daten.');
+          }
+          const previous = packetIds.get(packet.packetId);
+          if (previous && previous.hash !== read.hash) {
+            throw productError('collision', 'Eine Paket-ID enthält unterschiedliche Drive-Daten.');
+          }
+          if (!previous) {
+            const entry = {fileId: meta.id, packet, hash: read.hash, duplicates: []};
+            packetIds.set(packet.packetId, entry);
+            packetCandidates.push(entry);
+          } else if (previous.persisted) {
+            verifiedKnown.push({fileId: meta.id, contentHash: read.hash, kind: 'packet'});
+          } else {
+            previous.duplicates.push({fileId: meta.id, hash: read.hash});
+          }
+        } catch (error) {
+          if (isTransportFailure(error)) throw error;
+          if (error?.inspectedValue !== undefined) inspectedValue = error.inspectedValue;
+          immediateQuarantine.push({
+            fileId: rawMeta?.id ?? `unknown-${immediateQuarantine.length + 1}`,
+            code: error?.code ?? 'invalid',
+            message: safeMessage(error, 'Eine Drive-Datei ist ungültig.'),
+            value: inspectedValue,
+          });
         }
-        if (kind !== 'packet') throw productError('invalid', 'Der gebundene Ordner enthält eine unbekannte Produktdatei.');
-        const packet = validatePacket(read.value);
-        packetMetadataMatches(meta, packet, binding);
-        const pending = before.pendingPackets.find(({driveFileId}) => driveFileId === meta.id);
-        if (pending !== undefined && await contentHash(pending.packet) !== read.hash) {
-          throw productError('collision', 'Eine vorab reservierte Paketdatei enthält andere Daten.');
-        }
-        const previous = packetIds.get(packet.packetId);
-        if (previous && previous.hash !== read.hash) {
-          throw productError('collision', 'Eine Paket-ID enthält unterschiedliche Drive-Daten.');
-        }
-        if (!previous) {
-          const entry = {fileId: meta.id, packet, hash: read.hash, duplicates: []};
-          packetIds.set(packet.packetId, entry);
-          packetCandidates.push(entry);
-        } else if (previous.persisted) {
-          verifiedKnown.push({fileId: meta.id, contentHash: read.hash, kind: 'packet'});
-        } else {
-          previous.duplicates.push({fileId: meta.id, hash: read.hash});
-        }
-      } catch (error) {
-        if (isTransportFailure(error)) throw error;
-        if (error?.inspectedValue !== undefined) inspectedValue = error.inspectedValue;
-        immediateQuarantine.push({
-          fileId: rawMeta?.id ?? `unknown-${immediateQuarantine.length + 1}`,
-          code: error?.code ?? 'invalid',
-          message: safeMessage(error, 'Eine Drive-Datei ist ungültig.'),
-          value: inspectedValue,
-        });
       }
     }
 
@@ -1075,7 +1110,10 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
       publish('local', 'Nur lokal gespeichert.');
       return getStatus();
     }
-    publish('pending', 'Änderungen werden abgeglichen.');
+    const hasPending = statusFromState(state).pendingCount > 0;
+    publish(hasPending ? 'syncing' : 'checking', hasPending
+      ? 'Deine Änderungen werden mit Google Drive abgeglichen.'
+      : 'Gespeicherte Daten werden auf neue Änderungen geprüft.');
     await discoverCommerce(state.binding);
     const remoteProblem = await download(state.binding);
     const versionProblem=commands.getState().quarantinedFiles.find(entry=>entry.code==='version');
@@ -1123,7 +1161,7 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
   }
 
   async function retry() {
-    publish(commands.getState()?.binding ? 'pending' : 'local', 'Der Abgleich wird erneut versucht.');
+    if (!commands.getState()?.binding) publish('local', 'Der Abgleich wird erneut versucht.');
     return sync();
   }
 

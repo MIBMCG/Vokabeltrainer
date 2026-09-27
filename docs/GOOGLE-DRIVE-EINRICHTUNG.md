@@ -56,6 +56,22 @@ Im implementierten Browser-Tokenmodell wird nach Ablauf des Zugriffstokens ein n
 
 Produktentscheidung Q10 vom 16.09.2026: Der Nutzer akzeptiert dieses erneute Verbinden grundsätzlich, einschließlich einer möglichen erneuten Bestätigung beim Öffnen der App. Mit vorhandenen Vokabeln soll offline weitergeübt und nach erneuter Verbindung automatisch abgeglichen werden. Die reale Dialoghäufigkeit und Bedienbarkeit auf iPhone/iPad sind damit noch nicht nachgewiesen oder abgenommen.
 
+Nutzertest vom 27.09.2026: Erneutes Verbinden nach Reload und unerwartete
+Verbindungsabbrüche nach wenigen Minuten wurden als unbenutzerfreundlich
+beanstandet. Die Korrektur trennt Seitenende, PIN-Sperre und bewusstes Trennen:
+Nur „Google-Verbindung trennen“ widerruft die Google-Freigabe. Seitenende löscht
+lediglich die flüchtige Sitzung; verspätete Anmeldefehler dürfen keine neuere
+Sitzung entfernen. Die Anmeldung fordert mit `prompt: ''` keine unnötige
+erneute Kontowahl an. Welche Dialoge Google tatsächlich zeigt, hängt weiterhin
+vom Konto und Browser ab ([Google-Referenz](https://developers.google.com/identity/oauth2/web/reference/js-reference)).
+
+Nach vollständigem Neuladen oder regulärem Tokenablauf bleibt im bisherigen
+Browsermodell ein bewusster Klick auf „Mit Google verbinden“ nötig. Ein
+gebundener Lernbereich muss dabei nicht neu eingerichtet werden. Eine
+dauerhafte automatische Anmeldung ist damit nicht implementiert; es gibt
+keine Tokens in Browserdaten, Backups oder Repository und keinen zusätzlichen
+Cloudanbieter.
+
 Ein Wechsel des OAuth-Veröffentlichungsstatus auf „Production“ hebt die begrenzte Lebensdauer der Zugriffstokens nicht auf. Googles zusätzlich dokumentierte Sieben-Tage-Regel betrifft Refresh-Tokens bestimmter externer Apps im Teststatus; der implementierte Browserablauf verwendet kein eigenes serverseitiges Refresh-Token-Lager. Diese Sachverhalte nicht miteinander verwechseln.
 
 Quellen: [Browser-Tokenmodell](https://developers.google.com/identity/oauth2/web/guides/use-token-model), [Refresh-Token-Grenzen](https://developers.google.com/identity/protocols/oauth2).

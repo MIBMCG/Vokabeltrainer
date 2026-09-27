@@ -97,7 +97,11 @@ test('sync settings show the active Google session and never call a pending retr
       window.__succeedNextRetry = () => { retryMode = 'synced'; };
       window.__failNextRetry = () => { retryMode = 'error'; };
       window.__setSyntheticSyncStatus = (phase) => {
-        status = phase === 'pending'
+        status = phase === 'checking'
+          ? {...status, phase, pendingCount: 0, message: 'Gespeicherte Daten werden auf neue Änderungen geprüft.'}
+          : phase === 'syncing'
+          ? {...status, phase, pendingCount: 1, message: 'Deine Änderungen werden mit Google Drive abgeglichen.'}
+          : phase === 'pending'
           ? {...status, phase, pendingCount: 1, message: 'Änderungen werden abgeglichen.'}
           : {...status, phase: 'error', pendingCount: 1, message: 'Der synthetische Abgleich ist fehlgeschlagen.'};
         render();
@@ -125,6 +129,12 @@ test('sync settings show the active Google session and never call a pending retr
     await regression.locator('p.hint').filter({hasText: 'Der synthetische Abgleich ist fehlgeschlagen.'}).waitFor();
     assert.equal(await regression.getByText('Der Abgleich wurde ausgeführt.', {exact: true}).count(), 0);
     assert.equal(await regression.getByText('Der Abgleich ist vollständig bestätigt.', {exact: true}).count(), 0);
+
+    await page.evaluate(() => window.__setSyntheticSyncStatus('checking'));
+    assert.equal(await regression.locator('[data-sync-status]').innerText(), 'Auf Änderungen prüfen …');
+    assert.equal(await regression.getByText('Abgleich ausstehend', {exact: true}).count(), 0);
+    await page.evaluate(() => window.__setSyntheticSyncStatus('syncing'));
+    assert.equal(await regression.locator('[data-sync-status]').innerText(), 'Abgleich läuft …');
 
     await page.evaluate(() => window.__expireSyntheticAuth());
     assert.equal(await regression.getByRole('button', {name: 'Mit Google verbinden', exact: true}).count(), 1);

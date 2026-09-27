@@ -38,6 +38,23 @@ async function setupFixture(options = {}) {
   return {fixture, descriptor, descriptorHash, transport};
 }
 
+async function descriptorReadWithMetadataDrift(mutate) {
+  const {fixture, descriptorHash} = await setupFixture();
+  const record = fixture.files.get(binding.descriptorFileId);
+  let metadataReads = 0;
+  const transport = createPurchaseTransport({
+    fetchImpl: async (url, init) => {
+      const result = await fixture.fetch(url, init);
+      const parsed = new URL(url);
+      if (parsed.pathname.endsWith(`/drive/v2/files/${binding.descriptorFileId}`)
+        && parsed.searchParams.has('fields') && ++metadataReads === 1) mutate(record);
+      return result;
+    },
+    getToken: async () => 'synthetic-token', binding, descriptorHash,
+  });
+  return {transport, fixture, ref: {id: binding.descriptorFileId, sha256: descriptorHash}};
+}
+
 function recorder() {
   const values = [];
   return {values, persist: async (value) => values.push(structuredClone(value))};
@@ -64,6 +81,63 @@ test('transport preserves opaque strong ETags and rejects incoherent folder meta
     descriptorHash: transport.descriptorHash,
   });
   await assert.rejects(() => changing.readFolder({id: binding.folderId, kind: 'dataset'}), {code: 'stale'});
+});
+
+test('immutable read accepts unrelated metadata drift when its content revision and binding stay fixed', async () => {
+  const {transport, ref} = await descriptorReadWithMetadataDrift(record => {
+    record.version += 1;
+    record.etag = '"metadata-only-change"';
+  });
+  assert.deepEqual(await transport.readImmutable(ref, {kind: 'descriptor'}), {
+    version: 2, datasetId: binding.datasetId, rootEpochId: 'epoch-a',
+  });
+});
+
+test('immutable read rejects a changed content revision even when the body has the expected hash', async () => {
+  const {transport, ref} = await descriptorReadWithMetadataDrift(record => {
+    record.headRevisionId = 'another-content-revision';
+  });
+  await assert.rejects(() => transport.readImmutable(ref, {kind: 'descriptor'}), {code: 'stale'});
+});
+
+test('immutable read rejects changed bytes despite a stable content revision', async () => {
+  const {transport, ref} = await descriptorReadWithMetadataDrift(record => {
+    record.value.rootEpochId = 'changed';
+  });
+  await assert.rejects(() => transport.readImmutable(ref, {kind: 'descriptor'}), {code: 'integrity'});
+});
+
+test('immutable read rejects changed bound metadata despite a stable content revision', async t => {
+  for (const [name, mutate] of [
+    ['name', record => { record.title = 'changed.json'; }],
+    ['parent', record => { record.parentId = 'other-folder'; }],
+    ['MIME type', record => { record.mimeType = 'text/plain'; }],
+    ['private property', record => { record.properties.datasetId = 'other-dataset'; }],
+  ]) await t.test(name, async () => {
+    const {transport, ref} = await descriptorReadWithMetadataDrift(mutate);
+    await assert.rejects(() => transport.readImmutable(ref, {kind: 'descriptor'}), {code: 'binding'});
+  });
+});
+
+test('immutable read retains strict version and ETag comparison without a content revision', async t => {
+  for (const [name, missingRevision] of [['omitted', undefined], ['null', null]]) {
+    await t.test(name, async () => {
+      const {transport, ref, fixture} = await descriptorReadWithMetadataDrift(record => {
+        record.version += 1;
+        record.etag = '"metadata-only-change"';
+      });
+      fixture.files.get(binding.descriptorFileId).headRevisionId = missingRevision;
+      await assert.rejects(() => transport.readImmutable(ref, {kind: 'descriptor'}), {code: 'stale'});
+    });
+  }
+});
+
+test('immutable read rejects a malformed content revision', async () => {
+  const {fixture, descriptorHash, transport} = await setupFixture();
+  fixture.files.get(binding.descriptorFileId).headRevisionId = 42;
+  await assert.rejects(() => transport.readImmutable(
+    {id: binding.descriptorFileId, sha256: descriptorHash}, {kind: 'descriptor'},
+  ), {code: 'binding'});
 });
 
 test('transport binds every operation to the configured account and unchanged descriptor hash', async () => {

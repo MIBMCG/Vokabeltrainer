@@ -1,7 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import {createSyncScheduler} from '../../src/trainer/sync/scheduler.js';
+import * as syncScheduling from '../../src/trainer/sync/scheduler.js';
+
+const {createSyncScheduler} = syncScheduling;
 
 function timers() {
   let nextId = 0;
@@ -150,5 +152,73 @@ test('completion of an in-flight sync keeps an earlier queued change deadline', 
   await Promise.resolve();
   await Promise.resolve();
   assert.equal([...pending.values()][0].due, 11_000);
+  scheduler.stop();
+});
+
+test('sync-internal state commits leave an idle dataset on the normal poll', async () => {
+  const clock = timers();
+  let calls = 0;
+  const scheduler = createSyncScheduler({
+    sync: async () => { calls += 1; }, hasChanges: () => false,
+    setTimer: clock.setTimer, clearTimer: clock.clearTimer, now: () => 0,
+  });
+  const observe = syncScheduling.createLocalChangeNotifier({
+    scheduler, initialState: {outboxEventIds: [], ledger: {events: []}},
+  });
+  scheduler.start();
+  await Promise.resolve();
+  await Promise.resolve();
+  observe({outboxEventIds: [], ledger: {events: [{id: 'remote-round', type: 'round.completed'}]}});
+  assert.deepEqual([...clock.pending.values()].map(({delay}) => delay), [60_000]);
+  assert.equal(calls, 1);
+  scheduler.stop();
+});
+
+test('new local changes schedule ten seconds and a local completed round syncs immediately', async () => {
+  const clock = timers();
+  let calls = 0;
+  const scheduler = createSyncScheduler({
+    sync: async () => { calls += 1; }, hasChanges: () => false,
+    setTimer: clock.setTimer, clearTimer: clock.clearTimer, now: () => 0,
+  });
+  const observe = syncScheduling.createLocalChangeNotifier({
+    scheduler, initialState: {outboxEventIds: [], ledger: {events: []}},
+  });
+  scheduler.start();
+  await Promise.resolve();
+  await Promise.resolve();
+  observe({outboxEventIds: ['word-1'], ledger: {events: [{id: 'word-1', type: 'word.created'}]}});
+  assert.deepEqual([...clock.pending.values()].map(({delay}) => delay), [10_000]);
+  observe({outboxEventIds: ['word-1', 'round-1'], ledger: {events: [
+    {id: 'word-1', type: 'word.created'}, {id: 'round-1', type: 'round.completed'},
+  ]}});
+  await Promise.resolve();
+  await Promise.resolve();
+  assert.equal(calls, 2);
+  scheduler.stop();
+});
+
+test('a local change during an active sync still causes a follow-up sync', async () => {
+  const clock = timers();
+  let calls = 0;
+  let release;
+  const scheduler = createSyncScheduler({
+    sync: () => new Promise((resolve) => { calls += 1; release = resolve; }),
+    hasChanges: () => false, setTimer: clock.setTimer, clearTimer: clock.clearTimer, now: () => 0,
+  });
+  const observe = syncScheduling.createLocalChangeNotifier({
+    scheduler, initialState: {outboxEventIds: [], ledger: {events: []}},
+  });
+  scheduler.start();
+  observe({outboxEventIds: [], ledger: {events: [{id: 'remote-round', type: 'round.completed'}]}});
+  assert.equal(clock.pending.size, 0);
+  observe({outboxEventIds: ['local-1'], ledger: {events: [{id: 'local-1', type: 'word.created'}]}});
+  await clock.fire(10_000);
+  assert.equal(calls, 1);
+  release();
+  await Promise.resolve();
+  await Promise.resolve();
+  assert.equal(calls, 2);
+  release();
   scheduler.stop();
 });

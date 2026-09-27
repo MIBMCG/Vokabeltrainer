@@ -141,7 +141,7 @@ function uiState(root) {
   const owner = root.closest?.('#app') ?? root;
   if (!stateByOwner.has(owner)) stateByOwner.set(owner, {
     tab: 'mine', view: null, busy: false, notice: '', tone: 'info', activationPreview: null,
-    authRequired: false,
+    authRequired: false, progress: '', dialogOpen: false,
   });
   return stateByOwner.get(owner);
 }
@@ -200,19 +200,42 @@ function purchaseDialog({preview, name, onConfirm, trigger, onComplete}) {
     ]),
     el('p', {text: 'Ausgeben verändert dein Level nicht.'}),
   ]);
+  let confirming = false;
+  let finished = false;
+  let feedback = null;
+  const finish = () => {
+    if (finished) return;
+    finished = true;
+    dialog.remove();
+    onComplete?.();
+    if (trigger?.isConnected) trigger.focus();
+  };
+  dialog.addEventListener('cancel', (event) => {
+    if (confirming) event.preventDefault();
+  });
+  dialog.addEventListener('close', finish);
   const cancel = button('Abbrechen', () => {
-    dialog.close(); dialog.remove();
-    if (trigger?.isConnected) trigger.focus(); else onComplete?.();
+    if (confirming) return;
+    dialog.close(); finish();
   }, {class: 'secondary'});
   const confirm = button('Kauf verbindlich bestätigen', async () => {
+    if (confirming) return;
+    confirming = true;
     confirm.disabled = true; cancel.disabled = true;
+    confirm.setAttribute('aria-busy', 'true');
+    feedback?.remove();
+    feedback = message('Kauf wird abgeschlossen …');
+    dialog.append(feedback);
     try {
-      await onConfirm(); dialog.close(); dialog.remove();
-      if (trigger?.isConnected) trigger.focus(); else onComplete?.();
+      await onConfirm(); dialog.close(); finish();
     }
     catch (error) {
+      confirming = false;
+      confirm.removeAttribute('aria-busy');
       confirm.disabled = false; cancel.disabled = false;
-      dialog.append(message(error?.message || 'Der Kauf konnte noch nicht bestätigt werden.', 'error'));
+      feedback.remove();
+      feedback = message(error?.message || 'Der Kauf konnte noch nicht bestätigt werden.', 'error');
+      dialog.append(feedback);
     }
   }, {class: 'primary'});
   dialog.append(el('div', {attrs: {class: 'dialog-actions'}}, [confirm, cancel]));
@@ -265,6 +288,7 @@ export function renderPurchases({
   }
   const section = el('section', {attrs: {class: 'commerce-panel'}}, [tabs]);
   if (ui.notice) section.append(message(ui.notice, ui.tone));
+  if (ui.progress) section.append(message(ui.progress));
   if (ui.view === null) {
     section.append(el('p', {text: ui.busy ? 'Figuren und Käufe werden geladen …' : 'Figuren und Käufe sind noch nicht eingerichtet.'}));
     root.replaceChildren(section); return;
@@ -292,9 +316,11 @@ export function renderPurchases({
   }
   if (model.pending) section.append(message('Kauf wird geprüft. Sobald der Kauf bestätigt ist, gehört die Figur dir.'));
 
-  const run = async (action, success = '', {rethrowCodes = []} = {}) => {
+  const run = async (action, success = '', {rethrowCodes = [], progress = 'Änderung wird verarbeitet …'} = {}) => {
     if (ui.busy) return;
     ui.busy = true;
+    ui.progress = progress;
+    rerender();
     try {
       await action();
       ui.view = await commerce.getView();
@@ -309,17 +335,27 @@ export function renderPurchases({
           : error?.message || 'Die Aktion konnte noch nicht abgeschlossen werden.';
         ui.tone = error?.code === 'network' || error?.code === 'pending' ? 'info' : 'error';
       }
-    } finally { ui.busy = false; rerender({focus: true}); }
+    } finally { ui.busy = false; ui.progress = ''; rerender({focus: true}); }
   };
   const buy = async (entry, trigger) => {
+    if (ui.busy || ui.dialogOpen) return;
     if (entry.action === 'resume') {
-      await run(() => commerce.resume(model.pending.operationId), 'Der Kauf wurde erneut geprüft.');
+      await run(() => commerce.resume(model.pending.operationId), 'Der Kauf wurde erneut geprüft.',
+        {progress: 'Kauf wird erneut geprüft …'});
       return;
     }
+    ui.busy = true;
+    ui.progress = 'Kaufangebot wird geprüft …';
+    rerender();
     try {
       const preview = await commerce.preview({profileId, articleId: entry.id});
-      purchaseDialog({preview, name: entry.name, trigger, onComplete: () => rerender({focus: true}), onConfirm: () => run(
-        () => commerce.confirm(preview), 'Der Kauf ist bestätigt.', {rethrowCodes: ['stale']},
+      ui.dialogOpen = true;
+      purchaseDialog({preview, name: entry.name, trigger, onComplete: () => {
+        ui.dialogOpen = false;
+        rerender({focus: true});
+      }, onConfirm: () => run(
+        () => commerce.confirm(preview), 'Der Kauf ist bestätigt.',
+        {rethrowCodes: ['stale'], progress: 'Kauf wird bestätigt …'},
       )});
     } catch (error) {
       if (error?.code === 'auth') requireAuth();
@@ -329,9 +365,8 @@ export function renderPurchases({
           : error?.message || 'Der Kauf konnte noch nicht geprüft werden.';
         ui.tone = 'error';
       }
-      rerender();
       trigger?.focus();
-    }
+    } finally { ui.busy = false; ui.progress = ''; rerender(); }
   };
 
   const grid = el('div', {attrs: {class: 'commerce-grid'}});
@@ -387,7 +422,7 @@ export function renderPurchases({
           else void buy(entry, event.currentTarget);
         }, {
           class: ['buy', 'resume', 'reauth'].includes(form.action) ? 'primary' : 'secondary',
-          disabled: !['buy', 'resume', 'reauth'].includes(form.action) || ui.busy
+          disabled: !['buy', 'resume', 'reauth'].includes(form.action) || ui.busy || ui.dialogOpen
             || (form.action === 'reauth' && typeof onReconnect !== 'function'),
         });
       grid.append(el('article', {attrs: {class: 'commerce-card evolution-card', 'data-stage': String(form.stage)}}, [
@@ -409,7 +444,7 @@ export function renderPurchases({
             else void buy(entry, event.currentTarget);
           }, {
             class: ['buy', 'resume', 'reauth'].includes(figure.action) ? 'primary' : 'secondary',
-            disabled: !['buy', 'resume', 'reauth'].includes(figure.action) || ui.busy
+            disabled: !['buy', 'resume', 'reauth'].includes(figure.action) || ui.busy || ui.dialogOpen
               || (figure.action === 'reauth' && typeof onReconnect !== 'function'),
           }),
       ]));

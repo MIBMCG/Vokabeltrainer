@@ -2,6 +2,21 @@ function transient(error) {
   return error?.code === 'network' || error?.code === 'retryable';
 }
 
+export function createLocalChangeNotifier({scheduler, initialState}) {
+  let previousOutbox = new Set(initialState?.outboxEventIds ?? []);
+  return (state) => {
+    const outbox = new Set(state?.outboxEventIds ?? []);
+    const added = new Set([...outbox].filter((eventId) => !previousOutbox.has(eventId)));
+    previousOutbox = outbox;
+    if (added.size === 0) return;
+    if (state.ledger.events.some(({id, type}) => added.has(id) && type === 'round.completed')) {
+      scheduler.roundCompleted();
+    } else {
+      scheduler.changed();
+    }
+  };
+}
+
 export function createSyncScheduler({
   sync,
   hasChanges,

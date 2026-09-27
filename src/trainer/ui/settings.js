@@ -3,7 +3,7 @@ import {el, field, button, message} from './dom.js';
 import {renderBackup} from './backup.js';
 import {renderSync} from './sync.js';
 import {renderCommerceSettings} from './purchases.js';
-import {syncStatusLabel} from './status.js';
+import {hasActiveGoogleSession, syncStatusLabel} from './status.js';
 
 function input(name, {value = '', maxlength = 80, required = true, type = 'text'} = {}) {
   return el('input', {attrs: {name, value, maxlength, required, type}});
@@ -202,7 +202,7 @@ export function renderSettings({
   const syncHost = settingsTask(container, ui, {
     id: 'connection', title: 'Google-Verbindung',
     description: 'Gemeinsamen Lernbereich verbinden und abgleichen',
-    status: `Status: ${syncStatusLabel(sync.getStatus())}`,
+    status: `Status: ${syncStatusLabel(sync.getStatus(), hasActiveGoogleSession(auth))}`,
   });
   syncHost.classList.add('settings-service');
   syncHost.setAttribute('aria-label', 'Google-Abgleich');

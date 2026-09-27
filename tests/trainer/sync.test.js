@@ -15,6 +15,7 @@ import {emptyCommerce} from '../../src/trainer/purchases/schema.js';
 import {digest} from '../../src/trainer/model/canonical.js';
 import {uploadVerified} from '../../src/trainer/backup/transport.js';
 import {resolveEpochs} from '../../src/trainer/model/epochs.js';
+import {syncStatusLabel} from '../../src/trainer/ui/status.js';
 
 const VERSION = {format: 'vokabeltrainer-product', formatVersion: 1, ruleVersion: 1};
 
@@ -766,6 +767,41 @@ test('interrupted initial publication resumes the persisted setup IDs without a 
   assert.equal((await sync.discover()).length, 1);
 });
 
+test('a scheduler sync during dataset creation shares the in-flight setup', async () => {
+  const drive = new SyntheticDrive();
+  const originalCreateFolder = drive.createFolder.bind(drive);
+  let releaseFirstFolder;
+  let firstFolderStarted;
+  const folderStarted = new Promise((resolve) => { firstFolderStarted = resolve; });
+  const firstFolderGate = new Promise((resolve) => { releaseFirstFolder = resolve; });
+  let folderCalls = 0;
+  drive.createFolder = async (request) => {
+    folderCalls += 1;
+    if (folderCalls === 1) {
+      firstFolderStarted();
+      await firstFolderGate;
+    }
+    return originalCreateFolder(request);
+  };
+  const commands = await makeCommands(productState(createFixture().base));
+  const sync = createProductSync({
+    drive, store: {}, commands, now: () => new Date('2026-09-18T10:00:00.000Z'),
+    id: sequenceIds('concurrent-setup'), onStatus: () => {},
+  });
+  const creation = sync.createDataset('Familienwortschatz');
+  const settledCreation = creation.then((value) => ({value}), (error) => ({error}));
+  await folderStarted;
+  const scheduled = sync.sync();
+  releaseFirstFolder();
+  const [creationResult, scheduledResult] = await Promise.all([settledCreation, scheduled]);
+  assert.equal(creationResult.error, undefined);
+  assert.ok(creationResult.value?.folderId);
+  assert.equal(scheduledResult.phase, 'synced');
+  assert.equal(sync.getStatus().phase, 'synced');
+  assert.equal(commands.getState().outboxEventIds.length, 0);
+  assert.equal(folderCalls, 1, 'the saved setup must be published by one operation');
+});
+
 test('local commits immediately invalidate synced status and notify the consumer', async () => {
   const {sync, commands, statuses} = await setupSyntheticSync({outbox: []});
   assert.equal(sync.getStatus().phase, 'synced');
@@ -785,6 +821,92 @@ test('local commits immediately invalidate synced status and notify the consumer
   const afterDestroy = statuses.length;
   await commands.setAnimations({profileId: 'p1', animations: false});
   assert.equal(statuses.length, afterDestroy);
+});
+
+test('an idle poll reports checking, while a running upload is distinct from queued changes', async () => {
+  const {sync, drive, commands, statuses} = await setupSyntheticSync({outbox: []});
+  const accountId = drive.accountId.bind(drive);
+  let release;
+  drive.accountId = () => new Promise((resolve) => { release = () => resolve(accountId()); });
+  const poll = sync.retry();
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.equal(sync.getStatus().phase, 'checking');
+  assert.equal(sync.getStatus().pendingCount, 0);
+  assert.equal(syncStatusLabel(sync.getStatus()), 'Auf Änderungen prüfen …');
+  await commands.setAnimations({profileId: 'p1', animations: false});
+  assert.equal(sync.getStatus().phase, 'syncing');
+  assert.equal(sync.getStatus().pendingCount, 1);
+  assert.equal(syncStatusLabel(sync.getStatus()), 'Abgleich läuft …');
+  drive.accountId = accountId;
+  release();
+  await poll;
+  assert.equal(sync.getStatus().phase, 'synced');
+  statuses.length = 0;
+  await sync.retry();
+  assert.ok(statuses.some(({phase}) => phase === 'checking'));
+  assert.equal(statuses.some(({phase}) => phase === 'pending'), false);
+  sync.destroy();
+});
+
+test('independent Drive files are checked concurrently within a small bound', async () => {
+  const {sync, drive, commands} = await setupSyntheticSync();
+  const packetFile = [...drive.files.values()].find(({meta}) => meta.appProperties.kind === 'packet');
+  for (let index = 0; index < 8; index += 1) {
+    const copy = structuredClone(packetFile);
+    copy.meta.id = `parallel-copy-${index}`;
+    drive.files.set(copy.meta.id, copy);
+  }
+  await sync.sync(); // Populate verified session versions, as in repeated real polls.
+  const beforeLedger = commands.getState().ledger;
+  const fileIds = new Set(commands.getState().knownFiles.filter(({kind}) => kind !== 'dataset').map(({fileId}) => fileId));
+  let activeReads = 0;
+  let maxReads = 0;
+  drive.onMetadata = async (fileId) => {
+    if (!fileIds.has(fileId)) return;
+    activeReads += 1;
+    maxReads = Math.max(maxReads, activeReads);
+    await new Promise((resolve) => setTimeout(resolve, 5));
+    activeReads -= 1;
+  };
+  await sync.sync();
+  assert.ok(maxReads > 1, 'independent requests should overlap');
+  assert.ok(maxReads <= 4, 'Drive must not receive an unbounded request fanout');
+  assert.equal(activeReads, 0);
+  assert.equal(sync.getStatus().phase, 'synced');
+  assert.deepEqual(commands.getState().ledger, beforeLedger);
+  sync.destroy();
+});
+
+test('a failed parallel read waits for its started siblings before returning the error', async () => {
+  const {sync, drive, commands} = await setupSyntheticSync();
+  const files = commands.getState().knownFiles.filter(({kind}) => kind !== 'dataset');
+  assert.ok(files.length >= 2);
+  let release;
+  let firstStarted;
+  const started = new Promise((resolve) => { firstStarted = resolve; });
+  let settled = false;
+  let authFailureObserved = false;
+  drive.onMetadata = async (fileId) => {
+    if (fileId === files[0].fileId) {
+      firstStarted();
+      await new Promise((resolve) => { release = resolve; });
+    }
+    if (fileId === files[1].fileId) {
+      authFailureObserved = true;
+      throw new DriveError('auth', 'synthetic expired session', 401);
+    }
+  };
+  const operation = sync.sync();
+  const rejected = assert.rejects(operation, {code: 'auth'});
+  operation.then(() => { settled = true; }, () => { settled = true; });
+  await started;
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.equal(authFailureObserved, true, 'the sibling has already failed while the other read is held');
+  assert.equal(settled, false);
+  release();
+  await rejected;
+  assert.equal(sync.getStatus().phase, 'connect');
+  sync.destroy();
 });
 
 test('pending counters do not hide connect or error until an explicit sync operation starts', async () => {

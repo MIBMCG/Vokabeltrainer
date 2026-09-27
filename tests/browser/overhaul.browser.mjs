@@ -112,7 +112,7 @@ test('illustrated journey and layered avatar render responsively with real raste
     await page.screenshot({path: resolve(resultsDirectory, 'start-390.png'), fullPage: true});
 
     await page.getByRole('button', {name: 'Inselreise', exact: true}).click();
-    assert.equal(await page.locator('[data-art-key="island-journey"] img').evaluate((image) => image.naturalWidth > 0), true);
+    assert.equal(await loadedArt(page, '[data-art-key="island-journey"] img'), 1);
     assert.equal(await page.locator('[data-stage]').count(), 15);
     assert.equal(await page.locator('[data-island]').count(), 3);
     assert.equal(await page.locator('.journey-map').evaluate((map) => {

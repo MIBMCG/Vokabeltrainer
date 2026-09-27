@@ -4,7 +4,7 @@ import {adultStateChanged, openAdultSettings, pinResetForm, renderAdult} from '.
 import {practiceRenderKey, practiceUpdateBlocker, renderPractice, renderPracticeLanding} from './practice.js';
 import {renderAvatar, renderJourney} from './rewards.js';
 import {refreshSyncConnection} from './sync.js';
-import {syncStatusLabel} from './status.js';
+import {hasActiveGoogleSession, syncStatusLabel, syncStatusMessage} from './status.js';
 
 const MAX_ANSWERS_TEXT_LENGTH = 4_200;
 const SHELL_SESSION_KEY = 'vokabeltrainer-shell-v1';
@@ -448,10 +448,11 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, commer
       if (destroyed) return;
       const node = root.querySelector('[data-sync-status]');
       if (!node) return;
-      node.textContent = syncStatusLabel(status);
+      const connected = hasActiveGoogleSession(auth);
+      node.textContent = syncStatusLabel(status, connected);
       node.dataset.phase = status?.phase ?? 'local';
       const detail = node.nextElementSibling;
-      if (detail?.classList.contains('hint')) detail.textContent = status?.message ?? '';
+      if (detail?.classList.contains('hint')) detail.textContent = syncStatusMessage(status, connected);
       refreshSyncConnection(root, status);
     },
     async pauseForUpdate() {

@@ -55,7 +55,7 @@ test('C2 rejected required precache install keeps the active offline app and for
     assert.equal(await page.evaluate(() => devicePixelRatio), 2);
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null, null, {timeout: 10_000});
     await page.evaluate(async () => { await caches.open('synthetic-foreign-cache'); });
-    harness.setServiceWorkerVersion('v27');
+    harness.setServiceWorkerVersion('v28');
     harness.failNextPrecacheAsset('styles.css');
     await page.evaluate(async () => {
       const registration = await navigator.serviceWorker.getRegistration('./');
@@ -67,7 +67,7 @@ test('C2 rejected required precache install keeps the active offline app and for
     });
     const cacheNames = await page.evaluate(async () => (await caches.keys()).sort());
     assert.equal(cacheNames.includes('synthetic-foreign-cache'), true, JSON.stringify(cacheNames));
-    assert.equal(cacheNames.includes('vokabeltrainer-product:%2Ftrainer%2F:v26'), true, JSON.stringify(cacheNames));
+    assert.equal(cacheNames.includes('vokabeltrainer-product:%2Ftrainer%2F:v27'), true, JSON.stringify(cacheNames));
     await context.setOffline(true);
     await page.reload({waitUntil: 'domcontentloaded'});
     await page.locator('#profile-list').waitFor();
@@ -395,7 +395,7 @@ test('final I3 deliberate reconnect wakes pending bound sync without another lif
     await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
     await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
     await page.getByRole('button', {name: 'Neuen Lernbereich anlegen'}).click();
-    await page.getByText('Abgeglichen', {exact: true}).waitFor();
+    await waitForInitialDatasetSync(page, harness);
     await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
     await page.locator('#settings-task-children > summary').click();
     await page.locator('summary').filter({hasText: 'Kind hinzufügen'}).click();
@@ -428,7 +428,7 @@ test('final I3 deliberate reconnect wakes pending bound sync without another lif
     await page.clock.runFor(61_000);
     await heldFilesRead;
     assert.equal(controls.heldFilesReads, 1, 'normal polling continues past the account response into Drive file discovery');
-    assert.equal(await page.locator('[data-sync-status]').innerText(), 'Abgleich ausstehend',
+    assert.equal(await page.locator('[data-sync-status]').innerText(), 'Auf Änderungen prüfen …',
       'the poll must not report completion while its next Drive read is held');
     controls.releaseHeldFilesRead();
     await page.locator('[data-sync-status]').filter({hasText: 'Abgeglichen'}).waitFor();
@@ -540,6 +540,30 @@ async function productState(page) {
       transaction.oncomplete = () => database.close();
     };
   }));
+}
+
+async function waitForInitialDatasetSync(page, harness, pageErrors = []) {
+  try {
+    await page.getByText('Abgeglichen', {exact: true}).waitFor();
+  } catch (error) {
+    const state = await productState(page);
+    error.message += `\nInitial sync diagnostics: ${JSON.stringify({
+      status: await page.locator('[data-sync-status]').allTextContents(),
+      hints: await page.locator('.sync-status + .hint').allTextContents(),
+      notices: await page.locator('.message').allTextContents(),
+      settingsOpen: await page.locator('#settings-task-connection').evaluateAll(
+        (nodes) => nodes.map((node) => node.open),
+      ),
+      binding: Boolean(state?.binding),
+      datasetSetup: Boolean(state?.datasetSetup),
+      outboxCount: state?.outboxEventIds?.length,
+      pendingPacketCount: state?.pendingPackets?.length,
+      pageErrors,
+      unexpectedRequests: harness.google.unexpected,
+      writeKinds: harness.google.writes.map(({kind}) => kind),
+    })}`;
+    throw error;
+  }
 }
 
 async function writeProductState(page, state) {
@@ -1623,7 +1647,7 @@ test('trainer sync and restore exposes deliberate Google, download and import fl
     });
     await page.getByLabel('Name des Lernbereichs').fill('Familienwortschatz');
     await page.getByRole('button', {name: 'Neuen Lernbereich anlegen', exact: true}).click();
-    await page.getByText('Abgeglichen', {exact: true}).waitFor();
+    await waitForInitialDatasetSync(page, harness, pageErrors);
 
     controls.rejectNextAbout401 = true;
     await page.getByRole('button', {name: 'Zur Profilauswahl', exact: true}).click();
@@ -1765,9 +1789,9 @@ test('trainer sync and restore exposes deliberate Google, download and import fl
     await page.locator('#adult-unlock').click();
     await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
     const afterLockedPopup = await page.evaluate(() => window.__syntheticOauthRequests);
-    await page.locator('[data-sync-status]').filter({hasText: 'Mit Google verbinden'}).waitFor();
-    assert.equal(await page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).count(), 0);
-    assert.equal(await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).count(), 1);
+    await page.getByText('Google-Verbindung ist aktiv.', {exact: true}).waitFor();
+    assert.equal(await page.getByRole('button', {name: 'Jetzt abgleichen', exact: true}).count(), 1);
+    assert.equal(await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).count(), 0);
     assert.equal(await page.evaluate(() => window.__syntheticOauthRequests), afterLockedPopup);
 
     assert.deepEqual(pageErrors, []);
@@ -2232,7 +2256,7 @@ test('trainer offline update UI blocks typing and pending answers before control
   try {
     await page.goto(harness.baseUrl);
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null, null, {timeout: 10_000});
-    harness.setServiceWorkerVersion('v27', {activationDelayMs: 750});
+    harness.setServiceWorkerVersion('v28', {activationDelayMs: 750});
     await page.evaluate(async () => {
       const registration = await navigator.serviceWorker.getRegistration('./');
       await registration.update();
@@ -2290,8 +2314,8 @@ test('trainer offline update UI blocks typing and pending answers before control
     const beforeReload = await productState(page);
     assert.equal(beforeReload.ledger.events.some(({type}) => type === 'round.completed' || type === 'round.abandoned'), false);
     assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product:')).sort()), [
-      'vokabeltrainer-product:%2Ftrainer%2F:v26',
       'vokabeltrainer-product:%2Ftrainer%2F:v27',
+      'vokabeltrainer-product:%2Ftrainer%2F:v28',
     ]);
     const navigation = page.waitForNavigation();
     await updateButton.click();
@@ -2306,7 +2330,7 @@ test('trainer offline update UI blocks typing and pending answers before control
     await navigation;
     await page.getByText('Richtig!', {exact: true}).waitFor();
     assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product:')).sort()), [
-      'vokabeltrainer-product:%2Ftrainer%2F:v27',
+      'vokabeltrainer-product:%2Ftrainer%2F:v28',
     ]);
   } finally {
     await context.close();

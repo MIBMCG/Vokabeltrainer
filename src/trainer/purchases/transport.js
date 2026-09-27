@@ -19,7 +19,7 @@ const FOLDER = 'application/vnd.google-apps.folder';
 const JSON_TYPE = 'application/json';
 const PRODUCT_APP = 'vokabeltrainer-product';
 export const PURCHASE_APP = 'vokabeltrainer-purchases';
-const METADATA_FIELDS = 'id,title,mimeType,parents,properties,labels,version,etag';
+const METADATA_FIELDS = 'id,title,mimeType,parents,properties,labels,version,etag,headRevisionId';
 
 function error(code, message, status = null) {
   try {
@@ -250,7 +250,9 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
     if (value.id !== id || typeof value.title !== 'string' || typeof value.mimeType !== 'string'
       || !Array.isArray(value.parents) || value.labels?.trashed !== false
       || typeof value.version !== 'string' || !/^(?:0|[1-9][0-9]*)$/.test(value.version)
-      || !strongEtag(value.etag)) {
+      || !strongEtag(value.etag)
+      || (value.headRevisionId !== undefined && value.headRevisionId !== null
+        && (typeof value.headRevisionId !== 'string' || value.headRevisionId.trim() === ''))) {
       error('binding', 'Die Drive-Metadaten sind nicht vollständig gebunden.');
     }
     const parents = value.parents.map((parent) => {
@@ -265,6 +267,8 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
       properties: normalizeProperties(value.properties),
       version: value.version,
       etag: value.etag,
+      ...(value.headRevisionId === undefined || value.headRevisionId === null
+        ? {} : {headRevisionId: value.headRevisionId}),
     };
   }
 
@@ -393,8 +397,14 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
     const value = await contentJson(response);
     const after = await metadata(ref.id);
     checkImmutableMetadata(after, ref, context);
-    if (before.version !== after.version || before.etag !== after.etag
+    if (before.name !== after.name || before.mimeType !== after.mimeType
+      || !same(before.parents, after.parents)
       || !same(before.properties, after.properties)) {
+      error('binding', 'Die Bindung der unveränderlichen Drive-Datei hat sich während des Lesens geändert.');
+    }
+    if (before.headRevisionId !== after.headRevisionId
+      || (before.headRevisionId === undefined
+        && (before.version !== after.version || before.etag !== after.etag))) {
       error('stale', 'Die unveränderliche Drive-Datei hat sich während des Lesens geändert.');
     }
     let actual;

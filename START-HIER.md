@@ -2,11 +2,11 @@
 
 Stand: **27.09.2026**.
 
-Die aktuelle Fortsetzung betrifft die aus dem Nutzertest gemeldeten
-Bedienprobleme: Figurenauswahl/Farben, Updatehinweis, Google-Verbindung im Shop
-und einfachere Erwachsenen-Einstellungen. Zuerst die
-[aktuelle Übergabe](docs/handoffs/2026-09-27-bedienkorrekturen.md) und den
-[Bedienbericht](docs/reports/2026-09-27-bedienkorrekturen.md) lesen.
+Die aktuelle Fortsetzung betrifft Abgleichschleifen, langsame Käufe mit
+Mehrfachdialogen, Google-Trennungen und einen Fehler beim Lesen von Kaufdaten.
+Zuerst die [aktuelle Übergabe](docs/handoffs/2026-09-27-sync-und-kaeufe.md) und den
+[Prüfbericht](docs/reports/2026-09-27-sync-und-kaeufe.md) lesen. Die vorherigen
+Bedienkorrekturen (Avatar/Farben, Updatehinweis, Erwachsenenansicht) bleiben erhalten.
 Die folgenden Zahlen dokumentieren den vorherigen Kaufpaket-Abschluss.
 
 Version 1 und die Überarbeitung A1–C2 bleiben die Produktbasis. Das bestätigte Kaufpaket (Tasks 1–6) ist umgesetzt und unabhängig geprüft.

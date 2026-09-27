@@ -370,12 +370,16 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
   async function uploadPurchase(operationId) {
     let {attempt}=await reservePurchase(operationId);
     if(attempt.phase!=='reserved')return attempt;
-    for(const upload of attempt.uploads) {
-      const commerce=current().commerce;
-      await transport.writeImmutable({
-        ref:upload.ref,value:upload.value,kind:'content',config:commerce.config,
-        authorization:{kind:'attempt',commerce,operationId,attemptId:attempt.attemptId},
-      });
+    for(let offset=0;offset<attempt.uploads.length;offset+=3) {
+      const settled=await Promise.allSettled(attempt.uploads.slice(offset,offset+3).map(async upload=>{
+        const commerce=current().commerce;
+        await transport.writeImmutable({
+          ref:upload.ref,value:upload.value,kind:'content',config:commerce.config,
+          authorization:{kind:'attempt',commerce,operationId,attemptId:attempt.attemptId},
+        });
+      }));
+      const failed=settled.find(result=>result.status==='rejected');
+      if(failed)throw failed.reason;
     }
     ({attempt}=await persistAttempt(operationId,({attempt:target})=>{target.phase='uploaded';}));
     return attempt;

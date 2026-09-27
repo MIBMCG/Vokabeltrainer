@@ -2,7 +2,7 @@ import {project} from '../learning/progress.js';
 import {resolveEpochs} from '../model/epochs.js';
 import {el, field, button, message} from './dom.js';
 import {eventLabel, previewSummaryNodes, revisionChoiceNodes} from './preview.js';
-import {syncStatusLabel} from './status.js';
+import {hasActiveGoogleSession, syncStatusLabel, syncStatusMessage} from './status.js';
 
 const stateByRoot = new WeakMap();
 const connectionViewByRoot = new WeakMap();
@@ -35,26 +35,15 @@ export function refreshSyncConnection(root, status) {
   const view = connectionViewByRoot.get(owner);
   if (!view || !view.root.isConnected) return;
   const summary = owner.querySelector?.('[data-settings-sync-summary]');
-  if (summary) summary.textContent = `Status: ${syncStatusLabel(status)}`;
-  const connected = status?.phase === 'connect' ? false : activeSession(view.auth, view.ui.connected);
+  const connected = hasActiveGoogleSession(view.auth, view.ui.connected);
+  if (summary) summary.textContent = `Status: ${syncStatusLabel(status, connected)}`;
   if (connected === view.ui.connected) return;
   view.ui.connected = connected;
   view.rerender();
 }
 
-function activeSession(auth, fallback) {
-  if (typeof auth.getToken !== 'function') return fallback;
-  try {
-    auth.getToken();
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-function ensureUnlocked(isUnlocked, auth) {
+function ensureUnlocked(isUnlocked) {
   if (typeof isUnlocked === 'function' && !isUnlocked()) {
-    auth.invalidate();
     const error = new Error('Der Erwachsenenbereich wurde gesperrt. Bitte erneut mit PIN öffnen.');
     error.code = 'locked';
     throw error;
@@ -66,7 +55,7 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
   const projection = project(state.ledger);
   const resolved = resolveEpochs(state.ledger);
   const status = sync.getStatus();
-  ui.connected = status.phase === 'connect' ? false : activeSession(auth, ui.connected);
+  ui.connected = hasActiveGoogleSession(auth, ui.connected);
   const configuration = auth.configuration?.(Boolean(state.binding)) ?? {
     clientId: auth.clientId?.() ?? '', source: 'browser', requiresDecision: false,
   };
@@ -78,16 +67,15 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
   async function run(action, {after} = {}) {
     if (ui.busy) return;
     try {
-      ensureUnlocked(isUnlocked, auth);
+      ensureUnlocked(isUnlocked);
       ui.busy = true;
       ui.notice = '';
       const pending = action();
       rerender();
       const result = await pending;
-      ensureUnlocked(isUnlocked, auth);
+      ensureUnlocked(isUnlocked);
       if (after) await after(result);
     } catch (error) {
-      if (error?.code === 'auth') auth.invalidate();
       ui.notice = error?.message || 'Die Aktion konnte nicht abgeschlossen werden.';
       ui.tone = 'error';
     } finally {
@@ -102,8 +90,8 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
   const section = el('section', {attrs: {'aria-labelledby': 'sync-title', class: 'stack'}});
   section.append(
     el('h2', {text: 'Abgleich', attrs: {id: 'sync-title'}}),
-    el('p', {text: syncStatusLabel(status), attrs: {class: 'sync-status', 'data-sync-status': '', 'data-phase': status.phase}}),
-    el('p', {text: status.message || '', attrs: {class: 'hint'}}),
+    el('p', {text: syncStatusLabel(status, ui.connected), attrs: {class: 'sync-status', 'data-sync-status': '', 'data-phase': status.phase}}),
+    el('p', {text: syncStatusMessage(status, ui.connected), attrs: {class: 'hint'}}),
   );
   if (status.pendingCount > 0) section.append(message(`${status.pendingCount} Änderung${status.pendingCount === 1 ? '' : 'en'} wartet noch auf Bestätigung.`));
   if (status.lateCount > 0) section.append(message(`${status.lateCount} alte Änderung${status.lateCount === 1 ? ' bleibt' : 'en bleiben'} getrennt erhalten.`));
@@ -120,6 +108,8 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
       el('h3', {text: 'Google Drive verbinden'}),
       el('p', {text: configuration.source === 'missing'
         ? 'Der Google-Zugang ist noch nicht vorbereitet. Lokal üben und speichern ist weiterhin möglich.'
+        : state.binding
+          ? 'Google-Verbindung erneuern. Ihr Lernbereich bleibt verbunden; ausstehende Änderungen werden danach automatisch abgeglichen.'
         : 'Verbinden Sie das gemeinsame Google-Konto der Familie. Danach wählen Sie bewusst einen neuen oder vorhandenen Lernbereich.'}),
       el('button', {text: 'Mit Google verbinden', attrs: {
         type: 'submit', class: 'primary', disabled: ui.busy || configuration.source === 'missing',

@@ -4,6 +4,16 @@ export {DriveError};
 
 export const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
 
+export async function withFreshAuth(auth, action) {
+  const snapshot = auth.snapshot();
+  try {
+    return await action();
+  } catch (error) {
+    if (error?.code === 'auth') auth.invalidateIfCurrent(snapshot);
+    throw error;
+  }
+}
+
 const EXPIRY_MARGIN_MS = 30_000;
 
 function invalid(message) {
@@ -25,6 +35,7 @@ export function createTokenSession({oauth2, clientId, now = Date.now} = {}) {
   let token = null;
   let pending = null;
   let generation = 0;
+  let revision = 0;
 
   function settleCallback(attempt, response) {
     if (!pending || pending.attempt !== attempt || generation !== attempt) return;
@@ -57,6 +68,7 @@ export function createTokenSession({oauth2, clientId, now = Date.now} = {}) {
       value: response.access_token,
       expiresAt: now() + expiresIn * 1000,
     };
+    revision += 1;
     current.resolve();
   }
 
@@ -72,6 +84,7 @@ export function createTokenSession({oauth2, clientId, now = Date.now} = {}) {
     if (token && now() < token.expiresAt - EXPIRY_MARGIN_MS) return Promise.resolve();
     token = null;
     generation += 1;
+    revision += 1;
     const attempt = generation;
 
     return new Promise((resolve, reject) => {
@@ -82,6 +95,7 @@ export function createTokenSession({oauth2, clientId, now = Date.now} = {}) {
           client_id: clientId.trim(),
           scope: DRIVE_SCOPE,
           include_granted_scopes: false,
+          prompt: '',
           callback: (response) => settleCallback(attempt, response),
           error_callback: () => settlePopupError(attempt),
         });
@@ -99,6 +113,7 @@ export function createTokenSession({oauth2, clientId, now = Date.now} = {}) {
   function getToken() {
     if (!token || now() >= token.expiresAt - EXPIRY_MARGIN_MS) {
       token = null;
+      revision += 1;
       throw authError();
     }
     return token.value;
@@ -106,17 +121,23 @@ export function createTokenSession({oauth2, clientId, now = Date.now} = {}) {
 
   function invalidate() {
     token = null;
+    revision += 1;
   }
 
-  function disconnect() {
+  function clearLocal() {
     generation += 1;
+    revision += 1;
     if (pending) {
       const current = pending;
       pending = null;
       current.reject(authError('Google-Anmeldung wurde getrennt.'));
     }
-    const tokenToRevoke = token?.value;
     token = null;
+  }
+
+  function disconnect() {
+    const tokenToRevoke = token?.value;
+    clearLocal();
     if (tokenToRevoke && typeof oauth2.revoke === 'function') {
       try {
         oauth2.revoke(tokenToRevoke, () => {});
@@ -126,5 +147,12 @@ export function createTokenSession({oauth2, clientId, now = Date.now} = {}) {
     }
   }
 
-  return {connect, getToken, invalidate, disconnect};
+  function invalidateIfCurrent(snapshot) {
+    if (revision !== snapshot) return false;
+    invalidate();
+    return true;
+  }
+
+  return {connect, getToken, invalidate, disconnect, clearLocal,
+    snapshot: () => revision, invalidateIfCurrent};
 }

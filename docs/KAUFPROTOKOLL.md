@@ -554,8 +554,21 @@ für den davon abhängigen Request. Ein später notwendiger Tokenwechsel beginnt
 einen neuen gebundenen Schritt; Tokens werden nie gespeichert. Ordner werden
 durch zwei V2-Metadatenreads kohärent gelesen; unveränderliche JSON-Dateien
 durch Metadaten-, Medien- und zweiten Metadatenread. Die starke ETag bleibt als
-opaker String unverändert. Fehlende, schwache oder während der Lesung geänderte
-ETags/Versionen sperren den Schritt.
+opaker String unverändert; fehlende oder schwache ETags sperren den Schritt.
+Bei Ordnern sperren auch während der Lesung geänderte ETags/Versionen den
+Schritt. Bei unveränderlichen JSON-Dateien wird zusätzlich `headRevisionId`
+angefordert: Eine vorhandene Inhaltsrevision muss vor und nach dem Medienabruf
+identisch sein. Dateiname, MIME-Typ, Elternbindung und private Properties müssen
+ebenfalls stabil bleiben, der gelesene Inhalt muss weiterhin den erwarteten
+SHA-256 erfüllen. Fehlt die Inhaltsrevision auf beiden Seiten, gilt der strenge
+Vergleich von Version und ETag. Einseitig fehlende oder ungültige
+Inhaltsrevisionen werden nicht als Nachweis angenommen.
+
+Diese Präzisierung vom 27.09.2026 trennt Inhaltsänderungen von bloßen
+Metadatenänderungen: Googles Dateiversion zählt auch nicht sichtbare
+Serveränderungen; `headRevisionId` bezeichnet bei Blobdateien die aktuelle
+Inhaltsrevision ([Google-Dateireferenz](https://developers.google.com/workspace/drive/api/reference/rest/v2/files)).
+Die ursprüngliche ETag-Bedingung beim Schreiben eines Kaufkopfs bleibt unverändert.
 
 Die vorhandene Datensatzbeschreibung ist ausschließlich lesbar als
 `{id:binding.descriptorFileId,sha256:descriptorHash}`. Sie muss Kind,
@@ -601,6 +614,12 @@ Schreibautorität. Nach einem Create wird die Datei unabhängig vom HTTP-Status
 vollständig nachgelesen. Ein 409 nach möglichem Antwortverlust ist nur dann
 erfolgreich, wenn Eltern, Marker, vollständige Konfiguration und Inhaltshash
 exakt stimmen.
+
+Die unveränderlichen Uploads eines bereits vollständig gespeicherten
+Kaufversuchs dürfen in Gruppen von höchstens drei parallel laufen. Vor einem
+Fehlerabbruch werden alle begonnenen Uploads abgewartet. Phase `uploaded` und
+Kaufkopfänderung sind erst nach erfolgreicher Prüfung aller Uploads erlaubt;
+ein Wiederholungsversuch verwendet die bereits gespeicherten IDs und Bodies.
 
 `putPointer` kennt zwei getrennte Formen. Die Einrichtung schreibt
 `configRef` einmalig in den bestehenden Bestandsordner und verlangt einen

@@ -5,11 +5,20 @@ Stand: **27.09.2026**. Arbeitszweig:
 
 ## Aktuelle Nachbesserung aus dem Nutzertest
 
+Das neue Korrekturpaket behandelt Abgleichschleifen, langsame bzw. wiederholt
+bestätigte Käufe, unerwartete Google-Trennungen und eine parallele Neuanlage.
+Der aktuelle Einstieg steht in der
+[Übergabe zu Abgleich und Käufen](docs/handoffs/2026-09-27-sync-und-kaeufe.md),
+Ursachen und Prüfgrenzen im [Prüfbericht](docs/reports/2026-09-27-sync-und-kaeufe.md).
+Finaler Prüfstand dieses Pakets: **543/543 Node-Tests und 54/54 Browserfälle**,
+unabhängige Nachprüfungen ohne verbleibenden Befund. Echte Drive-Laufzeit und
+iOS-/Zwei-Geräte-Abnahme bleiben offen; nach Reload bleibt ein Google-Klick nötig.
+
 Die Bedienkorrekturen vom 27.09. umfassen den Updatehinweis, die einheitliche
 Figurendarstellung mit direkt erreichbaren Farben, den Google-Wiederverbindenweg
 im Shop und kompakte Erwachsenen-Einstellungen. Prüfstand und Ursachen stehen
 im [Bedienbericht](docs/reports/2026-09-27-bedienkorrekturen.md), Einstieg und
-Grenzen in der [aktuellen Übergabe](docs/handoffs/2026-09-27-bedienkorrekturen.md).
+Grenzen in der [vorherigen Übergabe](docs/handoffs/2026-09-27-bedienkorrekturen.md).
 
 ## Vorheriger Abschlussstand
 

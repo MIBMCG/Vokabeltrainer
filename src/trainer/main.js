@@ -1,7 +1,7 @@
 import {createCommands, productStateHash} from './commands.js';
 import {createPinGate} from './adult/pin.js';
 import {createRestoreService} from './backup/restore.js';
-import {createTokenSession, DriveError} from '../drive/auth.js';
+import {createTokenSession, DriveError, withFreshAuth} from '../drive/auth.js';
 import {createDriveClient} from '../drive/client.js';
 import {openProductStore} from './storage/store.js';
 import {createProductSync} from './sync/drive.js';
@@ -9,7 +9,7 @@ import {createPurchaseTransport} from './purchases/transport.js';
 import {createPurchaseService, purchasePreviewStateHash} from './purchases/service.js';
 import {createCommerceIntegration} from './purchases/integration.js';
 import {digest} from './model/canonical.js';
-import {createSyncScheduler} from './sync/scheduler.js';
+import {createLocalChangeNotifier, createSyncScheduler} from './sync/scheduler.js';
 import {createUpdateController} from './updates.js';
 import {mountShell} from './ui/shell.js';
 import {APP_CONFIG} from './config.js';
@@ -121,6 +121,20 @@ function createProductAuth() {
     invalidate() {
       session?.invalidate();
     },
+    snapshot() {
+      return {session, revision: session?.snapshot() ?? null};
+    },
+    invalidateIfCurrent(snapshot) {
+      if (session !== snapshot.session || session === null) return false;
+      const invalidated = session.invalidateIfCurrent(snapshot.revision);
+      if (invalidated) shell?.syncStatusChanged(syncController?.getStatus());
+      return invalidated;
+    },
+    clearLocal() {
+      session?.clearLocal();
+      session = null;
+      sessionClientId = '';
+    },
     disconnect() {
       session?.disconnect();
       session = null;
@@ -130,19 +144,11 @@ function createProductAuth() {
 }
 
 function invalidateOnAuth(service, authSession) {
-  const wrapped = {};
-  for (const name of ['discover', 'createDataset', 'joinDataset', 'sync', 'retry']) {
-    wrapped[name] = async (...args) => {
-      try {
-        return await service[name](...args);
-      } catch (error) {
-        if (error?.code === 'auth') authSession.invalidate();
-        throw error;
-      }
-    };
+  const wrapped = {...service};
+  for (const [name, method] of Object.entries(service)) {
+    if (typeof method !== 'function' || ['getStatus', 'destroy'].includes(name)) continue;
+    wrapped[name] = (...args) => withFreshAuth(authSession, () => method(...args));
   }
-  wrapped.getStatus = () => service.getStatus();
-  wrapped.destroy = () => service.destroy();
   return wrapped;
 }
 
@@ -273,7 +279,6 @@ async function start() {
     drive, store, commands, now: () => new Date(), id: () => crypto.randomUUID(),
     commerce: commerceIntegration,
     onStatus: (status) => {
-      if (status.phase === 'connect') auth.invalidate();
       shell?.syncStatusChanged(status);
     },
   });
@@ -299,13 +304,10 @@ async function start() {
     return purchaseRuntime;
   }
   async function purchaseCall(name, ...args) {
-    try {
+    return withFreshAuth(auth, async () => {
       const service = await currentPurchaseService();
       return await service[name](...args);
-    } catch (error) {
-      if (error?.code === 'auth') auth.invalidate();
-      throw error;
-    }
+    });
   }
   const commerce = Object.freeze({
     isConnected() {
@@ -353,10 +355,10 @@ async function start() {
     async confirmRestore(operationId) { return (await currentPurchaseService()).confirmRestore(operationId); },
     async resume(operationId) { return (await currentPurchaseService()).resume(operationId); },
   };
-  const restore = createRestoreService({
+  const restore = invalidateOnAuth(createRestoreService({
     commands, store, sync: syncController, drive, now: () => new Date(), id: () => crypto.randomUUID(),
     commerce: () => commerceRestore,
-  });
+  }), auth);
   scheduler = createSyncScheduler({
     sync: () => syncController.sync(),
     hasChanges: () => {
@@ -374,13 +376,10 @@ async function start() {
   });
   shell.render();
   await startUpdates(commands);
-  let completedRounds = commands.getState()?.ledger.events.filter(({type}) => type === 'round.completed').length ?? 0;
+  const notifyLocalChange = createLocalChangeNotifier({scheduler, initialState: commands.getState()});
   unsubscribeScheduler = commands.subscribe((state) => {
     refreshUpdateNotice(commands);
-    const nextCompleted = state.ledger.events.filter(({type}) => type === 'round.completed').length;
-    if (nextCompleted > completedRounds) scheduler?.roundCompleted();
-    else scheduler?.changed();
-    completedRounds = nextCompleted;
+    notifyLocalChange(state);
   });
   schedulerVisibility = () => scheduler?.visibility(!document.hidden && navigator.onLine);
   schedulerOnline = () => {
@@ -408,7 +407,7 @@ function close() {
   updates?.destroy();
   updateNotice?.remove();
   updateNotice = null;
-  auth?.disconnect();
+  auth?.clearLocal();
   shell?.destroy();
   store?.close();
 }

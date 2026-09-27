@@ -40,6 +40,7 @@ export function purchasesHttpFixture({accountId = 'account-a', etag = '"opaque/s
       value: clone(value),
       version: 1,
       etag,
+      headRevisionId: mimeType === JSON_TYPE ? `revision-${id}` : undefined,
     });
   }
 
@@ -105,6 +106,7 @@ export function purchasesHttpFixture({accountId = 'account-a', etag = '"opaque/s
         labels: {trashed: false},
         version: String(record.version),
         etag: record.etag,
+        ...(record.headRevisionId === undefined ? {} : {headRevisionId: record.headRevisionId}),
       });
     }
 

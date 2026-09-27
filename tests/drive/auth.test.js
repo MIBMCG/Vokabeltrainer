@@ -1,7 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import {DRIVE_SCOPE, DriveError, createTokenSession} from '../../src/drive/auth.js';
+import * as driveAuth from '../../src/drive/auth.js';
+
+const {DRIVE_SCOPE, DriveError, createTokenSession} = driveAuth;
+const withFreshAuth = (...args) => driveAuth.withFreshAuth(...args);
 
 function oauthFixture() {
   let config;
@@ -48,6 +51,7 @@ test('configures GIS for only drive.file and starts the popup synchronously', as
   assert.equal(fixture.config().client_id, 'client-id.apps.googleusercontent.com');
   assert.equal(fixture.config().scope, DRIVE_SCOPE);
   assert.equal(fixture.config().include_granted_scopes, false);
+  assert.equal(fixture.config().prompt, '');
 
   fixture.config().callback({
     access_token: 'access-a',
@@ -180,5 +184,56 @@ test('disconnect clears and revokes the token while ignoring a late callback', a
   await second;
   session.disconnect();
   assert.deepEqual(fixture.revoked, ['current-access']);
+  assert.throws(() => session.getToken(), expectDriveError('auth'));
+});
+
+test('page cleanup clears the RAM token without revoking the Google grant', async () => {
+  const fixture = oauthFixture();
+  const session = createTokenSession({oauth2: fixture.oauth2, clientId: 'client-id.apps.googleusercontent.com'});
+  const first = session.connect();
+  fixture.config().callback({access_token: 'access-a', expires_in: 3600, scope: DRIVE_SCOPE});
+  await first;
+  const late = fixture.config().callback;
+  session.clearLocal();
+  assert.deepEqual(fixture.revoked, []);
+  assert.throws(() => session.getToken(), expectDriveError('auth'));
+
+  const second = session.connect();
+  fixture.config().callback({access_token: 'access-b', expires_in: 3600, scope: DRIVE_SCOPE});
+  await second;
+  late({access_token: 'stale', expires_in: 3600, scope: DRIVE_SCOPE});
+  assert.equal(session.getToken(), 'access-b');
+});
+
+test('an old 401 cannot invalidate a newer Google token', async () => {
+  const fixture = oauthFixture();
+  const session = createTokenSession({oauth2: fixture.oauth2, clientId: 'client-id.apps.googleusercontent.com'});
+  const first = session.connect();
+  fixture.config().callback({access_token: 'access-a', expires_in: 3600, scope: DRIVE_SCOPE});
+  await first;
+  let rejectOld;
+  const oldRequest = withFreshAuth(session, () => new Promise((resolve, reject) => { rejectOld = reject; }));
+  session.invalidate();
+  const second = session.connect();
+  fixture.config().callback({access_token: 'access-b', expires_in: 3600, scope: DRIVE_SCOPE});
+  await second;
+  rejectOld(new DriveError('auth', 'old request failed', 401));
+  await assert.rejects(oldRequest, expectDriveError('auth'));
+  assert.equal(session.getToken(), 'access-b');
+});
+
+test('current 401 clears its token while a network failure retains it', async () => {
+  const fixture = oauthFixture();
+  const session = createTokenSession({oauth2: fixture.oauth2, clientId: 'client-id.apps.googleusercontent.com'});
+  const first = session.connect();
+  fixture.config().callback({access_token: 'access-a', expires_in: 3600, scope: DRIVE_SCOPE});
+  await first;
+  await assert.rejects(withFreshAuth(session, async () => {
+    throw new DriveError('network', 'temporary network failure');
+  }), {code: 'network'});
+  assert.equal(session.getToken(), 'access-a');
+  await assert.rejects(withFreshAuth(session, async () => {
+    throw new DriveError('auth', 'current request failed', 401);
+  }), expectDriveError('auth'));
   assert.throws(() => session.getToken(), expectDriveError('auth'));
 });
