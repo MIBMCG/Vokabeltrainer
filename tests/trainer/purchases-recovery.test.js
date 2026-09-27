@@ -809,7 +809,7 @@ test('an accepted setup pointer survives lost response and fresh commands servic
   assert.notEqual(confirmed.etag,durableIdentity.etag);
 });
 
-test('a reserved activation left beside an unclear setup remains resumable after setup confirmation',async()=>{
+test('a direct reserved activation resume stays read-only until the same unclear setup is confirmed',async()=>{
   const first=await actualActivationHarness({suffix:'legacy-reserved'});
   first.fixture.dropPointerResponse();
   await assert.rejects(first.service.prepareActivation({
@@ -837,23 +837,29 @@ test('a reserved activation left beside an unclear setup remains resumable after
   };
   state.restoreJobs.push(candidate.publication);
   await first.commands.commitExternal(state,await productStateHash(first.commands.getState()));
-  await first.integration.publishControl({state:first.commands.getState(),control:state.commerce.control});
-  const publishedCount=first.drive.files.size;
+  const savedControl=structuredClone(first.commands.getState().commerce.control);
+  assert.equal(first.drive.files.size,0);
+  assert.equal(first.fixture.files.get(BINDING.folderId).properties.purchaseConfigId,undefined);
 
   const fresh=await actualActivationHarness({
     store:first.store,fixture:first.fixture,drive:first.drive,suffix:'legacy-reserved-fresh',
   });
   const pointerWrites=fresh.fixture.calls.filter(({method})=>method==='PUT').length;
-  await assert.rejects(fresh.service.prepareActivation({
-    binding:BINDING,descriptorHash:fresh.descriptorHash,
-  }),{code:'pending'});
+  await assert.rejects(fresh.service.resume('legacy-control'),{code:'pending'});
   assert.equal(fresh.fixture.calls.filter(({method})=>method==='PUT').length,pointerWrites);
-  assert.equal(fresh.drive.files.size,publishedCount);
+  assert.equal(fresh.drive.files.size,0);
+  assert.deepEqual(fresh.commands.getState().commerce.control,savedControl);
+  assert.equal(fresh.fixture.files.get(BINDING.folderId).properties.purchaseConfigId,undefined);
+
   assert.equal((await fresh.service.resume(unclear.operationId)).status,'confirmed');
   const confirmed=await fresh.service.resume('legacy-control');
   assert.equal(confirmed.phase,'confirmed');
   assert.equal(fresh.commands.getState().commerce.mode,'active');
-  assert.equal(fresh.drive.files.size,publishedCount);
+  assert.ok(fresh.drive.files.size>0);
+  assert.deepEqual(confirmed.candidate,savedControl.candidate);
+  assert.deepEqual(confirmed.uploads,savedControl.uploads);
+  assert.deepEqual(confirmed.pointerProperties,savedControl.pointerProperties);
+  assert.equal(confirmed.etag,savedControl.etag);
 });
 
 test('activation resumes its exact reserved closure after an upload failure and restart',async()=>{

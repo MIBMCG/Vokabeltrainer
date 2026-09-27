@@ -524,7 +524,13 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
   }
 
   async function uploadControl(operationId) {
-    let state=current(),control=state.commerce.control;
+    let state=current();
+    const setup=state.commerce.setup;
+    if(setup!==null&&setup.phase!=='confirmed') {
+      await installSetup(setup.binding,setup.descriptorHash);
+      state=current();
+    }
+    let control=state.commerce.control;
     if(control===null||control.operationId!==operationId)fail('reference','Der Steuerauftrag wurde nicht gefunden.');
     if(control.phase==='reserved') {
       const publication=state.restoreJobs.find(job=>job.id===operationId);

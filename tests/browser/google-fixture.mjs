@@ -11,6 +11,8 @@ export function createGoogleFixture() {
   const writes = [];
 
   async function attach(context) {
+    let heldFilesRead = null;
+    let observedHeldFilesRead = null;
     const controls = {
       offline: false,
       account: 'synthetic-account',
@@ -19,6 +21,17 @@ export function createGoogleFixture() {
       rejectNextAbout401: false,
       cancelNextOauth: false,
       oauthClientIds: [],
+      holdNextFilesRead: false,
+      heldFilesReads: 0,
+      waitForHeldFilesRead() {
+        if (controls.heldFilesReads > 0) return Promise.resolve(controls.heldFilesReads);
+        return new Promise((resolveHeld) => { observedHeldFilesRead = resolveHeld; });
+      },
+      releaseHeldFilesRead() {
+        const release = heldFilesRead;
+        heldFilesRead = null;
+        release?.();
+      },
     };
     await context.exposeFunction('__syntheticOauthDecision', (clientId) => {
       controls.oauthClientIds.push(clientId);
@@ -87,6 +100,13 @@ export function createGoogleFixture() {
       }
       if (url.pathname === '/drive/v3/files/generateIds') return respond({ids: [`file-${++sequence}`]});
       if (url.pathname === '/drive/v3/files' && method === 'GET') {
+        if (controls.holdNextFilesRead) {
+          controls.holdNextFilesRead = false;
+          controls.heldFilesReads += 1;
+          observedHeldFilesRead?.(controls.heldFilesReads);
+          observedHeldFilesRead = null;
+          await new Promise((release) => { heldFilesRead = release; });
+        }
         const query = url.searchParams.get('q') || '';
         let matches = [...files.values()].filter((file) => !file.metadata.trashed);
         const parent = query.match(/'([A-Za-z0-9_-]+)' in parents/);

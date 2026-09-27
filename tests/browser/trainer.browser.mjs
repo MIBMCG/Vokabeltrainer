@@ -416,19 +416,27 @@ test('final I3 deliberate reconnect wakes pending bound sync without another lif
     assert.equal(synced.outboxEventIds.length, 0, 'successful reconnect must drain the event outbox');
     assert.equal(synced.pendingPackets.length, 0, 'successful reconnect must confirm every pending packet');
     assert.equal(await page.evaluate(() => window.__syntheticOauthRequests), requests + 1);
-    for (const id of pending) assert.equal([...harness.google.files.values()].flatMap(({value}) => value?.kind === 'packet' ? value.events : []).filter((event) => event.id === id).length, 1);
     // Advancing the browser clock exercises normal polling without visibility/focus triggers.
     const writeBaseline = harness.google.writes.length;
-    let polls = 0, completedPolls = 0;
-    page.on('request', (request) => { if (request.url().includes('/drive/v3/about')) polls += 1; });
-    page.on('response', (response) => { if (response.url().includes('/drive/v3/about')) completedPolls += 1; });
+    controls.holdNextFilesRead = true;
+    const heldFilesRead = controls.waitForHeldFilesRead();
     await page.clock.runFor(61_000);
-    for(let attempt=0;attempt<100&&completedPolls===0;attempt+=1)await page.waitForTimeout(50);
-    assert.ok(polls > 0, 'normal polling resumes');
-    assert.ok(completedPolls > 0, 'normal polling completes');
+    await heldFilesRead;
+    assert.equal(controls.heldFilesReads, 1, 'normal polling continues past the account response into Drive file discovery');
+    assert.equal(await page.locator('[data-sync-status]').innerText(), 'Abgleich ausstehend',
+      'the poll must not report completion while its next Drive read is held');
+    controls.releaseHeldFilesRead();
+    await page.locator('[data-sync-status]').filter({hasText: 'Abgeglichen'}).waitFor();
+    const completed = await productState(page);
+    assert.equal(completed.outboxEventIds.length, 0, 'the completed poll keeps the event outbox drained');
+    assert.equal(completed.pendingPackets.length, 0, 'the completed poll keeps every packet confirmed');
+    for (const id of pending) assert.equal([...harness.google.files.values()].flatMap(({value}) => value?.kind === 'packet' ? value.events : []).filter((event) => event.id === id).length, 1);
     assert.equal(harness.google.writes.length, writeBaseline,
       JSON.stringify({baseline:writeBaseline,writes:harness.google.writes}));
-  } finally { await harness.close(); }
+  } finally {
+    controls.releaseHeldFilesRead();
+    await harness.close();
+  }
 });
 
 test('final I4 restore conflict preserves an open answer until adult resolution without scoring', {timeout: 60_000}, async () => {
