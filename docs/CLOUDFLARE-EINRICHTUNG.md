@@ -5,7 +5,10 @@ Dieses Paket bereitet eine zusätzliche Variante mit automatischer
 Google-Wiederaufnahme vor. Die geführte kostenlose Einrichtung für einen
 privaten Test im Freundeskreis ist beauftragt und die App inzwischen unter
 [Vokabeltrainer](https://vokabeltrainer.marco-civico.workers.dev/trainer/)
-bereitgestellt. **Die echte Google-Anmeldung ist noch nicht geprüft.** Auch der
+bereitgestellt. **Der Nutzer hat Google-Anmeldung und weiterhin aktive
+Verbindung nach F5 bestätigt.** Tokenablauf und weitere Geräte bleiben offen.
+Nach diesem Test ist Pause mit [Laptop-Übergabe](handoffs/2026-09-27-laptop-pause.md)
+beauftragt. Auch der
 private Betrieb benötigt eine erreichbare HTTPS-Adresse. Eine öffentliche
 Produktvermarktung, eine Änderung der Repository-Sichtbarkeit oder der Lizenz
 sind damit nicht beauftragt. Vokabeln, Lernstände und Käufe bleiben
@@ -25,8 +28,8 @@ Tarif oder Domain. Maßgeblich sind die jeweils aktuellen Freigrenzen
   Rücksprungadresse mit `/api/auth/callback` ergänzt. Die Geheimniswerte wurden
   nicht ausgelesen. Beim späteren Deploy zeigte die Remote-Konfiguration die
   Logs noch als aktiviert; die bestätigte Übernahme der lokalen Konfiguration
-  setzte `observability.enabled` und die Logs auf `false`, vor dem ersten noch
-  ausstehenden Google-Anmeldeversuch.
+  setzte `observability.enabled` und die Logs auf `false`, vor dem ersten
+  Google-Anmeldeversuch.
 - Lokal geprüft: ignorierte `server/wrangler.local.jsonc` mit den tatsächlichen
   öffentlichen Konfigurationswerten und ohne Secret-Werte; Wrangler 4.142.0
   beendet den Dry-run aus `server/` erfolgreich. Das vorbereitete Paket enthält
@@ -49,9 +52,14 @@ Tarif oder Domain. Maßgeblich sind die jeweils aktuellen Freigrenzen
   200 mit `{"connected":false}` sowie `Cache-Control: no-store`.
   `/server/worker.js`, `/docs/ANFORDERUNGEN.md`, `/.git/config` und `/` liefern
   jeweils 404.
-- Noch offen: Der Nutzer öffnet die App, meldet sich bei Google an und lädt
-  danach neu. Echte Google-Anmeldung, Token-Erneuerung und Geräteabnahme sind
-  durch die bisherigen Bereitstellungsprüfungen nicht nachgewiesen.
+- Späterer realer Nutzertest: App unter der HTTPS-Adresse eingerichtet, Google-
+  Anmeldung durchgeführt, zum Trainer ohne Fehlermeldung zurückgekehrt und nach
+  F5 weiterhin aktive Verbindung bestätigt. Keine Namen, PINs oder Sitzungswerte
+  wurden zur Dokumentation ausgelesen. Dieser Nutzerbericht ist unabhängig von
+  den vorherigen unangemeldeten HTTP-Prüfungen.
+- Noch offen: automatische Token-Erneuerung nach Ablauf, Browserneustart,
+  vorhandenen Drive-Lernbereich bewusst auswählen, Zweitgerät und Apple-Abnahme.
+  Diese Tests werden nach der verlangten Pause gemeinsam fortgesetzt.
 
 Weitere Einzelheiten und Fehlerbefunde stehen in der
 [Einrichtungsfortsetzung der Übergabe](handoffs/2026-09-27-anmeldung-und-tempo.md#fortsetzung-der-geführten-privaten-einrichtung-am-27092026).

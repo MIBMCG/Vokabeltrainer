@@ -62,11 +62,14 @@ aktiviert. Ein zusätzliches kostenloses Cloudflare-Konto ist für diesen Weg
 akzeptiert. Danach beauftragt der Nutzer den gemeinsamen schrittweisen
 Anbietertest. Konto/Worker und D1 sind inzwischen eingerichtet, die
 Google-Konfiguration ist nach Nutzerrückmeldung vorbereitet. Der private
-App-Upload ist erfolgt und die Erreichbarkeit geprüft. Die tatsächliche
-automatische Google-Anmeldung ist noch nicht belegt.
+App-Upload ist erfolgt und die Erreichbarkeit geprüft. Anschließend bestätigt
+der Nutzer die echte Google-Anmeldung und eine weiterhin aktive Verbindung nach
+F5. Dies belegt diesen Browserversuch, nicht die Erneuerung nach Tokenablauf,
+Browserneustart oder Zweitgerät. Der Nutzer beauftragt danach eine vollständige
+Laptop-Übergabe und GitHub-Sicherung, anschließend Pause bis zur Fortsetzung.
 Freigegebener Umfang und Prüfgrenzen stehen im
 [Anmeldeentwurf](superpowers/specs/2026-09-27-server-anmeldung-design.md), der Stand
-in der [aktuellen Übergabe](handoffs/2026-09-27-anmeldung-und-tempo.md).
+in der [aktuellen Laptop-Übergabe](handoffs/2026-09-27-laptop-pause.md).
 
 ## Historische Herleitung der Kaufentscheidung
 

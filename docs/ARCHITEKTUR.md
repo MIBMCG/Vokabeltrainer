@@ -11,9 +11,10 @@ Die lokale Anwendung bleibt eine statische PWA. Seit dem 27.09.2026 ist zusätzl
 die Vorbereitung einer kostenlosen Servervariante für automatische Anmeldung
 bestätigt. Deren Grenzen stehen im
 [Anmeldeentwurf](superpowers/specs/2026-09-27-server-anmeldung-design.md);
-die private Testbereitstellung ist inzwischen erfolgt. Echte Google-Anmeldung
-und Geräteprüfung stehen noch aus; Belege und aktuelle Grenze stehen in der
-[Einrichtungsfortsetzung](handoffs/2026-09-27-anmeldung-und-tempo.md#fortsetzung-der-geführten-privaten-einrichtung-am-27092026).
+die private Testbereitstellung ist inzwischen erfolgt. Der Nutzer bestätigt
+Google-Anmeldung und weiterhin aktive Verbindung nach F5. Erneuerung nach
+Tokenablauf, Browserneustart und Geräteprüfung bleiben offen; Belege und aktuelle
+Grenze stehen in der [Laptop-Übergabe](handoffs/2026-09-27-laptop-pause.md).
 Der Produktcode liegt unter `src/trainer/`; die historische Kaufprobe unter
 `src/shop-probe/` ist kein Laufzeitimport. Die Laufzeit setzt die vorhandenen
 Commands, ProductSync und RestoreService mit den Modulen unter

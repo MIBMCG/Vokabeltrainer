@@ -1,5 +1,12 @@
 # Fortsetzung: automatische Anmeldung und Kaufgeschwindigkeit
 
+**Aktualisierung nach dem Nutzertest:** Google-Anmeldung und weiterhin aktive
+Verbindung nach F5 sind am 27.09.2026 vom Nutzer bestätigt. Anschließend ist
+Pause beauftragt. Der aktuelle Einstieg mit vollständigem Laptop-Ablauf steht
+in der [Laptop-Pausenübergabe](2026-09-27-laptop-pause.md). Die folgenden
+datierten Zwischenstände erklären die technische Herleitung; frühere nächste
+Schritte sind durch den aktuellen Einstieg ersetzt.
+
 Stand: 27.09.2026. Branch `codex/vokabeltrainer-v1`.
 Ausgangscommit: `1c9e4975db93b1630792c65472d4e9fdcbb4f98d`.
 Geprüfter Produktcommit: `e270ae727c2da5e3b1ca7db71b28f014c3fb7de9`,

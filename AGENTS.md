@@ -1,5 +1,14 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
+**Aktuelle Steuerung: Pause nach Nutzertest am 27.09.2026.** Der Nutzer bestätigt
+die echte Google-Anmeldung an der bereitgestellten HTTPS-App und eine weiterhin
+aktive Verbindung nach F5. Anschließend verlangt er Sicherung auf GitHub und
+eine vollständige Laptop-Übergabe, danach Pause. Nur diese Abschlussdokumentation
+und Git-Sicherung durchführen; keine weiteren Produktarbeiten oder Testsitzungen
+ohne neue ausdrückliche Fortsetzung. Einstieg ist die
+[Laptop-Pausenübergabe](docs/handoffs/2026-09-27-laptop-pause.md).
+Tokenablauf, Browserneustart, Bestandsübernahme und Zweitgerät bleiben offen.
+
 **Aktuelle Fortsetzung am 27.09.2026:** Vorrang hat die automatische Anmeldung.
 Nutzerantwort A bestätigte zunächst die lokale Vorbereitung einer kostenlosen
 Cloudflare-Servervariante; Google Drive bleibt Datenspeicher. Anschließend hat
@@ -8,9 +17,9 @@ D1 samt Tabellen/Bindung sind angelegt; Google-Adressen, Servervariablen und
 Secrets sind eingetragen; ihre Namen und die D1-Struktur wurden beim Anbieter
 geprüft. Probelauf, Wrangler-Anmeldung und privater App-Upload sind erfolgreich.
 Die HTTPS-App unter `/trainer/` und der unangemeldete Sitzungsstatus sind
-erreichbar; interne Dateipfade bleiben gesperrt. Als Nächstes erfolgt der
-gemeinsame Google-Anmeldetest. Echte automatische Google-Anmeldung und
-Geräteabnahme sind noch nicht belegt.
+erreichbar; interne Dateipfade bleiben gesperrt. Der anschließende Nutzerbericht
+bestätigt Google-Anmeldung und Reload; automatische Erneuerung nach Tokenablauf
+und Geräteabnahme sind noch nicht belegt.
 Der Nutzer plant ausschließlich die Nutzung im Freundeskreis, keine öffentliche
 Veröffentlichung. Die dafür nötige private HTTPS-Bereitstellung ist von einer
 öffentlichen Produktfreigabe zu unterscheiden; Repository-Sichtbarkeit und
@@ -37,9 +46,10 @@ bestätigten Drachenrichtung. Vier freigestellte Drachenquellen sind vorhanden;
 72 weitere Motive, deren responsive Produktionsvarianten und die vollständige
 Galeriegestaltung bleiben Folgeumfang. Das schließt einen weiter ausgebauten
 Klassisch-/Entwicklungswechsel und zusätzliche Fortschrittsdarstellung ein.
-Reale Google-Drive-Prüfung auf zwei physischen Geräten, iPhone/iPad, Safari,
-Home-Bildschirm-App und HTTPS-Bereitstellung bleiben eigenständige offene
-Nachweise. Der echte Google-Bericht 10 mit 6/6 Fällen ist ein historischer
+Reale Google-Drive-Prüfung auf zwei physischen Geräten, iPhone/iPad, Safari
+und Home-Bildschirm-App bleiben eigenständige offene Nachweise. Die private
+HTTPS-Bereitstellung sowie Google-Anmeldung und Reload sind inzwischen belegt.
+Der echte Google-Bericht 10 mit 6/6 Fällen ist ein historischer
 Probe-Nachweis und wird nicht unverändert wiederholt. Frühere datierte
 Probe-, Pause- und Zwischenstandsberichte sind Vorgeschichte, keine aktuellen
 Startaufträge.

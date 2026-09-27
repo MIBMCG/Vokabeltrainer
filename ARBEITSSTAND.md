@@ -3,6 +3,23 @@
 Stand: **27.09.2026**. Arbeitszweig:
 `codex/vokabeltrainer-v1`.
 
+## Pause und Laptop-Übergabe
+
+**Aktueller Auftrag: nach dem ersten realen Anmeldetest sichern und pausieren.**
+Der Nutzer bestätigt am 27.09.2026: HTTPS-App eingerichtet, über Google
+angemeldet, zum Trainer zurückgekehrt und nach F5 weiterhin verbunden.
+Die [Laptop-Pausenübergabe](docs/handoffs/2026-09-27-laptop-pause.md) ist jetzt
+der maßgebliche Einstieg. Sie trennt diesen Nutzerbericht von früheren
+automatisierten Nachweisen und enthält Start, Konfiguration, Konzepte und offene
+Arbeit. Tokenablauf, Browserneustart, Auswahl des vorhandenen Drive-Bestands
+und Zweitgerät bleiben offen. Bis zur ausdrücklichen Fortsetzung keine weiteren
+Produktänderungen oder Testsitzungen beginnen.
+
+Ausgangspunkt dieser reinen Dokumentationssicherung ist `6493590` auf
+`codex/vokabeltrainer-v1`; der Checkout war sauber. Der Abschlusscommit dieser
+Übergabe folgt auf demselben Zweig. Push und exakter Remote-Vergleich erfolgen
+nach den Dokumentationsprüfungen; keine persönlichen Daten werden übernommen.
+
 ## Aktuelle Nachbesserung aus dem Nutzertest
 
 Der Nutzer bestätigt inzwischen: **Der Kauf funktioniert**, dauert aber noch
@@ -21,8 +38,8 @@ belassen. Die App ist unter
 [der privaten Testadresse](https://vokabeltrainer.marco-civico.workers.dev/trainer/)
 erreichbar, der unangemeldete Sitzungsstatus und gesperrte interne Dateipfade
 sind geprüft. Version: `45b6cb48-486f-45c1-8afc-4425206af8b6`.
-Als Nächstes folgt der gemeinsame Google-Anmeldetest. Echte automatische
-Anmeldung und Geräteprüfungen stehen noch aus.
+Der anschließende gemeinsame Test ist für Google-Anmeldung und F5 durch den
+Nutzer bestätigt. Token-Erneuerung und Geräteprüfungen stehen noch aus.
 Der Nutzer plant nur den Einsatz im Freundeskreis. Eine öffentliche
 Produktveröffentlichung ist nicht geplant; der private Serverbetrieb benötigt
 trotzdem eine erreichbare HTTPS-Adresse. [Entwurf](docs/superpowers/specs/2026-09-27-server-anmeldung-design.md)
@@ -40,7 +57,9 @@ Browsermodus.
 Geprüfter Produktcommit: `e270ae727c2da5e3b1ca7db71b28f014c3fb7de9`.
 Dieser Stand wurde auf `origin/codex/vokabeltrainer-v1` gepusht und per
 Remote-SHA exakt bestätigt. Der anschließende Dokumentationsabschluss ergänzt
-nur diesen Nachweis. Kein Merge nach `main`, keine Kontoanlage oder Bereitstellung.
+nur diesen Nachweis. Zum damaligen Produktabschluss gab es keinen Merge nach
+`main`, keine Kontoanlage und keine Bereitstellung. Die spätere private
+Bereitstellung und der aktuelle Nutzertest sind oben separat dokumentiert.
 
 Das vorherige Korrekturpaket behandelt Abgleichschleifen, langsame bzw. wiederholt
 bestätigte Käufe, unerwartete Google-Trennungen und eine parallele Neuanlage.
@@ -142,7 +161,10 @@ vollständige EV05-Galerie oder visuelle Abnahme abgeleitet werden.
 
 ## Noch offen
 
-- echte Google-Anmeldung, Neuladen und Tokenablauf der bereitgestellten Servervariante;
+- Wiederaufnahme über Tokenablauf und Browserneustart sowie Laptop-Test der
+  Servervariante; Anmeldung und F5 sind am 27.09.2026 vom Nutzer bestätigt;
+- vorhandenen Google-Lernbereich an der neuen HTTPS-Adresse bewusst auswählen
+  und den sicheren Bestandsweg nachweisen;
 - weitere Beschleunigung von Kauf und Abgleich, anschließend reale Laufzeitprüfung;
 - persönliche Nachprüfung von Figurenfarben, Auswahl und Erwachsenen-Einstellungen;
 - realer Produktabgleich mit Google Drive auf zwei physischen Geräten;
@@ -169,11 +191,12 @@ keine reale Abnahme des integrierten Produkts.
 Ältere Pausenübergaben und Diagnoseberichte bleiben Belege ihres Datums. Ihre
 damaligen nächsten Schritte gelten nicht als aktuelle Arbeitsanweisung.
 
-## Nächster Schritt
+## Nächster Schritt nach ausdrücklicher Fortsetzung
 
-1. Kostenlose private Einrichtung der geprüften optionalen Servervariante gemäß
-   [Cloudflare-Anleitung](docs/CLOUDFLARE-EINRICHTUNG.md) und Geräteabnahme
-   getrennt nachweisen.
+1. Die [Laptop-Übergabe](docs/handoffs/2026-09-27-laptop-pause.md) lesen. Den
+   Laptop-Einstieg und vorhandenen Drive-Bestand gemeinsam prüfen, danach
+   Tokenablauf und Browserneustart. Bestehende Cloudflare-Ressourcen erhalten;
+   die Einrichtung und den erfolgreichen F5-Test nicht als offen neu beginnen.
 2. Den in der Übergabe beschriebenen begrenzten Kauf-Optimierungsvorschlag als
    nächstes Codepaket konkretisieren, umsetzen und prüfen; Kontobindung und
    Kaufprüfungen erhalten. Keine erneute pauschale Startfreigabe verlangen.
@@ -190,4 +213,4 @@ damaligen nächsten Schritte gelten nicht als aktuelle Arbeitsanweisung.
 Keine weitere allgemeine Startfreigabe verlangen. Merge nach `main`, Hosting,
 Cloudkontenänderungen und reale Geräteabnahme sind durch den Abschluss dieses
 Kaufpakets nicht automatisch autorisiert. Einstieg über die
-[aktuelle Übergabe](docs/handoffs/2026-09-27-anmeldung-und-tempo.md).
+[aktuelle Laptop-Übergabe](docs/handoffs/2026-09-27-laptop-pause.md).

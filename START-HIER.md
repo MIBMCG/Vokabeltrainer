@@ -2,17 +2,21 @@
 
 Stand: **27.09.2026**.
 
-Die aktuelle Fortsetzung priorisiert die automatische Google-Anmeldung und
-weitere Beschleunigung der Käufe. Der Nutzer bestätigt, dass der Kauf auf dem
-korrigierten Produktstand funktioniert, aber weiterhin zu lange dauert.
-Die optionale Serveranmeldung ist lokal umgesetzt. Der Nutzer führt jetzt den
-gemeinsamen schrittweisen Anbietertest durch: Worker, D1 und Konfiguration sind
-vorbereitet. Wrangler-Probelauf, Anmeldung und privater App-Upload sind
-erfolgreich. Die HTTPS-App und ihr unangemeldeter Sitzungsstatus sind geprüft;
-als Nächstes folgt der gemeinsame Google-Anmeldetest. Echte Google-Anmeldung
-und Zielgeräteprüfung sind noch nicht belegt.
-Vorgesehen ist ausschließlich die private Nutzung im Freundeskreis.
-Zuerst die [aktuelle Übergabe](docs/handoffs/2026-09-27-anmeldung-und-tempo.md) lesen.
+**Pause nach dem erfolgreichen ersten Anmeldetest.** Der Nutzer hat die
+bereitgestellte HTTPS-App eingerichtet, sich bei Google angemeldet und nach
+F5 bestätigt: Die Verbindung ist weiterhin aktiv. Das ist ein realer, vom
+Nutzer berichteter Nachweis für Anmeldung und Reload in diesem Browser;
+Tokenablauf, Browserneustart, vorhandener Drive-Bestand und Zweitgerät sind
+damit noch nicht geprüft. Keine weiteren Produktarbeiten bis zur ausdrücklichen
+Fortsetzung. Beauftragt sind nur noch Sicherung und Laptop-Übergabe.
+
+Zuerst die [aktuelle Laptop-Übergabe](docs/handoffs/2026-09-27-laptop-pause.md)
+lesen. Sie enthält den Teststand, die Cloudflare-Einrichtung, Startschritte,
+offene Aufgaben, Konzeptverweise und einen kopierbaren Wiedereinstieg.
+Die [Test-App](https://vokabeltrainer.marco-civico.workers.dev/trainer/) ist
+bereits bereitgestellt; am Laptop ist zum Öffnen kein lokaler Server nötig.
+Die automatische Google-Anmeldung und danach kürzere Kaufwartezeiten bleiben
+die Prioritäten. Vorgesehen ist ausschließlich private Nutzung im Freundeskreis.
 Das vorherige Korrekturpaket ist im
 [Prüfbericht](docs/reports/2026-09-27-sync-und-kaeufe.md) dokumentiert. Die vorherigen
 Bedienkorrekturen (Avatar/Farben, Updatehinweis, Erwachsenenansicht) bleiben erhalten.
@@ -32,7 +36,8 @@ Motive**, deren responsive Produktionsvarianten, die vollständige
 Galeriegestaltung mit weiter ausgebautem Klassisch-/Entwicklungswechsel und
 zusätzlicher Fortschrittsdarstellung sowie die visuelle Abnahme bleiben offen.
 Ebenfalls offen sind reale Produktprüfungen mit Google Drive auf
-zwei physischen Geräten, iPhone/iPad, Safari, Home-Bildschirm-App und HTTPS.
+zwei physischen Geräten, iPhone/iPad, Safari und Home-Bildschirm-App.
+Die HTTPS-Bereitstellung sowie Anmeldung und Reload sind inzwischen separat belegt.
 Der echte Google-Bericht 10 mit 6/6 Fällen bleibt ein historischer Probe-Nachweis
 und muss nicht unverändert wiederholt werden.
 
@@ -40,7 +45,7 @@ und muss nicht unverändert wiederholt werden.
 
 1. [AGENTS.md](AGENTS.md)
 2. [ARBEITSSTAND.md](ARBEITSSTAND.md)
-3. [Aktuelle Übergabe](docs/handoffs/2026-09-27-anmeldung-und-tempo.md)
+3. [Aktuelle Laptop-Übergabe](docs/handoffs/2026-09-27-laptop-pause.md)
 4. [Anforderungen und Entscheidungen](docs/ANFORDERUNGEN.md)
 5. [Architektur](docs/ARCHITEKTUR.md),
    [Produkt-Datenvertrag](docs/PRODUKT-DATENFORMAT.md) und
@@ -102,28 +107,17 @@ vermeintlichen Reparatur löschen.
 
 ## Kopierbarer Wiedereinstieg
 
-> Arbeite im Repository MIBMCG/Vokabeltrainer auf codex/vokabeltrainer-v1
-> weiter. Lies AGENTS.md, ARBEITSSTAND.md und die dort verlinkte aktuelle
-> Übergabe. Prüfe Branch, Remote und lokale Änderungen; erhalte fremde Arbeit.
-> Das Kaufpaket Tasks 1–6 ist abgeschlossen und auf dem Entwicklungszweig gesichert.
-> Produktstand 1c9e497 behebt Abgleich- und Kaufprobleme. Der Nutzer bestätigt
-> den funktionierenden Kauf, verlangt aber kürzere Wartezeit und priorisiert
-> automatische Google-Anmeldung. Die aktuelle Untersuchung steht in
-> docs/handoffs/2026-09-27-anmeldung-und-tempo.md. Nutzerantwort A bestätigt die
-> lokale Vorbereitung von Cloudflare Workers Free. Danach hat der Nutzer den
-> gemeinsamen schrittweisen Anbietertest beauftragt. Worker und D1 sind angelegt,
-> Providerkonfiguration und Wrangler-Dry-run sind geprüft. Der private App-Upload
-> ist erfolgt, App-Erreichbarkeit und unangemeldeter Sitzungsstatus sind belegt.
-> Der gemeinsame echte Google-Anmeldetest und Geräteprüfung stehen noch aus.
-> Nur private Nutzung im Freundeskreis, keine öffentliche Produktveröffentlichung.
-> Den aktuellen Prüfbericht und docs/CLOUDFLARE-EINRICHTUNG.md beachten.
-> Bestätigte R-/E-/U-/AV-/EV-Entscheidungen nicht erneut aufrollen.
-> Neue Lernfakten bleiben v2, lokaler Speicher ist Version 3, aktivierte
-> Kaufepochen und wirtschaftliche Sicherungen sind v3. Vier Drachenquellen
-> sind vorhanden; 72 weitere Motive, responsive Varianten und vollständige
-> Galeriegestaltung sowie reale Drive-/Apple-/HTTPS-Nachweise bleiben offen.
-> Historische Probe 10 nicht unverändert wiederholen. Keine echten PINs,
-> Tokens, Profile oder Backups in Git aufnehmen.
+> Setze die Arbeit am Vokabeltrainer auf meinem Laptop fort. Lies AGENTS.md,
+> START-HIER.md, ARBEITSSTAND.md und docs/handoffs/2026-09-27-laptop-pause.md.
+> Prüfe den aktuellen Zweig codex/vokabeltrainer-v1, Remote und lokale Änderungen.
+> Die private HTTPS-App ist bereitgestellt. Der Nutzer hat Google-Anmeldung
+> und weiterhin aktive Verbindung nach F5 bestätigt. Wiederhole weder die
+> Cloudflare-Anlage noch die abgeschlossenen Kaufpakete. Prüfe zuerst gemeinsam
+> den Laptop-Einstieg und den vorhandenen Drive-Bestand, ohne lokale Daten zu
+> überschreiben. Tokenablauf und Browserneustart bleiben offen. Danach am
+> dokumentierten Kauf-Tempo und am bestätigten Avatar-/Galerieumfang ansetzen.
+> Bestätigte Entscheidungen erhalten; nur private kostenlose Nutzung. Keine
+> echten Profile, Sicherungen, PINs oder Zugangsdaten in Git aufnehmen.
 
 Der konkrete aktuelle Auftrag bestimmt, welche Änderungen, Pushes und
 Veröffentlichungen autorisiert sind. Ein vorhandener grüner Teststand ist keine
