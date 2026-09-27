@@ -54,7 +54,7 @@ Die App-Registrierung und Zuordnung zum Trainerdatensatz sind eine einmalige Ein
 
 Im implementierten Browser-Tokenmodell wird nach Ablauf des Zugriffstokens ein neuer Zugriff über eine Nutzeraktion angefordert. Die App zeigt dafür „Mit Google verbinden“; Offlineübungen und noch nicht übertragene Ergebnisse bleiben erhalten. Wie häufig der Dialog auf den Zielgeräten tatsächlich erscheint, ist ein **offener Akzeptanzpunkt**.
 
-Produktentscheidung Q10 vom 16.09.2026: Der Nutzer akzeptiert dieses erneute Verbinden grundsätzlich, einschließlich einer möglichen erneuten Bestätigung beim Öffnen der App. Mit vorhandenen Vokabeln soll offline weitergeübt und nach erneuter Verbindung automatisch abgeglichen werden. Die reale Dialoghäufigkeit und Bedienbarkeit auf iPhone/iPad sind damit noch nicht nachgewiesen oder abgenommen.
+Historische Produktentscheidung Q10 vom 16.09.2026: Der Nutzer akzeptierte dieses erneute Verbinden grundsätzlich, einschließlich einer möglichen erneuten Bestätigung beim Öffnen der App. Die Rückmeldung vom 27.09.2026 fordert nun eine automatische Wiederaufnahme und ersetzt diese Komfortannahme. Nutzerantwort A bestätigt die lokale Vorbereitung einer optionalen Cloudflare-Servervariante; siehe [Anmeldeentwurf](superpowers/specs/2026-09-27-server-anmeldung-design.md). Das bisherige Browsermodell erfüllt den neuen Wunsch noch nicht. Offlineüben und der spätere automatische Abgleich bleiben erforderlich. Echte Einrichtung und Bedienbarkeit auf iPhone/iPad sind noch nicht abgenommen.
 
 Nutzertest vom 27.09.2026: Erneutes Verbinden nach Reload und unerwartete
 Verbindungsabbrüche nach wenigen Minuten wurden als unbenutzerfreundlich

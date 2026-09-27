@@ -5,6 +5,16 @@ Stand: **27.09.2026**. Arbeitszweig:
 
 ## Aktuelle Nachbesserung aus dem Nutzertest
 
+Der Nutzer bestätigt inzwischen: **Der Kauf funktioniert**, dauert aber noch
+zu lange. Vorrang hat jetzt die automatische Google-Anmeldung nach Neuladen
+und Ablauf des Zugriffs. Die kostenlose Cloudflare-Vorbereitung ist mit
+Nutzerantwort A bestätigt. Aktuelle Untersuchung und Umsetzung:
+[Übergabe zu Anmeldung und Tempo](docs/handoffs/2026-09-27-anmeldung-und-tempo.md).
+Ausgangspunkt ist Produktcommit `1c9e497`. Die optionale Serveranmeldung wird
+zunächst lokal vorbereitet; echte Einrichtung und Veröffentlichung folgen erst
+nach den technischen Prüfungen. [Entwurf](docs/superpowers/specs/2026-09-27-server-anmeldung-design.md)
+und [Plan](docs/superpowers/plans/2026-09-27-server-anmeldung.md).
+
 Das neue Korrekturpaket behandelt Abgleichschleifen, langsame bzw. wiederholt
 bestätigte Käufe, unerwartete Google-Trennungen und eine parallele Neuanlage.
 Der aktuelle Einstieg steht in der
@@ -80,7 +90,7 @@ Task-6-Gesamtlauf.
   gestalten“. Verfügbares Guthaben, Besitz und Auswahl werden je Profil aus dem
   bestätigten Ledger angezeigt; unklare Kaufantworten lassen sich mit „Kauf
   fortsetzen“ wiederaufnehmen.
-- Der Service Worker verwendet Cacheversion `v26`. Server-Allowlist und
+- Der Service Worker verwendet Cacheversion `v27`. Server-Allowlist und
   Pflicht-Precache enthalten die neuen Laufzeitmodule, vier Drachenbilder und
   alle 20 kleinen Haut-/Kleidungsbilder der menschlichen Grundfiguren;
   Google-Antworten und Tokens werden nicht gecacht.
@@ -104,6 +114,9 @@ vollständige EV05-Galerie oder visuelle Abnahme abgeleitet werden.
 
 ## Noch offen
 
+- Umsetzung und Prüfung der bestätigten optionalen Serveranmeldung;
+- weitere Beschleunigung von Kauf und Abgleich, anschließend reale Laufzeitprüfung;
+- persönliche Nachprüfung von Figurenfarben, Auswahl und Erwachsenen-Einstellungen;
 - realer Produktabgleich mit Google Drive auf zwei physischen Geräten;
 - iPhone-/iPad-, Safari- und Home-Bildschirm-Abnahme einschließlich
   Wiederaufnahme nach App-/Browserneustart;
@@ -130,16 +143,20 @@ damaligen nächsten Schritte gelten nicht als aktuelle Arbeitsanweisung.
 
 ## Nächster Schritt
 
-1. Die korrigierten Bedienwege mit dem Nutzer nachtesten; besonders
+1. Die bestätigte lokale Vorbereitung nach dem Anmeldeplan umsetzen und prüfen;
+   echte Einrichtung und Geräteabnahme anschließend getrennt nachweisen.
+2. Den begrenzten Kauf-Optimierungsvorschlag umsetzen und prüfen, sobald der
+   konkrete Änderungsumfang abgestimmt ist; Kontobindung und Kaufprüfungen erhalten.
+3. Die korrigierten Bedienwege mit dem Nutzer nachtesten; besonders
    Figurenfarben, Wiederverbinden im Shop und die Erwachsenen-Einstellungen.
-2. Am bestätigten Bild- und Galeriekonzept ansetzen: 72 übrige Motive und
+4. Am bestätigten Bild- und Galeriekonzept ansetzen: 72 übrige Motive und
    responsive Varianten produzieren, anschließend vollständige EV05-Galerie
    integrieren und visuell prüfen.
-3. Das integrierte Produkt auf zwei realen Geräten einschließlich iPhone/iPad
+5. Das integrierte Produkt auf zwei realen Geräten einschließlich iPhone/iPad
    prüfen; die historische Probe 10 nicht unverändert wiederholen.
-4. Hosting/HTTPS und allgemeine Lizenz nur im dafür bestätigten Umfang angehen.
+6. Hosting/HTTPS und allgemeine Lizenz nur im dafür bestätigten Umfang angehen.
 
 Keine weitere allgemeine Startfreigabe verlangen. Merge nach `main`, Hosting,
 Cloudkontenänderungen und reale Geräteabnahme sind durch den Abschluss dieses
 Kaufpakets nicht automatisch autorisiert. Einstieg über die
-[aktuelle Übergabe](docs/handoffs/2026-09-27-bedienkorrekturen.md).
+[aktuelle Übergabe](docs/handoffs/2026-09-27-anmeldung-und-tempo.md).

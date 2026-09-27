@@ -44,9 +44,25 @@ gelten getrennt je Kind und auch nach Offline-Neustart.
 
 Genügend Punkte ersetzen keine aktive Google-Verbindung. Fehlt diese oder
 läuft sie beim Kauf ab, muss die App verständlich zum erneuten Verbinden im
-Erwachsenenbereich führen. Es gibt keine automatische Anmeldung und keine
-Käufe ohne vorherigen bestätigten Abgleich. Die Prüfbelege dieser Korrekturen
+Erwachsenenbereich führen. Im bisherigen Produktstand gibt es noch keine
+automatische Anmeldung und keine Käufe ohne vorherigen bestätigten Abgleich.
+Die Prüfbelege dieser Korrekturen
 stehen im [Bedienbericht](reports/2026-09-27-bedienkorrekturen.md).
+
+**Weitere Rückmeldung vom 27.09.2026:** Der Nutzer bestätigt nach dem
+Korrekturpaket auf Produktstand `1c9e497`, dass der Kauf nun funktioniert, aber
+weiterhin zu lange dauert. Das ist eine reale Rückmeldung zu diesem Versuch,
+keine vollständige Geräte- oder Laufzeitabnahme. Vorrangiger nächster Auftrag:
+automatische Google-Anmeldung bzw. Wiederaufnahme nach Neuladen und Ablauf des
+Zugriffs. Die frühere Komfortannahme aus Q10/R28 ist damit überholt. Die
+Nutzerantwort A bestätigt anschließend die lokale Vorbereitung einer
+**Cloudflare Workers Free**-Serverlösung für die automatische Anmeldung.
+Vokabeln bleiben in Google Drive, kostenpflichtige Angebote werden nicht
+aktiviert. Ein zusätzliches kostenloses Cloudflare-Konto ist für diesen Weg
+akzeptiert; echte Kontoanlage, Google-Konfiguration und Veröffentlichung sind
+noch nicht durchgeführt. Freigegebener Umfang und Prüfgrenzen stehen im
+[Anmeldeentwurf](superpowers/specs/2026-09-27-server-anmeldung-design.md), der Stand
+in der [aktuellen Übergabe](handoffs/2026-09-27-anmeldung-und-tempo.md).
 
 ## Historische Herleitung der Kaufentscheidung
 
@@ -141,8 +157,8 @@ Grundentscheidungen vom 16.09.2026, ergänzt bis 19.09.2026. R08/R19 gelten als 
 | R09 | Drei Auswahlmodi | „Alle Vokabeln“: gesamter dem Kind zugeordneter Wortschatz. „Letzte Vokabeln“: zuletzt hinzugefügte Lektion innerhalb der diesem Kind zugeordneten Lektionen. „Neue Vokabeln“: zugeordnete Wörter, die das ausgewählte Kind noch nie geübt hat. Definitionen aus Q1/Q2, Zuordnungsgrenze aus Q7b/R26. |
 | R10 | Fortschritt einsehbar | Übersicht darüber, welche Wörter wie gut und wie oft geübt wurden. |
 | R11 | Ansprechende Gestaltung und Gamification | Bereits die erste Version verbindet Lernreise/Landkarte, Punkte/Level/Abzeichen und einen einfachen gestaltbaren Avatar zu einem gemeinsamen Belohnungssystem. Thema ist ein Insel-Abenteuer mit unterschiedlichen Landschaften, etwa Wäldern, Stränden und Bergen. Modern und passend für 10–13-Jährige gestalten. Der Avatar erhält zunächst eine kleine Auswahl an Farben und Zubehör. Punktevergabe gemäß R23, Freischaltprinzip gemäß R24; Umfang und Schwellenwerte gemäß bestätigtem E04; die tatsächlichen Grafiken entstehen bei der Umsetzung. |
-| R12 | Automatischer Cloudaustausch | Google Drive wurde ausdrücklich ausgewählt. Erneutes Verbinden bei Bedarf ist gemäß R28 grundsätzlich akzeptiert; die tatsächliche Häufigkeit und Bedienbarkeit bleiben auf Zielgeräten zu prüfen. |
-| R13 | Keine zusätzlichen kostenpflichtigen Cloudabos | Vorhandenes Google Drive nutzen. Kein stillschweigender Wechsel auf einen weiteren Dienst. |
+| R12 | Automatischer Cloudaustausch | Google Drive wurde ausdrücklich ausgewählt. Seit der Rückmeldung vom 27.09.2026 ist automatische Wiederaufnahme des Zugriffs priorisiert (R28); die lokale Vorbereitung einer Cloudflare-Serverlösung ist bestätigt. |
+| R13 | Keine zusätzlichen kostenpflichtigen Cloudabos | Google Drive bleibt Datenspeicher. Nutzerantwort A vom 27.09.2026 erlaubt die Vorbereitung eines zusätzlichen kostenlosen Cloudflare-Dienstes für automatische Anmeldung. Kein kostenpflichtiger Tarif, keine stillschweigende weitere Anbieteränderung. |
 | R14 | Gemeinsamer Google-Zugang | Die Eltern richten denselben Zugang auf beiden Geräten ein; eigene Lernprofile trennen die Lernstände der Kinder. |
 | R15 | Privater Gebrauch | Keine öffentliche Schulplattform oder mandantenfähige Klassenverwaltung beauftragt. |
 | R16 | Portable Dokumentation und GitHub | README, AGENTS.md und alle nötigen Übergabedokumente erstellen und pushen, sodass andere KIs/Systeme fortsetzen können. |
@@ -157,7 +173,7 @@ Grundentscheidungen vom 16.09.2026, ergänzt bis 19.09.2026. R08/R19 gelten als 
 | R25 | Vokabeleingabe und Lektionen | Erwachsene können einzelne Vokabeln über ein Formular ergänzen oder mehrere Zeilen aus einer Tabelle, beispielsweise Excel, mit den Spalten Deutsch und Englisch kopieren und einfügen. Die Wörter werden einer vorhandenen oder neu angelegten benannten Lektion zugeordnet, etwa „Unit 3“. Direkter Excel-/CSV-Dateiimport gehört nicht zur gewählten ersten Version. |
 | R26 | Lektionen gezielt Lernprofilen zuordnen | Erwachsene ordnen jede Lektion einem oder mehreren Kindern zu. Die drei Auswahlmodi berücksichtigen jeweils nur die dem ausgewählten Kind zugeordneten Lektionen. Eine gemeinsame Lektion muss dafür nicht mehrfach angelegt werden. Lernstände, Punkte und Avatar bleiben pro Kind getrennt. |
 | R27 | Erwachsenenansicht mit PIN | Die Erwachsenenansicht wird über den Menüpunkt „Für Erwachsene“ und eine selbst festgelegte vierstellige PIN geöffnet. Die PIN dient als einfache Hürde gegen versehentliche Änderungen an Vokabeln oder Zuordnungen. Sie ersetzt keine getrennten Google-Konten oder serverseitigen Zugriffsrechte. Einrichtung, Änderung, Vergessen und Verhalten auf mehreren Geräten im Detaildesign klären. |
-| R28 | Erneutes Google-Verbinden und Offlineüben | Eine bei Bedarf nötige erneute Bestätigung über „Mit Google verbinden“ ist grundsätzlich akzeptabel, auch beim erneuten Öffnen oder nach Ablauf des Zugriffs. Mit bereits vorhandenen Vokabeln kann währenddessen offline weitergeübt werden. Ergebnisse lokal erhalten und nach erneuter Verbindung bei geöffneter App und Internet automatisch abgleichen. Diese Zustimmung ersetzt keine Prüfung des tatsächlichen Dialogkomforts auf den Zielgeräten. |
+| R28 | Automatische Wiederaufnahme und Offlineüben | Der Nutzer verlangt seit 27.09.2026 bevorzugt automatische Wiederaufnahme nach Neuladen und Ablauf des Google-Zugriffs. Nutzerantwort A bestätigt die lokale Vorbereitung der Servervariante gemäß Anmeldeentwurf; die bisherige Browservariante bleibt erhalten. Ausdrückliches Trennen oder Widerruf bleibt wirksam. Mit vorhandenen Vokabeln weiterhin offline üben; Ergebnisse lokal erhalten und bei wiederhergestelltem Zugriff ohne doppelte Wertung abgleichen. Kein kostenpflichtiger Dienst. Echte Einrichtung und Zielgeräteprüfung bleiben erforderlich. |
 | R29 | Widersprüchliche Vokabeländerungen gemeinsam klären | Werden dieselben Vokabeln auf zwei Geräten widersprüchlich geändert, bleiben beide Fassungen erhalten. In der Erwachsenenansicht wird der Unterschied angezeigt und die richtige Fassung ausgewählt. Keine automatische inhaltliche Auswahl nach der Übertragungsreihenfolge. Übungsergebnisse beider Geräte bleiben erhalten und werden ohne doppelte Wertung zusammengeführt. |
 | R30 | Vollständige Sicherungsdatei und Wiederherstellung | Im Erwachsenenbereich eine vollständige JSON-Sicherung herunterladen und bei Bedarf wieder einlesen können. Sie enthält Vokabeln, Lektionen, Zuordnungen, Lernprofile, Lernstände und Belohnungsfortschritt einschließlich Punkten und Avatar-Ausstattung. Vor einer Wiederherstellung Vorschau und ausdrückliche Bestätigung anbieten. Rücksetzung und vorherige separate Sicherung gemäß R33; kein stilles Überschreiben. |
 | R31 | Allgemeine Lizenzentscheidung zurückgestellt | Für den privaten Einsatz weiterentwickeln und vorerst keine allgemeine Open-Source-Freigabe hinzufügen. Die allgemeine Lizenzentscheidung wurde bewusst verschoben; sie blockiert die beauftragte private Entwicklung nicht. Keine Änderung der Repository-Sichtbarkeit damit beauftragt. |

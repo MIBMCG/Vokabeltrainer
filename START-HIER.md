@@ -2,10 +2,12 @@
 
 Stand: **27.09.2026**.
 
-Die aktuelle Fortsetzung betrifft Abgleichschleifen, langsame Käufe mit
-Mehrfachdialogen, Google-Trennungen und einen Fehler beim Lesen von Kaufdaten.
-Zuerst die [aktuelle Übergabe](docs/handoffs/2026-09-27-sync-und-kaeufe.md) und den
-[Prüfbericht](docs/reports/2026-09-27-sync-und-kaeufe.md) lesen. Die vorherigen
+Die aktuelle Fortsetzung priorisiert die automatische Google-Anmeldung und
+weitere Beschleunigung der Käufe. Der Nutzer bestätigt, dass der Kauf auf dem
+korrigierten Produktstand funktioniert, aber weiterhin zu lange dauert.
+Zuerst die [aktuelle Übergabe](docs/handoffs/2026-09-27-anmeldung-und-tempo.md) lesen.
+Das vorherige Korrekturpaket ist im
+[Prüfbericht](docs/reports/2026-09-27-sync-und-kaeufe.md) dokumentiert. Die vorherigen
 Bedienkorrekturen (Avatar/Farben, Updatehinweis, Erwachsenenansicht) bleiben erhalten.
 Die folgenden Zahlen dokumentieren den vorherigen Kaufpaket-Abschluss.
 
@@ -31,7 +33,7 @@ und muss nicht unverändert wiederholt werden.
 
 1. [AGENTS.md](AGENTS.md)
 2. [ARBEITSSTAND.md](ARBEITSSTAND.md)
-3. [Abschlussübergabe](docs/handoffs/2026-09-27-bedienkorrekturen.md)
+3. [Aktuelle Übergabe](docs/handoffs/2026-09-27-anmeldung-und-tempo.md)
 4. [Anforderungen und Entscheidungen](docs/ANFORDERUNGEN.md)
 5. [Architektur](docs/ARCHITEKTUR.md),
    [Produkt-Datenvertrag](docs/PRODUKT-DATENFORMAT.md) und
@@ -97,7 +99,12 @@ vermeintlichen Reparatur löschen.
 > weiter. Lies AGENTS.md, ARBEITSSTAND.md und die dort verlinkte aktuelle
 > Übergabe. Prüfe Branch, Remote und lokale Änderungen; erhalte fremde Arbeit.
 > Das Kaufpaket Tasks 1–6 ist abgeschlossen und auf dem Entwicklungszweig gesichert.
-> Maßgeblich ist docs/reports/2026-09-27-persistent-purchases-final.md.
+> Produktstand 1c9e497 behebt Abgleich- und Kaufprobleme. Der Nutzer bestätigt
+> den funktionierenden Kauf, verlangt aber kürzere Wartezeit und priorisiert
+> automatische Google-Anmeldung. Die aktuelle Untersuchung steht in
+> docs/handoffs/2026-09-27-anmeldung-und-tempo.md. Nutzerantwort A bestätigt die
+> lokale Vorbereitung von Cloudflare Workers Free; echte Einrichtung und
+> Veröffentlichung sind noch nicht erfolgt. Den dort verlinkten Plan beachten.
 > Bestätigte R-/E-/U-/AV-/EV-Entscheidungen nicht erneut aufrollen.
 > Neue Lernfakten bleiben v2, lokaler Speicher ist Version 3, aktivierte
 > Kaufepochen und wirtschaftliche Sicherungen sind v3. Vier Drachenquellen
