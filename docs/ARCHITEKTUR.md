@@ -8,13 +8,14 @@ gesichert. Der aktuelle Nachweis steht im
 [Abschlussbericht](reports/2026-09-27-persistent-purchases-final.md).
 
 Die lokale Anwendung bleibt eine statische PWA. Seit dem 27.09.2026 ist zusätzlich
-die Vorbereitung einer kostenlosen Servervariante für automatische Anmeldung
-bestätigt. Deren Grenzen stehen im
+die kostenlose Servervariante für automatische Anmeldung privat bereitgestellt.
+Deren Grenzen stehen im
 [Anmeldeentwurf](superpowers/specs/2026-09-27-server-anmeldung-design.md);
-die private Testbereitstellung ist inzwischen erfolgt. Der Nutzer bestätigt
-Google-Anmeldung und weiterhin aktive Verbindung nach F5. Erneuerung nach
-Tokenablauf, Browserneustart und Geräteprüfung bleiben offen; Belege und aktuelle
-Grenze stehen in der [Laptop-Übergabe](handoffs/2026-09-27-laptop-pause.md).
+Google-Anmeldung, Verbindung nach F5 sowie der Abgleich mit dem bewusst
+gewählten vorhandenen Drive-Bestand sind beobachtet. Die aktive Verbindung
+nach vollständigem Chrome-Neustart ist vom Nutzer bestätigt. Der reguläre Tokenablauf, ein echter Kauf und
+die Geräteprüfung bleiben offen; Belege und Grenzen stehen in der
+[aktuellen Laptop-Übergabe](handoffs/2026-09-28-laptop-fortsetzung.md).
 Der Produktcode liegt unter `src/trainer/`; die historische Kaufprobe unter
 `src/shop-probe/` ist kein Laufzeitimport. Die Laufzeit setzt die vorhandenen
 Commands, ProductSync und RestoreService mit den Modulen unter
@@ -52,8 +53,9 @@ wirtschaftliche Ansicht. Die bestätigte Restoreauswahl wird erst nach
 bestätigtem gemeinsamem Kopf und `authoritativeState` gegen dessen Konten
 geprüft und vollständig ersetzt; eine leere Auswahl leert den Zielstand.
 
-Der Service Worker verwendet Cacheversion `v28`; die Pflichtliste enthält die
-neuen Laufzeitmodule, vier Drachenbilder und alle 20 kleinen Haut-/Kleidungsbilder
+Der Service Worker verwendet seit Produktcommit `ed36f4d` Cacheversion `v30`;
+die Pflichtliste enthält die neuen Laufzeitmodule, vier Drachenbilder und alle
+20 kleinen Haut-/Kleidungsbilder
 der menschlichen Grundfiguren, aber keine Google-Antworten oder Tokens.
 Ein gemeinsamer Darstellungsresolver verbindet die gespeicherte Figurenauswahl
 mit den vorhandenen Profilfarben für Avataransicht, Übungsstart und Inselreise.
@@ -65,6 +67,17 @@ Auswahl bei Konflikten ist an die sichtbare Kopfmenge gebunden; Änderungen
 verlangen erneute Auswahl. Die bewahrte Erwachsenenansicht verliert dadurch
 keine fremden Eingaben. Die Einrichtungsgrenze gilt unmittelbar vor jeder
 abhängigen Controlpublikation, auch bei direktem Resume eines alten Auftrags.
+
+Beim Rücklesen einer JSON-Sicherungsdatei fordert der Drive-v3-Client die
+optionale `headRevisionId` an und liest Metadaten und Inhalt ohne Browsercache.
+Nur wenn die gültige Inhaltsrevision vor und nach dem Lesen gleich ist, darf
+die allgemeine Drive-`version` abweichen. Alle übrigen gelieferten
+Metadatenfelder werden weiterhin verglichen; ohne gültige Inhaltsrevision gilt
+der bisherige strenge Vergleich. Inhalts-Hashes und Bindungsprüfungen bleiben
+erhalten. Der echte Anlegeversuch eines getrennten Google-Testbereichs war
+zuvor zweimal mit einer Meldung über geänderte Sicherungsmetadaten gescheitert;
+das tatsächlich abweichende Feld wurde nicht beobachtet. Der erneute echte
+Versuch steht noch aus.
 
 ## Gemeinsame Autorität
 

@@ -1,6 +1,32 @@
 # Arbeitsstand
 
-## Aktuelle Steuerung: Testpunkte vorbereitet, anschließend Pause
+## Aktuelle Fortsetzung: getrennten Kauftest einrichten
+
+Der Nutzer beendet die Pause ausdrücklich mit „jetzt kannst du weiter arbeiten“.
+Ausgangsstand `45ec0a8b0be06747b1de574c29102926b3b66b43` ist erneut exakt mit
+GitHub verglichen; der Arbeitsbaum war sauber. Die getrennte HTTPS-App im
+Codex-Browser zeigte eine leere Ersteinrichtung. Der Nutzer hat die lokale PIN
+selbst eingerichtet. Die geprüfte Sicherung wurde nach Vorschau ausschließlich
+in diesem unverbundenen Testbereich wiederhergestellt: 60 Wörter, 150 Antworten
+und 1.600 Punkte. Die Oberfläche bestätigt die aktivierte Wiederherstellung
+und eine geprüfte lokale Sicherheitskopie. Der Nutzer hat Google verbunden.
+Die Einrichtung des eigenen Test-Lernbereichs scheiterte zweimal an der
+Sicherungs-Metadatenprüfung. Der bestehende Chrome-Lernstand bleibt erhalten.
+
+Produktcommit `ed36f4d` ergänzt die Inhaltsrevision und unverfälschte Abrufe.
+Bei gültiger stabiler Inhaltsrevision darf ausschließlich die allgemeine
+Drive-Version wechseln; übrige Metadaten, Bindung und Inhalt bleiben geprüft.
+105/105 gezielte und 601/601 gesamte Node-Tests sowie 7/7 ausgewählte
+Browserfälle bestehen; unabhängige Prüfung ohne blockierende Befunde.
+Cache v30 ist tatsächlich bereitgestellt, Worker-Version
+`6d687e33-66b1-4f26-9ab9-99771d809809`; die ausgelieferten geänderten Module
+entsprechen exakt dem geprüften Paket. Im Testbrowser ist das kontrollierte
+Update übernommen und das Profil zeigt weiterhin 1.600 Punkte. Der Nutzer
+wurde um erneutes Öffnen der Erwachsenenansicht mit seiner Test-PIN gebeten.
+Erneuter realer Einrichtungsversuch, Kauf und reale Kaufdauer stehen noch aus.
+Details: [Kauftest und Sicherungsabgleich](docs/reports/2026-09-28-kauftest-wiederherstellung.md).
+
+## Vorheriger Abschluss: Testpunkte vorbereitet, anschließend Pause
 
 Der Nutzer bittet nach dem erfolgreichen Update um einen schnellen Kauftest
 ohne weitere eigene Vokabelübungen und danach ausdrücklich um Pause, da er

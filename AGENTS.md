@@ -1,6 +1,19 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-**Aktuelle Steuerung: Pause nach Abschluss am 28.09.2026.** Nach Bereitstellung
+**Aktuelle Steuerung: Fortsetzung am 28.09.2026 erneut beauftragt.** Mit
+„jetzt kannst du weiter arbeiten“ beendet der Nutzer die folgende Pause.
+Der synthetische Teststand mit 1.600 Punkten ist im getrennten Codex-Browser
+importiert und Google verbunden. Die Einrichtung des eigenen Test-Lernbereichs
+scheiterte zweimal an der Sicherungs-Metadatenprüfung. Die begrenzte Korrektur
+`ed36f4d` ist geprüft (601 Node-Tests, 7 ausgewählte Browserfälle, unabhängiges
+Review) und als Cache v30 bereitgestellt. Nach kontrolliertem Update sind die
+1.600 Punkte erhalten; vor dem erneuten realen Versuch muss der Nutzer die
+Erwachsenenansicht mit seiner Test-PIN öffnen. Kein Kauf ist bisher erfolgt.
+Vorhandene Familien- und Drive-Bestände erhalten. Einstieg und Nachweisgrenzen:
+[Laptop-Übergabe](docs/handoffs/2026-09-28-laptop-fortsetzung.md) und
+[Kauftestbericht](docs/reports/2026-09-28-kauftest-wiederherstellung.md).
+
+**Vorherige Pause nach Abschluss am 28.09.2026.** Nach Bereitstellung
 und bestätigter aktiver Google-Verbindung wünscht der Nutzer für den nächsten
 Kauftest schnell verfügbare Testpunkte und anschließend ausdrücklich Pause.
 Ein separater synthetischer Teststand mit 1.600 Punkten ist geprüft vorbereitet;
@@ -21,7 +34,7 @@ Die begrenzte Kaufbeschleunigung ist mit Produktcommit `b6b83a9` auf dem
 bestehenden Entwicklungszweig integriert: 591/591 Node-Tests, 12/12 ausgewählte
 Browserfälle und unabhängige Spec-/Qualitätsprüfung PASS. Pro Dreiergruppe
 werden synthetisch 34 statt 54 HTTP-Anfragen benötigt. Nach erneuter Fortsetzung
-ist die aktualisierte private Test-App als Cache v29 bereitgestellt; aktive
+war die aktualisierte private Test-App als Cache v29 bereitgestellt; damalige
 Worker-Version `494388ba-6838-4604-9369-788a6e60962d`. Die ausgelieferten
 Kaufmodule entsprechen exakt dem geprüften Paket. Kontrolliertes Chrome-Update,
 erhaltene aktive Google-Verbindung und vollständiger Abgleich sind beobachtet.

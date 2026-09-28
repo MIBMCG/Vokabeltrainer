@@ -1,8 +1,8 @@
 # Kaufversuch mit vorbereiteten Testpunkten
 
 Stand: 28.09.2026. Der Nutzer möchte den echten Kaufpfad testen, ohne dafür
-selbst weitere Vokabelrunden durchlaufen zu müssen. Anschließend wurde eine
-Pause beauftragt. Die folgende Vorbereitung verändert keinen vorhandenen
+selbst weitere Vokabelrunden durchlaufen zu müssen. Die anschließende Pause
+wurde ausdrücklich beendet. Die folgende Vorbereitung verändert keinen vorhandenen
 Lernbereich und schreibt dem echten Profil keine Punkte gut.
 
 ## Getrennter Teststand
@@ -27,7 +27,18 @@ Format v2, 252 Ereignisse, genau ein Profil und keine Kaufhistorie. Die
 Der Sicherungsimport ersetzt den aktiven Datensatzstand; er fügt nicht nur
 ein weiteres Profil hinzu.
 
-## Verwendung bei der nächsten Fortsetzung
+## Aktueller Versuch
+
+Die Sicherung ist bereits im separaten Codex-Browser importiert; dort zeigt
+„Kauftest“ 1.600 Punkte und Level 9. Google ist verbunden. Das Anlegen des eigenen
+Lernbereichs scheiterte an einer Metadatenprüfung. Die begrenzte Korrektur ist
+als Cache v30 übernommen. Nach dem Update wird zum Fortsetzen die lokale
+Test-PIN benötigt. Noch kein Kauf. Details und nächster Schritt stehen im
+[Kauftestbericht](reports/2026-09-28-kauftest-wiederherstellung.md) und der
+[Laptop-Übergabe](handoffs/2026-09-28-laptop-fortsetzung.md).
+Den bereits erfolgten Import nicht wiederholen.
+
+## Ablauf für eine neue, leere Testumgebung
 
 1. Ein separates, leeres Browserprofil ausschließlich für den Kauftest öffnen.
    Die private [Trainer-App](https://vokabeltrainer.marco-civico.workers.dev/trainer/)
@@ -45,7 +56,7 @@ ein weiteres Profil hinzu.
    Start der Kaufvorschau, ausdrückliche Bestätigung und Abschluss zeitlich
    erfassen. Anschließend Besitz, Guthaben, Auswahl und Wiederöffnung prüfen.
 
-Die separate Testumgebung ist noch nicht im Browser oder in Drive angelegt.
-Ein echter Kauf und eine reale Zeitersparnis werden erst nach diesem Versuch
+Die Browser-Testumgebung ist eingerichtet; der vollständige Drive-Abgleich
+steht noch aus. Ein echter Kauf und eine reale Zeitersparnis werden erst nach diesem Versuch
 behauptet. Die vorherigen synthetischen Tests und die erfolgreiche Auslieferung
 von v29 ersetzen diesen Versuch nicht.

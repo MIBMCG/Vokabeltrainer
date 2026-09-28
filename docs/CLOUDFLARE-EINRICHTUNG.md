@@ -2,11 +2,13 @@
 
 Aktuelle Fortsetzung: [Laptop- und Bereitstellungsstand vom 28.09.2026](handoffs/2026-09-28-laptop-fortsetzung.md).
 Laptop-Bestandsübernahme und Chrome-Neustart sind inzwischen separat belegt.
-Der erneute Upload des geprüften Kaufpakets ist abgeschlossen: aktive Version
-`494388ba-6838-4604-9369-788a6e60962d`, Cache `v29`. Der echte
-Chrome-Updatepfad und erhaltene Google-Verbindung sind inzwischen bestätigt;
-ein echter Kauf bleibt separat offen. Der alte Pausenauftrag ist
-beendet.
+Der begrenzte Korrekturstand `ed36f4d` ist mit Cache `v30` als Worker-Version
+`6d687e33-66b1-4f26-9ab9-99771d809809` aktiv. Der frühere Upload des
+Kaufpakets mit Cache `v29` und Version
+`494388ba-6838-4604-9369-788a6e60962d` bleibt unten als historischer
+Nachweis erhalten. Ein erneuter echter Versuch mit dem getrennten
+Google-Testbereich, ein Kauf und der reguläre Tokenablauf stehen noch aus.
+Der alte Pausenauftrag ist beendet.
 
 Einrichtungsnachweis: 27.09.2026. Die bestehende lokale Trainer-App bleibt im Browsermodus.
 Dieses Paket bereitet eine zusätzliche Variante mit automatischer
@@ -116,6 +118,35 @@ zusammen mit „Vollständig abgeglichen“ direkt in der Erwachsenenansicht
 beobachtet. Ein Kauf wurde mangels verfügbarem bezahlbaren Angebot nicht
 ausgelöst; fehlende Entwicklungsbilder sind bekannter Folgeumfang.
 Tokenablauf, reale Kaufwartezeit, Zweitgerät und Apple-Abnahme bleiben offen.
+
+## Bereitstellung der begrenzten Sicherungskorrektur am 28.09.2026
+
+Produktcommit `ed36f4d` ist auf derselben privaten HTTPS-Adresse bereitgestellt.
+Die neue Worker-Version `6d687e33-66b1-4f26-9ab9-99771d809809` ist seit
+28.09.2026, 16:52:37.311 UTC, zu 100 % aktiv. Drei Assets wurden hochgeladen:
+`src/drive/client.js`, `src/trainer/backup/transport.js` und `trainer/sw.js`;
+158 inhaltsgleiche Assets wurden wiederverwendet. Die aktuelle Cachekennung ist
+`v30`.
+
+Die Korrektur fordert für JSON-Dateien die optionale Drive-Inhaltsrevision
+`headRevisionId` an. Bei gleicher gültiger Inhaltsrevision darf allein die
+allgemeine Drive-`version` zwischen den beiden Metadatenabfragen abweichen;
+alle übrigen gelieferten Metadatenfelder, auch zusätzliche, bleiben im Vergleich.
+Ohne gültige Inhaltsrevision bleibt der vollständige Vergleich streng.
+Metadaten und JSON-Inhalt werden mit `no-store` angefordert; Inhalts-Hashes und
+Dateibindungen bleiben geprüft. Vorher war die reale Erstellung eines
+getrennten Google-Testbereichs zweimal mit „Eine Sicherungsdatei wurde während
+des Lesens geändert“ gescheitert. Das konkret abweichende Metadatenfeld wurde
+dabei nicht aufgezeichnet. Der erneute echte Versuch mit der Korrektur steht
+noch aus.
+
+Vor der Bereitstellung bestanden 601 Node-Tests, darunter 105 gezielte Fälle,
+sowie sieben ausgewählte Browserfälle zu Offlinebetrieb, Update,
+Wiederherstellung, Kauf und Anmeldung. Die HTTPS-Nachprüfung um 16:52:50 UTC
+lieferte für fünf öffentliche Pfade, einschließlich beider geänderten Module,
+Status 200; die ausgelieferten Dateien waren bytegleich mit dem Staging.
+Diese Prüfung belegt die Auslieferung, noch keinen gelungenen Google-Abgleich
+des neuen Testbereichs, echten Kauf oder natürlichen Tokenablauf.
 
 ## Lokal vorbereiten und prüfen
 

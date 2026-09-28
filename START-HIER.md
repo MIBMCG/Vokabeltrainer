@@ -1,6 +1,14 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Pause nach Abschluss am 28.09.2026:** Die beauftragte private Bereitstellung
+**Aktuelle Fortsetzung am 28.09.2026:** Der Nutzer hat die Pause ausdrücklich
+beendet. Die 1.600 Testpunkte sind im getrennten Codex-Browser importiert,
+Google ist verbunden. Die eigene Drive-Einrichtung scheiterte an einer
+Metadatenprüfung. Die geprüfte Korrektur `ed36f4d` ist als Cache v30 online und
+im Testbrowser übernommen. Zum erneuten Einrichtungs- und Kaufversuch muss
+der Nutzer die Erwachsenenansicht nach dem Update mit seiner Test-PIN öffnen.
+Noch kein Kauf; [aktueller Prüfbericht](docs/reports/2026-09-28-kauftest-wiederherstellung.md).
+
+**Vorherige Pause nach Abschluss am 28.09.2026:** Die beauftragte private Bereitstellung
 und der Chrome-Updateweg sind abgeschlossen. Für den nächsten Kaufversuch
 ist ein separater Teststand mit 1.600 Punkten geprüft vorbereitet;
 [Anleitung](docs/KAUFTEST-MIT-TESTPUNKTEN.md). Er wurde noch nicht importiert.
@@ -20,8 +28,8 @@ Die begrenzte Kaufbeschleunigung ist auf dem Entwicklungszweig integriert:
 Produktcommit `b6b83a9`, 591/591 Node-Tests, 12/12 ausgewählte Browserfälle,
 unabhängige Prüfung PASS. Der [Prüfbericht](docs/reports/2026-09-28-kaufgruppen.md)
 trennt synthetisch eingesparte Anfragen von noch nicht gemessener realer
-Kaufwartezeit. Nach erneuter Fortsetzung ist dieses Paket auf der privaten
-HTTPS-App bereitgestellt: Cache v29, aktive Worker-Version
+Kaufwartezeit. Bei der vorherigen Bereitstellung wurde dieses Paket auf der privaten
+HTTPS-App bereitgestellt: Cache v29, damalige Worker-Version
 `494388ba-6838-4604-9369-788a6e60962d`; beide Kaufmodule sind per Inhaltsvergleich
 bestätigt. Der kontrollierte Updatehinweis in Chrome wurde angenommen und die
 Profilauswahl erschien wieder. Aktive Google-Verbindung und vollständiger

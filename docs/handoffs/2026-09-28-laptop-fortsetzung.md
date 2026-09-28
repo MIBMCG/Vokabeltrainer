@@ -2,7 +2,32 @@
 
 Stand: **28.09.2026**. Zweig: `codex/vokabeltrainer-v1`.
 
-**Aktuelle Steuerung: Pause nach Sicherung.** Der Nutzer wünscht nach dem
+**Aktuelle Steuerung: erneut fortgesetzt.** Der Nutzer hebt die Pause mit
+„jetzt kannst du weiter arbeiten“ ausdrücklich auf. Ausgangspunkt ist der
+erneut exakt mit GitHub verglichene Commit `45ec0a8`. Im separaten Codex-Browser
+hat der Nutzer die lokale PIN eingerichtet. Die synthetische Sicherung wurde
+nach Vorschau in den unverbundenen Testbereich importiert; die Oberfläche
+bestätigt die geprüfte Wiederherstellung. Google ist verbunden. Das Anlegen
+des eigenen Testbereichs scheiterte zweimal an der Sicherungs-Metadatenprüfung.
+Die Korrektur `ed36f4d` ist nach 601 Node-Tests, 7 ausgewählten Browserfällen und
+unabhängiger Prüfung als Cache v30 bereitgestellt: aktive Worker-Version
+`6d687e33-66b1-4f26-9ab9-99771d809809`. Die geänderten Module wurden öffentlich
+bytegenau gegen das geprüfte Paket bestätigt. Nach kontrolliertem Update zeigt
+das Testprofil weiter 1.600 Punkte; die Erwachsenenansicht verlangt wieder die
+Test-PIN. Der Nutzer wurde um das Öffnen gebeten. Danach denselben
+Einrichtungsauftrag fortsetzen, keinen zusätzlichen Testbereich anlegen.
+Der normale Chrome-Lernstand bleibt erhalten. Noch kein Kauf; alle Details und
+Nachweisgrenzen im [Kauftestbericht](../reports/2026-09-28-kauftest-wiederherstellung.md).
+
+**Konkreter nächster Schritt:** Im bereits geöffneten Codex-Testbrowser nach
+Entsperrung unter „Einstellungen“ → „Google-Verbindung“ denselben Auftrag für
+`Kauftest 28.09.2026 – 1600 Punkte` fortsetzen. Erst nach erfolgreicher Einrichtung
+Figuren und Käufe aktivieren und den Drachen für 200 Punkte prüfen. Den
+synthetischen Import nicht wiederholen und keinen bestehenden Familienbestand
+auswählen. Die genaue Ursache des realen Metadatenunterschieds ist nicht
+aufgezeichnet; erst der erneute reale Ablauf belegt die praktische Wirksamkeit.
+
+**Vorherige Pause nach Sicherung.** Der Nutzer wünscht nach dem
 erfolgreichen Update schnell verfügbares Testguthaben für einen späteren
 Kaufversuch und verlangt anschließend Pause. Ein separater synthetischer
 Teststand mit 1.600 Punkten ist geprüft vorbereitet. Keine Übernahme in den echten Lernbereich
