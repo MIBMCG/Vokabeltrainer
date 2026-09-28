@@ -230,9 +230,13 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
     return accountIdForToken(await runtimeToken());
   }
 
-  async function boundRequest(url, init = {}, accepted = []) {
+  async function boundRequest(url, init = {}, accepted = [], expectedToken = null) {
     const token = await runtimeToken();
+    if (expectedToken !== null && token !== expectedToken) error('auth', 'Google-Zugriff hat sich während des Kaufs geändert.');
     await accountIdForToken(token);
+    if (expectedToken !== null && await runtimeToken() !== expectedToken) {
+      error('auth', 'Google-Zugriff hat sich während des Kaufs geändert.');
+    }
     return requestWithToken(url, init, accepted, token);
   }
 
@@ -243,9 +247,9 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
     return assertId(value.ids[0]);
   }
 
-  async function metadata(id) {
+  async function metadata(id, expectedToken = null) {
     assertId(id);
-    const response = await boundRequest(`${API_V2}/${encodeURIComponent(id)}?fields=${encodeURIComponent(METADATA_FIELDS)}`, {cache: 'no-store'});
+    const response = await boundRequest(`${API_V2}/${encodeURIComponent(id)}?fields=${encodeURIComponent(METADATA_FIELDS)}`, {cache: 'no-store'}, [], expectedToken);
     const value = await responseJson(response);
     if (value.id !== id || typeof value.title !== 'string' || typeof value.mimeType !== 'string'
       || !Array.isArray(value.parents) || value.labels?.trashed !== false
@@ -302,10 +306,10 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
     requiredProperties(snapshot.properties, configProperties(checkedConfig, kind));
   }
 
-  async function readFolder({id, kind, config = null} = {}) {
+  async function readFolder({id, kind, config = null} = {}, expectedToken = null) {
     assertId(id);
-    const before = await metadata(id);
-    const after = await metadata(id);
+    const before = await metadata(id, expectedToken);
+    const after = await metadata(id, expectedToken);
     if (before.version !== after.version || before.etag !== after.etag
       || !same(before.properties, after.properties)
       || !same(before.parents, after.parents)) {
@@ -387,15 +391,15 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
     requiredProperties(snapshot.properties, context.properties);
   }
 
-  async function readImmutable(ref, options = {}) {
+  async function readImmutable(ref, options = {}, expectedToken = null) {
     assertId(ref?.id);
     assertHash(ref?.sha256);
     const context = immutableContext(ref, options);
-    const before = await metadata(ref.id);
+    const before = await metadata(ref.id, expectedToken);
     checkImmutableMetadata(before, ref, context);
-    const response = await boundRequest(`${API_V2}/${encodeURIComponent(ref.id)}?alt=media`, {cache: 'no-store'});
+    const response = await boundRequest(`${API_V2}/${encodeURIComponent(ref.id)}?alt=media`, {cache: 'no-store'}, [], expectedToken);
     const value = await contentJson(response);
-    const after = await metadata(ref.id);
+    const after = await metadata(ref.id, expectedToken);
     checkImmutableMetadata(after, ref, context);
     if (before.name !== after.name || before.mimeType !== after.mimeType
       || !same(before.parents, after.parents)
@@ -478,7 +482,7 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
     return {config:commerce.config,configRef:commerce.configRef,control,upload};
   }
 
-  async function verifyInstalledConfig(configRef, config) {
+  async function verifyInstalledConfig(configRef, config, expectedToken = null) {
     const checkedRef = assertRef(configRef);
     const checkedConfig = assertConfig(config);
     if (!sameBinding(checkedConfig.binding, checkedBinding)
@@ -486,17 +490,47 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
       || await digest(checkedConfig) !== checkedRef.sha256) {
       error('binding', 'Die gespeicherte Kaufkonfiguration stimmt nicht mit ihrer Referenz überein.');
     }
-    const root = await readFolder({id: checkedBinding.folderId, kind: 'dataset'});
+    const root = await readFolder({id: checkedBinding.folderId, kind: 'dataset'}, expectedToken);
     if (root.properties.purchaseApp !== PURCHASE_APP
       || root.properties.purchaseConfigId !== checkedRef.id
       || root.properties.purchaseConfigSha256 !== checkedRef.sha256) {
       error('binding', 'Die Kaufkonfiguration ist nicht als Bestandsanker installiert.');
     }
-    const installed = await readImmutable(checkedRef, {kind: 'config'});
+    const installed = await readImmutable(checkedRef, {kind: 'config'}, expectedToken);
     if (canonical(installed) !== canonical(checkedConfig)) {
       error('binding', 'Die installierte Kaufkonfiguration stimmt nicht mit dem Auftrag überein.');
     }
     return checkedConfig;
+  }
+
+  async function preparedImmutable({ref, value, kind = 'content', config}, authorizedConfig) {
+    if (!same(assertConfig(config), authorizedConfig)) error('binding', 'Die Uploadkonfiguration stimmt nicht.');
+    const actualHash = await digest(value);
+    if (actualHash !== ref.sha256) error('integrity', 'Der gespeicherte Uploadinhalt stimmt nicht mit seinem Hash überein.');
+    const context = immutableContext(ref, {kind, config: authorizedConfig});
+    const appProperties = context.properties;
+    propertiesBody(appProperties);
+    const uploadMetadata = {
+      id: ref.id,
+      name: context.name,
+      mimeType: JSON_TYPE,
+      parents: [context.parentId],
+      appProperties,
+    };
+    return {ref, kind, config: authorizedConfig, multipart: multipartBody(uploadMetadata, value)};
+  }
+
+  async function sendImmutable({ref, kind, config, multipart}, expectedToken = null) {
+    const response = await boundRequest(`${UPLOAD_V3}?uploadType=multipart&fields=id`, {
+      method: 'POST',
+      headers: {'Content-Type': multipart.contentType},
+      body: multipart.body,
+    }, [409], expectedToken);
+    if (response.status !== 409) {
+      const created = await responseJson(response);
+      if (created.id !== ref.id) error('binding', 'Drive hat eine andere unveränderliche Datei angelegt.', response.status);
+    }
+    return readImmutable(ref, {kind, config}, expectedToken);
   }
 
   async function writeImmutable({ref, value, kind = 'content', config, authorization} = {}) {
@@ -519,30 +553,41 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
     } else {
       error('binding', 'Der unveränderlichen Datei fehlt ein gespeicherter Schreibauftrag.');
     }
-    if (!same(assertConfig(config), authorizedConfig)) error('binding', 'Die Uploadkonfiguration stimmt nicht.');
-    const actualHash = await digest(value);
-    if (actualHash !== ref.sha256) error('integrity', 'Der gespeicherte Uploadinhalt stimmt nicht mit seinem Hash überein.');
-    const context = immutableContext(ref, {kind, config: authorizedConfig});
-    const appProperties = context.properties;
-    propertiesBody(appProperties);
-    const uploadMetadata = {
-      id: ref.id,
-      name: context.name,
-      mimeType: JSON_TYPE,
-      parents: [context.parentId],
-      appProperties,
-    };
-    const multipart = multipartBody(uploadMetadata, value);
-    const response = await boundRequest(`${UPLOAD_V3}?uploadType=multipart&fields=id`, {
-      method: 'POST',
-      headers: {'Content-Type': multipart.contentType},
-      body: multipart.body,
-    }, [409]);
-    if (response.status !== 409) {
-      const created = await responseJson(response);
-      if (created.id !== ref.id) error('binding', 'Drive hat eine andere unveränderliche Datei angelegt.', response.status);
+    return sendImmutable(await preparedImmutable({ref, value, kind, config}, authorizedConfig));
+  }
+
+  async function writeImmutableBatch(uploads) {
+    if (!Array.isArray(uploads) || uploads.length < 1 || uploads.length > 3) {
+      error('limit', 'Eine Kaufgruppe umfasst ein bis drei gespeicherte Dateien.');
     }
-    return readImmutable(ref, {kind, config: authorizedConfig});
+    const requests = copy(uploads);
+    const token = await runtimeToken();
+    const first = requests[0]?.authorization;
+    if (first?.kind !== 'attempt') error('binding', 'Die Kaufgruppe benötigt einen gespeicherten Kaufversuch.');
+    const prepared = [];
+    let shared = null;
+    for (const request of requests) {
+      const {ref, value, kind = 'content', config, authorization} = request;
+      assertId(ref?.id);
+      assertHash(ref?.sha256);
+      if (kind !== 'content' || authorization?.kind !== 'attempt'
+        || authorization.operationId !== first.operationId
+        || authorization.attemptId !== first.attemptId
+        || !same(authorization.commerce, first.commerce)) {
+        error('binding', 'Die Kaufgruppe gehört nicht zu einem Versuch.');
+      }
+      const checked = attemptAuthorization(authorization, ref, value);
+      if (shared === null) shared = checked;
+      else if (!sameRef(checked.configRef, shared.configRef) || !same(checked.config, shared.config)) {
+        error('binding', 'Die Kaufgruppe verwendet unterschiedliche Konfigurationen.');
+      }
+      prepared.push(await preparedImmutable({ref, value, kind, config}, checked.config));
+    }
+    await verifyInstalledConfig(shared.configRef, shared.config, token);
+    const settled = await Promise.allSettled(prepared.map(upload => sendImmutable(upload, token)));
+    const failed = settled.find(result => result.status === 'rejected');
+    if (failed) throw failed.reason;
+    return settled.map(result => result.value);
   }
 
   function assertSnapshot(snapshot, expected) {
@@ -667,6 +712,7 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
     createFolder,
     readImmutable,
     writeImmutable,
+    writeImmutableBatch,
     putPointer,
   });
 }

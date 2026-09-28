@@ -41,6 +41,7 @@ class PurchaseRemote {
   get putCalls(){return this.server.putCalls;}
   get writeCalls(){return this.server.writeCalls;}
   get writeRequests(){return this.server.writeRequests??(this.server.writeRequests=[]);}
+  get batchCalls(){return this.server.batchCalls??(this.server.batchCalls=[]);}
   get next(){return this.server.next;}
   set next(value){this.server.next=value;}
   get pointerFailure(){return this.server.pointerFailure??null;}
@@ -75,6 +76,13 @@ class PurchaseRemote {
     this.files.set(ref.id,structuredClone(value));
     if(fails&&failure.when==='after')throw new ProductError('network','synthetic upload response loss');
     return structuredClone(value);
+  }
+  async writeImmutableBatch(requests){
+    this.batchCalls.push(requests.map(({ref})=>structuredClone(ref)));
+    const settled=await Promise.allSettled(requests.map(request=>this.writeImmutable(request)));
+    const failed=settled.find(result=>result.status==='rejected');
+    if(failed)throw failed.reason;
+    return settled.map(result=>result.value);
   }
   async putPointer({snapshot,head,headValue,authorization}){
     const source=authorization.kind==='attempt'
@@ -639,6 +647,16 @@ test('purchase uploads at most three saved immutable files at once and waits bef
   const result=await confirmation;
   assert.equal(result.status,'confirmed');
   assert.equal(maximum,3);
+  assert.equal(harness.remote.putCalls.length,1);
+});
+
+test('purchase service sends each saved group through the batch transport before its pointer',async()=>{
+  const harness=await openHarness({store:byteStore(productState(ledgerWithSeveralUploadParts()))});
+  const preview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
+  await harness.service.confirm(preview);
+  const saved=harness.store.snapshot().commerce.jobs[0].attempts[0];
+  assert.deepEqual(harness.remote.batchCalls.map(group=>group.length),[3,2]);
+  assert.deepEqual(harness.remote.batchCalls.flat(),saved.uploads.map(({ref})=>ref));
   assert.equal(harness.remote.putCalls.length,1);
 });
 

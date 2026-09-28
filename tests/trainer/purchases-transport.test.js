@@ -4,6 +4,7 @@ import {createPurchaseTransport} from '../../src/trainer/purchases/transport.js'
 import {prepareBootstrap, resumeBootstrap} from '../../src/trainer/purchases/bootstrap.js';
 import {digest} from '../../src/trainer/purchases/value.js';
 import {purchasesHttpFixture} from './purchases-http-fixture.js';
+import {createServerAuth} from '../../src/drive/server-auth.js';
 
 const binding = {
   accountId: 'account-a',
@@ -690,6 +691,274 @@ async function configuredPointerCase() {
     prepared: await pointerCommerce(confirmed.configRef, confirmed.config, coordinator.etag),
   };
 }
+
+test('one reserved three-file purchase batch checks its installed config once while reading every upload', async () => {
+  const single = await configuredPointerCase();
+  const singleAuthorization = {
+    kind: 'attempt', commerce: single.prepared.commerce,
+    operationId: 'purchase-a', attemptId: 'attempt-a',
+  };
+  single.fixture.calls.length = 0;
+  for (const upload of single.prepared.attempt.uploads) {
+    await single.transport.writeImmutable({
+      ...upload, kind: 'content', config: single.prepared.commerce.config,
+      authorization: singleAuthorization,
+    });
+  }
+  assert.equal(single.fixture.calls.length, 54);
+
+  const {fixture, transport, prepared} = await configuredPointerCase();
+  const authorization = {
+    kind: 'attempt', commerce: prepared.commerce,
+    operationId: 'purchase-a', attemptId: 'attempt-a',
+  };
+  const requests = prepared.attempt.uploads.map(upload => ({
+    ...upload, kind: 'content', config: prepared.commerce.config, authorization,
+  }));
+  fixture.calls.length = 0;
+  const values = await transport.writeImmutableBatch(requests);
+  assert.deepEqual(values, requests.map(request => request.value));
+  assert.equal(fixture.calls.length, 34);
+  assert.equal(fixture.calls.filter(({url}) => url.includes('/drive/v3/about')).length, 17);
+  assert.equal(fixture.calls.filter(({url}) => url.includes(`/drive/v2/files/${binding.folderId}`)).length, 2);
+  assert.equal(fixture.calls.filter(({url}) => url.includes(`/drive/v2/files/${prepared.commerce.configRef.id}`)).length, 3);
+  assert.equal(fixture.calls.filter(({method}) => method === 'POST').length, 3);
+  for (const {ref} of requests) {
+    assert.equal(fixture.calls.filter(({url}) => url.includes(`/drive/v2/files/${ref.id}`)).length, 3);
+  }
+});
+
+function savedPurchaseBatch(prepared) {
+  const authorization = {
+    kind: 'attempt', commerce: prepared.commerce,
+    operationId: 'purchase-a', attemptId: prepared.attempt.attemptId,
+  };
+  return prepared.attempt.uploads.map(upload => ({
+    ...upload, kind: 'content', config: prepared.commerce.config, authorization,
+  }));
+}
+
+test('a second batch and a new saved attempt recheck the installed anchor', async () => {
+  const {fixture, transport, prepared} = await configuredPointerCase();
+  fixture.calls.length = 0;
+  await transport.writeImmutableBatch(savedPurchaseBatch(prepared));
+  assert.equal(fixture.calls.length, 34);
+  fixture.calls.length = 0;
+  await transport.writeImmutableBatch(savedPurchaseBatch(prepared));
+  assert.equal(fixture.calls.length, 34);
+  assert.equal(fixture.calls.filter(({method}) => method === 'POST').length, 3);
+
+  prepared.attempt = {...structuredClone(prepared.attempt), attemptId: 'attempt-b'};
+  prepared.commerce.jobs[0].attempts.push(prepared.attempt);
+  fixture.calls.length = 0;
+  await transport.writeImmutableBatch(savedPurchaseBatch(prepared));
+  assert.equal(fixture.calls.length, 34);
+
+  fixture.files.get(binding.folderId).properties.purchaseConfigSha256 = 'f'.repeat(64);
+  fixture.calls.length = 0;
+  await assert.rejects(() => transport.writeImmutableBatch(savedPurchaseBatch(prepared)), {code: 'binding'});
+  assert.equal(fixture.calls.filter(({method}) => method === 'POST').length, 0);
+});
+
+test('batch rejects foreign account, changed saved contents, and mismatched config before upload', async () => {
+  const {fixture, transport, prepared} = await configuredPointerCase();
+  const requests = savedPurchaseBatch(prepared);
+  fixture.setAccountId('account-b');
+  fixture.calls.length = 0;
+  await assert.rejects(() => transport.writeImmutableBatch(requests), {code: 'binding'});
+  assert.equal(fixture.calls.filter(({method}) => method === 'POST').length, 0);
+  fixture.setAccountId(binding.accountId);
+
+  const forged = structuredClone(requests);
+  forged[1].value = {...forged[1].value, byteLength: 3};
+  fixture.calls.length = 0;
+  await assert.rejects(() => transport.writeImmutableBatch(forged), {code: 'binding'});
+  assert.equal(fixture.calls.length, 0);
+
+  const wrongConfig = structuredClone(requests);
+  wrongConfig[2].config = {
+    ...wrongConfig[2].config,
+    contentFolderId: prepared.commerce.config.coordinatorId,
+  };
+  fixture.calls.length = 0;
+  await assert.rejects(() => transport.writeImmutableBatch(wrongConfig), {code: 'binding'});
+  assert.equal(fixture.calls.length, 0);
+});
+
+test('batch token change stops anchor reading and post-upload dependent reads', async () => {
+  for (const changeAt of ['before-anchor', 'during-anchor', 'after-post']) {
+    const {fixture, descriptorHash, prepared} = await configuredPointerCase();
+    let token = 'first';
+    let reads = 0;
+    const transport = createPurchaseTransport({
+      binding, descriptorHash,
+      getToken: async () => {
+        if (changeAt === 'before-anchor' && ++reads === 2) token = 'second';
+        return token;
+      },
+      fetchImpl: async (url, init) => {
+        const response = await fixture.fetch(url, init);
+        if (changeAt === 'during-anchor' && url.includes(`/drive/v2/files/${binding.folderId}`)) token = 'second';
+        if (changeAt === 'after-post' && init?.method === 'POST') token = 'second';
+        return response;
+      },
+    });
+    fixture.calls.length = 0;
+    await assert.rejects(() => transport.writeImmutableBatch(savedPurchaseBatch(prepared)), {code: 'auth'});
+    if (changeAt !== 'after-post') assert.equal(fixture.calls.filter(({method}) => method === 'POST').length, 0);
+    if (changeAt === 'after-post') {
+      for (const {ref} of prepared.attempt.uploads) {
+        assert.equal(fixture.calls.filter(({url}) => url.includes(`/drive/v2/files/${ref.id}`)).length, 0);
+      }
+    }
+  }
+});
+
+test('batch captures its runtime token before asynchronous upload validation', async () => {
+  const {fixture, descriptorHash, prepared} = await configuredPointerCase();
+  let token = 'first';
+  const transport = createPurchaseTransport({
+    binding, descriptorHash, getToken: async () => token, fetchImpl: fixture.fetch,
+  });
+  fixture.calls.length = 0;
+  const batch = transport.writeImmutableBatch(savedPurchaseBatch(prepared));
+  queueMicrotask(() => { token = 'second'; });
+  await assert.rejects(batch, {code: 'auth'});
+  assert.equal(fixture.calls.filter(({method}) => method === 'POST').length, 0);
+});
+
+test('batch snapshots requested files before an asynchronous token lookup settles', async () => {
+  const {fixture, descriptorHash, prepared} = await configuredPointerCase();
+  const requests = savedPurchaseBatch(prepared);
+  const original = structuredClone(requests[1]);
+  let releaseToken;
+  let first = true;
+  const transport = createPurchaseTransport({
+    binding, descriptorHash, fetchImpl: fixture.fetch,
+    getToken: () => {
+      if (!first) return 'first';
+      first = false;
+      return new Promise(resolve => { releaseToken = resolve; });
+    },
+  });
+  const batch = transport.writeImmutableBatch(requests);
+  requests[1].ref = {id: 'foreign-file', sha256: 'f'.repeat(64)};
+  requests[1].value = {version: 1, kind: 'foreign'};
+  releaseToken('first');
+  await batch;
+  assert.deepEqual(fixture.files.get(original.ref.id).value, original.value);
+  assert.equal(fixture.files.has('foreign-file'), false);
+});
+
+test('server session marker may survive same-account refresh but stops a resumed session during batch', async () => {
+  for (const restartSession of [false, true]) {
+    const {fixture, descriptorHash, prepared} = await configuredPointerCase();
+    let auth;
+    let rootReads = 0;
+    const authFetch = async (url, init) => {
+      if (url === '/api/auth/session') return Response.json({connected: true, accountId: binding.accountId});
+      const driveUrl = `https://www.googleapis.com${url.slice('/api/drive'.length)}`;
+      const response = await fixture.fetch(driveUrl, init);
+      if (driveUrl.includes(`/drive/v2/files/${binding.folderId}`) && ++rootReads === 1) {
+        if (restartSession) auth.clearLocal();
+        await auth.resume();
+      }
+      return response;
+    };
+    auth = createServerAuth({fetchImpl: authFetch});
+    await auth.resume();
+    const transport = createPurchaseTransport({
+      fetchImpl: auth.fetchDrive, getToken: auth.getToken, binding, descriptorHash,
+    });
+    fixture.calls.length = 0;
+    if (restartSession) {
+      await assert.rejects(() => transport.writeImmutableBatch(savedPurchaseBatch(prepared)), {code: 'auth'});
+      assert.equal(fixture.calls.filter(({method}) => method === 'POST').length, 0);
+    } else {
+      await transport.writeImmutableBatch(savedPurchaseBatch(prepared));
+      assert.equal(fixture.calls.length, 34);
+    }
+  }
+});
+
+test('purchase pointer checks its anchor again after an uploaded batch', async () => {
+  const {fixture, transport, coordinator, prepared} = await configuredPointerCase();
+  await transport.writeImmutableBatch(savedPurchaseBatch(prepared));
+  fixture.files.get(binding.folderId).properties.purchaseConfigId = 'other-config';
+  fixture.calls.length = 0;
+  await assert.rejects(() => transport.putPointer({
+    snapshot: coordinator,
+    head: prepared.candidate,
+    headValue: prepared.receipt,
+    authorization: {
+      kind: 'attempt', commerce: prepared.commerce,
+      operationId: 'purchase-a', attemptId: 'attempt-a',
+    },
+  }), {code: 'binding'});
+  assert.equal(fixture.calls.filter(({method}) => method === 'PUT').length, 0);
+  assert.equal(fixture.calls.filter(({url}) => url.includes(`/drive/v2/files/${binding.folderId}`)).length, 2);
+});
+
+test('batch snapshots caller objects before anchor reads and rejects a divergent 409 body', async () => {
+  const {fixture, descriptorHash, prepared} = await configuredPointerCase();
+  const requests = savedPurchaseBatch(prepared);
+  const original = structuredClone(requests[1]);
+  let changed = false;
+  const transport = createPurchaseTransport({
+    binding, descriptorHash, getToken: async () => 'synthetic-token',
+    fetchImpl: async (url, init) => {
+      const response = await fixture.fetch(url, init);
+      if (!changed && url.includes(`/drive/v2/files/${binding.folderId}`)) {
+        changed = true;
+        requests[1].ref = {id: 'foreign-file', sha256: 'f'.repeat(64)};
+        requests[1].value = {version: 1, kind: 'foreign'};
+        requests[1].config = {...requests[1].config, contentFolderId: 'foreign-folder'};
+      }
+      return response;
+    },
+  });
+  await transport.writeImmutableBatch(requests);
+  assert.deepEqual(fixture.files.get(original.ref.id).value, original.value);
+  assert.equal(fixture.files.has('foreign-file'), false);
+
+  fixture.files.get(original.ref.id).value = {changed: true};
+  fixture.calls.length = 0;
+  await assert.rejects(() => transport.writeImmutableBatch(savedPurchaseBatch(prepared)), {code: 'integrity'});
+  assert.equal(fixture.calls.filter(({method}) => method === 'POST').length, 3);
+});
+
+test('batch waits for an already started read after another upload fails', async () => {
+  const {fixture, descriptorHash, prepared} = await configuredPointerCase();
+  let releaseRead;
+  const readGate = new Promise(resolve => { releaseRead = resolve; });
+  let signalRead;
+  const readStarted = new Promise(resolve => { signalRead = resolve; });
+  const transport = createPurchaseTransport({
+    binding, descriptorHash, getToken: async () => 'synthetic-token',
+    fetchImpl: async (url, init) => {
+      if (init?.method === 'POST' && init.body.includes('"id":"basis-a","name"')) {
+        return new Response('{}', {status: 500});
+      }
+      if (url.includes('/drive/v2/files/receipt-a?alt=media')) {
+        signalRead();
+        await readGate;
+      }
+      return fixture.fetch(url, init);
+    },
+  });
+  let settled = false;
+  const result = transport.writeImmutableBatch(savedPurchaseBatch(prepared)).then(
+    () => { settled = true; return null; },
+    error => { settled = true; return error; },
+  );
+  await readStarted;
+  assert.equal(settled, false);
+  releaseRead();
+  const failure = await result;
+  assert.equal(failure.code, 'retryable');
+  assert.equal(fixture.files.has('receipt-a'), true);
+  assert.equal(fixture.files.has('basis-part-a'), true);
+});
 
 test('purchase authority requires config body hash and the exact installed anchor ref', async () => {
   for (const changedRef of [
