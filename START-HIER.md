@@ -1,7 +1,11 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Fortsetzung am 28.09.2026:** Der Nutzer hat die Weiterarbeit mit Superpowers
-ausdrücklich beauftragt. Die Pause vom Vortag ist beendet.
+**Pause nach Abschluss am 28.09.2026:** Die beauftragte private Bereitstellung
+und der Chrome-Updateweg sind abgeschlossen. Für den nächsten Kaufversuch
+ist ein separater Teststand mit 1.600 Punkten geprüft vorbereitet;
+[Anleitung](docs/KAUFTEST-MIT-TESTPUNKTEN.md). Er wurde noch nicht importiert.
+Der Nutzer verlangt anschließend Pause. Nach Sicherung keine weitere Arbeit
+ohne ausdrückliche Fortsetzung.
 Aktueller Einstieg: [Laptop-Fortsetzung](docs/handoffs/2026-09-28-laptop-fortsetzung.md).
 
 Stand: **28.09.2026**.
@@ -16,7 +20,14 @@ Die begrenzte Kaufbeschleunigung ist auf dem Entwicklungszweig integriert:
 Produktcommit `b6b83a9`, 591/591 Node-Tests, 12/12 ausgewählte Browserfälle,
 unabhängige Prüfung PASS. Der [Prüfbericht](docs/reports/2026-09-28-kaufgruppen.md)
 trennt synthetisch eingesparte Anfragen von noch nicht gemessener realer
-Kaufwartezeit. Die laufende HTTPS-App wurde dabei nicht aktualisiert.
+Kaufwartezeit. Nach erneuter Fortsetzung ist dieses Paket auf der privaten
+HTTPS-App bereitgestellt: Cache v29, aktive Worker-Version
+`494388ba-6838-4604-9369-788a6e60962d`; beide Kaufmodule sind per Inhaltsvergleich
+bestätigt. Der kontrollierte Updatehinweis in Chrome wurde angenommen und die
+Profilauswahl erschien wieder. Aktive Google-Verbindung und vollständiger
+Abgleich sind nach dem Update bestätigt. Ein echter Kauf war mangels
+bezahlbarem freigegebenem Angebot noch nicht möglich; günstigere
+Entwicklungsbilder fehlen. Reale Kaufwartezeit bleibt gesondert zu prüfen.
 
 Zuerst die [aktuelle Laptop-Übergabe](docs/handoffs/2026-09-28-laptop-fortsetzung.md)
 lesen. Die [vorherige Pausenübergabe](docs/handoffs/2026-09-27-laptop-pause.md)
@@ -117,12 +128,16 @@ vermeintlichen Reparatur löschen.
 
 > Setze die Arbeit am Vokabeltrainer auf meinem Laptop fort. Lies AGENTS.md,
 > START-HIER.md, ARBEITSSTAND.md und docs/handoffs/2026-09-28-laptop-fortsetzung.md.
+> Damit beende ich die Pause vom 28.09. ausdrücklich. Verwende für den nächsten
+> Kaufversuch den vorbereiteten synthetischen Stand mit 1.600 Punkten gemäß
+> docs/KAUFTEST-MIT-TESTPUNKTEN.md in einer getrennten Testumgebung. Den
+> vorhandenen Familienlernstand nicht durch diese Sicherung ersetzen.
 > Prüfe den aktuellen Zweig codex/vokabeltrainer-v1, Remote und lokale Änderungen.
 > Die private HTTPS-App ist bereitgestellt. Der vorhandene Drive-Bestand wurde
 > am Laptop übernommen; vollständiger Abgleich ist beobachtet und Google bleibt
 > laut Nutzer nach Chrome-Neustart verbunden. Regulärer Tokenablauf bleibt offen.
-> Die Kaufgruppen-Optimierung in b6b83a9 ist geprüft und integriert, aber noch
-> nicht bereitgestellt. Vor einem Praxistest ihren Bereitstellungsstand prüfen.
+> Die Kaufgruppen-Optimierung in b6b83a9 ist geprüft und als Cache v29 privat
+> bereitgestellt. Der kontrollierte Updateweg in Chrome ist beobachtet.
 > Wiederhole weder Cloudflare-Anlage noch abgeschlossene Kaufpakete. Reale
 > Kaufwartezeit und Geräteabnahmen getrennt nachweisen; danach am bestätigten
 > Avatar-/Galerieumfang ansetzen.

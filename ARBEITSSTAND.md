@@ -1,6 +1,42 @@
 # Arbeitsstand
 
+## Aktuelle Steuerung: Testpunkte vorbereitet, anschließend Pause
+
+Der Nutzer bittet nach dem erfolgreichen Update um einen schnellen Kauftest
+ohne weitere eigene Vokabelübungen und danach ausdrücklich um Pause, da er
+gleich losmuss. Der bestehende Datenvertrag leitet Guthaben aus Lernereignissen
+ab; ein manueller Guthabenbefehl existiert nicht. Ein separater rein synthetischer
+Teststand mit einem Profil „Kauftest“, 1.600 Punkten und Level 9 ist vorbereitet.
+Der Generator und die geschriebene Sicherung sind geprüft; der Drache ist
+verfügbar. [Datei und Anleitung](docs/KAUFTEST-MIT-TESTPUNKTEN.md).
+Der Stand wurde weder in einen Browser importiert noch in Drive angelegt.
+Nach Dokumentations- und
+Git-Sicherung wird pausiert; Nutzerbedienung ist heute nicht mehr erforderlich.
+
 ## Fortsetzung auf dem Laptop am 28.09.2026
+
+**Anschließende Bereitstellungsfortsetzung:** Der auf GitHub exakt bestätigte
+Abschlussstand `939830c` ist Ausgangspunkt des erneut beauftragten Weiterarbeitens.
+Nach Wiederherstellung der lokalen Betreiberkonfiguration und erfolgreichem
+Probelauf mit 161 Dateien ist das Paket tatsächlich hochgeladen: Wrangler
+4.142.0, drei neue Assets und 158 wiederverwendete Dateien, Exitcode 0.
+Aktive Worker-Version: `494388ba-6838-4604-9369-788a6e60962d`, Cache v29.
+Öffentlich ausgelieferte HTML-Datei, Serverkonfiguration, Service Worker und
+beide Kaufmodule stimmen exakt mit dem lokalen Paket überein. Interne Pfade
+bleiben gesperrt. Chrome zeigte „Neue Programmversion verfügbar“; nach
+„Jetzt aktualisieren“ erschien die Profilauswahl wieder.
+Nach dem Update bestätigt der Nutzer die aktive Google-Verbindung ohne erneute
+Anmeldung; „Google-Verbindung ist aktiv“ und „Vollständig abgeglichen“ wurden
+auch direkt beobachtet. Ein echter Kauf blieb aus: kein bezahlbares freigegebenes
+Angebot im vorhandenen Profil, günstigere Entwicklungsform noch ohne Bild.
+Keine persönlichen Punktestände oder Kaufdaten wurden für den Test verändert.
+
+Zwei Laptop-OAuth-Anmeldungen scheiterten beim Codeaustausch an einer
+Cloudflare-Bot-Challenge (403). Der anschließend vom Nutzer in Chrome
+erstellte, auf das bestehende Konto begrenzte API-Token-Zugang funktioniert;
+Eingabe erfolgte verdeckt lokal, Speicherung Windows-verschlüsselt außerhalb
+von Git. Keine Secrets des Workers wurden ersetzt. Aktuelle Details:
+[Bereitstellungsfortsetzung](docs/handoffs/2026-09-28-laptop-fortsetzung.md#bereitstellungsfortsetzung-am-28092026).
 
 Der Nutzer hat die Weiterarbeit mit Superpowers ausdrücklich beauftragt.
 Die Pause vom 27.09. ist beendet. Der saubere lokale Entwicklungszweig
@@ -33,13 +69,14 @@ Abschlussnachweise auf exakt diesem Produktstand: **591/591 Node-Tests**,
 Offline-/Updatepfad, **161 öffentliche Dateien** lokal vorbereitet und
 unabhängiges **Spec/Qualität PASS ohne offene Befunde**. Die zwölf Browserfälle
 sind eine gezielte aktuelle Auswahl; die frühere Gesamtsuite mit 58 Fällen
-wurde nicht vollständig neu ausgeführt. Es gab keinen neuen Upload zur
-laufenden HTTPS-App und noch keine Messung der realen Kaufwartezeit.
+wurde nicht vollständig neu ausgeführt. Die Produktprüfung war vor dem oben
+dokumentierten Upload abgeschlossen; reale Kaufwartezeit ist noch nicht gemessen.
 Details und Prüfkommandos: [Kaufgruppenbericht](docs/reports/2026-09-28-kaufgruppen.md).
 
-Der Dokumentationsabschluss folgt auf dem bestehenden Entwicklungszweig und
-wird nach Verweis-/Diffprüfung auf GitHub gesichert. Sein Commit und der exakte
-Remotevergleich werden in der Abschlussmeldung genannt. Aktueller Einstieg:
+Der erste Dokumentationsabschluss `939830c` ist bereits exakt auf GitHub
+bestätigt. Die anschließenden Bereitstellungs- und Pausennachträge werden nach
+Verweis-/Diffprüfung ebenfalls gesichert; ihr Commit und exakter Remotevergleich
+werden in der Abschlussmeldung genannt. Aktueller Einstieg:
 [Laptop-Fortsetzung](docs/handoffs/2026-09-28-laptop-fortsetzung.md).
 
 ## Historischer Stand vom 27.09.2026
@@ -181,7 +218,7 @@ Task-6-Gesamtlauf.
   gestalten“. Verfügbares Guthaben, Besitz und Auswahl werden je Profil aus dem
   bestätigten Ledger angezeigt; unklare Kaufantworten lassen sich mit „Kauf
   fortsetzen“ wiederaufnehmen.
-- Der Service Worker verwendet Cacheversion `v28`. Server-Allowlist und
+- Der Service Worker verwendet Cacheversion `v29`. Server-Allowlist und
   Pflicht-Precache enthalten die neuen Laufzeitmodule, vier Drachenbilder und
   alle 20 kleinen Haut-/Kleidungsbilder der menschlichen Grundfiguren;
   Google-Antworten, Sitzungs- und Proxyantworten werden nicht gecacht.
@@ -207,8 +244,8 @@ vollständige EV05-Galerie oder visuelle Abnahme abgeleitet werden.
 
 - Wiederaufnahme über regulären Tokenablauf; Laptop-Anmeldung, Bestandsübernahme
   und vollständiger Abgleich sind inzwischen belegt, Chrome-Neustart vom Nutzer bestätigt;
-- geprüfte Kaufgruppen-Optimierung auf die private Test-App übertragen und reale
-  Kaufwartezeit beobachten; die langsame Bestandsübernahme bleibt separat zu untersuchen;
+- reale Kaufwartezeit der inzwischen bereitgestellten Kaufgruppen-Optimierung
+  beobachten; die langsame Bestandsübernahme bleibt separat zu untersuchen;
 - persönliche Nachprüfung von Figurenfarben, Auswahl und Erwachsenen-Einstellungen;
 - realer Produktabgleich mit Google Drive auf zwei physischen Geräten;
 - iPhone-/iPad-, Safari- und Home-Bildschirm-Abnahme einschließlich
@@ -234,15 +271,16 @@ keine reale Abnahme des integrierten Produkts.
 Ältere Pausenübergaben und Diagnoseberichte bleiben Belege ihres Datums. Ihre
 damaligen nächsten Schritte gelten nicht als aktuelle Arbeitsanweisung.
 
-## Nächste Schritte nach dem Laptop-Einstieg
+## Nächste Schritte nach ausdrücklicher Fortsetzung
 
 1. Die [Laptop-Übergabe](docs/handoffs/2026-09-28-laptop-fortsetzung.md) lesen.
    Regulären Tokenablauf nachweisen, sobald er tatsächlich eingetreten ist.
    Die erfolgreiche Laptop-Einrichtung, Bestandsübernahme und den bestätigten
    Chrome-Neustart nicht erneut als offen behandeln.
-2. Das geprüfte Kaufpaket `b6b83a9` auf die bestehende private HTTPS-App
-   übertragen und anschließend die tatsächlich verwendete Version sowie reale
-   Kaufwartezeit prüfen. Bereitstellung und Praxistest sind noch nicht erfolgt.
+2. Mit der bereitgestellten Kaufversion `b6b83a9`/v29 einen vom Nutzer gewählten
+   Kauf im [getrennten Teststand mit 1.600 Punkten](docs/KAUFTEST-MIT-TESTPUNKTEN.md)
+   beobachten und dessen reale Wartezeit festhalten. Die Bereitstellung
+   und der kontrollierte Chrome-Updateweg sind bereits belegt.
 3. Die korrigierten Bedienwege mit dem Nutzer nachtesten; besonders
    Figurenfarben, Wiederverbinden im Shop und die Erwachsenen-Einstellungen.
 4. Am bestätigten Bild- und Galeriekonzept ansetzen: 72 übrige Motive und

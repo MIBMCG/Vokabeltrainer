@@ -1,6 +1,6 @@
 # Begrenzte Beschleunigung der Kaufuploads
 
-Stand: 28.09.2026. Ausgangspunkt ist `c4996144afce6287457737bf84289c870cdad222`; geprüfter Produktcommit ist `b6b83a95346d2b2c71a3d3edba35abff88f43047`. Das Produktpaket ist unverändert per Fast-Forward in `codex/vokabeltrainer-v1` übernommen. Ein Deployment oder ein Push des anschließenden Dokumentationsstands ist damit nicht nachgewiesen.
+Stand: 28.09.2026. Ausgangspunkt ist `c4996144afce6287457737bf84289c870cdad222`; geprüfter Produktcommit ist `b6b83a95346d2b2c71a3d3edba35abff88f43047`. Das Produktpaket ist unverändert per Fast-Forward in `codex/vokabeltrainer-v1` übernommen und mit Dokumentationsabschluss `939830c` exakt auf GitHub bestätigt. Die anschließende echte Bereitstellung ist unten getrennt vom Produkttest festgehalten.
 
 ## Problem und Änderung
 
@@ -49,4 +49,28 @@ Die unabhängige Prüfung des eingefrorenen Produktdiffs ergab **Spec PASS und Q
 
 ## Nachweisgrenzen
 
-Die HTTP- und Browserprüfungen verwenden synthetische Google-Antworten und isolierte Browserdaten. Eine tatsächliche Verkürzung der Kaufwartezeit bei Google Drive wurde weder gemessen noch durch diesen Bericht behauptet. Der Produktcommit wurde nicht eigens für dieses Paket bereitgestellt; ein echter Kauf auf der HTTPS-Adresse, regulärer Tokenablauf und die Abnahme auf zwei physischen Geräten sowie iPhone/iPad und Safari bleiben getrennte Nachweise. Der zuvor bestätigte Laptop-Einstieg belegt nicht die Wirkung dieser noch nicht bereitgestellten Änderung.
+Die HTTP- und Browserprüfungen verwenden synthetische Google-Antworten und isolierte Browserdaten. Eine tatsächliche Verkürzung der Kaufwartezeit bei Google Drive wurde weder gemessen noch durch diesen Bericht behauptet. Ein echter Kauf auf der HTTPS-Adresse, regulärer Tokenablauf und die Abnahme auf zwei physischen Geräten sowie iPhone/iPad und Safari bleiben getrennte Nachweise. Der zuvor bestätigte Laptop-Einstieg belegt nicht die Wirkung der Änderung.
+
+## Anschließende private Bereitstellung
+
+Nach erneuter ausdrücklicher Fortsetzung am selben Tag wurde der unveränderte
+Produktstand mit Wrangler 4.142.0 auf die bestehende private App übertragen.
+Probelauf und Upload aus `server/` behielten den Build-Hook und `--keep-vars`.
+Von 161 öffentlichen Dateien wurden genau drei neu hochgeladen:
+`trainer/sw.js` und die beiden Kaufmodule; 158 Dateien wurden wiederverwendet.
+Der Anbieter bestätigt die neue Version
+`494388ba-6838-4604-9369-788a6e60962d` mit 100 Prozent Anteil.
+
+Die Nachprüfung über HTTPS bestätigte für HTML, Serverkonfiguration, Service
+Worker v29, Kaufservice und Kauftransport jeweils HTTP 200 und bytegleiche
+Inhalte zum vorbereiteten Paket. Der unangemeldete Sitzungsabruf liefert
+weiter `connected:false` mit `no-store`; interne Pfade liefern 404.
+Im vorhandenen Chrome-Profil erschien danach der kontrollierte Updatehinweis.
+„Jetzt aktualisieren“ führte wieder zur Profilauswahl. Der Nutzer bestätigt
+die aktive Google-Verbindung ohne neue Anmeldung; anschließend wurden aktive
+Verbindung und vollständiger Abgleich auch direkt in der App beobachtet.
+Ein Kauf wurde mangels bezahlbarem freigegebenem Angebot nicht ausgelöst;
+die günstigere Entwicklungsform benötigt noch ihr Bild. Diese Beobachtungen
+ersetzen weder den echten Kaufversuch noch die getrennte Tokenablaufprüfung.
+Zugang, Grenzen und Fortsetzung stehen in der
+[Laptop-Übergabe](../handoffs/2026-09-28-laptop-fortsetzung.md#bereitstellungsfortsetzung-am-28092026).

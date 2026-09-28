@@ -1,5 +1,15 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
+**Aktuelle Steuerung: Pause nach Abschluss am 28.09.2026.** Nach Bereitstellung
+und bestätigter aktiver Google-Verbindung wünscht der Nutzer für den nächsten
+Kauftest schnell verfügbare Testpunkte und anschließend ausdrücklich Pause.
+Ein separater synthetischer Teststand mit 1.600 Punkten ist geprüft vorbereitet;
+[Anleitung](docs/KAUFTEST-MIT-TESTPUNKTEN.md). Echte Lernprofile, Guthaben und
+Drive-Bestände wurden dafür nicht verändert. Nach Sicherung von
+Testvorbereitung und Übergabe auf GitHub keine weitere Produktarbeit,
+Bereitstellung oder Testsitzung ohne erneute ausdrückliche Fortsetzung.
+Aktueller Einstieg bleibt die [Laptop-Übergabe](docs/handoffs/2026-09-28-laptop-fortsetzung.md).
+
 **Fortsetzung am 28.09.2026 ausdrücklich beauftragt:** Der Nutzer setzt die
 Arbeit mit Superpowers auf dem Laptop fort. Die unten dokumentierte Pause ist
 damit beendet. GitHub und lokaler Entwicklungszweig wurden auf `c499614`
@@ -10,8 +20,14 @@ ohne neue Google-Anmeldung. Regulärer Tokenablauf bleibt offen.
 Die begrenzte Kaufbeschleunigung ist mit Produktcommit `b6b83a9` auf dem
 bestehenden Entwicklungszweig integriert: 591/591 Node-Tests, 12/12 ausgewählte
 Browserfälle und unabhängige Spec-/Qualitätsprüfung PASS. Pro Dreiergruppe
-werden synthetisch 34 statt 54 HTTP-Anfragen benötigt. Die aktualisierte
-Test-App ist noch nicht bereitgestellt; reale Kaufwartezeit bleibt offen.
+werden synthetisch 34 statt 54 HTTP-Anfragen benötigt. Nach erneuter Fortsetzung
+ist die aktualisierte private Test-App als Cache v29 bereitgestellt; aktive
+Worker-Version `494388ba-6838-4604-9369-788a6e60962d`. Die ausgelieferten
+Kaufmodule entsprechen exakt dem geprüften Paket. Kontrolliertes Chrome-Update,
+erhaltene aktive Google-Verbindung und vollständiger Abgleich sind beobachtet.
+Ein echter Kauf konnte mangels bezahlbarem freigegebenem Angebot noch nicht
+geprüft werden; günstigere Entwicklungsbilder fehlen weiterhin. Reale
+Kaufwartezeit und regulärer Tokenablauf bleiben offen.
 Aktueller Verlauf und Nachweisgrenzen:
 [Laptop-Fortsetzung](docs/handoffs/2026-09-28-laptop-fortsetzung.md).
 

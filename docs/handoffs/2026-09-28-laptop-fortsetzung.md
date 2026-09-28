@@ -2,6 +2,13 @@
 
 Stand: **28.09.2026**. Zweig: `codex/vokabeltrainer-v1`.
 
+**Aktuelle Steuerung: Pause nach Sicherung.** Der Nutzer wünscht nach dem
+erfolgreichen Update schnell verfügbares Testguthaben für einen späteren
+Kaufversuch und verlangt anschließend Pause. Ein separater synthetischer
+Teststand mit 1.600 Punkten ist geprüft vorbereitet. Keine Übernahme in den echten Lernbereich
+und keine weitere Testsitzung heute. Nach GitHub-Sicherung auf die nächste
+ausdrückliche Fortsetzung warten.
+
 ## Auftrag und Ausgangspunkt
 
 Der Nutzer hat nach dem GitHub-Abgleich ausdrücklich beauftragt:
@@ -96,9 +103,9 @@ der kontrollierte Updatefall prüft v29 auf eine synthetische v30.
 | --- | --- |
 | Vollständiger Node-Abschlusslauf | 591/591 bestanden; keine Fehler, Abbrüche oder übersprungenen Tests |
 | Ausgewählte Browserfälle | 12/12 bestanden; Kauf, Fehlerwiederaufnahme, Sitzung nach Reload, Offline-Neustart und kontrolliertes Update |
-| Server-Dateipaket | 161 öffentliche Dateien lokal vorbereitet; kein Upload |
+| Server-Dateipaket vor der Bereitstellungsfortsetzung | 161 öffentliche Dateien lokal vorbereitet; zu diesem Zeitpunkt noch kein Upload |
 | Unabhängige Prüfung | Spec PASS, Qualität PASS; keine offenen Codebefunde |
-| Reale Kaufwartezeit der Änderung | Noch nicht gemessen; die laufende HTTPS-App enthält dieses Paket noch nicht |
+| Reale Kaufwartezeit der Änderung | Noch nicht gemessen; zum Zeitpunkt dieses Prüfstands enthielt die HTTPS-App das Paket noch nicht |
 
 Prüfkommandos, Testentwicklung, Anfragezählung und Nachweisgrenzen stehen im
 [Kaufgruppenbericht](../reports/2026-09-28-kaufgruppen.md). Die frühere
@@ -114,27 +121,132 @@ ohne Force-Push auf GitHub gesichert. Die Abschlussmeldung nennt den tatsächlic
 gesicherten Commit nach Vergleich von `git rev-parse HEAD` mit
 `git ls-remote origin refs/heads/codex/vokabeltrainer-v1`.
 
-Der Dokumentationslauf prüft 241 Markdown-Dateien und 939 lokale Verweise
-ohne Fehler; die Diffprüfung bleibt sauber. Eine unabhängige Schlusskontrolle
+Der erste Dokumentationslauf vor der Bereitstellung prüfte 241 Markdown-Dateien
+und 939 lokale Verweise ohne Fehler; die Diffprüfung blieb sauber. Eine unabhängige Schlusskontrolle
 hat veraltete Wiedereinstiege identifiziert; diese sind auf den heutigen
 Laptop- und Kaufstand aktualisiert.
 
 Die private HTTPS-Adresse bleibt die bereits eingerichtete
 [Test-App](https://vokabeltrainer.marco-civico.workers.dev/trainer/).
-Die heutige Änderung wurde noch nicht auf Cloudflare bereitgestellt.
+Die Bereitstellung der heutigen Änderung ist unten gesondert nachgewiesen.
 Git-Sicherung überträgt keine Google-Sitzung und keine lokalen Browserdaten.
 
-## Nächste Schritte und Nachweisgrenzen
+## Bereitstellungsfortsetzung am 28.09.2026
+
+Nach dem GitHub-Abschluss `939830c94895ae791b2b5ad0d01ff375a07a4599` fordert
+der Nutzer erneut „dann machen wir weiter“. Der nächste Schritt ist die
+Bereitstellung des geprüften Kaufpakets auf derselben privaten HTTPS-App.
+GitHub und lokaler Checkout wurden erneut exakt verglichen; der Checkout war
+sauber und der Worker sowie das Staging-Skript sind unverändert.
+
+Auf dem Laptop fehlte erwartungsgemäß die ignorierte Datei
+`server/wrangler.local.jsonc`. Sie wurde aus Vorlage und den öffentlichen
+Betreiberwerten der vorherigen Laptop-Übergabe wiederhergestellt. Bestehende
+D1-Bindung und Client-ID, ausgeschaltete Logs und Vorschauadressen bleiben
+erhalten. Es wurden keine Secrets ausgelesen oder neu erzeugt.
+
+Wrangler 4.142.0 führte aus `server/` den dokumentierten Probelauf
+`deploy --config wrangler.local.jsonc --dry-run --keep-vars` mit Exitcode 0 aus.
+Der aktive Build-Hook erzeugte 161 öffentliche Dateien. Der anschließende
+Dateivergleich fand keine unerwartete Abweichung zum Quellstand; nur die
+vorgesehene Kopie von `config.js` verwendet den Servermodus. Der Produktcache
+im Paket steht auf v29.
+
+Die öffentliche HTTPS-Prüfung **vor** dem Upload bestätigte noch **v28**.
+HTML und Serverkonfiguration stimmen mit dem vorbereiteten Paket überein;
+Service Worker und beide Kaufmodule entsprechen noch dem früheren Stand.
+Der Sitzungsabruf ohne Cookie liefert `connected:false` mit `no-store`.
+Wurzel, interne Worker-Datei, Anforderungsdokument und Git-Konfiguration liefern
+404. Diese Prüfung liest keine persönliche Google-Sitzung.
+
+Die erste Wrangler-Anmeldung des Laptops war noch nicht erfolgreich.
+Zwei OAuth-Versuche scheiterten nach der Browserfreigabe beim
+Codeaustausch mit `/oauth2/token`: HTTP 403, HTML-Bot-Challenge statt JSON.
+Der Nutzer bestätigte denselben Fehler. In diesen Versuchen erfolgte kein
+Upload und keine Änderung an Cloudressourcen, Google-Zugang oder Browserdaten. Der Befund ist
+mit einem [bekannten Cloudflare-Problem](https://github.com/cloudflare/workers-sdk/issues/15723)
+vereinbar; dessen Ursache im konkreten Netzwerk ist nicht weiter bewiesen.
+Als von [Wrangler unterstützte Alternative](https://developers.cloudflare.com/workers/wrangler/commands/general/)
+wurde ein begrenzter API-Token-Zugang vorbereitet. Die Cloudflare-Sicherheitsprüfung
+in Chrome und die verdeckte lokale Geheimniseingabe übernahm der Nutzer selbst.
+Keine globale Proxy- oder TLS-Regel wurde geändert.
+
+Der Nutzer erzeugte einen zeitlich begrenzten API-Token für das bestehende
+Cloudflare-Konto. Die angezeigte Gültigkeit reicht vom 28. bis zum 30.09.2026;
+die Rechte sind auf **Workers Scripts Edit**, **D1 Read** und **Account Settings Read**
+begrenzt. Der Token wurde außerhalb von Git mit Windows-DPAPI verschlüsselt
+gespeichert und nur als Umgebungsvariable des jeweiligen Wrangler-Prozesses
+verwendet. Der Schlüsselwert wurde weder im Chat angezeigt noch in Git oder
+Dokumentation übernommen; persönliche Konto- und Sitzungsdaten stehen nicht
+in diesem Bericht. Vor dem Deploy wurden der Zugang, die vorherige aktive Version
+`45b6cb48-486f-45c1-8afc-4425206af8b6` und ausschließlich die Namen der
+vorhandenen Secrets lesend bestätigt.
+
+Der echte Deploy aus `server/` mit Wrangler 4.142.0, `--keep-vars` und aktivem
+Build-Hook endete mit Exitcode 0. Von 161 öffentlichen Dateien wurden genau
+die drei geänderten Assets `trainer/sw.js`, `src/trainer/purchases/service.js`
+und `src/trainer/purchases/transport.js` neu hochgeladen; 158 blieben
+inhaltsgleich. Die neue aktive Worker-Version
+`494388ba-6838-4604-9369-788a6e60962d` stand laut Deploymentliste zu 100 %
+bereit (Erstellzeit 28.09.2026, 14:57:42 UTC).
+
+Die echte HTTPS-Nachprüfung um 14:58:14 UTC lieferte für `/trainer/` Status 200,
+für den Service Worker Cache `v29`, für die öffentliche Konfiguration den
+Servermodus und für beide Kaufmodule Status 200. Alle fünf geprüften Dateien
+waren byteidentisch mit dem vorbereiteten Paket. `/api/auth/session` lieferte
+ohne Cookie Status 200, `connected:false` und `Cache-Control: no-store`.
+`/`, `/server/worker.js`, `/docs/ANFORDERUNGEN.md` und `/.git/config` blieben
+mit 404 gesperrt. Diese Prüfung verwendete keine persönliche Sitzung.
+
+Im vorhandenen Chrome-Profil erschien nach Neuladen „Neue Programmversion
+verfügbar“. Nach „Jetzt aktualisieren“ kehrte die Profilauswahl zurück.
+Der Nutzer bestätigte anschließend „Google-Verbindung ist aktiv“, ohne erneut
+zu verbinden. Die Erwachsenenansicht zeigte danach auch direkt beobachtet
+„Google-Verbindung ist aktiv“ und „Vollständig abgeglichen“.
+
+Ein echter Kauf wurde nicht ausgelöst: Im vorhandenen Profil war kein
+bezahlbares freigegebenes Kaufangebot verfügbar. Für weitere Shopfiguren fehlte
+Guthaben; die günstigere Entwicklungsform war wegen des noch fehlenden Bildes
+gesperrt. Persönliche Punktestände wurden nicht in den Bericht übernommen und
+nicht für einen Test verändert. Das bekannte offene Bildpaket bleibt Folgeumfang.
+Eine reale Kaufdauer und Zeitersparnis sind weiterhin nicht gemessen.
+
+## Vorbereitete Testpunkte und anschließende Pause
+
+Der Nutzer möchte den Kauf ohne weitere eigene Vokabelrunden testen. Der
+vorhandene Produktvertrag kennt keine manuelle Punktgutschrift: Guthaben
+entsteht aus validierten Antworten und Rundenabschlüssen. Tabellenimport
+übernimmt nur Vokabeln; der Sicherungsimport ersetzt einen ganzen aktiven
+Datensatzstand. Die automatisierte Testfixture darf daher nicht über einen
+echten Familienstand geschrieben werden.
+
+Die [synthetische Sicherung](../../tests/fixtures/purchase-demo-1600.json)
+enthält genau ein Profil „Kauftest“, 1.600 Punkte und Level 9; „Einfacher Drache“
+ist verfügbar. Der [Generator](../../scripts/create-purchase-demo.mjs) erzeugt
+die Punkte über die vorhandenen Produktbefehle: fünf Runden mit insgesamt
+150 richtigen Antworten ergeben 1.500 Antwort- und 100 Rundenpunkte. Seine
+Ausführung und das erneute Einlesen der geschriebenen Datei mit `parseBackup`
+waren erfolgreich. Format v2, 252 Ereignisse, keine Kaufhistorie, PIN oder
+Google-Zugangsdaten; alle Lernereignisse liegen zwischen Februar und Juli 2026.
+
+Die [Anleitung für den getrennten Kauftest](../KAUFTEST-MIT-TESTPUNKTEN.md)
+beschreibt den nächsten Schritt. Der Stand wurde weder in einen Browser
+importiert noch in Drive angelegt. Bestehende Profile und Drive-Bestände wurden
+nicht verändert. Nach Git-Sicherung ist die ausdrücklich verlangte Pause
+einzuhalten. Die heutige Kaufmessung bleibt offen.
+
+## Nächste Schritte nach ausdrücklicher Fortsetzung
 
 1. Regulären Tokenablauf getrennt prüfen, sobald er tatsächlich eingetreten ist.
    Den bestätigten Chrome-Neustart erhalten; kein manipuliertes Token und kein
    Löschen persönlicher Browserdaten. Die nächste Statusrückmeldung soll
    festhalten, ob ohne neuen Google-Klick verbunden und abgeglichen werden kann.
-2. Für den Praxistest der Kaufbeschleunigung den geprüften Produktstand auf
-   derselben privaten Test-App bereitstellen. Dieser Upload ist der nächste
-   konkrete Bereitstellungsschritt, kein in dieser Runde ausgeführter Vorgang.
-   Danach die tatsächlich verwendete App-Version prüfen und die Wartezeit
-   gemeinsam an einem vom Nutzer gewählten Kauf beobachten.
+2. Den vorbereiteten [Teststand mit 1.600 Punkten](../KAUFTEST-MIT-TESTPUNKTEN.md)
+   in einer getrennten Umgebung einrichten und einen vom Nutzer gewählten,
+   bebilderten Kauf mit Cacheversion `v29` gemeinsam prüfen. Kontrolliertes Update
+   und erhaltene Google-Verbindung sind bereits belegt.
+   Die Wartezeit nur bei einem tatsächlich beobachteten Kauf bewerten;
+   die synthetische Anfragezählung ist kein Zeitnachweis.
 3. Den bestätigten Avatar-/Galerieumfang fortsetzen: 72 weitere Motive,
    Produktionsvarianten und vollständige Galerie bleiben Folgeumfang.
 4. Reales Google Drive auf zwei physischen Geräten, iPhone/iPad, Safari und
@@ -142,7 +254,7 @@ Git-Sicherung überträgt keine Google-Sitzung und keine lokalen Browserdaten.
 
 Bestandsübernahme und vollständiger Abgleich sind heute direkt beobachtet;
 der Chrome-Neustart ist vom Nutzer bestätigt. Regulärer Zugriffstokenablauf,
-Kauf über diese HTTPS-Adresse und reale Kaufbeschleunigung bleiben offen.
+Kauf mit der neu bereitgestellten Version und reale Kaufbeschleunigung bleiben offen.
 Dies ist keine vollständige Zwei-Geräte-Abnahme und kein Apple-/Safari-Nachweis.
 
 ## Wiedereinstieg
@@ -151,8 +263,16 @@ Dies ist keine vollständige Zwei-Geräte-Abnahme und kein Apple-/Safari-Nachwei
 > aktuellen Entwicklungszweig und GitHub, ohne vorhandene Arbeit zu verwerfen.
 > Der Laptop hat den vorhandenen Drive-Bestand übernommen; vollständiger Abgleich
 > ist beobachtet und Google bleibt laut Nutzer nach Chrome-Neustart verbunden.
-> Die Kaufgruppen-Optimierung in b6b83a9 ist geprüft und integriert, aber noch
-> nicht bereitgestellt. Vor einem neuen Lauf den aktuellen Bereitstellungsstand
-> prüfen. Keine abgeschlossene Google-Einrichtung oder Kaufimplementierung neu
+> Die Kaufgruppen-Optimierung in b6b83a9 ist geprüft und als private
+> HTTPS-Version `494388ba-6838-4604-9369-788a6e60962d` bereitgestellt.
+> Der Nutzer hat nach Vorbereitung der Testpunkte eine Pause verlangt; mit
+> diesem neuen Auftrag setze ich die Arbeit ausdrücklich fort.
+> Nutze die geprüfte synthetische Sicherung mit 1.600 Punkten gemäß
+> docs/KAUFTEST-MIT-TESTPUNKTEN.md ausschließlich in einer getrennten
+> Testumgebung; den bestehenden Familienlernstand nicht ersetzen.
+> Kontrolliertes Chrome-Update und erhaltene aktive Google-Verbindung sind
+> bereits belegt. Ein Kauf wurde mangels verfügbarem bezahlbaren Angebot nicht
+> ausgelöst; fehlende Entwicklungsbilder und reale Kaufwartezeit bleiben offen.
+> Keine abgeschlossene Google-Einrichtung oder Kaufimplementierung neu
 > beginnen. Reale Token-Erneuerung, Kaufwartezeit und Geräteabnahmen getrennt
 > nachweisen; keine persönlichen Daten in Git aufnehmen.

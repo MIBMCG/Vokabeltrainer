@@ -1,14 +1,23 @@
 # Optionale Serveranmeldung: Vorbereitung und private Einrichtung
 
-Stand: 27.09.2026. Die bestehende lokale Trainer-App bleibt im Browsermodus.
+Aktuelle Fortsetzung: [Laptop- und Bereitstellungsstand vom 28.09.2026](handoffs/2026-09-28-laptop-fortsetzung.md).
+Laptop-Bestandsübernahme und Chrome-Neustart sind inzwischen separat belegt.
+Der erneute Upload des geprüften Kaufpakets ist abgeschlossen: aktive Version
+`494388ba-6838-4604-9369-788a6e60962d`, Cache `v29`. Der echte
+Chrome-Updatepfad und erhaltene Google-Verbindung sind inzwischen bestätigt;
+ein echter Kauf bleibt separat offen. Der alte Pausenauftrag ist
+beendet.
+
+Einrichtungsnachweis: 27.09.2026. Die bestehende lokale Trainer-App bleibt im Browsermodus.
 Dieses Paket bereitet eine zusätzliche Variante mit automatischer
 Google-Wiederaufnahme vor. Die geführte kostenlose Einrichtung für einen
 privaten Test im Freundeskreis ist beauftragt und die App inzwischen unter
 [Vokabeltrainer](https://vokabeltrainer.marco-civico.workers.dev/trainer/)
 bereitgestellt. **Der Nutzer hat Google-Anmeldung und weiterhin aktive
 Verbindung nach F5 bestätigt.** Tokenablauf und weitere Geräte bleiben offen.
-Nach diesem Test ist Pause mit [Laptop-Übergabe](handoffs/2026-09-27-laptop-pause.md)
-beauftragt. Auch der
+Nach diesem Test war zunächst Pause mit der
+[Laptop-Übergabe](handoffs/2026-09-27-laptop-pause.md) beauftragt. Sie endete
+mit der ausdrücklichen Fortsetzung vom 28.09.2026. Auch der
 private Betrieb benötigt eine erreichbare HTTPS-Adresse. Eine öffentliche
 Produktvermarktung, eine Änderung der Repository-Sichtbarkeit oder der Lizenz
 sind damit nicht beauftragt. Vokabeln, Lernstände und Käufe bleiben
@@ -57,12 +66,56 @@ Tarif oder Domain. Maßgeblich sind die jeweils aktuellen Freigrenzen
   F5 weiterhin aktive Verbindung bestätigt. Keine Namen, PINs oder Sitzungswerte
   wurden zur Dokumentation ausgelesen. Dieser Nutzerbericht ist unabhängig von
   den vorherigen unangemeldeten HTTP-Prüfungen.
-- Noch offen: automatische Token-Erneuerung nach Ablauf, Browserneustart,
-  vorhandenen Drive-Lernbereich bewusst auswählen, Zweitgerät und Apple-Abnahme.
-  Diese Tests werden nach der verlangten Pause gemeinsam fortgesetzt.
+- Zum damaligen Stand noch offen waren automatische Token-Erneuerung nach
+  Ablauf, Browserneustart, die Auswahl des vorhandenen Drive-Lernbereichs,
+  Zweitgerät und Apple-Abnahme. Die späteren Laptop-Nachweise stehen in der
+  [aktuellen Übergabe](handoffs/2026-09-28-laptop-fortsetzung.md).
 
 Weitere Einzelheiten und Fehlerbefunde stehen in der
 [Einrichtungsfortsetzung der Übergabe](handoffs/2026-09-27-anmeldung-und-tempo.md#fortsetzung-der-geführten-privaten-einrichtung-am-27092026).
+
+## Bereitstellung des Kaufpakets am 28.09.2026
+
+Der Produktstand `b6b83a95346d2b2c71a3d3edba35abff88f43047` wurde nach
+bestandener lokaler Prüfung auf derselben privaten Adresse bereitgestellt.
+Ein Dry-run aus `server/` mit Wrangler 4.142.0, `--keep-vars` und aktivem
+Build-Hook bestand. Das Staging enthielt 161 erlaubte öffentliche Dateien;
+die Quellkonfiguration blieb im Browsermodus und nur ihre Stagingkopie wurde
+auf Servermodus geschaltet.
+
+Zwei zuvor versuchte interaktive Wrangler-Anmeldungen scheiterten beim
+Codeaustausch mit `dash.cloudflare.com/oauth2/token` an HTTP 403. Die
+Cloudflare-Sicherheitsprüfung in Chrome erledigte der Nutzer selbst. Für den
+anschließenden Deploy erzeugte und verwendete er einen auf das bestehende
+Konto begrenzten API-Token mit **Workers Scripts Edit**, **D1 Read** und
+**Account Settings Read**. Laut angezeigter Zusammenfassung gilt er vom
+28. bis 30.09.2026. Der Wert wurde nur verdeckt lokal eingegeben, außerhalb
+von Git mit Windows-DPAPI verschlüsselt und pro Werkzeugprozess als
+Umgebungsvariable verwendet. Es wurden weder Tokenwert noch Secret-Werte
+gelesen oder dokumentiert. Zugang, vorige aktive Version und vorhandene
+Secret-Namen wurden vor dem Upload lesend geprüft.
+
+Der echte Wrangler-Deploy aus `server/` mit `--keep-vars` und Build-Hook endete
+mit Exitcode 0: genau drei neue Assets (`trainer/sw.js`,
+`src/trainer/purchases/service.js`, `src/trainer/purchases/transport.js`) und
+158 inhaltsgleiche Assets. Die neue Version
+`494388ba-6838-4604-9369-788a6e60962d` wurde am 28.09.2026 um
+14:57:42 UTC erstellt und in der Deploymentliste zu 100 % als aktiv angezeigt.
+
+Die HTTPS-Nachprüfung um 14:58:14 UTC ergab Status 200 für `/trainer/`,
+Cache `v29` im Service Worker, Servermodus in `/src/trainer/config.js` und
+Status 200 für beide Kaufmodule. Alle fünf geprüften Dateien waren
+byteidentisch mit dem Staging. `/api/auth/session` antwortete ohne Cookie mit
+Status 200, `connected:false` und `Cache-Control: no-store`.
+`/`, `/server/worker.js`, `/docs/ANFORDERUNGEN.md` und `/.git/config`
+lieferten 404. Die Prüfung nutzte keine persönliche Sitzung und beweist
+keinen echten Kauf oder eine kürzere Kaufdauer. Anschließend wurde in Chrome
+der kontrollierte Updatehinweis angenommen; die Profilauswahl erschien wieder.
+Die aktive Google-Verbindung ist nach dem Update vom Nutzer bestätigt und
+zusammen mit „Vollständig abgeglichen“ direkt in der Erwachsenenansicht
+beobachtet. Ein Kauf wurde mangels verfügbarem bezahlbaren Angebot nicht
+ausgelöst; fehlende Entwicklungsbilder sind bekannter Folgeumfang.
+Tokenablauf, reale Kaufwartezeit, Zweitgerät und Apple-Abnahme bleiben offen.
 
 ## Lokal vorbereiten und prüfen
 
