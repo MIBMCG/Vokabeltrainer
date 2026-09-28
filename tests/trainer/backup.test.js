@@ -2,11 +2,75 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {exportBackup, parseBackup, previewBackup} from '../../src/trainer/backup/format.js';
 import {createFixture} from './fixtures.js';
-import {planSnapshotUploads,uploadVerified,readSnapshot} from '../../src/trainer/backup/transport.js';
+import {planSnapshotUploads,uploadVerified,readSnapshot,readVerifiedFile} from '../../src/trainer/backup/transport.js';
 import {snapshotHash} from '../../src/trainer/backup/format.js';
 import {SyntheticDrive} from './backup-fixtures.js';
 
 const time = '2026-09-18T10:00:00.000Z';
+
+function snapshotReader({revision = 'revision-a', mutateOnRead = () => {}} = {}) {
+  const drive = new SyntheticDrive();
+  const binding = {accountId: 'account-a', folderId: 'folder', datasetId: 'd1'};
+  const value = {id: 'epoch-a'};
+  drive.addJson({id: 'file-a', parentId: binding.folderId,
+    appProperties: {app: 'vokabeltrainer-product', kind: 'epoch', datasetId: binding.datasetId, epochId: value.id}, value});
+  if (revision !== null) drive.files.get('file-a').meta.headRevisionId = revision;
+  drive.onRead = async () => mutateOnRead(drive.files.get('file-a'));
+  return {drive, binding, value, read: () => readVerifiedFile(drive, 'file-a', binding, 'epoch')};
+}
+
+test('snapshot read accepts metadata version drift with a stable content revision', async () => {
+  const fixture = snapshotReader({mutateOnRead: (file) => { file.meta.version = '2'; }});
+  assert.deepEqual(await fixture.read(), fixture.value);
+});
+
+test('snapshot read rejects changed or removed content revisions', async (t) => {
+  for (const [name, change] of [
+    ['changed', (file) => { file.meta.headRevisionId = 'revision-b'; }],
+    ['removed', (file) => { delete file.meta.headRevisionId; }],
+  ]) await t.test(name, async () => {
+    const fixture = snapshotReader({mutateOnRead: change});
+    await assert.rejects(fixture.read(), {code: 'stale'});
+  });
+});
+
+test('snapshot read keeps strict version comparison without a content revision', async () => {
+  const fixture = snapshotReader({revision: null, mutateOnRead: (file) => { file.meta.version = '2'; }});
+  await assert.rejects(fixture.read(), {code: 'stale'});
+});
+
+test('snapshot read keeps strict version comparison with a malformed content revision', async () => {
+  const fixture = snapshotReader({revision: '', mutateOnRead: (file) => { file.meta.version = '2'; }});
+  await assert.rejects(fixture.read(), {code: 'stale'});
+});
+
+test('snapshot read rejects changed binding metadata despite a stable content revision', async () => {
+  const fixture = snapshotReader({mutateOnRead: (file) => { file.meta.appProperties.datasetId = 'other-dataset'; }});
+  await assert.rejects(fixture.read(), {code: 'stale'});
+});
+
+test('snapshot read rejects unknown metadata drift despite a stable content revision', async () => {
+  const fixture = snapshotReader({mutateOnRead: (file) => { file.meta.unexpectedField = 'changed'; }});
+  await assert.rejects(fixture.read(), {code: 'stale'});
+});
+
+test('snapshot upload rejects changed content despite a stable content revision', async () => {
+  const drive = new SyntheticDrive();
+  const binding = {accountId: 'account-a', folderId: 'folder', datasetId: 'd1'};
+  drive.onMetadata = async (id) => {
+    const file = drive.files.get(id);
+    file.meta.headRevisionId = 'revision-a';
+    return structuredClone(file.meta);
+  };
+  drive.onRead = async (id) => {
+    const file = drive.files.get(id);
+    file.value.other = 2;
+    file.meta.version = '2';
+  };
+  await assert.rejects(uploadVerified(drive, binding, {
+    fileId: 'file-a', kind: 'epoch', value: {id: 'epoch-a', other: 1},
+  }), {code: 'collision'});
+});
 test('portable backup includes pending facts but excludes all local transport and credentials', async () => {
   const f = createFixture();
   const ledger = f.withEvents(f.roundStarted, f.answer({id:'pending-answer'}));

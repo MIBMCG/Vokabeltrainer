@@ -130,6 +130,28 @@ test('accepts an optional decimal Drive version and rejects malformed values', a
   await assert.rejects(client.metadata('file-a'), expectDriveError('invalid'));
 });
 
+test('requests and validates an optional binary content revision without cached reads', async () => {
+  const requests = [];
+  const values = [
+    jsonMetadata({headRevisionId: 'revision-a'}),
+    jsonMetadata({headRevisionId: ''}),
+  ];
+  const client = createDriveClient({
+    getToken: () => 'token-a',
+    fetchImpl: async (url, init) => {
+      requests.push({url: new URL(url), init});
+      return new URL(url).searchParams.get('alt') === 'media'
+        ? Response.json({id: 'epoch-a'})
+        : Response.json(values.shift());
+    },
+  });
+  assert.equal((await client.metadata('file-a')).headRevisionId, 'revision-a');
+  assert.deepEqual(await client.readJson('file-a'), {id: 'epoch-a'});
+  await assert.rejects(client.metadata('file-a'), expectDriveError('invalid'));
+  assert.match(requests[0].url.searchParams.get('fields'), /headRevisionId/);
+  assert.equal(requests.every(({init}) => init.cache === 'no-store'), true);
+});
+
 test('rejects incomplete or malformed search pages instead of returning partial data', async () => {
   const incomplete = createDriveClient({
     getToken: () => 'token-a',

@@ -1,7 +1,7 @@
 const DRIVE_API_ORIGIN = 'https://www.googleapis.com';
 const DRIVE_API_ROOT = `${DRIVE_API_ORIGIN}/drive/v3`;
 const DRIVE_UPLOAD_ROOT = `${DRIVE_API_ORIGIN}/upload/drive/v3`;
-const METADATA_FIELDS = 'id,name,mimeType,parents,appProperties,trashed,version';
+const METADATA_FIELDS = 'id,name,mimeType,parents,appProperties,trashed,version,headRevisionId';
 const FOLDER_MIME_TYPE = 'application/vnd.google-apps.folder';
 const JSON_MIME_TYPE = 'application/json';
 const SAFE_ID = /^[A-Za-z0-9_-]+$/;
@@ -62,6 +62,10 @@ function validateMetadata(value) {
   if (value.version !== undefined
     && (typeof value.version !== 'string' || !/^(?:0|[1-9][0-9]*)$/.test(value.version))) {
     throw invalid('Die Drive-Dateiversion ist ungültig.');
+  }
+  if (value.headRevisionId !== undefined
+    && (typeof value.headRevisionId !== 'string' || value.headRevisionId.trim() === '')) {
+    throw invalid('Die Drive-Inhaltsrevision ist ungültig.');
   }
   return value;
 }
@@ -241,13 +245,13 @@ export function createDriveClient({getToken, fetchImpl = globalThis.fetch} = {})
   async function metadata(id) {
     assertId(id);
     const url = buildUrl(DRIVE_API_ROOT, `files/${encodeURIComponent(id)}`, {fields: METADATA_FIELDS});
-    return validateMetadata(await parseJsonResponse(await request(url)));
+    return validateMetadata(await parseJsonResponse(await request(url, {cache: 'no-store'})));
   }
 
   async function readJson(id) {
     assertId(id);
     const url = buildUrl(DRIVE_API_ROOT, `files/${encodeURIComponent(id)}`, {alt: 'media'});
-    const value = await parseJsonResponse(await request(url));
+    const value = await parseJsonResponse(await request(url, {cache: 'no-store'}));
     ensureJsonValue(value);
     return value;
   }

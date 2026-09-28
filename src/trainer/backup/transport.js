@@ -59,12 +59,21 @@ export function assertTransportMetadata(meta,binding,kind) {
     || meta.appProperties?.app!==APP || meta.appProperties.kind!==kind
     || meta.appProperties.datasetId!==binding.datasetId) fail('binding','Die Sicherungsdatei gehört nicht zum verbundenen Ordner.');
 }
+function comparableMetadata(before,after) {
+  const sameContentRevision=typeof before.headRevisionId==='string' && before.headRevisionId.trim()!==''
+    && before.headRevisionId===after.headRevisionId;
+  if(!sameContentRevision)return [before,after];
+  const {version: _beforeVersion,...stableBefore}=before;
+  const {version: _afterVersion,...stableAfter}=after;
+  return [stableBefore,stableAfter];
+}
 export async function readVerifiedFile(drive,fileId,binding,kind) {
   if(typeof fileId!=='string' || !/^[A-Za-z0-9_-]{1,128}$/.test(fileId))fail('invalid','Die Sicherungsdatei-ID ist ungültig.');
   const before=await drive.metadata(fileId);assertTransportMetadata(before,binding,kind);
   if(before.id!==fileId)fail('binding','Die gelesene Sicherungsdatei hat eine andere ID.');
   const value=await drive.readJson(fileId),after=await drive.metadata(fileId);
-  if(await digest(before)!==await digest(after))fail('stale','Eine Sicherungsdatei wurde während des Lesens geändert.');
+  const [stableBefore,stableAfter]=comparableMetadata(before,after);
+  if(await digest(stableBefore)!==await digest(stableAfter))fail('stale','Eine Sicherungsdatei wurde während des Lesens geändert.');
   if(kind==='epoch' ? before.appProperties.epochId!==value?.id : before.appProperties.snapshotId!==value?.snapshotId) {
     fail('binding','Inhalt und Drive-Kennung der Sicherungsdatei widersprechen sich.');
   }
