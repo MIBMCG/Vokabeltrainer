@@ -88,7 +88,7 @@ test('only approved dragon stages are visually available while base figure art s
     accounts: {p1: {
       profileId: 'p1', earnedPoints: 4000, spentPoints: 0, availablePoints: 4000,
       purchasedArticleIds: [], entitledFigureIds: ['dragon', 'explorer-girl'],
-      entitledEvolutionIds: ['evolution:dragon:1'],
+      entitledEvolutionIds: ['evolution:dragon:1', 'evolution:explorer-girl:1'],
     }},
   };
 
@@ -101,7 +101,35 @@ test('only approved dragon stages are visually available while base figure art s
   view.selection = [{profileId: 'p1', figureId: 'explorer-girl', stage: 1}];
   const pendingArt = purchaseProfileModel({view, profileId: 'p1', online: true});
   assert.equal(pendingArt.forms.length, 4);
-  assert.equal(pendingArt.forms.every(({artAvailable, action}) => !artAvailable && action === 'unavailable'), true);
+  assert.equal(pendingArt.forms[0].artAvailable, true);
+  assert.equal(pendingArt.forms[0].action, 'select');
+  assert.equal(pendingArt.forms.slice(1).every(({artAvailable, action}) => !artAvailable && action === 'unavailable'), true);
+});
+
+test('gallery offer uses the viewed figure, caps progress, and reports the highest stage', () => {
+  const view = {
+    mode: 'active', jobs: [], selection: [{profileId: 'p1', figureId: 'dragon', stage: 1}],
+    accounts: {p1: {
+      earnedPoints: 50, availablePoints: 50,
+      entitledFigureIds: ['dragon', 'explorer-girl'],
+      entitledEvolutionIds: ['evolution:dragon:1', 'evolution:explorer-girl:1'],
+    }},
+  };
+  const saving = purchaseProfileModel({view, profileId: 'p1', figureId: 'dragon', online: true});
+  assert.equal(saving.offer.nextStage, 2);
+  assert.equal(saving.offer.price, 200);
+  assert.equal(saving.offer.missingPoints, 150);
+  assert.equal(saving.offer.progress, 0.25);
+  view.accounts.p1.availablePoints = 900;
+  assert.equal(purchaseProfileModel({view, profileId: 'p1', online: true}).offer.progress, 1);
+  view.accounts.p1.entitledEvolutionIds.push('evolution:dragon:2', 'evolution:dragon:3', 'evolution:dragon:4');
+  assert.equal(purchaseProfileModel({view, profileId: 'p1', online: true}).offer.status, 'complete');
+  const human = purchaseProfileModel({view, profileId: 'p1', figureId: 'explorer-girl', online: true});
+  assert.equal(human.forms[1].action, 'unavailable');
+  assert.equal(human.forms[1].previousOwned, true);
+  assert.equal(human.offer.nextStage, 2);
+  view.accounts.p1.entitledEvolutionIds.push('evolution:explorer-girl:2');
+  assert.equal(purchaseProfileModel({view, profileId: 'p1', figureId: 'explorer-girl', online: true}).forms[2].previousOwned, true);
 });
 
 test('restore preview derives its economy after preparation has synchronized the current state', async () => {

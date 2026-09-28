@@ -2,9 +2,10 @@ import {rewardState} from '../learning/rewards.js';
 import {figureById} from '../avatar/catalog.js';
 import {avatarParts, resolveAvatarDisplay} from '../avatar/display.js';
 import {figurePicture} from '../avatar/art.js';
+import {evolutionPicture} from '../avatar/evolution-art.js';
 import {avatarPicture, picture} from './art.js';
 import {el} from './dom.js';
-import {evolutionArt, renderPurchases} from './purchases.js';
+import {renderPurchases} from './purchases.js';
 
 export {avatarParts};
 
@@ -68,17 +69,14 @@ function illustration(asset, symbol, className) {
 }
 
 function evolvedPicture(display, {className = '', sizes = '256px'} = {}) {
-  const source = evolutionArt(display.figureId, display.stage);
-  if (source === null) return null;
+  const art = evolutionPicture(display.figureId, display.stage, {alt: '', sizes});
+  if (art === null) return null;
   const host = el('div', {attrs: {
     class: ['avatar-evolution-display', className].filter(Boolean).join(' '),
     role: 'img', 'aria-label': `${figureById(display.figureId)?.name ?? 'Figur'} – Stufe ${display.stage}`,
     'data-figure-id': display.figureId, 'data-stage': String(display.stage), 'data-complete': 'true',
   }});
-  host.append(el('img', {attrs: {
-    src: source, alt: '', loading: 'eager', decoding: 'async', sizes,
-    width: '1536', height: '1536',
-  }}));
+  host.append(art);
   return host;
 }
 
@@ -343,7 +341,7 @@ export function renderAvatar({root, state: productState, profile, profileId, com
     ]),
     commerceHost,
     selectedAppearance,
-    el('details', {attrs: {class: 'classic-avatar', open: ui.classicOpen ?? display.kind === 'classic'}}, [
+    display.kind === 'classic' ? el('details', {attrs: {class: 'classic-avatar', open: ui.classicOpen ?? true}}, [
       el('summary', {attrs: {id: 'classic-avatar-title'}}, [
         el('strong', {text: 'Klassischen Avatar gestalten'}),
         el('span', {text: allEquipmentUnlocked
@@ -358,11 +356,11 @@ export function renderAvatar({root, state: productState, profile, profileId, com
       ]),
       el('section', {attrs: {class: 'avatar-customizer'}}, [notice, classicForm]),
       ]),
-    ]),
+    ]) : null,
   ]));
   const classicDetails = root.querySelector('.classic-avatar');
-  let lastClassicOpen = classicDetails.open;
-  classicDetails.addEventListener('toggle', () => {
+  let lastClassicOpen = classicDetails?.open;
+  classicDetails?.addEventListener('toggle', () => {
     if (classicDetails.isConnected && classicDetails.open !== lastClassicOpen) {
       lastClassicOpen = classicDetails.open;
       ui.classicOpen = classicDetails.open;

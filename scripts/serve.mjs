@@ -94,6 +94,8 @@ const ASSETS = new Map([
   ['/src/trainer/purchases/transport.js', ['src/trainer/purchases/transport.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/avatar/catalog.js', ['src/trainer/avatar/catalog.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/avatar/evolution.js', ['src/trainer/avatar/evolution.js', 'text/javascript; charset=utf-8']],
+  ['/src/trainer/avatar/evolution-art.js', ['src/trainer/avatar/evolution-art.js', 'text/javascript; charset=utf-8']],
+  ['/src/trainer/avatar/evolution-art-manifest.js', ['src/trainer/avatar/evolution-art-manifest.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/avatar/display.js', ['src/trainer/avatar/display.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/avatar/art.js', ['src/trainer/avatar/art.js', 'text/javascript; charset=utf-8']],
   ['/src/trainer/avatar/art-manifest.js', ['src/trainer/avatar/art-manifest.js', 'text/javascript; charset=utf-8']],
@@ -133,6 +135,10 @@ const ASSETS = new Map([
     `/trainer/assets/avatar-evolution/dragon-stage-${stage}.png`,
     [`trainer/assets/avatar-evolution/dragon-stage-${stage}.png`, 'image/png'],
   ]),
+  ...[1, 2, 3, 4].flatMap((stage) => [256, 512, 768].map((width) => [
+    `/trainer/assets/avatar-evolution/dragon-stage-${stage}-${width}.webp`,
+    [`trainer/assets/avatar-evolution/dragon-stage-${stage}-${width}.webp`, 'image/webp'],
+  ])),
 ]);
 
 export function publicAssetFiles() {

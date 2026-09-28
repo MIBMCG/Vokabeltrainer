@@ -1,6 +1,6 @@
 # Quellen der Avatar-Entwicklungsformen
 
-Diese Dateien sind große PNG-Quellen für die spätere Bildausgabe, noch keine ausgelieferten App-Bilder. Auswahl und Prüfung der ersten Drachenreihe:
+Diese Dateien sind die unveränderten großen PNG-Quellen der Bildausgabe. Auswahl und Prüfung der ersten Drachenreihe:
 
 | Formkennung | Ausgewählte Quelle |
 | --- | --- |
@@ -11,4 +11,14 @@ Diese Dateien sind große PNG-Quellen für die spätere Bildausgabe, noch keine 
 
 Die gleichnamigen JSON-Dateien dokumentieren Prompt, Referenz, Prüfsumme und Auswahlstatus. Dateien mit `superseded-source-candidate` sind erhaltene frühere Versuche und dürfen nicht als ausgewählte Produktionsquelle verwendet werden.
 
-Der [Umsetzungsbericht](../../reports/2026-09-20-avatar-evolution-foundation.md) und die [unabhängige Bildprüfung](../../reports/2026-09-20-avatar-evolution-art-review.md) trennen technische Prüfung, bestätigte Stilrichtung und noch offene Darstellung im Produkt. Vier von 76 geplanten Motiven sind vorbereitet; die übrigen 72 und die auflösungsabhängigen WebP-Ausgaben stehen noch aus.
+Der [historische Grundlagenbericht](../../reports/2026-09-20-avatar-evolution-foundation.md) und die [unabhängige Bildprüfung](../../reports/2026-09-20-avatar-evolution-art-review.md) dokumentieren die bestätigte Stilrichtung. Vier von 76 geplanten Motiven liegen vor; die übrigen 72 bleiben offen.
+
+Die vier Quellen wurden am 28.09.2026 in transparente WebPs mit 256, 512 und
+768 Pixeln Breite abgeleitet, ohne Vergrößerung oder Motivänderung. Das
+[Buildskript](../../../scripts/build-evolution-art.mjs) prüft den ausgewählten
+Quellstatus und die Prüfsumme. Es benötigt Sharp nur beim Bauen; `SHARP_MODULE`
+kann auf eine vorhandene Sharp-Installation zeigen. Danach erzeugt
+`node scripts/build-evolution-art.mjs` die Bilder, das Laufzeitmanifest und den
+[Größen-/Hashbericht](../../../trainer/assets/avatar-evolution/build-report.json).
+Der [Galeriebericht](../../reports/2026-09-28-entwicklungsgalerie.md) hält
+Integration, Tests und tatsächliche Bereitstellung getrennt fest.

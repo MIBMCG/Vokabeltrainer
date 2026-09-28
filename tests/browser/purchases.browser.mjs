@@ -384,30 +384,46 @@ test('earned points buy through the real service and survive reopen, offline use
     await page.getByRole('button', {name: 'Zur Profilauswahl'}).click();
     await page.getByRole('button', {name: /Ada/}).first().click();
     await page.getByRole('button', {name: 'Mein Avatar'}).click();
-    await page.getByRole('button', {name: 'Entwicklung'}).click();
-    const buyStage2 = page.getByRole('button', {name: 'Für 200 Punkte freischalten'});
+    await page.getByRole('button', {name: 'Entwicklung', exact: true}).click();
+    assert.equal(await page.locator('.evolution-card').count(), 4);
+    assert.match(await page.locator('.evolution-summary').innerText(), /Nächste Form: Stufe 2.*Preis: 200 Punkte/);
+    assert.match(await page.locator('.evolution-summary').innerText(), /Verfügbar: 1600 Punkte.*Noch 0 Punkte fehlen/);
+    assert.equal(await page.locator('.evolution-progress').getAttribute('aria-valuenow'), '100');
+    await page.screenshot({path: resolve(resultsDirectory, 'desktop-evolution.png'), fullPage: true});
+    const buyStage2 = page.getByRole('button', {name: 'Für 200 Punkte entwickeln'});
     try { await buyStage2.click({timeout: 10_000}); } catch (error) {
       error.message += `\nVisible page:\n${await page.locator('body').innerText()}\nCommerce:${JSON.stringify((await productState(page)).commerce)}`;
       throw error;
     }
+    assert.equal(await page.locator('.purchase-dialog .evolution-art img').count(), 1);
     await page.getByRole('button', {name: 'Kauf verbindlich bestätigen'}).click();
     await page.getByText('Der Kauf ist bestätigt.', {exact: true}).waitFor({timeout: 30_000});
+    await page.getByRole('heading', {name: 'Freigeschaltet'}).waitFor();
+    assert.equal(await page.getByRole('button', {name: 'Jetzt auswählen'}).count(), 1);
+    assert.equal((await productState(page)).commerce.selection.length, 0);
+    await page.keyboard.press('Escape');
+    await page.locator('.purchase-dialog').waitFor({state: 'detached'});
     assert.equal(await page.evaluate(() => document.activeElement?.isConnected === true), true);
     assert.equal(await page.evaluate(() => document.activeElement?.closest('.commerce-tabs') !== null), true);
     assert.match(await page.locator('.commerce-balance').innerText(), /1400 Verfügbare Punkte/);
     assert.equal(project((await productState(page)).ledger).profiles[earned.profileId].points, 1600);
     await page.locator('[data-stage="2"]').getByRole('button', {name: 'Diese Form auswählen'}).click();
     await page.locator('[data-stage="2"]').getByRole('button', {name: 'Ausgewählt'}).waitFor({timeout: 5_000});
+    assert.equal(await page.locator('.classic-avatar').count(), 0);
     assert.equal(await page.evaluate(() => document.activeElement?.isConnected === true), true);
     assert.equal(await page.evaluate(() => document.activeElement?.closest('.commerce-tabs') !== null), true);
     await page.getByRole('button', {name: 'Meine Figur', exact: true}).click();
-    await page.locator('[data-selected-purchase-figure] img[src$="dragon-stage-2.png"]').waitFor();
+    await page.locator('[data-selected-purchase-figure] img[src*="dragon-stage-2"]').waitFor();
     const dragonCard = page.locator('.commerce-card').filter({
       has: page.getByRole('heading', {name: 'Einfacher Drache', exact: true}),
     });
     const selectBaseDragon = dragonCard.getByRole('button', {name: 'Grundform auswählen'});
     await selectBaseDragon.waitFor();
     assert.equal(await selectBaseDragon.isEnabled(), true);
+    await dragonCard.getByRole('button', {name: 'Entwicklung ansehen'}).click();
+    await page.locator('[data-stage="2"] button:disabled').waitFor();
+    assert.equal((await productState(page)).commerce.selection[0].stage, 2);
+    await page.getByRole('button', {name: 'Meine Figur', exact: true}).click();
     await page.screenshot({path: resolve(resultsDirectory, 'desktop-owned.png'), fullPage: true});
     await page.locator('[data-selected-purchase-figure]').screenshot({path: resolve(resultsDirectory, 'desktop-selected-figure.png')});
 
@@ -416,9 +432,13 @@ test('earned points buy through the real service and survive reopen, offline use
     await reopened.goto(harness.baseUrl);
     await reopened.getByRole('button', {name: /Ada/}).first().click();
     await reopened.getByRole('button', {name: 'Mein Avatar'}).click();
-    await reopened.getByRole('button', {name: 'Entwicklung'}).click();
+    await reopened.getByRole('button', {name: 'Entwicklung', exact: true}).click();
     await reopened.getByRole('button', {name: 'Diese Form auswählen'}).waitFor();
     assert.match(await reopened.locator('.commerce-balance').innerText(), /1400 Verfügbare Punkte/);
+    await reopened.getByRole('button', {name: 'Meine Figur', exact: true}).click();
+    await reopened.getByRole('button', {name: 'Klassisch auswählen'}).click();
+    await reopened.locator('.classic-avatar').waitFor();
+    await reopened.getByRole('button', {name: 'Entwicklung', exact: true}).click();
 
     await openAdultSettings(reopened);
     await reopened.getByRole('button', {name: 'Mit Google verbinden'}).click();
@@ -426,9 +446,9 @@ test('earned points buy through the real service and survive reopen, offline use
     await reopened.getByRole('button', {name: 'Zur Profilauswahl'}).click();
     await reopened.getByRole('button', {name: /Ada/}).first().click();
     await reopened.getByRole('button', {name: 'Mein Avatar'}).click();
-    await reopened.getByRole('button', {name: 'Entwicklung'}).click();
+    await reopened.getByRole('button', {name: 'Entwicklung', exact: true}).click();
 
-    await reopened.getByRole('button', {name: 'Für 400 Punkte freischalten'}).click();
+    await reopened.getByRole('button', {name: 'Für 400 Punkte entwickeln'}).click();
     await reopened.getByRole('button', {name: 'Kauf verbindlich bestätigen'}).waitFor();
     const beforeStale = (await productState(reopened)).ledger.events.length;
     await reopened.locator('input[name="skin"]').nth(1).evaluate((input) => {
@@ -446,7 +466,7 @@ test('earned points buy through the real service and survive reopen, offline use
     await waitForOutbox(reopened, 0);
 
     controls.loseNextPointerResponse = true;
-    await reopened.getByRole('button', {name: 'Für 400 Punkte freischalten'}).click();
+    await reopened.getByRole('button', {name: 'Für 400 Punkte entwickeln'}).click();
     await reopened.getByRole('button', {name: 'Kauf verbindlich bestätigen'}).click();
     await reopened.getByText(/Ausgang ist noch unbekannt/).waitFor({timeout: 30_000});
     await reopened.getByRole('button', {name: 'Kauf fortsetzen'}).click();
@@ -456,10 +476,13 @@ test('earned points buy through the real service and survive reopen, offline use
     await reopened.locator('[data-stage="3"]').getByRole('button', {name: 'Ausgewählt'}).waitFor({timeout: 5_000});
     assert.equal(await reopened.evaluate(() => document.activeElement?.isConnected === true), true);
     await reopened.getByRole('button', {name: 'Meine Figur', exact: true}).click();
-    await reopened.locator('[data-selected-purchase-figure] img[src$="dragon-stage-3.png"]').waitFor();
+    await reopened.locator('[data-selected-purchase-figure] img[src*="dragon-stage-3"]').waitFor();
 
     await reopened.setViewportSize({width: 390, height: 844});
     assert.equal(await reopened.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+    await reopened.getByRole('button', {name: 'Entwicklung', exact: true}).click();
+    await reopened.screenshot({path: resolve(resultsDirectory, 'mobile-evolution.png'), fullPage: true});
+    await reopened.getByRole('button', {name: 'Meine Figur', exact: true}).click();
     await reopened.screenshot({path: resolve(resultsDirectory, 'mobile-owned.png'), fullPage: true});
     await reopened.locator('[data-selected-purchase-figure]').screenshot({path: resolve(resultsDirectory, 'mobile-selected-figure.png')});
     controls.offline = true;
@@ -471,8 +494,8 @@ test('earned points buy through the real service and survive reopen, offline use
     if (!await reopened.getByRole('heading', {name: 'Mein Avatar'}).count()) {
       await reopened.getByRole('button', {name: 'Mein Avatar'}).click();
     }
-    await reopened.locator('[data-selected-purchase-figure] img[src$="dragon-stage-3.png"]').waitFor();
-    await reopened.getByRole('button', {name: 'Entwicklung'}).click();
+    await reopened.locator('[data-selected-purchase-figure] img[src*="dragon-stage-3"]').waitFor();
+    await reopened.getByRole('button', {name: 'Entwicklung', exact: true}).click();
     await reopened.locator('[data-stage="3"]').getByRole('button', {name: 'Ausgewählt'}).waitFor();
     const offlineBuy = reopened.getByRole('button', {name: 'Offline – Kauf nicht möglich'});
     await offlineBuy.waitFor();
@@ -481,9 +504,51 @@ test('earned points buy through the real service and survive reopen, offline use
     await reopened.getByRole('button', {name: 'Profil wechseln'}).click();
     await reopened.getByRole('button', {name: /Ben/}).first().click();
     await reopened.getByRole('button', {name: 'Mein Avatar'}).click();
-    await reopened.getByRole('button', {name: 'Entwicklung'}).click();
+    await reopened.getByRole('button', {name: 'Entwicklung', exact: true}).click();
     assert.match(await reopened.locator('.commerce-balance').innerText(), /0 Verfügbare Punkte/);
-    assert.equal(await reopened.getByRole('button', {name: 'Diese Form auswählen'}).count(), 0);
+    assert.equal(await reopened.locator('[data-stage="2"]').getByRole('button', {name: 'Diese Form auswählen'}).count(), 0);
+    assert.match(await reopened.locator('.evolution-summary').innerText(), /Noch 200 Punkte fehlen/);
+  } finally {
+    await harness.close();
+  }
+});
+
+test('failed selection after confirmed purchase stays visible in the dialog', {timeout: 60_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page} = await harness.newDevice();
+  try {
+    await page.goto(harness.baseUrl);
+    await page.evaluate(async () => {
+      const {renderPurchases} = await import('/src/trainer/ui/purchases.js');
+      const root = document.createElement('div');
+      root.id = 'synthetic-purchase-ui';
+      document.body.append(root);
+      const view = {
+        mode: 'active', jobs: [], selection: [],
+        accounts: {p1: {
+          earnedPoints: 200, availablePoints: 200,
+          entitledFigureIds: ['dragon'], entitledEvolutionIds: ['evolution:dragon:1'],
+        }},
+      };
+      const commerce = {
+        isConnected: () => true,
+        getView: async () => view,
+        preview: async () => ({price: 200, availablePoints: 200}),
+        confirm: async () => { view.accounts.p1.entitledEvolutionIds.push('evolution:dragon:2'); },
+        select: async () => { throw new Error('Auswahlprobe fehlgeschlagen'); },
+      };
+      renderPurchases({root, profileId: 'p1', commerce, online: true});
+    });
+    const ui = page.locator('#synthetic-purchase-ui');
+    await ui.getByRole('button', {name: 'Entwicklung', exact: true}).click();
+    await ui.getByRole('button', {name: 'Für 200 Punkte entwickeln'}).click();
+    await page.getByRole('button', {name: 'Kauf verbindlich bestätigen'}).click();
+    await page.getByRole('heading', {name: 'Freigeschaltet'}).waitFor();
+    await page.getByRole('button', {name: 'Jetzt auswählen'}).click();
+    await page.locator('.purchase-dialog').getByText('Die Auswahl konnte noch nicht gespeichert werden.', {exact: false}).waitFor();
+    assert.equal(await page.getByRole('button', {name: 'Jetzt auswählen'}).isEnabled(), true);
+    await page.keyboard.press('Escape');
+    await page.locator('.purchase-dialog').waitFor({state: 'detached'});
   } finally {
     await harness.close();
   }

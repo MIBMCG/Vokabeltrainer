@@ -1,17 +1,13 @@
 import {FIGURES} from '../avatar/catalog.js';
-import {EVOLUTION_FORMS} from '../avatar/evolution.js';
+import {EVOLUTION_FORMS, evolutionOffer} from '../avatar/evolution.js';
+import {evolutionArt, evolutionPicture as artPicture} from '../avatar/evolution-art.js';
 import {figurePicture} from '../avatar/art.js';
 import {project} from '../learning/progress.js';
 import {readHistory, replayHistory} from '../purchases/history.js';
 import {rebuildAccounts} from '../purchases/projection.js';
 import {el, button, message} from './dom.js';
 
-const DRAGON_ART = Object.freeze(new Map([
-  [1, '../../../trainer/assets/avatar-evolution/dragon-stage-1.png'],
-  [2, '../../../trainer/assets/avatar-evolution/dragon-stage-2.png'],
-  [3, '../../../trainer/assets/avatar-evolution/dragon-stage-3.png'],
-  [4, '../../../trainer/assets/avatar-evolution/dragon-stage-4.png'],
-]));
+export {evolutionArt};
 
 export function activationPreviewModel(state) {
   const learning = project(state.ledger);
@@ -41,24 +37,18 @@ function pendingPurchase(view, profileId) {
   };
 }
 
-export function evolutionArt(figureId, stage) {
-  if (figureId !== 'dragon') return null;
-  const path = DRAGON_ART.get(stage);
-  return path ? new URL(path, import.meta.url).href : null;
-}
-
-export function purchaseProfileModel({view, profileId, online, authenticated = true}) {
+export function purchaseProfileModel({view, profileId, figureId = null, online, authenticated = true}) {
   const account = view.accounts?.[profileId] ?? null;
   if (!account) return null;
   const pending = pendingPurchase(view, profileId);
   const selection = view.selection.find((entry) => entry.profileId === profileId) ?? null;
-  const selectedFigureId = selection?.figureId
+  const selectedFigureId = figureId ?? selection?.figureId
     ?? (account.entitledFigureIds.includes('dragon') ? 'dragon' : account.entitledFigureIds[0]);
   const forms = EVOLUTION_FORMS.filter(({figureId}) => figureId === selectedFigureId).map((form) => {
     const owned = account.entitledEvolutionIds.includes(form.id);
     const previousOwned = form.stage === 1
-      || account.entitledEvolutionIds.includes(`evolution:dragon:${form.stage - 1}`);
-    const artAvailable = evolutionArt(form.figureId, form.stage) !== null;
+      || account.entitledEvolutionIds.includes(`evolution:${form.figureId}:${form.stage - 1}`);
+    const artAvailable = form.stage === 1 || evolutionArt(form.figureId, form.stage) !== null;
     let action = 'locked';
     if (!artAvailable) action = 'unavailable';
     else if (owned) action = 'select';
@@ -70,11 +60,15 @@ export function purchaseProfileModel({view, profileId, online, authenticated = t
     else if (account.availablePoints < form.price) action = 'saving';
     else if (!authenticated) action = 'reauth';
     else action = 'buy';
-    return {...form, owned, artAvailable, artUrl: evolutionArt(form.figureId, form.stage), action};
+    return {...form, owned, previousOwned, artAvailable, artUrl: evolutionArt(form.figureId, form.stage), action};
   });
   const selected = selection
-    ? forms.find(({figureId, stage}) => figureId === selection.figureId && stage === selection.stage) ?? null
+    ? EVOLUTION_FORMS.find(({figureId, stage}) => figureId === selection.figureId && stage === selection.stage) ?? null
     : null;
+  const highestOwnedStage = Math.max(0, ...EVOLUTION_FORMS
+    .filter((form) => form.figureId === selectedFigureId && account.entitledEvolutionIds.includes(form.id))
+    .map(({stage}) => stage));
+  const offer = evolutionOffer({figureId: selectedFigureId, highestOwnedStage, availablePoints: account.availablePoints});
   const shop = FIGURES.filter(({unlock}) => unlock.kind === 'shop').map((figure) => {
     const owned = account.entitledFigureIds.includes(figure.id);
     let action = owned ? 'select' : !online ? 'offline'
@@ -89,6 +83,8 @@ export function purchaseProfileModel({view, profileId, online, authenticated = t
     levelPoints: account.earnedPoints,
     pending,
     selected,
+    viewedFigureId: selectedFigureId,
+    offer,
     forms,
     shop,
   });
@@ -141,7 +137,7 @@ function uiState(root) {
   const owner = root.closest?.('#app') ?? root;
   if (!stateByOwner.has(owner)) stateByOwner.set(owner, {
     tab: 'mine', view: null, busy: false, notice: '', tone: 'info', activationPreview: null,
-    authRequired: false, progress: '', dialogOpen: false,
+    authRequired: false, progress: '', dialogOpen: false, viewedFigureId: null,
   });
   return stateByOwner.get(owner);
 }
@@ -169,15 +165,18 @@ function figureCard(figure, controls = []) {
   ]);
 }
 
-function evolutionPicture(form) {
-  if (!form.artAvailable) return el('div', {attrs: {class: 'evolution-placeholder', role: 'img', 'aria-label': 'Bild folgt'}}, [
+function formPicture(form, {sizes = '(max-width: 600px) 42vw, 180px', appearance = null} = {}) {
+  if (evolutionArt(form.figureId, form.stage) === null && form.stage === 1) {
+    return figurePicture({figureId: form.figureId, skin: appearance?.skin,
+      clothing: appearance?.clothing, equipment: {}}, {sizes});
+  }
+  if (evolutionArt(form.figureId, form.stage) === null) return el('div', {attrs: {class: 'evolution-placeholder', role: 'img', 'aria-label': 'Bild folgt'}}, [
     el('span', {text: 'Bild folgt'}),
   ]);
-  const image = el('img', {attrs: {
-    src: form.artUrl, alt: `Drache Entwicklungsstufe ${form.stage}`, loading: 'eager',
-    width: '1536', height: '1536', class: 'evolution-image',
-  }});
-  return el('picture', {attrs: {class: 'evolution-art'}}, [image]);
+  return artPicture(form.figureId, form.stage, {
+    alt: `${FIGURES.find(({id}) => id === form.figureId)?.name ?? 'Figur'} – Stufe ${form.stage}`,
+    className: 'evolution-image', sizes,
+  });
 }
 
 function purchaseActionLabel(entry) {
@@ -187,13 +186,15 @@ function purchaseActionLabel(entry) {
   if (entry.action === 'saving') return `Noch ${entry.price - entry.availablePoints} Punkte sammeln`;
   if (entry.action === 'locked') return 'Vorherige Stufe fehlt';
   if (entry.action === 'unavailable') return 'Bild noch nicht verfügbar';
-  return `Für ${entry.price} Punkte freischalten`;
+  return entry.stage ? `Für ${entry.price} Punkte entwickeln` : `Für ${entry.price} Punkte freischalten`;
 }
 
-function purchaseDialog({preview, name, onConfirm, trigger, onComplete}) {
+function purchaseDialog({preview, entry, onConfirm, onSelect, trigger, onComplete}) {
   const dialog = el('dialog', {attrs: {class: 'purchase-dialog', 'aria-labelledby': 'purchase-dialog-title'}}, [
     el('h2', {text: 'Kauf prüfen', attrs: {id: 'purchase-dialog-title'}}),
-    el('p', {text: name}),
+    entry.figureId && entry.stage ? formPicture(entry, {sizes: '(max-width: 600px) 70vw, 256px'})
+      : entry.unlock ? figurePicture({figureId: entry.id, equipment: {}}, {sizes: '256px'}) : null,
+    el('p', {text: entry.name}),
     el('dl', {attrs: {class: 'summary-list'}}, [
       el('dt', {text: 'Preis'}), el('dd', {text: `${preview.price} Punkte`}),
       el('dt', {text: 'Danach verfügbar'}), el('dd', {text: `${preview.availablePoints - preview.price} Punkte`}),
@@ -201,6 +202,7 @@ function purchaseDialog({preview, name, onConfirm, trigger, onComplete}) {
     el('p', {text: 'Ausgeben verändert dein Level nicht.'}),
   ]);
   let confirming = false;
+  let selecting = false;
   let finished = false;
   let feedback = null;
   const finish = () => {
@@ -211,7 +213,7 @@ function purchaseDialog({preview, name, onConfirm, trigger, onComplete}) {
     if (trigger?.isConnected) trigger.focus();
   };
   dialog.addEventListener('cancel', (event) => {
-    if (confirming) event.preventDefault();
+    if (confirming || selecting) event.preventDefault();
   });
   dialog.addEventListener('close', finish);
   const cancel = button('Abbrechen', () => {
@@ -227,7 +229,29 @@ function purchaseDialog({preview, name, onConfirm, trigger, onComplete}) {
     feedback = message('Kauf wird abgeschlossen …');
     dialog.append(feedback);
     try {
-      await onConfirm(); dialog.close(); finish();
+      const confirmed = await onConfirm();
+      if (!confirmed) { dialog.close(); finish(); return; }
+      confirming = false;
+      dialog.replaceChildren(
+        el('h2', {text: 'Freigeschaltet', attrs: {id: 'purchase-dialog-title'}}),
+        el('p', {text: `${entry.name} gehört jetzt dir.`}),
+      );
+      const select = button('Jetzt auswählen', async () => {
+        if (selecting) return;
+        selecting = true;
+        select.disabled = true;
+        try {
+          if (await onSelect()) { dialog.close(); finish(); }
+          else {
+            dialog.append(message('Die Auswahl konnte noch nicht gespeichert werden. Bitte versuche es erneut oder wähle die Form später aus.', 'error'));
+            select.disabled = false;
+          }
+        } finally { selecting = false; }
+      }, {class: 'primary'});
+      dialog.append(el('div', {attrs: {class: 'dialog-actions'}}, [
+        select, button('Später auswählen', () => { dialog.close(); finish(); }, {class: 'secondary'}),
+      ]));
+      select.focus();
     }
     catch (error) {
       confirming = false;
@@ -238,8 +262,23 @@ function purchaseDialog({preview, name, onConfirm, trigger, onComplete}) {
       dialog.append(feedback);
     }
   }, {class: 'primary'});
+  const previewImage = dialog.querySelector('.evolution-art img');
+  if (previewImage) {
+    confirm.disabled = !(previewImage.complete && previewImage.naturalWidth > 0);
+    previewImage.addEventListener('load', () => {
+      if (!confirming && previewImage.naturalWidth > 0) {
+        confirm.disabled = false;
+        if (document.activeElement === cancel) confirm.focus();
+      }
+    });
+    dialog.addEventListener('evolution-art-unavailable', () => {
+      confirm.disabled = true;
+      dialog.append(message('Bild gerade nicht verfügbar. Dieser Kauf kann noch nicht bestätigt werden.', 'error'));
+    });
+  }
   dialog.append(el('div', {attrs: {class: 'dialog-actions'}}, [confirm, cancel]));
-  document.body.append(dialog); dialog.showModal(); confirm.focus();
+  document.body.append(dialog); dialog.showModal();
+  (confirm.disabled ? cancel : confirm).focus();
 }
 
 export function renderPurchases({
@@ -250,6 +289,10 @@ export function renderPurchases({
   if (ui.purchaseRoot !== root) {
     ui.purchaseRoot = root;
     ui.view = null;
+  }
+  if (ui.profileId !== profileId) {
+    ui.profileId = profileId;
+    ui.viewedFigureId = null;
   }
   const rerender = (options) => rerenderCurrentPurchase(ui, options);
   const authenticated = commerce.isConnected?.() ?? true;
@@ -297,7 +340,7 @@ export function renderPurchases({
     section.append(message('Die Daten für Figuren und Käufe werden im Erwachsenenbereich eingerichtet. Dein klassischer Avatar bleibt verfügbar.'));
     root.replaceChildren(section); return;
   }
-  const model = purchaseProfileModel({view: ui.view, profileId, online, authenticated});
+  const model = purchaseProfileModel({view: ui.view, profileId, figureId: ui.viewedFigureId, online, authenticated});
   if (!model) {
     section.append(message('Für dieses Lernprofil ist noch kein bestätigtes Punktekonto vorhanden.', 'error'));
     root.replaceChildren(section); return;
@@ -316,8 +359,8 @@ export function renderPurchases({
   }
   if (model.pending) section.append(message('Kauf wird geprüft. Sobald der Kauf bestätigt ist, gehört die Figur dir.'));
 
-  const run = async (action, success = '', {rethrowCodes = [], progress = 'Änderung wird verarbeitet …'} = {}) => {
-    if (ui.busy) return;
+  const run = async (action, success = '', {rethrowCodes = [], progress = 'Änderung wird verarbeitet …', refreshShell = false} = {}) => {
+    if (ui.busy) return false;
     ui.busy = true;
     ui.progress = progress;
     rerender();
@@ -325,6 +368,8 @@ export function renderPurchases({
       await action();
       ui.view = await commerce.getView();
       ui.notice = success; ui.tone = 'info';
+      if (refreshShell) onRefresh?.();
+      return true;
     } catch (error) {
       try { ui.view = await commerce.getView(); } catch {}
       if (rethrowCodes.includes(error?.code)) throw error;
@@ -335,7 +380,8 @@ export function renderPurchases({
           : error?.message || 'Die Aktion konnte noch nicht abgeschlossen werden.';
         ui.tone = error?.code === 'network' || error?.code === 'pending' ? 'info' : 'error';
       }
-    } finally { ui.busy = false; ui.progress = ''; rerender({focus: true}); }
+      return false;
+    } finally { ui.busy = false; ui.progress = ''; rerender({focus: !ui.dialogOpen}); }
   };
   const buy = async (entry, trigger) => {
     if (ui.busy || ui.dialogOpen) return;
@@ -350,10 +396,13 @@ export function renderPurchases({
     try {
       const preview = await commerce.preview({profileId, articleId: entry.id});
       ui.dialogOpen = true;
-      purchaseDialog({preview, name: entry.name, trigger, onComplete: () => {
+      purchaseDialog({preview, entry, trigger, onComplete: () => {
         ui.dialogOpen = false;
         rerender({focus: true});
-      }, onConfirm: () => run(
+      }, onSelect: () => run(
+        () => commerce.select({profileId, figureId: entry.figureId ?? entry.id, stage: entry.stage ?? 1}),
+        `${entry.name} wurde ausgewählt.`, {refreshShell: true},
+      ), onConfirm: () => run(
         () => commerce.confirm(preview), 'Der Kauf ist bestätigt.',
         {rethrowCodes: ['stale'], progress: 'Kauf wird bestätigt …'},
       )});
@@ -373,8 +422,8 @@ export function renderPurchases({
   if (ui.tab === 'mine') {
     if (model.selected) {
       const selectedFigure = FIGURES.find(({id}) => id === model.selected.figureId);
-      const selectedPicture = model.selected.figureId === 'dragon'
-        ? evolutionPicture(model.selected)
+      const selectedPicture = evolutionArt(model.selected.figureId, model.selected.stage)
+        ? formPicture(model.selected, {sizes: '(max-width: 600px) 70vw, 320px'})
         : figurePicture({
           figureId: model.selected.figureId,
           skin: appearance?.skin,
@@ -401,15 +450,50 @@ export function renderPurchases({
     for (const figureId of ui.view.accounts[profileId].entitledFigureIds) {
       const figure = FIGURES.find(({id}) => id === figureId);
       if (!figure) continue;
-      const selected = model.selected?.figureId === figureId && model.selected.stage === 1;
-      grid.append(figureCard(figure, [
-        el('p', {text: selected ? 'Ausgewählt' : 'Freigeschaltet', attrs: {class: 'status-chip'}}),
-        button(selected ? 'Ausgewählt' : 'Grundform auswählen', () => run(
-          () => commerce.select({profileId, figureId, stage: 1}), `${figure.name} wurde ausgewählt.`,
-        ), {class: 'secondary', disabled: selected || ui.busy}),
-      ]));
+      for (const form of EVOLUTION_FORMS.filter((candidate) =>
+        candidate.figureId === figureId && ui.view.accounts[profileId].entitledEvolutionIds.includes(candidate.id))) {
+        const selected = model.selected?.figureId === figureId && model.selected.stage === form.stage;
+        const picture = evolutionArt(figureId, form.stage)
+          ? formPicture(form)
+          : form.stage === 1 ? figurePicture({figureId, skin: appearance?.skin, clothing: appearance?.clothing, equipment: {}},
+            {sizes: '(max-width: 600px) 42vw, 180px'}) : formPicture(form);
+        grid.append(el('article', {attrs: {class: 'commerce-card owned-form-card', 'data-owned-stage': String(form.stage)}}, [
+          picture,
+          el('h3', {text: form.stage === 1 ? figure.name : `${figure.name} – Stufe ${form.stage}`}),
+          el('p', {text: selected ? 'Ausgewählt' : 'Gehört dir', attrs: {class: 'status-chip'}}),
+          button(selected ? 'Ausgewählt' : form.stage === 1 ? 'Grundform auswählen' : 'Diese Form auswählen', () => run(
+            () => commerce.select({profileId, figureId, stage: form.stage}), `${figure.name} wurde ausgewählt.`,
+            {refreshShell: true},
+          ), {class: 'secondary', disabled: selected || ui.busy}),
+          form.stage === 1 ? button('Entwicklung ansehen', () => {
+            ui.viewedFigureId = figureId; ui.tab = 'evolution'; rerender({focus: true});
+          }, {class: 'secondary'}) : null,
+        ]));
+      }
     }
   } else if (ui.tab === 'evolution') {
+    const offer = model.offer;
+    const nextForm = model.forms.find(({stage}) => stage === offer.nextStage);
+    const summary = el('section', {attrs: {class: 'evolution-summary', 'aria-label': 'Fortschritt zur nächsten Form'}}, [
+      el('h2', {text: `${FIGURES.find(({id}) => id === model.viewedFigureId)?.name ?? 'Figur'} entwickeln`}),
+      offer.status === 'complete'
+        ? el('p', {text: 'Höchste Stufe erreicht'})
+        : offer.status === 'base-locked'
+          ? el('p', {text: 'Zuerst die Grundfigur freischalten.'})
+          : el('div', {attrs: {class: 'evolution-next'}}, [
+            nextForm?.artAvailable ? formPicture(nextForm, {sizes: '(max-width: 600px) 35vw, 160px'}) : null,
+            el('div', {}, [
+              el('p', {text: `Nächste Form: Stufe ${offer.nextStage} · Preis: ${offer.price} Punkte`}),
+              el('p', {text: `Verfügbar: ${model.availablePoints} Punkte · Noch ${offer.missingPoints} Punkte fehlen`}),
+              el('div', {attrs: {class: 'evolution-progress', role: 'progressbar',
+                'aria-label': 'Fortschritt zur nächsten Form', 'aria-valuemin': '0',
+                'aria-valuemax': '100', 'aria-valuenow': String(Math.round(offer.progress * 100))}}, [
+                el('span', {attrs: {class: 'evolution-progress-fill', style: `width:${offer.progress * 100}%`}}),
+              ]),
+            ]),
+          ]),
+    ]);
+    section.append(summary);
     for (const form of model.forms) {
       const figureName = FIGURES.find(({id}) => id === form.figureId)?.name ?? 'Figur';
       const entry = {...form, name: `${figureName} – Stufe ${form.stage}`, availablePoints: model.availablePoints};
@@ -425,10 +509,18 @@ export function renderPurchases({
           disabled: !['buy', 'resume', 'reauth'].includes(form.action) || ui.busy || ui.dialogOpen
             || (form.action === 'reauth' && typeof onReconnect !== 'function'),
         });
-      grid.append(el('article', {attrs: {class: 'commerce-card evolution-card', 'data-stage': String(form.stage)}}, [
-        evolutionPicture(form), el('h3', {text: entry.name}),
+      const card = el('article', {attrs: {class: 'commerce-card evolution-card', 'data-stage': String(form.stage)}}, [
+        formPicture(form, {appearance}), el('h3', {text: entry.name}),
+        el('p', {text: form.owned ? 'Gehört dir' : 'Noch gesperrt', attrs: {class: 'status-chip'}}),
         el('p', {text: form.stage === 1 ? 'Grundform' : `${form.price} Punkte`}), action,
-      ]));
+      ]);
+      card.addEventListener('evolution-art-unavailable', () => {
+        if (form.action === 'buy') {
+          action.disabled = true;
+          action.textContent = 'Bild gerade nicht verfügbar';
+        }
+      });
+      grid.append(card);
     }
   } else {
     for (const figure of model.shop) {
