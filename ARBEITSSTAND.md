@@ -1,14 +1,58 @@
 # Arbeitsstand
 
-Stand: **27.09.2026**. Arbeitszweig:
+## Fortsetzung auf dem Laptop am 28.09.2026
+
+Der Nutzer hat die Weiterarbeit mit Superpowers ausdrücklich beauftragt.
+Die Pause vom 27.09. ist beendet. Der saubere lokale Entwicklungszweig
+`codex/vokabeltrainer-v1` wurde von `5a434bf` per Fast-Forward auf `c499614`
+aktualisiert und exakt mit GitHub verglichen. Die aktuellen Einstiegstexte,
+Anforderungen, Architektur und Laptop-Übergabe sind gelesen.
+
+In Chrome wurde die bereitgestellte HTTPS-App geöffnet. Der Laptop zeigte
+die Ersteinrichtung. Mit synthetischen Angaben und einer allein vom Nutzer
+eingegebenen PIN wurde die lokale Einrichtung abgeschlossen. Anschließend
+bestätigte der Nutzer die Google-Anmeldung und Rückkehr zum Trainer. Die App
+zeigte eine aktive Google-Verbindung und fand vorhandene Lernbereiche. Der
+Nutzer wählte den weiterzuverwendenden Bestand. Nach dessen Vorschau mit
+Erhalt des lokalen Teststands als Sicherheitskopie wurde dieser Bestand
+übernommen. Anschließend waren „Vollständig abgeglichen“ und die aktive
+Google-Verbindung sichtbar. Keine neue Cloudfamilie wurde angelegt.
+Der Nutzer bestätigt anschließend: Nach vollständigem Beenden und Neustarten
+von Chrome ist die Google-Verbindung ohne neuen Anmeldeklick aktiv. Dieser
+Neustartnachweis beruht auf seiner Rückmeldung; der reguläre Ablauf eines
+Zugriffstokens ist dadurch nicht nachgewiesen.
+Die begrenzte Kaufbeschleunigung ist fertig und als Produktcommit
+`b6b83a95346d2b2c71a3d3edba35abff88f43047` unverändert per Fast-Forward in
+`codex/vokabeltrainer-v1` integriert. Die kurzlebige gemeinsame Prüfung für
+höchstens drei gespeicherte Kaufdateien reduziert in der HTTP-Fixture 54 auf
+34 Anfragen. Konto-/Sitzungsbindung, Datei-Nachlesen, Wiederaufnahme und frische
+Kopfprüfung bleiben erhalten. Cachekennung: v29.
+
+Abschlussnachweise auf exakt diesem Produktstand: **591/591 Node-Tests**,
+**12/12 ausgewählte Browserfälle** einschließlich Kauf/Recovery sowie echtem
+Offline-/Updatepfad, **161 öffentliche Dateien** lokal vorbereitet und
+unabhängiges **Spec/Qualität PASS ohne offene Befunde**. Die zwölf Browserfälle
+sind eine gezielte aktuelle Auswahl; die frühere Gesamtsuite mit 58 Fällen
+wurde nicht vollständig neu ausgeführt. Es gab keinen neuen Upload zur
+laufenden HTTPS-App und noch keine Messung der realen Kaufwartezeit.
+Details und Prüfkommandos: [Kaufgruppenbericht](docs/reports/2026-09-28-kaufgruppen.md).
+
+Der Dokumentationsabschluss folgt auf dem bestehenden Entwicklungszweig und
+wird nach Verweis-/Diffprüfung auf GitHub gesichert. Sein Commit und der exakte
+Remotevergleich werden in der Abschlussmeldung genannt. Aktueller Einstieg:
+[Laptop-Fortsetzung](docs/handoffs/2026-09-28-laptop-fortsetzung.md).
+
+## Historischer Stand vom 27.09.2026
+
+Damals verwendeter Arbeitszweig:
 `codex/vokabeltrainer-v1`.
 
-## Pause und Laptop-Übergabe
+### Pause und Laptop-Übergabe
 
-**Aktueller Auftrag: nach dem ersten realen Anmeldetest sichern und pausieren.**
+**Damals beauftragt: nach dem ersten realen Anmeldetest sichern und pausieren.**
 Der Nutzer bestätigt am 27.09.2026: HTTPS-App eingerichtet, über Google
 angemeldet, zum Trainer zurückgekehrt und nach F5 weiterhin verbunden.
-Die [Laptop-Pausenübergabe](docs/handoffs/2026-09-27-laptop-pause.md) ist jetzt
+Die [Laptop-Pausenübergabe](docs/handoffs/2026-09-27-laptop-pause.md) war damals
 der maßgebliche Einstieg. Sie trennt diesen Nutzerbericht von früheren
 automatisierten Nachweisen und enthält Start, Konfiguration, Konzepte und offene
 Arbeit. Tokenablauf, Browserneustart, Auswahl des vorhandenen Drive-Bestands
@@ -20,7 +64,7 @@ Ausgangspunkt dieser reinen Dokumentationssicherung ist `6493590` auf
 Übergabe folgt auf demselben Zweig. Push und exakter Remote-Vergleich erfolgen
 nach den Dokumentationsprüfungen; keine persönlichen Daten werden übernommen.
 
-## Aktuelle Nachbesserung aus dem Nutzertest
+## Nachbesserung aus dem Nutzertest vom 27.09.2026
 
 Der Nutzer bestätigt inzwischen: **Der Kauf funktioniert**, dauert aber noch
 zu lange. Vorrang hat jetzt die automatische Google-Anmeldung nach Neuladen
@@ -159,13 +203,12 @@ Galeriegestaltung mit weiter ausgebautem Klassisch-/Entwicklungswechsel und
 zusätzlicher Fortschrittsdarstellung bleibt Folgeumfang. Daraus darf keine
 vollständige EV05-Galerie oder visuelle Abnahme abgeleitet werden.
 
-## Noch offen
+## Noch offen am 28.09.2026
 
-- Wiederaufnahme über Tokenablauf und Browserneustart sowie Laptop-Test der
-  Servervariante; Anmeldung und F5 sind am 27.09.2026 vom Nutzer bestätigt;
-- vorhandenen Google-Lernbereich an der neuen HTTPS-Adresse bewusst auswählen
-  und den sicheren Bestandsweg nachweisen;
-- weitere Beschleunigung von Kauf und Abgleich, anschließend reale Laufzeitprüfung;
+- Wiederaufnahme über regulären Tokenablauf; Laptop-Anmeldung, Bestandsübernahme
+  und vollständiger Abgleich sind inzwischen belegt, Chrome-Neustart vom Nutzer bestätigt;
+- geprüfte Kaufgruppen-Optimierung auf die private Test-App übertragen und reale
+  Kaufwartezeit beobachten; die langsame Bestandsübernahme bleibt separat zu untersuchen;
 - persönliche Nachprüfung von Figurenfarben, Auswahl und Erwachsenen-Einstellungen;
 - realer Produktabgleich mit Google Drive auf zwei physischen Geräten;
 - iPhone-/iPad-, Safari- und Home-Bildschirm-Abnahme einschließlich
@@ -191,15 +234,15 @@ keine reale Abnahme des integrierten Produkts.
 Ältere Pausenübergaben und Diagnoseberichte bleiben Belege ihres Datums. Ihre
 damaligen nächsten Schritte gelten nicht als aktuelle Arbeitsanweisung.
 
-## Nächster Schritt nach ausdrücklicher Fortsetzung
+## Nächste Schritte nach dem Laptop-Einstieg
 
-1. Die [Laptop-Übergabe](docs/handoffs/2026-09-27-laptop-pause.md) lesen. Den
-   Laptop-Einstieg und vorhandenen Drive-Bestand gemeinsam prüfen, danach
-   Tokenablauf und Browserneustart. Bestehende Cloudflare-Ressourcen erhalten;
-   die Einrichtung und den erfolgreichen F5-Test nicht als offen neu beginnen.
-2. Den in der Übergabe beschriebenen begrenzten Kauf-Optimierungsvorschlag als
-   nächstes Codepaket konkretisieren, umsetzen und prüfen; Kontobindung und
-   Kaufprüfungen erhalten. Keine erneute pauschale Startfreigabe verlangen.
+1. Die [Laptop-Übergabe](docs/handoffs/2026-09-28-laptop-fortsetzung.md) lesen.
+   Regulären Tokenablauf nachweisen, sobald er tatsächlich eingetreten ist.
+   Die erfolgreiche Laptop-Einrichtung, Bestandsübernahme und den bestätigten
+   Chrome-Neustart nicht erneut als offen behandeln.
+2. Das geprüfte Kaufpaket `b6b83a9` auf die bestehende private HTTPS-App
+   übertragen und anschließend die tatsächlich verwendete Version sowie reale
+   Kaufwartezeit prüfen. Bereitstellung und Praxistest sind noch nicht erfolgt.
 3. Die korrigierten Bedienwege mit dem Nutzer nachtesten; besonders
    Figurenfarben, Wiederverbinden im Shop und die Erwachsenen-Einstellungen.
 4. Am bestätigten Bild- und Galeriekonzept ansetzen: 72 übrige Motive und
@@ -213,4 +256,4 @@ damaligen nächsten Schritte gelten nicht als aktuelle Arbeitsanweisung.
 Keine weitere allgemeine Startfreigabe verlangen. Merge nach `main`, Hosting,
 Cloudkontenänderungen und reale Geräteabnahme sind durch den Abschluss dieses
 Kaufpakets nicht automatisch autorisiert. Einstieg über die
-[aktuelle Laptop-Übergabe](docs/handoffs/2026-09-27-laptop-pause.md).
+[aktuelle Laptop-Übergabe](docs/handoffs/2026-09-28-laptop-fortsetzung.md).

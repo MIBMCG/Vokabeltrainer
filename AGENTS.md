@@ -1,15 +1,31 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-**Aktuelle Steuerung: Pause nach Nutzertest am 27.09.2026.** Der Nutzer bestätigt
+**Fortsetzung am 28.09.2026 ausdrücklich beauftragt:** Der Nutzer setzt die
+Arbeit mit Superpowers auf dem Laptop fort. Die unten dokumentierte Pause ist
+damit beendet. GitHub und lokaler Entwicklungszweig wurden auf `c499614`
+abgeglichen. Google-Anmeldung, bewusste Auswahl des vorhandenen Drive-Bestands
+und anschließender Status „Vollständig abgeglichen“ sind am Laptop beobachtet.
+Der Nutzer bestätigt die aktive Verbindung nach vollständigem Chrome-Neustart
+ohne neue Google-Anmeldung. Regulärer Tokenablauf bleibt offen.
+Die begrenzte Kaufbeschleunigung ist mit Produktcommit `b6b83a9` auf dem
+bestehenden Entwicklungszweig integriert: 591/591 Node-Tests, 12/12 ausgewählte
+Browserfälle und unabhängige Spec-/Qualitätsprüfung PASS. Pro Dreiergruppe
+werden synthetisch 34 statt 54 HTTP-Anfragen benötigt. Die aktualisierte
+Test-App ist noch nicht bereitgestellt; reale Kaufwartezeit bleibt offen.
+Aktueller Verlauf und Nachweisgrenzen:
+[Laptop-Fortsetzung](docs/handoffs/2026-09-28-laptop-fortsetzung.md).
+
+**Historischer Pausenauftrag nach Nutzertest am 27.09.2026.** Der Nutzer bestätigt
 die echte Google-Anmeldung an der bereitgestellten HTTPS-App und eine weiterhin
 aktive Verbindung nach F5. Anschließend verlangt er Sicherung auf GitHub und
 eine vollständige Laptop-Übergabe, danach Pause. Nur diese Abschlussdokumentation
 und Git-Sicherung durchführen; keine weiteren Produktarbeiten oder Testsitzungen
 ohne neue ausdrückliche Fortsetzung. Einstieg ist die
 [Laptop-Pausenübergabe](docs/handoffs/2026-09-27-laptop-pause.md).
-Tokenablauf, Browserneustart, Bestandsübernahme und Zweitgerät bleiben offen.
+Damals waren Tokenablauf, Browserneustart, Bestandsübernahme und Zweitgerät offen;
+der aktuelle Nachweisstand vom 28.09. steht oben.
 
-**Aktuelle Fortsetzung am 27.09.2026:** Vorrang hat die automatische Anmeldung.
+**Vorherige Fortsetzung am 27.09.2026:** Vorrang hatte die automatische Anmeldung.
 Nutzerantwort A bestätigte zunächst die lokale Vorbereitung einer kostenlosen
 Cloudflare-Servervariante; Google Drive bleibt Datenspeicher. Anschließend hat
 der Nutzer den gemeinsamen schrittweisen Anbietertest beauftragt. Worker und

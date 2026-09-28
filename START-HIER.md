@@ -1,18 +1,26 @@
 # Hier mit der Weiterarbeit beginnen
 
-Stand: **27.09.2026**.
+**Fortsetzung am 28.09.2026:** Der Nutzer hat die Weiterarbeit mit Superpowers
+ausdrücklich beauftragt. Die Pause vom Vortag ist beendet.
+Aktueller Einstieg: [Laptop-Fortsetzung](docs/handoffs/2026-09-28-laptop-fortsetzung.md).
 
-**Pause nach dem erfolgreichen ersten Anmeldetest.** Der Nutzer hat die
-bereitgestellte HTTPS-App eingerichtet, sich bei Google angemeldet und nach
-F5 bestätigt: Die Verbindung ist weiterhin aktiv. Das ist ein realer, vom
-Nutzer berichteter Nachweis für Anmeldung und Reload in diesem Browser;
-Tokenablauf, Browserneustart, vorhandener Drive-Bestand und Zweitgerät sind
-damit noch nicht geprüft. Keine weiteren Produktarbeiten bis zur ausdrücklichen
-Fortsetzung. Beauftragt sind nur noch Sicherung und Laptop-Übergabe.
+Stand: **28.09.2026**.
 
-Zuerst die [aktuelle Laptop-Übergabe](docs/handoffs/2026-09-27-laptop-pause.md)
-lesen. Sie enthält den Teststand, die Cloudflare-Einrichtung, Startschritte,
-offene Aufgaben, Konzeptverweise und einen kopierbaren Wiedereinstieg.
+Der Laptop ist eingerichtet, der vom Nutzer gewählte vorhandene Drive-Bestand
+ist übernommen und „Vollständig abgeglichen“ wurde beobachtet. Der Nutzer
+bestätigt die weiterhin aktive Google-Verbindung nach vollständigem
+Chrome-Neustart ohne neuen Anmeldeklick. Regulärer Tokenablauf und vollständige
+Zwei-Geräte-/Apple-Abnahme bleiben offen.
+
+Die begrenzte Kaufbeschleunigung ist auf dem Entwicklungszweig integriert:
+Produktcommit `b6b83a9`, 591/591 Node-Tests, 12/12 ausgewählte Browserfälle,
+unabhängige Prüfung PASS. Der [Prüfbericht](docs/reports/2026-09-28-kaufgruppen.md)
+trennt synthetisch eingesparte Anfragen von noch nicht gemessener realer
+Kaufwartezeit. Die laufende HTTPS-App wurde dabei nicht aktualisiert.
+
+Zuerst die [aktuelle Laptop-Übergabe](docs/handoffs/2026-09-28-laptop-fortsetzung.md)
+lesen. Die [vorherige Pausenübergabe](docs/handoffs/2026-09-27-laptop-pause.md)
+enthält weiterhin Cloudflare-Einrichtung, Startschritte und Konzeptverweise.
 Die [Test-App](https://vokabeltrainer.marco-civico.workers.dev/trainer/) ist
 bereits bereitgestellt; am Laptop ist zum Öffnen kein lokaler Server nötig.
 Die automatische Google-Anmeldung und danach kürzere Kaufwartezeiten bleiben
@@ -45,7 +53,7 @@ und muss nicht unverändert wiederholt werden.
 
 1. [AGENTS.md](AGENTS.md)
 2. [ARBEITSSTAND.md](ARBEITSSTAND.md)
-3. [Aktuelle Laptop-Übergabe](docs/handoffs/2026-09-27-laptop-pause.md)
+3. [Aktuelle Laptop-Übergabe](docs/handoffs/2026-09-28-laptop-fortsetzung.md)
 4. [Anforderungen und Entscheidungen](docs/ANFORDERUNGEN.md)
 5. [Architektur](docs/ARCHITEKTUR.md),
    [Produkt-Datenvertrag](docs/PRODUKT-DATENFORMAT.md) und
@@ -108,14 +116,16 @@ vermeintlichen Reparatur löschen.
 ## Kopierbarer Wiedereinstieg
 
 > Setze die Arbeit am Vokabeltrainer auf meinem Laptop fort. Lies AGENTS.md,
-> START-HIER.md, ARBEITSSTAND.md und docs/handoffs/2026-09-27-laptop-pause.md.
+> START-HIER.md, ARBEITSSTAND.md und docs/handoffs/2026-09-28-laptop-fortsetzung.md.
 > Prüfe den aktuellen Zweig codex/vokabeltrainer-v1, Remote und lokale Änderungen.
-> Die private HTTPS-App ist bereitgestellt. Der Nutzer hat Google-Anmeldung
-> und weiterhin aktive Verbindung nach F5 bestätigt. Wiederhole weder die
-> Cloudflare-Anlage noch die abgeschlossenen Kaufpakete. Prüfe zuerst gemeinsam
-> den Laptop-Einstieg und den vorhandenen Drive-Bestand, ohne lokale Daten zu
-> überschreiben. Tokenablauf und Browserneustart bleiben offen. Danach am
-> dokumentierten Kauf-Tempo und am bestätigten Avatar-/Galerieumfang ansetzen.
+> Die private HTTPS-App ist bereitgestellt. Der vorhandene Drive-Bestand wurde
+> am Laptop übernommen; vollständiger Abgleich ist beobachtet und Google bleibt
+> laut Nutzer nach Chrome-Neustart verbunden. Regulärer Tokenablauf bleibt offen.
+> Die Kaufgruppen-Optimierung in b6b83a9 ist geprüft und integriert, aber noch
+> nicht bereitgestellt. Vor einem Praxistest ihren Bereitstellungsstand prüfen.
+> Wiederhole weder Cloudflare-Anlage noch abgeschlossene Kaufpakete. Reale
+> Kaufwartezeit und Geräteabnahmen getrennt nachweisen; danach am bestätigten
+> Avatar-/Galerieumfang ansetzen.
 > Bestätigte Entscheidungen erhalten; nur private kostenlose Nutzung. Keine
 > echten Profile, Sicherungen, PINs oder Zugangsdaten in Git aufnehmen.
 
