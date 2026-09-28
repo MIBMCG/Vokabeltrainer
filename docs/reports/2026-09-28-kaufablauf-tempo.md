@@ -131,5 +131,71 @@ Updatefall prüft v31 auf v32. Es kamen keine neuen Laufzeitdateien hinzu.
 Dokumentationsprüfung: 244 Markdown-Dateien, 966 lokale Verweise, keine Fehler.
 Die synthetischen Browserfälle ersetzen keine reale Drive- oder Geräteabnahme.
 
-Bereitstellung und erneuter realer Kaufversuch werden nach ihren tatsächlichen
-Ergebnissen ergänzt. Eine reale Beschleunigung wird damit noch nicht behauptet.
+## Private Bereitstellung und realer Kauf
+
+Produktcommit `ad96f00390243cbda94a825d278650b1efa682d7` wurde nach den Prüfungen
+erstellt und ohne Änderungen per Fast-Forward in `codex/vokabeltrainer-v1`
+übernommen. Die vorhandene private Cloudflare-App wurde mit Wrangler 4.142.0
+aktualisiert: 161 öffentliche Dateien vorbereitet, sechs geänderte Assets
+hochgeladen, 155 wiederverwendet, Exitcode 0. Worker-Version
+`a573d6f3-ecf5-42a8-82e9-2b59f66eca20` ist seit
+`2026-09-28T17:36:18.195Z` mit 100 % aktiv. Cachekennung: v31.
+
+Der öffentliche Inhaltsvergleich um `2026-09-28T17:36:54.447Z` bestätigt
+HTTP 200 und bytegleiche Antworten für HTML, Service Worker, Servermodus-
+Konfiguration, Drive-Client und die fünf geänderten Produktmodule. Der erste
+Vergleichsstart scheiterte an der lokalen Node-Zertifikatskette; mit
+`--use-system-ca` und weiterhin aktiver Zertifikatsprüfung bestand der Vergleich.
+Es wurden weder Kontenmodell noch Provider oder öffentliche Freigabe geändert.
+
+Im bereits eingerichteten getrennten Codex-Testbrowser wurde das angebotene
+Update über „Jetzt aktualisieren“ übernommen. Stufe 2 und 1.400 verfügbare
+Punkte blieben erhalten. Ohne erneute Google-Anmeldung wurde anschließend
+„Einfacher Drache – Stufe 3“ für 400 Testpunkte gekauft:
+
+| Beobachtung | Vorher: Stufe 2 unter v30 | Jetzt: Stufe 3 unter v31 |
+| --- | --- | --- |
+| Vorschau sichtbar | nach ca. 26,927 s | nach ca. 20,838 s |
+| Bestätigung noch laufend | nach ca. 98,722 s | nach ca. 24,356 s |
+| „Der Kauf ist bestätigt.“ sichtbar | spätestens nach ca. 118,821 s | nach ca. 43,891 s |
+
+Die Bestätigung ist in diesem Durchgang deutlich früher sichtbar. Die Werte
+sind UI-Beobachtungen ab der jeweiligen Bedienaktion; sie sind weder einzelne
+HTTP-Zeiten noch ein kontrollierter Vergleich desselben Kaufs. Preis, Kaufstufe,
+Historie und reale Netzbedingungen unterscheiden sich. Aus einem Durchgang
+folgt keine allgemeine Zeitgarantie und keine Nutzerabnahme des Tempos.
+Rund 44 Sekunden sind weiterhin eine spürbare Wartezeit.
+
+Nach der Bestätigung zeigt die Oberfläche 1.000 verfügbare Punkte, 1.600
+Lernpunkte und Level 9. Stufe 3 wurde bewusst ausgewählt. Nach anschließendem
+Neuladen bestätigt der DOM-Nachweis Stufe 3 als „Deine ausgewählte Figur“ und
+dieselben Punktestände. Ein weiterer Kauf wurde nicht ausgelöst; die verbleibenden
+1.000 Testpunkte reichen für Stufe 4 mit 800 Punkten.
+
+Unmittelbar nach diesem letzten Reload zeigte die Oberfläche
+„Google erneut verbinden“. Ob der Hinweis danach automatisch verschwand,
+ist nicht belegt: Der anschließende Browsersteuerungsaufruf zum Warten und
+Aufnehmen der Ergebnisansicht lieferte nach langer Wartezeit nur einen
+Werkzeug-Timeout. Das ist kein gemessener weiterer Kauf und kein Beleg für
+einen Kaufhänger. Der vorherige erfolgreiche Kauf und Erhalt nach Reload
+wurden bereits separat beobachtet. Eine natürliche Token-Erneuerung wird daraus
+nicht abgeleitet. Der ursprüngliche Familienlernstand in Chrome blieb unangetastet.
+
+## Übergabe und Nachweisgrenzen
+
+Aktueller Entwicklungszweig: `codex/vokabeltrainer-v1`. Produktstand und
+Bereitstellung sind oben exakt benannt. Der Produktcommit
+`ad96f00390243cbda94a825d278650b1efa682d7` wurde auf denselben GitHub-Zweig
+gepusht; lokaler HEAD und die direkte Remote-Abfrage stimmen exakt überein.
+Dieser anschließende Dokumentationsnachtrag wird separat auf demselben Zweig
+gesichert und erneut gegen die Remote-SHA verglichen. Dessen endgültige SHA
+steht in der Abschlussmeldung.
+
+Der Testbereich bleibt eingerichtet und enthält die gekaufte Stufe 3 sowie
+1.000 verfügbare Testpunkte. Einrichtung, Import oder Kaufaktivierung nicht
+wiederholen. Für eine weitere reale Messung zuerst den tatsächlichen aktuellen
+Google-Verbindungsstatus prüfen, ohne vorhandene Browserdaten zu löschen.
+Die größeren offenen Nachweise sind Nutzerbewertung des Tempos, natürlicher
+Tokenablauf, zwei physische Geräte und Apple/Safari/Home-Bildschirm-App.
+Weitere größere Beschleunigungen benötigen eine gezielte Diagnose der
+verbleibenden Wartezeit und ein dazu passendes abgegrenztes Design.

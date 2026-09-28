@@ -1,30 +1,48 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-**Aktuelle Steuerung: Fortsetzung am 28.09.2026 erneut beauftragt.** Mit
-„jetzt kannst du weiter arbeiten“ beendet der Nutzer die folgende Pause.
-Der synthetische Teststand mit 1.600 Punkten ist im getrennten Codex-Browser
-importiert. Die zuvor zweimal gescheiterte Einrichtung wurde nach der begrenzten
-Korrektur `ed36f4d` unter Cache v30 erfolgreich fortgesetzt: Ein eigener
-Test-Lernbereich ist in Drive angelegt, vollständig abgeglichen und die
-Google-Verbindung aktiv. Die Korrektur bestand 601 Node-Tests, 7 ausgewählte
-Browserfälle und ein unabhängiges Review. Der einmal bestätigte reale Kauf
-„Einfacher Drache – Stufe 2“ für 200 Punkte ist gelungen: Im Testprofil stehen
-1.400 verfügbare Punkte bei unverändert 1.600 Lernpunkten und Level 9.
-Die Kaufvorschau war nach 26,927 Sekunden sichtbar; die Bestätigung lief nach
-98,722 Sekunden noch und war spätestens nach 118,821 Sekunden sichtbar.
-Das sind ungefähre UI-Beobachtungen, keine genaue HTTP-Dauer oder belegte
-Zeitersparnis. Der Nutzer berichtet eine Kaufbestätigung von über zwei Minuten
-und bewertet das Tempo ausdrücklich als zu langsam; Leistungsdiagnose hat
-Priorität, das Tempo ist nicht abgenommen. Die bewusste Auswahl der gekauften
-Form ist bestätigt; Besitz, Auswahl und Guthaben sind nach Neuladen erhalten. Vorhandene
-Familien- und Drive-Bestände bleiben erhalten. Der Dokumentationszwischenstand
-`a51d9991fee20ea5ceb50d25ed1040043d7cd5f0` wurde
-exakt mit GitHub verglichen. Natürlicher Tokenablauf, Zweitgerät und Apple-Abnahme
-bleiben offen. Die lokale vollständige Diagnose zählt 234 Anfragen pro
-Bestätigung, davon 102 für zwei Lernabgleiche. Der portable Diagnosehelfer und
-ein noch nicht umgesetzter Verbesserungsvorschlag stehen im Kauftestbericht.
-Einstieg und Nachweisgrenzen:
-[Laptop-Übergabe](docs/handoffs/2026-09-28-laptop-fortsetzung.md) und
+**Aktuelle Steuerung: begrenzte Kaufbeschleunigung am 28.09.2026.** Der Nutzer
+hat mit „ja, beschleunige so gut es geht“ die Arbeit nach der beanstandeten
+Kaufwartezeit beauftragt. Auf Basis `e3933fc` ist Produktcommit
+`ad96f00390243cbda94a825d278650b1efa682d7` per Fast-Forward im
+Entwicklungszweig integriert. Final bestanden 624/624 Node-Tests und 8/8
+ausgewählte Browserfälle; das unabhängige Review ist PASS. Die vollständige
+synthetische Probe zählt 55 statt 63 HTTP-Anfragen für die Vorschau und 139
+statt 234 für die Bestätigung. Das ist eine Anfragenmessung, keine Zusage
+einer bestimmten realen Kaufdauer. Cache v31 ist privat bereitgestellt;
+Worker-Version `a573d6f3-ecf5-42a8-82e9-2b59f66eca20` ist seit
+28.09.2026, 17:36:18 UTC zu 100 % aktiv. Neun öffentliche Dateien wurden
+bytegleich mit dem geprüften Paket verglichen. Produktcommit `ad96f00` ist
+exakt mit GitHub abgeglichen; dieser Dokumentationsnachtrag wird separat
+gesichert.
+
+Im getrennten Codex-Testbereich wurde das kontrollierte Update übernommen.
+Ohne erneute Google-Anmeldung während Update und Kauf wurde „Einfacher Drache –
+Stufe 3“ für 400 Punkte gekauft und bewusst ausgewählt. Die Vorschau erschien
+nach 20,838 Sekunden; nach 24,356 Sekunden lief die Bestätigung noch und nach
+43,891 Sekunden war sie sichtbar. Nach Neuladen waren Stufe 3 als „Deine
+ausgewählte Figur“, 1.000 verfügbare Punkte, unverändert 1.600 Lernpunkte und
+Level 9 im DOM bestätigt. Das ist eine einzelne UI-Beobachtung mit anderer
+Kaufstufe und Vorgeschichte, kein kontrollierter A/B-Vergleich und noch keine
+Tempoabnahme durch den Nutzer. Unmittelbar nach diesem Neuladen erschien „Google
+erneut verbinden“; die anschließende UI-Abfrage endete ohne Ergebnis durch
+Tool-Timeout. Der aktuelle Google-Status nach diesem Neuladen ist daher offen.
+Regulärer Tokenablauf, Zweitgerät und Apple-Abnahme bleiben ebenfalls offen.
+Der Familien-Chrome blieb unangetastet. Testpunkte, Drive-Bindung und Kaufstufen
+sind bereits eingerichtet; Import und Einrichtung nicht wiederholen. Nächster
+Schritt ist die Nutzerrückmeldung zum Tempo. Eine weitere größere Optimierung
+braucht eine konkrete Diagnose der Restlatenz und ein abgestimmtes Design.
+Einstieg und Nachweisgrenzen: [Tempobericht](docs/reports/2026-09-28-kaufablauf-tempo.md)
+und [Laptop-Übergabe](docs/handoffs/2026-09-28-laptop-fortsetzung.md).
+
+**Historischer Stand vor dem Tempopaket:** Die Korrektur `ed36f4d` ermöglichte
+unter Cache v30 den eigenen vollständig abgeglichenen Drive-Testbereich. Der
+erste reale Kauf „Einfacher Drache – Stufe 2“ kostete 200 Punkte; danach waren
+1.400 verfügbar. Die damalige Vorschau war nach 26,927 Sekunden sichtbar, die
+Bestätigung nach 98,722 Sekunden noch nicht und spätestens nach 118,821
+Sekunden sichtbar. Der Nutzer beanstandete mehr als zwei Minuten. Vor der
+neuen Beschleunigung zählte die synthetische Diagnose 234 Anfragen je
+Bestätigung, davon 102 für zwei Lernabgleiche. Diese Messungen und der damals
+noch nicht umgesetzte Vorschlag stehen im
 [Kauftestbericht](docs/reports/2026-09-28-kauftest-wiederherstellung.md).
 
 **Vorherige Pause nach Abschluss am 28.09.2026.** Nach Bereitstellung
@@ -35,7 +53,7 @@ Ein separater synthetischer Teststand mit 1.600 Punkten ist geprüft vorbereitet
 Drive-Bestände wurden dafür nicht verändert. Nach Sicherung von
 Testvorbereitung und Übergabe auf GitHub keine weitere Produktarbeit,
 Bereitstellung oder Testsitzung ohne erneute ausdrückliche Fortsetzung.
-Aktueller Einstieg bleibt die [Laptop-Übergabe](docs/handoffs/2026-09-28-laptop-fortsetzung.md).
+Damals galt als Einstieg die [Laptop-Übergabe](docs/handoffs/2026-09-28-laptop-fortsetzung.md).
 
 **Fortsetzung am 28.09.2026 ausdrücklich beauftragt:** Der Nutzer setzt die
 Arbeit mit Superpowers auf dem Laptop fort. Die unten dokumentierte Pause ist
@@ -55,7 +73,7 @@ erhaltene aktive Google-Verbindung und vollständiger Abgleich sind beobachtet.
 Ein echter Kauf konnte mangels bezahlbarem freigegebenem Angebot noch nicht
 geprüft werden; günstigere Entwicklungsbilder fehlen weiterhin. Reale
 Kaufwartezeit und regulärer Tokenablauf bleiben offen.
-Aktueller Verlauf und Nachweisgrenzen:
+Damals geltender Verlauf und Nachweisgrenzen:
 [Laptop-Fortsetzung](docs/handoffs/2026-09-28-laptop-fortsetzung.md).
 
 **Historischer Pausenauftrag nach Nutzertest am 27.09.2026.** Der Nutzer bestätigt

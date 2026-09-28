@@ -1,28 +1,42 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Aktuelle Fortsetzung am 28.09.2026:** Der Nutzer hat die Pause ausdrücklich
-beendet. Die 1.600 Testpunkte sind im getrennten Codex-Browser importiert,
-die eigene Drive-Einrichtung ist nach der Korrektur `ed36f4d` unter Cache v30
-gelungen. Der Test-Lernbereich ist vollständig abgeglichen, Google aktiv.
-„Einfacher Drache – Stufe 2“ wurde einmal für 200 Punkte gekauft: 1.400 Punkte
-verfügbar, 1.600 Lernpunkte und Level 9 unverändert. Die Kaufvorschau erschien
-nach etwa 26,927 Sekunden; die Bestätigung war nach 118,821 Sekunden sichtbar
-(nach 98,722 Sekunden noch laufend). Das sind UI-Beobachtungen, keine genaue
-HTTP-Dauer oder belegte Zeitersparnis. Der Nutzer berichtet über zwei Minuten
-für die Bestätigung und beanstandet das Tempo ausdrücklich. Der Kauf ist
-funktional bestätigt, die Leistungsdiagnose hat nun Priorität; das Tempo ist
-nicht abgenommen. Die gekaufte Form wurde bewusst ausgewählt; Besitz, Auswahl
-und Guthaben sind nach Neuladen erhalten. Natürlicher Tokenablauf und Geräteabnahmen bleiben offen. Der
-Dokumentationszwischenstand `a51d9991fee20ea5ceb50d25ed1040043d7cd5f0` ist exakt
-mit GitHub verglichen. [Aktueller Prüfbericht](docs/reports/2026-09-28-kauftest-wiederherstellung.md).
+**Aktuelle Fortsetzung am 28.09.2026:** Der Nutzer hat die begrenzte
+Kaufbeschleunigung ausdrücklich beauftragt. Produktcommit `ad96f00` ist auf
+`codex/vokabeltrainer-v1` integriert; 624/624 Node-Tests, 8/8 ausgewählte
+Browserfälle und unabhängiges Review PASS. Die synthetische Vollprobe zählt
+55 statt 63 HTTP-Anfragen für die Vorschau und 139 statt 234 für die
+Bestätigung. Cache v31 ist privat bereitgestellt; Worker-Version
+`a573d6f3-ecf5-42a8-82e9-2b59f66eca20` ist aktiv, neun öffentliche Dateien
+sind bytegleich geprüft. Produktcommit `ad96f00` ist exakt mit GitHub
+abgeglichen; dieser Dokumentationsnachtrag wird separat gesichert.
 
-**Vorherige Pause nach Abschluss am 28.09.2026:** Die beauftragte private Bereitstellung
+Im getrennten Codex-Testbereich wurde nach kontrolliertem Update ohne neue
+Google-Anmeldung „Einfacher Drache – Stufe 3“ für 400 Punkte gekauft und bewusst
+gewählt. Die Vorschau war nach 20,838 Sekunden sichtbar; die Bestätigung lief
+nach 24,356 Sekunden noch und war nach 43,891 Sekunden sichtbar. Nach Neuladen
+zeigte der DOM Stufe 3 als „Deine ausgewählte Figur“, 1.000 verfügbare Punkte,
+1.600 Lernpunkte und Level 9. Es ist ein einzelner realer Kauftest mit anderer
+Stufe und Vorgeschichte, kein kontrollierter A/B-Vergleich; eine Tempoabnahme
+durch den Nutzer fehlt. Unmittelbar nach diesem Neuladen erschien „Google erneut
+verbinden“. Eine weitere UI-Abfrage endete durch Tool-Timeout ohne Ergebnis;
+der aktuelle Google-Status ist offen. Regulärer Tokenablauf und Geräteabnahmen
+bleiben offen. Einrichtung und Import nicht wiederholen; der Familien-Chrome
+blieb unangetastet. [Aktueller Tempobericht](docs/reports/2026-09-28-kaufablauf-tempo.md).
+
+**Historischer Vergleich unter Cache v30:** Der erste Kauf von Drachenstufe 2
+für 200 Punkte ließ 1.400 Punkte übrig. Die Vorschau erschien nach 26,927
+Sekunden, die Bestätigung war nach 98,722 Sekunden noch offen und spätestens
+nach 118,821 Sekunden sichtbar. Der Nutzer beanstandete das Tempo. Dieser
+frühere UI-Wert belegt keine allgemeine Zeitersparnis der neuen Version.
+[Damals aktueller Kauftestbericht](docs/reports/2026-09-28-kauftest-wiederherstellung.md).
+
+**Historische Pause nach Abschluss am 28.09.2026:** Die beauftragte private Bereitstellung
 und der Chrome-Updateweg sind abgeschlossen. Für den nächsten Kaufversuch
 ist ein separater Teststand mit 1.600 Punkten geprüft vorbereitet;
 [Anleitung](docs/KAUFTEST-MIT-TESTPUNKTEN.md). Er wurde noch nicht importiert.
 Der Nutzer verlangt anschließend Pause. Nach Sicherung keine weitere Arbeit
 ohne ausdrückliche Fortsetzung.
-Aktueller Einstieg: [Laptop-Fortsetzung](docs/handoffs/2026-09-28-laptop-fortsetzung.md).
+Damals galt als Einstieg die [Laptop-Fortsetzung](docs/handoffs/2026-09-28-laptop-fortsetzung.md).
 
 Stand: **28.09.2026**.
 
@@ -32,7 +46,7 @@ bestätigt die weiterhin aktive Google-Verbindung nach vollständigem
 Chrome-Neustart ohne neuen Anmeldeklick. Regulärer Tokenablauf und vollständige
 Zwei-Geräte-/Apple-Abnahme bleiben offen.
 
-Die begrenzte Kaufbeschleunigung ist auf dem Entwicklungszweig integriert:
+**Vorheriger Produktstand:** Die erste begrenzte Kaufbeschleunigung ist auf dem Entwicklungszweig integriert:
 Produktcommit `b6b83a9`, 591/591 Node-Tests, 12/12 ausgewählte Browserfälle,
 unabhängige Prüfung PASS. Der [Prüfbericht](docs/reports/2026-09-28-kaufgruppen.md)
 trennt synthetisch eingesparte Anfragen von noch nicht gemessener realer
@@ -45,13 +59,15 @@ Abgleich sind nach dem Update bestätigt. Ein echter Kauf war mangels
 bezahlbarem freigegebenem Angebot noch nicht möglich; günstigere
 Entwicklungsbilder fehlen. Reale Kaufwartezeit bleibt gesondert zu prüfen.
 
-Zuerst die [aktuelle Laptop-Übergabe](docs/handoffs/2026-09-28-laptop-fortsetzung.md)
+Zuerst den [aktuellen Tempobericht](docs/reports/2026-09-28-kaufablauf-tempo.md)
+und die [Laptop-Übergabe](docs/handoffs/2026-09-28-laptop-fortsetzung.md)
 lesen. Die [vorherige Pausenübergabe](docs/handoffs/2026-09-27-laptop-pause.md)
 enthält weiterhin Cloudflare-Einrichtung, Startschritte und Konzeptverweise.
 Die [Test-App](https://vokabeltrainer.marco-civico.workers.dev/trainer/) ist
 bereits bereitgestellt; am Laptop ist zum Öffnen kein lokaler Server nötig.
-Die automatische Google-Anmeldung und danach kürzere Kaufwartezeiten bleiben
-die Prioritäten. Vorgesehen ist ausschließlich private Nutzung im Freundeskreis.
+Vorrang haben die Nutzerrückmeldung zum neuen Kaufgefühl und die Klärung des
+Google-Status nach dem letzten Neuladen. Vorgesehen ist ausschließlich private
+Nutzung im Freundeskreis.
 Das vorherige Korrekturpaket ist im
 [Prüfbericht](docs/reports/2026-09-27-sync-und-kaeufe.md) dokumentiert. Die vorherigen
 Bedienkorrekturen (Avatar/Farben, Updatehinweis, Erwachsenenansicht) bleiben erhalten.
@@ -143,22 +159,23 @@ vermeintlichen Reparatur löschen.
 ## Kopierbarer Wiedereinstieg
 
 > Setze die Arbeit am Vokabeltrainer auf meinem Laptop fort. Lies AGENTS.md,
-> START-HIER.md, ARBEITSSTAND.md und docs/handoffs/2026-09-28-laptop-fortsetzung.md.
-> Die Pause vom 28.09. ist bereits beendet. Vorrang hat die beanstandete
-> Kaufbestätigung von über zwei Minuten. Der getrennte Codex-Testbrowser ist
-> bereits mit Google verbunden und für Käufe aktiviert. Nach dem bestätigten
-> Kauf von Drachenstufe 2 verbleiben 1.400 Testpunkte; Besitz und Auswahl sind
-> nach Neuladen erhalten. Import und Einrichtung nicht wiederholen. Den
-> vorhandenen Familienlernstand erhalten.
+> START-HIER.md, ARBEITSSTAND.md, den aktuellen Tempobericht und
+> docs/handoffs/2026-09-28-laptop-fortsetzung.md. Die Pause ist beendet.
+> Das begrenzte Tempopaket ad96f00 ist als Cache v31 privat bereitgestellt.
+> Nach dem Kauf und der bewussten Auswahl von Drachenstufe 3 zeigt der getrennte
+> Codex-Testbrowser nach Neuladen 1.000 verfügbare Punkte bei unverändert
+> 1.600 Lernpunkten und Level 9. Import und Einrichtung nicht wiederholen;
+> den Familien-Chrome und vorhandene Drive-Bestände erhalten.
 > Prüfe den aktuellen Zweig codex/vokabeltrainer-v1, Remote und lokale Änderungen.
-> Die private HTTPS-App ist bereitgestellt. Der vorhandene Drive-Bestand wurde
-> am Laptop übernommen; vollständiger Abgleich ist beobachtet und Google bleibt
-> laut Nutzer nach Chrome-Neustart verbunden. Regulärer Tokenablauf bleibt offen.
-> Die geprüfte Sicherungskorrektur ed36f4d ist als Cache v30 privat bereitgestellt.
-> Der kontrollierte Updateweg ist beobachtet. Wiederhole weder Cloudflare-Anlage
-> noch abgeschlossene Kaufpakete. Den vollständigen Kaufablauf vermessen und
-> beschleunigen; Geräteabnahmen getrennt nachweisen; danach am bestätigten
-> Avatar-/Galerieumfang ansetzen.
+> Produktcommit ad96f00 ist exakt mit GitHub abgeglichen. Die private HTTPS-App
+> und der kontrollierte Updateweg sind nachgewiesen. Unmittelbar nach dem
+> letzten Neuladen erschien „Google erneut verbinden“; die anschließende
+> Statusabfrage blieb wegen Tool-Timeout ohne
+> Ergebnis. Den aktuellen Google-Status klären, ohne die Einrichtung zu
+> wiederholen. Die reale Tempoabnahme durch den Nutzer steht noch aus. Vor
+> einer größeren weiteren Optimierung die Restlatenz konkret diagnostizieren
+> und ein Design abstimmen. Regulären Tokenablauf und Geräteabnahmen getrennt
+> nachweisen; danach am bestätigten Avatar-/Galerieumfang ansetzen.
 > Bestätigte Entscheidungen erhalten; nur private kostenlose Nutzung. Keine
 > echten Profile, Sicherungen, PINs oder Zugangsdaten in Git aufnehmen.
 

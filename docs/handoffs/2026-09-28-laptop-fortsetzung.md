@@ -2,7 +2,43 @@
 
 Stand: **28.09.2026**. Zweig: `codex/vokabeltrainer-v1`.
 
-**Aktuelle Steuerung: erneut fortgesetzt.** Der Nutzer hebt die Pause mit
+## Aktueller Nachtrag: Tempopaket und zweiter realer Kauf
+
+Der Nutzer hat die begrenzte Beschleunigung mit „ja, beschleunige so gut es
+geht“ beauftragt. Auf Basis `e3933fc` wurde Produktcommit
+`ad96f00390243cbda94a825d278650b1efa682d7` per Fast-Forward integriert.
+Final bestanden 624/624 Node-Tests, 8/8 ausgewählte Browserfälle und ein
+unabhängiges Review mit PASS. Die synthetische Vollprobe zählt 55 statt 63
+HTTP-Anfragen für die Vorschau und 139 statt 234 für die Bestätigung.
+Cache v31 wurde privat bereitgestellt; die aktive Worker-Version
+`a573d6f3-ecf5-42a8-82e9-2b59f66eca20` stand seit
+28.09.2026, 17:36:18 UTC zu 100 % bereit. Neun öffentliche Dateien wurden
+bytegleich mit dem geprüften Paket verglichen. Produktcommit `ad96f00` ist
+exakt mit GitHub abgeglichen; dieser Dokumentationsnachtrag wird separat
+gesichert.
+
+Im getrennten Codex-Browser wurde „Jetzt aktualisieren“ angenommen. Ohne neue
+Google-Anmeldung während Update und Kauf wurde „Einfacher Drache – Stufe 3“
+für 400 Punkte gekauft. Die Vorschau erschien nach 20,838 Sekunden; nach
+24,356 Sekunden lief die Bestätigung noch, nach 43,891 Sekunden war sie
+sichtbar. Stufe 3 wurde bewusst ausgewählt. Nach Neuladen bestätigte der DOM
+Stufe 3 als „Deine ausgewählte Figur“, 1.000 verfügbare Punkte, unverändert
+1.600 Lernpunkte und Level 9. Das ist eine einzelne UI-Beobachtung mit anderer
+Stufe und Vorgeschichte, kein kontrollierter A/B-Vergleich; der Nutzer hat das
+Tempo noch nicht abgenommen. Unmittelbar nach diesem Neuladen erschien „Google erneut
+verbinden“. Die anschließende UI-Abfrage endete ohne Ergebnis durch Tool-
+Timeout; der aktuelle Google-Status ist offen. Regulärer Tokenablauf,
+Zweitgerät und Apple-Abnahme bleiben offen. Familien-Chrome und bestehende
+Drive-Bestände blieben unangetastet. Die bereits eingerichteten 1.000 Punkte
+reichen für einen Test der Stufe 4 für 800 Punkte; Einrichtung und Import nicht
+wiederholen. Nächster Schritt ist die Nutzerrückmeldung zum verbesserten Tempo.
+Für eine weitere größere Optimierung zuerst Restlatenz konkret diagnostizieren
+und ein Design abstimmen. Alle Nachweisgrenzen im
+[Tempobericht](../reports/2026-09-28-kaufablauf-tempo.md).
+
+## Historischer Stand vor dem Tempopaket
+
+**Damals aktuelle Steuerung: erneut fortgesetzt.** Der Nutzer hebt die Pause mit
 „jetzt kannst du weiter arbeiten“ ausdrücklich auf. Ausgangspunkt ist der
 erneut exakt mit GitHub verglichene Commit `45ec0a8`. Im separaten Codex-Browser
 hat der Nutzer die lokale PIN eingerichtet. Die synthetische Sicherung wurde
@@ -22,7 +58,7 @@ Erfolg ist belegt, das Tempo ist nicht abgenommen. Der normale Chrome-
 Lernstand bleibt erhalten. Alle Details und
 Nachweisgrenzen im [Kauftestbericht](../reports/2026-09-28-kauftest-wiederherstellung.md).
 
-**Konkreter nächster Schritt:** Den vollständigen Kaufweg vermessen und die
+**Damals konkreter nächster Schritt:** Den vollständigen Kaufweg vermessen und die
 langsame Bestätigung gezielt verbessern. Die bisherige Einsparung betrifft nur
 eine Uploadgruppe, nicht den ganzen Ablauf. Der bestehende separate Codex-
 Testbrowser enthält bereits Drive-Bindung, 1.400 Testpunkte und Drachenstufe 2;
@@ -265,43 +301,42 @@ importiert noch in Drive angelegt. Bestehende Profile und Drive-Bestände wurden
 nicht verändert. Nach Git-Sicherung ist die ausdrücklich verlangte Pause
 einzuhalten. Die heutige Kaufmessung bleibt offen.
 
-## Nächste Schritte nach ausdrücklicher Fortsetzung
+## Nächste Schritte nach dem Tempopaket
 
-1. Regulären Tokenablauf getrennt prüfen, sobald er tatsächlich eingetreten ist.
-   Den bestätigten Chrome-Neustart erhalten; kein manipuliertes Token und kein
-   Löschen persönlicher Browserdaten. Die nächste Statusrückmeldung soll
-   festhalten, ob ohne neuen Google-Klick verbunden und abgeglichen werden kann.
-2. Vorrangig den vollständigen Kaufablauf vermessen und beschleunigen. Der
-   [getrennte Teststand](../KAUFTEST-MIT-TESTPUNKTEN.md) ist bereits eingerichtet
-   und unter Cache v30 verbunden. Drachenstufe 2 ist gekauft und gewählt;
-   1.400 Punkte bleiben verfügbar. Kauf und Erhalt nach Neuladen sind belegt,
-   die Bestätigungsdauer ist vom Nutzer als zu langsam beanstandet.
+1. Den aktuellen Google-Status nach dem jüngsten Neuladen klären. Regulären
+   Tokenablauf getrennt prüfen, sobald er tatsächlich eingetreten ist. Keine
+   persönlichen Browserdaten löschen und die abgeschlossene Einrichtung nicht
+   wiederholen.
+2. Die Nutzerrückmeldung zur Kaufwartezeit unter Cache v31 einholen. Der
+   [getrennte Teststand](../KAUFTEST-MIT-TESTPUNKTEN.md) ist bereits eingerichtet;
+   Drachenstufe 3 ist gekauft und gewählt. 1.000 Punkte bleiben verfügbar,
+   Stufe 4 kostet 800 Punkte. Vor einer größeren weiteren Beschleunigung die
+   Restlatenz konkret diagnostizieren und ein Design abstimmen.
 3. Den bestätigten Avatar-/Galerieumfang fortsetzen: 72 weitere Motive,
    Produktionsvarianten und vollständige Galerie bleiben Folgeumfang.
 4. Reales Google Drive auf zwei physischen Geräten, iPhone/iPad, Safari und
    Home-Bildschirm-App einschließlich Offlineübung und Wiederaufnahme prüfen.
 
-Bestandsübernahme und vollständiger Abgleich sind heute direkt beobachtet;
-der Chrome-Neustart ist vom Nutzer bestätigt. Der Kauf im getrennten Teststand
-ist ebenfalls belegt. Regulärer Zugriffstokenablauf und eine akzeptable reale
-Kaufgeschwindigkeit bleiben offen.
+Bestandsübernahme und vollständiger Abgleich sind historisch direkt beobachtet;
+der Chrome-Neustart ist vom Nutzer bestätigt. Beide Käufe im getrennten
+Teststand sind belegt. Der Google-Status nach dem jüngsten Neuladen, regulärer
+Zugriffstokenablauf und die Nutzerabnahme der neuen Kaufgeschwindigkeit bleiben
+offen.
 Dies ist keine vollständige Zwei-Geräte-Abnahme und kein Apple-/Safari-Nachweis.
 
 ## Wiedereinstieg
 
 > Lies AGENTS.md, START-HIER.md, ARBEITSSTAND.md und diese Übergabe. Prüfe den
 > aktuellen Entwicklungszweig und GitHub, ohne vorhandene Arbeit zu verwerfen.
-> Der Laptop hat den vorhandenen Drive-Bestand übernommen; vollständiger Abgleich
-> ist beobachtet und Google bleibt laut Nutzer nach Chrome-Neustart verbunden.
-> Die Sicherungskorrektur ed36f4d ist geprüft und als private
-> HTTPS-Version `6d687e33-66b1-4f26-9ab9-99771d809809`, Cache v30, bereitgestellt.
-> Der Nutzer hat die frühere Pause beendet. Der getrennte Codex-Testbereich ist
-> bereits verbunden und für Käufe aktiviert; Drachenstufe 2 ist gekauft und
-> nach Neuladen gewählt. Verfügbar sind noch 1.400 Testpunkte.
-> Einrichtung und Import nicht wiederholen; den Familienlernstand erhalten.
-> Vorrang hat die beanstandete Kaufbestätigung von über zwei Minuten. Den
-> vollständigen Ablauf vermessen und beschleunigen; die frühere Teilmessung
-> einer Uploadgruppe ersetzt keine Prüfung der gesamten Kaufdauer.
-> Keine abgeschlossene Google-Einrichtung oder Kaufimplementierung neu
-> beginnen. Reale Token-Erneuerung, Kaufwartezeit und Geräteabnahmen getrennt
-> nachweisen; keine persönlichen Daten in Git aufnehmen.
+> Der Laptop hat den vorhandenen Drive-Bestand übernommen; der vollständige
+> Abgleich ist historisch beobachtet. Produktcommit ad96f00 ist exakt mit
+> GitHub abgeglichen und als Cache v31 privat bereitgestellt. Der Nutzer hat
+> die frühere Pause beendet. Im getrennten Codex-Testbereich ist Drachenstufe 3
+> für 400 Punkte gekauft und nach Neuladen gewählt; 1.000 Punkte sind noch
+> verfügbar. Einrichtung und Import nicht wiederholen; Familien-Chrome und
+> vorhandene Drive-Bestände erhalten. Unmittelbar nach dem jüngsten Neuladen
+> erschien „Google erneut verbinden“; die weitere UI-Abfrage endete ohne
+> Ergebnis. Den aktuellen Google-Status klären und die Nutzermeinung zum
+> verbesserten Kaufgefühl einholen. Vor einer größeren Optimierung die
+> Restlatenz diagnostizieren und ein Design abstimmen. Reale Token-Erneuerung
+> und Geräteabnahmen getrennt nachweisen; keine persönlichen Daten in Git.

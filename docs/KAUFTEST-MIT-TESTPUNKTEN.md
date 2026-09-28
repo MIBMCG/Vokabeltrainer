@@ -30,16 +30,21 @@ ein weiteres Profil hinzu.
 ## Aktueller Versuch
 
 Die Sicherung ist bereits im separaten Codex-Browser importiert; dort zeigt
-„Kauftest“ nach einem erfolgreichen Testkauf noch 1.400 verfügbare Punkte,
-1.600 Lernpunkte und Level 9. Google und der eigene Test-Lernbereich sind
-verbunden und vollständig abgeglichen. Die zuvor störende Metadatenprüfung ist
-mit der begrenzten Korrektur als Cache v30 angepasst; die Einrichtung gelang.
-Drachenstufe 2 wurde für 200 Punkte gekauft und bewusst ausgewählt. Guthaben,
-Besitz und Auswahl sind nach Neuladen erhalten. Der Nutzer beanstandet die
-Kaufbestätigung von über zwei Minuten; das Tempo ist weiterhin offen.
-Die 1.400 übrigen Testpunkte reichen für Stufe 3 (400) und Stufe 4 (800).
+„Kauftest“ nach zwei erfolgreichen Testkäufen noch **1.000 verfügbare Punkte**,
+1.600 Lernpunkte und Level 9. Der eigene Drive-Testbereich und die Kaufaktivierung
+sind eingerichtet. Nach dem Update auf Cache v31 wurde ohne erneute
+Google-Anmeldung Drachenstufe 3 für 400 Punkte gekauft und bewusst ausgewählt.
+Stufe 2 war bereits für 200 Punkte gekauft. Guthaben, Besitz und Auswahl sind
+nach Neuladen erhalten. Die neue Vorschau erschien nach etwa 21 Sekunden,
+die Bestätigung nach etwa 44 Sekunden; zuvor war die Bestätigung erst nach
+knapp zwei Minuten sichtbar. Das ist ein einzelner beobachteter Durchgang,
+keine allgemeine Zeitgarantie oder Nutzerabnahme des Tempos.
+Die übrigen 1.000 Testpunkte reichen für Stufe 4 (800).
+Vor einem weiteren Kauf den aktuellen Google-Status prüfen: Direkt nach dem
+letzten Reload erschien ein Verbindungshinweis; die anschließende automatische
+Nachkontrolle lieferte wegen eines Werkzeug-Timeouts kein Ergebnis.
 Details und nächster Schritt stehen im
-[Kauftestbericht](reports/2026-09-28-kauftest-wiederherstellung.md) und der
+[Tempobericht](reports/2026-09-28-kaufablauf-tempo.md) und der
 [Laptop-Übergabe](handoffs/2026-09-28-laptop-fortsetzung.md).
 Den bereits erfolgten Import nicht wiederholen.
 
@@ -61,6 +66,6 @@ Den bereits erfolgten Import nicht wiederholen.
    Start der Kaufvorschau, ausdrückliche Bestätigung und Abschluss zeitlich
    erfassen. Anschließend Besitz, Guthaben, Auswahl und Wiederöffnung prüfen.
 
-Der getrennte Browser- und Drive-Teststand ist eingerichtet und ein echter
-Kauf bestätigt. Eine reale Zeitersparnis ist damit nicht belegt; die
-Kaufgeschwindigkeit wird nach der Nutzerbeanstandung weiter untersucht.
+Der getrennte Browser- und Drive-Teststand ist eingerichtet. Zwei echte
+Käufe mit synthetischen Punkten und ihr Erhalt nach Neuladen sind bestätigt.
+Einrichtung und Import für diesen bestehenden Teststand nicht wiederholen.

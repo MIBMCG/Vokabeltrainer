@@ -1,6 +1,42 @@
 # Arbeitsstand
 
-## Aktuelle Fortsetzung: realer Kauf im getrennten Teststand bestätigt
+## Aktuelle Fortsetzung: Tempopaket bereitgestellt und Stufe 3 gekauft
+
+Der Nutzer hat die begrenzte Kaufbeschleunigung mit „ja, beschleunige so gut
+es geht“ beauftragt. Auf Basis `e3933fc` wurde Produktcommit
+`ad96f00390243cbda94a825d278650b1efa682d7` per Fast-Forward integriert.
+Final bestanden 624/624 Node-Tests, 8/8 ausgewählte Browserfälle und ein
+unabhängiges Review mit PASS. Die vollständige synthetische Kaufprobe ergab
+55 statt 63 HTTP-Anfragen für die Vorschau und 139 statt 234 für die
+Bestätigung. Diese Zählung ist kein Maß für die reale Wartezeit.
+
+Die private HTTPS-App ist mit Cache v31 bereitgestellt. Aktive Worker-Version:
+`a573d6f3-ecf5-42a8-82e9-2b59f66eca20`, seit 28.09.2026, 17:36:18 UTC
+zu 100 % aktiv. Neun öffentliche Dateien einschließlich der geänderten
+Laufzeitdateien, HTML, Konfiguration, Client und Service Worker wurden
+bytegleich mit dem geprüften Paket verglichen. Produktcommit `ad96f00` ist
+exakt mit GitHub abgeglichen; dieser Dokumentationsnachtrag wird separat
+gesichert.
+
+Im getrennten Codex-Testbrowser wurde „Jetzt aktualisieren“ verwendet. Ohne
+neue Google-Anmeldung während Update und Kauf wurde „Einfacher Drache – Stufe
+3“ für 400 Punkte gekauft. Die Vorschau war nach 20,838 Sekunden sichtbar;
+nach 24,356 Sekunden lief die Bestätigung noch, nach 43,891 Sekunden war sie
+sichtbar. Stufe 3 wurde bewusst ausgewählt. Nach Neuladen bestätigte der DOM
+Stufe 3 als „Deine ausgewählte Figur“, 1.000 verfügbare Punkte, 1.600
+Lernpunkte und Level 9. Diese einzelne Beobachtung mit anderer Stufe und
+Vorgeschichte ist kein kontrollierter A/B-Vergleich oder allgemeines
+Zeitversprechen; die Nutzerabnahme des Tempos fehlt. Nach diesem Neuladen
+erschien „Google erneut verbinden“. Ein anschließender UI-Aufruf endete
+ohne Ergebnis durch Tool-Timeout; der aktuelle Google-Status ist deshalb
+offen. Während Update und Kauf war keine neue Anmeldung nötig. Familien-Chrome
+und vorhandene Bestände blieben unangetastet. Der Testbereich ist bereits
+eingerichtet; mit 1.000 Punkten ist Stufe 4 für 800 Punkte bezahlbar. Nächster
+Schritt ist die Nutzerrückmeldung zum Tempo. Für eine weitere größere
+Optimierung sind konkrete Restlatenzdiagnose und abgestimmtes Design nötig.
+Details: [Tempobericht](docs/reports/2026-09-28-kaufablauf-tempo.md).
+
+## Vorheriger Stand: realer Kauf von Stufe 2 im getrennten Teststand bestätigt
 
 Der Nutzer beendet die Pause ausdrücklich mit „jetzt kannst du weiter arbeiten“.
 Ausgangsstand `45ec0a8b0be06747b1de574c29102926b3b66b43` ist erneut exakt mit
@@ -40,13 +76,13 @@ und Apple-Abnahme bleiben offen. Der Dokumentationszwischenstand
 `a51d9991fee20ea5ceb50d25ed1040043d7cd5f0` ist exakt mit GitHub verglichen.
 Details: [Kauftest und Sicherungsabgleich](docs/reports/2026-09-28-kauftest-wiederherstellung.md).
 
-Die vollständige lokale Diagnose des Kaufablaufs ergibt 63 HTTP-Anfragen für
+Die damalige vollständige lokale Diagnose des Kaufablaufs ergab 63 HTTP-Anfragen für
 die Vorschau und 234 für die Bestätigung, darunter 102 in zwei vollständigen
 Lernabgleichen. Die Ansicht danach braucht keine Netzabrufe. Der portable
 Helfer `scripts/measure-purchase-requests.mjs` sperrt echtes Netzwerk und
-bestätigt synthetisch 1.600 → 1.400 verfügbare Punkte. Vorschläge zum
-Zusammenführen doppelter Prüfungen sind dokumentiert, noch nicht umgesetzt.
-Die reale Wartezeit wurde dadurch noch nicht verkürzt.
+bestätigt synthetisch 1.600 → 1.400 verfügbare Punkte. Das damals dokumentierte
+Zusammenführen doppelter Prüfungen ist mit dem oben genannten Tempopaket
+umgesetzt. Der damalige Diagnosewert bleibt als Ausgangsmessung erhalten.
 
 ## Vorheriger Abschluss: Testpunkte vorbereitet, anschließend Pause
 
@@ -124,7 +160,7 @@ Details und Prüfkommandos: [Kaufgruppenbericht](docs/reports/2026-09-28-kaufgru
 Der erste Dokumentationsabschluss `939830c` ist bereits exakt auf GitHub
 bestätigt. Die anschließenden Bereitstellungs- und Pausennachträge werden nach
 Verweis-/Diffprüfung ebenfalls gesichert; ihr Commit und exakter Remotevergleich
-werden in der Abschlussmeldung genannt. Aktueller Einstieg:
+werden in der damaligen Abschlussmeldung genannt. Damaliger Einstieg:
 [Laptop-Fortsetzung](docs/handoffs/2026-09-28-laptop-fortsetzung.md).
 
 ## Historischer Stand vom 27.09.2026
@@ -192,7 +228,7 @@ Bereitstellung und der aktuelle Nutzertest sind oben separat dokumentiert.
 
 Das vorherige Korrekturpaket behandelt Abgleichschleifen, langsame bzw. wiederholt
 bestätigte Käufe, unerwartete Google-Trennungen und eine parallele Neuanlage.
-Der aktuelle Einstieg steht in der
+Der damalige Einstieg steht in der
 [Übergabe zu Abgleich und Käufen](docs/handoffs/2026-09-27-sync-und-kaeufe.md),
 Ursachen und Prüfgrenzen im [Prüfbericht](docs/reports/2026-09-27-sync-und-kaeufe.md).
 Finaler Prüfstand dieses Pakets: **543/543 Node-Tests und 54/54 Browserfälle**,
@@ -291,10 +327,12 @@ vollständige EV05-Galerie oder visuelle Abnahme abgeleitet werden.
 ## Noch offen am 28.09.2026
 
 - Wiederaufnahme über regulären Tokenablauf; Laptop-Anmeldung, Bestandsübernahme
-  und vollständiger Abgleich sind inzwischen belegt, Chrome-Neustart vom Nutzer bestätigt;
-- die vom Nutzer beanstandete Kaufbestätigung von über zwei Minuten nach
-  vollständiger Ablaufmessung beschleunigen; die langsame Bestandsübernahme
-  bleibt separat zu untersuchen;
+  und vollständiger Abgleich sind historisch belegt, Chrome-Neustart vom Nutzer
+  bestätigt; der Google-Status nach dem jüngsten Neuladen ist wegen einer
+  ergebnislosen UI-Abfrage offen;
+- Nutzerrückmeldung zur Wartezeit des bereitgestellten Tempopakets; eine
+  weitere größere Optimierung erst nach konkreter Restlatenzdiagnose und
+  abgestimmtem Design; die langsame Bestandsübernahme bleibt separat;
 - persönliche Nachprüfung von Figurenfarben, Auswahl und Erwachsenen-Einstellungen;
 - realer Produktabgleich mit Google Drive auf zwei physischen Geräten;
 - iPhone-/iPad-, Safari- und Home-Bildschirm-Abnahme einschließlich
@@ -322,15 +360,16 @@ damaligen nächsten Schritte gelten nicht als aktuelle Arbeitsanweisung.
 
 ## Nächste Schritte nach ausdrücklicher Fortsetzung
 
-1. Die [Laptop-Übergabe](docs/handoffs/2026-09-28-laptop-fortsetzung.md) lesen.
-   Regulären Tokenablauf nachweisen, sobald er tatsächlich eingetreten ist.
-   Die erfolgreiche Laptop-Einrichtung, Bestandsübernahme und den bestätigten
-   Chrome-Neustart nicht erneut als offen behandeln.
-2. Vorrangig den vollständigen Kaufablauf unter `ed36f4d`/v30 vermessen und
-   beschleunigen. Der [getrennte Teststand](docs/KAUFTEST-MIT-TESTPUNKTEN.md)
-   ist bereits verbunden und aktiviert; nach Kauf von Drachenstufe 2 verbleiben
-   1.400 Punkte. Einrichtung und Import nicht wiederholen. Der erfolgreiche
-   Kauf ist funktional belegt, das Tempo ausdrücklich nicht abgenommen.
+1. Den [Tempobericht](docs/reports/2026-09-28-kaufablauf-tempo.md) und die
+   [Laptop-Übergabe](docs/handoffs/2026-09-28-laptop-fortsetzung.md) lesen.
+   Den aktuellen Google-Status nach dem jüngsten Neuladen klären und den
+   regulären Tokenablauf nachweisen, sobald er tatsächlich eingetreten ist.
+   Die erfolgreiche Einrichtung und Bestandsübernahme nicht wiederholen.
+2. Die Nutzerrückmeldung zur nun bereitgestellten Kaufbeschleunigung einholen.
+   Der [getrennte Teststand](docs/KAUFTEST-MIT-TESTPUNKTEN.md) ist eingerichtet;
+   Stufe 3 ist gekauft und nach Neuladen gewählt. 1.000 Punkte bleiben
+   verfügbar, Stufe 4 kostet 800 Punkte. Einrichtung und Import nicht
+   wiederholen. Vor einem größeren Folgepaket Restlatenz und Design klären.
 3. Die korrigierten Bedienwege mit dem Nutzer nachtesten; besonders
    Figurenfarben, Wiederverbinden im Shop und die Erwachsenen-Einstellungen.
 4. Am bestätigten Bild- und Galeriekonzept ansetzen: 72 übrige Motive und
@@ -338,10 +377,11 @@ damaligen nächsten Schritte gelten nicht als aktuelle Arbeitsanweisung.
    integrieren und visuell prüfen.
 5. Das integrierte Produkt auf zwei realen Geräten einschließlich iPhone/iPad
    prüfen; die historische Probe 10 nicht unverändert wiederholen.
-6. Privates Hosting/HTTPS nur im dafür bestätigten Umfang angehen; keine
-   öffentliche Produktfreigabe oder allgemeine Lizenzentscheidung ableiten.
+6. Die private HTTPS-Bereitstellung von Cache v31 als erledigt behandeln;
+   daraus keine öffentliche Produktfreigabe oder Lizenzentscheidung ableiten.
 
 Keine weitere allgemeine Startfreigabe verlangen. Merge nach `main`, Hosting,
 Cloudkontenänderungen und reale Geräteabnahme sind durch den Abschluss dieses
-Kaufpakets nicht automatisch autorisiert. Einstieg über die
-[aktuelle Laptop-Übergabe](docs/handoffs/2026-09-28-laptop-fortsetzung.md).
+Kaufpakets nicht automatisch autorisiert. Einstieg über den
+[aktuellen Tempobericht](docs/reports/2026-09-28-kaufablauf-tempo.md) und die
+[Laptop-Übergabe](docs/handoffs/2026-09-28-laptop-fortsetzung.md).
