@@ -240,11 +240,20 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
     return requestWithToken(url, init, accepted, token);
   }
 
-  async function reserveId() {
-    const response = await boundRequest(`${API_V3}/generateIds?count=1&space=drive&type=files`);
+  async function reserveIds(count) {
+    if (!Number.isSafeInteger(count) || count < 1 || count > 1000) {
+      error('invalid', 'Die Anzahl der zu reservierenden Datei-IDs ist ungültig.');
+    }
+    const response = await boundRequest(`${API_V3}/generateIds?count=${count}&space=drive&type=files`);
     const value = await responseJson(response);
-    if (!Array.isArray(value.ids) || value.ids.length !== 1) error('invalid', 'Drive hat keine eindeutige Datei-ID reserviert.');
-    return assertId(value.ids[0]);
+    if (!Array.isArray(value.ids) || value.ids.length !== count) error('invalid', 'Drive hat nicht alle Datei-IDs reserviert.');
+    const ids = value.ids.map(id => assertId(id));
+    if (new Set(ids).size !== ids.length) error('collision', 'Drive hat eine Datei-ID mehrfach reserviert.');
+    return ids;
+  }
+
+  async function reserveId() {
+    return (await reserveIds(1))[0];
   }
 
   async function metadata(id, expectedToken = null) {
@@ -708,6 +717,7 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
     descriptorHash,
     accountId,
     reserveId,
+    reserveIds,
     readFolder,
     createFolder,
     readImmutable,

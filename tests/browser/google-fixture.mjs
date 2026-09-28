@@ -98,7 +98,10 @@ export function createGoogleFixture() {
         }
         return respond({user: {permissionId: controls.account}});
       }
-      if (url.pathname === '/drive/v3/files/generateIds') return respond({ids: [`file-${++sequence}`]});
+      if (url.pathname === '/drive/v3/files/generateIds') {
+        const count=Number(url.searchParams.get('count'));
+        return respond({ids:Array.from({length:count},()=>`file-${++sequence}`)});
+      }
       if (url.pathname === '/drive/v3/files' && method === 'GET') {
         if (controls.holdNextFilesRead) {
           controls.holdNextFilesRead = false;

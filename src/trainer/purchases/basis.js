@@ -112,6 +112,10 @@ export async function packBasis(ledger, reserve) {
   };
 }
 
+export function basisFileCount(ledger) {
+  return chunks(canonical(assertLedger(ledger))).length + 1;
+}
+
 async function checkedRead(ref, read) {
   assertRef(ref);
   if (typeof read !== 'function') fail('invalid', 'Die Lesefunktion für die Basis fehlt.');

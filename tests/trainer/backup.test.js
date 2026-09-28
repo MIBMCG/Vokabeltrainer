@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {exportBackup, parseBackup, previewBackup} from '../../src/trainer/backup/format.js';
 import {createFixture} from './fixtures.js';
-import {planSnapshotUploads,uploadVerified,readSnapshot,readVerifiedFile} from '../../src/trainer/backup/transport.js';
+import {planSnapshotUploads,uploadVerified,readSnapshot,readVerifiedFile,createSnapshotReadContext,readSnapshotFile} from '../../src/trainer/backup/transport.js';
 import {snapshotHash} from '../../src/trainer/backup/format.js';
 import {SyntheticDrive} from './backup-fixtures.js';
 
@@ -70,6 +70,60 @@ test('snapshot upload rejects changed content despite a stable content revision'
   await assert.rejects(uploadVerified(drive, binding, {
     fileId: 'file-a', kind: 'epoch', value: {id: 'epoch-a', other: 1},
   }), {code: 'collision'});
+});
+
+test('an oversized checked snapshot file is read again instead of retained in the download cache', async () => {
+  const drive = new SyntheticDrive();
+  const binding = {accountId: 'account-a', folderId: 'folder', datasetId: 'd1'};
+  drive.addJson({id: 'large-part', parentId: binding.folderId,
+    appProperties: {app: 'vokabeltrainer-product', kind: 'snapshot-part', datasetId: 'd1', snapshotId: 'snapshot-a'},
+    value: {format: 'vokabeltrainer-product', formatVersion: 1, ruleVersion: 1,
+      kind: 'snapshot-part', snapshotId: 'snapshot-a', datasetId: 'd1', padding: 'x'.repeat(4 * 1024 * 1024)},
+  });
+  const context = createSnapshotReadContext(drive, binding, [drive.files.get('large-part').meta], []);
+
+  await readSnapshotFile(context, 'large-part');
+  await readSnapshotFile(context, 'large-part');
+
+  assert.equal(drive.calls.filter(([method, id]) => method === 'readJson' && id === 'large-part').length, 2);
+});
+
+test('snapshot cache bounds the combined size of checked files', async () => {
+  const drive = new SyntheticDrive();
+  const binding = {accountId: 'account-a', folderId: 'folder', datasetId: 'd1'};
+  for (let index = 0; index < 5; index++) drive.addJson({id: `large-part-${index}`, parentId: binding.folderId,
+    appProperties: {app: 'vokabeltrainer-product', kind: 'snapshot-part', datasetId: 'd1', snapshotId: 'snapshot-a'},
+    value: {format: 'vokabeltrainer-product', formatVersion: 1, ruleVersion: 1,
+      kind: 'snapshot-part', snapshotId: 'snapshot-a', datasetId: 'd1', index,
+      padding: 'x'.repeat(1024 * 1024)},
+  });
+  const context = createSnapshotReadContext(drive, binding,
+    [...drive.files.values()].map(({meta}) => meta), []);
+
+  for (let index = 0; index < 5; index++) await readSnapshotFile(context, `large-part-${index}`);
+  await readSnapshotFile(context, 'large-part-0');
+  await readSnapshotFile(context, 'large-part-4');
+
+  assert.equal(drive.calls.filter(([method, id]) => method === 'readJson' && id === 'large-part-0').length, 1);
+  assert.equal(drive.calls.filter(([method, id]) => method === 'readJson' && id === 'large-part-4').length, 2);
+});
+
+test('snapshot download cache stops retaining new files after its entry limit', async () => {
+  const drive = new SyntheticDrive();
+  const binding = {accountId: 'account-a', folderId: 'folder', datasetId: 'd1'};
+  for (let index = 0; index < 129; index++) drive.addJson({id: `part-${index}`, parentId: binding.folderId,
+    appProperties: {app: 'vokabeltrainer-product', kind: 'snapshot-part', datasetId: 'd1', snapshotId: 'snapshot-a'},
+    value: {format: 'vokabeltrainer-product', formatVersion: 1, ruleVersion: 1,
+      kind: 'snapshot-part', snapshotId: 'snapshot-a', datasetId: 'd1', index},
+  });
+  const context = createSnapshotReadContext(drive, binding,
+    [...drive.files.values()].map(({meta}) => meta), []);
+
+  for (let index = 0; index < 129; index++) await readSnapshotFile(context, `part-${index}`);
+  await readSnapshotFile(context, 'part-128');
+
+  assert.equal(drive.calls.filter(([method, id]) => method === 'readJson' && id === 'part-128').length, 2);
+  assert.equal(drive.calls.filter(([method, id]) => method === 'readJson' && id === 'part-0').length, 1);
 });
 test('portable backup includes pending facts but excludes all local transport and credentials', async () => {
   const f = createFixture();

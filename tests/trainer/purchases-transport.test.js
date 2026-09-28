@@ -190,6 +190,33 @@ test('account check and dependent request use one runtime token snapshot', async
   assert.deepEqual(authorizations, ['Bearer token-account-a']);
 });
 
+test('transport reserves a validated unique group of file IDs in one request', async () => {
+  const {fixture, transport} = await setupFixture();
+  assert.deepEqual(await transport.reserveIds(5), [
+    'reserved-1','reserved-2','reserved-3','reserved-4','reserved-5',
+  ]);
+  const requests = fixture.calls.filter(({url}) => url.includes('/drive/v3/files/generateIds'));
+  assert.equal(requests.length, 1);
+  assert.equal(new URL(requests[0].url).searchParams.get('count'), '5');
+});
+
+test('transport rejects malformed or duplicate generated IDs before use', async t => {
+  for (const ids of [['same','same'], ['valid'], ['valid','bad id']]) {
+    await t.test(JSON.stringify(ids), async () => {
+      const {transport, fixture, descriptorHash} = await setupFixture();
+      const malformed = createPurchaseTransport({
+        binding, descriptorHash, getToken: async () => 'synthetic-token',
+        fetchImpl: async (url, init) => url.includes('/drive/v3/files/generateIds')
+          ? new Response(JSON.stringify({ids}), {status:200,headers:{'Content-Type':'application/json'}})
+          : fixture.fetch(url, init),
+      });
+      await assert.rejects(() => malformed.reserveIds(2), {code: ids[1] === 'bad id' ? 'invalid' : ids.length === 1 ? 'invalid' : 'collision'});
+    });
+  }
+  const {transport} = await setupFixture();
+  await assert.rejects(() => transport.reserveIds(0), {code:'invalid'});
+});
+
 test('bootstrap persists both folder IDs and config before its first write', async () => {
   const {fixture, descriptorHash, transport} = await setupFixture();
   const saved = recorder();

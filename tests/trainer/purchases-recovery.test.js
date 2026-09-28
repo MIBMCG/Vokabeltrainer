@@ -497,7 +497,101 @@ test('purchase preview ignores advancing sync bookkeeping but remains bound to e
   const preview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
   const confirmed=await harness.service.confirm(preview);
   assert.equal(confirmed.status,'confirmed');
-  assert.ok(syncRun>=3);
+  assert.equal(syncRun,2);
+});
+
+test('an unchanged immediate confirmation reuses its freshly verified learning and purchase state',async()=>{
+  let syncRuns=0,coordinatorReads=0;
+  const harness=await openHarness({syncForCommands:commands=>({
+    async syncLearning(){syncRuns+=1;return learningSync(commands).syncLearning();},
+  })});
+  const readFolder=harness.remote.readFolder.bind(harness.remote);
+  harness.remote.readFolder=async input=>{coordinatorReads+=1;return readFolder(input);};
+  const preview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
+  const before={syncRuns,coordinatorReads};
+  const result=await harness.service.confirm(preview);
+  assert.equal(result.status,'confirmed');
+  assert.equal(syncRuns-before.syncRuns,1);
+  assert.equal(coordinatorReads-before.coordinatorReads,4);
+  assert.equal(harness.remote.putCalls.length,1);
+});
+
+test('immediate confirmation reserves exactly its basis and receipt IDs as one group',async()=>{
+  const harness=await openHarness({store:byteStore(productState(ledgerWithSeveralUploadParts()))});
+  const counts=[];
+  harness.remote.reserveIds=async count=>{
+    counts.push(count);
+    return Promise.all(Array.from({length:count},()=>harness.remote.reserveId()));
+  };
+  const preview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
+  const result=await harness.service.confirm(preview);
+  const attempt=harness.store.snapshot().commerce.jobs[0].attempts[0];
+  assert.equal(result.status,'confirmed');
+  assert.deepEqual(counts,[attempt.uploads.length]);
+  assert.equal(new Set(attempt.uploads.map(({ref})=>ref.id)).size,attempt.uploads.length);
+});
+
+test('a local state change after the intent triggers full verification before reservation',async()=>{
+  let syncRuns=0;
+  const harness=await openHarness({syncForCommands:commands=>({
+    async syncLearning(){syncRuns+=1;return learningSync(commands).syncLearning();},
+  })});
+  const originalCommit=harness.commands.commitExternal.bind(harness.commands);
+  let changed=false;
+  harness.commands.commitExternal=async (next,expected)=>{
+    await originalCommit(next,expected);
+    if(!changed&&next.commerce.jobs[0]?.attempts[0]?.phase==='intent') {
+      changed=true;
+      const before=harness.commands.getState(),after=structuredClone(before);
+      after.knownFiles.push({fileId:'later-sync-fact',contentHash:'b'.repeat(64),kind:'packet'});
+      await originalCommit(after,await productStateHash(before));
+    }
+  };
+  const preview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
+  const before=syncRuns;
+  const result=await harness.service.confirm(preview);
+  assert.equal(result.status,'confirmed');
+  assert.equal(changed,true);
+  assert.equal(syncRuns-before,2);
+});
+
+test('a local change during the reservation wait cannot become a trusted purchase basis',async()=>{
+  const harness=await openHarness();
+  const preview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
+  const readFolder=harness.remote.readFolder.bind(harness.remote);
+  let injected=false;
+  harness.remote.readFolder=async input=>{
+    if(!injected&&harness.commands.getState().commerce.jobs[0]?.attempts[0]?.phase==='intent') {
+      injected=true;
+      const before=harness.commands.getState(),after=structuredClone(before);
+      after.knownFiles.push({fileId:'late-read-fact',contentHash:'c'.repeat(64),kind:'packet'});
+      await harness.commands.commitExternal(after,await productStateHash(before));
+    }
+    return readFolder(input);
+  };
+  await assert.rejects(harness.service.confirm(preview),{code:'stale'});
+  assert.equal(injected,true);
+  assert.equal(harness.remote.writeCalls.length,0);
+  assert.equal(harness.remote.putCalls.length,0);
+  assert.equal(harness.store.snapshot().commerce.jobs[0].attempts[0].phase,'intent');
+});
+
+test('lost ID reservation response leaves a durable intent and resume creates one saved attempt',async()=>{
+  const harness=await openHarness();
+  const preview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
+  harness.remote.reserveIds=async()=>{throw new ProductError('network','synthetic lost ID response');};
+  await assert.rejects(harness.service.confirm(preview),{code:'network'});
+  const job=harness.store.snapshot().commerce.jobs[0];
+  assert.equal(job.attempts[0].phase,'intent');
+  assert.equal(harness.remote.writeCalls.length,0);
+  assert.equal(harness.remote.putCalls.length,0);
+  const operationId=job.intent.operationId;
+  harness.remote.reserveIds=async count=>Promise.all(Array.from({length:count},()=>harness.remote.reserveId()));
+  const resumed=await harness.service.resume(operationId);
+  assert.equal(resumed.status,'confirmed');
+  const saved=harness.store.snapshot().commerce.jobs[0].attempts[0];
+  assert.equal(new Set(saved.uploads.map(({ref})=>ref.id)).size,saved.uploads.length);
+  assert.equal(harness.remote.putCalls.length,1);
 });
 
 test('a storage failure before reservation prevents the dependent network write',async()=>{
@@ -658,6 +752,36 @@ test('purchase service sends each saved group through the batch transport before
   assert.deepEqual(harness.remote.batchCalls.map(group=>group.length),[3,2]);
   assert.deepEqual(harness.remote.batchCalls.flat(),saved.uploads.map(({ref})=>ref));
   assert.equal(harness.remote.putCalls.length,1);
+});
+
+test('successful immediate purchase replays verified batch results without rereading its new objects',async()=>{
+  const harness=await openHarness({store:byteStore(productState(ledgerWithSeveralUploadParts()))});
+  const preview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
+  const read=harness.remote.readImmutable.bind(harness.remote);
+  const readIds=[];
+  harness.remote.readImmutable=async ref=>{readIds.push(ref.id);return read(ref);};
+  const result=await harness.service.confirm(preview);
+  const attempt=harness.store.snapshot().commerce.jobs[0].attempts[0];
+  const ownIds=new Set(attempt.uploads.map(({ref})=>ref.id));
+  assert.equal(result.status,'confirmed');
+  assert.equal(attempt.uploads.length,5);
+  assert.deepEqual(readIds.filter(id=>ownIds.has(id)),[]);
+});
+
+test('lost pointer response leaves replay to a fresh remote read during resume',async()=>{
+  const harness=await openHarness();
+  const preview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
+  harness.remote.pointerFailure='after';
+  await assert.rejects(harness.service.confirm(preview),{code:'network'});
+  const job=harness.store.snapshot().commerce.jobs[0];
+  const ownIds=new Set(job.attempts[0].uploads.map(({ref})=>ref.id));
+  const fresh=await restartHarness(harness);
+  fresh.remote.pointerFailure=null;
+  const read=fresh.remote.readImmutable.bind(fresh.remote),readIds=[];
+  fresh.remote.readImmutable=async ref=>{readIds.push(ref.id);return read(ref);};
+  const result=await fresh.service.resume(job.intent.operationId);
+  assert.equal(result.status,'confirmed');
+  assert.deepEqual(new Set(readIds.filter(id=>ownIds.has(id))),ownIds);
 });
 
 test('failed parallel upload waits for started reads, leaves the saved attempt reserved, and retries identically',async()=>{

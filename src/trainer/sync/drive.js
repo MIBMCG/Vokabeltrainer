@@ -6,7 +6,7 @@ import {project} from '../learning/progress.js';
 import {productStateHash} from '../commands.js';
 import {buildPackets, validatePacket} from './packets.js';
 import {mergeById, epochHistory, exportBackup} from '../backup/format.js';
-import {readSnapshot, planSnapshotUploads, uploadVerified, localSafetyCopy} from '../backup/transport.js';
+import {readSnapshot, readSnapshotFile, createSnapshotReadContext, planSnapshotUploads, uploadVerified, localSafetyCopy} from '../backup/transport.js';
 
 const APP = 'vokabeltrainer-product';
 const FOLDER_MIME_TYPE = 'application/vnd.google-apps.folder';
@@ -307,7 +307,7 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
     return state.knownFiles.find((entry) => entry.fileId === fileId) ?? null;
   }
 
-  async function readIfNeeded(meta, state, {force = false} = {}) {
+  async function readIfNeeded(meta, state, {force = false, snapshotContext = null} = {}) {
     const known = knownFor(state, meta.id);
     const cached = sessionVersions.get(meta.id);
     if (!force && known && meta.version !== undefined && cached
@@ -318,7 +318,8 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
       }
       meta = fresh;
     }
-    const read = await readBracketed(meta);
+    const read = snapshotContext === null ? await readBracketed(meta)
+      : await readSnapshotFile(snapshotContext,meta.id);
     try { assertSupportedVersion(read.value); }
     catch(error) { error.inspectedValue=read.value; throw error; }
     if (known && known.contentHash !== read.hash) {
@@ -748,6 +749,7 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
       throw productError('collision', 'Die gebundene Datensatzbeschreibung wurde verändert.');
     }
     const files = await drive.listFiles(childQuery(binding.folderId, binding.datasetId));
+    const snapshotContext = createSnapshotReadContext(drive,binding,files,before.knownFiles);
     const observedIds = new Set(files.map(({id: fileId}) => fileId));
     for (const known of before.knownFiles) {
       if (!observedIds.has(known.fileId)) {
@@ -774,7 +776,10 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
           });
           const kind = meta.appProperties.kind;
           const read = kind === 'dataset' ? null
-            : await readIfNeeded(meta, before, {force: kind === 'snapshot-manifest'});
+            : await readIfNeeded(meta, before, {
+              force: kind === 'snapshot-manifest',
+              snapshotContext: kind === 'snapshot-part' || kind === 'snapshot-manifest' ? snapshotContext : null,
+            });
           return {rawMeta, meta, read};
         } catch (error) {
           return {rawMeta, error};
@@ -813,7 +818,7 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
             if(read.value?.kind!==kind || read.value.datasetId!==binding.datasetId
               || read.value.snapshotId!==meta.appProperties.snapshotId)throw productError('invalid','Die Snapshot-Dateikennung stimmt nicht.');
             if(kind==='snapshot-manifest') {
-              const checked=await readSnapshot({drive,binding,fileId:meta.id,descriptor:before.ledger.descriptor});
+              const checked=await readSnapshot({drive,binding,fileId:meta.id,descriptor:before.ledger.descriptor,context:snapshotContext});
               if(await digest(checked.manifest)!==read.hash)throw productError('stale','Das Snapshot-Manifest wurde während der Prüfung geändert.');
               const snapshotId=checked.manifest.snapshotId;
               if(!manifestGroups.has(snapshotId))manifestGroups.set(snapshotId,[]);

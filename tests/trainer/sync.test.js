@@ -13,7 +13,8 @@ import {buildPackets as oldPackets} from '../compat/v1/src/trainer/sync/packets.
 import {createCommerceIntegration} from '../../src/trainer/purchases/integration.js';
 import {emptyCommerce} from '../../src/trainer/purchases/schema.js';
 import {digest} from '../../src/trainer/model/canonical.js';
-import {uploadVerified} from '../../src/trainer/backup/transport.js';
+import {planSnapshotUploads, uploadVerified} from '../../src/trainer/backup/transport.js';
+import {exportBackup} from '../../src/trainer/backup/format.js';
 import {resolveEpochs} from '../../src/trainer/model/epochs.js';
 import {syncStatusLabel} from '../../src/trainer/ui/status.js';
 
@@ -177,6 +178,162 @@ async function setupSyntheticSync({drive = new SyntheticDrive(), ledger = create
   await sync.createDataset('Familienwortschatz');
   return {sync, drive, commands, statuses};
 }
+
+async function addRemoteSnapshot(drive, binding, ledger) {
+  const backup = await exportBackup({ledger, safetyCopies: []}, '2026-09-18T10:00:00.000Z');
+  const uploads = await planSnapshotUploads(backup, 'safety', drive);
+  for (const upload of uploads) drive.addJson({
+    id: upload.fileId, parentId: binding.folderId, value: upload.value,
+    appProperties: {
+      app: 'vokabeltrainer-product', kind: upload.kind, datasetId: binding.datasetId,
+      snapshotId: upload.value.snapshotId,
+    },
+  });
+  return uploads;
+}
+
+function listManifestBeforePart(drive, uploads) {
+  const manifestId = uploads.at(-1).fileId;
+  const partId = uploads[0].fileId;
+  const manifest = drive.files.get(manifestId);
+  const part = drive.files.get(partId);
+  drive.files.delete(manifestId);
+  drive.files.delete(partId);
+  drive.files.set(manifestId, manifest);
+  drive.files.set(partId, part);
+}
+
+test('one download reads each freshly checked snapshot file only once', async () => {
+  const ledger = createFixture().base;
+  const {sync, drive, commands} = await setupSyntheticSync({ledger, outbox: []});
+  const uploads = await addRemoteSnapshot(drive, commands.getState().binding, ledger);
+  const start = drive.calls.length;
+
+  await sync.sync();
+
+  const reads = drive.calls.slice(start).filter(([method]) => method === 'readJson');
+  for (const upload of uploads) {
+    assert.equal(reads.filter(([, fileId]) => fileId === upload.fileId).length, 1, upload.kind);
+  }
+  assert.equal(sync.getStatus().phase, 'synced');
+
+  const warmStart = drive.calls.length;
+  await sync.sync();
+  const warmCalls = drive.calls.slice(warmStart);
+  for (const upload of uploads) {
+    assert.equal(warmCalls.filter(([method, fileId]) => method === 'readJson' && fileId === upload.fileId).length,
+      1, `${upload.kind} warm`);
+    assert.ok(warmCalls.filter(([method, fileId]) => method === 'metadata' && fileId === upload.fileId).length <= 3,
+      `${upload.kind} warm metadata`);
+  }
+});
+
+test('manifest before its part uses one content read per snapshot file', async () => {
+  const ledger = createFixture().base;
+  const {sync, drive, commands} = await setupSyntheticSync({ledger, outbox: []});
+  const uploads = await addRemoteSnapshot(drive, commands.getState().binding, ledger);
+  listManifestBeforePart(drive, uploads);
+  const start = drive.calls.length;
+
+  await sync.sync();
+
+  for (const upload of uploads) {
+    assert.equal(drive.calls.slice(start).filter(([method, id]) => method === 'readJson' && id === upload.fileId).length,
+      1, upload.kind);
+  }
+  assert.equal(sync.getStatus().phase, 'synced');
+});
+
+test('manifest at a download batch edge does not cause the next batch to reread its part', async () => {
+  const ledger = createFixture().base;
+  const {sync, drive, commands} = await setupSyntheticSync({ledger, outbox: []});
+  const binding = commands.getState().binding;
+  const [packet] = buildPackets({events: [ledger.events[0]], datasetId: 'd1', epochId: 'e0', id: () => 'padding-packet'});
+  drive.addJson({id: 'padding-file', parentId: binding.folderId, value: packet,
+    appProperties: {app: 'vokabeltrainer-product', kind: 'packet', datasetId: 'd1', epochId: 'e0', packetId: packet.packetId}});
+  const uploads = await addRemoteSnapshot(drive, binding, ledger);
+  listManifestBeforePart(drive, uploads);
+  const listed = await drive.listFiles(`'${binding.folderId}' in parents`);
+  assert.equal(listed.findIndex(({id}) => id === uploads.at(-1).fileId), 3);
+  assert.equal(listed.findIndex(({id}) => id === uploads[0].fileId), 4);
+  const start = drive.calls.length;
+
+  await sync.sync();
+
+  for (const upload of uploads) {
+    assert.equal(drive.calls.slice(start).filter(([method, id]) => method === 'readJson' && id === upload.fileId).length,
+      1, upload.kind);
+  }
+  assert.equal(sync.getStatus().phase, 'synced');
+});
+
+test('snapshot download rejects an unrelated metadata change during a reused read', async () => {
+  const ledger = createFixture().base;
+  const {sync, drive, commands} = await setupSyntheticSync({ledger, outbox: []});
+  const uploads = await addRemoteSnapshot(drive, commands.getState().binding, ledger);
+  const manifestId = uploads.at(-1).fileId;
+  drive.onRead = async (fileId) => {
+    if (fileId !== manifestId) return;
+    drive.files.get(fileId).meta.description = 'changed during read';
+    drive.onRead = null;
+  };
+
+  await assert.rejects(sync.sync(), {code: 'stale'});
+  assert.equal(commands.getState().knownFiles.some(({fileId}) => fileId === manifestId), false);
+});
+
+test('snapshot download rejects a part revised after its first read', async () => {
+  const ledger = createFixture().base;
+  const {sync, drive, commands} = await setupSyntheticSync({ledger, outbox: []});
+  const uploads = await addRemoteSnapshot(drive, commands.getState().binding, ledger);
+  const partId = uploads[0].fileId;
+  const manifestId = uploads.at(-1).fileId;
+  drive.onRead = async (fileId) => {
+    if (fileId !== manifestId) return;
+    drive.files.get(partId).meta.headRevisionId = 'foreign-revision';
+    drive.files.get(partId).value.events.push({id: 'foreign-event'});
+    drive.onRead = null;
+  };
+
+  await assert.rejects(sync.sync(), {code: 'stale'});
+  assert.equal(commands.getState().knownFiles.some(({fileId}) => fileId === manifestId), false);
+});
+
+test('snapshot download accepts a version-only change with the same content revision', async () => {
+  const ledger = createFixture().base;
+  const {sync, drive, commands} = await setupSyntheticSync({ledger, outbox: []});
+  const uploads = await addRemoteSnapshot(drive, commands.getState().binding, ledger);
+  for (const upload of uploads) drive.files.get(upload.fileId).meta.headRevisionId = 'same-content-revision';
+  const partId = uploads[0].fileId;
+  const manifestId = uploads.at(-1).fileId;
+  drive.onRead = async (fileId) => {
+    if (fileId === partId) drive.files.get(partId).meta.version = '2';
+    if (fileId === manifestId) drive.files.get(partId).meta.version = '3';
+  };
+
+  await sync.sync();
+
+  assert.equal(sync.getStatus().phase, 'synced');
+  assert.equal(commands.getState().knownFiles.some(({fileId}) => fileId === manifestId), true);
+});
+
+test('snapshot download does not let a warm session cache hide new metadata', async () => {
+  const ledger = createFixture().base;
+  const {sync, drive, commands} = await setupSyntheticSync({ledger, outbox: []});
+  const uploads = await addRemoteSnapshot(drive, commands.getState().binding, ledger);
+  const partId = uploads[0].fileId;
+  await sync.sync();
+  let changed = false;
+  drive.onMetadata = async (fileId) => {
+    if (fileId !== partId || changed) return;
+    changed = true;
+    drive.files.get(partId).meta.description = 'foreign metadata';
+    return structuredClone(drive.files.get(partId).meta);
+  };
+
+  await assert.rejects(sync.sync(), {code: 'stale'});
+  assert.equal(changed, true);
+});
 
 test('optional commerce port reconciles after learning download and syncLearning uses the same non-recursive path', async () => {
   const calls = [];

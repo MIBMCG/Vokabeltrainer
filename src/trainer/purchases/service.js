@@ -1,11 +1,11 @@
 import {ProductError} from '../model/errors.js';
 import {productStateHash} from '../commands.js';
 import {project} from '../learning/progress.js';
-import {packBasis} from './basis.js';
+import {basisFileCount,packBasis} from './basis.js';
 import {readHistory} from './history.js';
 import {purchaseOffer,rebuildAccounts} from './projection.js';
 import {assertCommerce,assertIntent} from './schema.js';
-import {canonical,copy,digest,fail,sameRef} from './value.js';
+import {assertId,canonical,copy,digest,fail,sameRef} from './value.js';
 import {prepareBootstrap,resumeBootstrap} from './bootstrap.js';
 
 function invalid(message) {
@@ -196,7 +196,7 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     });
   }
 
-  async function refreshInternal() {
+  async function refreshInternal(localReplay=null) {
     let state=current();
     let commerce=state.commerce;
     if(commerce.mode==='inactive' || commerce.config===null)return rememberHistory(null,commerce);
@@ -215,12 +215,26 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
       publish({phase:'ready',code:null,message:null,operationId:null});
       return null;
     }
+    let replayValues=null;
+    if(localReplay!==null&&sameRef(head,localReplay.head)
+      &&historyContext(commerce)===localReplay.context) {
+      const job=commerce.jobs.find(entry=>entry.intent.operationId===localReplay.operationId);
+      const attempt=job?.attempts.at(-1);
+      if(job?.status==='open'&&attempt?.attemptId===localReplay.attemptId
+        &&attempt.phase==='reconciling'&&sameRef(attempt.candidate,head)
+        &&attempt.uploads.length===localReplay.values.size
+        &&attempt.uploads.every(({ref})=>sameRef(ref,localReplay.values.get(ref.id)?.ref))) {
+        replayValues=localReplay.values;
+      }
+    }
     const history=await readHistory({
       head,
       binding:commerce.binding,
       cache:commerce.cache,
       read:(fileId,expectedRef)=>{
         if(expectedRef===null)throw new ProductError('history',`Der Historienwert ${fileId} hat keinen gebundenen Hash.`);
+        const verified=replayValues?.get(fileId);
+        if(verified&&sameRef(verified.ref,expectedRef))return copy(verified.value);
         return transport.readImmutable(expectedRef,{kind:'content',config:commerce.config});
       },
       onProgress:(progress)=>publish({phase:'refreshing',code:null,message:JSON.stringify(progress),operationId:null}),
@@ -320,8 +334,8 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     return {job,attempt};
   }
 
-  async function persistAttempt(operationId,mutate) {
-    const state=current(),commerce=copy(state.commerce);
+  async function persistAttempt(operationId,mutate,{base=null}={}) {
+    const state=base??current(),commerce=copy(state.commerce);
     const {job,attempt}=attemptByOperation(commerce,operationId);
     mutate({job,attempt,commerce});
     await replaceCommerce(commerce,{base:state});
@@ -332,10 +346,18 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     return [...bundle.parts,{ref:bundle.ref,value:bundle.manifest},{ref:receiptRef,value:receiptValue}];
   }
 
-  async function reservePurchase(operationId) {
-    await syncLearning();
-    await refreshInternal();
-    let state=current(),commerce=state.commerce;
+  async function reservePurchase(operationId,freshAnchor=null) {
+    const initial=current();
+    const reusable=freshAnchor!==null&&lastHistory!==null
+      &&lastHistoryContext===historyContext(initial.commerce)
+      &&await productStateHash(initial)===freshAnchor.stateHash;
+    let state=initial;
+    if(!reusable) {
+      await syncLearning();
+      await refreshInternal();
+      state=current();
+    }
+    const commerce=state.commerce;
     let {job,attempt}=attemptByOperation(commerce,operationId);
     if(attempt.phase!=='intent')return {job,attempt};
     if(job.status!=='open'||commerce.mode!=='active')fail('pending','Der Kaufauftrag ist nicht fortsetzbar.');
@@ -349,40 +371,67 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     });
     if(offer.epochId!==job.intent.epochId||offer.price!==job.intent.price
       ||offer.catalogVersion!==job.intent.catalogVersion)fail('stale','Der bestätigte Kaufauftrag ist veraltet.');
-    const bundle=await packBasis(state.ledger,()=>transport.reserveId());
+    const idCount=basisFileCount(state.ledger)+1;
+    const reserved=[];
+    if(typeof transport.reserveIds==='function') {
+      while(reserved.length<idCount) {
+        const count=Math.min(1000,idCount-reserved.length);
+        const group=await transport.reserveIds(count);
+        if(!Array.isArray(group)||group.length!==count)fail('invalid','Die Datei-ID-Reservierung ist unvollständig.');
+        reserved.push(...group);
+      }
+    } else {
+      while(reserved.length<idCount)reserved.push(await transport.reserveId());
+    }
+    if(!Array.isArray(reserved)||reserved.length!==idCount)fail('invalid','Die Datei-ID-Reservierung ist unvollständig.');
+    const checkedIds=reserved.map(value=>assertId(value));
+    if(new Set(checkedIds).size!==checkedIds.length)fail('collision','Die Datei-ID-Reservierung enthält Duplikate.');
+    let nextId=0;
+    const bundle=await packBasis(state.ledger,()=>checkedIds[nextId++]);
     const receiptValue={
       version:1,kind:'receipt',datasetId:commerce.binding.datasetId,
       coordinatorId:commerce.config.coordinatorId,sequence:history.projection.sequence+1,
       previous:copy(commerce.head),operationId:job.intent.operationId,operation:'purchase',
       epochId:job.intent.epochId,basis:copy(bundle.ref),intent:copy(job.intent),economy:null,
     };
-    const receiptRef={id:await transport.reserveId(),sha256:await digest(receiptValue)};
+    const receiptRef={id:checkedIds[nextId++],sha256:await digest(receiptValue)};
+    if(nextId!==checkedIds.length)fail('invalid','Die Datei-ID-Reservierung passt nicht zur Kaufbasis.');
     const uploads=uploadClosure(bundle,receiptRef,receiptValue);
     await preflightCandidate({candidate:receiptRef,uploads,history,binding:commerce.binding});
     const pointerProperties=exactPointerProperties(snapshot,receiptRef);
     ({job,attempt}=await persistAttempt(operationId,({attempt:target})=>{
       target.phase='reserved';target.head=copy(commerce.head);target.etag=snapshot.etag;
       target.candidate=copy(receiptRef);target.pointerProperties=copy(pointerProperties);target.uploads=copy(uploads);
-    }));
+    },{base:state}));
     return {job,attempt};
   }
 
-  async function uploadPurchase(operationId) {
-    let {attempt}=await reservePurchase(operationId);
+  async function uploadPurchase(operationId,freshAnchor=null,verifiedUploads=null) {
+    let {attempt}=await reservePurchase(operationId,freshAnchor);
     if(attempt.phase!=='reserved')return attempt;
     for(let offset=0;offset<attempt.uploads.length;offset+=3) {
       const commerce=current().commerce;
-      await transport.writeImmutableBatch(attempt.uploads.slice(offset,offset+3).map(upload=>({
+      const group=attempt.uploads.slice(offset,offset+3);
+      const verified=await transport.writeImmutableBatch(group.map(upload=>({
           ref:upload.ref,value:upload.value,kind:'content',config:commerce.config,
           authorization:{kind:'attempt',commerce,operationId,attemptId:attempt.attemptId},
       })));
+      if(verifiedUploads!==null) {
+        if(!Array.isArray(verified)||verified.length!==group.length)fail('integrity','Die Kaufgruppe wurde nicht vollständig verifiziert.');
+        for(let index=0;index<group.length;index++) {
+          const ref=group[index].ref;
+          if(await digest(verified[index])!==ref.sha256)fail('integrity','Die verifizierte Kaufdatei stimmt nicht mit ihrem Hash überein.');
+          verifiedUploads.set(ref.id,{ref:copy(ref),value:copy(verified[index])});
+        }
+      }
     }
     ({attempt}=await persistAttempt(operationId,({attempt:target})=>{target.phase='uploaded';}));
     return attempt;
   }
 
-  async function sendPurchasePointer(operationId) {
-    let attempt=await uploadPurchase(operationId);
+  async function sendPurchasePointer(operationId,freshAnchor=null) {
+    const verifiedUploads=freshAnchor===null?null:new Map();
+    let attempt=await uploadPurchase(operationId,freshAnchor,verifiedUploads);
     if(attempt.phase==='uploaded')({attempt}=await persistAttempt(operationId,({attempt:target})=>{target.phase='pointer-pending';}));
     if(!['pointer-pending','reconciling'].includes(attempt.phase))return attempt;
     if(attempt.phase==='reconciling')({attempt}=await persistAttempt(operationId,({attempt:target})=>{target.phase='pointer-pending';}));
@@ -404,7 +453,11 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
       throw error;
     }
     await persistAttempt(operationId,({attempt:target})=>{target.phase='reconciling';});
-    await refreshInternal();
+    const localReplay=verifiedUploads?.size===attempt.uploads.length?{
+      values:verifiedUploads,head:copy(attempt.candidate),context:historyContext(commerce),
+      operationId,attemptId:attempt.attemptId,
+    }:null;
+    await refreshInternal(localReplay);
     return attemptByOperation(current().commerce,operationId).job;
   }
 
@@ -438,9 +491,11 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     commerce.jobs.push({version:1,intent,status:'open',attempts:[{
       version:1,attemptId,phase:'intent',head:null,etag:null,candidate:null,pointerProperties:null,uploads:[],
     }]});
+    const expectedAfterIntent=copy(state);expectedAfterIntent.commerce=commerce;
+    const freshAnchor={stateHash:await productStateHash(expectedAfterIntent)};
     await replaceCommerce(commerce,{base:state});
     publish({phase:'purchasing',code:null,message:null,operationId});
-    const job=await sendPurchasePointer(operationId);
+    const job=await sendPurchasePointer(operationId,freshAnchor);
     publish({phase:'ready',code:null,message:null,operationId});
     return {operationId,status:job.status};
   }

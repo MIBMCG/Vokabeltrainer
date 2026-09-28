@@ -53,7 +53,8 @@ export function purchasesHttpFixture({accountId = 'account-a', etag = '"opaque/s
       return response({user: {permissionId: activeAccountId}});
     }
     if (parsed.pathname.endsWith('/drive/v3/files/generateIds')) {
-      return response({ids: [`reserved-${++serial}`]});
+      const count=Number(parsed.searchParams.get('count'));
+      return response({ids: Array.from({length:count},()=>`reserved-${++serial}`)});
     }
 
     if (method === 'POST' && parsed.pathname.endsWith('/upload/drive/v3/files')) {

@@ -67,17 +67,88 @@ function comparableMetadata(before,after) {
   const {version: _afterVersion,...stableAfter}=after;
   return [stableBefore,stableAfter];
 }
-export async function readVerifiedFile(drive,fileId,binding,kind) {
+async function readVerifiedFileDetailed(drive,fileId,binding,kind,listedMetadata=null) {
   if(typeof fileId!=='string' || !/^[A-Za-z0-9_-]{1,128}$/.test(fileId))fail('invalid','Die Sicherungsdatei-ID ist ungültig.');
   const before=await drive.metadata(fileId);assertTransportMetadata(before,binding,kind);
   if(before.id!==fileId)fail('binding','Die gelesene Sicherungsdatei hat eine andere ID.');
+  if(listedMetadata!==null) {
+    const [listed,first]=comparableMetadata(listedMetadata,before);
+    if(await digest(listed)!==await digest(first))fail('stale','Eine Sicherungsdatei wurde vor dem Lesen geändert.');
+  }
   const value=await drive.readJson(fileId),after=await drive.metadata(fileId);
   const [stableBefore,stableAfter]=comparableMetadata(before,after);
   if(await digest(stableBefore)!==await digest(stableAfter))fail('stale','Eine Sicherungsdatei wurde während des Lesens geändert.');
   if(kind==='epoch' ? before.appProperties.epochId!==value?.id : before.appProperties.snapshotId!==value?.snapshotId) {
     fail('binding','Inhalt und Drive-Kennung der Sicherungsdatei widersprechen sich.');
   }
-  return value;
+  return {value,hash:await digest(value),metadata:after};
+}
+export async function readVerifiedFile(drive,fileId,binding,kind) {
+  return (await readVerifiedFileDetailed(drive,fileId,binding,kind)).value;
+}
+
+// Only this module can populate the context, and only after a bracketed Drive read.
+const snapshotReadContexts=new WeakMap();
+const MAX_SNAPSHOT_CACHE_BYTES=4*1024*1024;
+const MAX_SNAPSHOT_CACHE_ENTRIES=128;
+export function createSnapshotReadContext(drive,binding,listedFiles,knownFiles) {
+  const context=Object.freeze({});
+  snapshotReadContexts.set(context,{drive,binding:structuredClone(binding),files:new Map(),cachedBytes:0,
+    listed:new Map(listedFiles.filter(meta=>['snapshot-part','snapshot-manifest'].includes(meta?.appProperties?.kind))
+      .map(meta=>[meta.id,structuredClone(meta)])),
+    knownHashes:new Map(knownFiles.map(({fileId,contentHash})=>[fileId,contentHash]))});
+  return context;
+}
+function snapshotContext(context,drive,binding) {
+  const state=snapshotReadContexts.get(context);
+  if(!state || state.drive!==drive || state.binding.accountId!==binding.accountId
+    || state.binding.folderId!==binding.folderId || state.binding.datasetId!==binding.datasetId) {
+    fail('binding','Der Snapshot-Lesekontext gehört zu einer anderen Verbindung.');
+  }
+  return state;
+}
+async function readContextFile(state,fileId,kind) {
+  const listed=state.listed.get(fileId);
+  if(!listed)fail('missing','Ein Snapshot-Teil fehlt in der Drive-Dateiliste.');
+  if(listed.appProperties.kind!==kind)fail('binding','Die Snapshot-Dateikennung stimmt nicht.');
+  const cached=state.files.get(fileId);
+  if(cached) {
+    if(cached.kind!==kind)fail('binding','Die Snapshot-Dateikennung stimmt nicht.');
+    // A revision after the first read must still fail, even within one download.
+    const current=await state.drive.metadata(fileId);
+    assertTransportMetadata(current,state.binding,kind);
+    if(current.id!==fileId)fail('binding','Die gelesene Sicherungsdatei hat eine andere ID.');
+    const [previous,latest]=comparableMetadata(cached.metadata,current);
+    if(await digest(previous)!==await digest(latest))fail('stale','Eine Sicherungsdatei wurde nach dem Lesen geändert.');
+    return {value:structuredClone(cached.value),hash:cached.hash,metadata:current};
+  }
+  const {value,hash,metadata}=await readVerifiedFileDetailed(state.drive,fileId,state.binding,kind,listed);
+  try { assertSupportedVersion(value); }
+  catch(error) { error.inspectedValue=value; throw error; }
+  const knownHash=state.knownHashes.get(fileId);
+  if(knownHash!==undefined && knownHash!==hash) {
+    try { fail('collision','Eine bereits bekannte Datei wurde nachträglich verändert.'); }
+    catch(error) { error.inspectedValue=value; throw error; }
+  }
+  // The cache is optional; an overflow takes the same checked Drive read path again.
+  if(state.files.size<MAX_SNAPSHOT_CACHE_ENTRIES && state.cachedBytes<MAX_SNAPSHOT_CACHE_BYTES) {
+    const size=bytes(value);
+    if(size<=MAX_SNAPSHOT_CACHE_BYTES-state.cachedBytes) {
+      state.files.set(fileId,{kind,value:structuredClone(value),hash,metadata:structuredClone(metadata)});
+      state.cachedBytes+=size;
+    }
+  }
+  return {value,hash,metadata};
+}
+export async function readSnapshotFile(context,fileId) {
+  const state=snapshotReadContexts.get(context),kind=state?.listed.get(fileId)?.appProperties?.kind;
+  if(!state || !['snapshot-part','snapshot-manifest'].includes(kind))fail('invalid','Die Snapshot-Dateikennung ist ungültig.');
+  return {skipped:false,...await readContextFile(state,fileId,kind)};
+}
+async function readSnapshotContextFile(context,drive,binding,fileId,kind) {
+  if(context===undefined)return readVerifiedFile(drive,fileId,binding,kind);
+  const state=snapshotContext(context,drive,binding);
+  return (await readContextFile(state,fileId,kind)).value;
 }
 export async function uploadVerified(drive,binding,upload) {
   if(await drive.accountId()!==binding.accountId)fail('binding','Die Sicherheitskopie gehört zu einem anderen Google-Konto.');
@@ -88,8 +159,8 @@ export async function uploadVerified(drive,binding,upload) {
   const value=await readVerifiedFile(drive,upload.fileId,binding,upload.kind);
   if(await digest(value)!==await digest(upload.value))fail('collision','Die hochgeladene Sicherungsdatei stimmt beim Rücklesen nicht überein.');
 }
-export async function readSnapshot({drive,binding,fileId,descriptor}) {
-  const manifest=await readVerifiedFile(drive,fileId,binding,'snapshot-manifest');
+export async function readSnapshot({drive,binding,fileId,descriptor,context}) {
+  const manifest=await readSnapshotContextFile(context,drive,binding,fileId,'snapshot-manifest');
   assertSupportedVersion(manifest);
   exact(manifest,[...Object.keys(VERSION),'kind','snapshotId','datasetId','purpose','snapshot','parts','totalHash','backupMetadata']);
   exact(manifest.backupMetadata,['exportedAt','safetyCopyIndex',...(manifest.formatVersion===3?['economy']:[])]);
@@ -103,7 +174,7 @@ export async function readSnapshot({drive,binding,fileId,descriptor}) {
     const ref=manifest.parts[index];exact(ref,['fileId','hash','index']);
     if(ref.index!==index || seen.has(ref.fileId) || !/^[0-9a-f]{64}$/.test(ref.hash))fail('invalid','Die Snapshot-Teile sind unvollständig oder doppelt.');
     seen.add(ref.fileId);
-    const part=await readVerifiedFile(drive,ref.fileId,binding,'snapshot-part');
+    const part=await readSnapshotContextFile(context,drive,binding,ref.fileId,'snapshot-part');
     assertContainedVersion(manifest,[part]);
     assertContainedVersion(part,part.events ?? []);
     exact(part,[...Object.keys(VERSION),'kind','snapshotId','datasetId','index','events','epochHistory']);version(part,'snapshot-part');
