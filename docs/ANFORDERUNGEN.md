@@ -13,8 +13,10 @@ Vor der Veröffentlichung bleibt ein frischer Kaufkopf erforderlich. Der
 geschützte Schreibvergleich, dauerhaft gespeicherte Kaufaufträge und das
 Nachlesen eines unklaren Ergebnisses bleiben bestehen. Wiederaufnahme und
 Restore behalten ihre strengen Prüfpfade. Die [Tempoanalyse](reports/2026-09-28-kauf-20-sekunden.md)
-trennt diesen bestätigten Zielvertrag von synthetischen Messungen und der
-noch offenen echten Zeitabnahme.
+trennt diesen bestätigten Zielvertrag von synthetischen Messungen und dem
+echten Test: 113 ms Vorschau plus vom Nutzer gemeldete 17 Sekunden Bestätigung,
+also rund 17,1 Sekunden. Unter 20 Sekunden ist in diesem Durchgang belegt;
+das Wunschziel unter 10 Sekunden bleibt offen.
 
 Der [Entwurf für dauerhafte Käufe](superpowers/specs/2026-09-20-persistent-purchases-design.md)
 ist bestätigt und im Kaufpaket Tasks 1–6 umgesetzt und geprüft.

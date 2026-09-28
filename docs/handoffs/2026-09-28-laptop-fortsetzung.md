@@ -11,6 +11,24 @@ werden. Der [aktuelle Tempobericht](../reports/2026-09-28-kauf-20-sekunden.md)
 ist für diese Fortsetzung maßgeblich. Die früheren Pausen und nächsten Schritte
 weiter unten beschreiben den damaligen Stand.
 
+Produktcommit `192590258e657175defcf89f1141d561c2f1c95d` ist exakt mit GitHub
+abgeglichen und als Cache v32 privat bereitgestellt. 641/641 Node-Tests und
+8/8 ausgewählte Browserfälle bestanden; nach der letzten Abbruchkorrektur
+bestand erneut der Kauf-Browserfall. Die unabhängigen Reviews sind PASS.
+Aktive Worker-Version: `e14dc090-529a-45ee-829b-53dfaf1162e1` seit
+28.09.2026, 19:03:51 UTC; elf öffentliche Dateien sind bytegleich geprüft.
+
+Im getrennten Codex-Testbereich wurden vorab 440 zusätzliche synthetische
+Punkte durch zwei fiktive Übungsrunden erzeugt. Die reale Vorschau für
+Drachenstufe 4 erschien nach 113 ms. Der Nutzer führte die abschließende
+Bestätigung selbst aus und meldete 17 Sekunden. Rund 17,1 Sekunden
+Prozesswartezeit erfüllen in diesem Durchgang das 20-Sekunden-Ziel; unter
+10 Sekunden ist noch nicht erreicht. Die sichtbare Kaufbestätigung,
+40 verbleibende Punkte sowie unverändert 2.040 Lernpunkte und Level 11 sind
+beobachtet. Stufe 4 ist gewählt und nach Neuladen erhalten. Während Update
+und Kauf war keine neue Google-Anmeldung erforderlich. Der vorübergehende
+Verbindungshinweis beim Laden ist kein Nachweis eines Sitzungsverlusts.
+
 ## Historischer Nachtrag: Tempopaket und zweiter realer Kauf
 
 Der Nutzer hat die begrenzte Beschleunigung mit „ja, beschleunige so gut es
@@ -310,27 +328,27 @@ importiert noch in Drive angelegt. Bestehende Profile und Drive-Bestände wurden
 nicht verändert. Nach Git-Sicherung ist die ausdrücklich verlangte Pause
 einzuhalten. Die heutige Kaufmessung bleibt offen.
 
-## Nächste Schritte nach dem Tempopaket
+## Nächste Schritte nach dem 20-Sekunden-Test
 
-1. Den aktuellen Google-Status nach dem jüngsten Neuladen klären. Regulären
-   Tokenablauf getrennt prüfen, sobald er tatsächlich eingetreten ist. Keine
+1. Regulären Tokenablauf getrennt prüfen, sobald er tatsächlich eingetreten
+   ist. Der vorübergehende Verbindungshinweis verschwand auch nach dem jüngsten
+   Neuladen ohne neue Anmeldung. Keine
    persönlichen Browserdaten löschen und die abgeschlossene Einrichtung nicht
    wiederholen.
-2. Die Nutzerrückmeldung zur Kaufwartezeit unter Cache v31 einholen. Der
-   [getrennte Teststand](../KAUFTEST-MIT-TESTPUNKTEN.md) ist bereits eingerichtet;
-   Drachenstufe 3 ist gekauft und gewählt. 1.000 Punkte bleiben verfügbar,
-   Stufe 4 kostet 800 Punkte. Vor einer größeren weiteren Beschleunigung die
-   Restlatenz konkret diagnostizieren und ein Design abstimmen.
+2. Eine weitere Optimierung auf das Wunschziel unter 10 Sekunden muss die
+   verbleibende echte Bestätigungsdauer von 17 Sekunden untersuchen. Keine
+   Wiederholung des bereits abgeschlossenen Imports oder Kauftests verlangen.
+   Im [getrennten Teststand](../KAUFTEST-MIT-TESTPUNKTEN.md) sind alle vier
+   Drachenstufen sowie Nebelhirsch vorhanden; nur 40 Punkte bleiben verfügbar.
 3. Den bestätigten Avatar-/Galerieumfang fortsetzen: 72 weitere Motive,
    Produktionsvarianten und vollständige Galerie bleiben Folgeumfang.
 4. Reales Google Drive auf zwei physischen Geräten, iPhone/iPad, Safari und
    Home-Bildschirm-App einschließlich Offlineübung und Wiederaufnahme prüfen.
 
 Bestandsübernahme und vollständiger Abgleich sind historisch direkt beobachtet;
-der Chrome-Neustart ist vom Nutzer bestätigt. Beide Käufe im getrennten
-Teststand sind belegt. Der Google-Status nach dem jüngsten Neuladen, regulärer
-Zugriffstokenablauf und die Nutzerabnahme der neuen Kaufgeschwindigkeit bleiben
-offen.
+der Chrome-Neustart ist vom Nutzer bestätigt. Der Nutzer hat die aktuelle
+Kaufbestätigung mit 17 Sekunden gemessen; die 20-Sekunden-Grenze ist in diesem
+Durchgang erfüllt. Regulärer Zugriffstokenablauf bleibt offen.
 Dies ist keine vollständige Zwei-Geräte-Abnahme und kein Apple-/Safari-Nachweis.
 
 ## Wiedereinstieg
@@ -338,14 +356,13 @@ Dies ist keine vollständige Zwei-Geräte-Abnahme und kein Apple-/Safari-Nachwei
 > Lies AGENTS.md, START-HIER.md, ARBEITSSTAND.md und diese Übergabe. Prüfe den
 > aktuellen Entwicklungszweig und GitHub, ohne vorhandene Arbeit zu verwerfen.
 > Der Laptop hat den vorhandenen Drive-Bestand übernommen; der vollständige
-> Abgleich ist historisch beobachtet. Produktcommit ad96f00 ist exakt mit
-> GitHub abgeglichen und als Cache v31 privat bereitgestellt. Der Nutzer hat
-> die frühere Pause beendet. Im getrennten Codex-Testbereich ist Drachenstufe 3
-> für 400 Punkte gekauft und nach Neuladen gewählt; 1.000 Punkte sind noch
-> verfügbar. Einrichtung und Import nicht wiederholen; Familien-Chrome und
-> vorhandene Drive-Bestände erhalten. Unmittelbar nach dem jüngsten Neuladen
-> erschien „Google erneut verbinden“; die weitere UI-Abfrage endete ohne
-> Ergebnis. Den aktuellen Google-Status klären und die Nutzermeinung zum
-> verbesserten Kaufgefühl einholen. Vor einer größeren Optimierung die
-> Restlatenz diagnostizieren und ein Design abstimmen. Reale Token-Erneuerung
-> und Geräteabnahmen getrennt nachweisen; keine persönlichen Daten in Git.
+> Abgleich ist historisch beobachtet. Produktcommit 1925902 ist exakt mit
+> GitHub abgeglichen und als Cache v32 privat bereitgestellt. Die frühere
+> Pause ist aufgehoben. Der aktuelle Echtkauf dauerte rund 17,1 Sekunden
+> einschließlich Vorschau; die 17 Sekunden Bestätigung hat der Nutzer gemeldet.
+> Das Ziel unter 20 Sekunden ist für diesen Durchgang belegt, unter 10 Sekunden
+> bleibt ein Wunschziel. Stufe 4 ist gewählt und nach Neuladen erhalten;
+> 40 Testpunkte, 2.040 Lernpunkte und Level 11 bleiben. Einrichtung und Import
+> nicht wiederholen; Familien-Chrome und vorhandene Drive-Bestände erhalten.
+> Der Verbindungshinweis beim Laden verschwand vor dem Kauf ohne Neuanmeldung.
+> Reale Token-Erneuerung und Geräteabnahmen bleiben getrennte offene Nachweise.

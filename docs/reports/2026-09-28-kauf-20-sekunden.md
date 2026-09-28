@@ -87,9 +87,48 @@ lokale Stand unmittelbar nach dem gespeicherten Intent, wird ausschließlich
 der noch unreservierte Auftrag geschlossen; eine neue Vorschau ist möglich.
 Gesendete oder reservierte Versuche werden auf diesem Pfad nicht verworfen.
 
-## Nächster Nachweis
+## Bereitstellung und begonnener echter Zeitvergleich
 
-Es folgen die kontrollierte Bereitstellung und ein echter Kaufversuch mit
-Messung von Vorschau und Bestätigung. Erst diese Prüfung kann das
-20-Sekunden-Ziel oder das Ziel unter 10 Sekunden belegen. Regulärer Tokenablauf,
-Zweitgerät und Apple-Abnahme bleiben eigene offene Nachweise.
+Produktcommit `192590258e657175defcf89f1141d561c2f1c95d` wurde im bestehenden
+Entwicklungszweig `codex/vokabeltrainer-v1` per Fast-Forward übernommen und
+privat als Cache v32 bereitgestellt. Der Upload änderte sechs Laufzeitdateien;
+155 Dateien blieben unverändert. Worker-Version
+`e14dc090-529a-45ee-829b-53dfaf1162e1` ist seit 28.09.2026, 19:03:51 UTC
+zu 100 % aktiv. Elf öffentliche Dateien wurden um 19:04:13 UTC bytegleich mit
+dem geprüften Paket verglichen, darunter alle sechs geänderten Laufzeitdateien.
+
+Im bereits eingerichteten separaten Codex-Testprofil war zusätzlich der
+Nebelhirsch gekauft worden; vor der Vorbereitung waren 400 Punkte verfügbar.
+Zwei automatisch bediente Runden mit ausschließlich fiktiven Inselwörtern
+ergaben 440 weitere Testpunkte. Der sichtbare Stand vor dem Kauf war dadurch
+840 verfügbare Punkte, 2.040 Lernpunkte und Level 11. Familien-Chrome und
+echte Lernbestände wurden nicht verändert.
+
+Das kontrollierte Update über „Jetzt aktualisieren“ wurde übernommen. Der
+vorübergehende Hinweis „Google erneut verbinden“ nach dem Laden verschwand
+ohne erneute Anmeldung. Die Vorschau für Drachenstufe 4 war nach **113 ms**
+sichtbar und zeigte 800 Punkte Preis sowie 40 Punkte Restguthaben.
+
+Die automatische Freigabe lehnte den abschließenden Bestätigungsklick ab,
+auch nach Vorlage des Nachweises rein synthetischer Übungspunkte. Der Nutzer
+führte ihn deshalb selbst aus und meldete **17 Sekunden** bis zur sichtbaren
+Bestätigung. Zusammen mit der gemessenen Vorschau sind das ungefähr
+**17,1 Sekunden Prozesswartezeit**. Die bewusste Lese-/Klickpause zwischen
+Vorschau und Bestätigung sowie die Freigabeunterbrechung sind nicht darin
+enthalten. Für diesen echten Test ist die Grenze von 20 Sekunden erreicht;
+das Wunschziel unter 10 Sekunden ist nicht erreicht. Es handelt sich um eine
+einzelne UI-Messung mit einer vom Nutzer gestoppten Bestätigungsdauer, keine
+allgemeine Garantie unter beliebigen Netzbedingungen.
+
+Der anschließend gelesene DOM bestätigt „Der Kauf ist bestätigt.“,
+40 verfügbare Punkte sowie unverändert 2.040 Lernpunkte und Level 11.
+Stufe 4 wurde bewusst ausgewählt. Nach Neuladen sind Stufe 4 als ausgewählte
+Figur, Guthaben und Lernpunkte erhalten. Auch nach diesem Neuladen verschwand
+der anfängliche Verbindungshinweis ohne erneute Anmeldung. Das belegt keinen
+bestimmten Tokenablauf; regulärer Tokenablauf,
+Zweitgerät und Apple-Abnahme bleiben eigene offene Prüfungen.
+
+Produktcommit `192590258e657175defcf89f1141d561c2f1c95d` wurde nach GitHub
+auf `codex/vokabeltrainer-v1` übertragen und per `git ls-remote` exakt
+verglichen. Der nachfolgende Dokumentationscommit sichert die reale Messung
+und die aktualisierte Übergabe; sein Hash ist über die Zweigspitze überprüfbar.

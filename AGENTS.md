@@ -10,6 +10,17 @@ frischer Kaufkopf, bedingtes Schreiben und Wiederaufnahme bleiben erhalten.
 Die frühere Pause gilt nicht. Umsetzung und echte Zeitnachweise stehen im
 [aktuellen Tempobericht](docs/reports/2026-09-28-kauf-20-sekunden.md).
 
+Produktcommit `1925902`, Cache v32, ist nach 641/641 Node-Tests, 8/8
+ausgewählten Browserfällen und unabhängigen Reviews privat bereitgestellt.
+Die echte Vorschau dauert im getrennten Testbereich 113 ms. Der Nutzer hat
+die Bestätigung selbst ausgeführt und 17 Sekunden gemeldet: zusammen rund
+17,1 Sekunden Wartezeit. Der Kauf von Drachenstufe 4 und der Erhalt nach
+Neuladen sind beobachtet; 40 Testpunkte bleiben, 2.040 Lernpunkte und Level 11
+sind unverändert. Die 20-Sekunden-Grenze ist in diesem Durchgang erreicht,
+das Wunschziel unter 10 Sekunden noch nicht. Produktcommit und GitHub sind
+exakt abgeglichen. Testbereich nicht neu einrichten oder importieren. Details in der aktuellen
+[Laptop-Übergabe](docs/handoffs/2026-09-28-laptop-fortsetzung.md).
+
 **Historisch: begrenzte Kaufbeschleunigung am 28.09.2026.** Der Nutzer
 hat mit „ja, beschleunige so gut es geht“ die Arbeit nach der beanstandeten
 Kaufwartezeit beauftragt. Auf Basis `e3933fc` ist Produktcommit

@@ -8,6 +8,25 @@ Bestätigung zusammen; Ziel sind unter 10 Sekunden. Er erlaubt den Abbau
 redundanter Prüfungen. Der neue Pfad und seine Nachweise stehen im
 [aktuellen Tempobericht](docs/reports/2026-09-28-kauf-20-sekunden.md).
 
+Produktcommit `1925902` ist integriert und mit Cache v32 privat bereitgestellt.
+Final: 641/641 Node-Tests, 8/8 ausgewählte Browserfälle, nach letzter
+Abbruchkorrektur erneut der Kauf-Browserfall, unabhängige Reviews PASS.
+Synthetisch benötigt der Serverpfad 0 Vorschau- und 31 Bestätigungsanfragen;
+mit 500 ms Verzögerung pro Anfrage dauert der Kauf etwa 10,7 Sekunden.
+Elf ausgelieferte Dateien sind bytegleich geprüft. Aktive Worker-Version:
+`e14dc090-529a-45ee-829b-53dfaf1162e1`.
+
+Im getrennten Codex-Testbereich ist das Update übernommen und die
+Google-Verbindung ohne neue Anmeldung wieder verfügbar. Die echte Vorschau
+für Stufe 4 erscheint nach 113 ms. Nach dem selbst ausgeführten Klick meldet
+der Nutzer 17 Sekunden für die Bestätigung. Zusammen rund 17,1 Sekunden:
+20-Sekunden-Grenze in diesem Durchgang erreicht, Wunschziel unter 10 Sekunden
+noch nicht. Der DOM bestätigt den Kauf für 800 Punkte und danach 40 verfügbare
+Punkte, unverändert 2.040 Lernpunkte und Level 11. Stufe 4 ist gewählt und
+nach Neuladen erhalten. Produktcommit `192590258e657175defcf89f1141d561c2f1c95d`
+ist exakt mit GitHub abgeglichen. Die anschließende Dokumentation sichert den
+realen Test; keine allgemeine Zeitgarantie oder Apple-/Zweitgeräteabnahme.
+
 ## Historisch: Tempopaket bereitgestellt und Stufe 3 gekauft
 
 Der Nutzer hat die begrenzte Kaufbeschleunigung mit „ja, beschleunige so gut

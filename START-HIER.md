@@ -7,6 +7,15 @@ unter 10 Sekunden. Die erneute Optimierung und ihre Nachweise stehen im
 [Laptop-Übergabe](docs/handoffs/2026-09-28-laptop-fortsetzung.md). Frühere
 Wartezeiten und Pausen in den folgenden Abschnitten sind Vorgeschichte.
 
+Cache v32 aus Produktcommit `1925902` ist privat bereitgestellt und geprüft
+(641 Node-Tests, acht ausgewählte Browserfälle, unabhängige Reviews PASS).
+Die echte Vorschau erscheint nach 113 ms; der Nutzer meldet 17 Sekunden
+für die Bestätigung. Rund 17,1 Sekunden Gesamtwartezeit liegen in diesem
+Durchgang unter der 20-Sekunden-Grenze, aber über dem Wunschziel von 10 Sekunden.
+Stufe 4 ist gekauft, gewählt und nach Neuladen erhalten; 40 Testpunkte bleiben.
+Produktcommit und GitHub sind exakt abgeglichen. Einrichtung und Import nicht
+wiederholen.
+
 **Vorherige Fortsetzung am 28.09.2026:** Der Nutzer hat die begrenzte
 Kaufbeschleunigung ausdrücklich beauftragt. Produktcommit `ad96f00` ist auf
 `codex/vokabeltrainer-v1` integriert; 624/624 Node-Tests, 8/8 ausgewählte
@@ -66,14 +75,14 @@ Abgleich sind nach dem Update bestätigt. Ein echter Kauf war mangels
 bezahlbarem freigegebenem Angebot noch nicht möglich; günstigere
 Entwicklungsbilder fehlen. Reale Kaufwartezeit bleibt gesondert zu prüfen.
 
-Zuerst den [aktuellen Tempobericht](docs/reports/2026-09-28-kaufablauf-tempo.md)
+Zuerst den [aktuellen Tempobericht](docs/reports/2026-09-28-kauf-20-sekunden.md)
 und die [Laptop-Übergabe](docs/handoffs/2026-09-28-laptop-fortsetzung.md)
 lesen. Die [vorherige Pausenübergabe](docs/handoffs/2026-09-27-laptop-pause.md)
 enthält weiterhin Cloudflare-Einrichtung, Startschritte und Konzeptverweise.
 Die [Test-App](https://vokabeltrainer.marco-civico.workers.dev/trainer/) ist
 bereits bereitgestellt; am Laptop ist zum Öffnen kein lokaler Server nötig.
-Vorrang haben die Nutzerrückmeldung zum neuen Kaufgefühl und die Klärung des
-Google-Status nach dem letzten Neuladen. Vorgesehen ist ausschließlich private
+Der 20-Sekunden-Test ist abgeschlossen. Unter 10 Sekunden, regulärer
+Tokenablauf und die Geräteabnahmen bleiben offene Ziele. Vorgesehen ist ausschließlich private
 Nutzung im Freundeskreis.
 Das vorherige Korrekturpaket ist im
 [Prüfbericht](docs/reports/2026-09-27-sync-und-kaeufe.md) dokumentiert. Die vorherigen

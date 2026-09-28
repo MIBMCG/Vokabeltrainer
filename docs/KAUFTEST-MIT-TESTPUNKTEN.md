@@ -29,22 +29,19 @@ ein weiteres Profil hinzu.
 
 ## Aktueller Versuch
 
-Die Sicherung ist bereits im separaten Codex-Browser importiert; dort zeigt
-„Kauftest“ nach zwei erfolgreichen Testkäufen noch **1.000 verfügbare Punkte**,
-1.600 Lernpunkte und Level 9. Der eigene Drive-Testbereich und die Kaufaktivierung
-sind eingerichtet. Nach dem Update auf Cache v31 wurde ohne erneute
-Google-Anmeldung Drachenstufe 3 für 400 Punkte gekauft und bewusst ausgewählt.
-Stufe 2 war bereits für 200 Punkte gekauft. Guthaben, Besitz und Auswahl sind
-nach Neuladen erhalten. Die neue Vorschau erschien nach etwa 21 Sekunden,
-die Bestätigung nach etwa 44 Sekunden; zuvor war die Bestätigung erst nach
-knapp zwei Minuten sichtbar. Das ist ein einzelner beobachteter Durchgang,
-keine allgemeine Zeitgarantie oder Nutzerabnahme des Tempos.
-Die übrigen 1.000 Testpunkte reichen für Stufe 4 (800).
-Vor einem weiteren Kauf den aktuellen Google-Status prüfen: Direkt nach dem
-letzten Reload erschien ein Verbindungshinweis; die anschließende automatische
-Nachkontrolle lieferte wegen eines Werkzeug-Timeouts kein Ergebnis.
-Details und nächster Schritt stehen im
-[Tempobericht](reports/2026-09-28-kaufablauf-tempo.md) und der
+Die Sicherung ist im separaten Codex-Browser importiert; Drive-Testbereich
+und Kaufaktivierung sind eingerichtet. Drachenstufen 2, 3 und 4 sowie
+Nebelhirsch sind gekauft. Zwei zusätzliche fiktive Übungsrunden brachten
+440 Punkte für den letzten Test. Aktuell bleiben **40 verfügbare Punkte**,
+2.040 Lernpunkte und Level 11. Stufe 4 ist gewählt und nach Neuladen erhalten.
+
+Unter Cache v32 erschien die Vorschau nach 113 ms; der Nutzer meldete
+17 Sekunden für die selbst bestätigte Stufe 4. Rund 17,1 Sekunden
+Prozesswartezeit liegen in diesem Durchgang unter der verlangten Grenze von
+20 Sekunden. Das Wunschziel unter 10 Sekunden bleibt offen. Das ist keine
+allgemeine Zeitgarantie. Der Verbindungshinweis beim Laden verschwand vor dem
+Kauf ohne erneute Anmeldung. Details stehen im
+[Tempobericht](reports/2026-09-28-kauf-20-sekunden.md) und der
 [Laptop-Übergabe](handoffs/2026-09-28-laptop-fortsetzung.md).
 Den bereits erfolgten Import nicht wiederholen.
 
@@ -66,6 +63,6 @@ Den bereits erfolgten Import nicht wiederholen.
    Start der Kaufvorschau, ausdrückliche Bestätigung und Abschluss zeitlich
    erfassen. Anschließend Besitz, Guthaben, Auswahl und Wiederöffnung prüfen.
 
-Der getrennte Browser- und Drive-Teststand ist eingerichtet. Zwei echte
+Der getrennte Browser- und Drive-Teststand ist eingerichtet. Die getesteten
 Käufe mit synthetischen Punkten und ihr Erhalt nach Neuladen sind bestätigt.
 Einrichtung und Import für diesen bestehenden Teststand nicht wiederholen.

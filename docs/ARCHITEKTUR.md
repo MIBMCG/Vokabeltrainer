@@ -121,6 +121,12 @@ die Bestätigung; ein verzögerter Lauf mit 500 ms pro Google-Anfrage dauerte
 Der [Tempobericht](reports/2026-09-28-kauf-20-sekunden.md) enthält Messaufbau
 und offene Prüfungen.
 
+Der anschließend privat bereitgestellte Stand v32 wurde real geprüft:
+113 ms Vorschau und vom Nutzer gemeldete 17 Sekunden bis zur Bestätigung.
+Der DOM und das Neuladen bestätigen Besitz, Auswahl und genau 800 Punkte
+Ausgabe bei unveränderten Lernpunkten. Rund 17,1 Sekunden erfüllen in diesem
+Durchgang die 20-Sekunden-Grenze; das Wunschziel unter 10 Sekunden bleibt offen.
+
 ## Gemeinsame Autorität
 
 Jeder aktivierte Datensatz besitzt genau einen gemeinsamen wirtschaftlichen
