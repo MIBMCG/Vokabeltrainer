@@ -1,6 +1,28 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-**Aktuelle Steuerung: vollständiger Kauf in höchstens 20 Sekunden.** Der Nutzer
+**Aktuelle Steuerung: Pause nach Galerieabschluss am 28.09.2026.** Der Nutzer
+verlangt nach diesem sinnvollen Abschlussschritt eine Pause. Galeriepaket,
+private Bereitstellung, Browserkontrolle und GitHub-Übergabe abschließen;
+danach keine weitere Produktarbeit, Bereitstellung, Bilderzeugung oder Testsitzung
+ohne ausdrückliche Fortsetzung. Einstieg bleibt die
+[Laptop-Übergabe](docs/handoffs/2026-09-28-laptop-fortsetzung.md).
+
+**Aktuelle Fortsetzung: bestätigte Entwicklungsgalerie am 28.09.2026.**
+Nach dem 20-Sekunden-Test hat der Nutzer die Weiterarbeit beauftragt.
+Das begrenzte Galeriepaket ist als Produktcommit `64539ff` integriert und
+privat als Cache v33 bereitgestellt. Fortschritt zur nächsten Form, klare
+Besitzanzeigen, Kaufbild, bewusste Auswahl und Klassisch-Wechsel sind umgesetzt.
+Zwölf responsive Drachenbilder ersetzen die großen PNGs in der Laufzeit;
+die vier kleinen Offlinebilder benötigen zusammen rund 139 KB statt 6,9 MB.
+646/646 Node-Tests, nach letzten Dialogkorrekturen 8/8 gezielte Node-Tests,
+14/14 ausgewählte Browserfälle sowie unabhängige Prüfungen sind PASS.
+20 ausgelieferte Dateien sind bytegleich geprüft. Details und tatsächliche
+Browserbeobachtung: [Galeriebericht](docs/reports/2026-09-28-entwicklungsgalerie.md).
+72 weitere Motive bleiben Folgeumfang; natürliche Token-Erneuerung und
+physische Geräteabnahmen sind weiterhin offen. Die früheren Pausen waren aufgehoben;
+Testbereich und vorhandene Familienbestände nicht neu einrichten oder ersetzen.
+
+**Historisch: vollständiger Kauf in höchstens 20 Sekunden.** Der Nutzer
 hat Cache v31 erneut als zu langsam zurückgewiesen. Er verlangt einschließlich
 Vorschau und Bestätigung höchstens 20 Sekunden, möglichst unter 10 Sekunden,
 und erlaubt dafür weniger redundante Prüfungen. Der beauftragte Pfad nutzt

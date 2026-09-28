@@ -75,7 +75,30 @@ das kleine Ersatzbild fehlt. Die Korrektur ist unabhängig nachgeprüft (PASS)
 und im Browser belegt: keine defekte Grafik; der zugehörige Kauf bleibt bei
 endgültig fehlender Vorschau gesperrt. Die unabhängige Spec-/Qualitätsprüfung
 von Task 2 und Gesamtintegration ist PASS, ohne wichtige oder blockierende
-Befunde. Commit, echte Bereitstellung und Remoteabgleich werden separat ergänzt.
+Befunde.
+
+## Integration und private Bereitstellung
+
+Produktcommit `64539ff662941fa51294ecd4f235c37e08c6e11a` wurde per Fast-Forward
+in `codex/vokabeltrainer-v1` übernommen. Wrangler 4.142.0 hat 18 geänderte/neue
+Dateien hochgeladen und 157 vorhandene Dateien wiederverwendet; Exitcode 0.
+Worker-Version `a0242f2e-916d-4547-8b15-78b5ffc31da1`, erstellt am
+28.09.2026 um 19:49:18 UTC, ist zu 100 % aktiv. Um 19:49:53 UTC stimmten
+alle 20 geprüften öffentlichen Dateien bytegenau mit dem Uploadpaket überein:
+HTML, Cache v33, Styles, Konfiguration, beide UI-Module, beide Bildmodule und
+alle zwölf WebPs. Konto, Secrets und Kaufprotokoll wurden nicht verändert.
+
+Im bestehenden getrennten Codex-Testbrowser wurde „Jetzt aktualisieren“
+angenommen. Die neue Galerie erschien nach einem zusätzlichen Neuladen.
+Direkt beobachtet sind alle vier besessenen Drachenstufen, die ausgewählte
+Stufe 4, „Höchste Stufe erreicht“, 40 verfügbare Punkte, 2.040 Lernpunkte und
+Level 11. Der vorübergehende Hinweis zum erneuten Google-Verbinden verschwand
+ohne Anmeldung. Ein Bildschirmbild bestätigt die ausgelieferte Galerie.
+Kein Kauf und keine Änderung an vorhandenen Familienbeständen wurden ausgelöst.
+
+Der Nutzer verlangt nach diesem Schritt Pause. Nach Dokumentation und
+GitHub-Sicherung endet die Arbeit; weitere Motive oder Tests erst nach einer
+neuen ausdrücklichen Fortsetzung.
 
 Die Browserfälle verwenden ausschließlich synthetische Daten und einen lokalen
 Google-Ersatz. Die vollständige historische Browsergesamtsuite wurde nicht neu

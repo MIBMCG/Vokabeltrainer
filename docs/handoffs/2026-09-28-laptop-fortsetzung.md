@@ -2,7 +2,41 @@
 
 Stand: **28.09.2026**. Zweig: `codex/vokabeltrainer-v1`.
 
-## Aktueller Auftrag: höchstens 20 Sekunden insgesamt
+**Aktuelle Steuerung: Pause nach Galerieabschluss.** Der Nutzer verlangt
+ausdrücklich eine Pause nach dem laufenden sinnvollen Abschlussschritt.
+Bereitstellung und Browserkontrolle sind abgeschlossen; nach Dokumentation
+und GitHub-Sicherung ohne ausdrückliche Fortsetzung nicht weiterarbeiten.
+
+## Aktuelle Fortsetzung: Entwicklungsgalerie
+
+Nach dem bestätigten 20-Sekunden-Test beauftragt der Nutzer die Fortsetzung.
+Das bestehende EV05-Design ist für die vorhandene Drachenreihe vervollständigt:
+Fortschritt und nächste Form, Besitzanzeigen, Kaufvorschau mit Bild, ausdrückliche
+Auswahl nach Freischaltung sowie klassische Gestaltung im passenden Modus.
+Die bestätigten persönlichen Grundfarben bleiben erhalten.
+
+Produktcommit `64539ff662941fa51294ecd4f235c37e08c6e11a` ist lokal integriert
+und privat mit Cache v33 bereitgestellt. Zwölf WebPs in 256/512/768 Pixeln
+ersetzen die großen Drachen-PNGs in der Laufzeit. Die vier kleinen Offlinebilder
+benötigen zusammen 139.420 Bytes statt 6.898.398 Bytes; größere Varianten laden
+bei Bedarf. Quellen und ursprüngliche PNGs bleiben unverändert.
+
+646/646 Node-Tests, nach letzten Dialogkorrekturen 8/8 gezielte Node-Tests,
+14/14 ausgewählte Browserfälle und unabhängige Prüfungen sind PASS.
+Worker-Version `a0242f2e-916d-4547-8b15-78b5ffc31da1` ist zu 100 % aktiv;
+20 öffentliche Dateien sind bytegleich geprüft. [Galeriebericht](../reports/2026-09-28-entwicklungsgalerie.md).
+72 weitere Motive sowie natürliche Token-Erneuerung, physische Zweitgeräte und
+Apple-Abnahme bleiben offen. Der bekannte Teststand bleibt erhalten und darf
+nicht erneut importiert werden. Die aktuelle Pause steht oben.
+
+Das kontrollierte Update wurde im bestehenden Codex-Testbrowser angenommen.
+Nach einem zusätzlichen Neuladen zeigte die neue Galerie alle vier besessenen
+Drachenstufen, „Höchste Stufe erreicht“ und die weiterhin ausgewählte Stufe 4.
+40 verfügbare Punkte, 2.040 Lernpunkte und Level 11 sind erhalten. Der anfängliche
+Hinweis „Google erneut verbinden“ verschwand ohne neue Anmeldung. Es wurde
+kein Kauf, Import oder Wechsel des Drive-Bestands vorgenommen.
+
+## Vorheriger Auftrag: höchstens 20 Sekunden insgesamt
 
 Der Nutzer hat die Kaufwartezeit unter Cache v31 erneut zurückgewiesen und
 höchstens 20 Sekunden einschließlich Vorschau und Bestätigung gefordert,
@@ -328,7 +362,7 @@ importiert noch in Drive angelegt. Bestehende Profile und Drive-Bestände wurden
 nicht verändert. Nach Git-Sicherung ist die ausdrücklich verlangte Pause
 einzuhalten. Die heutige Kaufmessung bleibt offen.
 
-## Nächste Schritte nach dem 20-Sekunden-Test
+## Nächste Schritte erst nach ausdrücklicher Fortsetzung
 
 1. Regulären Tokenablauf getrennt prüfen, sobald er tatsächlich eingetreten
    ist. Der vorübergehende Verbindungshinweis verschwand auch nach dem jüngsten
@@ -340,8 +374,8 @@ einzuhalten. Die heutige Kaufmessung bleibt offen.
    Wiederholung des bereits abgeschlossenen Imports oder Kauftests verlangen.
    Im [getrennten Teststand](../KAUFTEST-MIT-TESTPUNKTEN.md) sind alle vier
    Drachenstufen sowie Nebelhirsch vorhanden; nur 40 Punkte bleiben verfügbar.
-3. Den bestätigten Avatar-/Galerieumfang fortsetzen: 72 weitere Motive,
-   Produktionsvarianten und vollständige Galerie bleiben Folgeumfang.
+3. Die übrigen 72 Motive als eigenes Bildpaket fortsetzen. Die Galeriebedienung
+   und responsiven Ausgaben der vorhandenen Drachenreihe sind abgeschlossen.
 4. Reales Google Drive auf zwei physischen Geräten, iPhone/iPad, Safari und
    Home-Bildschirm-App einschließlich Offlineübung und Wiederaufnahme prüfen.
 
@@ -355,10 +389,13 @@ Dies ist keine vollständige Zwei-Geräte-Abnahme und kein Apple-/Safari-Nachwei
 
 > Lies AGENTS.md, START-HIER.md, ARBEITSSTAND.md und diese Übergabe. Prüfe den
 > aktuellen Entwicklungszweig und GitHub, ohne vorhandene Arbeit zu verwerfen.
+> Aktuell gilt ausdrücklich Pause. Produktcommit 64539ff ergänzt die Galerie
+> und responsive Drachenbilder; Cache v33 ist bereitgestellt und die neue Ansicht
+> im Testbrowser beobachtet. Ohne neue ausdrückliche Fortsetzung nicht arbeiten.
 > Der Laptop hat den vorhandenen Drive-Bestand übernommen; der vollständige
 > Abgleich ist historisch beobachtet. Produktcommit 1925902 ist exakt mit
-> GitHub abgeglichen und als Cache v32 privat bereitgestellt. Die frühere
-> Pause ist aufgehoben. Der aktuelle Echtkauf dauerte rund 17,1 Sekunden
+> GitHub abgeglichen und wurde damals als Cache v32 privat bereitgestellt.
+> Der letzte Echtkauf dauerte rund 17,1 Sekunden
 > einschließlich Vorschau; die 17 Sekunden Bestätigung hat der Nutzer gemeldet.
 > Das Ziel unter 20 Sekunden ist für diesen Durchgang belegt, unter 10 Sekunden
 > bleibt ein Wunschziel. Stufe 4 ist gewählt und nach Neuladen erhalten;

@@ -1,6 +1,39 @@
 # Arbeitsstand
 
-## Aktueller Auftrag: höchstens 20 Sekunden für den gesamten Kauf
+**Aktuelle Steuerung: Pause nach diesem Abschluss.** Der Nutzer verlangt
+während der abschließenden Browserkontrolle eine sinnvolle Pause nach diesem
+Schritt. Nur Abschlussdokumentation und GitHub-Sicherung fertigstellen;
+danach keine neue Produktarbeit oder Testsitzung ohne ausdrückliche Fortsetzung.
+
+## Aktuelle Fortsetzung: Entwicklungsgalerie und kleinere Bilder
+
+Nach dem 20-Sekunden-Test beauftragt der Nutzer die Weiterarbeit. Das bereits
+bestätigte EV05-Bedienpaket ist mit den vier vorhandenen Drachenformen umgesetzt:
+nächste Form mit Preis/Guthaben/fehlenden Punkten, Fortschrittsbalken, klare
+Besitzanzeigen, Bilder im Kaufdialog und bewusste Auswahl nach Freischaltung.
+Alle besessenen Formen sind wieder auswählbar. Klassische Gestaltung und
+persönliche Grundfarben bleiben erhalten; Betrachten ändert die Auswahl nicht.
+
+Produktcommit `64539ff662941fa51294ecd4f235c37e08c6e11a` ist integriert und
+privat als Cache v33 bereitgestellt. Zwölf transparente WebPs verwenden
+256/512/768 Pixel; kleine Offlinebilder zusammen 139.420 statt 6.898.398 Bytes.
+Größere Bilder werden passend nachgeladen. Bei endgültigem Bildausfall erscheint
+ein Hinweis und die Kaufbestätigung bleibt gesperrt.
+
+Prüfungen: 646/646 gesamte Node-Tests, nach den letzten Dialogkorrekturen
+8/8 gezielte Node-Tests, 14/14 ausgewählte Browserfälle und unabhängige Prüfungen
+PASS. 20 öffentliche Dateien sind bytegleich mit dem Uploadpaket verglichen.
+Aktive Worker-Version: `a0242f2e-916d-4547-8b15-78b5ffc31da1`.
+Im getrennten Codex-Testbrowser wurde das Update angenommen. Die neue Galerie
+erschien nach einem zusätzlichen Neuladen; alle vier Drachenstufen gehören
+weiterhin dem Testprofil, Stufe 4 bleibt gewählt. „Höchste Stufe erreicht“,
+40 verfügbare Punkte und 2.040 Lernpunkte/Level 11 sind direkt beobachtet.
+Der anfängliche Google-Verbindungshinweis verschwand ohne neue Anmeldung.
+Details und Browserbeobachtung stehen im [Galeriebericht](docs/reports/2026-09-28-entwicklungsgalerie.md).
+72 weitere Motive, das Kauf-Wunschziel unter zehn Sekunden und reale
+Token-/Geräteabnahmen bleiben offen.
+
+## Vorheriger Auftrag: höchstens 20 Sekunden für den gesamten Kauf
 
 Der Nutzer hat den bereitgestellten Stand erneut getestet und als zu langsam
 zurückgewiesen. Maßgeblich sind jetzt höchstens 20 Sekunden für Vorschau und

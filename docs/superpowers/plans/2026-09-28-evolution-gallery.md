@@ -45,24 +45,24 @@
 
 **Interfaces:** Task 1 liefert den obigen Bildvertrag. `evolutionOffer` bleibt die einzige Fortschrittsberechnung. Bestehende Commerce-Methoden bleiben unverändert.
 
-- [ ] Tests zuerst für Fortschritt bei 50/200 Punkten (150 fehlen, 25 %), Deckelung bei 100 %, höchste Stufe sowie figurenbezogene Vorgängerstufe.
-- [ ] Tests zuerst für Kaufbild und bewusste Auswahl nach Bestätigung, owned/locked-Anzeigen sowie Klassisch-Rückkehr ohne Verlust der Gestaltung.
-- [ ] Failures mit den betroffenen Node-/Browserfällen nachweisen.
-- [ ] Fortschrittsbereich mit nächstem Bild, Preis, Guthaben und fehlenden Punkten einbauen; alle vier Formen mit Besitzstatus zeigen. Höchste Stufe ausdrücklich anzeigen.
-- [ ] Kaufdialog mit Bild ergänzen; Bestätigung beibehalten und „Freigeschaltet“ / „Jetzt auswählen“ ergänzen. Auswahl erfolgt nur durch separate Aktion.
-- [ ] Eigene Formen übersichtlich anbieten, Figur für Entwicklung ohne unbeabsichtigte Auswahl betrachten können. Klassische Gestaltung nur bei klassischer Auswahl, menschliche Basisfarben gemäß Präzisierung anbieten.
-- [ ] Gemeinsame responsive Bilder auch in der großen Auswahl und Lernanzeige verwenden; schmale Darstellung und Tastaturzugang erhalten.
-- [ ] Betroffene Tests ausführen und Änderungen unabhängig prüfen lassen.
+- [x] Tests zuerst für Fortschritt bei 50/200 Punkten (150 fehlen, 25 %), Deckelung bei 100 %, höchste Stufe sowie figurenbezogene Vorgängerstufe.
+- [x] Tests zuerst für Kaufbild und bewusste Auswahl nach Bestätigung, owned/locked-Anzeigen sowie Klassisch-Rückkehr ohne Verlust der Gestaltung.
+- [x] Failures mit den betroffenen Node-/Browserfällen nachweisen.
+- [x] Fortschrittsbereich mit nächstem Bild, Preis, Guthaben und fehlenden Punkten einbauen; alle vier Formen mit Besitzstatus zeigen. Höchste Stufe ausdrücklich anzeigen.
+- [x] Kaufdialog mit Bild ergänzen; Bestätigung beibehalten und „Freigeschaltet“ / „Jetzt auswählen“ ergänzen. Auswahl erfolgt nur durch separate Aktion.
+- [x] Eigene Formen übersichtlich anbieten, Figur für Entwicklung ohne unbeabsichtigte Auswahl betrachten können. Klassische Gestaltung nur bei klassischer Auswahl, menschliche Basisfarben gemäß Präzisierung anbieten.
+- [x] Gemeinsame responsive Bilder auch in der großen Auswahl und Lernanzeige verwenden; schmale Darstellung und Tastaturzugang erhalten.
+- [x] Betroffene Tests ausführen und Änderungen unabhängig prüfen lassen.
 
 ## Task 3: Integration und Abschluss
 
 **Files:** `trainer/sw.js`, `scripts/serve.mjs`, `tests/serve.test.js`, `tests/browser/evolution-art.browser.mjs`, betroffene Browser-Updatefixtures, Quellen-README, `ARBEITSSTAND.md`, aktuelle Übergabe und Ergebnisbericht.
 
-- [ ] Cachekennung auf v33 erhöhen; neue Laufzeitmodule und tatsächlich benötigte Bildvarianten explizit aufnehmen. Große ursprüngliche PNGs nicht mehr vorladen, sofern Laufzeit und Tests keine Abhängigkeit mehr besitzen.
-- [ ] Vollständige Node-Prüfung, betroffene Browserfälle einschließlich Offline/Update, Galerie auf breitem und schmalem Bildschirm ausführen; Bilder visuell prüfen.
-- [ ] Unabhängige Gesamtprüfung auf Spec und Qualität; Befunde vor Abschluss beheben.
-- [ ] Prüfgrenzen und Bildgrößen dokumentieren, Entwicklungszweig integrieren, private App aktualisieren und ausgelieferte Dateien vergleichen.
-- [ ] GitHub-Push und exakten Remote-Commit belegen. Keine vollständige Produktion aller Figuren behaupten.
+- [x] Cachekennung auf v33 erhöhen; neue Laufzeitmodule und tatsächlich benötigte Bildvarianten explizit aufnehmen. Große ursprüngliche PNGs nicht mehr vorladen, sofern Laufzeit und Tests keine Abhängigkeit mehr besitzen.
+- [x] Vollständige Node-Prüfung, betroffene Browserfälle einschließlich Offline/Update, Galerie auf breitem und schmalem Bildschirm ausführen; Bilder visuell prüfen.
+- [x] Unabhängige Gesamtprüfung auf Spec und Qualität; Befunde vor Abschluss beheben.
+- [x] Prüfgrenzen und Bildgrößen dokumentieren, Entwicklungszweig integrieren, private App aktualisieren und ausgelieferte Dateien vergleichen.
+- [x] GitHub-Push und exakten Remote-Commit belegen. Keine vollständige Produktion aller Figuren behaupten.
 
 ## Ablaufentscheidung
 

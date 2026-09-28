@@ -1,6 +1,20 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Aktueller Auftrag am 28.09.2026:** Der Nutzer verlangt nach erneutem Test
+**Pause nach Abschluss:** Der Nutzer wünscht nach dem Galeriepaket eine Pause.
+Nach Abschlussdokumentation und GitHub-Sicherung keine weitere Arbeit ohne
+ausdrückliche Fortsetzung. Die neue Galerie ist im bestehenden Testbrowser
+sichtbar; Punkte, Besitz und Auswahl sind erhalten.
+
+**Aktuelle Fortsetzung am 28.09.2026:** Das bestätigte Galeriepaket ist
+als Produktcommit `64539ff` integriert und privat mit Cache v33 bereitgestellt.
+Es ergänzt Fortschritt, Besitzanzeigen, Kaufbild und bewusste Auswahl; die
+Drachenbilder sind deutlich kleiner und in passenden Größen verfügbar.
+646 Node-Tests, abschließend acht gezielte Node-Tests, 14 Browserfälle und
+unabhängige Prüfungen sind erfolgreich. Der [Galeriebericht](docs/reports/2026-09-28-entwicklungsgalerie.md)
+und die [Laptop-Übergabe](docs/handoffs/2026-09-28-laptop-fortsetzung.md)
+nennen Bereitstellung und Nachweisgrenzen. 72 zusätzliche Motive bleiben offen.
+
+**Vorheriger Auftrag am 28.09.2026:** Der Nutzer verlangt nach erneutem Test
 höchstens 20 Sekunden für Vorschau und Kaufbestätigung zusammen, möglichst
 unter 10 Sekunden. Die erneute Optimierung und ihre Nachweise stehen im
 [aktuellen Tempobericht](docs/reports/2026-09-28-kauf-20-sekunden.md) und der
