@@ -2,11 +2,19 @@
 
 **Aktuelle Fortsetzung am 28.09.2026:** Der Nutzer hat die Pause ausdrücklich
 beendet. Die 1.600 Testpunkte sind im getrennten Codex-Browser importiert,
-Google ist verbunden. Die eigene Drive-Einrichtung scheiterte an einer
-Metadatenprüfung. Die geprüfte Korrektur `ed36f4d` ist als Cache v30 online und
-im Testbrowser übernommen. Zum erneuten Einrichtungs- und Kaufversuch muss
-der Nutzer die Erwachsenenansicht nach dem Update mit seiner Test-PIN öffnen.
-Noch kein Kauf; [aktueller Prüfbericht](docs/reports/2026-09-28-kauftest-wiederherstellung.md).
+die eigene Drive-Einrichtung ist nach der Korrektur `ed36f4d` unter Cache v30
+gelungen. Der Test-Lernbereich ist vollständig abgeglichen, Google aktiv.
+„Einfacher Drache – Stufe 2“ wurde einmal für 200 Punkte gekauft: 1.400 Punkte
+verfügbar, 1.600 Lernpunkte und Level 9 unverändert. Die Kaufvorschau erschien
+nach etwa 26,927 Sekunden; die Bestätigung war nach 118,821 Sekunden sichtbar
+(nach 98,722 Sekunden noch laufend). Das sind UI-Beobachtungen, keine genaue
+HTTP-Dauer oder belegte Zeitersparnis. Der Nutzer berichtet über zwei Minuten
+für die Bestätigung und beanstandet das Tempo ausdrücklich. Der Kauf ist
+funktional bestätigt, die Leistungsdiagnose hat nun Priorität; das Tempo ist
+nicht abgenommen. Die gekaufte Form wurde bewusst ausgewählt; Besitz, Auswahl
+und Guthaben sind nach Neuladen erhalten. Natürlicher Tokenablauf und Geräteabnahmen bleiben offen. Der
+Dokumentationszwischenstand `a51d9991fee20ea5ceb50d25ed1040043d7cd5f0` ist exakt
+mit GitHub verglichen. [Aktueller Prüfbericht](docs/reports/2026-09-28-kauftest-wiederherstellung.md).
 
 **Vorherige Pause nach Abschluss am 28.09.2026:** Die beauftragte private Bereitstellung
 und der Chrome-Updateweg sind abgeschlossen. Für den nächsten Kaufversuch
@@ -136,18 +144,20 @@ vermeintlichen Reparatur löschen.
 
 > Setze die Arbeit am Vokabeltrainer auf meinem Laptop fort. Lies AGENTS.md,
 > START-HIER.md, ARBEITSSTAND.md und docs/handoffs/2026-09-28-laptop-fortsetzung.md.
-> Damit beende ich die Pause vom 28.09. ausdrücklich. Verwende für den nächsten
-> Kaufversuch den vorbereiteten synthetischen Stand mit 1.600 Punkten gemäß
-> docs/KAUFTEST-MIT-TESTPUNKTEN.md in einer getrennten Testumgebung. Den
-> vorhandenen Familienlernstand nicht durch diese Sicherung ersetzen.
+> Die Pause vom 28.09. ist bereits beendet. Vorrang hat die beanstandete
+> Kaufbestätigung von über zwei Minuten. Der getrennte Codex-Testbrowser ist
+> bereits mit Google verbunden und für Käufe aktiviert. Nach dem bestätigten
+> Kauf von Drachenstufe 2 verbleiben 1.400 Testpunkte; Besitz und Auswahl sind
+> nach Neuladen erhalten. Import und Einrichtung nicht wiederholen. Den
+> vorhandenen Familienlernstand erhalten.
 > Prüfe den aktuellen Zweig codex/vokabeltrainer-v1, Remote und lokale Änderungen.
 > Die private HTTPS-App ist bereitgestellt. Der vorhandene Drive-Bestand wurde
 > am Laptop übernommen; vollständiger Abgleich ist beobachtet und Google bleibt
 > laut Nutzer nach Chrome-Neustart verbunden. Regulärer Tokenablauf bleibt offen.
-> Die Kaufgruppen-Optimierung in b6b83a9 ist geprüft und als Cache v29 privat
-> bereitgestellt. Der kontrollierte Updateweg in Chrome ist beobachtet.
-> Wiederhole weder Cloudflare-Anlage noch abgeschlossene Kaufpakete. Reale
-> Kaufwartezeit und Geräteabnahmen getrennt nachweisen; danach am bestätigten
+> Die geprüfte Sicherungskorrektur ed36f4d ist als Cache v30 privat bereitgestellt.
+> Der kontrollierte Updateweg ist beobachtet. Wiederhole weder Cloudflare-Anlage
+> noch abgeschlossene Kaufpakete. Den vollständigen Kaufablauf vermessen und
+> beschleunigen; Geräteabnahmen getrennt nachweisen; danach am bestätigten
 > Avatar-/Galerieumfang ansetzen.
 > Bestätigte Entscheidungen erhalten; nur private kostenlose Nutzung. Keine
 > echten Profile, Sicherungen, PINs oder Zugangsdaten in Git aufnehmen.

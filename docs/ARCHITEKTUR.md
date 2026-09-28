@@ -13,8 +13,12 @@ Deren Grenzen stehen im
 [Anmeldeentwurf](superpowers/specs/2026-09-27-server-anmeldung-design.md);
 Google-Anmeldung, Verbindung nach F5 sowie der Abgleich mit dem bewusst
 gewählten vorhandenen Drive-Bestand sind beobachtet. Die aktive Verbindung
-nach vollständigem Chrome-Neustart ist vom Nutzer bestätigt. Der reguläre Tokenablauf, ein echter Kauf und
-die Geräteprüfung bleiben offen; Belege und Grenzen stehen in der
+nach vollständigem Chrome-Neustart ist vom Nutzer bestätigt. In einem
+getrennten synthetischen Testbereich wurde ein echter Kauf über Google Drive
+bestätigt; Besitz, Auswahl und Guthaben sind nach Neuladen erhalten. Der Nutzer
+beanstandet die Bestätigungsdauer von über zwei Minuten; die Kaufgeschwindigkeit
+ist nicht abgenommen. Der reguläre Tokenablauf und die Geräteprüfung bleiben offen;
+Belege und Grenzen stehen in der
 [aktuellen Laptop-Übergabe](handoffs/2026-09-28-laptop-fortsetzung.md).
 Der Produktcode liegt unter `src/trainer/`; die historische Kaufprobe unter
 `src/shop-probe/` ist kein Laufzeitimport. Die Laufzeit setzt die vorhandenen
@@ -76,8 +80,15 @@ Metadatenfelder werden weiterhin verglichen; ohne gültige Inhaltsrevision gilt
 der bisherige strenge Vergleich. Inhalts-Hashes und Bindungsprüfungen bleiben
 erhalten. Der echte Anlegeversuch eines getrennten Google-Testbereichs war
 zuvor zweimal mit einer Meldung über geänderte Sicherungsmetadaten gescheitert;
-das tatsächlich abweichende Feld wurde nicht beobachtet. Der erneute echte
-Versuch steht noch aus.
+das tatsächlich abweichende Feld wurde nicht beobachtet. Unter Cache `v30`
+meldete die Oberfläche bei Fortsetzung mit demselben Einrichtungsnamen
+„Der Lernbereich wurde angelegt.“ und danach „Vollständig abgeglichen.“
+Die Google-Verbindung blieb aktiv. Nach einmaliger Aktivierung wurde dort
+„Drache Stufe 2“ für 200 Guthaben echt gekauft. Die Oberfläche zeigte
+„Der Kauf ist bestätigt.“, 1.400 verfügbares Guthaben bei unverändert
+1.600 Lernpunkten und Level 9. „Drache Stufe 3“ für 400 blieb offen.
+Bewusste Auswahl, Besitz und Guthaben sind nach Neuladen bestätigt; dieser
+Test ersetzt keine Abnahme mit einem zweiten Gerät.
 
 ## Gemeinsame Autorität
 

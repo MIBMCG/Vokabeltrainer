@@ -6,8 +6,9 @@ Der begrenzte Korrekturstand `ed36f4d` ist mit Cache `v30` als Worker-Version
 `6d687e33-66b1-4f26-9ab9-99771d809809` aktiv. Der frühere Upload des
 Kaufpakets mit Cache `v29` und Version
 `494388ba-6838-4604-9369-788a6e60962d` bleibt unten als historischer
-Nachweis erhalten. Ein erneuter echter Versuch mit dem getrennten
-Google-Testbereich, ein Kauf und der reguläre Tokenablauf stehen noch aus.
+Nachweis erhalten. Der getrennte Google-Testbereich wurde unter `v30`
+erfolgreich angelegt und vollständig abgeglichen. Ein echter Kauf wurde darin
+bestätigt; der reguläre Tokenablauf steht noch aus.
 Der alte Pausenauftrag ist beendet.
 
 Einrichtungsnachweis: 27.09.2026. Die bestehende lokale Trainer-App bleibt im Browsermodus.
@@ -115,9 +116,10 @@ keinen echten Kauf oder eine kürzere Kaufdauer. Anschließend wurde in Chrome
 der kontrollierte Updatehinweis angenommen; die Profilauswahl erschien wieder.
 Die aktive Google-Verbindung ist nach dem Update vom Nutzer bestätigt und
 zusammen mit „Vollständig abgeglichen“ direkt in der Erwachsenenansicht
-beobachtet. Ein Kauf wurde mangels verfügbarem bezahlbaren Angebot nicht
-ausgelöst; fehlende Entwicklungsbilder sind bekannter Folgeumfang.
-Tokenablauf, reale Kaufwartezeit, Zweitgerät und Apple-Abnahme bleiben offen.
+beobachtet. Zum damaligen Stand wurde mangels verfügbarem bezahlbaren Angebot
+kein Kauf ausgelöst; fehlende Entwicklungsbilder sind bekannter Folgeumfang.
+Tokenablauf, reale Kaufwartezeit, Zweitgerät und Apple-Abnahme waren damals
+offen. Der spätere echte Kauf steht im folgenden Abschnitt.
 
 ## Bereitstellung der begrenzten Sicherungskorrektur am 28.09.2026
 
@@ -137,16 +139,33 @@ Metadaten und JSON-Inhalt werden mit `no-store` angefordert; Inhalts-Hashes und
 Dateibindungen bleiben geprüft. Vorher war die reale Erstellung eines
 getrennten Google-Testbereichs zweimal mit „Eine Sicherungsdatei wurde während
 des Lesens geändert“ gescheitert. Das konkret abweichende Metadatenfeld wurde
-dabei nicht aufgezeichnet. Der erneute echte Versuch mit der Korrektur steht
-noch aus.
+dabei nicht aufgezeichnet. Nach Entsperren der Erwachsenenansicht und
+Fortsetzung mit exakt demselben Einrichtungsnamen meldete die Oberfläche unter
+`v30` „Der Lernbereich wurde angelegt.“, „Vollständig abgeglichen.“ und
+„Google-Verbindung ist aktiv.“ Vier ältere lokale Einrichtungsereignisse
+blieben getrennt und wurden nicht in den neuen Bereich übernommen.
+Die Aktivierungsvorschau zeigte 1.600 Punkte und Level 9. Die einmalige
+Aktivierung war im beobachteten Intervall zwischen 82,259 und 110,577 Sekunden
+abgeschlossen. Danach wurde „Drache Stufe 2“ für 200 Guthaben in der getrennten
+In-App-Browserumgebung mit echtem Google Drive gekauft. Die Oberfläche zeigte
+„Der Kauf ist bestätigt.“, 1.400 verfügbares Guthaben, unverändert
+1.600 Lernpunkte und Level 9. „Drache Stufe 3“ für 400 blieb offen.
+Die Kaufvorschau war bei 26,927 Sekunden sichtbar; bei 98,722 Sekunden lief
+die Bestätigung noch und bis 118,821 Sekunden war sie sichtbar bestätigt.
+Das sind Beobachtungsintervalle der Oberfläche, keine präzise HTTP-Messung
+und kein Vorher-Nachher-Vergleich. Die gekaufte Form wurde bewusst ausgewählt;
+Besitz, Auswahl und Guthaben sind nach Neuladen erhalten. Der Nutzer meldet
+eine Kaufbestätigung von über zwei Minuten und beanstandet das Tempo.
+Die Kaufgeschwindigkeit ist nicht abgenommen; die Leistungsdiagnose hat Priorität.
 
 Vor der Bereitstellung bestanden 601 Node-Tests, darunter 105 gezielte Fälle,
 sowie sieben ausgewählte Browserfälle zu Offlinebetrieb, Update,
 Wiederherstellung, Kauf und Anmeldung. Die HTTPS-Nachprüfung um 16:52:50 UTC
 lieferte für fünf öffentliche Pfade, einschließlich beider geänderten Module,
 Status 200; die ausgelieferten Dateien waren bytegleich mit dem Staging.
-Diese Prüfung belegt die Auslieferung, noch keinen gelungenen Google-Abgleich
-des neuen Testbereichs, echten Kauf oder natürlichen Tokenablauf.
+Diese HTTP-Prüfung belegt die Auslieferung. Der spätere erfolgreiche Abgleich
+und Kauf im neuen Testbereich wurden separat in der echten App beobachtet;
+natürlicher Tokenablauf, Zweitgerät und Apple-Abnahme bleiben offen.
 
 ## Lokal vorbereiten und prüfen
 

@@ -105,6 +105,170 @@ erschien das Updateangebot. Nach „Jetzt aktualisieren“ erschien das Profil
 weiterhin mit Level 9 und 1.600 Punkten. Die Erwachsenenansicht verlangt nach
 dem Reload erwartungsgemäß erneut die lokale Test-PIN.
 
-Der erneute reale Einrichtungsversuch und der Kauf stehen noch aus. Die
-synthetisch belegte Korrektur allein beweist weder das konkrete geänderte
-Metadatenfeld des ursprünglichen Fehlers noch seine Behebung im echten Ablauf.
+## Erneuter realer Einrichtungsversuch
+
+Nach der vom Nutzer bestätigten Entsperrung war die Google-Verbindung ohne
+erneute Anmeldung aktiv. Mit exakt demselben Namen wurde der gespeicherte
+Einrichtungsauftrag fortgesetzt. Die Oberfläche meldete anschließend
+„Der Lernbereich wurde angelegt.“ und „Vollständig abgeglichen.“ Vier alte
+Ereignisse der leeren Ersteinrichtung bleiben getrennt erhalten; sie wurden
+nicht zur Übernahme ausgewählt. Der Testimport wurde nicht wiederholt.
+
+Damit gelingt der zuvor gescheiterte Ablauf mit v30 auch beim echten
+Google-Zugriff. Das konkret geänderte Metadatenfeld der früheren Versuche ist
+weiterhin nicht aufgezeichnet; aus dem erfolgreichen Ablauf wird keine
+rückwirkende feldgenaue Diagnose abgeleitet.
+
+Die anschließende Vorschau zur Aktivierung von Figuren und Käufen zeigte
+den synthetischen Lernbereich mit „Kauftest: 1600 Lernpunkte, Level 9“.
+Die Aktivierung wurde einmal bestätigt. Nach 82,259 Sekunden stand noch
+die Vorschau; spätestens nach 110,577 Sekunden war „Figuren und Käufe sind
+bereit.“ sichtbar.
+
+Bei der Aktivierung blieb die Vorschau mindestens 82 Sekunden unverändert.
+Die lesende Codeprüfung erklärt die fehlende Zwischenanzeige: Der Handler
+aktualisiert erst nach Abschluss oder Fehler, ohne den Bestätigungsbutton
+zwischenzeitlich zu sperren. Der Auftrag wurde deshalb nur einmal ausgelöst.
+Die Aktivierung veröffentlicht unter anderem Sicherungsteile und die
+wirtschaftliche Ausgangsbasis mit anschließender Nachprüfung. Die frühere
+Reduktion auf 34 Anfragen je Kauf-Dreiergruppe betrifft diese einmalige
+Einrichtung nicht. Die Browser-Drive-Abrufe besitzen keinen eigenen Zeitabbruch;
+der Server begrenzt seine einzelnen Google-Abrufe jedoch mit
+`AbortSignal.timeout(10_000)`. Ein Gesamtabbruch für den vollständigen Kauf
+ist daraus nicht abzuleiten. Die Wartezeit allein belegt weder einen Hänger
+noch Erfolg.
+
+## Echter Kauf, Auswahl und Neuladen
+
+Im Testprofil erschien die Drachenreihe mit 1.600 verfügbaren Punkten und
+1.600 Lernpunkten. Für „Einfacher Drache – Stufe 2“ wurde einmal die Vorschau
+angefordert. Der Dialog war nach 26,927 Sekunden sichtbar und zeigte
+200 Punkte Preis sowie 1.400 Punkte danach. Die Bestätigung wurde genau einmal
+betätigt. Nach 98,722 Sekunden stand noch „Kauf wird bestätigt …“; spätestens
+nach 118,821 Sekunden waren „Der Kauf ist bestätigt.“, der Besitz von Stufe 2
+und 1.400 verfügbare Punkte sichtbar. Die Lernpunkte blieben bei 1.600,
+das Level bei 9. Stufe 3 wurde für 400 Punkte angeboten.
+
+Diese Zeitpunkte wurden außerhalb der Seite an UI-Beobachtungen gemessen.
+Sie begrenzen den beobachteten Ablauf, sind keine genaue Messung einzelner
+HTTP-Anfragen und kein Vorher-nachher-Vergleich. Der Nutzer berichtet selbst
+eine Kaufbestätigung von **über zwei Minuten** und beanstandet genau diese
+Wartezeit. Der funktionale Erfolg bedeutet ausdrücklich **keine Abnahme des
+Tempos**.
+
+Anschließend wurde Stufe 2 bewusst gewählt; die App bestätigte
+„Die Entwicklungsform wurde ausgewählt.“ Nach echtem Neuladen der Seite
+zeigte „Meine Figur“ weiterhin Stufe 2 als ausgewählte Figur sowie
+1.400 verfügbare Punkte, 1.600 Lernpunkte und Level 9. Der getrennte Teststand
+bleibt geöffnet. Das übrige Guthaben reicht für Stufe 3 und 4; im normalen
+Chrome-Familienstand wurden keine Punkte oder Käufe geändert.
+
+## Vorrangiger Folgeauftrag: Kaufwartezeit
+
+Der Nutzer benennt die Wartezeit als weiterhin ungelöstes Hauptproblem.
+Die bisherige Optimierung eines Uploadteils von 54 auf 34 Anfragen ist kein
+Nachweis für einen schnellen Gesamtkauf. Die aktuelle Untersuchung verfolgt
+deshalb den vollständigen Bestätigungsweg einschließlich Lernabgleich,
+wiederholter Kopfprüfung, Upload, Veröffentlichung und abschließender Ansicht.
+Noch keine weitere Tempoänderung bereitgestellt. Natürlicher Tokenablauf,
+Zweitgerät und Apple-Abnahme bleiben gesondert offen.
+
+### Vollständige synthetische Ablaufmessung
+
+Der Diagnosehelfer `scripts/measure-purchase-requests.mjs` verwendet dieselbe
+1.600-Punkte-Sicherung und die echten Laufzeitmodule für ProductSync,
+Kaufintegration, Kaufdienst und Drive-Transport. Nur die Google-HTTP-Grenze
+wird durch das vorhandene Testdouble im eigenen Prozess ersetzt; reales
+`fetch` ist ausdrücklich gesperrt. Es werden keine Browser oder Zugangsdaten
+verwendet. Die Vorbereitung nutzt `backupLedger` und die echte Aktivierung;
+sie rekonstruiert nicht jede historische Datei des realen Testbereichs.
+
+Erste ausgeführte Messungen über den danach portabilisierten Diagnosehelfer:
+
+| Vorgang | HTTP-Anfragen | Lokal ohne Netzwartezeit | Mit angeforderten 10 ms je Anfrage |
+| --- | ---: | ---: | ---: |
+| Kaufvorschau | 63 | 437 ms | 1.267 ms |
+| Kaufbestätigung | 234 | 1.465 ms | 4.867 ms |
+| Ansicht vorher / nachher | 0 / 0 | 6 / 9 ms | 9 / 9 ms |
+
+Beide Läufe bestätigen den Kauf und 1.400 verfügbare bei 1.600 Lernpunkten;
+maximal drei HTTP-Anfragen liefen parallel. Die Windows-Timer halten
+angeforderte 10 ms nicht exakt ein. Diese Zeiten enthalten keine echte
+Google-, Cloudflare-, D1-, Browser- oder IndexedDB-Latenz. Sie sind keine
+sekundengenaue Erklärung des Nutzerversuchs.
+
+Die vollständige Bestätigung zerfällt im gemessenen Szenario so:
+
+| Abschnitt | HTTP-Anfragen |
+| --- | ---: |
+| Erster vollständiger Lernabgleich | 51 |
+| Kaufkopfprüfung danach | 4 |
+| Zweiter vollständiger Lernabgleich bei der Reservierung | 51 |
+| Kaufkopfprüfung danach | 4 |
+| Koordinatorprüfung für den Kandidaten | 4 |
+| Fünf einzelne ID-Reservierungen | 10 |
+| Uploadgruppe mit drei Dateien | 34 |
+| Uploadgruppe mit zwei Dateien | 26 |
+| Koordinatorprüfung vor Veröffentlichung | 4 |
+| Geschützte Pointer-Veröffentlichung | 12 |
+| Abschließende Koordinatorprüfung | 4 |
+| Nachlesen der fünf neuen Kaufobjekte | 30 |
+| **Summe** | **234** |
+
+Nach Anfrageart sind es 92 Kontoabfragen, 100 Metadatenabrufe, 29
+Inhaltsabrufe, zwei Dateilisten, fünf ID-Reservierungen, fünf Uploads und
+ein Pointer-Schreibzugriff. `getView` verwendet anschließend die lokale
+geprüfte Historie und erzeugt hier keine Netzabrufe. Jeder Lernabgleich
+enthält selbst 27 gewöhnliche Drive-Abfragen, zehn zur Kaufentdeckung und
+14 zur gemeinsamen Kaufprüfung. Die alte Zahl 34 beschreibt allein die
+erste der beiden Uploadgruppen.
+
+Die unabhängige Codeanalyse bestätigt die Abfolge in
+[`confirmInternal` und `reservePurchase`](../../src/trainer/purchases/service.js),
+die zusätzliche Kontoabfrage vor jedem gebundenen Kaufabruf im
+[Transport](../../src/trainer/purchases/transport.js) sowie das erneute Lesen
+eines schon gelesenen Snapshot-Manifests in
+[ProductSync](../../src/trainer/sync/drive.js) und
+[Sicherungstransport](../../src/trainer/backup/transport.js).
+Gecachte Kaufhistorie wird erneut lokal geprüft; nicht alle alten Kaufobjekte
+werden bei jeder Prüfung erneut aus Drive geladen.
+
+### Begrenzter Verbesserungsvorschlag, noch nicht umgesetzt
+
+Der frisch geprüfte Stand einer Bestätigung könnte innerhalb desselben
+Auftrags bis zur Reservierung weitergereicht werden, sofern Zustand und
+Bindung nachweislich unverändert sind. Bei Wiederaufnahme oder Abweichung
+wäre weiterhin vollständig abzugleichen. Aktueller Koordinatorkopf, ETag,
+`If-Match`, persistierter Auftrag und abschließende Bestätigung bleiben
+erforderlich. Im gemessenen Ablauf könnten dadurch 55 doppelte Anfragen
+entfallen: 234 → 179.
+
+Gemeinsame Reservierung der fünf benötigten IDs könnte weitere acht Anfragen
+sparen; Wiederverwendung des bereits vollständig geprüften Manifests innerhalb
+eines einzigen Abgleichs weitere drei. Das ergibt einen **ungeprüften Zielwert
+von 168 statt 234 Anfragen** für dieses Szenario, rund 28 Prozent weniger.
+Hash-, Inhalts-, Revisions- und Bindungsprüfungen bleiben Bedingungen des
+Vorschlags. Das ist weder implementiert noch ein Versprechen einer bestimmten
+realen Dauer. Konto-/Sicherheitsgrenzen des Serverzugangs werden dadurch nicht
+geändert. Eine weitergehende Umstellung auf serverseitige Kaufkoordination
+wäre eine eigene Architekturentscheidung.
+
+Reproduktion der lokalen Diagnose aus der Repositorywurzel:
+
+```powershell
+node scripts/measure-purchase-requests.mjs
+$env:SYNTHETIC_HTTP_DELAY_MS='10'
+node scripts/measure-purchase-requests.mjs
+Remove-Item Env:SYNTHETIC_HTTP_DELAY_MS
+```
+
+Die detaillierte Ausgabe liegt ausschließlich im ignorierten Ordner
+`.superpowers`; sie enthält synthetische IDs. Echte Request-Zeiten der
+Produktionssitzung sind bislang nicht aufgezeichnet.
+
+Der abschließende Lauf über den portablen Skriptpfad bestand ebenfalls:
+63 Anfragen/438 ms für die Vorschau, 234 Anfragen/1.488 ms für die Bestätigung,
+korrekter Kauf und keine unerwarteten Testdouble-Anfragen. Eine unzulässige
+Verzögerung von 26 ms wurde mit Exitcode 1 vor dem Ablauf zurückgewiesen.
+Die Dokumentationsprüfung und `git diff --check` bestanden. Produktcode und
+bereitgestellter Stand bleiben durch diese Diagnose unverändert bei v30.

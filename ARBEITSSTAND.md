@@ -1,6 +1,6 @@
 # Arbeitsstand
 
-## Aktuelle Fortsetzung: getrennten Kauftest einrichten
+## Aktuelle Fortsetzung: realer Kauf im getrennten Teststand bestätigt
 
 Der Nutzer beendet die Pause ausdrücklich mit „jetzt kannst du weiter arbeiten“.
 Ausgangsstand `45ec0a8b0be06747b1de574c29102926b3b66b43` ist erneut exakt mit
@@ -10,8 +10,8 @@ selbst eingerichtet. Die geprüfte Sicherung wurde nach Vorschau ausschließlich
 in diesem unverbundenen Testbereich wiederhergestellt: 60 Wörter, 150 Antworten
 und 1.600 Punkte. Die Oberfläche bestätigt die aktivierte Wiederherstellung
 und eine geprüfte lokale Sicherheitskopie. Der Nutzer hat Google verbunden.
-Die Einrichtung des eigenen Test-Lernbereichs scheiterte zweimal an der
-Sicherungs-Metadatenprüfung. Der bestehende Chrome-Lernstand bleibt erhalten.
+Die ersten beiden Einrichtungsversuche scheiterten an der
+Sicherungs-Metadatenprüfung. Der bestehende Chrome-Lernstand blieb erhalten.
 
 Produktcommit `ed36f4d` ergänzt die Inhaltsrevision und unverfälschte Abrufe.
 Bei gültiger stabiler Inhaltsrevision darf ausschließlich die allgemeine
@@ -21,10 +21,32 @@ Browserfälle bestehen; unabhängige Prüfung ohne blockierende Befunde.
 Cache v30 ist tatsächlich bereitgestellt, Worker-Version
 `6d687e33-66b1-4f26-9ab9-99771d809809`; die ausgelieferten geänderten Module
 entsprechen exakt dem geprüften Paket. Im Testbrowser ist das kontrollierte
-Update übernommen und das Profil zeigt weiterhin 1.600 Punkte. Der Nutzer
-wurde um erneutes Öffnen der Erwachsenenansicht mit seiner Test-PIN gebeten.
-Erneuter realer Einrichtungsversuch, Kauf und reale Kaufdauer stehen noch aus.
+Update übernommen und das Profil zeigt weiterhin 1.600 Punkte. Nach erneutem
+Öffnen der Erwachsenenansicht wurde die gespeicherte Einrichtung erfolgreich
+fortgesetzt. Der eigene Test-Lernbereich ist in Drive angelegt und vollständig
+abgeglichen; die Google-Verbindung blieb unter v30 aktiv. Die Aktivierung von
+Figuren und Käufen gelang mit 1.600 Punkten und Level 9. Ein einziger realer
+Kauf „Einfacher Drache – Stufe 2“ für 200 Punkte ist bestätigt: 1.400
+verfügbare Punkte, 1.600 Lernpunkte und Level 9. Die Vorschau war nach 26,927
+Sekunden sichtbar; nach 98,722 Sekunden lief die Bestätigung noch, spätestens
+nach 118,821 Sekunden war „Der Kauf ist bestätigt.“ sichtbar. Das sind
+ungefähre UI-Beobachtungen, keine präzise HTTP-Dauer und kein Beleg einer
+Zeitersparnis gegenüber dem alten Stand. Der Nutzer berichtet eine
+Kaufbestätigung von über zwei Minuten und bewertet das Tempo ausdrücklich als
+zu langsam. Der funktionale Kauf ist bestätigt; die Leistungsdiagnose ist
+jetzt vorrangig und das Tempo nicht abgenommen. Die gekaufte Form wurde
+bewusst ausgewählt; Besitz, Auswahl und Guthaben sind nach Neuladen erhalten. Natürlicher Tokenablauf, Zweitgerät
+und Apple-Abnahme bleiben offen. Der Dokumentationszwischenstand
+`a51d9991fee20ea5ceb50d25ed1040043d7cd5f0` ist exakt mit GitHub verglichen.
 Details: [Kauftest und Sicherungsabgleich](docs/reports/2026-09-28-kauftest-wiederherstellung.md).
+
+Die vollständige lokale Diagnose des Kaufablaufs ergibt 63 HTTP-Anfragen für
+die Vorschau und 234 für die Bestätigung, darunter 102 in zwei vollständigen
+Lernabgleichen. Die Ansicht danach braucht keine Netzabrufe. Der portable
+Helfer `scripts/measure-purchase-requests.mjs` sperrt echtes Netzwerk und
+bestätigt synthetisch 1.600 → 1.400 verfügbare Punkte. Vorschläge zum
+Zusammenführen doppelter Prüfungen sind dokumentiert, noch nicht umgesetzt.
+Die reale Wartezeit wurde dadurch noch nicht verkürzt.
 
 ## Vorheriger Abschluss: Testpunkte vorbereitet, anschließend Pause
 
@@ -270,8 +292,9 @@ vollständige EV05-Galerie oder visuelle Abnahme abgeleitet werden.
 
 - Wiederaufnahme über regulären Tokenablauf; Laptop-Anmeldung, Bestandsübernahme
   und vollständiger Abgleich sind inzwischen belegt, Chrome-Neustart vom Nutzer bestätigt;
-- reale Kaufwartezeit der inzwischen bereitgestellten Kaufgruppen-Optimierung
-  beobachten; die langsame Bestandsübernahme bleibt separat zu untersuchen;
+- die vom Nutzer beanstandete Kaufbestätigung von über zwei Minuten nach
+  vollständiger Ablaufmessung beschleunigen; die langsame Bestandsübernahme
+  bleibt separat zu untersuchen;
 - persönliche Nachprüfung von Figurenfarben, Auswahl und Erwachsenen-Einstellungen;
 - realer Produktabgleich mit Google Drive auf zwei physischen Geräten;
 - iPhone-/iPad-, Safari- und Home-Bildschirm-Abnahme einschließlich
@@ -303,10 +326,11 @@ damaligen nächsten Schritte gelten nicht als aktuelle Arbeitsanweisung.
    Regulären Tokenablauf nachweisen, sobald er tatsächlich eingetreten ist.
    Die erfolgreiche Laptop-Einrichtung, Bestandsübernahme und den bestätigten
    Chrome-Neustart nicht erneut als offen behandeln.
-2. Mit der bereitgestellten Kaufversion `b6b83a9`/v29 einen vom Nutzer gewählten
-   Kauf im [getrennten Teststand mit 1.600 Punkten](docs/KAUFTEST-MIT-TESTPUNKTEN.md)
-   beobachten und dessen reale Wartezeit festhalten. Die Bereitstellung
-   und der kontrollierte Chrome-Updateweg sind bereits belegt.
+2. Vorrangig den vollständigen Kaufablauf unter `ed36f4d`/v30 vermessen und
+   beschleunigen. Der [getrennte Teststand](docs/KAUFTEST-MIT-TESTPUNKTEN.md)
+   ist bereits verbunden und aktiviert; nach Kauf von Drachenstufe 2 verbleiben
+   1.400 Punkte. Einrichtung und Import nicht wiederholen. Der erfolgreiche
+   Kauf ist funktional belegt, das Tempo ausdrücklich nicht abgenommen.
 3. Die korrigierten Bedienwege mit dem Nutzer nachtesten; besonders
    Figurenfarben, Wiederverbinden im Shop und die Erwachsenen-Einstellungen.
 4. Am bestätigten Bild- und Galeriekonzept ansetzen: 72 übrige Motive und

@@ -12,20 +12,25 @@ des eigenen Testbereichs scheiterte zweimal an der Sicherungs-Metadatenprüfung.
 Die Korrektur `ed36f4d` ist nach 601 Node-Tests, 7 ausgewählten Browserfällen und
 unabhängiger Prüfung als Cache v30 bereitgestellt: aktive Worker-Version
 `6d687e33-66b1-4f26-9ab9-99771d809809`. Die geänderten Module wurden öffentlich
-bytegenau gegen das geprüfte Paket bestätigt. Nach kontrolliertem Update zeigt
-das Testprofil weiter 1.600 Punkte; die Erwachsenenansicht verlangt wieder die
-Test-PIN. Der Nutzer wurde um das Öffnen gebeten. Danach denselben
-Einrichtungsauftrag fortsetzen, keinen zusätzlichen Testbereich anlegen.
-Der normale Chrome-Lernstand bleibt erhalten. Noch kein Kauf; alle Details und
+bytegenau gegen das geprüfte Paket bestätigt. Nach kontrolliertem Update und
+Entsperrung gelang derselbe Einrichtungsauftrag: Der Testbereich ist vollständig
+abgeglichen, Google aktiv. Figuren und Käufe wurden aktiviert. Der reale Kauf
+„Einfacher Drache – Stufe 2“ für 200 Punkte ist bestätigt; 1.400 verfügbare Punkte,
+1.600 Lernpunkte und Level 9 bleiben nach bewusster Auswahl und Neuladen erhalten.
+Der Nutzer beanstandet über zwei Minuten für die Kaufbestätigung. Funktionaler
+Erfolg ist belegt, das Tempo ist nicht abgenommen. Der normale Chrome-
+Lernstand bleibt erhalten. Alle Details und
 Nachweisgrenzen im [Kauftestbericht](../reports/2026-09-28-kauftest-wiederherstellung.md).
 
-**Konkreter nächster Schritt:** Im bereits geöffneten Codex-Testbrowser nach
-Entsperrung unter „Einstellungen“ → „Google-Verbindung“ denselben Auftrag für
-`Kauftest 28.09.2026 – 1600 Punkte` fortsetzen. Erst nach erfolgreicher Einrichtung
-Figuren und Käufe aktivieren und den Drachen für 200 Punkte prüfen. Den
-synthetischen Import nicht wiederholen und keinen bestehenden Familienbestand
-auswählen. Die genaue Ursache des realen Metadatenunterschieds ist nicht
-aufgezeichnet; erst der erneute reale Ablauf belegt die praktische Wirksamkeit.
+**Konkreter nächster Schritt:** Den vollständigen Kaufweg vermessen und die
+langsame Bestätigung gezielt verbessern. Die bisherige Einsparung betrifft nur
+eine Uploadgruppe, nicht den ganzen Ablauf. Der bestehende separate Codex-
+Testbrowser enthält bereits Drive-Bindung, 1.400 Testpunkte und Drachenstufe 2;
+Import, Google-Anmeldung und Aktivierung nicht wiederholen. Die genaue Ursache
+des früheren Metadatenunterschieds ist nicht aufgezeichnet, der erneute reale
+Einrichtungsablauf ist unter v30 aber erfolgreich. Natürlicher Tokenablauf
+und weitere Geräteabnahmen bleiben offen. Letzter exakt abgeglichener
+GitHub-Stand vor diesem Testbericht: `a51d999`.
 
 **Vorherige Pause nach Sicherung.** Der Nutzer wünscht nach dem
 erfolgreichen Update schnell verfügbares Testguthaben für einen späteren
@@ -236,7 +241,7 @@ gesperrt. Persönliche Punktestände wurden nicht in den Bericht übernommen und
 nicht für einen Test verändert. Das bekannte offene Bildpaket bleibt Folgeumfang.
 Eine reale Kaufdauer und Zeitersparnis sind weiterhin nicht gemessen.
 
-## Vorbereitete Testpunkte und anschließende Pause
+## Historisch: vorbereitete Testpunkte und anschließende Pause
 
 Der Nutzer möchte den Kauf ohne weitere eigene Vokabelrunden testen. Der
 vorhandene Produktvertrag kennt keine manuelle Punktgutschrift: Guthaben
@@ -266,20 +271,20 @@ einzuhalten. Die heutige Kaufmessung bleibt offen.
    Den bestätigten Chrome-Neustart erhalten; kein manipuliertes Token und kein
    Löschen persönlicher Browserdaten. Die nächste Statusrückmeldung soll
    festhalten, ob ohne neuen Google-Klick verbunden und abgeglichen werden kann.
-2. Den vorbereiteten [Teststand mit 1.600 Punkten](../KAUFTEST-MIT-TESTPUNKTEN.md)
-   in einer getrennten Umgebung einrichten und einen vom Nutzer gewählten,
-   bebilderten Kauf mit Cacheversion `v29` gemeinsam prüfen. Kontrolliertes Update
-   und erhaltene Google-Verbindung sind bereits belegt.
-   Die Wartezeit nur bei einem tatsächlich beobachteten Kauf bewerten;
-   die synthetische Anfragezählung ist kein Zeitnachweis.
+2. Vorrangig den vollständigen Kaufablauf vermessen und beschleunigen. Der
+   [getrennte Teststand](../KAUFTEST-MIT-TESTPUNKTEN.md) ist bereits eingerichtet
+   und unter Cache v30 verbunden. Drachenstufe 2 ist gekauft und gewählt;
+   1.400 Punkte bleiben verfügbar. Kauf und Erhalt nach Neuladen sind belegt,
+   die Bestätigungsdauer ist vom Nutzer als zu langsam beanstandet.
 3. Den bestätigten Avatar-/Galerieumfang fortsetzen: 72 weitere Motive,
    Produktionsvarianten und vollständige Galerie bleiben Folgeumfang.
 4. Reales Google Drive auf zwei physischen Geräten, iPhone/iPad, Safari und
    Home-Bildschirm-App einschließlich Offlineübung und Wiederaufnahme prüfen.
 
 Bestandsübernahme und vollständiger Abgleich sind heute direkt beobachtet;
-der Chrome-Neustart ist vom Nutzer bestätigt. Regulärer Zugriffstokenablauf,
-Kauf mit der neu bereitgestellten Version und reale Kaufbeschleunigung bleiben offen.
+der Chrome-Neustart ist vom Nutzer bestätigt. Der Kauf im getrennten Teststand
+ist ebenfalls belegt. Regulärer Zugriffstokenablauf und eine akzeptable reale
+Kaufgeschwindigkeit bleiben offen.
 Dies ist keine vollständige Zwei-Geräte-Abnahme und kein Apple-/Safari-Nachweis.
 
 ## Wiedereinstieg
@@ -288,16 +293,15 @@ Dies ist keine vollständige Zwei-Geräte-Abnahme und kein Apple-/Safari-Nachwei
 > aktuellen Entwicklungszweig und GitHub, ohne vorhandene Arbeit zu verwerfen.
 > Der Laptop hat den vorhandenen Drive-Bestand übernommen; vollständiger Abgleich
 > ist beobachtet und Google bleibt laut Nutzer nach Chrome-Neustart verbunden.
-> Die Kaufgruppen-Optimierung in b6b83a9 ist geprüft und als private
-> HTTPS-Version `494388ba-6838-4604-9369-788a6e60962d` bereitgestellt.
-> Der Nutzer hat nach Vorbereitung der Testpunkte eine Pause verlangt; mit
-> diesem neuen Auftrag setze ich die Arbeit ausdrücklich fort.
-> Nutze die geprüfte synthetische Sicherung mit 1.600 Punkten gemäß
-> docs/KAUFTEST-MIT-TESTPUNKTEN.md ausschließlich in einer getrennten
-> Testumgebung; den bestehenden Familienlernstand nicht ersetzen.
-> Kontrolliertes Chrome-Update und erhaltene aktive Google-Verbindung sind
-> bereits belegt. Ein Kauf wurde mangels verfügbarem bezahlbaren Angebot nicht
-> ausgelöst; fehlende Entwicklungsbilder und reale Kaufwartezeit bleiben offen.
+> Die Sicherungskorrektur ed36f4d ist geprüft und als private
+> HTTPS-Version `6d687e33-66b1-4f26-9ab9-99771d809809`, Cache v30, bereitgestellt.
+> Der Nutzer hat die frühere Pause beendet. Der getrennte Codex-Testbereich ist
+> bereits verbunden und für Käufe aktiviert; Drachenstufe 2 ist gekauft und
+> nach Neuladen gewählt. Verfügbar sind noch 1.400 Testpunkte.
+> Einrichtung und Import nicht wiederholen; den Familienlernstand erhalten.
+> Vorrang hat die beanstandete Kaufbestätigung von über zwei Minuten. Den
+> vollständigen Ablauf vermessen und beschleunigen; die frühere Teilmessung
+> einer Uploadgruppe ersetzt keine Prüfung der gesamten Kaufdauer.
 > Keine abgeschlossene Google-Einrichtung oder Kaufimplementierung neu
 > beginnen. Reale Token-Erneuerung, Kaufwartezeit und Geräteabnahmen getrennt
 > nachweisen; keine persönlichen Daten in Git aufnehmen.

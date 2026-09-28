@@ -3,13 +3,27 @@
 **Aktuelle Steuerung: Fortsetzung am 28.09.2026 erneut beauftragt.** Mit
 „jetzt kannst du weiter arbeiten“ beendet der Nutzer die folgende Pause.
 Der synthetische Teststand mit 1.600 Punkten ist im getrennten Codex-Browser
-importiert und Google verbunden. Die Einrichtung des eigenen Test-Lernbereichs
-scheiterte zweimal an der Sicherungs-Metadatenprüfung. Die begrenzte Korrektur
-`ed36f4d` ist geprüft (601 Node-Tests, 7 ausgewählte Browserfälle, unabhängiges
-Review) und als Cache v30 bereitgestellt. Nach kontrolliertem Update sind die
-1.600 Punkte erhalten; vor dem erneuten realen Versuch muss der Nutzer die
-Erwachsenenansicht mit seiner Test-PIN öffnen. Kein Kauf ist bisher erfolgt.
-Vorhandene Familien- und Drive-Bestände erhalten. Einstieg und Nachweisgrenzen:
+importiert. Die zuvor zweimal gescheiterte Einrichtung wurde nach der begrenzten
+Korrektur `ed36f4d` unter Cache v30 erfolgreich fortgesetzt: Ein eigener
+Test-Lernbereich ist in Drive angelegt, vollständig abgeglichen und die
+Google-Verbindung aktiv. Die Korrektur bestand 601 Node-Tests, 7 ausgewählte
+Browserfälle und ein unabhängiges Review. Der einmal bestätigte reale Kauf
+„Einfacher Drache – Stufe 2“ für 200 Punkte ist gelungen: Im Testprofil stehen
+1.400 verfügbare Punkte bei unverändert 1.600 Lernpunkten und Level 9.
+Die Kaufvorschau war nach 26,927 Sekunden sichtbar; die Bestätigung lief nach
+98,722 Sekunden noch und war spätestens nach 118,821 Sekunden sichtbar.
+Das sind ungefähre UI-Beobachtungen, keine genaue HTTP-Dauer oder belegte
+Zeitersparnis. Der Nutzer berichtet eine Kaufbestätigung von über zwei Minuten
+und bewertet das Tempo ausdrücklich als zu langsam; Leistungsdiagnose hat
+Priorität, das Tempo ist nicht abgenommen. Die bewusste Auswahl der gekauften
+Form ist bestätigt; Besitz, Auswahl und Guthaben sind nach Neuladen erhalten. Vorhandene
+Familien- und Drive-Bestände bleiben erhalten. Der Dokumentationszwischenstand
+`a51d9991fee20ea5ceb50d25ed1040043d7cd5f0` wurde
+exakt mit GitHub verglichen. Natürlicher Tokenablauf, Zweitgerät und Apple-Abnahme
+bleiben offen. Die lokale vollständige Diagnose zählt 234 Anfragen pro
+Bestätigung, davon 102 für zwei Lernabgleiche. Der portable Diagnosehelfer und
+ein noch nicht umgesetzter Verbesserungsvorschlag stehen im Kauftestbericht.
+Einstieg und Nachweisgrenzen:
 [Laptop-Übergabe](docs/handoffs/2026-09-28-laptop-fortsetzung.md) und
 [Kauftestbericht](docs/reports/2026-09-28-kauftest-wiederherstellung.md).
 
