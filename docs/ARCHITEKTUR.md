@@ -57,7 +57,7 @@ wirtschaftliche Ansicht. Die bestätigte Restoreauswahl wird erst nach
 bestätigtem gemeinsamem Kopf und `authoritativeState` gegen dessen Konten
 geprüft und vollständig ersetzt; eine leere Auswahl leert den Zielstand.
 
-Der Service Worker verwendet seit Produktcommit `ed36f4d` Cacheversion `v30`;
+Der Service Worker verwendet für den beschleunigten Kaufpfad Cacheversion `v32`;
 die Pflichtliste enthält die neuen Laufzeitmodule, vier Drachenbilder und alle
 20 kleinen Haut-/Kleidungsbilder
 der menschlichen Grundfiguren, aber keine Google-Antworten oder Tokens.
@@ -89,6 +89,37 @@ Die Google-Verbindung blieb aktiv. Nach einmaliger Aktivierung wurde dort
 1.600 Lernpunkten und Level 9. „Drache Stufe 3“ für 400 blieb offen.
 Bewusste Auswahl, Besitz und Guthaben sind nach Neuladen bestätigt; dieser
 Test ersetzt keine Abnahme mit einem zweiten Gerät.
+
+## Kaufpfad für das 20-Sekunden-Ziel
+
+Die normale Kaufvorschau berechnet Preis und verbleibendes Guthaben aus der
+vollständig geprüften lokalen Kaufhistorie. Bei fehlendem oder ungültigem
+Cache bricht sie ab; die normale Bestätigung startet keinen vollständigen
+ProductSync. Lernpunkte, die zwischenzeitlich auf einem anderen Gerät
+entstanden, werden erst nach einem regulären Abgleich kaufbar. Vor dem Kauf
+wird ein frischer Koordinatorkopf mit ETag gelesen und gegen die gespeicherte
+Bindung geprüft. Die Vorschau wird erneut gegen den aktuellen lokalen Zustand
+geprüft; fremde Käufe oder geänderte Köpfe dürfen keinen Doppelkauf erzeugen.
+
+Im Servermodus liefert die aktuelle, kontogebundene Sitzung die Google-
+Kontokennung für den erfassten Sitzungsmarker. Dadurch entfällt die separate
+Google-`about`-Abfrage pro Dateizugriff. Der direkte Browsermodus behält
+seinen bisherigen Kontonachweis. Ein nur für den reservierten Kaufversuch
+gültiger, instanzgebundener Kontext prüft Configref und Config einmal und
+trägt diesen Anker durch Upload und Pointer-Schritt. Er wird bei Fehlern,
+Markerwechsel und nach dem Schreibversuch verworfen; Resume und Restore
+verwenden die vollständige Prüfung. Der Kaufkopf benötigt genau einen
+frischen, bindungsgeprüften Metadatenabruf.
+
+Unveränderliche Uploads, ihre Inhalts- und Bindungsprüfung, der dauerhaft
+gespeicherte Intent, die `If-Match`-Bedingung am Koordinator und das Nachlesen
+bei unklarem Ausgang bleiben maßgeblich. Datenformat, Google Drive als
+Speicher und Anbieterarchitektur ändern sich dadurch nicht. Die aktuelle
+synthetische Serverpfadmessung ergibt 0 Anfragen für die Vorschau und 31 für
+die Bestätigung; ein verzögerter Lauf mit 500 ms pro Google-Anfrage dauerte
+20 ms beziehungsweise 10.727 ms. Das ist keine reale Laufzeitabnahme.
+Der [Tempobericht](reports/2026-09-28-kauf-20-sekunden.md) enthält Messaufbau
+und offene Prüfungen.
 
 ## Gemeinsame Autorität
 

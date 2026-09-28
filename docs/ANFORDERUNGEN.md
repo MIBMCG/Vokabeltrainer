@@ -2,6 +2,20 @@
 
 ## Aktueller Umsetzungsnachweis
 
+**Kaufwartezeit, Auftrag vom 28.09.2026:** Der Nutzer verlangt für den
+gesamten Kauf von der Vorschau bis zur sichtbaren Bestätigung höchstens
+20 Sekunden; angestrebt sind weniger als 10 Sekunden. Er erlaubt dafür,
+redundante Sicherungsprüfungen zu verringern. Eine Kaufvorschau darf den
+bereits bestätigten lokalen Stand verwenden. Bei einer normalen Bestätigung
+ist kein vollständiger Lernabgleich nötig; neue Lernpunkte von einem anderen
+Gerät werden erst nach dem nächsten regulären Abgleich für Käufe verfügbar.
+Vor der Veröffentlichung bleibt ein frischer Kaufkopf erforderlich. Der
+geschützte Schreibvergleich, dauerhaft gespeicherte Kaufaufträge und das
+Nachlesen eines unklaren Ergebnisses bleiben bestehen. Wiederaufnahme und
+Restore behalten ihre strengen Prüfpfade. Die [Tempoanalyse](reports/2026-09-28-kauf-20-sekunden.md)
+trennt diesen bestätigten Zielvertrag von synthetischen Messungen und der
+noch offenen echten Zeitabnahme.
+
 Der [Entwurf für dauerhafte Käufe](superpowers/specs/2026-09-20-persistent-purchases-design.md)
 ist bestätigt und im Kaufpaket Tasks 1–6 umgesetzt und geprüft.
 Den überprüfbaren Stand mit Tests, Review und Gitgrenzen enthält der

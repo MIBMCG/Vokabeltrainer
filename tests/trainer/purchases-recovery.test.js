@@ -149,7 +149,7 @@ async function waitForPurchase(check) {
   }
 }
 
-async function openHarness({store,remote,ids=sequenceIds('purchase'),syncForCommands=learningSync}={}){
+async function openHarness({store,remote,ids=sequenceIds('purchase'),syncForCommands=learningSync,clean=true,prime=true}={}){
   store??=memoryStore(productState(earnedLedger()));remote??=new PurchaseRemote();
   const commands=await createCommands({store,now:()=>new Date('2026-09-21T10:00:00Z'),id:sequenceIds('command'),deviceId:'dev1',onChange(){}});
   let head=remote.coordinator.properties.purchaseHeadId?{
@@ -162,8 +162,10 @@ async function openHarness({store,remote,ids=sequenceIds('purchase'),syncForComm
     next.binding=structuredClone(BINDING);next.commerce=commerce;next.outboxEventIds=[];next.pendingPackets=[];
     await commands.commitExternal(next,await productStateHash(commands.getState()));
   }
+  if(clean)await learningSync(commands).syncLearning();
   const statuses=[];
   const service=createPurchaseService({commands,transport:remote,sync:syncForCommands(commands),now:()=>new Date('2026-09-21T10:00:00Z'),id:ids,onStatus:s=>statuses.push(s)});
+  if(prime&&commands.getState().commerce.cache.head===null&&commands.getState().commerce.jobs.length===0)await service.refresh();
   return {store,remote,commands,service,statuses};
 }
 
@@ -494,13 +496,128 @@ test('purchase preview ignores advancing sync bookkeeping but remains bound to e
       return {phase:'synced',lastConfirmedAt:new Date(1_000*syncRun).toISOString()};
     },
   })});
+  const before=harness.commands.getState(),advanced=structuredClone(before);
+  advanced.knownFiles.push({fileId:'sync-diagnostic',contentHash:'b'.repeat(64),kind:'packet'});
+  await harness.commands.commitExternal(advanced,await productStateHash(before));
   const preview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
   const confirmed=await harness.service.confirm(preview);
   assert.equal(confirmed.status,'confirmed');
-  assert.equal(syncRun,2);
+  assert.equal(syncRun,0);
 });
 
-test('an unchanged immediate confirmation reuses its freshly verified learning and purchase state',async()=>{
+test('a fully cached clean purchase preview makes no learning sync or coordinator request',async()=>{
+  let syncRuns=0;
+  const harness=await openHarness({syncForCommands:commands=>({
+    async syncLearning(){syncRuns+=1;return learningSync(commands).syncLearning();},
+  })});
+  await harness.service.refresh();
+  assert.deepEqual(harness.commands.getState().outboxEventIds,[]);
+  assert.deepEqual(harness.commands.getState().pendingPackets,[]);
+  const readFolder=harness.remote.readFolder.bind(harness.remote);
+  let coordinatorReads=0;
+  harness.remote.readFolder=async input=>{coordinatorReads+=1;return readFolder(input);};
+  const preview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
+  assert.equal(preview.price,200);
+  assert.equal(preview.availablePoints,300);
+  assert.equal(syncRuns,0);
+  assert.equal(coordinatorReads,0);
+});
+
+test('a missing local purchase history asks for the normal background refresh without network work',async()=>{
+  const harness=await openHarness({prime:false});
+  let reads=0;
+  const readFolder=harness.remote.readFolder.bind(harness.remote);
+  harness.remote.readFolder=async input=>{reads+=1;return readFolder(input);};
+  await assert.rejects(harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'}),{code:'not-ready'});
+  assert.equal(reads,0);
+  assert.equal(harness.remote.writeCalls.length,0);
+});
+
+test('purchase preview before activation is locally not ready',async()=>{
+  const commands=await createCommands({
+    store:memoryStore(productState(earnedLedger())),now:()=>new Date('2026-09-21T10:00:00Z'),
+    id:sequenceIds('inactive'),deviceId:'dev1',onChange(){},
+  });
+  const remote=new PurchaseRemote();
+  const service=createPurchaseService({
+    commands,transport:remote,sync:learningSync(commands),
+    now:()=>new Date('2026-09-21T10:00:00Z'),id:sequenceIds('inactive-purchase'),onStatus(){},
+  });
+  await assert.rejects(service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'}),{code:'not-ready'});
+  assert.equal(remote.putCalls.length,0);
+});
+
+test('a clean confirmation refreshes purchase history without full learning sync',async()=>{
+  let syncRuns=0;
+  const harness=await openHarness({syncForCommands:commands=>({
+    async syncLearning(){syncRuns+=1;return learningSync(commands).syncLearning();},
+  })});
+  await harness.service.refresh();
+  const preview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
+  const result=await harness.service.confirm(preview);
+  assert.equal(result.status,'confirmed');
+  assert.equal(syncRuns,0);
+  assert.equal(harness.remote.putCalls.length,1);
+});
+
+test('unconfirmed local learning points cannot fund a purchase preview or confirmation',async()=>{
+  const harness=await openHarness();
+  await harness.service.refresh();
+  const preview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
+  const before=harness.commands.getState(),pending=structuredClone(before);
+  pending.outboxEventIds=['rev-p1'];
+  await harness.commands.commitExternal(pending,await productStateHash(before));
+  await assert.rejects(harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'}),{
+    code:'not-ready',message:'Lernstand wird noch abgeglichen. Bitte danach erneut kaufen.',
+  });
+  await assert.rejects(harness.service.confirm(preview),{
+    code:'not-ready',message:'Lernstand wird noch abgeglichen. Bitte danach erneut kaufen.',
+  });
+  assert.equal(harness.remote.writeCalls.length,0);
+  assert.equal(harness.remote.putCalls.length,0);
+});
+
+test('a fresh confirmation passes one purchase context from saved reservation through upload and pointer',async()=>{
+  const harness=await openHarness();
+  await harness.service.refresh();
+  const handle={tag:'synthetic-purchase-context'};
+  const created=[],uploads=[],pointers=[],released=[];
+  harness.remote.createPurchaseContext=async input=>{created.push(structuredClone(input));return handle;};
+  harness.remote.releasePurchaseContext=async value=>{released.push(value);};
+  const batch=harness.remote.writeImmutableBatch.bind(harness.remote);
+  harness.remote.writeImmutableBatch=async (requests,context)=>{uploads.push(context);return batch(requests);};
+  const put=harness.remote.putPointer.bind(harness.remote);
+  harness.remote.putPointer=async (input,context)=>{pointers.push(context);return put(input);};
+  const preview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
+  const result=await harness.service.confirm(preview);
+  assert.equal(result.status,'confirmed');
+  const job=harness.store.snapshot().commerce.jobs[0];
+  assert.equal(job.attempts[0].phase,'confirmed');
+  assert.equal(created.length,1);
+  assert.equal(created[0].operationId,job.intent.operationId);
+  assert.equal(created[0].attemptId,job.attempts[0].attemptId);
+  assert.ok(uploads.length>0);
+  assert.ok(uploads.every(value=>value===handle));
+  assert.deepEqual(pointers,[handle]);
+  assert.deepEqual(released,[handle]);
+});
+
+test('the normal confirmation reads each fresh coordinator head through the single-read transport',async()=>{
+  const harness=await openHarness();
+  await harness.service.refresh();
+  const readFolder=harness.remote.readFolder.bind(harness.remote);
+  let headReads=0;
+  harness.remote.readPurchaseHead=async ({id,config})=>{
+    headReads+=1;
+    return readFolder({id,kind:'coordinator',config});
+  };
+  const preview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
+  const result=await harness.service.confirm(preview);
+  assert.equal(result.status,'confirmed');
+  assert.equal(headReads,4);
+});
+
+test('an unchanged immediate confirmation reads fresh purchase heads without a learning sync',async()=>{
   let syncRuns=0,coordinatorReads=0;
   const harness=await openHarness({syncForCommands:commands=>({
     async syncLearning(){syncRuns+=1;return learningSync(commands).syncLearning();},
@@ -511,7 +628,7 @@ test('an unchanged immediate confirmation reuses its freshly verified learning a
   const before={syncRuns,coordinatorReads};
   const result=await harness.service.confirm(preview);
   assert.equal(result.status,'confirmed');
-  assert.equal(syncRuns-before.syncRuns,1);
+  assert.equal(syncRuns-before.syncRuns,0);
   assert.equal(coordinatorReads-before.coordinatorReads,4);
   assert.equal(harness.remote.putCalls.length,1);
 });
@@ -531,7 +648,7 @@ test('immediate confirmation reserves exactly its basis and receipt IDs as one g
   assert.equal(new Set(attempt.uploads.map(({ref})=>ref.id)).size,attempt.uploads.length);
 });
 
-test('a local state change after the intent triggers full verification before reservation',async()=>{
+test('a local state change after the intent rejects reservation without a learning sync',async()=>{
   let syncRuns=0;
   const harness=await openHarness({syncForCommands:commands=>({
     async syncLearning(){syncRuns+=1;return learningSync(commands).syncLearning();},
@@ -549,10 +666,23 @@ test('a local state change after the intent triggers full verification before re
   };
   const preview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
   const before=syncRuns;
-  const result=await harness.service.confirm(preview);
-  assert.equal(result.status,'confirmed');
+  await assert.rejects(harness.service.confirm(preview),{code:'stale'});
   assert.equal(changed,true);
-  assert.equal(syncRuns-before,2);
+  assert.equal(syncRuns-before,0);
+  assert.equal(harness.remote.writeCalls.length,0);
+  assert.equal(harness.remote.putCalls.length,0);
+  const abandoned=harness.store.snapshot().commerce.jobs[0];
+  assert.equal(abandoned.status,'superseded');
+  assert.equal(abandoned.attempts[0].phase,'intent');
+  assert.equal(abandoned.attempts[0].candidate,null);
+  assert.deepEqual(abandoned.attempts[0].uploads,[]);
+  assert.deepEqual(await harness.service.resume(abandoned.intent.operationId),{
+    operationId:abandoned.intent.operationId,status:'superseded',
+  });
+  assert.equal(harness.remote.writeCalls.length,0);
+  assert.equal(harness.remote.putCalls.length,0);
+  const replacement=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
+  assert.equal(replacement.price,preview.price);
 });
 
 test('a local change during the reservation wait cannot become a trusted purchase basis',async()=>{
@@ -926,7 +1056,12 @@ test('a stale preview and a second purchase of owned content create no durable c
   const harness=await openHarness();
   const stale=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
   await harness.commands.setAnimations({profileId:'p1',animations:false});
+  const readFolder=harness.remote.readFolder.bind(harness.remote);
+  let coordinatorReads=0;
+  harness.remote.readFolder=async input=>{coordinatorReads+=1;return readFolder(input);};
   await assert.rejects(harness.service.confirm(stale),{code:'stale'});
+  assert.equal(coordinatorReads,0);
+  await learningSync(harness.commands).syncLearning();
   assert.equal(harness.commands.getState().commerce.jobs.length,0);
   assert.equal(harness.remote.writeCalls.length,0);
 
@@ -1471,37 +1606,25 @@ test('changed intent, unknown profile and account or folder switch fail before a
   assert.equal(harness.remote.putCalls.length,0);
 });
 
-test('learning-sync port is mandatory and contradictory persisted sync state fails closed',async()=>{
+test('purchase preview uses the clean local snapshot and rejects contradictory pending state',async()=>{
   const harness=await openHarness();
   const make=(sync)=>createPurchaseService({
     commands:harness.commands,transport:harness.remote,sync,
     now:()=>new Date('2026-09-21T10:00:00Z'),id:sequenceIds('sync-boundary'),onStatus(){},
   });
-  await assert.rejects(
-    make({}).preview({profileId:'p1',articleId:'evolution:explorer-girl:2'}),
-    {code:'not-ready'},
-  );
-  await assert.rejects(
-    make({async syncLearning(){return {phase:'pending'};}})
-      .preview({profileId:'p1',articleId:'evolution:explorer-girl:2'}),
-    {code:'pending'},
-  );
-  const contradictory=make({
-    async syncLearning(){
-      const state=harness.commands.getState(),next=structuredClone(state);
-      next.outboxEventIds=['rev-p1'];
-      await harness.commands.commitExternal(next,await productStateHash(state));
-      return {phase:'synced'};
-    },
-  });
+  assert.equal((await make({}).preview({profileId:'p1',articleId:'evolution:explorer-girl:2'})).price,200);
+  const state=harness.commands.getState(),next=structuredClone(state);
+  next.outboxEventIds=['rev-p1'];
+  await harness.commands.commitExternal(next,await productStateHash(state));
+  const contradictory=make({async syncLearning(){return {phase:'synced'};}});
   await assert.rejects(
     contradictory.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'}),
-    {code:'pending'},
+    {code:'not-ready'},
   );
   assert.equal(harness.remote.writeCalls.length,0);assert.equal(harness.remote.putCalls.length,0);
 });
 
-test('a failed durable learning-sync commit prevents purchase-network mutation',async()=>{
+test('pending learning changes cannot reach the purchase network while sync storage is failing',async()=>{
   const base=await openHarness();
   const store=byteStore(base.store.snapshot()),remote=new PurchaseRemote(base.remote.server);
   const commands=await createCommands({store,now:()=>new Date('2026-09-21T10:00:00Z'),id:sequenceIds('sync-store'),deviceId:'dev1',onChange(){}});
@@ -1515,7 +1638,7 @@ test('a failed durable learning-sync commit prevents purchase-network mutation',
 
   await assert.rejects(
     service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'}),
-    {code:'storage'},
+    {code:'not-ready'},
   );
 
   assert.equal(remote.writeCalls.length,0);assert.equal(remote.putCalls.length,0);
@@ -1564,13 +1687,14 @@ test('an older ledger cannot publish a receipt that invalidates the verified sha
   const first=await openHarness({remote,ids:sequenceIds('first')});
   const second=await openHarness({remote,ids:sequenceIds('second')});
   await first.commands.setAnimations({profileId:'p1',animations:false});
+  await learningSync(first.commands).syncLearning();
   const firstPreview=await first.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
   await first.service.confirm(firstPreview);
   const acceptedHead=structuredClone(remote.coordinator.properties);
   const putCount=remote.putCalls.length;
 
   const stalePreview=await second.service.preview({profileId:'p2',articleId:'evolution:explorer-girl:2'});
-  await assert.rejects(second.service.confirm(stalePreview),{code:'history'});
+  await assert.rejects(second.service.confirm(stalePreview),{code:'stale'});
 
   assert.equal(remote.putCalls.length,putCount);
   assert.deepEqual(remote.coordinator.properties,acceptedHead);
@@ -1694,6 +1818,7 @@ test('versioned learning points and round bonus fund a second purchase that surv
   next.ledger.events.push(start,...answers,completed);
   next.clock=1011;
   await harness.commands.commitExternal(next,await productStateHash(before));
+  await learningSync(harness.commands).syncLearning();
 
   const preview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-boy:2'});
   assert.equal(preview.earnedPoints,420);

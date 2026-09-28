@@ -95,6 +95,13 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     return {...copy(snapshot.properties),purchaseHeadId:head.id,purchaseHeadSha256:head.sha256};
   }
 
+  function readCoordinator(commerce,fast=false) {
+    const input={id:commerce.config.coordinatorId,config:commerce.config};
+    return fast&&typeof transport.readPurchaseHead==='function'
+      ?transport.readPurchaseHead(input)
+      :transport.readFolder({...input,kind:'coordinator'});
+  }
+
   function targetReceipt(history,operationId) {
     const byId=new Map(history.entries.values.map(entry=>[entry.ref.id,entry]));
     let cursor=history.entries.head;
@@ -159,6 +166,26 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     return {state,learning};
   }
 
+  function cleanPurchaseState() {
+    const state=current(),commerce=state.commerce;
+    if(commerce.mode!=='active'||commerce.config===null||commerce.head===null) {
+      fail('not-ready','Käufe sind noch nicht aktiviert.');
+    }
+    if(canonical(state.binding)!==canonical(commerce.binding)
+      ||(transport.binding!==undefined&&canonical(transport.binding)!==canonical(commerce.binding))
+      ||(transport.descriptorHash!==undefined&&transport.descriptorHash!==commerce.config?.descriptorHash)) {
+      fail('binding','Kaufzustand und verbundenes Konto passen nicht zusammen.');
+    }
+    if(state.outboxEventIds.length>0||state.pendingPackets.length>0) {
+      fail('not-ready','Lernstand wird noch abgeglichen. Bitte danach erneut kaufen.');
+    }
+    if(state.quarantinedFiles.length>0)fail('integrity','Der Lernstand enthält gesperrte Dateien.');
+    const learning=project(state.ledger);
+    if(learning.epochConflict||learning.conflicts.length>0||learning.integrityProblems.length>0
+      ||learning.activeEpochId===null)fail('incomplete','Der Lernstand ist nicht vollständig eindeutig.');
+    return state;
+  }
+
   function economicForLedger(history,state) {
     const learning=project(state.ledger);
     if(learning.epochConflict||learning.conflicts.length>0||learning.integrityProblems.length>0
@@ -196,7 +223,7 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     });
   }
 
-  async function refreshInternal(localReplay=null) {
+  async function refreshInternal(localReplay=null,fastHead=false) {
     let state=current();
     let commerce=state.commerce;
     if(commerce.mode==='inactive' || commerce.config===null)return rememberHistory(null,commerce);
@@ -205,9 +232,7 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
       fail('binding','Der Laufzeittransport gehört zu einem anderen Konto oder Bestandsordner.');
     }
     publish({phase:'refreshing',code:null,message:null,operationId:null});
-    const snapshot=await transport.readFolder({
-      id:commerce.config.coordinatorId,kind:'coordinator',config:commerce.config,
-    });
+    const snapshot=await readCoordinator(commerce,fastHead);
     const head=pointerHead(snapshot);
     if(head===null) {
       if(commerce.mode==='active'||commerce.mode==='blocked')fail('history','Dem aktiven Kaufzustand fehlt der gemeinsame Kopf.');
@@ -313,9 +338,15 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
   }
 
   async function previewInternal({profileId,articleId}={}) {
-    await syncLearning();
-    const history=await ensureHistory();
-    const state=current(),commerce=state.commerce;
+    cleanPurchaseState();
+    let history;
+    try {history=await currentCachedHistory();}
+    catch(error) {
+      if(error?.code==='network')fail('not-ready','Der bestätigte Kaufstand ist lokal noch nicht vollständig verfügbar. Bitte zuerst den Abgleich abschließen.');
+      throw error;
+    }
+    const state=cleanPurchaseState(),commerce=state.commerce;
+    if(history!==null&&lastHistoryContext!==historyContext(commerce))fail('stale','Der lokale Kaufstand hat sich geändert.');
     if(commerce.mode!=='active'||history===null)fail('not-ready','Käufe sind noch nicht aktiviert.');
     if(commerce.control!==null&&!['confirmed','rejected','superseded'].includes(commerce.control.phase)) {
       fail('pending','Ein Steuerauftrag muss zuerst abgeschlossen werden.');
@@ -352,6 +383,15 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
       &&lastHistoryContext===historyContext(initial.commerce)
       &&await productStateHash(initial)===freshAnchor.stateHash;
     let state=initial;
+    if(freshAnchor!==null&&!reusable) {
+      const job=initial.commerce.jobs.find(entry=>entry.intent.operationId===operationId);
+      if(job?.status==='open'&&job.attempts.at(-1)?.phase==='intent') {
+        await persistAttempt(operationId,({job:target})=>{
+          target.status='superseded';
+        },{base:initial});
+      }
+      fail('stale','Der geprüfte lokale Kaufstand hat sich geändert.');
+    }
     if(!reusable) {
       await syncLearning();
       await refreshInternal();
@@ -361,7 +401,7 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     let {job,attempt}=attemptByOperation(commerce,operationId);
     if(attempt.phase!=='intent')return {job,attempt};
     if(job.status!=='open'||commerce.mode!=='active')fail('pending','Der Kaufauftrag ist nicht fortsetzbar.');
-    const snapshot=await transport.readFolder({id:commerce.config.coordinatorId,kind:'coordinator',config:commerce.config});
+    const snapshot=await readCoordinator(commerce,freshAnchor!==null);
     const remoteHead=pointerHead(snapshot);
     if(!sameRef(remoteHead,commerce.head))fail('stale','Der gemeinsame Kaufkopf hat sich geändert.');
     const history=lastHistory??await ensureHistory();
@@ -406,8 +446,7 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
     return {job,attempt};
   }
 
-  async function uploadPurchase(operationId,freshAnchor=null,verifiedUploads=null) {
-    let {attempt}=await reservePurchase(operationId,freshAnchor);
+  async function uploadPurchase(operationId,attempt,verifiedUploads=null,purchaseContext=null) {
     if(attempt.phase!=='reserved')return attempt;
     for(let offset=0;offset<attempt.uploads.length;offset+=3) {
       const commerce=current().commerce;
@@ -415,7 +454,7 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
       const verified=await transport.writeImmutableBatch(group.map(upload=>({
           ref:upload.ref,value:upload.value,kind:'content',config:commerce.config,
           authorization:{kind:'attempt',commerce,operationId,attemptId:attempt.attemptId},
-      })));
+      })),purchaseContext);
       if(verifiedUploads!==null) {
         if(!Array.isArray(verified)||verified.length!==group.length)fail('integrity','Die Kaufgruppe wurde nicht vollständig verifiziert.');
         for(let index=0;index<group.length;index++) {
@@ -431,41 +470,59 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
 
   async function sendPurchasePointer(operationId,freshAnchor=null) {
     const verifiedUploads=freshAnchor===null?null:new Map();
-    let attempt=await uploadPurchase(operationId,freshAnchor,verifiedUploads);
-    if(attempt.phase==='uploaded')({attempt}=await persistAttempt(operationId,({attempt:target})=>{target.phase='pointer-pending';}));
-    if(!['pointer-pending','reconciling'].includes(attempt.phase))return attempt;
-    if(attempt.phase==='reconciling')({attempt}=await persistAttempt(operationId,({attempt:target})=>{target.phase='pointer-pending';}));
-    const commerce=current().commerce;
-    const candidate=attempt.uploads.find(entry=>sameRef(entry.ref,attempt.candidate));
-    const currentSnapshot=await transport.readFolder({id:commerce.config.coordinatorId,kind:'coordinator',config:commerce.config});
-    const storedSnapshot={...currentSnapshot,etag:attempt.etag,properties:copy(attempt.pointerProperties)};
+    let purchaseContext=null;
     try {
-      await transport.putPointer({
-        snapshot:storedSnapshot,head:attempt.candidate,headValue:candidate.value,
-        authorization:{kind:'attempt',commerce,operationId,attemptId:attempt.attemptId},
-      });
-    } catch(error) {
-      await persistAttempt(operationId,({attempt:target,job})=>{
-        if(error?.code==='stale') {
-          target.phase='superseded';job.status='superseded';
-        } else target.phase='reconciling';
-      });
-      throw error;
+      let {attempt}=await reservePurchase(operationId,freshAnchor);
+      if(freshAnchor!==null&&attempt.phase==='reserved'
+        &&typeof transport.createPurchaseContext==='function') {
+        purchaseContext=await transport.createPurchaseContext({
+          commerce:current().commerce,operationId,attemptId:attempt.attemptId,
+        });
+      }
+      attempt=await uploadPurchase(operationId,attempt,verifiedUploads,purchaseContext);
+      if(attempt.phase==='uploaded')({attempt}=await persistAttempt(operationId,({attempt:target})=>{target.phase='pointer-pending';}));
+      if(!['pointer-pending','reconciling'].includes(attempt.phase))return attempt;
+      if(attempt.phase==='reconciling')({attempt}=await persistAttempt(operationId,({attempt:target})=>{target.phase='pointer-pending';}));
+      const commerce=current().commerce;
+      const candidate=attempt.uploads.find(entry=>sameRef(entry.ref,attempt.candidate));
+      const currentSnapshot=await readCoordinator(commerce,freshAnchor!==null);
+      const storedSnapshot={...currentSnapshot,etag:attempt.etag,properties:copy(attempt.pointerProperties)};
+      try {
+        await transport.putPointer({
+          snapshot:storedSnapshot,head:attempt.candidate,headValue:candidate.value,
+          authorization:{kind:'attempt',commerce,operationId,attemptId:attempt.attemptId},
+        },purchaseContext);
+      } catch(error) {
+        await persistAttempt(operationId,({attempt:target,job})=>{
+          if(error?.code==='stale') {
+            target.phase='superseded';job.status='superseded';
+          } else target.phase='reconciling';
+        });
+        throw error;
+      }
+      await persistAttempt(operationId,({attempt:target})=>{target.phase='reconciling';});
+      const localReplay=verifiedUploads?.size===attempt.uploads.length?{
+        values:verifiedUploads,head:copy(attempt.candidate),context:historyContext(commerce),
+        operationId,attemptId:attempt.attemptId,
+      }:null;
+      await refreshInternal(localReplay,freshAnchor!==null);
+      return attemptByOperation(current().commerce,operationId).job;
+    } finally {
+      if(purchaseContext!==null&&typeof transport.releasePurchaseContext==='function') {
+        await transport.releasePurchaseContext(purchaseContext);
+      }
     }
-    await persistAttempt(operationId,({attempt:target})=>{target.phase='reconciling';});
-    const localReplay=verifiedUploads?.size===attempt.uploads.length?{
-      values:verifiedUploads,head:copy(attempt.candidate),context:historyContext(commerce),
-      operationId,attemptId:attempt.attemptId,
-    }:null;
-    await refreshInternal(localReplay);
-    return attemptByOperation(current().commerce,operationId).job;
   }
 
   async function confirmInternal(preview) {
     if(!preview||typeof preview!=='object')fail('invalid','Die Kaufvorschau fehlt.');
-    await syncLearning();
-    await refreshInternal();
-    const state=current();
+    const local=current();
+    if(await purchasePreviewStateHash(local)!==preview.stateHash||!sameRef(local.commerce.head,preview.head)) {
+      fail('stale','Die Kaufvorschau ist nicht mehr aktuell.');
+    }
+    cleanPurchaseState();
+    await refreshInternal(null,true);
+    const state=cleanPurchaseState();
     if(await purchasePreviewStateHash(state)!==preview.stateHash||!sameRef(state.commerce.head,preview.head)) {
       fail('stale','Die Kaufvorschau ist nicht mehr aktuell.');
     }

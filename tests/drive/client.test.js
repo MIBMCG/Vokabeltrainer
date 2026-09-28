@@ -43,6 +43,27 @@ test('binds the account through permissionId without requesting an email address
   assert.equal(requests[0].init.headers.Authorization, 'Bearer token-a');
 });
 
+test('server-bound account lookup uses the captured session marker without Google about', async () => {
+  const markers = [];
+  const client = createDriveClient({
+    getToken: () => 'server-session:1:account-a',
+    getAccountId: (marker) => { markers.push(marker); return 'account-a'; },
+    fetchImpl: async () => { throw new Error('Unexpected Google request'); },
+  });
+
+  assert.equal(await client.accountId(), 'account-a');
+  assert.deepEqual(markers, ['server-session:1:account-a']);
+});
+
+test('server-bound account lookup rejects malformed account IDs', async () => {
+  const client = createDriveClient({
+    getToken: () => 'server-session:1:account-a',
+    getAccountId: () => 'wrong/account',
+    fetchImpl: async () => { throw new Error('Unexpected Google request'); },
+  });
+  await assert.rejects(client.accountId(), expectDriveError('invalid'));
+});
+
 test('rejects a malformed account response instead of binding the wrong identifier', async () => {
   const client = createDriveClient({
     getToken: () => 'token-a',

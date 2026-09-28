@@ -1,6 +1,14 @@
 # Arbeitsstand
 
-## Aktuelle Fortsetzung: Tempopaket bereitgestellt und Stufe 3 gekauft
+## Aktueller Auftrag: höchstens 20 Sekunden für den gesamten Kauf
+
+Der Nutzer hat den bereitgestellten Stand erneut getestet und als zu langsam
+zurückgewiesen. Maßgeblich sind jetzt höchstens 20 Sekunden für Vorschau und
+Bestätigung zusammen; Ziel sind unter 10 Sekunden. Er erlaubt den Abbau
+redundanter Prüfungen. Der neue Pfad und seine Nachweise stehen im
+[aktuellen Tempobericht](docs/reports/2026-09-28-kauf-20-sekunden.md).
+
+## Historisch: Tempopaket bereitgestellt und Stufe 3 gekauft
 
 Der Nutzer hat die begrenzte Kaufbeschleunigung mit „ja, beschleunige so gut
 es geht“ beauftragt. Auf Basis `e3933fc` wurde Produktcommit

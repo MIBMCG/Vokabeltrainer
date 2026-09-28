@@ -91,6 +91,11 @@ export function createServerAuth({fetchImpl = globalThis.fetch, navigate = (url)
     return marker;
   }
 
+  function accountIdForMarker(capturedMarker) {
+    if (!connected || capturedMarker !== marker) throw authError('Die Google-Sitzung hat sich geändert.');
+    return accountId;
+  }
+
   function clearLocal() { update(null); }
 
   async function disconnect() {
@@ -138,7 +143,7 @@ export function createServerAuth({fetchImpl = globalThis.fetch, navigate = (url)
   return Object.freeze({
     configuration: () => ({clientId: '', source: 'server', requiresDecision: false}),
     clientId: () => '',
-    connect, resume, getToken, fetchDrive, clearLocal, disconnect,
+    connect, resume, getToken, accountIdForMarker, fetchDrive, clearLocal, disconnect,
     snapshot: () => revision, invalidateIfCurrent,
   });
 }

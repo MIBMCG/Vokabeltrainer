@@ -174,12 +174,14 @@ function multipartBody(metadata, value) {
   };
 }
 
-export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken, binding, descriptorHash} = {}) {
-  if (typeof fetchImpl !== 'function' || typeof getToken !== 'function') {
+export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken, getAccountId = null, binding, descriptorHash} = {}) {
+  if (typeof fetchImpl !== 'function' || typeof getToken !== 'function'
+    || (getAccountId !== null && typeof getAccountId !== 'function')) {
     error('invalid', 'Der Kauftransport ist nicht vollständig konfiguriert.');
   }
   const checkedBinding = assertBinding(binding);
   assertHash(descriptorHash);
+  const purchaseContexts = new WeakMap();
 
   async function runtimeToken() {
     let token;
@@ -214,6 +216,14 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
   }
 
   async function accountIdForToken(token) {
+    if (getAccountId !== null) {
+      let actual;
+      try { actual = await getAccountId(token); }
+      catch { error('auth', 'Google-Zugriff ist nicht verfügbar.'); }
+      if (actual !== checkedBinding.accountId) error('binding', 'Das verbundene Google-Konto stimmt nicht.');
+      if (await runtimeToken() !== token) error('auth', 'Google-Zugriff hat sich während des Kaufs geändert.');
+      return actual;
+    }
     const response = await requestWithToken(
       'https://www.googleapis.com/drive/v3/about?fields=user(permissionId)',
       {},
@@ -326,6 +336,13 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
     }
     checkFolder(after, {id, kind, config});
     return copy(after);
+  }
+
+  async function readPurchaseHead({id,config} = {}) {
+    assertId(id);
+    const snapshot=await metadata(id);
+    checkFolder(snapshot,{id,kind:'coordinator',config});
+    return copy(snapshot);
   }
 
   async function createFolder({kind, setup: rawSetup} = {}) {
@@ -512,6 +529,50 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
     return checkedConfig;
   }
 
+  async function createPurchaseContext({commerce:rawCommerce,operationId,attemptId}={}) {
+    const commerce=assertCommerce(copy(rawCommerce));
+    const job=commerce.jobs.find(entry=>entry.intent.operationId===operationId);
+    const attempt=job?.attempts.at(-1);
+    if(commerce.mode!=='active'||!sameBinding(commerce.binding,checkedBinding)
+      ||job?.status!=='open'||attempt?.attemptId!==attemptId||attempt.phase!=='reserved') {
+      error('binding','Der Kaufkontext gehört keinem reservierten Versuch.');
+    }
+    const candidate=attempt.uploads.find(entry=>sameRef(entry.ref,attempt.candidate));
+    const checked=attemptAuthorization({commerce,operationId,attemptId},candidate.ref,candidate.value);
+    for(const upload of attempt.uploads) {
+      if(await digest(upload.value)!==upload.ref.sha256)error('integrity','Ein gespeicherter Kaufupload hat einen anderen Hash.');
+    }
+    const token=await runtimeToken();
+    await verifyInstalledConfig(checked.configRef,checked.config,token);
+    if(await runtimeToken()!==token)error('auth','Google-Zugriff hat sich während des Kaufs geändert.');
+    const handle=Object.freeze({});
+    purchaseContexts.set(handle,{token,operationId,attemptId,
+      config:copy(checked.config),configRef:copy(checked.configRef),
+      candidate:copy(attempt.candidate),head:copy(attempt.head),etag:attempt.etag});
+    return handle;
+  }
+
+  function releasePurchaseContext(handle) {
+    if(handle!==null&&typeof handle==='object')purchaseContexts.delete(handle);
+  }
+
+  function checkedPurchaseContext(handle,checked,operationId,attemptId,token) {
+    const saved=handle!==null&&typeof handle==='object'?purchaseContexts.get(handle):null;
+    if(!saved)error('binding','Der Kaufkontext ist ungültig oder bereits beendet.');
+    if(saved.token!==token) {
+      releasePurchaseContext(handle);
+      error('auth','Google-Zugriff hat sich während des Kaufs geändert.');
+    }
+    if(saved.operationId!==operationId||saved.attemptId!==attemptId
+      ||!sameRef(saved.configRef,checked.configRef)||!same(saved.config,checked.config)
+      ||!sameRef(saved.candidate,checked.attempt.candidate)
+      ||!sameRef(saved.head,checked.attempt.head)||saved.etag!==checked.attempt.etag) {
+      releasePurchaseContext(handle);
+      error('binding','Der Kaufkontext gehört zu einem anderen Versuch.');
+    }
+    return saved;
+  }
+
   async function preparedImmutable({ref, value, kind = 'content', config}, authorizedConfig) {
     if (!same(assertConfig(config), authorizedConfig)) error('binding', 'Die Uploadkonfiguration stimmt nicht.');
     const actualHash = await digest(value);
@@ -565,38 +626,47 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
     return sendImmutable(await preparedImmutable({ref, value, kind, config}, authorizedConfig));
   }
 
-  async function writeImmutableBatch(uploads) {
-    if (!Array.isArray(uploads) || uploads.length < 1 || uploads.length > 3) {
-      error('limit', 'Eine Kaufgruppe umfasst ein bis drei gespeicherte Dateien.');
-    }
-    const requests = copy(uploads);
-    const token = await runtimeToken();
-    const first = requests[0]?.authorization;
-    if (first?.kind !== 'attempt') error('binding', 'Die Kaufgruppe benötigt einen gespeicherten Kaufversuch.');
-    const prepared = [];
-    let shared = null;
-    for (const request of requests) {
-      const {ref, value, kind = 'content', config, authorization} = request;
-      assertId(ref?.id);
-      assertHash(ref?.sha256);
-      if (kind !== 'content' || authorization?.kind !== 'attempt'
-        || authorization.operationId !== first.operationId
-        || authorization.attemptId !== first.attemptId
-        || !same(authorization.commerce, first.commerce)) {
-        error('binding', 'Die Kaufgruppe gehört nicht zu einem Versuch.');
+  async function writeImmutableBatch(uploads,context=null) {
+    try {
+      if (!Array.isArray(uploads) || uploads.length < 1 || uploads.length > 3) {
+        error('limit', 'Eine Kaufgruppe umfasst ein bis drei gespeicherte Dateien.');
       }
-      const checked = attemptAuthorization(authorization, ref, value);
-      if (shared === null) shared = checked;
-      else if (!sameRef(checked.configRef, shared.configRef) || !same(checked.config, shared.config)) {
-        error('binding', 'Die Kaufgruppe verwendet unterschiedliche Konfigurationen.');
+      const requests = copy(uploads);
+      const token = await runtimeToken();
+      const first = requests[0]?.authorization;
+      if (first?.kind !== 'attempt') error('binding', 'Die Kaufgruppe benötigt einen gespeicherten Kaufversuch.');
+      const prepared = [];
+      let shared = null;
+      for (const request of requests) {
+        const {ref, value, kind = 'content', config, authorization} = request;
+        assertId(ref?.id);
+        assertHash(ref?.sha256);
+        if (kind !== 'content' || authorization?.kind !== 'attempt'
+          || authorization.operationId !== first.operationId
+          || authorization.attemptId !== first.attemptId
+          || !same(authorization.commerce, first.commerce)) {
+          error('binding', 'Die Kaufgruppe gehört nicht zu einem Versuch.');
+        }
+        const checked = attemptAuthorization(authorization, ref, value);
+        if (shared === null) shared = checked;
+        else if (!sameRef(checked.configRef, shared.configRef) || !same(checked.config, shared.config)) {
+          error('binding', 'Die Kaufgruppe verwendet unterschiedliche Konfigurationen.');
+        }
+        prepared.push(await preparedImmutable({ref, value, kind, config}, checked.config));
       }
-      prepared.push(await preparedImmutable({ref, value, kind, config}, checked.config));
+      if(context===null)await verifyInstalledConfig(shared.configRef, shared.config, token);
+      else {
+        if(shared.attempt.phase!=='reserved')error('binding','Der Kaufversuch ist nicht für Uploads reserviert.');
+        checkedPurchaseContext(context,shared,first.operationId,first.attemptId,token);
+      }
+      const settled = await Promise.allSettled(prepared.map(upload => sendImmutable(upload, token)));
+      const failed = settled.find(result => result.status === 'rejected');
+      if (failed) throw failed.reason;
+      return settled.map(result => result.value);
+    } catch(cause) {
+      releasePurchaseContext(context);
+      throw cause;
     }
-    await verifyInstalledConfig(shared.configRef, shared.config, token);
-    const settled = await Promise.allSettled(prepared.map(upload => sendImmutable(upload, token)));
-    const failed = settled.find(result => result.status === 'rejected');
-    if (failed) throw failed.reason;
-    return settled.map(result => result.value);
   }
 
   function assertSnapshot(snapshot, expected) {
@@ -606,11 +676,13 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
     }
   }
 
-  async function putPointer({snapshot, configRef = null, head = null, headValue = null, authorization} = {}) {
+  async function putPointerInternal({snapshot, configRef = null, head = null, headValue = null, authorization} = {},context=null) {
+    if(context!==null&&authorization?.kind!=='attempt')error('binding','Der Kaufkontext gilt nur für einen Kaufversuch.');
     let expected;
     let additions;
     let storedProperties;
     let storedEtag;
+    let contextToken=null;
     if (authorization?.kind === 'setup') {
       const setup = setupAuthorization(authorization.setup, checkedBinding, descriptorHash);
       if (!sameRef(configRef, setup.configRef) || head !== null) {
@@ -672,7 +744,15 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
       const checked = authorization.kind==='attempt'
         ? attemptAuthorization(authorization,head,headValue)
         : controlAuthorization(authorization,head,headValue);
-      const config = await verifyInstalledConfig(checked.configRef, checked.config);
+      if(context!==null&&checked.attempt.phase!=='pointer-pending') {
+        error('binding','Der Kaufversuch ist nicht für den Pointer bereit.');
+      }
+      const saved=context===null?null:checkedPurchaseContext(context,checked,
+        authorization.operationId,authorization.attemptId,await runtimeToken());
+      const config = saved===null
+        ? await verifyInstalledConfig(checked.configRef, checked.config)
+        : saved.config;
+      contextToken=saved?.token??null;
       const stored = authorization.kind==='attempt'?checked.attempt:checked.control;
       if (!sameRef(stored.candidate, head)
         || stored.phase !== 'pointer-pending'
@@ -706,10 +786,15 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
       method: 'PUT',
       headers: {'Content-Type': 'application/json; charset=UTF-8', 'If-Match': storedEtag},
       body: JSON.stringify(body),
-    });
+    },[],contextToken);
     const updated = await responseJson(response);
     if (updated.id !== snapshot.id) error('binding', 'Drive hat einen anderen Pointer geändert.', response.status);
     return {id: snapshot.id, status: response.status};
+  }
+
+  async function putPointer(args,context=null) {
+    try { return await putPointerInternal(args,context); }
+    finally { releasePurchaseContext(context); }
   }
 
   return Object.freeze({
@@ -719,10 +804,13 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
     reserveId,
     reserveIds,
     readFolder,
+    readPurchaseHead,
     createFolder,
     readImmutable,
     writeImmutable,
     writeImmutableBatch,
     putPointer,
+    createPurchaseContext,
+    releasePurchaseContext,
   });
 }

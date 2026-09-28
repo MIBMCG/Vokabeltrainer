@@ -1,6 +1,13 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Aktuelle Fortsetzung am 28.09.2026:** Der Nutzer hat die begrenzte
+**Aktueller Auftrag am 28.09.2026:** Der Nutzer verlangt nach erneutem Test
+höchstens 20 Sekunden für Vorschau und Kaufbestätigung zusammen, möglichst
+unter 10 Sekunden. Die erneute Optimierung und ihre Nachweise stehen im
+[aktuellen Tempobericht](docs/reports/2026-09-28-kauf-20-sekunden.md) und der
+[Laptop-Übergabe](docs/handoffs/2026-09-28-laptop-fortsetzung.md). Frühere
+Wartezeiten und Pausen in den folgenden Abschnitten sind Vorgeschichte.
+
+**Vorherige Fortsetzung am 28.09.2026:** Der Nutzer hat die begrenzte
 Kaufbeschleunigung ausdrücklich beauftragt. Produktcommit `ad96f00` ist auf
 `codex/vokabeltrainer-v1` integriert; 624/624 Node-Tests, 8/8 ausgewählte
 Browserfälle und unabhängiges Review PASS. Die synthetische Vollprobe zählt

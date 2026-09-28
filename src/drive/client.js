@@ -154,8 +154,9 @@ function makeBoundary() {
   return `vt_probe_${Date.now().toString(36)}_${boundaryCounter.toString(36)}`;
 }
 
-export function createDriveClient({getToken, fetchImpl = globalThis.fetch} = {}) {
-  if (typeof getToken !== 'function' || typeof fetchImpl !== 'function') {
+export function createDriveClient({getToken, getAccountId = null, fetchImpl = globalThis.fetch} = {}) {
+  if (typeof getToken !== 'function' || typeof fetchImpl !== 'function'
+    || (getAccountId !== null && typeof getAccountId !== 'function')) {
     throw invalid('Drive-Client ist nicht vollständig konfiguriert.');
   }
 
@@ -194,6 +195,13 @@ export function createDriveClient({getToken, fetchImpl = globalThis.fetch} = {})
   }
 
   async function accountId() {
+    if (getAccountId !== null) {
+      const id = await getAccountId(await getToken());
+      if (typeof id !== 'string' || !/^[A-Za-z0-9_-]{1,128}$/u.test(id)) {
+        throw invalid('Google-Kontokennung fehlt.');
+      }
+      return id;
+    }
     const url = buildUrl(DRIVE_API_ROOT, 'about', {fields: 'user(permissionId)'});
     const result = await parseJsonResponse(await request(url));
     const permissionId = result?.user?.permissionId;

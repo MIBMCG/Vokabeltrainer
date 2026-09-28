@@ -275,9 +275,10 @@ async function start() {
     })
     : createProductAuth();
   const driveFetch = serverMode ? (url, init) => auth.fetchDrive(url, init) : globalThis.fetch;
-  const drive = createDriveClient({getToken: () => auth.getToken(), fetchImpl: driveFetch});
+  const getAccountId = serverMode ? (marker) => auth.accountIdForMarker(marker) : undefined;
+  const drive = createDriveClient({getToken: () => auth.getToken(), getAccountId, fetchImpl: driveFetch});
   const purchaseTransportFor = ({binding, descriptorHash}) => createPurchaseTransport({
-    getToken: () => auth.getToken(), fetchImpl: driveFetch, binding, descriptorHash,
+    getToken: () => auth.getToken(), getAccountId, fetchImpl: driveFetch, binding, descriptorHash,
   });
   let rawSync;
   const commerceIntegration = createCommerceIntegration({

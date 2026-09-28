@@ -1,13 +1,18 @@
 // Synthetic request diagnostic: no real browser, real network, or credentials.
 // Run: node scripts/measure-purchase-requests.mjs
 // Optional: SYNTHETIC_HTTP_DELAY_MS is an integer from 0 through 25.
-// Local timings exclude the browser, IndexedDB, server authentication, and Google latency.
+// PURCHASE_DIAGNOSTIC_MODE=server includes the real server auth adapter and proxy.
+// PURCHASE_HTTP_DELAY_MS (0..1000) adds latency only to preview/confirm requests.
+// Local timings exclude the browser, IndexedDB, D1 latency and real Google latency.
 import assert from 'node:assert/strict';
 import {mkdir, readFile, writeFile} from 'node:fs/promises';
 import {AsyncLocalStorage} from 'node:async_hooks';
 import {fileURLToPath} from 'node:url';
 import {createGoogleFixture} from '../tests/browser/google-fixture.mjs';
 import {createDriveClient} from '../src/drive/client.js';
+import {createServerAuth} from '../src/drive/server-auth.js';
+import {createAuthService} from '../server/auth-service.js';
+import {createCipher, sha256} from '../server/crypto.js';
 import {createCommands} from '../src/trainer/commands.js';
 import {backupLedger, parseBackup} from '../src/trainer/backup/format.js';
 import {createPurchaseTransport} from '../src/trainer/purchases/transport.js';
@@ -22,6 +27,13 @@ const delayInput = (process.env.SYNTHETIC_HTTP_DELAY_MS ?? '0').trim();
 const delayMs = Number(delayInput);
 if (!/^\d+$/u.test(delayInput) || !Number.isSafeInteger(delayMs) || delayMs > 25) {
   throw new Error('SYNTHETIC_HTTP_DELAY_MS must be an integer from 0 through 25.');
+}
+const mode = process.env.PURCHASE_DIAGNOSTIC_MODE ?? 'direct';
+if (!['direct', 'server'].includes(mode)) throw new Error('Unknown diagnostic mode.');
+const purchaseDelayInput = (process.env.PURCHASE_HTTP_DELAY_MS ?? '0').trim();
+const purchaseDelayMs = Number(purchaseDelayInput);
+if (!/^\d+$/u.test(purchaseDelayInput) || !Number.isSafeInteger(purchaseDelayMs) || purchaseDelayMs > 1000) {
+  throw new Error('PURCHASE_HTTP_DELAY_MS must be an integer from 0 through 1000.');
 }
 const google = createGoogleFixture();
 const routes = new Map();
@@ -48,7 +60,7 @@ function wrap(object, prefix) {
   return Object.fromEntries(Object.entries(object).map(([key, value]) => [key,
     typeof value !== 'function' ? value : (...args) => traced(`${prefix}.${key}`, () => value(...args))]));
 }
-const fetchImpl = async (url, init = {}) => {
+const googleFetch = async (url, init = {}) => {
   const parsed = new URL(url);
   assert.equal(parsed.origin, 'https://www.googleapis.com');
   const headers = Object.fromEntries(new Headers(init.headers).entries());
@@ -61,10 +73,12 @@ const fetchImpl = async (url, init = {}) => {
   active++; phaseMaximum = Math.max(phaseMaximum, active);
   let result;
   try {
-    if (delayMs > 0) await new Promise(resolve => setTimeout(resolve, delayMs));
+    const requestDelay = delayMs + (['preview', 'confirm'].includes(topPhase) ? purchaseDelayMs : 0);
+    if (requestDelay > 0) await new Promise(resolve => setTimeout(resolve, requestDelay));
+    const body = typeof init.body === 'string' ? init.body : init.body ? new TextDecoder().decode(init.body) : undefined;
     await handler({
       request: () => ({url: () => parsed.href, method: () => request.method,
-        headers: () => headers, postData: () => init.body, postDataJSON: () => JSON.parse(init.body)}),
+        headers: () => headers, postData: () => body, postDataJSON: () => JSON.parse(body)}),
       fulfill: async ({status = 200, headers: responseHeaders, body}) => {result = new Response(body, {status, headers: responseHeaders});},
       abort: async reason => {throw new Error(`Synthetic abort: ${reason}`);},
     });
@@ -74,15 +88,46 @@ const fetchImpl = async (url, init = {}) => {
     active--; tick = Math.max(tick, request.startTick + 1); request.endTick = tick; request.endMs = performance.now();
   }
 };
-const getToken = async () => 'synthetic-browser-token-1';
-const drive = createDriveClient({fetchImpl, getToken});
+let fetchImpl = googleFetch;
+let getToken = async () => 'synthetic-browser-token-1';
+let getAccountId;
+if (mode === 'server') {
+  const origin = 'https://trainer.example';
+  const cookie = 'synthetic-diagnostic-session';
+  const sessionId = await sha256(cookie);
+  const encryptionKey = Buffer.alloc(32, 9).toString('base64');
+  const cipher = createCipher(encryptionKey);
+  let sessionRecord = {version: 1, expiresAt: Date.now() + 86_400_000,
+    payload: await cipher.encrypt({accessToken: 'synthetic-browser-token-1', refreshToken: 'synthetic-refresh',
+      tokenExpiresAt: Date.now() + 3_600_000, accountId: 'synthetic-account'})};
+  const sessionStore = {
+    async readSession(id) { return id === sessionId ? sessionRecord : null; },
+    async deleteSession(id) { if (id === sessionId) sessionRecord = null; },
+    async casSession(id, version, record) {
+      if (id !== sessionId || sessionRecord?.version !== version) return false;
+      sessionRecord = {...record, version: version + 1}; return true;
+    },
+  };
+  const server = createAuthService({store: sessionStore, fetchImpl: googleFetch,
+    config: {origin, clientId: 'synthetic-client', clientSecret: 'synthetic-secret', encryptionKey}});
+  const auth = createServerAuth({fetchImpl: async (path, init) => {
+    const headers = new Headers(init.headers);
+    headers.set('Cookie', `__Host-vt_session=${cookie}`); headers.set('Origin', origin);
+    return server.fetch(new Request(new URL(path, origin), {...init, headers}));
+  }});
+  assert.equal(await auth.resume(), true);
+  getToken = () => auth.getToken();
+  fetchImpl = (url, init) => auth.fetchDrive(url, init);
+  getAccountId = typeof auth.accountIdForMarker === 'function' ? marker => auth.accountIdForMarker(marker) : undefined;
+}
+const drive = createDriveClient({fetchImpl, getToken, getAccountId});
 const ledger = backupLedger(await parseBackup(await readFile(new URL('../tests/fixtures/purchase-demo-1600.json', import.meta.url), 'utf8')));
 const initial = productState(ledger, {outbox: [], deviceId: 'diagnostic-device'});
 initial.storageVersion = 2;
 const store = memoryStore(initial);
 const now = () => new Date('2026-09-28T20:00:00.000Z');
 const commands = await createCommands({store, now, id: sequenceIds('diagnostic-command'), deviceId: 'diagnostic-device', onChange() {}});
-const transportFor = input => wrap(createPurchaseTransport({fetchImpl, getToken, ...input}), 'transport');
+const transportFor = input => wrap(createPurchaseTransport({fetchImpl, getToken, getAccountId, ...input}), 'transport');
 let rawSync;
 const integration = wrap(createCommerceIntegration({commands, drive, transportFor,
   learningSync: () => traced('product.syncLearning', () => rawSync.syncLearning()), now, id: sequenceIds('diagnostic-integration')}), 'integration');
@@ -126,10 +171,10 @@ const view = await phase('getViewAfter', () => service.getView());
 assert.equal(view.accounts['purchase-demo-profile'].availablePoints, 1400);
 assert.equal(view.accounts['purchase-demo-profile'].earnedPoints, 1600);
 assert.equal(google.unexpected.length, 0);
-const report = {syntheticOnly: true, delayMs, eventCount: ledger.events.length, phases,
+const report = {syntheticOnly: true, mode, delayMs, purchaseDelayMs, eventCount: ledger.events.length, phases,
   spans: spans.map(span => ({...span, elapsedMs: Math.round(span.endMs - span.startMs)})), requests};
 const outputDirectory = new URL('../.superpowers/', import.meta.url);
 await mkdir(outputDirectory, {recursive: true});
-const output = new URL('purchase-latency-measure.json', outputDirectory);
+const output = new URL(`purchase-latency-measure${mode === 'server' ? '-server' : ''}.json`, outputDirectory);
 await writeFile(output, JSON.stringify(report, null, 2) + '\n');
 console.log(JSON.stringify({result: result.status, points: view.accounts['purchase-demo-profile'], report: fileURLToPath(output)}));

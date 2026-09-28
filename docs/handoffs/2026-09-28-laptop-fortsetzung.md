@@ -2,7 +2,16 @@
 
 Stand: **28.09.2026**. Zweig: `codex/vokabeltrainer-v1`.
 
-## Aktueller Nachtrag: Tempopaket und zweiter realer Kauf
+## Aktueller Auftrag: höchstens 20 Sekunden insgesamt
+
+Der Nutzer hat die Kaufwartezeit unter Cache v31 erneut zurückgewiesen und
+höchstens 20 Sekunden einschließlich Vorschau und Bestätigung gefordert,
+möglichst unter 10 Sekunden. Redundante Prüfungen dürfen dafür reduziert
+werden. Der [aktuelle Tempobericht](../reports/2026-09-28-kauf-20-sekunden.md)
+ist für diese Fortsetzung maßgeblich. Die früheren Pausen und nächsten Schritte
+weiter unten beschreiben den damaligen Stand.
+
+## Historischer Nachtrag: Tempopaket und zweiter realer Kauf
 
 Der Nutzer hat die begrenzte Beschleunigung mit „ja, beschleunige so gut es
 geht“ beauftragt. Auf Basis `e3933fc` wurde Produktcommit

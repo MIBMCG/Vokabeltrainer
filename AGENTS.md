@@ -1,6 +1,16 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-**Aktuelle Steuerung: begrenzte Kaufbeschleunigung am 28.09.2026.** Der Nutzer
+**Aktuelle Steuerung: vollständiger Kauf in höchstens 20 Sekunden.** Der Nutzer
+hat Cache v31 erneut als zu langsam zurückgewiesen. Er verlangt einschließlich
+Vorschau und Bestätigung höchstens 20 Sekunden, möglichst unter 10 Sekunden,
+und erlaubt dafür weniger redundante Prüfungen. Der beauftragte Pfad nutzt
+die bestätigte lokale Vorschau, verzichtet beim normalen Kauf auf den vollen
+Lernabgleich und bündelt Konto- und Konfigurationsnachweise. Dauerhafter Auftrag,
+frischer Kaufkopf, bedingtes Schreiben und Wiederaufnahme bleiben erhalten.
+Die frühere Pause gilt nicht. Umsetzung und echte Zeitnachweise stehen im
+[aktuellen Tempobericht](docs/reports/2026-09-28-kauf-20-sekunden.md).
+
+**Historisch: begrenzte Kaufbeschleunigung am 28.09.2026.** Der Nutzer
 hat mit „ja, beschleunige so gut es geht“ die Arbeit nach der beanstandeten
 Kaufwartezeit beauftragt. Auf Basis `e3933fc` ist Produktcommit
 `ad96f00390243cbda94a825d278650b1efa682d7` per Fast-Forward im

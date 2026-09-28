@@ -190,6 +190,33 @@ test('account check and dependent request use one runtime token snapshot', async
   assert.deepEqual(authorizations, ['Bearer token-account-a']);
 });
 
+test('server identity hook replaces about while binding the account to one marker', async () => {
+  const fixture = purchasesHttpFixture();
+  let marker = 'server-marker-a';
+  const seen = [];
+  const transport = createPurchaseTransport({binding, descriptorHash: 'a'.repeat(64),
+    fetchImpl: fixture.fetch, getToken: async () => marker,
+    getAccountId: async captured => {seen.push(captured); return binding.accountId;},
+  });
+  assert.equal(await transport.reserveId(), 'reserved-1');
+  assert.deepEqual(seen, ['server-marker-a']);
+  assert.equal(fixture.calls.filter(({url}) => url.includes('/drive/v3/about')).length, 0);
+
+  const changed = createPurchaseTransport({binding, descriptorHash: 'a'.repeat(64),
+    fetchImpl: fixture.fetch, getToken: async () => marker,
+    getAccountId: async () => {marker = 'server-marker-b'; return binding.accountId;},
+  });
+  fixture.calls.length = 0;
+  await assert.rejects(() => changed.reserveId(), {code: 'auth'});
+  assert.equal(fixture.calls.length, 0);
+  const foreign = createPurchaseTransport({binding, descriptorHash: 'a'.repeat(64),
+    fetchImpl: fixture.fetch, getToken: async () => marker,
+    getAccountId: async () => 'other-account',
+  });
+  await assert.rejects(() => foreign.reserveId(), {code: 'binding'});
+  assert.equal(fixture.calls.length, 0);
+});
+
 test('transport reserves a validated unique group of file IDs in one request', async () => {
   const {fixture, transport} = await setupFixture();
   assert.deepEqual(await transport.reserveIds(5), [
@@ -718,6 +745,95 @@ async function configuredPointerCase() {
     prepared: await pointerCommerce(confirmed.configRef, confirmed.config, coordinator.etag),
   };
 }
+
+test('purchase head uses one fresh checked metadata response', async () => {
+  const {fixture, transport, confirmed, coordinator} = await configuredPointerCase();
+  fixture.calls.length = 0;
+  const head = await transport.readPurchaseHead({id: confirmed.coordinatorId, config: confirmed.config});
+  assert.deepEqual(head, coordinator);
+  assert.equal(fixture.calls.filter(({url}) => url.includes(`/drive/v2/files/${confirmed.coordinatorId}`)).length, 1);
+  fixture.files.get(confirmed.coordinatorId).properties.kind = 'other';
+  await assert.rejects(() => transport.readPurchaseHead({id: confirmed.coordinatorId, config: confirmed.config}), {code: 'binding'});
+});
+
+test('one purchase context checks its installed config once across batch and pointer', async () => {
+  const {fixture, transport, coordinator, prepared} = await configuredPointerCase();
+  prepared.attempt.phase = 'reserved';
+  fixture.calls.length = 0;
+  const context = await transport.createPurchaseContext({commerce: prepared.commerce,
+    operationId: 'purchase-a', attemptId: 'attempt-a'});
+  assert.equal(fixture.calls.filter(({url}) => url.includes(`/drive/v2/files/${binding.folderId}`)).length, 2);
+  assert.equal(fixture.calls.filter(({url}) => url.includes(`/drive/v2/files/${prepared.commerce.configRef.id}`)).length, 3);
+  fixture.calls.length = 0;
+  await transport.writeImmutableBatch(savedPurchaseBatch(prepared), context);
+  assert.equal(fixture.calls.filter(({url}) => url.includes(`/drive/v2/files/${binding.folderId}`)).length, 0);
+  assert.equal(fixture.calls.filter(({url}) => url.includes(`/drive/v2/files/${prepared.commerce.configRef.id}`)).length, 0);
+  prepared.attempt.phase = 'pointer-pending';
+  fixture.calls.length = 0;
+  await transport.putPointer({snapshot: coordinator, head: prepared.candidate, headValue: prepared.receipt,
+    authorization: {kind: 'attempt', commerce: prepared.commerce, operationId: 'purchase-a', attemptId: 'attempt-a'}}, context);
+  assert.equal(fixture.calls.filter(({url}) => url.includes(`/drive/v2/files/${binding.folderId}`)).length, 0);
+  assert.equal(fixture.calls.filter(({url}) => url.includes(`/drive/v2/files/${prepared.commerce.configRef.id}`)).length, 0);
+  fixture.calls.length = 0;
+  await assert.rejects(() => transport.writeImmutableBatch(savedPurchaseBatch(prepared), context), {code: 'binding'});
+  assert.equal(fixture.calls.length, 0);
+  transport.releasePurchaseContext(context);
+  transport.releasePurchaseContext(context);
+});
+
+test('purchase context rejects foreign transport and changed marker before writes', async () => {
+  const {fixture, descriptorHash, prepared, transport} = await configuredPointerCase();
+  prepared.attempt.phase = 'reserved';
+  const context = await transport.createPurchaseContext({commerce: prepared.commerce,
+    operationId: 'purchase-a', attemptId: 'attempt-a'});
+  const foreign = createPurchaseTransport({binding, descriptorHash,
+    fetchImpl: fixture.fetch, getToken: async () => 'synthetic-token'});
+  fixture.calls.length = 0;
+  await assert.rejects(() => foreign.writeImmutableBatch(savedPurchaseBatch(prepared), context), {code: 'binding'});
+  assert.equal(fixture.calls.length, 0);
+  let marker = 'first';
+  const changing = createPurchaseTransport({binding, descriptorHash,
+    fetchImpl: fixture.fetch, getToken: async () => marker});
+  const own = await changing.createPurchaseContext({commerce: prepared.commerce,
+    operationId: 'purchase-a', attemptId: 'attempt-a'});
+  marker = 'second';
+  fixture.calls.length = 0;
+  await assert.rejects(() => changing.writeImmutableBatch(savedPurchaseBatch(prepared), own), {code: 'auth'});
+  assert.equal(fixture.calls.length, 0);
+  marker = 'first';
+  await assert.rejects(() => changing.writeImmutableBatch(savedPurchaseBatch(prepared), own), {code: 'binding'});
+  assert.equal(fixture.calls.length, 0);
+});
+
+test('purchase context cannot authorize another saved attempt', async () => {
+  const {fixture, transport, prepared} = await configuredPointerCase();
+  prepared.attempt.phase = 'reserved';
+  const context = await transport.createPurchaseContext({commerce: prepared.commerce,
+    operationId: 'purchase-a', attemptId: 'attempt-a'});
+  const other = structuredClone(prepared.commerce);
+  other.jobs[0].attempts.push({...structuredClone(other.jobs[0].attempts[0]), attemptId: 'attempt-b'});
+  const uploads = other.jobs[0].attempts.at(-1).uploads.map(upload => ({...upload,
+    kind: 'content', config: other.config,
+    authorization: {kind: 'attempt', commerce: other, operationId: 'purchase-a', attemptId: 'attempt-b'},
+  }));
+  fixture.calls.length = 0;
+  await assert.rejects(() => transport.writeImmutableBatch(uploads, context), {code: 'binding'});
+  assert.equal(fixture.calls.filter(({method}) => method === 'POST').length, 0);
+  await assert.rejects(() => transport.writeImmutableBatch(savedPurchaseBatch(prepared), context), {code: 'binding'});
+  assert.equal(fixture.calls.filter(({method}) => method === 'POST').length, 0);
+});
+
+test('a partially failed purchase batch consumes its ephemeral context', async () => {
+  const {fixture, transport, prepared} = await configuredPointerCase();
+  prepared.attempt.phase = 'reserved';
+  const context = await transport.createPurchaseContext({commerce: prepared.commerce,
+    operationId: 'purchase-a', attemptId: 'attempt-a'});
+  fixture.loseCreateResponse();
+  await assert.rejects(() => transport.writeImmutableBatch(savedPurchaseBatch(prepared), context), {code: 'network'});
+  fixture.calls.length = 0;
+  await assert.rejects(() => transport.writeImmutableBatch(savedPurchaseBatch(prepared), context), {code: 'binding'});
+  assert.equal(fixture.calls.length, 0);
+});
 
 test('one reserved three-file purchase batch checks its installed config once while reading every upload', async () => {
   const single = await configuredPointerCase();

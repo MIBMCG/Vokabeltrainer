@@ -53,6 +53,27 @@ test('a renewed session uses its new account binding for later proxy calls', asy
   assert.deepEqual(accounts, ['account-2']);
 });
 
+test('account lookup accepts only the current server session marker', async () => {
+  let accountId = 'account-1';
+  const auth = createServerAuth({fetchImpl: async (url) => url === '/api/auth/session'
+    ? Response.json({connected: true, accountId}) : Response.json({connected: false})});
+  await auth.resume();
+  const first = auth.getToken();
+  assert.equal(auth.accountIdForMarker(first), 'account-1');
+  assert.throws(() => auth.accountIdForMarker('server-session:forged:account-1'), {code: 'auth'});
+  accountId = 'account-2';
+  await auth.resume();
+  assert.throws(() => auth.accountIdForMarker(first), {code: 'auth'});
+  assert.equal(auth.accountIdForMarker(auth.getToken()), 'account-2');
+  auth.clearLocal();
+  assert.throws(() => auth.accountIdForMarker(first), {code: 'auth'});
+  await auth.resume();
+  assert.throws(() => auth.accountIdForMarker(first), {code: 'auth'});
+  assert.equal(auth.accountIdForMarker(auth.getToken()), 'account-2');
+  await auth.disconnect();
+  assert.throws(() => auth.accountIdForMarker(first), {code: 'auth'});
+});
+
 test('rejects non-Google URLs before a proxy request', async () => {
   let calls = 0;
   const auth = createServerAuth({fetchImpl: async () => { calls++; return Response.json({connected: true, accountId: 'account-1'}); }});
