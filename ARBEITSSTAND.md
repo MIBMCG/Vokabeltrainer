@@ -1,5 +1,27 @@
 # Arbeitsstand
 
+## Aktuelle offene Arbeitspunkte (29.09.2026)
+
+- **Neu aufgenommen: Vokabeln einfacher hinzufügen.** Der Nutzer wünscht eine
+  Vereinfachung der bestehenden Eingabe. Der konkrete Ablauf wird noch geklärt;
+  bisher ist dies ein bestätigtes Verbesserungsziel, keine fertige Änderung.
+  [Anforderung und Abgrenzung](docs/ANFORDERUNGEN.md#neuer-folgepunkt-vokabeln-einfacher-hinzufügen-29092026).
+- Die verbleibenden 64 Entwicklungsbilder produzieren und integrieren.
+- Kaufgeschwindigkeit weiter verbessern: rund 17,1 Sekunden sind für einen
+  echten Durchgang belegt; das Wunschziel unter zehn Sekunden und die langsame
+  Übernahme vorhandener Lernbereiche bleiben Optimierungspunkte.
+- Automatische Google-Erneuerung über einen natürlichen Tokenablauf praktisch
+  nachweisen; der falsche Galeriehinweis ist bereits behoben.
+- Das integrierte Produkt mit Google Drive auf zwei physischen Geräten prüfen.
+- Handynutzung praktisch abnehmen, besonders iPhone/Safari und die
+  Home-Bildschirm-App; Tastatur, Touchbedienung, Offlinebetrieb, Neustarts,
+  Updates und Erwachsenenverwaltung einschließen. Responsive Ansichten und
+  automatisierte Browserprüfungen ersetzen diesen Praxistest nicht.
+
+Die vereinbarten Kernfunktionen einschließlich Galeriebedienung sind umgesetzt.
+Ältere offene Listen weiter unten sind datierte Vorgeschichte; maßgeblich sind
+diese Liste und die jeweils jüngsten Abschlussberichte.
+
 **Abgeschlossen: Google-Statusanzeige.** Nach ausdrücklicher Fortsetzung ist
 der falsche Verbindungshinweis nach erfolgreicher Sitzungswiederaufnahme
 reproduziert und als Produktcommit `67de463e752221894e9e59cb81d1a978397db77a`

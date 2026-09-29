@@ -1,5 +1,22 @@
 # Anforderungen und Entscheidungen
 
+## Neuer Folgepunkt: Vokabeln einfacher hinzufügen (29.09.2026)
+
+Der Nutzer möchte das Hinzufügen neuer Vokabeln vereinfachen und ausdrücklich
+in die Liste der verbleibenden Arbeiten aufnehmen. Das Verbesserungsziel ist
+bestätigt; der konkrete Bedienablauf ist noch zu klären und nicht umgesetzt.
+Ausgangspunkt sind die bestehende Einzeleingabe und das Einfügen mehrerer
+Deutsch-/Englisch-Zeilen gemäß R25 sowie die Lektionszuordnung gemäß R26.
+Offen ist, welcher dieser Schritte im Alltag hauptsächlich vereinfacht werden
+soll. Ein bestimmtes Importformat oder eine zusätzliche Erkennungsmethode ist
+mit dieser Aufnahme noch nicht festgelegt.
+
+Die zusätzliche Frage nach einfacher Handynutzung betrifft den aktuellen
+Bedien- und Prüfstand: Die App besitzt eine responsive Oberfläche und eine
+Home-Bildschirm-Konfiguration. Schmale Browseransichten sind geprüft;
+die praktische Bedienabnahme auf echten Smartphones, insbesondere iPhone
+und Safari, steht weiterhin aus.
+
 ## Aktueller Umsetzungsnachweis
 
 **Kaufwartezeit, Auftrag vom 28.09.2026:** Der Nutzer verlangt für den

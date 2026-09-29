@@ -119,6 +119,17 @@ ist eine kontrollierte Beobachtung über den natürlichen Tokenablauf hinweg
 in einer vorhandenen Sitzung, ohne neue Anmeldung oder Einrichtungsreset.
 Die 64 weiteren Bildmotive bleiben Folgeumfang nach persönlicher Konzeptfreigabe.
 
+### Ergänzter Folgeauftrag vom 29.09.2026
+
+Nach der Übersicht über verbleibende Arbeiten ergänzt der Nutzer ausdrücklich
+das Ziel **„Hinzufügen neuer Vokabeln vereinfachen“**. Es steht jetzt in den
+[Anforderungen](../ANFORDERUNGEN.md#neuer-folgepunkt-vokabeln-einfacher-hinzufügen-29092026)
+und der aktuellen offenen Liste im [Arbeitsstand](../../ARBEITSSTAND.md).
+Der gewünschte Schwerpunkt der Vereinfachung ist noch zu klären. Diese
+Dokumentation legt keine neue Eingabemethode fest und ändert das Produkt nicht.
+Die gleichzeitig erfragte Handynutzung ist in der Oberfläche vorbereitet;
+ihre praktische Abnahme auf echten Zielgeräten bleibt offen.
+
 ## Bereitstellung und tatsächliche Browserkontrolle
 
 Nach erfolgreichem Abschluss aller Prüfungen wurde Produktcommit
