@@ -434,12 +434,11 @@ test('compact vocabulary management opens editors deliberately and preserves the
     await page.getByLabel('Neue Lektion', {exact: true}).fill('Reise');
     await page.getByRole('checkbox', {name: 'Ada', exact: true}).check();
     await page.locator('#import-text').fill('Bank\tbench\nBank\tbank');
-    await page.locator('#import-preview').click();
     assert.equal(await page.locator('#import-apply').isDisabled(), true);
     await page.locator('[data-import-row="row-2"] select').selectOption('separate');
     assert.equal(await page.locator('#import-apply').isEnabled(), true);
     await page.locator('#import-apply').click();
-    await page.getByText('Die geprüften Tabellenzeilen wurden übernommen.', {exact: true}).waitFor();
+    await page.getByText('2 Wörter wurden auf diesem Gerät gespeichert.', {exact: true}).waitFor();
 
     await page.getByLabel('Lektion auswählen').selectOption({label: 'Inselwörter'});
     const hund = page.locator('[data-word-german="Hund"]');
@@ -524,7 +523,6 @@ test('table import revalidates its preview against the currently selected target
     await page.getByRole('button', {name: 'Mehrere Wörter einfügen', exact: true}).click();
     await page.getByLabel('Lektion', {exact: true}).selectOption({label: 'Inselwörter'});
     await page.locator('#import-text').fill('Boot\tboat');
-    await page.locator('#import-preview').click();
     assert.equal(await page.locator('#import-apply').isEnabled(), true);
 
     await page.getByLabel('Lektion', {exact: true}).selectOption({label: 'Meer'});

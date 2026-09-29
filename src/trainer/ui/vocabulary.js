@@ -1,4 +1,4 @@
-import {applyRows, parseTable, validateRows} from '../adult/import.js';
+import {parseTable, validateRows} from '../adult/import.js';
 import {project} from '../learning/progress.js';
 import {dayInZone} from '../learning/calendar.js';
 import {projectSchedule} from '../learning/schedule.js';
@@ -49,8 +49,19 @@ function closeDecision(root) {
   root.querySelector('#adult-unsaved-dialog')?.remove();
 }
 
+function vocabularySavePending(root) {
+  const pending = Boolean(stateFor(root).openEditor?.saving);
+  if (pending && !root.querySelector('#adult-save-pending')) {
+    const notice = message('Speichern läuft. Bitte warten Sie, bis die Eingaben übernommen wurden.');
+    notice.id = 'adult-save-pending';
+    root.querySelector('#adult-content')?.prepend(notice);
+  }
+  return pending;
+}
+
 export function requestVocabularyNavigation(root, action) {
   const ui = stateFor(root);
+  if (vocabularySavePending(root)) return;
   closeDecision(root);
   if (!ui.draft?.isDirty()) {
     ui.draft = null;
@@ -69,29 +80,41 @@ export function requestVocabularyNavigation(root, action) {
     ui.draft = null;
     action();
   };
-  dialog.append(
+  const controls = [
     button('Speichern', async () => {
-      const saved = await ui.draft?.save();
-      if (saved) finish();
+      if (vocabularySavePending(root)) return;
+      for (const control of controls) control.disabled = true;
+      try {
+        const saved = await ui.draft?.save();
+        if (saved) finish();
+      } finally {
+        if (dialog.isConnected) for (const control of controls) control.disabled = false;
+      }
     }, {class: 'primary'}),
     button('Verwerfen', () => {
+      if (vocabularySavePending(root)) return;
       ui.draft?.discard();
       finish();
     }, {class: 'secondary'}),
-    button('Weiterbearbeiten', () => closeDecision(root), {class: 'secondary'}),
-  );
+    button('Weiterbearbeiten', () => {
+      if (!vocabularySavePending(root)) closeDecision(root);
+    }, {class: 'secondary'}),
+  ];
+  dialog.append(...controls);
   root.append(dialog);
   if (typeof dialog.showModal === 'function') dialog.showModal();
   else dialog.setAttribute('open', '');
 }
 
 export function discardVocabularyDraft(root) {
+  if (vocabularySavePending(root)) return false;
   const ui = stateFor(root);
   closeDecision(root);
   ui.openEditor = null;
   ui.draft = null;
   ui.importRows = null;
   ui.importIssues = [];
+  return true;
 }
 
 function lessonFields({profiles, lessons, selectedLessonId, profileId}) {
@@ -113,10 +136,18 @@ function lessonFields({profiles, lessons, selectedLessonId, profileId}) {
     assignments.append(el('label', {}, [checkbox, profile.value.name]));
   }
   const newFields = el('div', {attrs: {class: 'new-lesson-fields'}}, [field('Neue Lektion', newLesson), assignments]);
-  const update = () => { newFields.hidden = select.value !== NEW_LESSON; };
+  const assigned = el('p', {attrs: {class: 'hint', 'data-lesson-assignment': ''}});
+  const update = () => {
+    newFields.hidden = select.value !== NEW_LESSON;
+    const lesson = lessons.find(({id}) => id === select.value);
+    const names = lesson?.value.profileIds.map((id) => profiles.find((profile) => profile.id === id)?.value.name)
+      .filter(Boolean) ?? [];
+    assigned.textContent = lesson ? `Diese Lektion erhalten: ${names.join(', ') || 'kein Kind'}.` : '';
+    assigned.hidden = !lesson;
+  };
   select.addEventListener('change', update);
   update();
-  wrapper.append(field('Lektion', select), newFields);
+  wrapper.append(field('Lektion', select), assigned, newFields);
   return {wrapper, select, newLesson, assignments, update};
 }
 
@@ -140,19 +171,6 @@ function restoreImportDraft(fields, text, draft) {
   text.value = draft.text;
 }
 
-async function resolveLesson({fields, commands}) {
-  if (fields.select.value !== NEW_LESSON) return fields.select.value;
-  const name = fields.newLesson.value.trim();
-  if (!name) throw new Error('Bitte geben Sie einen Namen für die neue Lektion ein.');
-  const lessonId = crypto.randomUUID();
-  const profileIds = [...fields.assignments.querySelectorAll('input:checked')].map(({value}) => value).sort();
-  await commands.revise({
-    entityType: 'lesson', entityId: lessonId, expectedHeads: [],
-    value: {name, archived: false, profileIds},
-  });
-  return lessonId;
-}
-
 function setFormError(form, error) {
   form.querySelector('[data-form-error]')?.remove();
   form.append(message(error.message, 'error'));
@@ -163,7 +181,7 @@ function editorDirty(form, initial) {
   return () => JSON.stringify([...new FormData(form).entries()]) !== initial;
 }
 
-function renderWordForm({root, container, ui, word, projection, commands, onRefresh}) {
+function renderWordForm({root, container, ui, word, projection, state, commands, onRefresh}) {
   const form = el('form', {attrs: {class: 'stack compact vocabulary-editor'}});
   const german = input('german', {value: word?.value.german ?? '', maxlength: 200});
   const answerInput = input('answers', {
@@ -197,7 +215,10 @@ function renderWordForm({root, container, ui, word, projection, commands, onRefr
     text: word ? 'Änderung speichern' : 'Vokabel hinzufügen',
     attrs: {type: 'submit', class: 'primary'},
   });
-  form.append(submit, button('Abbrechen', () => {
+  const nextSubmit = word ? null : button('Speichern und nächstes Wort', () => save(true), {class: 'secondary'});
+  form.append(submit);
+  if (nextSubmit) form.append(nextSubmit);
+  form.append(button('Abbrechen', () => {
     requestVocabularyNavigation(root, () => {
       ui.openEditor = null;
       ui.draft = null;
@@ -205,39 +226,70 @@ function renderWordForm({root, container, ui, word, projection, commands, onRefr
     });
   }, {class: 'secondary'}));
   const initial = JSON.stringify([...new FormData(form).entries()]);
-  const save = async () => {
-    submit.disabled = true;
+  let pending = false;
+  const editor = ui.openEditor;
+  const save = async (keepOpen = false) => {
+    if (pending || editor.saving) return false;
+    pending = true;
+    editor.saving = true;
+    for (const control of form.querySelectorAll('input, select, button')) control.disabled = true;
     try {
-      const lessonId = word?.value.lessonId ?? await resolveLesson({fields: target, commands});
-      await commands.revise({
-        entityType: 'word', entityId: word?.id ?? crypto.randomUUID(),
-        expectedHeads: [...ui.openEditor.expectedHeads],
-        value: {
-          lessonId,
-          german: german.value.trim(), answers: answers(answerInput.value), hint: hint.value.trim(),
-          archived: word?.value.archived ?? false,
-        },
-      });
+      const wordValue = {
+        german: german.value.trim(), answers: answers(answerInput.value), hint: hint.value.trim(),
+      };
+      let lessonId = word?.value.lessonId ?? target.select.value;
+      if (!word && lessonId === NEW_LESSON) {
+        const name = target.newLesson.value.trim();
+        if (!name) throw new Error('Bitte geben Sie einen Namen für die neue Lektion ein.');
+        const profileIds = [...target.assignments.querySelectorAll('input:checked')].map(({value}) => value).sort();
+        const key = JSON.stringify({name, profileIds, wordValue});
+        if (!editor.singleRequest || editor.singleRequest.key !== key) {
+          editor.singleRequest = {key, request: {
+            expectedDatasetId: state.ledger.descriptor.datasetId,
+            expectedEpochId: projection.activeEpochId,
+            lesson: {id: crypto.randomUUID(), name, profileIds},
+            words: [{id: crypto.randomUUID(), ...wordValue, decision: 'include'}],
+          }};
+        }
+        const result = await commands.importWords(editor.singleRequest.request);
+        lessonId = result.lessonId;
+      } else {
+        await commands.revise({
+          entityType: 'word', entityId: word?.id ?? crypto.randomUUID(),
+          expectedHeads: [...editor.expectedHeads],
+          value: {lessonId, ...wordValue, archived: word?.value.archived ?? false},
+        });
+      }
+      if (ui.openEditor !== editor) return true;
       ui.lessonId = lessonId;
-      ui.openEditor = null;
+      ui.openEditor = keepOpen && !word
+        ? {kind: 'add', expectedHeads: [], profileId: editor.profileId, lessonId}
+        : null;
       ui.draft = null;
       report(ui, word ? 'Die Vokabel wurde gespeichert.' : 'Die Vokabel wurde hinzugefügt.');
       onRefresh();
+      if (keepOpen && !word) queueMicrotask(() => root.querySelector('form.vocabulary-editor input[name="german"]')?.focus());
       return true;
     } catch (error) {
+      root.querySelector('#adult-save-pending')?.remove();
       setFormError(form, error);
-      submit.disabled = false;
+      pending = false;
+      editor.saving = false;
+      for (const control of form.querySelectorAll('input, select, button')) control.disabled = false;
       return false;
     }
   };
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
-    await save();
+    await save(false);
   });
   ui.draft = {
     isDirty: editorDirty(form, initial), save,
     discard: () => { ui.openEditor = null; },
   };
+  if (editor.saving) {
+    for (const control of form.querySelectorAll('input, select, button')) control.disabled = true;
+  }
   container.append(form);
 }
 
@@ -288,61 +340,76 @@ function renderLessonEditor({root, container, ui, lesson, projection, commands, 
   container.append(form);
 }
 
-function renderImport({root, container, ui, projection, commands, onRefresh}) {
+function renderImport({root, container, ui, projection, state, commands, onRefresh}) {
+  const editor = ui.openEditor;
   const panel = el('section', {attrs: {class: 'subpanel vocabulary-editor', 'aria-labelledby': 'import-title'}}, [
     el('h3', {text: 'Mehrere Wörter einfügen', attrs: {id: 'import-title'}}),
     el('p', {text: 'Spalten: Deutsch, Englisch, optional Bedeutungshinweis. Mehrere Lösungen mit | trennen.'}),
   ]);
   const profiles = values(projection.entities.profiles).filter((profile) => !profile.value.archived);
   const lessons = values(projection.entities.lessons);
-  const target = lessonFields({profiles, lessons, selectedLessonId: ui.openEditor.lessonId, profileId: ui.openEditor.profileId});
+  const target = lessonFields({
+    profiles, lessons, selectedLessonId: editor.lessonId, profileId: editor.profileId,
+  });
   const text = el('textarea', {attrs: {id: 'import-text', rows: '6', 'aria-label': 'Tabellenzeilen'}});
-  let apply;
-  if (ui.openEditor.importDraft) restoreImportDraft(target, text, ui.openEditor.importDraft);
+  if (editor.importDraft) restoreImportDraft(target, text, editor.importDraft);
   else {
-    ui.openEditor.importDraft = readImportDraft(target, text);
-    ui.openEditor.initialImportDraft = JSON.stringify(ui.openEditor.importDraft);
+    editor.importDraft = readImportDraft(target, text);
+    editor.initialImportDraft = JSON.stringify(editor.importDraft);
   }
-  const updateDraft = () => {
-    ui.openEditor.importDraft = readImportDraft(target, text);
+  editor.openRowIds ??= new Set();
+  editor.showAllRows ??= false;
+  editor.datasetId ??= state.ledger.descriptor.datasetId;
+  editor.epochId ??= projection.activeEpochId;
+  const captureTarget = () => {
+    if (editor.targetId === target.select.value) return;
+    editor.targetId = target.select.value;
+    editor.targetHeads = [...(projection.entities.lessons[target.select.value]?.heads ?? [])];
   };
-  text.addEventListener('input', () => {
-    updateDraft();
-    if (ui.importRows !== null && apply) apply.disabled = true;
-  });
-  target.newLesson.addEventListener('input', updateDraft);
-  for (const checkbox of target.assignments.querySelectorAll('input')) {
-    checkbox.addEventListener('change', updateDraft);
-  }
-  target.select.addEventListener('change', () => {
-    updateDraft();
-    if (ui.importRows !== null) onRefresh();
-  });
-  panel.append(target.wrapper, field('Tabellenzeilen', text));
-  panel.append(button('Vorschau prüfen', () => {
-    updateDraft();
-    const parsed = parseTable(ui.openEditor.importDraft.text);
+  captureTarget();
+  if (ui.importRows === null) {
+    const parsed = parseTable(editor.importDraft.text);
     ui.importRows = parsed.rows;
     ui.importIssues = parsed.issues;
-    ui.openEditor.previewText = ui.openEditor.importDraft.text;
-    onRefresh();
-  }, {id: 'import-preview', class: 'secondary'}));
-
+  }
+  editor.parsedText ??= editor.importDraft.text;
+  const updateDraft = () => { editor.importDraft = readImportDraft(target, text); };
   const activeWordsFor = (lessonId) => values(projection.entities.words).filter((word) => (
     !word.value.archived && lessonId !== NEW_LESSON && word.value.lessonId === lessonId
   ));
-  const activeWords = activeWordsFor(ui.openEditor.importDraft.lessonId);
-  let allIssues = [];
-  let validated = {rows: [], issues: []};
-  if (ui.importRows !== null) {
-    validated = validateRows(ui.importRows, activeWords.map(({value}) => value));
-    allIssues = [...ui.importIssues, ...validated.issues];
-    if (allIssues.length) {
-      panel.append(message('Bitte klären Sie alle markierten Zeilen.', 'error'), el('ul', {attrs: {class: 'issues'}},
-        allIssues.map((issue) => el('li', {text: `${issue.rowId}: ${issue.message}`}))));
+  const summary = el('p', {attrs: {id: 'import-summary', class: 'import-summary', role: 'status'}});
+  const previewArea = el('div', {attrs: {class: 'import-preview'}});
+  let apply;
+  let skipExact;
+  const renderPreview = () => {
+    const activeWords = activeWordsFor(target.select.value).map(({value}) => value);
+    const validated = validateRows(ui.importRows, activeWords);
+    const issues = [...ui.importIssues, ...validated.issues];
+    const problemIds = new Set(issues.map(({rowId}) => rowId));
+    const skipped = validated.rows.filter(({decision}) => decision === 'skip').length;
+    const ready = validated.rows.filter(({rowId, decision}) => decision !== 'skip' && !problemIds.has(rowId)).length;
+    const lessonName = target.select.value === NEW_LESSON
+      ? (target.newLesson.value.trim() || 'Neue Lektion')
+      : (lessons.find(({id}) => id === target.select.value)?.value.name || 'Keine Lektion');
+    summary.textContent = ready + ' bereit · ' + skipped + ' übersprungen · '
+      + problemIds.size + ' zu prüfen · Lektion: ' + lessonName;
+    previewArea.replaceChildren();
+    if (issues.length) {
+      previewArea.append(message('Bitte klären Sie die markierten Zeilen.', 'error'),
+        el('ul', {attrs: {class: 'issues'}},
+          issues.map((issue) => el('li', {text: issue.rowId + ': ' + issue.message}))));
     }
-    const preview = el('div', {attrs: {class: 'import-preview'}});
+    const allRows = el('details', {attrs: {class: 'import-all-rows', open: editor.showAllRows}}, [
+      el('summary', {text: 'Alle ' + validated.rows.length + ' Tabellenzeilen ansehen und bearbeiten'}),
+    ]);
+    allRows.addEventListener('toggle', () => {
+      if (allRows.isConnected) editor.showAllRows = allRows.open;
+    });
+    const exactRows = new Set(validated.rows.filter((row) => row.decision !== 'skip'
+      && activeWords.some((word) => JSON.stringify(semanticWord(row)) === JSON.stringify(semanticWord(word))))
+      .map(({rowId}) => rowId));
     for (const row of validated.rows) {
+      const problem = problemIds.has(row.rowId);
       const german = input('german', {value: row.german, maxlength: 200});
       const answerInput = input('answers', {value: row.answers.join(' | '), maxlength: MAX_ANSWERS_TEXT_LENGTH});
       const hint = input('hint', {value: row.hint, maxlength: 300, required: false});
@@ -353,69 +420,157 @@ function renderImport({root, container, ui, projection, commands, onRefresh}) {
       ]);
       decision.value = row.decision;
       const replace = (changes, resolveStructure = false) => {
+        if (editor.saving) return;
+        editor.openRowIds.add(row.rowId);
         ui.importRows = ui.importRows.map((entry) => entry.rowId === row.rowId ? {...entry, ...changes} : entry);
         if (resolveStructure) ui.importIssues = ui.importIssues.filter((issue) => issue.rowId !== row.rowId);
-        onRefresh();
+        editor.importRequest = null;
+        renderPreview();
       };
       german.addEventListener('change', () => replace({german: german.value}));
       answerInput.addEventListener('change', () => replace({answers: answers(answerInput.value)}));
       hint.addEventListener('change', () => replace({hint: hint.value}));
       decision.addEventListener('change', () => replace({decision: decision.value}, decision.value === 'skip'));
-      const rowPanel = el('div', {attrs: {class: 'import-row', 'data-import-row': row.rowId}}, [
-        field('Deutsch', german), field('Englisch', answerInput), field('Hinweis', hint), field('Entscheidung', decision),
+      const detail = el('details', {attrs: {
+        class: 'import-row' + (problem ? ' import-row-problem' : ''),
+        'data-import-row': row.rowId,
+        open: problem || editor.openRowIds.has(row.rowId),
+      }});
+      detail.addEventListener('toggle', () => {
+        if (detail.open) editor.openRowIds.add(row.rowId);
+        else editor.openRowIds.delete(row.rowId);
+      });
+      const status = row.decision === 'skip' ? 'übersprungen' : problem ? 'bitte prüfen' : 'bereit';
+      detail.append(el('summary', {text: row.rowId + ' · ' + (row.german || 'Ohne deutsches Wort')
+        + ' — ' + row.answers.join(' | ') + ' · ' + status}));
+      const fields = el('div', {attrs: {class: 'import-row-fields'}}, [
+        field('Deutsch', german), field('Englisch', answerInput),
+        field('Hinweis', hint), field('Entscheidung', decision),
       ]);
+      detail.append(fields);
       if (ui.importIssues.some((issue) => issue.rowId === row.rowId)) {
-        rowPanel.append(button('Struktur nach Prüfung bestätigen', () => {
+        detail.append(button('Struktur nach Prüfung bestätigen', () => {
+          if (editor.saving) return;
           ui.importIssues = ui.importIssues.filter((issue) => issue.rowId !== row.rowId);
-          onRefresh();
+          editor.importRequest = null;
+          renderPreview();
         }, {class: 'secondary'}));
       }
-      preview.append(rowPanel);
+      if (problem) previewArea.append(detail);
+      else allRows.append(detail);
     }
-    panel.append(preview);
+    if (validated.rows.length) previewArea.append(allRows);
+    const validLesson = target.select.value !== NEW_LESSON || target.newLesson.value.trim().length > 0;
+    if (apply) apply.disabled = Boolean(editor.saving) || !validLesson || ready === 0 || issues.length > 0;
+    if (skipExact) skipExact.disabled = Boolean(editor.saving) || exactRows.size === 0;
+    if (editor.saving) {
+      for (const control of panel.querySelectorAll('input, textarea, select, button')) control.disabled = true;
+    }
+    return {validated, issues, ready, exactRows};
+  };
+  text.addEventListener('input', () => {
+    if (editor.saving) return;
+    updateDraft();
+    const parsed = parseTable(text.value);
+    ui.importRows = parsed.rows;
+    ui.importIssues = parsed.issues;
+    editor.parsedText = text.value;
+    editor.openRowIds.clear();
+    editor.importRequest = null;
+    panel.querySelector('[data-form-error]')?.remove();
+    renderPreview();
+  });
+  target.select.addEventListener('change', () => {
+    if (editor.saving) return;
+    updateDraft();
+    captureTarget();
+    editor.importRequest = null;
+    renderPreview();
+  });
+  target.newLesson.addEventListener('input', () => {
+    updateDraft();
+    editor.importRequest = null;
+    renderPreview();
+  });
+  for (const checkbox of target.assignments.querySelectorAll('input')) {
+    checkbox.addEventListener('change', () => {
+      updateDraft();
+      editor.importRequest = null;
+      renderPreview();
+    });
   }
+  skipExact = button('Identische vorhandene Wörter überspringen', () => {
+    const {exactRows} = renderPreview();
+    ui.importRows = ui.importRows.map((row) => exactRows.has(row.rowId)
+      ? {...row, decision: 'skip'} : row);
+    ui.importIssues = ui.importIssues.filter((issue) => !exactRows.has(issue.rowId));
+    editor.importRequest = null;
+    renderPreview();
+  }, {id: 'import-skip-identical', class: 'secondary'});
   const save = async () => {
-    apply.disabled = true;
+    if (editor.saving) return false;
+    editor.saving = true;
+    for (const control of panel.querySelectorAll('input, textarea, select, button')) control.disabled = true;
     try {
       updateDraft();
-      if (ui.importRows === null || ui.openEditor.previewText !== ui.openEditor.importDraft.text) {
-        throw new Error('Bitte prüfen Sie zuerst die aktuelle Vorschau.');
+      if (editor.parsedText !== text.value) {
+        throw new Error('Die Tabellenzeilen haben sich seit der Prüfung geändert. Bitte erneut prüfen.');
       }
-      const currentWords = activeWordsFor(ui.openEditor.importDraft.lessonId);
-      const currentValidation = validateRows(ui.importRows, currentWords.map(({value}) => value));
-      if (ui.importIssues.length || currentValidation.issues.length) throw new Error('Bitte klären Sie zuerst alle Importhinweise.');
-      const lessonId = await resolveLesson({fields: target, commands});
-      await applyRows(currentValidation.rows, async (row) => {
-        await commands.revise({
-          entityType: 'word', entityId: crypto.randomUUID(), expectedHeads: [],
-          value: {lessonId, german: row.german, answers: row.answers, hint: row.hint, archived: false},
-        });
-      }, (remaining) => { ui.importRows = remaining; ui.importIssues = []; });
-      ui.lessonId = lessonId;
+      const {validated, issues, ready} = renderPreview();
+      if (issues.length || ready === 0) throw new Error('Bitte klären Sie zuerst alle Importhinweise.');
+      const selected = validated.rows.filter(({decision}) => decision !== 'skip');
+      const key = JSON.stringify({draft: editor.importDraft, selected});
+      if (!editor.importRequest || editor.importRequest.key !== key) {
+        const lesson = target.select.value === NEW_LESSON
+          ? {id: crypto.randomUUID(), name: target.newLesson.value.trim(),
+            profileIds: editor.importDraft.profileIds}
+          : {id: target.select.value, expectedHeads: [...editor.targetHeads]};
+        editor.importRequest = {key, request: {
+          expectedDatasetId: editor.datasetId,
+          expectedEpochId: editor.epochId,
+          lesson,
+          words: selected.map((row) => ({
+            id: crypto.randomUUID(), german: row.german, answers: row.answers,
+            hint: row.hint, decision: row.decision,
+          })),
+        }};
+      }
+      const result = await commands.importWords(editor.importRequest.request);
+      if (ui.openEditor !== editor) return true;
+      ui.lessonId = result.lessonId;
       ui.openEditor = null;
       ui.draft = null;
       ui.importRows = null;
-      report(ui, 'Die geprüften Tabellenzeilen wurden übernommen.');
+      ui.importIssues = [];
+      report(ui, result.addedCount === 1
+        ? '1 Wort wurde auf diesem Gerät gespeichert.'
+        : result.addedCount + ' Wörter wurden auf diesem Gerät gespeichert.');
       onRefresh();
       return true;
     } catch (error) {
+      root.querySelector('#adult-save-pending')?.remove();
+      editor.saving = false;
+      for (const control of panel.querySelectorAll('input, textarea, select, button')) control.disabled = false;
       setFormError(panel, error);
-      apply.disabled = false;
+      renderPreview();
       return false;
     }
   };
-  apply = button('Geprüfte Zeilen übernehmen', save, {
-    id: 'import-apply', class: 'primary', disabled: ui.importRows === null || allIssues.length > 0,
-  });
-  panel.append(apply, button('Abbrechen', () => requestVocabularyNavigation(root, () => {
-    discardVocabularyDraft(root);
-    onRefresh();
-  }), {class: 'secondary'}));
+  apply = button('Geprüfte Zeilen übernehmen', save, {id: 'import-apply', class: 'primary'});
+  panel.append(target.wrapper, field('Tabellenzeilen', text), summary, skipExact, previewArea,
+    apply, button('Abbrechen', () => requestVocabularyNavigation(root, () => {
+      discardVocabularyDraft(root);
+      onRefresh();
+    }), {class: 'secondary'}));
+  renderPreview();
+  if (editor.saving) {
+    for (const control of panel.querySelectorAll('input, textarea, select, button')) control.disabled = true;
+  }
   ui.draft = {
     isDirty: () => {
       updateDraft();
-      return JSON.stringify(ui.openEditor.importDraft) !== ui.openEditor.initialImportDraft
-        || ui.importRows !== null;
+      return JSON.stringify(editor.importDraft) !== editor.initialImportDraft
+        || ui.importRows.some((row) => row.decision !== 'include');
     },
     save,
     discard: () => { ui.openEditor = null; ui.importRows = null; ui.importIssues = []; },
@@ -482,14 +637,14 @@ export function renderVocabulary({root, state, commands, profileId, onRefresh}) 
   if (selectedLesson?.value) {
     const lessonBar = el('div', {attrs: {class: 'lesson-actions'}}, [
       el('strong', {text: selectedLesson.value.name}),
-      button('Lektion bearbeiten', () => {
+      button('Lektion bearbeiten', () => requestVocabularyNavigation(root, () => {
         ui.openEditor = {
           kind: 'lesson', entityId: selectedLesson.id, expectedHeads: [...selectedLesson.heads],
           profileId: ui.profileId, lessonId: selectedLesson.id,
         };
         onRefresh();
-      }, {class: 'secondary'}),
-      button(selectedLesson.value.archived ? 'Lektion reaktivieren' : 'Lektion archivieren', async () => {
+      }), {class: 'secondary'}),
+      button(selectedLesson.value.archived ? 'Lektion reaktivieren' : 'Lektion archivieren', () => requestVocabularyNavigation(root, async () => {
         try {
           await commands.revise({
             entityType: 'lesson', entityId: selectedLesson.id, expectedHeads: [...selectedLesson.heads],
@@ -500,18 +655,18 @@ export function renderVocabulary({root, state, commands, profileId, onRefresh}) 
           report(ui, error.message, 'error');
         }
         onRefresh();
-      }, {class: 'secondary'}),
+      }), {class: 'secondary'}),
     ]);
     container.append(lessonBar);
   }
 
   if (ui.openEditor?.kind === 'word') {
     const word = projection.entities.words[ui.openEditor.entityId];
-    if (word?.value) renderWordForm({root, container, ui, word, projection, commands, onRefresh});
+    if (word?.value) renderWordForm({root, container, ui, word, projection, state, commands, onRefresh});
   } else if (ui.openEditor?.kind === 'add') {
-    renderWordForm({root, container, ui, word: null, projection, commands, onRefresh});
+    renderWordForm({root, container, ui, word: null, projection, state, commands, onRefresh});
   } else if (ui.openEditor?.kind === 'import') {
-    renderImport({root, container, ui, projection, commands, onRefresh});
+    renderImport({root, container, ui, projection, state, commands, onRefresh});
   } else if (ui.openEditor?.kind === 'lesson' && selectedLesson?.value) {
     renderLessonEditor({root, container, ui, lesson: selectedLesson, projection, commands, onRefresh});
   } else {

@@ -55,7 +55,7 @@ test('C2 rejected required precache install keeps the active offline app and for
     assert.equal(await page.evaluate(() => devicePixelRatio), 2);
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null, null, {timeout: 10_000});
     await page.evaluate(async () => { await caches.open('synthetic-foreign-cache'); });
-    harness.setServiceWorkerVersion('v37');
+    harness.setServiceWorkerVersion('v38');
     harness.failNextPrecacheAsset('styles.css');
     await page.evaluate(async () => {
       const registration = await navigator.serviceWorker.getRegistration('./');
@@ -67,7 +67,7 @@ test('C2 rejected required precache install keeps the active offline app and for
     });
     const cacheNames = await page.evaluate(async () => (await caches.keys()).sort());
     assert.equal(cacheNames.includes('synthetic-foreign-cache'), true, JSON.stringify(cacheNames));
-    assert.equal(cacheNames.includes('vokabeltrainer-product:%2Ftrainer%2F:v36'), true, JSON.stringify(cacheNames));
+    assert.equal(cacheNames.includes('vokabeltrainer-product:%2Ftrainer%2F:v37'), true, JSON.stringify(cacheNames));
     await context.setOffline(true);
     await page.reload({waitUntil: 'domcontentloaded'});
     await page.locator('#profile-list').waitFor();
@@ -1318,7 +1318,6 @@ test('trainer setup, adult decisions, persistence and BFCache lifecycle', {timeo
 
     await page.getByRole('button', {name: 'Mehrere Wörter einfügen', exact: true}).click();
     await page.locator('#import-text').fill('Bank\tbench\tSitzplatz\textra');
-    await page.locator('#import-preview').click();
     await page.getByText(/Rohzeile:.*Sitzplatz.*extra/).waitFor();
     const structuralRow = page.locator('[data-import-row="row-1"]');
     await structuralRow.locator('input[name="german"]').fill('Sitzbank');
@@ -1332,19 +1331,18 @@ test('trainer setup, adult decisions, persistence and BFCache lifecycle', {timeo
 
     await page.getByRole('button', {name: 'Mehrere Wörter einfügen', exact: true}).click();
     await page.locator('#import-text').fill('"mehr\tdeutig"\tanswer');
-    await page.locator('#import-preview').click();
     await page.getByText(/Rohzeile:.*"mehr.*deutig".*answer/).waitFor();
     const quotedRow = page.locator('[data-import-row="row-1"]');
     await quotedRow.locator('input[name="hint"]').fill('Nur der Hinweis wurde geändert');
     await quotedRow.locator('input[name="hint"]').press('Tab');
     assert.equal(await page.locator('#import-apply').isDisabled(), true);
     await quotedRow.locator('select').selectOption('skip');
-    assert.equal(await page.locator('#import-apply').isEnabled(), true);
-    await page.locator('#import-apply').click();
+    assert.equal(await page.locator('#import-apply').isDisabled(), true);
+    await page.getByRole('button', {name: 'Abbrechen', exact: true}).click();
+    await page.getByRole('button', {name: 'Verwerfen', exact: true}).click();
 
     await page.getByRole('button', {name: 'Mehrere Wörter einfügen', exact: true}).click();
     await page.locator('#import-text').fill(`Langform\t${longAnswers}`);
-    await page.locator('#import-preview').click();
     assert.equal(await page.locator('[data-import-row="row-1"] input[name="answers"]').inputValue(), longAnswers);
     assert.ok(await page.locator('[data-import-row="row-1"] input[name="answers"]').evaluate(
       (input, requiredLength) => input.maxLength >= requiredLength,
@@ -1355,10 +1353,8 @@ test('trainer setup, adult decisions, persistence and BFCache lifecycle', {timeo
 
     await page.getByRole('button', {name: 'Mehrere Wörter einfügen', exact: true}).click();
     await page.locator('#import-text').fill('Pflichtfeld fehlt\t');
-    await page.locator('#import-preview').click();
     assert.equal(await page.locator('#import-apply').isDisabled(), true);
     await page.locator('#import-text').fill('Fahrrad\tbicycle | bike\n<img onerror=window.__xss=1>\timage');
-    await page.locator('#import-preview').click();
     assert.equal(await page.locator('#import-apply').isDisabled(), true);
     await page.locator('[data-import-row="row-1"] select').selectOption('separate');
     assert.equal(await page.locator('#import-apply').isEnabled(), true);
@@ -2256,7 +2252,7 @@ test('trainer offline update UI blocks typing and pending answers before control
   try {
     await page.goto(harness.baseUrl);
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null, null, {timeout: 10_000});
-    harness.setServiceWorkerVersion('v37', {activationDelayMs: 750});
+    harness.setServiceWorkerVersion('v38', {activationDelayMs: 750});
     await page.evaluate(async () => {
       const registration = await navigator.serviceWorker.getRegistration('./');
       await registration.update();
@@ -2314,8 +2310,8 @@ test('trainer offline update UI blocks typing and pending answers before control
     const beforeReload = await productState(page);
     assert.equal(beforeReload.ledger.events.some(({type}) => type === 'round.completed' || type === 'round.abandoned'), false);
     assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product:')).sort()), [
-      'vokabeltrainer-product:%2Ftrainer%2F:v36',
       'vokabeltrainer-product:%2Ftrainer%2F:v37',
+      'vokabeltrainer-product:%2Ftrainer%2F:v38',
     ]);
     const navigation = page.waitForNavigation();
     await updateButton.click();
@@ -2330,7 +2326,7 @@ test('trainer offline update UI blocks typing and pending answers before control
     await navigation;
     await page.getByText('Richtig!', {exact: true}).waitFor();
     assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product:')).sort()), [
-      'vokabeltrainer-product:%2Ftrainer%2F:v37',
+      'vokabeltrainer-product:%2Ftrainer%2F:v38',
     ]);
   } finally {
     await context.close();

@@ -25,6 +25,7 @@ import {DEFAULT_POLICY, assertPolicy, currentPolicy, currentGenerations} from '.
 import {migrateProductStateV1,migrateProductStateV2} from './storage/migrate.js';
 import {assertCommerce,emptyCommerce} from './purchases/schema.js';
 import {validatePacket} from './sync/packets.js';
+import {validateRows} from './adult/import.js';
 
 const STATE_KEYS = [
   'storageVersion',
@@ -719,6 +720,107 @@ export async function createCommands({store, now, id, deviceId, onChange}) {
         appendLocalEvent(next, event);
         reconcileMilestones(next);
         await commit(next);
+      });
+    },
+
+    importWords({expectedDatasetId, expectedEpochId, lesson, words}) {
+      return enqueue(async () => {
+        const next = newWorkingState();
+        const projection = project(next.ledger);
+        assertId(expectedDatasetId);
+        assertId(expectedEpochId);
+        if (next.ledger.descriptor.datasetId !== expectedDatasetId
+          || projection.epochConflict || projection.activeEpochId !== expectedEpochId) {
+          fail('stale', 'Der Lernbereich hat sich seit der Vorschau geändert.');
+        }
+        assertRecord(lesson, 'Die ausgewählte Lektion ist ungültig.');
+        assertId(lesson.id, 'Die Lektions-ID ist ungültig.');
+        const existingLesson = projection.entities.lessons[lesson.id] ?? null;
+        if (existingLesson?.conflicted || existingLesson?.value?.archived) {
+          fail('conflict', 'Die Lektion ist nicht mehr verfügbar.');
+        }
+        const isNewLesson = Object.hasOwn(lesson, 'name');
+        if (isNewLesson) {
+          if (typeof lesson.name !== 'string' || lesson.name.trim().length === 0
+            || [...lesson.name].length > 80) invalid('Der Lektionsname ist ungültig.');
+          assertIdArray(lesson.profileIds, 'Die Kinderzuordnung ist ungültig.');
+          if (lesson.profileIds.some((profileId) => {
+            const profile = projection.entities.profiles[profileId];
+            return !profile || profile.conflicted || profile.value?.archived;
+          })) invalid('Ein zugeordnetes Profil ist nicht verfügbar.');
+        } else {
+          if (!existingLesson) invalid('Die Lektion ist nicht verfügbar.');
+          if (!Array.isArray(lesson.expectedHeads)) invalid('Die erwarteten Lektionsfassungen sind ungültig.');
+          assertIdArray(lesson.expectedHeads, 'Die erwarteten Lektionsfassungen sind ungültig.');
+        }
+        if (!Array.isArray(words) || words.length === 0) invalid('Die Wortliste ist leer oder ungültig.');
+        const seenIds = new Set();
+        for (const word of words) {
+          assertRecord(word, 'Ein Importwort ist ungültig.');
+          assertId(word.id, 'Eine Wort-ID ist ungültig.');
+          if (seenIds.has(word.id)) invalid('Eine Wort-ID kommt mehrfach vor.');
+          seenIds.add(word.id);
+          if (!['include', 'separate'].includes(word.decision)
+            || typeof word.german !== 'string' || typeof word.hint !== 'string'
+            || !Array.isArray(word.answers) || word.answers.some((answer) => typeof answer !== 'string')) {
+            invalid('Ein Importwort ist ungültig.');
+          }
+        }
+        const reviewed = validateRows(words.map((word, index) => ({
+          ...word, rowId: `row-${index + 1}`,
+        })), Object.values(projection.entities.words).filter((word) => (
+          word.value && !word.value.archived && word.value.lessonId === lesson.id
+        )).map(({value}) => value));
+        if (reviewed.issues.some((issue) => issue.code !== 'duplicate')) {
+          invalid('Mindestens ein Importwort überschreitet die gültigen Feldgrenzen.');
+        }
+        const normalized = reviewed.rows.map((row, index) => ({
+          id: words[index].id, german: row.german, answers: row.answers,
+          hint: row.hint, decision: row.decision,
+        }));
+        const existingWords = normalized.map((word) => projection.entities.words[word.id] ?? null);
+        if (existingWords.some(Boolean)) {
+          const allMatch = existingWords.every((entity, index) => entity?.value
+            && !entity.conflicted && !entity.value.archived
+            && canonical({lessonId: entity.value.lessonId, german: entity.value.german,
+              answers: entity.value.answers, hint: entity.value.hint})
+              === canonical({lessonId: lesson.id, german: normalized[index].german,
+                answers: normalized[index].answers, hint: normalized[index].hint}));
+          if (!allMatch || (isNewLesson && !existingLesson)) {
+            fail('conflict', 'Der Import wurde nur teilweise oder anders gespeichert.');
+          }
+          return {lessonId: lesson.id, addedCount: normalized.length};
+        }
+        if (isNewLesson && existingLesson) fail('conflict', 'Die neue Lektions-ID ist bereits belegt.');
+        if (!isNewLesson) {
+          const actualHeads = [...existingLesson.heads].sort();
+          const expectedHeads = [...lesson.expectedHeads].sort();
+          if (canonical(actualHeads) !== canonical(expectedHeads)) {
+            fail('stale', 'Die Lektion wurde seit der Vorschau geändert.');
+          }
+        }
+        if (reviewed.issues.length) fail('conflict', 'Ein deutsches Wort ist bereits vorhanden.');
+        if (isNewLesson) {
+          const revisionId = id();
+          appendLocalEvent(next, nextEvent(next, 'entity.revised', revisionPayload({
+            entityType: 'lesson', entityId: lesson.id, parents: [],
+            value: {name: lesson.name, archived: false, profileIds: [...lesson.profileIds].sort()},
+          }), {eventId: revisionId, epochId: expectedEpochId}));
+        }
+        for (const word of normalized) {
+          const revisionId = id();
+          const value = {
+            lessonId: lesson.id, german: word.german, answers: word.answers,
+            hint: word.hint, archived: false,
+            learningId: await nextLearningId({wordId: word.id, revisionId, value: word, parents: []}),
+          };
+          appendLocalEvent(next, nextEvent(next, 'entity.revised', revisionPayload({
+            entityType: 'word', entityId: word.id, parents: [], value,
+          }), {eventId: revisionId, epochId: expectedEpochId}));
+        }
+        reconcileMilestones(next);
+        await commit(next);
+        return {lessonId: lesson.id, addedCount: normalized.length};
       });
     },
 

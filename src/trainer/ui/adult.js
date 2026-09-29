@@ -30,7 +30,7 @@ export function adultStateChanged(root, state) {
   const notice = el('aside', {attrs: {id: 'adult-background-notice', class: 'message', role: 'status'}}, [
     el('p', {text: 'Im Hintergrund wurde der Datenstand geändert. Ihre offenen Eingaben bleiben erhalten. Veraltete Bearbeitungen werden beim Speichern geprüft.'}),
     button('Ansicht neu laden (Eingaben verwerfen)', () => {
-      discardVocabularyDraft(root);
+      if (!discardVocabularyDraft(root)) return;
       discardLearningRuleDraft(root);
       ui.refresh();
     }, {class: 'secondary'}),

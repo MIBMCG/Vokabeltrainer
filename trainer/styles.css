@@ -434,7 +434,16 @@ summary { min-height: 44px; padding: 0.6rem 0; cursor: pointer; font-weight: 750
 .lesson-detail { margin-top: 1rem; }
 .subpanel { margin-top: 1.25rem; background: #f7fbf5; }
 .import-preview { display: grid; gap: 0.75rem; margin: 1rem 0; }
-.import-row { display: grid; grid-template-columns: 1fr 1fr 1fr minmax(180px, 1fr); gap: 0.6rem; padding: 0.75rem; border: 1px solid var(--line); border-radius: 0.8rem; background: #fff; }
+.import-summary { padding: 0.65rem 0.8rem; border-radius: 0.7rem; background: #e7f3eb; font-weight: 750; overflow-wrap: anywhere; }
+.import-all-rows { min-width: 0; padding: 0 0.75rem; border: 1px solid var(--line); border-radius: 0.8rem; background: #fff; }
+.import-all-rows > summary { overflow-wrap: anywhere; }
+.import-all-rows[open] { padding-bottom: 0.6rem; }
+.import-row { min-width: 0; padding: 0.35rem 0.75rem; border: 1px solid var(--line); border-radius: 0.8rem; background: #fff; }
+.import-row summary { overflow-wrap: anywhere; }
+.import-row-problem { border-color: #b95635; background: #fff8ef; }
+.import-row-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; padding-bottom: 0.7rem; }
+.import-row-fields label, .import-row-fields input, .import-row-fields select { min-width: 0; max-width: 100%; }
+.import-row:focus-within, .import-row:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
 .issues { color: #7d2020; }
 .table-scroll { overflow-x: auto; margin-bottom: 1.5rem; }
 table { width: 100%; border-collapse: collapse; background: #fff; }
@@ -634,7 +643,7 @@ th:first-child { position: sticky; left: 0; background: #fff; }
   .statistics-cards { grid-template-columns: 1fr; }
   .word-ring-layout { grid-template-columns: 1fr; }
   .word-ring-layout svg { width: min(14rem, 100%); margin: 0 auto; }
-  .import-row { grid-template-columns: 1fr; }
+  .import-row-fields { grid-template-columns: 1fr; }
   .management-list { grid-template-columns: 1fr; }
   .mode-grid { grid-template-columns: 1fr; }
   .mode-grid legend { font-size: 1.3rem; }

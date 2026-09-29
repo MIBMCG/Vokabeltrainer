@@ -93,6 +93,125 @@ function solutionForCurrent(state, profileId = 'p1') {
   return state.ledger.events.find(({id}) => id === revisionId).payload.value.answers[0];
 }
 
+test('word import commits an entire reviewed batch once with ordinary word events', async () => {
+  const {commands, store} = await harness();
+  const before = commands.getState();
+  const savesBefore = store.saves.length;
+  const words = [
+    {id: 'bulk-a', german: 'Boot', answers: ['boat'], hint: '', decision: 'include'},
+    {id: 'bulk-b', german: 'Berg', answers: ['mountain'], hint: '', decision: 'include'},
+    {id: 'bulk-c', german: 'Meer', answers: ['sea', 'ocean'], hint: '', decision: 'include'},
+  ];
+  const result = await commands.importWords({
+    expectedDatasetId: 'd1', expectedEpochId: 'e0',
+    lesson: {id: 'l1', expectedHeads: ['rev-l1']}, words,
+  });
+
+  assert.deepEqual(result, {lessonId: 'l1', addedCount: 3});
+  assert.equal(store.saves.length, savesBefore + 1);
+  const after = commands.getState();
+  assert.deepEqual(after.ledger.events.slice(0, before.ledger.events.length), before.ledger.events);
+  const created = after.ledger.events.slice(before.ledger.events.length);
+  assert.equal(created.length, 3);
+  assert.deepEqual(created.map(({type, payload}) => [type, payload.entityId, payload.value.answers]), [
+    ['entity.revised', 'bulk-a', ['boat']],
+    ['entity.revised', 'bulk-b', ['mountain']],
+    ['entity.revised', 'bulk-c', ['sea', 'ocean']],
+  ]);
+  assert.ok(created.every(({formatVersion, ruleVersion}) => formatVersion === 2 && ruleVersion === 2));
+  assert.deepEqual(after.outboxEventIds.slice(-3), created.map(({id}) => id));
+  assert.deepEqual(project(after.ledger).entities.words['bulk-c'].value.answers, ['sea', 'ocean']);
+});
+
+test('word import keeps a new lesson and its words atomic through validation and storage failure', async () => {
+  let changes = 0;
+  const {commands, store} = await harness({onChange: () => { changes++; }});
+  const before = commands.getState();
+  const savesBefore = store.saves.length;
+  const request = {
+    expectedDatasetId: 'd1', expectedEpochId: 'e0',
+    lesson: {id: 'bulk-lesson', name: 'Wasser', profileIds: ['p1']},
+    words: [{id: 'bulk-water', german: 'Wasser', answers: ['water'], hint: '', decision: 'include'}],
+  };
+  await assert.rejects(commands.importWords({...request, words: [
+    {...request.words[0], answers: ['x'.repeat(201)]},
+  ]}), {code: 'invalid'});
+  assert.deepEqual(commands.getState(), before);
+  assert.equal(store.saves.length, savesBefore);
+  store.failNextSave = true;
+  await assert.rejects(commands.importWords(request), {code: 'storage'});
+  assert.deepEqual(commands.getState(), before);
+  assert.equal(store.saves.length, savesBefore);
+  assert.equal(changes, 0);
+
+  assert.deepEqual(await commands.importWords(request), {lessonId: 'bulk-lesson', addedCount: 1});
+  const after = commands.getState();
+  assert.equal(after.ledger.events.length, before.ledger.events.length + 2);
+  assert.deepEqual(project(after.ledger).entities.lessons['bulk-lesson'].value.profileIds, ['p1']);
+  assert.equal(store.saves.length, savesBefore + 1);
+  assert.equal(changes, 1);
+  assert.deepEqual(await commands.importWords(request), {lessonId: 'bulk-lesson', addedCount: 1});
+  assert.deepEqual(commands.getState(), after);
+  assert.equal(store.saves.length, savesBefore + 1);
+  assert.equal(changes, 1);
+  await commands.revise({entityType: 'lesson', entityId: 'bulk-lesson',
+    expectedHeads: project(after.ledger).entities.lessons['bulk-lesson'].heads,
+    value: {name: 'Wasser und Meer', archived: false, profileIds: []}});
+  const renamed = commands.getState();
+  const savesBeforeRenamedRetry = store.saves.length;
+  assert.deepEqual(await commands.importWords(request), {lessonId: 'bulk-lesson', addedCount: 1});
+  assert.deepEqual(commands.getState(), renamed);
+  assert.equal(store.saves.length, savesBeforeRenamedRetry);
+});
+
+test('word import rejects stale new writes yet an identical completed retry survives later lesson edits', async () => {
+  const {commands, store} = await harness();
+  const request = {
+    expectedDatasetId: 'd1', expectedEpochId: 'e0',
+    lesson: {id: 'l1', expectedHeads: ['rev-l1']},
+    words: [{id: 'bulk-bank', german: 'Bank', answers: ['bench'], hint: '', decision: 'include'}],
+  };
+  await commands.revise({entityType: 'lesson', entityId: 'l1', expectedHeads: ['rev-l1'],
+    value: {name: 'Unit 1 revised', archived: false, profileIds: ['p1']}});
+  const changed = commands.getState();
+  await assert.rejects(commands.importWords(request), {code: 'stale'});
+  assert.deepEqual(commands.getState(), changed);
+
+  const currentHeads = project(changed.ledger).entities.lessons.l1.heads;
+  const fresh = {...request, lesson: {id: 'l1', expectedHeads: currentHeads}};
+  await commands.importWords(fresh);
+  await commands.revise({entityType: 'lesson', entityId: 'l1', expectedHeads: currentHeads,
+    value: {name: 'Unit 1 newer', archived: false, profileIds: ['p1']}});
+  const after = commands.getState();
+  const savesBeforeRetry = store.saves.length;
+  assert.deepEqual(await commands.importWords(fresh), {lessonId: 'l1', addedCount: 1});
+  assert.deepEqual(commands.getState(), after);
+  assert.equal(store.saves.length, savesBeforeRetry);
+});
+
+test('word import rejects duplicate meanings, mixed retries and changed dataset or epoch', async () => {
+  const {commands, store} = await harness();
+  const request = {
+    expectedDatasetId: 'd1', expectedEpochId: 'e0',
+    lesson: {id: 'l1', expectedHeads: ['rev-l1']},
+    words: [{id: 'bulk-dog', german: 'Hund', answers: ['hound'], hint: '', decision: 'include'}],
+  };
+  const before = commands.getState();
+  await assert.rejects(commands.importWords(request), {code: 'conflict'});
+  await assert.rejects(commands.importWords({...request, expectedDatasetId: 'other'}), {code: 'stale'});
+  await assert.rejects(commands.importWords({...request, expectedEpochId: 'other'}), {code: 'stale'});
+  assert.deepEqual(commands.getState(), before);
+  const accepted = {...request, words: [{...request.words[0], decision: 'separate'}]};
+  await commands.importWords(accepted);
+  const after = commands.getState();
+  assert.deepEqual(project(after.ledger).entities.words['bulk-dog'].value.answers, ['hound']);
+  await assert.rejects(commands.importWords({...accepted, words: [...accepted.words,
+    {id: 'bulk-cat', german: 'Vogel', answers: ['bird'], hint: '', decision: 'include'}]}), {code: 'conflict'});
+  await assert.rejects(commands.importWords({...accepted, words: [{...accepted.words[0], hint: 'changed'}]}), {code: 'conflict'});
+  assert.deepEqual(commands.getState(), after);
+  assert.equal(store.saves.at(-1).ledger.events.length, after.ledger.events.length);
+});
+
 test('learning rules preview is pure and serialized edits reject stale forms without changing rewards', async () => {
   const f=createFixture(),ledger=f.withEvents(f.roundStarted,
     f.answer({id:'a1'}),f.answer({id:'a2',ordinal:2}));
