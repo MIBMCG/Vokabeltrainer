@@ -69,7 +69,8 @@ function illustration(asset, symbol, className) {
 }
 
 function evolvedPicture(display, {className = '', sizes = '256px'} = {}) {
-  const art = evolutionPicture(display.figureId, display.stage, {alt: '', sizes});
+  if (display.stage === 1 && figureById(display.figureId)?.group === 'human' && display.clothing !== 0) return null;
+  const art = evolutionPicture(display.figureId, display.stage, {skin: display.skin ?? 0, alt: '', sizes});
   if (art === null) return null;
   const host = el('div', {attrs: {
     class: ['avatar-evolution-display', className].filter(Boolean).join(' '),
@@ -186,11 +187,12 @@ function radioChoice({name, value, label, checked, disabled = false, dataOption,
   ]);
 }
 
-function colourChoices(parts) {
+function colourChoices(parts, {skinOnly = false} = {}) {
   const skin = el('fieldset', {attrs: {class: 'choice-group colour-group'}}, [el('legend', {text: 'Hautfarbe'})]);
   SKINS.forEach((label, index) => skin.append(radioChoice({
     name: 'skin', value: index, label, checked: parts.skin === index, dataOption: `skin-${index}`,
   })));
+  if (skinOnly) return [skin];
   const clothing = el('fieldset', {attrs: {class: 'choice-group colour-group'}}, [el('legend', {text: 'Kleidungsfarbe'})]);
   CLOTHING.forEach((label, index) => clothing.append(radioChoice({
     name: 'clothing', value: index, label: `Kleidung ${label}`,
@@ -263,10 +265,10 @@ export function renderAvatar({root, state: productState, profile, profileId, com
   const notice = el('p', {attrs: {class: 'message avatar-message', role: 'status', hidden: true}});
 
   let saving = false;
-  const appearanceForm = ({equipment = false, label}) => {
+  const appearanceForm = ({equipment = false, skinOnly = false, label}) => {
     const form = el('form', {attrs: {class: 'avatar-controls', 'aria-label': label}});
     const formNotice = el('p', {attrs: {class: 'message avatar-message', role: 'status', hidden: true}});
-    form.append(...colourChoices(parts));
+    form.append(...colourChoices(parts, {skinOnly}));
     if (equipment) form.append(...equipmentChoices(parts, rewards));
     form.append(formNotice);
     form.addEventListener('change', async (event) => {
@@ -304,9 +306,9 @@ export function renderAvatar({root, state: productState, profile, profileId, com
   };
   const classicForm = appearanceForm({equipment: true, label: 'Klassischen Avatar gestalten'});
   const selectedFigure = display.kind === 'figure' ? figureById(display.figureId) : null;
-  const selectedHumanBase = selectedFigure?.group === 'human' && display.stage === 1;
-  const selectedForm = selectedHumanBase
-    ? appearanceForm({label: `${selectedFigure.name} gestalten`})
+  const selectedHuman = selectedFigure?.group === 'human';
+  const selectedForm = selectedHuman
+    ? appearanceForm({skinOnly: display.stage > 1, label: `${selectedFigure.name} gestalten`})
     : null;
 
   const motion = el('label', {attrs: {class: 'motion-switch'}}, [
@@ -326,10 +328,12 @@ export function renderAvatar({root, state: productState, profile, profileId, com
   });
 
   const commerceHost = el('section', {attrs: {class: 'avatar-commerce', 'aria-label': 'Meine Figur, Entwicklung und Shop'}});
-  const selectedAppearance = selectedHumanBase
+  const selectedAppearance = selectedHuman
     ? el('section', {attrs: {class: 'avatar-customizer selected-human-appearance'}}, [
       el('h2', {text: `${selectedFigure.name} gestalten`}),
-      el('p', {text: 'Haut- und Kleidungsfarbe gelten für deine menschliche Grundfigur.'}),
+      el('p', {text: display.stage === 1
+        ? 'Haut- und Kleidungsfarbe gelten für deine menschliche Grundfigur.'
+        : 'Wähle kostenlos eine Hautfarbe für diese Entwicklungsform.'}),
       selectedForm,
     ])
     : null;

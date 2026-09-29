@@ -82,7 +82,7 @@ test('purchase profile model uses verified service accounts and keeps uncertain 
   assert.equal(purchaseProfileModel({view, profileId: 'p2', online: false}).forms[1].action, 'offline');
 });
 
-test('approved dragon, Nebelhirsch and Tiger stages are visually available while other base figure art stays usable', () => {
+test('all developed forms have art and an owned human base offers its next stage', () => {
   const view = {
     mode: 'active', head: {id: 'head-1', sha256: 'a'.repeat(64)}, jobs: [], selection: [], control: null,
     accounts: {p1: {
@@ -109,11 +109,11 @@ test('approved dragon, Nebelhirsch and Tiger stages are visually available while
   assert.equal(tiger.forms[1].action, 'buy');
 
   view.selection = [{profileId: 'p1', figureId: 'explorer-girl', stage: 1}];
-  const pendingArt = purchaseProfileModel({view, profileId: 'p1', online: true});
-  assert.equal(pendingArt.forms.length, 4);
-  assert.equal(pendingArt.forms[0].artAvailable, true);
-  assert.equal(pendingArt.forms[0].action, 'select');
-  assert.equal(pendingArt.forms.slice(1).every(({artAvailable, action}) => !artAvailable && action === 'unavailable'), true);
+  const human = purchaseProfileModel({view, profileId: 'p1', online: true});
+  assert.equal(human.forms.length, 4);
+  assert.equal(human.forms.every(({artAvailable}) => artAvailable), true);
+  assert.equal(human.forms[0].action, 'select');
+  assert.equal(human.forms[1].action, 'buy');
 });
 
 test('gallery offer uses the viewed figure, caps progress, and reports the highest stage', () => {
@@ -135,7 +135,7 @@ test('gallery offer uses the viewed figure, caps progress, and reports the highe
   view.accounts.p1.entitledEvolutionIds.push('evolution:dragon:2', 'evolution:dragon:3', 'evolution:dragon:4');
   assert.equal(purchaseProfileModel({view, profileId: 'p1', online: true}).offer.status, 'complete');
   const human = purchaseProfileModel({view, profileId: 'p1', figureId: 'explorer-girl', online: true});
-  assert.equal(human.forms[1].action, 'unavailable');
+  assert.equal(human.forms[1].action, 'buy');
   assert.equal(human.forms[1].previousOwned, true);
   assert.equal(human.offer.nextStage, 2);
   view.accounts.p1.entitledEvolutionIds.push('evolution:explorer-girl:2');

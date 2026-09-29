@@ -416,6 +416,3334 @@ export const EVOLUTION_ART = deepFreeze({
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-evolution/tiger-stage-4-256.webp"
+    },
+    "horse-stage-1": {
+      "key": "horse-stage-1",
+      "sourceName": "horse-stage-1-v1.png",
+      "sourceWidth": 1024,
+      "sourceHeight": 1536,
+      "sourceBytes": 2096606,
+      "sourceSha256": "81428abb9b7eea66ddcc1d7c32f8a47e95aa3c063f7a243f2a3198bd090c444c",
+      "width": 1024,
+      "height": 1536,
+      "variants": [
+        {
+          "width": 256,
+          "height": 384,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 15,
+            "bottom": 15
+          },
+          "bytes": 28158,
+          "sha256": "0ae2a80d7a0843502577413b289b561123757b95eb86b90f9f075ff089c6eaa6",
+          "url": "../../../trainer/assets/avatar-evolution/horse-stage-1-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 768,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 75298,
+          "sha256": "d9358dfec2293aeab330f059400bb68300ed15c376cd500b1e15b8e8cea0e98f",
+          "url": "../../../trainer/assets/avatar-evolution/horse-stage-1-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 1152,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 46,
+            "bottom": 46
+          },
+          "bytes": 139072,
+          "sha256": "68543645a1de47691b3c2ecb62bd4a06a2903e5965313f397cbcd4725ba3fc22",
+          "url": "../../../trainer/assets/avatar-evolution/horse-stage-1-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/horse-stage-1-256.webp"
+    },
+    "horse-stage-2": {
+      "key": "horse-stage-2",
+      "sourceName": "horse-stage-2-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 1394173,
+      "sourceSha256": "19fc613fcd8f26b61b7c8ffb42ffe2e4df4f442d38bcdf230c223ef8e7b4281f",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 21352,
+          "sha256": "48d9eed055d9b4b2a5abb80d774a07e0e7cc63cd2c2b16f4c9d24336381c889b",
+          "url": "../../../trainer/assets/avatar-evolution/horse-stage-2-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 59590,
+          "sha256": "fdb6f6d2abe0b91a6c3032adae141039cc4d7042abaac9cd33280f500ac28a00",
+          "url": "../../../trainer/assets/avatar-evolution/horse-stage-2-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 111180,
+          "sha256": "39a54045fe5fc350bdf0c6033eb505bcd7cb8dac2a4bbd1591381f36d09bf0c1",
+          "url": "../../../trainer/assets/avatar-evolution/horse-stage-2-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/horse-stage-2-256.webp"
+    },
+    "horse-stage-3": {
+      "key": "horse-stage-3",
+      "sourceName": "horse-stage-3-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 1765436,
+      "sourceSha256": "86e74ae2185e6e379bb120601b5e8ecda6b89d3f41f95bb6a0c2f936d09a1a44",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 26228,
+          "sha256": "250c779bb043c9969a18c3f4c02824b760b95a8a944e7739c1c4c7fb8a514754",
+          "url": "../../../trainer/assets/avatar-evolution/horse-stage-3-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 75996,
+          "sha256": "1348905556617a8ebebf401448cba5d42d82fc66c49f6528c322fa758aae5584",
+          "url": "../../../trainer/assets/avatar-evolution/horse-stage-3-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 144192,
+          "sha256": "5062f9f61bb1c192d77f04cc0eb27a82f65892390a7c0c49352fcbe419ec29b6",
+          "url": "../../../trainer/assets/avatar-evolution/horse-stage-3-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/horse-stage-3-256.webp"
+    },
+    "horse-stage-4": {
+      "key": "horse-stage-4",
+      "sourceName": "horse-stage-4-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 2233079,
+      "sourceSha256": "d3b9009f19306dcab7f1e791c61308feb6a25b25ee24bc8e0ba2e882a904e6f2",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 34166,
+          "sha256": "fed4b952b7e3aff85f18f3843a86bf519b4f4239862baba8621f261b3f548850",
+          "url": "../../../trainer/assets/avatar-evolution/horse-stage-4-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 102866,
+          "sha256": "57ead61c0911364d925452b06b23bfa504cbeed267cb3c2abec1c355797b59e3",
+          "url": "../../../trainer/assets/avatar-evolution/horse-stage-4-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 198774,
+          "sha256": "0a14e288f3374b0ccb812d7ea05a4399a7fe07d3a34cc47aed7bd49465284707",
+          "url": "../../../trainer/assets/avatar-evolution/horse-stage-4-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/horse-stage-4-256.webp"
+    },
+    "unicorn-moon-stage-1": {
+      "key": "unicorn-moon-stage-1",
+      "sourceName": "unicorn-moon-stage-1-v1.png",
+      "sourceWidth": 1024,
+      "sourceHeight": 1536,
+      "sourceBytes": 2027291,
+      "sourceSha256": "27b8f185aae2488c7186a308b49239b1813dd1b77d81ec2c01237e1d231da480",
+      "width": 1024,
+      "height": 1536,
+      "variants": [
+        {
+          "width": 256,
+          "height": 384,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 15,
+            "bottom": 15
+          },
+          "bytes": 28964,
+          "sha256": "c209b9ac923fa132da65c4e93e3036cd9779f8bc51dd0466a8dd83e81165c187",
+          "url": "../../../trainer/assets/avatar-evolution/unicorn-moon-stage-1-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 768,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 77698,
+          "sha256": "49c808dbc6b7d11c7d9a8c12d6aaf4c811d2f3c5289f00d0316198d931ae78ec",
+          "url": "../../../trainer/assets/avatar-evolution/unicorn-moon-stage-1-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 1152,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 46,
+            "bottom": 46
+          },
+          "bytes": 142450,
+          "sha256": "cb15a349ee2fbcf1ac5cd6b463679cb8ba09f885831e4df9cfa702e7d8bf3d19",
+          "url": "../../../trainer/assets/avatar-evolution/unicorn-moon-stage-1-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/unicorn-moon-stage-1-256.webp"
+    },
+    "unicorn-moon-stage-2": {
+      "key": "unicorn-moon-stage-2",
+      "sourceName": "unicorn-moon-stage-2-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 1540737,
+      "sourceSha256": "14a26426112d57c69f6415e7f9bd113cdee687d22ea9b4577b1145fcb2fb3228",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 22708,
+          "sha256": "b309c08afa9d689ac851cd41e354958757b34a1b3ef35734ad7fad2c2092e35f",
+          "url": "../../../trainer/assets/avatar-evolution/unicorn-moon-stage-2-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 61126,
+          "sha256": "7c1ef0d6e5e8eeccc6637e70c69a4d0749af91d68ec4d4f6b9f8e78e83574f0a",
+          "url": "../../../trainer/assets/avatar-evolution/unicorn-moon-stage-2-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 113504,
+          "sha256": "021b470435f55e33e8b49259e37c3140b92b1d391b2d2b911ba112860ba6c132",
+          "url": "../../../trainer/assets/avatar-evolution/unicorn-moon-stage-2-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/unicorn-moon-stage-2-256.webp"
+    },
+    "unicorn-moon-stage-3": {
+      "key": "unicorn-moon-stage-3",
+      "sourceName": "unicorn-moon-stage-3-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 1853075,
+      "sourceSha256": "87258a2d5785a0eb802ca502352b114c5681a5fa56ed41d026b6a68d523fc6bc",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 26580,
+          "sha256": "0d0b18db3c221e0cd0ea4f898825655f9e1c9128f39bf4184522a28efd54f7fd",
+          "url": "../../../trainer/assets/avatar-evolution/unicorn-moon-stage-3-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 79264,
+          "sha256": "07063668616ee1737a3f6b3407b7180a94bb9e2de2b07bec85d1e81516599b51",
+          "url": "../../../trainer/assets/avatar-evolution/unicorn-moon-stage-3-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 152818,
+          "sha256": "c9df05d08696774dd0b0dc0753d8368e8dd45fa0393e8ad76b4608b1082bf4da",
+          "url": "../../../trainer/assets/avatar-evolution/unicorn-moon-stage-3-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/unicorn-moon-stage-3-256.webp"
+    },
+    "unicorn-moon-stage-4": {
+      "key": "unicorn-moon-stage-4",
+      "sourceName": "unicorn-moon-stage-4-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 2188636,
+      "sourceSha256": "e5dbbd04c81c7bce52f551c41b75782470f32bb8687d0d7cc9532082b2e0dd31",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 31876,
+          "sha256": "e341ff06b856578d24559e00823fdad4f00fa26eabebb6241bf1d810e94e11b5",
+          "url": "../../../trainer/assets/avatar-evolution/unicorn-moon-stage-4-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 94712,
+          "sha256": "2e63cccd6aecd5a0554fffcedfd13d41ceebf612d32b666acd28d2594c566ec2",
+          "url": "../../../trainer/assets/avatar-evolution/unicorn-moon-stage-4-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 186216,
+          "sha256": "c3fb0b99d5409172dbf0afffd811ef2a741d49e395c724c3ce588f2a88299bfc",
+          "url": "../../../trainer/assets/avatar-evolution/unicorn-moon-stage-4-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/unicorn-moon-stage-4-256.webp"
+    },
+    "pegasus-star-stage-1": {
+      "key": "pegasus-star-stage-1",
+      "sourceName": "pegasus-star-stage-1-v1.png",
+      "sourceWidth": 1024,
+      "sourceHeight": 1536,
+      "sourceBytes": 2669004,
+      "sourceSha256": "54280d22374ed89732e1dee1335f9cdcf71fbe0d64e73ba411f90b49a6ce73cb",
+      "width": 1024,
+      "height": 1536,
+      "variants": [
+        {
+          "width": 256,
+          "height": 384,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 15,
+            "bottom": 15
+          },
+          "bytes": 41046,
+          "sha256": "d01b63ff1bc37b93edb689105f8fd3af3c5ba22da855e44663a62a39ba6bf21d",
+          "url": "../../../trainer/assets/avatar-evolution/pegasus-star-stage-1-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 768,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 120104,
+          "sha256": "519b6ae5ab12767d08f2991a81661da9413954c0cda8ae3dcd00999933e640a7",
+          "url": "../../../trainer/assets/avatar-evolution/pegasus-star-stage-1-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 1152,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 46,
+            "bottom": 46
+          },
+          "bytes": 234954,
+          "sha256": "80a1e6e0b95385f9b4666cd0c9c9c2be92ed2f8796fd2289dda2e2b7490a5865",
+          "url": "../../../trainer/assets/avatar-evolution/pegasus-star-stage-1-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/pegasus-star-stage-1-256.webp"
+    },
+    "pegasus-star-stage-2": {
+      "key": "pegasus-star-stage-2",
+      "sourceName": "pegasus-star-stage-2-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 2110663,
+      "sourceSha256": "2e4fcdf9708b0c5c5507e03c0891d0796b9985d97f614759d73090d27ca55aae",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 28486,
+          "sha256": "6665dea6c4e99977d1774e304f3e0554bd728eec02797f02d63d79e7ad293c1d",
+          "url": "../../../trainer/assets/avatar-evolution/pegasus-star-stage-2-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 82490,
+          "sha256": "5d1da007aae5fc669ffa3658f2f5aa65388b8e56ef48848174c54119dfd55cb1",
+          "url": "../../../trainer/assets/avatar-evolution/pegasus-star-stage-2-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 157214,
+          "sha256": "a0c502f58f5a017f7eef024e3a572d16bdb882a29217531e3ad3209aa61d473d",
+          "url": "../../../trainer/assets/avatar-evolution/pegasus-star-stage-2-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/pegasus-star-stage-2-256.webp"
+    },
+    "pegasus-star-stage-3": {
+      "key": "pegasus-star-stage-3",
+      "sourceName": "pegasus-star-stage-3-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 2431784,
+      "sourceSha256": "381a9b14a1c9c9a0912b4b278d4c4500b0371738cfb85565ea2cd06e93ca08aa",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 35152,
+          "sha256": "5815b2f6753ffe7fa2fd8d7f80a6f1b57dff233d56da677c0bc062d8ca2d5ef8",
+          "url": "../../../trainer/assets/avatar-evolution/pegasus-star-stage-3-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 107218,
+          "sha256": "134a2d2ba21b378cad66d356d57bf3ac77b85100de0a33c9e8e01f6031a4fb44",
+          "url": "../../../trainer/assets/avatar-evolution/pegasus-star-stage-3-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 211788,
+          "sha256": "b616c486ab4e59f2a510a1700635b7fb088db27f5c224e7bb1ae9c5a4c395890",
+          "url": "../../../trainer/assets/avatar-evolution/pegasus-star-stage-3-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/pegasus-star-stage-3-256.webp"
+    },
+    "pegasus-star-stage-4": {
+      "key": "pegasus-star-stage-4",
+      "sourceName": "pegasus-star-stage-4-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 2420306,
+      "sourceSha256": "f61434baef7856ae96697852f56579dee6185b1323ff03638376c1fea3b51a5a",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 37494,
+          "sha256": "c09ecee258ea03b55627e33c1c77f5499ff765db95e6a44febe6d1c3ae3b1a68",
+          "url": "../../../trainer/assets/avatar-evolution/pegasus-star-stage-4-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 116498,
+          "sha256": "c850a3aa590bc63edac25eefe471bba3411a6d65181c7da8b8f352b26f2a965f",
+          "url": "../../../trainer/assets/avatar-evolution/pegasus-star-stage-4-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 230086,
+          "sha256": "989fb1df5a6857f75ea3a40b6d0392d45e0cd621cea7f645b930f0d9aa1411b3",
+          "url": "../../../trainer/assets/avatar-evolution/pegasus-star-stage-4-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/pegasus-star-stage-4-256.webp"
+    },
+    "dragon-crystal-stage-1": {
+      "key": "dragon-crystal-stage-1",
+      "sourceName": "dragon-crystal-stage-1-v1.png",
+      "sourceWidth": 1199,
+      "sourceHeight": 1312,
+      "sourceBytes": 1723454,
+      "sourceSha256": "21650fcf744d1b000d17d21036ce895f8aad610f69789719d48bb44821bfb862",
+      "width": 1199,
+      "height": 1312,
+      "variants": [
+        {
+          "width": 256,
+          "height": 280,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 11,
+            "bottom": 11
+          },
+          "bytes": 30180,
+          "sha256": "9a994361b887e126b7c6e6352d2cf4c82bb2d7b14ee81a0a9c3034ff048bf91e",
+          "url": "../../../trainer/assets/avatar-evolution/dragon-crystal-stage-1-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 560,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 22,
+            "bottom": 22
+          },
+          "bytes": 91676,
+          "sha256": "2fb66c5daa66cf837fbb9e0b2ae2d3bf3398aab1291a4ea96405dec04d35723a",
+          "url": "../../../trainer/assets/avatar-evolution/dragon-crystal-stage-1-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 840,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 34,
+            "bottom": 34
+          },
+          "bytes": 180644,
+          "sha256": "a1ee2fb9dd2bbc581d303cbf1448c4eb544282d30127c71e04f77315db471077",
+          "url": "../../../trainer/assets/avatar-evolution/dragon-crystal-stage-1-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/dragon-crystal-stage-1-256.webp"
+    },
+    "dragon-crystal-stage-2": {
+      "key": "dragon-crystal-stage-2",
+      "sourceName": "dragon-crystal-stage-2-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 1979630,
+      "sourceSha256": "8abaeae44b26c08caebfb956cf34c5b326fe748b01289915edaa12a5beae037d",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 32232,
+          "sha256": "aeb6706ff09e5ee388f19970d829149858b1f94754d158b6dd9221634e9b94ae",
+          "url": "../../../trainer/assets/avatar-evolution/dragon-crystal-stage-2-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 97860,
+          "sha256": "3478a6d99c829ae4d486613354aa02e684744e19804a1b259a0c0ab0ce28a858",
+          "url": "../../../trainer/assets/avatar-evolution/dragon-crystal-stage-2-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 191572,
+          "sha256": "46af7de25ca838372c4a74f50288b7d3d48e3b90aab325e43cccb11f4e097e93",
+          "url": "../../../trainer/assets/avatar-evolution/dragon-crystal-stage-2-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/dragon-crystal-stage-2-256.webp"
+    },
+    "dragon-crystal-stage-3": {
+      "key": "dragon-crystal-stage-3",
+      "sourceName": "dragon-crystal-stage-3-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 2324572,
+      "sourceSha256": "d8199e8aaa38f253f25615dfffbcd6726ff3e7984667abf7cfcd51ee2f534990",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 38382,
+          "sha256": "7a963169448800a3ee50b7cb94e0aad8fbf5ff73e4911bba45f362674cd7062f",
+          "url": "../../../trainer/assets/avatar-evolution/dragon-crystal-stage-3-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 120404,
+          "sha256": "d678f85ef42ef83f620d601c0f1d8cd46ce138a99b68c77a80dd473e4079f708",
+          "url": "../../../trainer/assets/avatar-evolution/dragon-crystal-stage-3-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 239964,
+          "sha256": "7e975dc9f6ff3e8c6155e4fcf1470ac43fa2a75374669c06c06387ae17eda82d",
+          "url": "../../../trainer/assets/avatar-evolution/dragon-crystal-stage-3-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/dragon-crystal-stage-3-256.webp"
+    },
+    "dragon-crystal-stage-4": {
+      "key": "dragon-crystal-stage-4",
+      "sourceName": "dragon-crystal-stage-4-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 2678587,
+      "sourceSha256": "9067bc96cf6c9e8eedcfdd8ac4e6c8ddae7ea36b2569a31c5c9c33066f77f485",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 45068,
+          "sha256": "2496c4b707f050a638280d4eaf40846db2ab88906eda55e219fcda32b81c5fb3",
+          "url": "../../../trainer/assets/avatar-evolution/dragon-crystal-stage-4-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 143262,
+          "sha256": "cecc036661248cb479228fc8c9e5133cc64f9c651c0cb651e2ddea8c25a53880",
+          "url": "../../../trainer/assets/avatar-evolution/dragon-crystal-stage-4-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 287634,
+          "sha256": "f97297d5eba97af6ed231108e1eb49306a8c798249b18d874057f427bfe4ac1c",
+          "url": "../../../trainer/assets/avatar-evolution/dragon-crystal-stage-4-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/dragon-crystal-stage-4-256.webp"
+    },
+    "wolf-aurora-stage-1": {
+      "key": "wolf-aurora-stage-1",
+      "sourceName": "wolf-aurora-stage-1-v1.png",
+      "sourceWidth": 1223,
+      "sourceHeight": 1286,
+      "sourceBytes": 2019990,
+      "sourceSha256": "e48470e38c54ff528e3720b532aa62c19ee29d40a776057b963aa5afcfb98280",
+      "width": 1223,
+      "height": 1286,
+      "variants": [
+        {
+          "width": 256,
+          "height": 269,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 11,
+            "bottom": 11
+          },
+          "bytes": 26450,
+          "sha256": "90e76397ade08e71e2243f6033a1bb039e37560a99a059f6f3bd488711653d64",
+          "url": "../../../trainer/assets/avatar-evolution/wolf-aurora-stage-1-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 538,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 22,
+            "bottom": 22
+          },
+          "bytes": 78008,
+          "sha256": "79b399fc604e738c06d20e27a3deeedff5d2b879ee0bcc66d04921dca350db13",
+          "url": "../../../trainer/assets/avatar-evolution/wolf-aurora-stage-1-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 808,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 32,
+            "bottom": 32
+          },
+          "bytes": 158694,
+          "sha256": "6cb1fe212193c92a0257bb93addd6cf1053df06730541d4570334a2ba825f3af",
+          "url": "../../../trainer/assets/avatar-evolution/wolf-aurora-stage-1-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/wolf-aurora-stage-1-256.webp"
+    },
+    "wolf-aurora-stage-2": {
+      "key": "wolf-aurora-stage-2",
+      "sourceName": "wolf-aurora-stage-2-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 1957926,
+      "sourceSha256": "a8dbc846db747f51432a501cf9d342ee9b3202f913ded3db07b887159e050b1b",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 26194,
+          "sha256": "c4524b0ecde677458b0edf99f7b35b0c32aaa5d9a2e1c44c79b93b9c31b329a7",
+          "url": "../../../trainer/assets/avatar-evolution/wolf-aurora-stage-2-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 76382,
+          "sha256": "f40a01d3c650c75c3c73f20b818a33bb8de0ad3e8968272798f0bb12f8bee19e",
+          "url": "../../../trainer/assets/avatar-evolution/wolf-aurora-stage-2-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 147644,
+          "sha256": "d55d12a72ad785c4981e509920212439c9286bfc33111b1adfee646ccb917c05",
+          "url": "../../../trainer/assets/avatar-evolution/wolf-aurora-stage-2-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/wolf-aurora-stage-2-256.webp"
+    },
+    "wolf-aurora-stage-3": {
+      "key": "wolf-aurora-stage-3",
+      "sourceName": "wolf-aurora-stage-3-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 2084548,
+      "sourceSha256": "8ae7452e2656e6be3a08bef3c2560083a28fc5b1a0a135f16d7008f69b176b2a",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 28502,
+          "sha256": "e555a941e1a0ad22780f21cfa0ce33f80b27c64426378219d6b23f96f74d3623",
+          "url": "../../../trainer/assets/avatar-evolution/wolf-aurora-stage-3-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 86774,
+          "sha256": "fa7b947b1433562781bd6af7f71c9fd8438675d4ef67e6e444ede611c9dec30a",
+          "url": "../../../trainer/assets/avatar-evolution/wolf-aurora-stage-3-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 170932,
+          "sha256": "54cdc014912b0f83c1a0deb776abc05b71be60ab24ac104cdf959ae75f2e018c",
+          "url": "../../../trainer/assets/avatar-evolution/wolf-aurora-stage-3-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/wolf-aurora-stage-3-256.webp"
+    },
+    "wolf-aurora-stage-4": {
+      "key": "wolf-aurora-stage-4",
+      "sourceName": "wolf-aurora-stage-4-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 2405189,
+      "sourceSha256": "a8dca7560f026d30090332f58e19ce615ad9ba71d0ef3f80a6103b4571c0c488",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 32288,
+          "sha256": "8d2fa1289754da0b17cd6480eb5e7ee46d2ca616cfedf144ed7b6e42fb7a4b6f",
+          "url": "../../../trainer/assets/avatar-evolution/wolf-aurora-stage-4-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 95894,
+          "sha256": "636198e98d0206e03854693c932cedd6f000aaba53cb2d5f45f4485487926975",
+          "url": "../../../trainer/assets/avatar-evolution/wolf-aurora-stage-4-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 187874,
+          "sha256": "797d9ed4a47a0638871b36e6f0d6994720b5262ab4a032ee43038359bf71d524",
+          "url": "../../../trainer/assets/avatar-evolution/wolf-aurora-stage-4-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/wolf-aurora-stage-4-256.webp"
+    },
+    "panther-shadow-stage-1": {
+      "key": "panther-shadow-stage-1",
+      "sourceName": "panther-shadow-stage-1-v1.png",
+      "sourceWidth": 1223,
+      "sourceHeight": 1286,
+      "sourceBytes": 1717653,
+      "sourceSha256": "734386d788e4b0b0fb9c50cfb8bddbdebeed6b9374fd3dcc893d9a114a6927a4",
+      "width": 1223,
+      "height": 1286,
+      "variants": [
+        {
+          "width": 256,
+          "height": 269,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 11,
+            "bottom": 11
+          },
+          "bytes": 19874,
+          "sha256": "8e8fa7373582ca0182ced5245b2b859cd2cd6c8130b15f3474933fc4ac7ef1b4",
+          "url": "../../../trainer/assets/avatar-evolution/panther-shadow-stage-1-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 538,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 22,
+            "bottom": 22
+          },
+          "bytes": 53958,
+          "sha256": "371304a2ba21b7a39990e5949468872fcfcff8747c61462d50cd4730c238e0da",
+          "url": "../../../trainer/assets/avatar-evolution/panther-shadow-stage-1-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 808,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 32,
+            "bottom": 32
+          },
+          "bytes": 108272,
+          "sha256": "79e339c94538189d1148456be9a31eafd8557699c3903585b88def4c0658eb42",
+          "url": "../../../trainer/assets/avatar-evolution/panther-shadow-stage-1-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/panther-shadow-stage-1-256.webp"
+    },
+    "panther-shadow-stage-2": {
+      "key": "panther-shadow-stage-2",
+      "sourceName": "panther-shadow-stage-2-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 1774530,
+      "sourceSha256": "315ea4e182dd8a12997da15d5f8506b94f904029796e87997b5348824b12841d",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 20284,
+          "sha256": "0d7df8c85ccfeabaca8bf9618771454b12d60b9d7d7d230d325f6f06999d6349",
+          "url": "../../../trainer/assets/avatar-evolution/panther-shadow-stage-2-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 56622,
+          "sha256": "0a398780343a67c7807ab2f4d32cfae4ab247e6319544b60ef5807826b6ed826",
+          "url": "../../../trainer/assets/avatar-evolution/panther-shadow-stage-2-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 110250,
+          "sha256": "a3c5d8600ff1c66712a4338c7009692390668f26421d32035e6474f854c2607b",
+          "url": "../../../trainer/assets/avatar-evolution/panther-shadow-stage-2-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/panther-shadow-stage-2-256.webp"
+    },
+    "panther-shadow-stage-3": {
+      "key": "panther-shadow-stage-3",
+      "sourceName": "panther-shadow-stage-3-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 1934780,
+      "sourceSha256": "4766ddfb2e827dba39d5c43359068db748b53d445e221721ef41b58341748a20",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 24110,
+          "sha256": "c5c1edc25fa6116d4cace0a458172406b1fec6319c544f6de526fe7cdb7b6343",
+          "url": "../../../trainer/assets/avatar-evolution/panther-shadow-stage-3-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 69632,
+          "sha256": "753823b5f7d8c9ab4cbceead84799167d9ee47ffb6f7dd6824885c12fd64b596",
+          "url": "../../../trainer/assets/avatar-evolution/panther-shadow-stage-3-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 134254,
+          "sha256": "eb9e7c3d7808e33c68ca297ce51e3946ffbca36b8decf92cae4ff338077781b1",
+          "url": "../../../trainer/assets/avatar-evolution/panther-shadow-stage-3-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/panther-shadow-stage-3-256.webp"
+    },
+    "panther-shadow-stage-4": {
+      "key": "panther-shadow-stage-4",
+      "sourceName": "panther-shadow-stage-4-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 2395696,
+      "sourceSha256": "22f878af2321e62c44c4671b0981d9bc73944874495348e43cf38f92a23edc4a",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 34544,
+          "sha256": "472394efe5373e9b7e07a62e6645badfc1b693de7f09caf64a68383d053b0af5",
+          "url": "../../../trainer/assets/avatar-evolution/panther-shadow-stage-4-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 106742,
+          "sha256": "8deaa7068b741310f78dcde09e395e273c870e57a9249bfeb615b19eceb8cba5",
+          "url": "../../../trainer/assets/avatar-evolution/panther-shadow-stage-4-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 213324,
+          "sha256": "e0094c8313a0de7e4456aa9860ff21a26da011ed756d184c22ee946a424577cf",
+          "url": "../../../trainer/assets/avatar-evolution/panther-shadow-stage-4-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/panther-shadow-stage-4-256.webp"
+    },
+    "griffin-storm-stage-1": {
+      "key": "griffin-storm-stage-1",
+      "sourceName": "griffin-storm-stage-1-v1.png",
+      "sourceWidth": 1225,
+      "sourceHeight": 1284,
+      "sourceBytes": 1945177,
+      "sourceSha256": "9824b0ed7141d278a057f48d22620a5c2239027855f3b980d2d4105ecad7fd63",
+      "width": 1225,
+      "height": 1284,
+      "variants": [
+        {
+          "width": 256,
+          "height": 268,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 11,
+            "bottom": 11
+          },
+          "bytes": 27552,
+          "sha256": "0eb28924bd1c48a60e386c0dd64fd4d0891536eb1b02301731f882b77d72caf3",
+          "url": "../../../trainer/assets/avatar-evolution/griffin-storm-stage-1-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 537,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 21,
+            "bottom": 21
+          },
+          "bytes": 79522,
+          "sha256": "4a48eb2df113df11f15f4c6e8a8024fc2d0c21f2908a0d4c1e4b79b084211e59",
+          "url": "../../../trainer/assets/avatar-evolution/griffin-storm-stage-1-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 805,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 32,
+            "bottom": 32
+          },
+          "bytes": 152820,
+          "sha256": "0fff235b87665e88e5be4fe03ba70be98bfd017748b148fb28729297ecb9227c",
+          "url": "../../../trainer/assets/avatar-evolution/griffin-storm-stage-1-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/griffin-storm-stage-1-256.webp"
+    },
+    "griffin-storm-stage-2": {
+      "key": "griffin-storm-stage-2",
+      "sourceName": "griffin-storm-stage-2-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 2073739,
+      "sourceSha256": "1bf8ef5fed5fc8a6d52a75f06c149fda8e89c873ab23f578247b43cd6edc7453",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 28086,
+          "sha256": "061a6d4311c1f55bb1113e63d6c184d51309ad6bb7b21aed41431800eb835b85",
+          "url": "../../../trainer/assets/avatar-evolution/griffin-storm-stage-2-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 82760,
+          "sha256": "15de8ecc4d0dd61abf17a2950e3910883e4c9b39b48cd8f220728728477ad2c8",
+          "url": "../../../trainer/assets/avatar-evolution/griffin-storm-stage-2-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 162588,
+          "sha256": "698d91b8a6ca73b159b4953119c677e052e7e5590c0512d59a66fddd2c03b49e",
+          "url": "../../../trainer/assets/avatar-evolution/griffin-storm-stage-2-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/griffin-storm-stage-2-256.webp"
+    },
+    "griffin-storm-stage-3": {
+      "key": "griffin-storm-stage-3",
+      "sourceName": "griffin-storm-stage-3-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 2211768,
+      "sourceSha256": "52ae1367558290c08014ddb84b30cf7e4207e3308ef942a0276eab7d731a3992",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 32312,
+          "sha256": "8c3f52f6ae0681e0f502e5ec1f231a84ce2808743f6f3a5e0e5130f82d85e217",
+          "url": "../../../trainer/assets/avatar-evolution/griffin-storm-stage-3-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 95028,
+          "sha256": "31e2ed11bbcbcb7e2fa941d93e9182eee39dbda06fe00833c9ead64fe6495bfd",
+          "url": "../../../trainer/assets/avatar-evolution/griffin-storm-stage-3-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 185504,
+          "sha256": "0e1343439d9836ff7fbbbbae5a25d3d4c86182366023ab318c417c03ac85a90f",
+          "url": "../../../trainer/assets/avatar-evolution/griffin-storm-stage-3-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/griffin-storm-stage-3-256.webp"
+    },
+    "griffin-storm-stage-4": {
+      "key": "griffin-storm-stage-4",
+      "sourceName": "griffin-storm-stage-4-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 2780872,
+      "sourceSha256": "eb59226b71c49219e878724d2db2ab7c0bc0eb21992231b7008f26213ef735f5",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 45602,
+          "sha256": "f5c7a4e8125daf53b62cbd2ad83790a02b31f381fb94d58f07e2bc1d13bcd00b",
+          "url": "../../../trainer/assets/avatar-evolution/griffin-storm-stage-4-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 136414,
+          "sha256": "44cb9fa3a04f3554e03350fe838f648037d7299f88244d1bd384d5dc696bf816",
+          "url": "../../../trainer/assets/avatar-evolution/griffin-storm-stage-4-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 257736,
+          "sha256": "e5b82a149ba2fdb060d44d1d85341a47a532ec57d53bfae5f887cc3818adb51e",
+          "url": "../../../trainer/assets/avatar-evolution/griffin-storm-stage-4-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/griffin-storm-stage-4-256.webp"
+    },
+    "phoenix-stage-1": {
+      "key": "phoenix-stage-1",
+      "sourceName": "phoenix-stage-1-v1.png",
+      "sourceWidth": 1024,
+      "sourceHeight": 1536,
+      "sourceBytes": 2437704,
+      "sourceSha256": "5bf95178a98bb9c8f0b79f2d1d9c98c1be186b0cdd9562fae40da13563055b3c",
+      "width": 1024,
+      "height": 1536,
+      "variants": [
+        {
+          "width": 256,
+          "height": 384,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 15,
+            "bottom": 15
+          },
+          "bytes": 38416,
+          "sha256": "1f891251adb8f3e8acfd71998c120b8bdb41e654e49282ef0898bed783237190",
+          "url": "../../../trainer/assets/avatar-evolution/phoenix-stage-1-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 768,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 113634,
+          "sha256": "1ee82e662ee2dc954d2a7c43cdd976eea9a8d362050aaacec25e51ece0c1a9cd",
+          "url": "../../../trainer/assets/avatar-evolution/phoenix-stage-1-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 1152,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 46,
+            "bottom": 46
+          },
+          "bytes": 219296,
+          "sha256": "14b1d89eafc3fdf29b4d7a5710dfdf3b5adf9b40df22541ee7a1ed6759f30b65",
+          "url": "../../../trainer/assets/avatar-evolution/phoenix-stage-1-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/phoenix-stage-1-256.webp"
+    },
+    "phoenix-stage-2": {
+      "key": "phoenix-stage-2",
+      "sourceName": "phoenix-stage-2-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 2155912,
+      "sourceSha256": "0f4fd7f18c53f79a9e74f544d35e8585d212a35c3474ff400d8d229584adf7d1",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 34972,
+          "sha256": "b5a0206eb0e69c697d6af227f41d2064cba2c8331ce08422597f1324c570185f",
+          "url": "../../../trainer/assets/avatar-evolution/phoenix-stage-2-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 102930,
+          "sha256": "46f9fe25201431571fa46a164fd96a1e43ec1e98e5bc81af536acb3aad6babcf",
+          "url": "../../../trainer/assets/avatar-evolution/phoenix-stage-2-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 198256,
+          "sha256": "716b28d6b9a880b57a900f9c1259c8de545fd28f33faa2b4dbd6f400e596d8bd",
+          "url": "../../../trainer/assets/avatar-evolution/phoenix-stage-2-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/phoenix-stage-2-256.webp"
+    },
+    "phoenix-stage-3": {
+      "key": "phoenix-stage-3",
+      "sourceName": "phoenix-stage-3-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 2263477,
+      "sourceSha256": "0625da6b082a39f8ec58fbba1378f4801d127cf23582ff41282269efe6108ede",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 34924,
+          "sha256": "a65cbf27147ffbc48107410cb4171bb5565b70de7a9b71831866ea7fd3f5037f",
+          "url": "../../../trainer/assets/avatar-evolution/phoenix-stage-3-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 103360,
+          "sha256": "a812defe99f8546f191e786bcad33e83e3bc79154d0b70387d95d0c388ba786d",
+          "url": "../../../trainer/assets/avatar-evolution/phoenix-stage-3-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 200830,
+          "sha256": "10eb5803ba0770e4d759eb4a2cfe5e0780e10e60f196d7f002aa069962fb43de",
+          "url": "../../../trainer/assets/avatar-evolution/phoenix-stage-3-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/phoenix-stage-3-256.webp"
+    },
+    "phoenix-stage-4": {
+      "key": "phoenix-stage-4",
+      "sourceName": "phoenix-stage-4-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 2871147,
+      "sourceSha256": "26ff940101279756cd0b7c15e763daa66603286d2d4734794942145429c5a1b1",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 49466,
+          "sha256": "6c257733dd96023c77025831b3d73ffa91f637d0a1856e9fa939a01c13b3e05b",
+          "url": "../../../trainer/assets/avatar-evolution/phoenix-stage-4-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 151522,
+          "sha256": "059f0824f139ee6e521c037f5d830793e8a3fbb8cc32d0c0f7a56db75fd08b5a",
+          "url": "../../../trainer/assets/avatar-evolution/phoenix-stage-4-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 285120,
+          "sha256": "1c921250f92e06c29156bb278c0e6139cba07d85e3cb5c4dcb1fa16e461cc9e7",
+          "url": "../../../trainer/assets/avatar-evolution/phoenix-stage-4-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/phoenix-stage-4-256.webp"
+    },
+    "explorer-girl-stage-1-skin-0": {
+      "key": "explorer-girl-stage-1-skin-0",
+      "sourceName": "explorer-girl-stage-1-skin-0-v1.png",
+      "sourceWidth": 1086,
+      "sourceHeight": 1448,
+      "sourceBytes": 811214,
+      "sourceSha256": "3311c9e57beb8cdc549638c4c11a5b298018677c62a0f6e790a75a0ccc7cebee",
+      "width": 1086,
+      "height": 1448,
+      "variants": [
+        {
+          "width": 256,
+          "height": 341,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 14,
+            "bottom": 14
+          },
+          "bytes": 18320,
+          "sha256": "8577a7d4cf9044b006e3e424b433e8aea972a115b1cba54a3846ea3c1a70edc3",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-1-skin-0-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 683,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 27,
+            "bottom": 27
+          },
+          "bytes": 46630,
+          "sha256": "f4d0fc7a4ed048430653f6a0baba74563041e3619324092815cf9fd95aa31671",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-1-skin-0-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 1024,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 41,
+            "bottom": 41
+          },
+          "bytes": 82974,
+          "sha256": "e4adb86d60e9fc6e495c50db16e4b5cdf9b02b558dec042cd8a06ab2fbcb91bd",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-1-skin-0-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-1-skin-0-256.webp"
+    },
+    "explorer-girl-stage-1-skin-1": {
+      "key": "explorer-girl-stage-1-skin-1",
+      "sourceName": "explorer-girl-stage-1-skin-1-v1.png",
+      "sourceWidth": 1086,
+      "sourceHeight": 1448,
+      "sourceBytes": 825957,
+      "sourceSha256": "945690e6f3d9d540760854c0bbdd4b35594debc08b7597b467619e458c1cc362",
+      "width": 1086,
+      "height": 1448,
+      "variants": [
+        {
+          "width": 256,
+          "height": 341,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 14,
+            "bottom": 14
+          },
+          "bytes": 17866,
+          "sha256": "06cfa0d1b9ba8ee10ed0c709ac1494fc99392fa7f8f7cd1a95318862874b5a2f",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-1-skin-1-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 683,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 27,
+            "bottom": 27
+          },
+          "bytes": 45810,
+          "sha256": "266fc8cf54e8d18afcbea81342bca464b7c86a944ffdcaa3f4489aa3c39d32f5",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-1-skin-1-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 1024,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 41,
+            "bottom": 41
+          },
+          "bytes": 79326,
+          "sha256": "08f662c6eed43d43b15214f404da0ac898d7f624d975a481ae7db8162fa6ca7c",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-1-skin-1-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-1-skin-1-256.webp"
+    },
+    "explorer-girl-stage-1-skin-2": {
+      "key": "explorer-girl-stage-1-skin-2",
+      "sourceName": "explorer-girl-stage-1-skin-2-v1.png",
+      "sourceWidth": 1086,
+      "sourceHeight": 1448,
+      "sourceBytes": 831963,
+      "sourceSha256": "fd44b56ce1b3bff8f22d156fa9e0ed798bfd10d4ef835811f0d6065d33a423d1",
+      "width": 1086,
+      "height": 1448,
+      "variants": [
+        {
+          "width": 256,
+          "height": 341,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 14,
+            "bottom": 14
+          },
+          "bytes": 17674,
+          "sha256": "9148aed6a68ca209802de2712ceb87cb2201c385c06a52296a622746d96f751a",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-1-skin-2-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 683,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 27,
+            "bottom": 27
+          },
+          "bytes": 44656,
+          "sha256": "fc58933283ca2f7539125a16a15722e764b99b77caed597ff92043d8a06d55a2",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-1-skin-2-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 1024,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 41,
+            "bottom": 41
+          },
+          "bytes": 78922,
+          "sha256": "c6afef21c1a9ec8f611d88f3458f9b543e8bd2c379935027f53271475423de7e",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-1-skin-2-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-1-skin-2-256.webp"
+    },
+    "explorer-girl-stage-1-skin-3": {
+      "key": "explorer-girl-stage-1-skin-3",
+      "sourceName": "explorer-girl-stage-1-skin-3-v1.png",
+      "sourceWidth": 1086,
+      "sourceHeight": 1448,
+      "sourceBytes": 830965,
+      "sourceSha256": "e9a4c7543fbe4e261010e0d9bf79d2d3820a470f587cb09db846381c318f9a8a",
+      "width": 1086,
+      "height": 1448,
+      "variants": [
+        {
+          "width": 256,
+          "height": 341,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 14,
+            "bottom": 14
+          },
+          "bytes": 17412,
+          "sha256": "bc31066905357d8794abf6a7fbb6951c8d0af299012a1ef923f91cd410e32d20",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-1-skin-3-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 683,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 27,
+            "bottom": 27
+          },
+          "bytes": 44412,
+          "sha256": "484473d310ed78285b6e5002057611f108b3945a27411a64cbe68cb93884f417",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-1-skin-3-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 1024,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 41,
+            "bottom": 41
+          },
+          "bytes": 78644,
+          "sha256": "bc61b69e150a462dcea51877d7e4232cfd93072b60137c29ceccd48a6475fa2b",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-1-skin-3-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-1-skin-3-256.webp"
+    },
+    "explorer-girl-stage-2-skin-0": {
+      "key": "explorer-girl-stage-2-skin-0",
+      "sourceName": "explorer-girl-stage-2-skin-0-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 778275,
+      "sourceSha256": "d55b8008a22f4af26011963ea4585cdfebe83c016cf3721b00f1dbe7b67f3b8b",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 12780,
+          "sha256": "b20e40d9a09c7bbdfab7b39592619958e99ed8633446098d5d478f22f9d00176",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-2-skin-0-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 34212,
+          "sha256": "ae0f1ffeb8e6470a3834748c0a6a2dd04d1dda57c4242dbf92c4f8fd797fc601",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-2-skin-0-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 60958,
+          "sha256": "b0407a2b56d58ffdab744bc79ec08a7ffcf71b22d16bb4d02acbfd1aad7ed188",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-2-skin-0-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-2-skin-0-256.webp"
+    },
+    "explorer-girl-stage-2-skin-1": {
+      "key": "explorer-girl-stage-2-skin-1",
+      "sourceName": "explorer-girl-stage-2-skin-1-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 760816,
+      "sourceSha256": "eb52655b8a245e5da31bf60642ed7595617a7c8e472a9234fb0c64d19a8796cb",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 12844,
+          "sha256": "e22477700447f3db4d41c03b3d149ba97e557d2fd64ee883c90d9cc74a10600e",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-2-skin-1-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 33524,
+          "sha256": "4b97e3671fedbfaa4c13451c9977f0dfef11628b8b8d1d4c1a3d9772520d8c34",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-2-skin-1-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 59846,
+          "sha256": "c3e3e416fc13cd5424c414257b0bef7064c5248106b85fab8d440c3dad76d5ee",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-2-skin-1-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-2-skin-1-256.webp"
+    },
+    "explorer-girl-stage-2-skin-2": {
+      "key": "explorer-girl-stage-2-skin-2",
+      "sourceName": "explorer-girl-stage-2-skin-2-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 762999,
+      "sourceSha256": "284819fc420ebb1a4b25946410e9dd98e8c8e01d236eaa1c4a50686620b5e7b7",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 12698,
+          "sha256": "5e80444c207c7cc631a754f93f2e32292ffd449c973609fdf520ad273a477188",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-2-skin-2-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 33240,
+          "sha256": "574d92227cdd674c7efa4588d69f788f50362160df4c320e78419815a14c4308",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-2-skin-2-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 58890,
+          "sha256": "cd7924cf07b355ec463e1d0fe0b9801ef78fbd57ba3bb174a97f588666a6ea1e",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-2-skin-2-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-2-skin-2-256.webp"
+    },
+    "explorer-girl-stage-2-skin-3": {
+      "key": "explorer-girl-stage-2-skin-3",
+      "sourceName": "explorer-girl-stage-2-skin-3-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 774182,
+      "sourceSha256": "3c0952d75b83e61cfa032ee8a6baf94e762588c6515eafeea63af868e2037d30",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 12758,
+          "sha256": "f34712876d1309544939b3ee621733f532da41df8ad364b669e29f1a58521213",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-2-skin-3-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 33390,
+          "sha256": "155f7880368aae44cc909cbd2e9b8ca17892d43363feb6a9a1986536c84d9d58",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-2-skin-3-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 60086,
+          "sha256": "4718e6957ad0bb5a98762301b213b966d90cb1aad85c0c052b87ab4f3d479c69",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-2-skin-3-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-2-skin-3-256.webp"
+    },
+    "explorer-girl-stage-3-skin-0": {
+      "key": "explorer-girl-stage-3-skin-0",
+      "sourceName": "explorer-girl-stage-3-skin-0-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 1064358,
+      "sourceSha256": "2361c656ad0d1e9034b1f7f885f7015f72cac5fac74fb13214d768ec0047a962",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 16542,
+          "sha256": "46e32abe93b92fc9617edca5b42481ff305705f8407de068ef346786c2093672",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-3-skin-0-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 45304,
+          "sha256": "7416b8f99e4cca11ecba2f3c543704e834a5c29dd392d4f0cd79b1da8b0b9da8",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-3-skin-0-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 83754,
+          "sha256": "ed0c348be29f817483da88c91adbb18b8b29512967b1612221320a408af4888e",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-3-skin-0-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-3-skin-0-256.webp"
+    },
+    "explorer-girl-stage-3-skin-1": {
+      "key": "explorer-girl-stage-3-skin-1",
+      "sourceName": "explorer-girl-stage-3-skin-1-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 1052089,
+      "sourceSha256": "c93db9adf8891c8a139ebc5e0da6538895a8a185c09ad2533d665adc40f4fd30",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 16612,
+          "sha256": "88e7ad04cf597846ee66431db27210314ba1c3d7cf30a90d24542eb979fe0478",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-3-skin-1-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 45394,
+          "sha256": "16b764eda409aa6f831f277d564165fd3a96560b21d613e82cba6c57c55b81c3",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-3-skin-1-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 83406,
+          "sha256": "56c3ba88b99c512b2d916dbaaa608b66393f3b3490243bd4ef2f1250d6a18e44",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-3-skin-1-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-3-skin-1-256.webp"
+    },
+    "explorer-girl-stage-3-skin-2": {
+      "key": "explorer-girl-stage-3-skin-2",
+      "sourceName": "explorer-girl-stage-3-skin-2-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 1047159,
+      "sourceSha256": "5795e2eb8b6ab184b1e12b438135a6c0489bcbb33e9cfca3e6cee8ba767b8fae",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 16464,
+          "sha256": "a809d7ea94d6d3ce63f23f7728b53a6b6b590c028f85a66fa8dde94406645227",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-3-skin-2-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 44476,
+          "sha256": "43a56a50c656b6da75458b8bec1c045717771f5ad4f68e1f75e8b65d7e3e0cb8",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-3-skin-2-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 81240,
+          "sha256": "93827aa5bdc1e0d12bd7092d79cd422ceb3eb45fb431c7bf5221e9b88bd2e153",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-3-skin-2-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-3-skin-2-256.webp"
+    },
+    "explorer-girl-stage-3-skin-3": {
+      "key": "explorer-girl-stage-3-skin-3",
+      "sourceName": "explorer-girl-stage-3-skin-3-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 1053950,
+      "sourceSha256": "22071658a9cabf766dcd440e212795d85a853b98ec07103ed0a78e65b41da83e",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 16418,
+          "sha256": "a3cc90b9723f95be544b5cf465e84cee30f042f0380231dd426e55cbd5edf8c8",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-3-skin-3-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 45354,
+          "sha256": "8c1a770edfd0b788aab4110172edaf1d7941d2ea1e33e3a05ced044353a680bd",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-3-skin-3-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 81880,
+          "sha256": "2f253c4ec390149aed5ad2d3c598ebfd3a6568ae065abf4384b5e0de446caac3",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-3-skin-3-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-3-skin-3-256.webp"
+    },
+    "explorer-girl-stage-4-skin-0": {
+      "key": "explorer-girl-stage-4-skin-0",
+      "sourceName": "explorer-girl-stage-4-skin-0-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 1811663,
+      "sourceSha256": "29dc51273d3229d5009db08c9d7d7c8b70e5980a2a7d11092875ef2c6b86954d",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 27338,
+          "sha256": "6f7866631f2ac355e96bffc8f8bddfe80a236baa748aaaf30f2806f2f2c00a3d",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-4-skin-0-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 79516,
+          "sha256": "e55ec3f61563734d43fe9984b382826165baf31d70454beee86a77b58c76fea9",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-4-skin-0-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 149098,
+          "sha256": "0cb3dfc1a63c613197b72316c82eb3bb5bc2e59722109cc3b281e4001cdfdb0c",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-4-skin-0-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-4-skin-0-256.webp"
+    },
+    "explorer-girl-stage-4-skin-1": {
+      "key": "explorer-girl-stage-4-skin-1",
+      "sourceName": "explorer-girl-stage-4-skin-1-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 1790456,
+      "sourceSha256": "4870af545150808f0182c31bb1ae012e655bdeff0bb69dfe3f5f026336edbef0",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 27806,
+          "sha256": "037579e91311a44e13b4bf91313d1fc8556278e3aef4254d6266bbf62b4c8dff",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-4-skin-1-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 78840,
+          "sha256": "bc45c19bcb0ca36197e11a84ae2e61aa85a4a19754f24894162258a7799964b1",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-4-skin-1-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 148008,
+          "sha256": "36245553bef05121ec6edbfd6ea8718b6804feb55e6148d1bcdecbee0bd71432",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-4-skin-1-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-4-skin-1-256.webp"
+    },
+    "explorer-girl-stage-4-skin-2": {
+      "key": "explorer-girl-stage-4-skin-2",
+      "sourceName": "explorer-girl-stage-4-skin-2-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 1783935,
+      "sourceSha256": "4e2a999dbebbe41d877fb5fcd1bf1c88ed49cc85230c90846433d73a72dba08b",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 27672,
+          "sha256": "5f1d1c329d3d2d2ce4ffc9c926b5e8bcf8909bae5c9dc51c156e3bc958b7934a",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-4-skin-2-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 78080,
+          "sha256": "27b124892a62b87db48588cd9feb319129c7d9feeed48553e05cf578cc8a338c",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-4-skin-2-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 146942,
+          "sha256": "32b293ade05df8e860c8d69b1c76234e5b7d0030c263a3e6361e4b2d1dd1a270",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-4-skin-2-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-4-skin-2-256.webp"
+    },
+    "explorer-girl-stage-4-skin-3": {
+      "key": "explorer-girl-stage-4-skin-3",
+      "sourceName": "explorer-girl-stage-4-skin-3-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 1782763,
+      "sourceSha256": "45c110c25cb8a6dc379c2a794a4d8d9778d1164eb47bcb84d0ca623637036c35",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 27946,
+          "sha256": "98b872ea5a21f168ef0ed0374a60d42d0fdbe3a504aa7defb0b98159acd2dc8c",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-4-skin-3-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 78862,
+          "sha256": "c1b97afe60b4e886ee90184ce1cbd8b55dfa5b2b127b39433891777514343422",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-4-skin-3-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 147852,
+          "sha256": "b08e768cbafb1bda82a56e96ccddaff4490fab3e1d230d5f84c55b010fb2acd5",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-4-skin-3-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-girl-stage-4-skin-3-256.webp"
+    },
+    "explorer-boy-stage-1-skin-0": {
+      "key": "explorer-boy-stage-1-skin-0",
+      "sourceName": "explorer-boy-stage-1-skin-0-v1.png",
+      "sourceWidth": 1086,
+      "sourceHeight": 1448,
+      "sourceBytes": 814430,
+      "sourceSha256": "e168a0142b21b92effb5984b475102637a12c1bbf74f54704ec646cf1f08b477",
+      "width": 1086,
+      "height": 1448,
+      "variants": [
+        {
+          "width": 256,
+          "height": 341,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 14,
+            "bottom": 14
+          },
+          "bytes": 18392,
+          "sha256": "8cddc2e8282ea0342bfbdb277e1382a29ea35830270f6884d57f86293e26167f",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-1-skin-0-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 683,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 27,
+            "bottom": 27
+          },
+          "bytes": 47108,
+          "sha256": "77c5d4e1a462dbb684c0072743bfa50a36c6902c3fcb7e860af2283bf1c31587",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-1-skin-0-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 1024,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 41,
+            "bottom": 41
+          },
+          "bytes": 84922,
+          "sha256": "27fde8f9d9bf7e7741329567bfca894564af5d1dc58fbc3325426155e3d25df0",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-1-skin-0-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-1-skin-0-256.webp"
+    },
+    "explorer-boy-stage-1-skin-1": {
+      "key": "explorer-boy-stage-1-skin-1",
+      "sourceName": "explorer-boy-stage-1-skin-1-v1.png",
+      "sourceWidth": 1086,
+      "sourceHeight": 1448,
+      "sourceBytes": 803498,
+      "sourceSha256": "00b7c68fa08da982e3e3733c753a22f848c1c706661c4471cccc727f07465ec8",
+      "width": 1086,
+      "height": 1448,
+      "variants": [
+        {
+          "width": 256,
+          "height": 341,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 14,
+            "bottom": 14
+          },
+          "bytes": 18082,
+          "sha256": "04ec7d09b69fce3a2bf8deb9e0b812c317df02946a4093838f8cd0eb4be2f3c0",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-1-skin-1-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 683,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 27,
+            "bottom": 27
+          },
+          "bytes": 45416,
+          "sha256": "24d3d23613a63f6860c23ffe0390f40b8890bb08bb62a8251a314cc5f235c69b",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-1-skin-1-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 1024,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 41,
+            "bottom": 41
+          },
+          "bytes": 81258,
+          "sha256": "e6bd64284add08ecf1ff2480558e9222d2c38e24619275f0a1a812190ba0c713",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-1-skin-1-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-1-skin-1-256.webp"
+    },
+    "explorer-boy-stage-1-skin-2": {
+      "key": "explorer-boy-stage-1-skin-2",
+      "sourceName": "explorer-boy-stage-1-skin-2-v1.png",
+      "sourceWidth": 1086,
+      "sourceHeight": 1448,
+      "sourceBytes": 757812,
+      "sourceSha256": "62566227b97dbab7346bc9ab91729409e0c90acdf246f472fa0558b460300011",
+      "width": 1086,
+      "height": 1448,
+      "variants": [
+        {
+          "width": 256,
+          "height": 341,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 14,
+            "bottom": 14
+          },
+          "bytes": 16538,
+          "sha256": "3f54cf41ca9595bf09016e190f5d282dfb8f41463716b5d0f93d77ecd8bf407e",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-1-skin-2-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 683,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 27,
+            "bottom": 27
+          },
+          "bytes": 41240,
+          "sha256": "b0c11ebef7137aa7421c3d21bea405ff399db43f6971ceaa88f6dff7efe60f6a",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-1-skin-2-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 1024,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 41,
+            "bottom": 41
+          },
+          "bytes": 74088,
+          "sha256": "afa03be70abab1a7733c70e353b9822ace0815c2dc733aba83776b985c03ed00",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-1-skin-2-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-1-skin-2-256.webp"
+    },
+    "explorer-boy-stage-1-skin-3": {
+      "key": "explorer-boy-stage-1-skin-3",
+      "sourceName": "explorer-boy-stage-1-skin-3-v1.png",
+      "sourceWidth": 1086,
+      "sourceHeight": 1448,
+      "sourceBytes": 791970,
+      "sourceSha256": "809709e35a96f0664211f56fe4451fc138fef22a08e6108e9d4d623230056f06",
+      "width": 1086,
+      "height": 1448,
+      "variants": [
+        {
+          "width": 256,
+          "height": 341,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 14,
+            "bottom": 14
+          },
+          "bytes": 17568,
+          "sha256": "66e73ea23de503d69fa1b33cfb6ff7934a4e22e516c666d693a077d4b32bc888",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-1-skin-3-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 683,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 27,
+            "bottom": 27
+          },
+          "bytes": 43502,
+          "sha256": "f8c56fdfe6b8afd829cd4438177f947abd3deafca5422bdd67a9f3861b55097f",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-1-skin-3-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 1024,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 41,
+            "bottom": 41
+          },
+          "bytes": 78366,
+          "sha256": "c175ea533166f2562e5e87f4caa9c199ede74c5e994ca526654f2f3c7f5718b9",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-1-skin-3-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-1-skin-3-256.webp"
+    },
+    "explorer-boy-stage-2-skin-0": {
+      "key": "explorer-boy-stage-2-skin-0",
+      "sourceName": "explorer-boy-stage-2-skin-0-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 817596,
+      "sourceSha256": "1e0ee989bff235f8779b28e142a80f30ea2e87173f0a1baaa82b51b252b549a3",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 13432,
+          "sha256": "0bcf111f8de0954af8478b39036b247eb86b7bd2d23f4fa73b0f8a459a0ec128",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-2-skin-0-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 35248,
+          "sha256": "3828fb130c6e22c39da7595b6aba4f7509a9b622fa527e2a9e80e6a8e8472ef1",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-2-skin-0-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 63632,
+          "sha256": "c256583657a9521234018924f8d4ebcd1a1fd5254bac94cbbc740c4b6f9a4b58",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-2-skin-0-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-2-skin-0-256.webp"
+    },
+    "explorer-boy-stage-2-skin-1": {
+      "key": "explorer-boy-stage-2-skin-1",
+      "sourceName": "explorer-boy-stage-2-skin-1-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 809153,
+      "sourceSha256": "cbe58efb92a1065719daf3eeef2a3b0f27b55b0b7501e7ea316318f46dd4b7ff",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 13580,
+          "sha256": "c93e5374acf2089dc848a9cb69c48e4f1a5fc622871c44387f7f13d3401a56f1",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-2-skin-1-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 35110,
+          "sha256": "e495673186cfd434e50c31c11cc63a81781e4d66cd770afd123797f9a7f1811d",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-2-skin-1-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 64070,
+          "sha256": "118e8b72595e26f5a8cef26d3eb9018369eb34ca9427a083536a3f6f91e44723",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-2-skin-1-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-2-skin-1-256.webp"
+    },
+    "explorer-boy-stage-2-skin-2": {
+      "key": "explorer-boy-stage-2-skin-2",
+      "sourceName": "explorer-boy-stage-2-skin-2-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 802237,
+      "sourceSha256": "9fa7ec2c755bb2a9d3f244db4cef2eb25ffe9b8c333545f954436815f00ab014",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 13372,
+          "sha256": "58096c0559930b17134e23c046d5d3456efc9daa825d23bc776ad355900cb880",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-2-skin-2-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 33952,
+          "sha256": "ed7b3ee2cc9980f3a9b93ab5986118c0f12acab9c416db57674821e29a117d3a",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-2-skin-2-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 61186,
+          "sha256": "a3c2171919accabd41f2d6d253ca05030de4144953a7dd6b44c60d114143348e",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-2-skin-2-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-2-skin-2-256.webp"
+    },
+    "explorer-boy-stage-2-skin-3": {
+      "key": "explorer-boy-stage-2-skin-3",
+      "sourceName": "explorer-boy-stage-2-skin-3-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 818808,
+      "sourceSha256": "79eabbe3910478f2447b1943e519e56a1ffabbae36cdb5205fcae73073668284",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 13492,
+          "sha256": "ca8105f969debb986d3f367ea486f3eda8dd2a8d3015d73562f1cfd101636f71",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-2-skin-3-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 35072,
+          "sha256": "6faf4292daed5192992cc8e2fea8e5cb619b5ab445f50c5fa77478eeb390041f",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-2-skin-3-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 64298,
+          "sha256": "3fb269fc2d4aa60cf5376125cf5cd505bdeb9521a10a1aa1784bf6281c119921",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-2-skin-3-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-2-skin-3-256.webp"
+    },
+    "explorer-boy-stage-3-skin-0": {
+      "key": "explorer-boy-stage-3-skin-0",
+      "sourceName": "explorer-boy-stage-3-skin-0-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 1066885,
+      "sourceSha256": "64b97bb1d71b01272eb57f6e7f59e2c5c10312132a1a298254a00fea1b022ff3",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 16488,
+          "sha256": "2b94e5962c1a5f606ac21571ad3b125b00ef2d7a876f4e6cf91bc0eea7680bf5",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-3-skin-0-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 44836,
+          "sha256": "b3caba3a973bfca8d344c65a1165592fbbf14699b8d96498182cda0e4dad208e",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-3-skin-0-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 83144,
+          "sha256": "2470443ca759d615d2830d31e1a29fbee5feb80d0f127f2e5ba7619e1e6f1f4c",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-3-skin-0-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-3-skin-0-256.webp"
+    },
+    "explorer-boy-stage-3-skin-1": {
+      "key": "explorer-boy-stage-3-skin-1",
+      "sourceName": "explorer-boy-stage-3-skin-1-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 1059468,
+      "sourceSha256": "e30decce12f2a25ea8a159005e0d9224d20da03958f274d18a2d6c8df39480f1",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 16760,
+          "sha256": "7dce39db593e205e297bc5141905968e22684d20c8bd6241d70b8b2c615e7c08",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-3-skin-1-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 45094,
+          "sha256": "3bf112483ce234bbdeb8354e2985e0af0e94ffbcab4810e139c7920e53e04b38",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-3-skin-1-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 83586,
+          "sha256": "350ff5f878ff7dc643bb9cbf27f89b95c6f51111805c6b6d9d55d4c1400a72a0",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-3-skin-1-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-3-skin-1-256.webp"
+    },
+    "explorer-boy-stage-3-skin-2": {
+      "key": "explorer-boy-stage-3-skin-2",
+      "sourceName": "explorer-boy-stage-3-skin-2-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 1054856,
+      "sourceSha256": "b16d1d98a92d0f29bb219bb70e0093547854e45d08dc7a7a8215e795ac2fc069",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 16634,
+          "sha256": "72c7bee79e57a9e01f43a056b795cbfbb38e75a99eaaac1fc8a6939c7c853ae1",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-3-skin-2-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 44410,
+          "sha256": "3ce0d829912b227dc92b74465d825c27bbc4ee9a65d1c218defdf0ec5eb86db5",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-3-skin-2-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 81814,
+          "sha256": "a4207924a57b2044ca59fc70cf8851528929b916dd3b732c7620ecc0c855fa31",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-3-skin-2-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-3-skin-2-256.webp"
+    },
+    "explorer-boy-stage-3-skin-3": {
+      "key": "explorer-boy-stage-3-skin-3",
+      "sourceName": "explorer-boy-stage-3-skin-3-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 1070439,
+      "sourceSha256": "64887396544da59f524079b96b7b57c7e3089591e9586abd78d8c1243dfa9f17",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 16710,
+          "sha256": "104e9662e416ef495fd7788c483c435ecede1f3b06dfc3d8a8e886ce832e355b",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-3-skin-3-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 45668,
+          "sha256": "114eb6c375e013577fed10de82fac3a533f936a2b334f05a1617a1bab83aefe8",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-3-skin-3-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 83062,
+          "sha256": "368b569166d28c42070599c453392affcc900e14a358afe111e4fd90be50b99c",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-3-skin-3-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-3-skin-3-256.webp"
+    },
+    "explorer-boy-stage-4-skin-0": {
+      "key": "explorer-boy-stage-4-skin-0",
+      "sourceName": "explorer-boy-stage-4-skin-0-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 1888702,
+      "sourceSha256": "a74ae302a4684795ae7faf189c71b1b16a23142a985980f469b4f97116219c51",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 28754,
+          "sha256": "d285fc035c84fe024af0957a4f825dfbb36882b642d4073fa41ff137084c84c1",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-4-skin-0-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 83754,
+          "sha256": "297a35e1c161a4d79f2efafadcdf0a916f7740be25c2e04b1af59b66deb50b8b",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-4-skin-0-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 158436,
+          "sha256": "ae9eee42aa05007aff161574b0eed981e7eee732c989712dc4b8f1a68353e50d",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-4-skin-0-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-4-skin-0-256.webp"
+    },
+    "explorer-boy-stage-4-skin-1": {
+      "key": "explorer-boy-stage-4-skin-1",
+      "sourceName": "explorer-boy-stage-4-skin-1-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 1840826,
+      "sourceSha256": "0d24c06dc8310323399efa4f760d182b226dae4b41646ddb0cf1dad51aec38e7",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 29066,
+          "sha256": "9d1989f9af57ff6b6ad1ff7e8aecb58726551097e17c77aabc58c0ee5ddcf304",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-4-skin-1-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 82070,
+          "sha256": "7199c653b9af5f1712bec7cf08007d85f71b4a619980d4c11a6b2298246f4b6a",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-4-skin-1-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 153124,
+          "sha256": "2131530c5855abce1084bff2c90e26c51ec38d217677d24b29a7f1cb5384aab4",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-4-skin-1-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-4-skin-1-256.webp"
+    },
+    "explorer-boy-stage-4-skin-2": {
+      "key": "explorer-boy-stage-4-skin-2",
+      "sourceName": "explorer-boy-stage-4-skin-2-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 1839107,
+      "sourceSha256": "30ca649bb22b40c1d719dfa23de1873af02058fe5ced9e39fde62ef6f9b3b516",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 28750,
+          "sha256": "1d11f16c03df9808c86151c7eda6c688a618b4c6df56a659bc208a40a3497918",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-4-skin-2-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 81490,
+          "sha256": "0fdde886c31ec7bf0f6960ec14d31ad3d159e73312b0536b1e7447ad51faf861",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-4-skin-2-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 152236,
+          "sha256": "78a1189109599f488d27747b91924dc396763e845a0023566b0034f4a038b592",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-4-skin-2-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-4-skin-2-256.webp"
+    },
+    "explorer-boy-stage-4-skin-3": {
+      "key": "explorer-boy-stage-4-skin-3",
+      "sourceName": "explorer-boy-stage-4-skin-3-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 1832041,
+      "sourceSha256": "e2b69f3b47ee96bad65582c61d1667dd106ce925967d4eb547f2a9acf50abc46",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "inset": {
+            "left": 10,
+            "right": 10,
+            "top": 10,
+            "bottom": 10
+          },
+          "bytes": 29172,
+          "sha256": "027f11e41c0ba2b397353e87a937ffc2048eb27acf941b2ca7186f8d64a86e20",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-4-skin-3-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "inset": {
+            "left": 20,
+            "right": 20,
+            "top": 20,
+            "bottom": 20
+          },
+          "bytes": 82148,
+          "sha256": "dd2d71365c4423e308214f3a464ded068f8a2f8cb13b84d51486aae5264519e7",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-4-skin-3-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "inset": {
+            "left": 31,
+            "right": 31,
+            "top": 31,
+            "bottom": 31
+          },
+          "bytes": 153046,
+          "sha256": "f1f99a2e8a4ecf3cbb598a7e16a9ea5c5b4b23ec78a147a80c0a7939ed820d77",
+          "url": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-4-skin-3-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/explorer-boy-stage-4-skin-3-256.webp"
     }
   }
 });
@@ -432,5 +3760,69 @@ export const EVOLUTION_SMALL_URLS = Object.freeze([
   "../../../trainer/assets/avatar-evolution/tiger-stage-1-256.webp",
   "../../../trainer/assets/avatar-evolution/tiger-stage-2-256.webp",
   "../../../trainer/assets/avatar-evolution/tiger-stage-3-256.webp",
-  "../../../trainer/assets/avatar-evolution/tiger-stage-4-256.webp"
+  "../../../trainer/assets/avatar-evolution/tiger-stage-4-256.webp",
+  "../../../trainer/assets/avatar-evolution/horse-stage-1-256.webp",
+  "../../../trainer/assets/avatar-evolution/horse-stage-2-256.webp",
+  "../../../trainer/assets/avatar-evolution/horse-stage-3-256.webp",
+  "../../../trainer/assets/avatar-evolution/horse-stage-4-256.webp",
+  "../../../trainer/assets/avatar-evolution/unicorn-moon-stage-1-256.webp",
+  "../../../trainer/assets/avatar-evolution/unicorn-moon-stage-2-256.webp",
+  "../../../trainer/assets/avatar-evolution/unicorn-moon-stage-3-256.webp",
+  "../../../trainer/assets/avatar-evolution/unicorn-moon-stage-4-256.webp",
+  "../../../trainer/assets/avatar-evolution/pegasus-star-stage-1-256.webp",
+  "../../../trainer/assets/avatar-evolution/pegasus-star-stage-2-256.webp",
+  "../../../trainer/assets/avatar-evolution/pegasus-star-stage-3-256.webp",
+  "../../../trainer/assets/avatar-evolution/pegasus-star-stage-4-256.webp",
+  "../../../trainer/assets/avatar-evolution/dragon-crystal-stage-1-256.webp",
+  "../../../trainer/assets/avatar-evolution/dragon-crystal-stage-2-256.webp",
+  "../../../trainer/assets/avatar-evolution/dragon-crystal-stage-3-256.webp",
+  "../../../trainer/assets/avatar-evolution/dragon-crystal-stage-4-256.webp",
+  "../../../trainer/assets/avatar-evolution/wolf-aurora-stage-1-256.webp",
+  "../../../trainer/assets/avatar-evolution/wolf-aurora-stage-2-256.webp",
+  "../../../trainer/assets/avatar-evolution/wolf-aurora-stage-3-256.webp",
+  "../../../trainer/assets/avatar-evolution/wolf-aurora-stage-4-256.webp",
+  "../../../trainer/assets/avatar-evolution/panther-shadow-stage-1-256.webp",
+  "../../../trainer/assets/avatar-evolution/panther-shadow-stage-2-256.webp",
+  "../../../trainer/assets/avatar-evolution/panther-shadow-stage-3-256.webp",
+  "../../../trainer/assets/avatar-evolution/panther-shadow-stage-4-256.webp",
+  "../../../trainer/assets/avatar-evolution/griffin-storm-stage-1-256.webp",
+  "../../../trainer/assets/avatar-evolution/griffin-storm-stage-2-256.webp",
+  "../../../trainer/assets/avatar-evolution/griffin-storm-stage-3-256.webp",
+  "../../../trainer/assets/avatar-evolution/griffin-storm-stage-4-256.webp",
+  "../../../trainer/assets/avatar-evolution/phoenix-stage-1-256.webp",
+  "../../../trainer/assets/avatar-evolution/phoenix-stage-2-256.webp",
+  "../../../trainer/assets/avatar-evolution/phoenix-stage-3-256.webp",
+  "../../../trainer/assets/avatar-evolution/phoenix-stage-4-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-girl-stage-1-skin-0-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-girl-stage-1-skin-1-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-girl-stage-1-skin-2-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-girl-stage-1-skin-3-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-girl-stage-2-skin-0-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-girl-stage-2-skin-1-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-girl-stage-2-skin-2-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-girl-stage-2-skin-3-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-girl-stage-3-skin-0-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-girl-stage-3-skin-1-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-girl-stage-3-skin-2-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-girl-stage-3-skin-3-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-girl-stage-4-skin-0-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-girl-stage-4-skin-1-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-girl-stage-4-skin-2-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-girl-stage-4-skin-3-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-boy-stage-1-skin-0-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-boy-stage-1-skin-1-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-boy-stage-1-skin-2-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-boy-stage-1-skin-3-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-boy-stage-2-skin-0-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-boy-stage-2-skin-1-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-boy-stage-2-skin-2-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-boy-stage-2-skin-3-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-boy-stage-3-skin-0-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-boy-stage-3-skin-1-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-boy-stage-3-skin-2-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-boy-stage-3-skin-3-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-boy-stage-4-skin-0-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-boy-stage-4-skin-1-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-boy-stage-4-skin-2-256.webp",
+  "../../../trainer/assets/avatar-evolution/explorer-boy-stage-4-skin-3-256.webp"
 ]);

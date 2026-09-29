@@ -93,6 +93,15 @@ test('serves only named probe and trainer assets with correct MIME types', async
         [256, 512, 768].map((width) => [
           `/trainer/assets/avatar-evolution/${figureId}-stage-${stage}-${width}.webp`, 'image/webp',
         ]))),
+      ...['horse', 'unicorn-moon', 'pegasus-star', 'dragon-crystal', 'wolf-aurora', 'panther-shadow',
+        'griffin-storm', 'phoenix'].flatMap((figureId) => [1, 2, 3, 4].flatMap((stage) =>
+        [256, 512, 768].map((width) => [
+          `/trainer/assets/avatar-evolution/${figureId}-stage-${stage}-${width}.webp`, 'image/webp',
+        ]))),
+      ...['explorer-girl', 'explorer-boy'].flatMap((figureId) => [1, 2, 3, 4].flatMap((stage) =>
+        [0, 1, 2, 3].flatMap((skin) => [256, 512, 768].map((width) => [
+          `/trainer/assets/avatar-evolution/${figureId}-stage-${stage}-skin-${skin}-${width}.webp`, 'image/webp',
+        ])))),
       ['/src/trainer/backup/format.js', 'text/javascript; charset=utf-8'],
       ['/src/trainer/backup/restore.js', 'text/javascript; charset=utf-8'],
       ['/src/trainer/backup/transport.js', 'text/javascript; charset=utf-8'],
@@ -183,6 +192,8 @@ test('blocks non-read methods, traversal, private trees, dotfiles, and missing f
       ['/.git/config', 'GET', 404],
       ['/trainer/../tests/trainer/adult.test.js', 'GET', 404],
       ['/trainer/%2e%2e/%2e%2e/.git/config', 'GET', 404],
+      ['/trainer/assets/avatar-evolution/dragon-stage-4.png', 'GET', 404],
+      ['/docs/design/avatar-evolution/phoenix-stage-4-concept-v3.png', 'GET', 404],
       ['/missing.js', 'GET', 404],
     ];
     for (const [path, method, status] of cases) {

@@ -1,4 +1,4 @@
-import {FIGURES} from '../avatar/catalog.js';
+import {FIGURES, figureById} from '../avatar/catalog.js';
 import {EVOLUTION_FORMS, evolutionOffer} from '../avatar/evolution.js';
 import {evolutionArt, evolutionPicture as artPicture} from '../avatar/evolution-art.js';
 import {figurePicture} from '../avatar/art.js';
@@ -200,16 +200,19 @@ function figureCard(figure, controls = []) {
 }
 
 function formPicture(form, {sizes = '(max-width: 600px) 42vw, 180px', appearance = null} = {}) {
-  if (evolutionArt(form.figureId, form.stage) === null && form.stage === 1) {
+  const skin = appearance?.skin ?? 0;
+  const preserveClothing = form.stage === 1 && figureById(form.figureId)?.group === 'human'
+    && (appearance?.clothing ?? 0) !== 0;
+  if (form.stage === 1 && (preserveClothing || evolutionArt(form.figureId, form.stage, skin) === null)) {
     return figurePicture({figureId: form.figureId, skin: appearance?.skin,
       clothing: appearance?.clothing, equipment: {}}, {sizes});
   }
-  if (evolutionArt(form.figureId, form.stage) === null) return el('div', {attrs: {class: 'evolution-placeholder', role: 'img', 'aria-label': 'Bild folgt'}}, [
+  if (evolutionArt(form.figureId, form.stage, skin) === null) return el('div', {attrs: {class: 'evolution-placeholder', role: 'img', 'aria-label': 'Bild folgt'}}, [
     el('span', {text: 'Bild folgt'}),
   ]);
   return artPicture(form.figureId, form.stage, {
     alt: `${FIGURES.find(({id}) => id === form.figureId)?.name ?? 'Figur'} – Stufe ${form.stage}`,
-    className: 'evolution-image', sizes,
+    className: 'evolution-image', sizes, skin,
   });
 }
 
@@ -223,10 +226,10 @@ function purchaseActionLabel(entry) {
   return entry.stage ? `Für ${entry.price} Punkte entwickeln` : `Für ${entry.price} Punkte freischalten`;
 }
 
-function purchaseDialog({preview, entry, onConfirm, onSelect, trigger, onComplete}) {
+function purchaseDialog({preview, entry, appearance, onConfirm, onSelect, trigger, onComplete}) {
   const dialog = el('dialog', {attrs: {class: 'purchase-dialog', 'aria-labelledby': 'purchase-dialog-title'}}, [
     el('h2', {text: 'Kauf prüfen', attrs: {id: 'purchase-dialog-title'}}),
-    entry.figureId && entry.stage ? formPicture(entry, {sizes: '(max-width: 600px) 70vw, 256px'})
+    entry.figureId && entry.stage ? formPicture(entry, {sizes: '(max-width: 600px) 70vw, 256px', appearance})
       : entry.unlock ? figurePicture({figureId: entry.id, equipment: {}}, {sizes: '256px'}) : null,
     el('p', {text: entry.name}),
     el('dl', {attrs: {class: 'summary-list'}}, [
@@ -431,7 +434,7 @@ export function renderPurchases({
     try {
       const preview = await commerce.preview({profileId, articleId: entry.id});
       ui.dialogOpen = true;
-      purchaseDialog({preview, entry, trigger, onComplete: () => {
+      purchaseDialog({preview, entry, appearance, trigger, onComplete: () => {
         ui.dialogOpen = false;
         rerender({focus: true});
       }, onSelect: () => run(
@@ -457,8 +460,8 @@ export function renderPurchases({
   if (ui.tab === 'mine') {
     if (model.selected) {
       const selectedFigure = FIGURES.find(({id}) => id === model.selected.figureId);
-      const selectedPicture = evolutionArt(model.selected.figureId, model.selected.stage)
-        ? formPicture(model.selected, {sizes: '(max-width: 600px) 70vw, 320px'})
+      const selectedPicture = evolutionArt(model.selected.figureId, model.selected.stage, appearance?.skin ?? 0)
+        ? formPicture(model.selected, {sizes: '(max-width: 600px) 70vw, 320px', appearance})
         : figurePicture({
           figureId: model.selected.figureId,
           skin: appearance?.skin,
@@ -488,8 +491,8 @@ export function renderPurchases({
       for (const form of EVOLUTION_FORMS.filter((candidate) =>
         candidate.figureId === figureId && ui.view.accounts[profileId].entitledEvolutionIds.includes(candidate.id))) {
         const selected = model.selected?.figureId === figureId && model.selected.stage === form.stage;
-        const picture = evolutionArt(figureId, form.stage)
-          ? formPicture(form)
+        const picture = evolutionArt(figureId, form.stage, appearance?.skin ?? 0)
+          ? formPicture(form, {appearance})
           : form.stage === 1 ? figurePicture({figureId, skin: appearance?.skin, clothing: appearance?.clothing, equipment: {}},
             {sizes: '(max-width: 600px) 42vw, 180px'}) : formPicture(form);
         grid.append(el('article', {attrs: {class: 'commerce-card owned-form-card', 'data-owned-stage': String(form.stage)}}, [
@@ -516,7 +519,7 @@ export function renderPurchases({
         : offer.status === 'base-locked'
           ? el('p', {text: 'Zuerst die Grundfigur freischalten.'})
           : el('div', {attrs: {class: 'evolution-next'}}, [
-            nextForm?.artAvailable ? formPicture(nextForm, {sizes: '(max-width: 600px) 35vw, 160px'}) : null,
+            nextForm?.artAvailable ? formPicture(nextForm, {sizes: '(max-width: 600px) 35vw, 160px', appearance}) : null,
             el('div', {}, [
               el('p', {text: `Nächste Form: Stufe ${offer.nextStage} · Preis: ${offer.price} Punkte`}),
               el('p', {text: `Verfügbar: ${model.availablePoints} Punkte · Noch ${offer.missingPoints} Punkte fehlen`}),

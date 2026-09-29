@@ -1,0 +1,39 @@
+{
+  "source": "dragon-crystal-stage-1-v1.png",
+  "figureId": "dragon-crystal",
+  "stage": 1,
+  "status": "selected-production-source",
+  "createdOn": "2026-09-29",
+  "generator": "byte-identical existing source reuse",
+  "model": null,
+  "generationKind": "existing-source-byte-copy",
+  "sha256": "21650fcf744d1b000d17d21036ce895f8aad610f69789719d48bb44821bfb862",
+  "width": 1199,
+  "height": 1312,
+  "colorMode": "RGBA",
+  "personalApproval": true,
+  "approval": "User approved all ten rows including griffin/phoenix stage-4 v3 on 2026-09-29: Ja, so umsetzen. This is design approval; individual image QA is recorded separately.",
+  "references": [
+    {
+      "path": "../avatar-shop-sources/dragon-crystal.png",
+      "role": "unchanged existing source",
+      "sha256": "21650fcf744d1b000d17d21036ce895f8aad610f69789719d48bb44821bfb862"
+    }
+  ],
+  "prompt": null,
+  "provenanceSidecar": "../avatar-shop-sources/dragon-crystal.json",
+  "visualReview": {
+    "reviewedOn": "2026-09-29T20:51:04.698Z",
+    "reviewer": "controller",
+    "method": "All ten source contact sheets inspected on light and dark backgrounds; targeted skin-3 corrections additionally inspected individually.",
+    "result": "PASS",
+    "checks": [
+      "approved identity and progression",
+      "complete figure and expected anatomy",
+      "real transparent background",
+      "consistent human skin options and fixed developed clothing",
+      "griffin lightning and phoenix surrounding flames"
+    ],
+    "derivativeRequirement": "4% transparent inset on every side for new 64 derivative sets; preserve raw source pixels."
+  }
+}

@@ -101,9 +101,18 @@ test('worker installs the complete scoped trainer app without Google or personal
     'https://example.test/repo/src/drive/auth.js',
   ]) assert.ok(installed.includes(expected), expected);
   assert.equal(installed.filter((url) => url.includes('/assets/art/')).length, 18);
-  for (const stage of [1, 2, 3, 4]) {
-    assert.ok(installed.includes(`${scope}assets/avatar-evolution/tiger-stage-${stage}-256.webp`));
-    assert.equal(installed.includes(`${scope}assets/avatar-evolution/tiger-stage-${stage}-768.webp`), false);
+  const evolutionIds = ['dragon', 'deer-mist', 'tiger', 'horse', 'unicorn-moon', 'pegasus-star',
+    'dragon-crystal', 'wolf-aurora', 'panther-shadow', 'griffin-storm', 'phoenix'];
+  const evolutionKeys = evolutionIds.flatMap((figureId) => [1, 2, 3, 4].map((stage) => `${figureId}-stage-${stage}`));
+  for (const figureId of ['explorer-girl', 'explorer-boy']) {
+    for (const stage of [1, 2, 3, 4]) {
+      for (const skin of [0, 1, 2, 3]) evolutionKeys.push(`${figureId}-stage-${stage}-skin-${skin}`);
+    }
+  }
+  assert.equal(evolutionKeys.length, 76);
+  for (const key of evolutionKeys) {
+    assert.ok(installed.includes(`${scope}assets/avatar-evolution/${key}-256.webp`), key);
+    assert.equal(installed.includes(`${scope}assets/avatar-evolution/${key}-768.webp`), false, key);
   }
   assert.equal(installed.some((url) => /\/assets\/art\/.*-(?:512|768|960|1086|1440)\.webp$/u.test(url)), false);
   assert.equal(installed.some((url) => /accounts\.google|googleapis|\.json(?:$|\?)/u.test(url)), false);

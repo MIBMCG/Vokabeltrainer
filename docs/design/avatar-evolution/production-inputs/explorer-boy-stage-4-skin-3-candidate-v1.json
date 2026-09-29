@@ -1,0 +1,21 @@
+{
+  "source": "explorer-boy-stage-4-skin-3-candidate-v1.png",
+  "figureId": "explorer-boy",
+  "stage": 4,
+  "skin": 3,
+  "status": "superseded-production-edit-input",
+  "generator": "built-in image_gen",
+  "sha256": "c183affa07638a51405e4dccbd67696ae96971d16de462c3a270f2182f01681e",
+  "prompt": "Edit reference image 1 into skin-tone variant 3 of exactly the SAME fictional child avatar. Reference 1 supplies the exact approved costume, pose, face, hairstyle, equipment, silhouette, proportions and transparent composition: preserve ALL of those. Reference 2 is ONLY the required skin-tone reference from this child's original app avatar. Match that skin color consistently on the face, ears, neck and every visible hand/forearm. Keep the brown eyes and brown hair exactly as in reference 1. Do NOT borrow the shorts, basic shirt, pose or equipment from reference 2, and do NOT change facial identity, age, hairstyle, costume details, background or colors of any non-skin area. Maintain the existing highlights/shadows adapted naturally to the required skin tone. This is explorer-boy, stage 4, skin option 3: one fully clothed age-appropriate adventure child, same two hands and feet, same single continuous compass staff and flowing magical mantle as image 1. Full body with all extremities and accessories complete, with genuinely transparent margin. True transparent alpha background; no swatches, comparison panels, text, scenery or extra figures. One faithful production variant, not a new character design.",
+  "references": [
+    {
+      "path": "../../avatar-evolution-sources/explorer-boy-stage-4-skin-0-v1.png",
+      "sha256": "a74ae302a4684795ae7faf189c71b1b16a23142a985980f469b4f97116219c51"
+    },
+    {
+      "path": "../../avatar-shop-sources/explorer-boy-skin-3.png",
+      "sha256": "809709e35a96f0664211f56fe4451fc138fef22a08e6108e9d4d623230056f06"
+    }
+  ],
+  "reason": "Skin option 3 too light compared with existing base; corrected to match."
+}

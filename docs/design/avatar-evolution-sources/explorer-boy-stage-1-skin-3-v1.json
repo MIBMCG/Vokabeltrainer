@@ -1,0 +1,40 @@
+{
+  "source": "explorer-boy-stage-1-skin-3-v1.png",
+  "figureId": "explorer-boy",
+  "stage": 1,
+  "skin": 3,
+  "status": "selected-production-source",
+  "createdOn": "2026-09-29",
+  "generator": "byte-identical existing source reuse",
+  "model": null,
+  "generationKind": "existing-source-byte-copy",
+  "sha256": "809709e35a96f0664211f56fe4451fc138fef22a08e6108e9d4d623230056f06",
+  "width": 1086,
+  "height": 1448,
+  "colorMode": "RGBA",
+  "personalApproval": true,
+  "approval": "User approved all ten rows including griffin/phoenix stage-4 v3 on 2026-09-29: Ja, so umsetzen. This is design approval; individual image QA is recorded separately.",
+  "references": [
+    {
+      "path": "../avatar-shop-sources/explorer-boy-skin-3.png",
+      "role": "unchanged existing source",
+      "sha256": "809709e35a96f0664211f56fe4451fc138fef22a08e6108e9d4d623230056f06"
+    }
+  ],
+  "prompt": null,
+  "provenanceSidecar": "../avatar-shop-sources/explorer-boy-skin-3.json",
+  "visualReview": {
+    "reviewedOn": "2026-09-29T20:51:04.722Z",
+    "reviewer": "controller",
+    "method": "All ten source contact sheets inspected on light and dark backgrounds; targeted skin-3 corrections additionally inspected individually.",
+    "result": "PASS",
+    "checks": [
+      "approved identity and progression",
+      "complete figure and expected anatomy",
+      "real transparent background",
+      "consistent human skin options and fixed developed clothing",
+      "griffin lightning and phoenix surrounding flames"
+    ],
+    "derivativeRequirement": "4% transparent inset on every side for new 64 derivative sets; preserve raw source pixels."
+  }
+}

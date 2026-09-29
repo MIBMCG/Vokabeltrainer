@@ -1,0 +1,20 @@
+{
+  "source": "unicorn-moon-stage-2-candidate-v1.png",
+  "figureId": "unicorn-moon",
+  "stage": 2,
+  "status": "superseded-production-edit-input",
+  "generator": "built-in image_gen",
+  "sha256": "fe219af1ebc33a4b5602f9b0ea1a5c26a7e736c892a42e0d1c66ce94725a09a0",
+  "prompt": "Produce ONE full-body transparent production avatar for the approved vocabulary-game evolution gallery, ages 10–13. Reference 1 is the personally approved concept board: match ONLY row MOND-EINHORN, column STUFE 2. Reference 2 is the existing base identity. Do not draw the board or multiple figures. Faithfully implement that exact approved stage as an individual polished painterly cutout, preserving the source figure's identity and distinctive style. Same white unicorn with silver mane and tail, blue eyes and exactly one centered spiraled horn. Four horse legs, one tail, no wings.\nSpecific stage: Moon explorer: elegant silver crescent clasp and short dark blue star-patterned saddle cloth. Simple restrained celestial ornament, same ordinary white coat.\nMatch the board's pose and gear, colors and transformation strength. Full complete figure including every ear, mane tip, hoof and tail tip, centered with at least 6% completely transparent margin around the entire silhouette. Premium storybook game illustration with rich detail and clearly readable large shapes at 256px; calm noble friendly expression, not childish plastic/chibi. Anatomically coherent, no extra limbs or duplicate accessories. Genuine transparent alpha outside figure, no background, scenery, floor, ground shadow, frame, text, watermark or detached decorative objects. Square high resolution output. This is one unicorn-moon, stage 2, not a comparison sheet.",
+  "references": [
+    {
+      "path": "../remaining-equines-crystal-concept-v1.png",
+      "sha256": "1b1a0dc6f37d270bc851c16880569f41da0b034b1c6f8ca4b66cc62c3297fe5d"
+    },
+    {
+      "path": "../../avatar-shop-sources/unicorn-moon.png",
+      "sha256": "27b8f185aae2488c7186a308b49239b1813dd1b77d81ec2c01237e1d231da480"
+    }
+  ],
+  "reason": "Stage 2 equipment too close to stage 3; simplified to match approved progression."
+}

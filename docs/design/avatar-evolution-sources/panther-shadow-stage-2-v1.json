@@ -1,0 +1,43 @@
+{
+  "source": "panther-shadow-stage-2-v1.png",
+  "figureId": "panther-shadow",
+  "stage": 2,
+  "status": "selected-production-source",
+  "createdOn": "2026-09-29",
+  "generator": "built-in image_gen",
+  "model": "not exposed by tool",
+  "generationKind": "single-approved-form",
+  "sha256": "315ea4e182dd8a12997da15d5f8506b94f904029796e87997b5348824b12841d",
+  "width": 1254,
+  "height": 1254,
+  "colorMode": "RGBA",
+  "personalApproval": true,
+  "approval": "User approved all ten rows including griffin/phoenix stage-4 v3 on 2026-09-29: Ja, so umsetzen. This is design approval; individual image QA is recorded separately.",
+  "references": [
+    {
+      "path": "../avatar-evolution/remaining-mythical-animals-concept-v1.png",
+      "role": "approved design or edit target",
+      "sha256": "4765378d3b3ac4a8060b8504761b2b2568000fb83f50d0de43875358f2b2e564"
+    },
+    {
+      "path": "../avatar-shop-sources/panther-shadow.png",
+      "role": "original character identity / skin reference",
+      "sha256": "734386d788e4b0b0fb9c50cfb8bddbdebeed6b9374fd3dcc893d9a114a6927a4"
+    }
+  ],
+  "prompt": "Create ONE full-body transparent production avatar, matching the personally approved concept board exactly for row SCHATTENPANTHER, column STUFE 2. Reference 1: approved board, use only the indicated cell. Reference 2: original character identity. Do not reproduce any grid, labels or other characters. Identity: same sleek black/deep-indigo panther, violet eyes, round feline ears, faint violet star tracery in fur, exactly four paws and one long curled tail, NO horns or wings.\nStage-specific direction: Simple dark leather violet travel harness with a polished obsidian/amethyst pendant, elegant restrained gear, no heavy armor.\nPolished premium painterly storybook fantasy game style for ages 10–13, loyal to the concept's gear, colors, face and evolution strength. Friendly noble expression, no horror, no plastic or baby/chibi style. Correct complete anatomy. Entire ears/crown/horns/wings/paws/feet/tail and all ornament tips fully included, at least 6 percent completely empty transparent margin on ALL sides. Bold readable masses at 256 pixels. Single centered figure, square high-resolution cutout. True transparent alpha including between limbs/wings, no scenery, background, floor, ground shadow, pedestal, text, watermark, separate objects or frame. The output is exactly panther-shadow stage 2.",
+  "visualReview": {
+    "reviewedOn": "2026-09-29T20:51:04.842Z",
+    "reviewer": "controller",
+    "method": "All ten source contact sheets inspected on light and dark backgrounds; targeted skin-3 corrections additionally inspected individually.",
+    "result": "PASS",
+    "checks": [
+      "approved identity and progression",
+      "complete figure and expected anatomy",
+      "real transparent background",
+      "consistent human skin options and fixed developed clothing",
+      "griffin lightning and phoenix surrounding flames"
+    ],
+    "derivativeRequirement": "4% transparent inset on every side for new 64 derivative sets; preserve raw source pixels."
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "source": "unicorn-moon-stage-2-v1.png",
+  "figureId": "unicorn-moon",
+  "stage": 2,
+  "status": "selected-production-source",
+  "createdOn": "2026-09-29",
+  "generator": "built-in image_gen",
+  "model": "not exposed by tool",
+  "generationKind": "targeted-stage-equipment-correction",
+  "sha256": "14a26426112d57c69f6415e7f9bd113cdee687d22ea9b4577b1145fcb2fb3228",
+  "width": 1254,
+  "height": 1254,
+  "colorMode": "RGBA",
+  "personalApproval": true,
+  "approval": "User approved all ten rows including griffin/phoenix stage-4 v3 on 2026-09-29: Ja, so umsetzen. This is design approval; individual image QA is recorded separately.",
+  "references": [
+    {
+      "path": "../avatar-evolution/production-inputs/unicorn-moon-stage-2-candidate-v1.png",
+      "role": "approved design or edit target",
+      "sha256": "fe219af1ebc33a4b5602f9b0ea1a5c26a7e736c892a42e0d1c66ce94725a09a0"
+    }
+  ],
+  "prompt": "Edit this single unicorn stage-2 production candidate to match the simpler approved progression. Keep exactly the same white unicorn, blue eyes, single silver horn, silver mane/tail, four legs/hooves, face, pose and painterly finish. Make ONLY the equipment much SIMPLER: REMOVE every armored leg guard and jeweled shin piece so all four white lower legs are bare. REMOVE ornate chest plate, large blue gem and hanging jewel chains. Replace with just a narrow plain silver neckband bearing ONE small crescent charm. Keep ONE small short dark-blue saddlecloth with a subtle silver crescent/star pattern and a simple silver trim, no rigid barding or elaborate saddle, no row of hanging gems. This is a modest first upgrade, clearly distinct from the heavily armored stage 3. All anatomy unchanged; true transparent alpha background. Entire horn, ears, hooves and tail included with clear transparent margin, no ground shadow or text. One complete figure only.",
+  "visualReview": {
+    "reviewedOn": "2026-09-29T20:51:04.896Z",
+    "reviewer": "controller",
+    "method": "All ten source contact sheets inspected on light and dark backgrounds; targeted skin-3 corrections additionally inspected individually.",
+    "result": "PASS",
+    "checks": [
+      "approved identity and progression",
+      "complete figure and expected anatomy",
+      "real transparent background",
+      "consistent human skin options and fixed developed clothing",
+      "griffin lightning and phoenix surrounding flames"
+    ],
+    "derivativeRequirement": "4% transparent inset on every side for new 64 derivative sets; preserve raw source pixels."
+  }
+}

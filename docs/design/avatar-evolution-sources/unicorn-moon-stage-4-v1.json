@@ -1,0 +1,43 @@
+{
+  "source": "unicorn-moon-stage-4-v1.png",
+  "figureId": "unicorn-moon",
+  "stage": 4,
+  "status": "selected-production-source",
+  "createdOn": "2026-09-29",
+  "generator": "built-in image_gen",
+  "model": "not exposed by tool",
+  "generationKind": "single-approved-form",
+  "sha256": "e5dbbd04c81c7bce52f551c41b75782470f32bb8687d0d7cc9532082b2e0dd31",
+  "width": 1254,
+  "height": 1254,
+  "colorMode": "RGBA",
+  "personalApproval": true,
+  "approval": "User approved all ten rows including griffin/phoenix stage-4 v3 on 2026-09-29: Ja, so umsetzen. This is design approval; individual image QA is recorded separately.",
+  "references": [
+    {
+      "path": "../avatar-evolution/remaining-equines-crystal-concept-v1.png",
+      "role": "approved design or edit target",
+      "sha256": "1b1a0dc6f37d270bc851c16880569f41da0b034b1c6f8ca4b66cc62c3297fe5d"
+    },
+    {
+      "path": "../avatar-shop-sources/unicorn-moon.png",
+      "role": "original character identity / skin reference",
+      "sha256": "27b8f185aae2488c7186a308b49239b1813dd1b77d81ec2c01237e1d231da480"
+    }
+  ],
+  "prompt": "Produce ONE full-body transparent production avatar for the approved vocabulary-game evolution gallery, ages 10–13. Reference 1 is the personally approved concept board: match ONLY row MOND-EINHORN, column STUFE 4. Reference 2 is the existing base identity. Do not draw the board or multiple figures. Faithfully implement that exact approved stage as an individual polished painterly cutout, preserving the source figure's identity and distinctive style. Same white unicorn with silver mane and tail, blue eyes and exactly one centered spiraled horn. Four horse legs, one tail, no wings.\nSpecific stage: Legendary lunar spirit: dramatically longer flowing silver-white luminous mane and one long tail, a tall single crystalline horn, delicate moon lines on white coat and sapphire accents. Large majestic flowing hair silhouette, limited armor, no wings or floating moon disk.\nMatch the board's pose and gear, colors and transformation strength. Full complete figure including every ear, mane tip, hoof and tail tip, centered with at least 6% completely transparent margin around the entire silhouette. Premium storybook game illustration with rich detail and clearly readable large shapes at 256px; calm noble friendly expression, not childish plastic/chibi. Anatomically coherent, no extra limbs or duplicate accessories. Genuine transparent alpha outside figure, no background, scenery, floor, ground shadow, frame, text, watermark or detached decorative objects. Square high resolution output. This is one unicorn-moon, stage 4, not a comparison sheet.",
+  "visualReview": {
+    "reviewedOn": "2026-09-29T20:51:04.902Z",
+    "reviewer": "controller",
+    "method": "All ten source contact sheets inspected on light and dark backgrounds; targeted skin-3 corrections additionally inspected individually.",
+    "result": "PASS",
+    "checks": [
+      "approved identity and progression",
+      "complete figure and expected anatomy",
+      "real transparent background",
+      "consistent human skin options and fixed developed clothing",
+      "griffin lightning and phoenix surrounding flames"
+    ],
+    "derivativeRequirement": "4% transparent inset on every side for new 64 derivative sets; preserve raw source pixels."
+  }
+}
