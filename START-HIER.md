@@ -1,10 +1,12 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Aktuelle Fortsetzung: Restwartezeiten untersucht (29.09.2026).** Die Diagnose
-von Kauf und Lernbereichsübernahme ist abgeschlossen; ein begrenzter Entwurf
-für mehr gleichzeitig übertragene Kaufdateien wartet auf Nutzerantwort.
-Produkt `ee7e174` und Cache v39 unverändert.
-[Aktuelle Übergabe](docs/handoffs/2026-09-29-restwartezeiten.md).
+**Aktueller Abschluss: größere Kauf-Uploadgruppen (29.09.2026).** Der
+bestätigte Entwurf ist als `31fcf02` umgesetzt: bis sechs Kaufdateien zugleich,
+alle Prüfungen erhalten. Synthetisch 8,782 statt 10,907 Sekunden, 659 Node-
+und 13 Browserfälle PASS; unabhängig geprüft, als Cache v40 privat
+bereitgestellt und auf GitHub gesichert.
+Das reale Kaufziel unter zehn Sekunden bleibt offen. Keine neue Pause.
+[Aktuelle Übergabe](docs/handoffs/2026-09-29-kauf-uploadgruppen.md).
 
 **Aktueller Abschluss: Tabellenkorrekturen (29.09.2026).** Feldwechsel erhalten
 den Cursor; korrigierte Pflichtwerte werden automatisch freigegeben. Auch neu

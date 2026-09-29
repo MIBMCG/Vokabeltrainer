@@ -72,6 +72,11 @@ verursacht aber noch 38 Anfragen.
 
 ## Vorgeschlagener nächster Schritt
 
+Nachtrag: Dieser begrenzte Entwurf wurde anschließend bestätigt und umgesetzt.
+Den Vorher-/Nachher-Nachweis enthält der
+[Kauf-Uploadgruppen-Bericht](2026-09-29-kauf-uploadgruppen.md).
+Die folgenden Absätze bewahren den ursprünglichen Vorschlag vor Freigabe.
+
 Als begrenzte Kaufkorrektur bis zu sechs statt drei bereits dauerhaft
 reservierte Dateien gleichzeitig übertragen und nachlesen. Im gemessenen
 Fünf-Dateien-Kauf würde die zweite Uploadrunde entfallen. Die Größenordnung

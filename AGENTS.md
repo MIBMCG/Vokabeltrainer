@@ -1,14 +1,18 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-**Aktuelle Fortsetzung: Restwartezeiten am 29.09.2026.** Erneute Weiterarbeit
-beauftragt. Die synthetische Diagnose belegt zwei aufeinander wartende
-Kauf-Uploadgruppen und ein doppeltes vollständiges Einlesen bei der
-Lernbereichsübernahme. Kurzer Entwurf für bis zu sechs gleichzeitige
-Kaufdateien ist vorgelegt; Nutzerantwort noch offen. Keine Produktänderung
-oder neue Bereitstellung aus der Diagnose ableiten. Einstieg:
-[Restwartezeiten-Übergabe](docs/handoffs/2026-09-29-restwartezeiten.md).
-Die zusätzlich angefragte typische Wortliste und Kinder-/Lektionszuordnung
-für den Praxistest liegen noch nicht vor; Bestände erhalten.
+**Aktueller Abschluss: Kauf-Uploadgruppen am 29.09.2026.** Der Nutzer hat
+den begrenzten Entwurf bestätigt. Produktcommit `31fcf02` überträgt bis zu
+sechs statt drei Kaufdateien gleichzeitig; alle Prüfungen bleiben erhalten.
+Die synthetische Gesamtwartezeit mit 500 ms je Anfrage sinkt von 10,907 auf
+8,782 Sekunden (19,5 %); eine reale Zeit unter zehn Sekunden ist noch offen.
+659/659 Gesamttests, 147 gezielte Node-Tests, 13/13 Browserfälle und unabhängige
+Reviews PASS. Cache v40 privat aktiv, zwölf ausgelieferte Dateien bytegleich;
+Produkt exakt auf GitHub bestätigt. Keine neue Pause.
+Einstieg und Bereitstellungsnachweis:
+[Kauf-Uploadgruppen-Übergabe](docs/handoffs/2026-09-29-kauf-uploadgruppen.md).
+Typische Wortliste und Kinder-/Lektionszuordnung für den Import-Praxistest
+fehlen weiterhin. Die Lernbereichsübernahme ist nur diagnostiziert; kein
+Auftrag für eine ungeprüfte Abkürzung. Bestehende Bestände erhalten.
 
 **Aktueller Abschluss: Importkorrekturen am 29.09.2026.** Der Nutzer hat den
 kurzen Entwurf ausdrücklich bestätigt. Produktcommit `ee7e174` erhält bei

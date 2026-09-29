@@ -1,5 +1,10 @@
 # Übergabe: Diagnose der Restwartezeiten
 
+Nachtrag: Der Nutzer hat den Entwurf anschließend mit „ja, Teste das“
+bestätigt. Umsetzung und aktuelle Nachweise stehen in der
+[Kauf-Uploadgruppen-Übergabe](2026-09-29-kauf-uploadgruppen.md).
+Der folgende Text dokumentiert den damaligen Diagnosestand.
+
 Stand: 29.09.2026. Der Nutzer hat erneut Weiterarbeit beauftragt. Keine Pause.
 Produkt bleibt `ee7e174`, privat Cache v39; Ausgang der Diagnose ist der
 saubere Zweig `codex/vokabeltrainer-v1` auf `fa078c0`. Es wurden keine

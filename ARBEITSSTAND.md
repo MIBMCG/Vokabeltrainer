@@ -1,14 +1,19 @@
 # Arbeitsstand
 
-**Fortsetzung: Restwartezeiten untersucht (29.09.2026).** Zwei isolierte
-Messläufe grenzen die offenen Tempopunkte ein: fünf Kaufdateien warten in zwei
-Uploadgruppen aufeinander; die Übernahme eines aktivierten Lernbereichs liest
-denselben Bestand für Vorschau und Bestätigung zweimal vollständig.
-Kauf: 31 Anfragen. Übernahme: 79 + 79 + 38 Anfragen für Vorschau,
-Bestätigung und ersten Abgleich. Keine neue Produktänderung/Bereitstellung.
-Ein kurzer Entwurf für bis zu sechs gleichzeitige Kaufdateien liegt dem Nutzer
-zur Bestätigung vor; eine typische echte Wortliste wurde für den Praxistest
-angefragt. [Diagnose und nächste Schritte](docs/handoffs/2026-09-29-restwartezeiten.md).
+**Abgeschlossen: größere Kauf-Uploadgruppen (29.09.2026).** Der Nutzer
+bestätigt den Entwurf; Produkt `31fcf02229eee8e866d607b9d23cdaa601677680`
+überträgt bis sechs statt drei Kaufdateien gleichzeitig und erhält sämtliche
+Prüfungen. Der normale Fünf-Dateien-Kauf braucht eine statt zwei Gruppen.
+Mit 500 ms künstlicher Verzögerung je Google-Anfrage sinkt die gemessene
+Gesamtwartezeit von 10,907 auf 8,782 Sekunden (19,5 %); weiterhin 31 Anfragen.
+147 gezielte Node-Tests, finale 659/659 Gesamttests, 13/13 Browserfälle und
+unabhängige Reviews PASS. Cache v40 privat aktiv, zwölf ausgelieferte Dateien
+bytegleich geprüft. Produkt exakt auf GitHub bestätigt. Keine neue
+Pause. [Bericht](docs/reports/2026-09-29-kauf-uploadgruppen.md) und
+[aktuelle Übergabe](docs/handoffs/2026-09-29-kauf-uploadgruppen.md) enthalten
+Bereitstellungsnachweis und nächste Schritte. Reale Kaufzeit unter zehn
+Sekunden und typische Import-Wortliste bleiben offen. Die langsamere
+Lernbereichsübernahme ist nur diagnostiziert und nicht Teil dieses Pakets.
 
 **Abgeschlossen: Tabellenkorrekturen (29.09.2026).** Der bestätigte Entwurf
 ist als Produktcommit `ee7e17454af04526715df58c4f3767259f47414e` integriert

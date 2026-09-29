@@ -92,6 +92,14 @@ Test ersetzt keine Abnahme mit einem zweiten Gerät.
 
 ## Kaufpfad für das 20-Sekunden-Ziel
 
+Nachtrag vom 29.09.2026: Produkt `31fcf02` erhöht die Gruppen unveränderlicher
+Kaufdateien von drei auf höchstens sechs. Jede Gruppe wird weiterhin vollständig
+verifiziert, bevor die nächste beginnt; erst nach allen Gruppen darf der
+Kaufkopf geschrieben werden. Der normale Fünf-Dateien-Kauf spart eine Gruppe.
+Der synthetische Vergleich bei 500 ms je Anfrage ergibt 8,782 statt 10,907
+Sekunden insgesamt bei unverändert 31 Anfragen; reale Laufzeit bleibt separat
+zu messen. [Prüf- und Tempobericht](reports/2026-09-29-kauf-uploadgruppen.md).
+
 Die normale Kaufvorschau berechnet Preis und verbleibendes Guthaben aus der
 vollständig geprüften lokalen Kaufhistorie. Bei fehlendem oder ungültigem
 Cache bricht sie ab; die normale Bestätigung startet keinen vollständigen
