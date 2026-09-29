@@ -1,5 +1,11 @@
 # Hier mit der Weiterarbeit beginnen
 
+**Aktuell: Google-Hinweis in der Galerie.** Die beauftragte Fortsetzung
+untersucht die veraltete Anzeige nach automatischer Wiederaufnahme der Sitzung.
+Die begrenzte Korrektur ist geprüft: 646 Node-Tests, 14 Browserfälle und
+unabhängige Prüfung PASS. Private Bereitstellung folgt.
+[Aktuelle Diagnose und Übergabe](docs/handoffs/2026-09-29-google-statusanzeige.md).
+
 **Aktueller Abschluss: Tiger.** Die persönlich bestätigten vier Formen sind
 als Produktcommit `05d21b9` auf GitHub gesichert und privat mit Cache v35
 verfügbar. 646 gesamte Node-Tests, 25 gezielte Node-Tests, sechs Browserfälle

@@ -1,5 +1,14 @@
 # Arbeitsstand
 
+**Aktuelle Fortsetzung: Google-Statusanzeige.** Nach dem Tiger-Abschluss hat
+der Nutzer die Weiterarbeit ausdrücklich beauftragt. Im bestehenden Testbrowser
+verschwindet der Verbindungshinweis ohne neue Anmeldung beim Galeriewechsel.
+Der Client aktualisiert den Kaufbereich bei wiederhergestellter Verbindung
+bisher nicht zuverlässig. Die begrenzte Anzeigekorrektur ist reproduziert
+und geprüft: 646/646 Node-Tests, 14/14 Browserfälle, unabhängige Spec-/Codeprüfung
+PASS. Cache v36 ist vorbereitet; der Serverpfad bleibt unverändert.
+[Aktuelle Übergabe](docs/handoffs/2026-09-29-google-statusanzeige.md).
+
 **Abgeschlossen am 29.09.2026: Tiger.** Der Nutzer bestätigt den
 [Konzeptbogen](docs/design/avatar-evolution/tiger-stages-concept-v1.png) und
 die Galerieeinbindung mit „Ja, genau so umsetzen“. Produktcommit

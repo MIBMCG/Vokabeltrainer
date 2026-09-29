@@ -3,6 +3,7 @@ import {el, field, button, message} from './dom.js';
 import {adultStateChanged, openAdultSettings, pinResetForm, renderAdult} from './adult.js';
 import {practiceRenderKey, practiceUpdateBlocker, renderPractice, renderPracticeLanding} from './practice.js';
 import {renderAvatar, renderJourney} from './rewards.js';
+import {refreshPurchaseConnection} from './purchases.js';
 import {refreshSyncConnection} from './sync.js';
 import {hasActiveGoogleSession, syncStatusLabel, syncStatusMessage} from './status.js';
 
@@ -446,6 +447,7 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, commer
     },
     syncStatusChanged(status) {
       if (destroyed) return;
+      refreshPurchaseConnection(root);
       const node = root.querySelector('[data-sync-status]');
       if (!node) return;
       const connected = hasActiveGoogleSession(auth);

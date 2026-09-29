@@ -157,6 +157,40 @@ function rerenderCurrentPurchase(ui, {focus = false} = {}) {
   });
 }
 
+export function refreshPurchaseConnection(root) {
+  const owner = root.closest?.('#app') ?? root;
+  const ui = stateByOwner.get(owner);
+  const target = ui?.purchaseRender;
+  if (!target?.root.isConnected || !root.contains(target.root)) return;
+  const authenticated = target.commerce.isConnected?.() ?? true;
+  if (authenticated === ui.authenticated) return;
+  const purchaseRoot = target.root;
+  const focused = document.activeElement;
+  let restoreFocus = null;
+  if (purchaseRoot.contains(focused)) {
+    const tabs = [...purchaseRoot.querySelectorAll('.commerce-tabs button')];
+    const tabIndex = tabs.indexOf(focused);
+    const card = focused.closest('.commerce-card');
+    if (tabIndex >= 0) {
+      restoreFocus = () => purchaseRoot.querySelectorAll('.commerce-tabs button')[tabIndex];
+    } else if (card) {
+      const cardIndex = [...purchaseRoot.querySelectorAll('.commerce-card')].indexOf(card);
+      const buttonIndex = [...card.querySelectorAll('button')].indexOf(focused);
+      if (cardIndex >= 0 && buttonIndex >= 0) {
+        restoreFocus = () => purchaseRoot.querySelectorAll('.commerce-card')[cardIndex]
+          ?.querySelectorAll('button')[buttonIndex];
+      }
+    }
+    restoreFocus ??= () => purchaseRoot.querySelector('.commerce-tabs [aria-current="page"]');
+  }
+  rerenderCurrentPurchase(ui);
+  if (restoreFocus) {
+    const next = restoreFocus();
+    if (next && !next.disabled) next.focus();
+    else purchaseRoot.querySelector('.commerce-tabs [aria-current="page"]')?.focus();
+  }
+}
+
 function figureCard(figure, controls = []) {
   return el('article', {attrs: {class: 'commerce-card'}}, [
     figurePicture({figureId: figure.id, equipment: {}}, {sizes: '(max-width: 600px) 42vw, 180px'}),
@@ -296,6 +330,7 @@ export function renderPurchases({
   }
   const rerender = (options) => rerenderCurrentPurchase(ui, options);
   const authenticated = commerce.isConnected?.() ?? true;
+  ui.authenticated = authenticated;
   if (authenticated && ui.authRequired) {
     ui.authRequired = false;
     ui.notice = '';

@@ -1,5 +1,17 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
+**Aktuelle Fortsetzung am 29.09.2026: Google-Statusanzeige.** Der Nutzer setzt
+nach dem Tiger-Abschluss ausdrücklich fort. Der erneute Verbindungshinweis
+verschwindet im bestehenden Testbrowser ohne Anmeldung durch einen lokalen
+Galeriewechsel. Der untersuchte Clientpfad aktualisiert die Avataransicht
+nach asynchroner Sitzungswiederaufnahme nicht. Dieser begrenzte Anzeigefehler
+ist reproduziert und korrigiert; kein belegter Server-Sitzungsverlust.
+646/646 gesamte Node-Tests, 14/14 Browserfälle und unabhängige Spec-/Codeprüfung
+sind PASS. Cache v36 ist vorbereitet; private Bereitstellung und tatsächliche
+Browserkontrolle folgen als Abschluss.
+Einstieg: [Google-Statusanzeige](docs/handoffs/2026-09-29-google-statusanzeige.md).
+Konten, Guthaben, vorhandenen Testbereich und Familienbestände erhalten.
+
 **Abgeschlossen am 29.09.2026: bestätigte Tiger-Reihe.** Nach ausdrücklicher
 Fortsetzung bestätigt der Nutzer die vierstufige Tiger-Vorschau mit
 „Ja, genau so umsetzen“ für Einzelbilder und Galerieeinbindung.
