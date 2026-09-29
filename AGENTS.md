@@ -1,6 +1,15 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-**Aktuelle Fortsetzung am 29.09.2026: Nebelhirsch.** Der Nutzer hat die Pause
+**Aktuelle Fortsetzung am 29.09.2026: Tiger-Vorschau.** Nach Abschluss der
+Nebelhirsch-Reihe beauftragt der Nutzer die Weiterarbeit. Eine konkrete
+vierstufige Tiger-Vorschau ist erzeugt und zur persönlichen Bildprüfung
+vorgelegt. Diese neue Tiger-Bildrichtung ist noch nicht bestätigt; vorhandene
+Preise, Kaufabläufe und die allgemeine Stilrichtung bleiben bestätigt.
+Einstieg: [Tiger-Fortsetzung](docs/handoffs/2026-09-29-tiger-fortsetzung.md).
+Bis zur Bildentscheidung nur den Entwurf sichern und unabhängige Vorarbeiten
+abschließen; keine neuen Tiger-Produktionsbilder oder Produktintegration.
+
+**Abgeschlossen am 29.09.2026: Nebelhirsch.** Der Nutzer hat die Pause
 ausdrücklich aufgehoben und bestätigt, dass zwischenzeitlich nicht weitergearbeitet
 wurde. Der vierstufige Nebelhirsch-Entwurf v2 ist mit „Ja, genau so umsetzen“
 für Einzelbilder und Einbindung in die bestehende Galerie bestätigt.

@@ -1,5 +1,14 @@
 # Arbeitsstand
 
+**Fortsetzung nach dem Nebelhirsch-Abschluss:** Der Nutzer beauftragt die
+Weiterarbeit. Der bestehende Tiger wird als nächste begrenzte Reihe vorbereitet.
+Ein [Konzeptbogen](docs/design/avatar-evolution/tiger-stages-concept-v1.png)
+zeigt Grundform, Entdecker, Tempelwächter und eine mythische Sonnenform.
+Die Beschreibungen sind Arbeitsbegriffe, keine neuen Produktnamen.
+Die konkrete Bildentscheidung steht noch aus; es wurden noch keine
+Tiger-Produktionsbilder erstellt oder ausgeliefert.
+[Aktuelle Übergabe](docs/handoffs/2026-09-29-tiger-fortsetzung.md).
+
 **Aktuelle Fortsetzung am 29.09.2026:** Der Nutzer hebt die Pause auf; seit
 dem gesicherten Stand `c475a52` gab es laut Nutzer keine weitere Bearbeitung.
 Die lokalen Entwicklungszweige sind beim Einstieg sauber und auf diesem Stand.

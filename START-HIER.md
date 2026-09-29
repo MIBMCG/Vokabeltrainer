@@ -1,5 +1,10 @@
 # Hier mit der Weiterarbeit beginnen
 
+**Nächste Reihe: Tiger.** Der Nutzer hat die weitere Arbeit beauftragt.
+Eine konkrete Viereransicht liegt zur Bildprüfung vor; ihre persönliche
+Bestätigung steht noch aus. [Tiger-Fortsetzung](docs/handoffs/2026-09-29-tiger-fortsetzung.md).
+Die private App läuft weiterhin mit der abgeschlossenen Nebelhirsch-Reihe.
+
 **Fortsetzung am 29.09.2026:** Die Pause ist ausdrücklich aufgehoben.
 Der bestätigte Nebelhirsch ist mit allen vier Formen und passenden Ladegrößen
 in der Galerie verfügbar. Produktcommit `6d3ee83` ist auf GitHub gesichert
