@@ -4,8 +4,15 @@
 ausdrücklich aufgehoben und bestätigt, dass zwischenzeitlich nicht weitergearbeitet
 wurde. Der vierstufige Nebelhirsch-Entwurf v2 ist mit „Ja, genau so umsetzen“
 für Einzelbilder und Einbindung in die bestehende Galerie bestätigt.
-Die vorhandene Grundform wird unverändert wiederverwendet; drei höhere Formen,
-responsive Varianten und Offline-Einbindung sind das begrenzte laufende Paket.
+Das begrenzte Paket ist als Produktcommit `6d3ee83` integriert, auf GitHub
+abgeglichen und privat als Cache v34 bereitgestellt: vorhandene Grundform
+unverändert wiederverwendet, drei höhere Formen, zwölf responsive WebPs und
+Offline-Einbindung. 646/646 Node-Tests, 25/25 gezielte Node-Tests, fünf
+Browserfälle und unabhängige Bild-/Codeprüfungen sind PASS.
+32 ausgelieferte Dateien sind bytegleich geprüft. Alle vier Formen sind im
+bestehenden Testbrowser sichtbar; 40 verfügbare Punkte, 2.040 Lernpunkte,
+Level 11 und die bisherige Drachenauswahl sind erhalten.
+68 weitere Motive sowie Token-/Geräteabnahmen bleiben offen.
 Einstieg: [Nebelhirsch-Fortsetzung](docs/handoffs/2026-09-29-nebelhirsch-fortsetzung.md).
 Testbereich und Familienbestände erhalten, keine neue Einrichtung oder Importe.
 

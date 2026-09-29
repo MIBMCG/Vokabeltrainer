@@ -4,8 +4,17 @@
 dem gesicherten Stand `c475a52` gab es laut Nutzer keine weitere Bearbeitung.
 Die lokalen Entwicklungszweige sind beim Einstieg sauber und auf diesem Stand.
 Die konkrete Nebelhirsch-Bildrichtung v2 ist einschließlich App-Einbindung
-mit „Ja, genau so umsetzen“ bestätigt. Vier Formen, responsive Bilder und
-Offline-Nutzung bilden das laufende Paket. [Aktuelle Übergabe](docs/handoffs/2026-09-29-nebelhirsch-fortsetzung.md).
+mit „Ja, genau so umsetzen“ bestätigt. Das Paket ist als Produktcommit
+`6d3ee83` integriert und auf GitHub exakt abgeglichen: vier Formen,
+zwölf responsive WebPs und Offline-Nutzung. Privat läuft Cache v34,
+Worker-Version `bd05126f-fe46-4bea-a97e-652d10563277`.
+646/646 Node-Tests, 25/25 gezielte Node-Tests, fünf Browserfälle und unabhängige
+Bild-/Codeprüfungen sind erfolgreich. 32 öffentliche Dateien sind bytegleich.
+Der bestehende Testbrowser zeigt die neue Reihe; 40 verfügbare Punkte,
+2.040 Lernpunkte, Level 11 und Drachenstufe 4 als Auswahl sind erhalten.
+Die vier kleinen Nebelhirschbilder benötigen zusammen 143.854 Bytes.
+68 Motive und die bisherigen realen Token-/Geräteabnahmen bleiben offen.
+[Aktuelle Übergabe](docs/handoffs/2026-09-29-nebelhirsch-fortsetzung.md).
 
 **Historische Steuerung: Pause nach diesem Abschluss.** Der Nutzer verlangt
 während der abschließenden Browserkontrolle eine sinnvolle Pause nach diesem

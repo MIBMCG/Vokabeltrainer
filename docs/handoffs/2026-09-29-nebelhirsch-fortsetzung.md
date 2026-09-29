@@ -79,9 +79,43 @@ Die Browserbefehle nutzten eine vorhandene Playwright-Installation über
 isolierten synthetischen Browserprofilen. Die Vollsuite lief unter Windows
 über `npm.cmd test`.
 
-Die Bildintegration ist für Cache v34 vorbereitet. Produktstand beim
-Einstieg war `64539ff`, privat Cache v33. Tatsächliche neue Bereitstellung
-und Browserbeobachtung werden im nächsten Abschlussschritt ergänzt.
+## GitHub, private Bereitstellung und echte Browserbeobachtung
+
+Produktcommit `6d3ee83e7f4de01b3288396682e09f1f5cf2a83f` wurde ohne
+Abweichung vom geprüften Arbeitszweig per Fast-Forward in
+`codex/vokabeltrainer-v1` übernommen. Nach Push wurde die vollständige
+Commitkennung mit dem tatsächlichen GitHub-Branch verglichen: identisch.
+Dieser Bereitstellungsnachtrag wird separat auf demselben Zweig gesichert.
+
+Die private [HTTPS-App](https://vokabeltrainer.marco-civico.workers.dev/trainer/)
+verwendet Cache v34. Worker-Version
+`bd05126f-fe46-4bea-a97e-652d10563277` ist seit 29.09.2026,
+08:12:06 UTC zu 100 % aktiv (Version erstellt um 08:12:05 UTC).
+187 öffentliche Dateien wurden vorbereitet; 14 neue oder geänderte
+Dateien hochgeladen, 173 bereits vorhandene wiederverwendet.
+32 ausgelieferte Dateien einschließlich aller 24 Drachen-/Nebelhirsch-WebPs
+wurden am 29.09.2026 um 08:13:07 UTC bytegleich mit dem geprüften
+Bereitstellungspaket verglichen.
+
+Im vorhandenen Codex-Testbrowser wurde nach Neuladen der Hinweis
+„Neue Programmversion verfügbar“ sichtbar. „Jetzt aktualisieren“ übernahm
+das kontrollierte Update. Anschließend wurde das vorhandene Profil
+„Kauftest“ und seine Avataransicht geöffnet:
+
+- 40 verfügbare Punkte, 2.040 Lernpunkte und Level 11 sind erhalten.
+- Drachenstufe 4 ist weiterhin als „Deine ausgewählte Figur“ sichtbar.
+- „Entwicklung ansehen“ beim bereits besessenen Nebelhirsch zeigt alle vier
+  Formen, ohne eine andere Form auszuwählen.
+- Zur nächsten Form erscheinen 200 Punkte Preis, 40 verfügbar und
+  160 fehlend. Höhere Formen bleiben entsprechend der Besitzfolge gesperrt.
+- Alle fünf sichtbaren Bildinstanzen (vier Formen plus Vorschau) sind
+  vollständig geladen; die Quellen zeigen auf die neuen Nebelhirsch-WebPs.
+- Die tatsächliche schmale Browseransicht zeigt alle Silhouetten vollständig.
+
+Es wurde kein neuer Kauf ausgelöst, kein Guthaben hinzugefügt und kein
+Bestand eingerichtet oder importiert. Eine erneute Google-Anmeldung war
+für diese Galerieprüfung nicht erforderlich; daraus folgt kein zusätzlicher
+Nachweis für reguläre Token-Erneuerung.
 
 ## Erhaltene Grenzen
 
@@ -94,9 +128,12 @@ Kein weiterer echter Kauf ist für die Bildintegration erforderlich.
 Natürliche Google-Token-Erneuerung, physisches Zweitgerät, iPhone/iPad,
 Safari und Home-Bildschirm-App bleiben offen. Das Kauf-Wunschziel unter
 zehn Sekunden ist noch nicht erreicht; ein beobachteter Durchgang lag bei
-rund 17,1 Sekunden. Weitere Figuren folgen nach diesem Paket.
+rund 17,1 Sekunden. Acht von 76 geplanten Motiven sind nun ausgeliefert;
+68 weitere Motive bleiben offen.
 
 ## Nächster Schritt
 
-Den geprüften Umfang privat bereitstellen und im bestehenden Testbrowser
-die neue Galerie kontrollieren. Anschließend GitHub und diese Übergabe abgleichen.
+Das bestätigte Nebelhirsch-Paket ist abgeschlossen. Als nächstes kann eine
+weitere Figurenreihe konkretisiert und anhand der bestehenden Stilrichtung
+umgesetzt werden. Vorhandene Quellen, Besitzstände und Testbereich erhalten.
+Für dieses abgeschlossene Paket sind keine weiteren Nutzereingaben nötig.
