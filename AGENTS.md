@@ -1,5 +1,22 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
+**Aktuelle Steuerung: Pause nach Vokabeleingabe am 29.09.2026.** Der Nutzer
+verlangt nach diesem Abschlussschritt eine Pause. Das Paket ist als Produktcommit
+`c866bd76e98b9fcf4673a7d7a567674c282d04aa` integriert, exakt mit GitHub
+abgeglichen und privat als Cache v37 bereitgestellt. Automatische kompakte
+Tabellenprüfung, gemeinsame atomare Übernahme, sichtbare Lektions-/Kinderzuordnung
+und „Speichern und nächstes Wort“ sind umgesetzt. 650/650 Node-Tests,
+22/22 Browserfälle und unabhängige Task-/Abschlussprüfungen PASS. Die zunächst
+durch Standby unterbrochenen Zeitprüfungen sind im Bericht dokumentiert.
+Neun ausgelieferte Dateien sind bytegleich geprüft. Im bestehenden Testbrowser
+ist das kontrollierte Update übernommen; 40 verfügbare Punkte, 2.040 Lernpunkte,
+Level 11 und Drachenstufe 4 bleiben erhalten. Keine neue Einrichtung oder Importe
+im vorhandenen Testbereich oder Familienbestand. Nur diese Abschlussdokumentation
+und Git-Sicherung beenden; danach keine weitere Produktarbeit, Bereitstellung,
+Bilderzeugung oder Testsitzung ohne ausdrückliche Fortsetzung.
+Einstieg: [Pausenübergabe zur Vokabeleingabe](docs/handoffs/2026-09-29-vokabeleingabe.md).
+Natürlicher Google-Tokenablauf und physische Geräteabnahmen bleiben offen.
+
 **Abgeschlossen am 29.09.2026: Google-Statusanzeige.** Der Nutzer setzt
 nach dem Tiger-Abschluss ausdrücklich fort. Vor der Korrektur verschwand der
 Verbindungshinweis ohne Anmeldung erst durch einen lokalen Galeriewechsel.

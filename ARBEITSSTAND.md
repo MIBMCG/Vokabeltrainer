@@ -1,13 +1,26 @@
 # Arbeitsstand
 
+**Abgeschlossen, anschließend Pause: Vokabeleingabe (29.09.2026).** Nach
+ausdrücklicher Fortsetzung ist der priorisierte Tabellenweg überarbeitet:
+einfügen, automatische kompakte Prüfung, gemeinsame Übernahme. Lektions- und
+Kinderzuordnung stehen im selben Ablauf; „Speichern und nächstes Wort“ erleichtert
+die Einzeleingabe. Die synthetische lokale Übernahme von 250 Wörtern benötigt
+73 ms statt 6,3 s und eine statt 250 Speicherungen. Keine Browser-/Google-Zeit
+daraus ableiten. Produktcommit `c866bd76e98b9fcf4673a7d7a567674c282d04aa`
+ist exakt mit GitHub abgeglichen; Cache v37 ist privat bereitgestellt.
+650/650 Node-Tests, 22/22 Browserfälle, unabhängige Prüfungen und der Bytevergleich
+von neun ausgelieferten Dateien sind erfolgreich. Das kontrollierte Update im
+vorhandenen Testbrowser erhält 40 verfügbare Punkte, 2.040 Lernpunkte, Level 11
+und gewählte Drachenstufe 4. Der Nutzer wünscht danach Pause; keine weitere
+Produktarbeit oder Testsitzung ohne ausdrückliche Fortsetzung.
+[Bericht](docs/reports/2026-09-29-vokabeleingabe.md) und
+[aktuelle Pausenübergabe](docs/handoffs/2026-09-29-vokabeleingabe.md).
+
 ## Aktuelle offene Arbeitspunkte (29.09.2026)
 
-- **Neu aufgenommen: Vokabeln einfacher hinzufügen.** Der Nutzer wünscht eine
-  Vereinfachung von Einzeleingabe, Sammelübernahme und Lektions-/Kinderzuordnung.
-  Vorrang haben viele Wörter auf einmal aus Excel oder einer anderen Tabelle;
-  der bisherige Ablauf dauert ihm zu lange. Der konkrete neue Ablauf wird noch
-  abgestimmt; bisher ist dies ein bestätigtes Ziel, keine fertige Änderung.
-  [Anforderung und Abgrenzung](docs/ANFORDERUNGEN.md#neuer-folgepunkt-vokabeln-einfacher-hinzufügen-29092026).
+- Den vereinfachten Tabellenweg nach neuer Fortsetzung mit einer typischen
+  echten Wortliste praktisch beurteilen; lokale Speicherung und anschließenden
+  Google-Abgleich getrennt messen. Umsetzung und synthetische Prüfung sind fertig.
 - Die verbleibenden 64 Entwicklungsbilder produzieren und integrieren.
 - Kaufgeschwindigkeit weiter verbessern: rund 17,1 Sekunden sind für einen
   echten Durchgang belegt; das Wunschziel unter zehn Sekunden und die langsame

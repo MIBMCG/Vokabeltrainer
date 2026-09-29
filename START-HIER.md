@@ -1,6 +1,16 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Aktueller Abschluss: Google-Hinweis in der Galerie.** Die veraltete Anzeige
+**Aktueller Abschluss und Pause: vereinfachte Vokabeleingabe.** Das Paket ist
+als Produktcommit `c866bd7` auf GitHub gesichert und privat als Cache v37 aktiv.
+650 Node-Tests, 22 Browserfälle und unabhängige Prüfungen sind erfolgreich.
+Die Tabellenprüfung erscheint automatisch; die gesamte Auswahl wird gemeinsam
+gespeichert. Einzelwörter lassen sich bei gleicher Lektion direkt nacheinander
+eingeben. Der vorhandene Testbrowser ist aktualisiert; Punkte, Level und Figur
+sind erhalten. Der Nutzer verlangt danach ausdrücklich Pause: keine weitere
+Produktarbeit oder Testsitzung ohne neue Fortsetzung.
+[Aktuelle Pausenübergabe](docs/handoffs/2026-09-29-vokabeleingabe.md).
+
+**Vorheriger Abschluss: Google-Hinweis in der Galerie.** Die veraltete Anzeige
 nach automatischer Wiederaufnahme ist als Produktcommit `67de463` behoben,
 auf GitHub abgeglichen und privat mit Cache v36 bereitgestellt.
 646 Node-Tests, 14 Browserfälle und unabhängige Prüfung PASS. Der bestehende

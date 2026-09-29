@@ -8,13 +8,19 @@ Bereiche sollen einfacher werden — Einzeleingabe, Übernahme vieler Wörter un
 Lektions-/Kinderzuordnung. Vorrang hat die Übernahme vieler Wörter, deren
 bisherigen Ablauf er als sehr lang beschreibt. Die Wortlisten kommen
 hauptsächlich aus Excel oder einer anderen Tabelle. Diese Priorität und
-Ausgangsquelle sind bestätigt; die Überarbeitung ist noch nicht umgesetzt.
+Ausgangsquelle sind bestätigt. Nach dem konkreten Vorschlag für einen kürzeren
+Kopier-/Einfügeweg beauftragt er die Umsetzung; sie ist als Produktcommit
+`c866bd7` umgesetzt, geprüft und privat mit Cache v37 bereitgestellt.
 
 Ausgangspunkt sind die bestehende Einzeleingabe und das Einfügen mehrerer
 Deutsch-/Englisch-Zeilen gemäß R25 sowie die Lektionszuordnung gemäß R26.
-Der konkrete neue Ablauf wird vor der Umsetzung abgestimmt. Ein direkter
-Excel-Dateiimport oder eine zusätzliche Erkennungsmethode ist durch die Angabe
-der Ausgangsquelle noch nicht festgelegt.
+Der bestätigte neue Ablauf zeigt nach dem Einfügen automatisch eine kompakte
+Prüfung und übernimmt die ausgewählten Wörter gemeinsam. Lektion und Kinder
+stehen im selben Ablauf; die Einzeleingabe ergänzt „Speichern und nächstes Wort“.
+Duplikatentscheidungen und ausdrückliches Speichern bleiben erhalten.
+Ein direkter Excel-Dateiimport oder eine zusätzliche Erkennungsmethode ist
+weiterhin nicht festgelegt. Nachweise und Grenzen:
+[Vokabeleingabe](reports/2026-09-29-vokabeleingabe.md).
 
 Die zusätzliche Frage nach einfacher Handynutzung betrifft den aktuellen
 Bedien- und Prüfstand: Die App besitzt eine responsive Oberfläche und eine

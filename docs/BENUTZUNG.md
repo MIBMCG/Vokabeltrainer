@@ -1,11 +1,9 @@
 # Vokabeltrainer benutzen
 
-**Stand vom 27.09.2026:** Die Anleitung beschreibt Lernen, Verwaltung,
-Google-Abgleich, Sicherungen sowie „Meine Figur“, „Entwicklung“ und „Shop“.
-Den aktuellen Prüfstand und offene Arbeiten dokumentieren der
-[Arbeitsstand](../ARBEITSSTAND.md), der
-[Abschlussbericht](reports/2026-09-27-persistent-purchases-final.md) und die
-[Übergabe](handoffs/2026-09-27-persistent-purchases-abschluss.md).
+**Stand vom 29.09.2026:** Die Anleitung beschreibt Lernen, Verwaltung,
+die vereinfachte Tabellenübernahme, Google-Abgleich, Sicherungen sowie
+„Meine Figur“, „Entwicklung“ und „Shop“. Den aktuellen Prüfstand und offene
+Arbeiten dokumentiert der [Arbeitsstand](../ARBEITSSTAND.md).
 Reale Produktprüfungen mit Google Drive auf zwei physischen Geräten sowie
 iPhone/iPad folgen getrennt.
 
@@ -34,11 +32,31 @@ Abgleich ersetzt keine offenen Eingaben in anderen Bereichen.
 
 ## Wörter aus einer Tabelle übernehmen
 
-1. In Excel oder einer anderen Tabelle die Spalten Deutsch und Englisch markieren; optional folgt eine dritte Spalte mit dem Bedeutungshinweis.
-2. Zeilen kopieren und in der Erwachsenenansicht bei der passenden Lektion einfügen. Mehrere englische Lösungen innerhalb einer Zelle mit `|` trennen.
-3. Die Vorschau prüfen und bei Bedarf bearbeiten. Fehlende Angaben oder zusätzliche Spalten zuerst korrigieren.
-4. Bei möglichen Dopplungen bewusst entscheiden. Gleiche deutsche Wörter mit unterschiedlichen Bedeutungen dürfen getrennte Einträge sein.
-5. Erst die geprüften Zeilen übernehmen.
+1. In Excel oder einer anderen Tabelle die Wortzeilen ohne Spaltenüberschriften
+   markieren: Deutsch, Englisch und optional eine dritte Spalte mit Hinweis.
+   Mehrere englische Lösungen innerhalb einer Zelle mit `|` trennen.
+2. Unter **Für Erwachsene → Vokabeln → Mehrere Wörter einfügen** die Lektion
+   wählen. Für eine neue Lektion Namen und Kinder direkt hier festlegen;
+   bei vorhandenen Lektionen wird die Kinderzuordnung angezeigt.
+3. Die kopierten Zellen bei **Tabellenzeilen** einfügen. Die Übersicht entsteht
+   automatisch und zählt bereite, übersprungene und noch zu prüfende Zeilen.
+   Fehlerzeilen lassen sich direkt korrigieren; die gesamte Liste ist aufklappbar.
+4. Bei Dopplungen bewusst entscheiden. **Identische vorhandene Wörter
+   überspringen** überspringt genau passende vorhandene Einträge gesammelt.
+   Andere Bedeutungen bleiben einzeln prüfbar und können getrennt übernommen werden.
+5. **Geprüfte Zeilen übernehmen** speichert die ganze Auswahl gemeinsam auf
+   diesem Gerät. Der Google-Abgleich folgt anschließend entsprechend der
+   Verbindungsanzeige. Die gewählte Lektion bleibt erhalten.
+
+Änderungen am eingefügten Text oder an der Ziellektion aktualisieren die Prüfung.
+Bei einem lokalen Speicherfehler bleiben die Eingaben zum erneuten Versuch
+stehen; eine neue Lektion und ihre Wörter werden gemeinsam übernommen.
+
+Für einzelne Wörter öffnet **Wort hinzufügen** das kleine Eingabeformular.
+**Speichern und nächstes Wort** behält die Lektion, leert die Wortfelder und
+setzt den Cursor wieder in das deutsche Wort. **Vokabel hinzufügen** schließt die
+normale Eingabe ab. Beim Bearbeiten eines vorhandenen Wortes bleibt es derselbe
+Eintrag mit seiner bisherigen Lernhistorie.
 
 Ein direkter Excel-Dateiimport gehört nicht zur ersten Version. Wörter, Lektionen und Kinderprofile lassen sich archivieren und wieder aktivieren. Die bisherige Lernhistorie bleibt dabei erhalten.
 
@@ -131,13 +149,10 @@ Die App öffnet kein Anmeldefenster ohne diesen bewussten Klick.
 
 Nur Formen mit einem tatsächlich vorhandenen Bild können gekauft werden.
 Fehlende Motive bleiben sichtbar als **Bild folgt** und sind nicht kaufbar.
-Neben den vorhandenen Grundfiguren sind die vier bestätigten Drachenbilder
-als erste vollständige Entwicklungsreihe eingebunden. Die übrigen 72 Motive,
-kleinere responsive Bildvarianten und die
-vollständige Galeriegestaltung gehören zum Folgeumfang. Dazu zählen ein weiter
-ausgebauter Wechsel zwischen Klassisch und Entwicklung und zusätzliche
-Fortschrittsdarstellung; aus dem aktuellen Paket keine vollständige
-EV05-Galerie ableiten.
+Neben den Grundfiguren sind Drache, Nebelhirsch und Tiger mit jeweils vier
+bestätigten Formen und passenden Bildgrößen eingebunden. Fortschritt zur
+nächsten Form, Besitzanzeige und bewusster Wechsel zwischen den Figuren sind
+verfügbar. 64 weitere Entwicklungsmotive folgen noch.
 
 ### Kaufen und fortsetzen
 
@@ -219,4 +234,4 @@ Gleichzeitige Wiederherstellungen auf zwei Geräten erfordern eine bewusste Ausw
 
 ## Geräteprüfung
 
-Die [Geräte-Prüfliste](GERAETE-ABNAHME.md) führt durch die spätere Abnahme. Safari und eine zum Home-Bildschirm hinzugefügte App werden auf echtem iPhone und iPad getrennt geprüft. Bildschirmtastatur, Offline-Neustart, erneute Google-Anmeldung und Abgleich zwischen den Geräten gehören dazu. Automatisierte Browserprüfungen ersetzen diese Abnahme nicht. Eine öffentliche App-Adresse ist erst nach abgestimmter Bereitstellung verfügbar.
+Die [Geräte-Prüfliste](GERAETE-ABNAHME.md) führt durch die spätere Abnahme. Safari und eine zum Home-Bildschirm hinzugefügte App werden auf echtem iPhone und iPad getrennt geprüft. Bildschirmtastatur, Offline-Neustart, erneute Google-Anmeldung und Abgleich zwischen den Geräten gehören dazu. Automatisierte Browserprüfungen ersetzen diese Abnahme nicht. Die private [HTTPS-App](https://vokabeltrainer.marco-civico.workers.dev/trainer/) ist bereits für die vereinbarte Nutzung im Freundeskreis bereitgestellt.
