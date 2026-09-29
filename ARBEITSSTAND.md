@@ -1,6 +1,13 @@
 # Arbeitsstand
 
-**Aktuelle Steuerung: Pause nach diesem Abschluss.** Der Nutzer verlangt
+**Aktuelle Fortsetzung am 29.09.2026:** Der Nutzer hebt die Pause auf; seit
+dem gesicherten Stand `c475a52` gab es laut Nutzer keine weitere Bearbeitung.
+Die lokalen Entwicklungszweige sind beim Einstieg sauber und auf diesem Stand.
+Die konkrete Nebelhirsch-Bildrichtung v2 ist einschließlich App-Einbindung
+mit „Ja, genau so umsetzen“ bestätigt. Vier Formen, responsive Bilder und
+Offline-Nutzung bilden das laufende Paket. [Aktuelle Übergabe](docs/handoffs/2026-09-29-nebelhirsch-fortsetzung.md).
+
+**Historische Steuerung: Pause nach diesem Abschluss.** Der Nutzer verlangt
 während der abschließenden Browserkontrolle eine sinnvolle Pause nach diesem
 Schritt. Nur Abschlussdokumentation und GitHub-Sicherung fertigstellen;
 danach keine neue Produktarbeit oder Testsitzung ohne ausdrückliche Fortsetzung.

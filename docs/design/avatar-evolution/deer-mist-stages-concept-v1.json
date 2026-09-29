@@ -1,0 +1,28 @@
+{
+  "kind": "avatar-evolution-concept",
+  "createdOn": "2026-09-29",
+  "generator": "built-in image_gen",
+  "model": "not exposed by tool",
+  "width": 1942,
+  "height": 809,
+  "colorMode": "RGB",
+  "scope": "One four-panel comparison board, not production sprite sheet",
+  "version": 1,
+  "sourceFile": "deer-mist-stages-concept-v1.png",
+  "sha256": "183acc04ed3d97ee38bc360ec2605618d756dd3b918ff34bd4122da7409905b6",
+  "references": [
+    {
+      "path": "../avatar-shop-sources/deer-mist.png",
+      "role": "character identity",
+      "sha256": "1f7f605ab78fb8af4ec966c7086091c6844a017008afc676888f1b08f7d3f0c0"
+    },
+    {
+      "path": "dragon-stages-concept-v2.png",
+      "role": "approved painterly style and strength of final transformation",
+      "sha256": "2d2d088a8243ea18b61a657913ca2e8e8ea13d41b1260850383a87a270b224a8"
+    }
+  ],
+  "status": "superseded-framing-draft",
+  "visualReview": "Stage 4 highest antler leaf meets top edge; v2 corrects framing.",
+  "prompt": "Use case: stylized-concept.\nAsset type: ONE four-panel concept comparison board for the next avatar evolution family in a private vocabulary-learning game for ages 10–13. This is a design preview, not a production sprite sheet.\nInput image 1 is the CHARACTER IDENTITY REFERENCE: the existing Nebelhirsch, a friendly silver-white mystical stag with blue eyes, turquoise-tipped silver branching antlers, soft chest ruff and a gently curled fluffy tail. Preserve that recognizable deer identity, four hooved legs, deer face, ears, fur palette and three-quarter standing pose throughout.\nInput image 2 is ONLY a STYLE AND EVOLUTION-STRENGTH REFERENCE: premium softly painted fantasy, clear escalation over four forms, especially a truly legendary final silhouette. Do not copy the dragon, its wings, dragon anatomy, labels, background scenery or armor design.\n\nCreate a wide, polished landscape board with four equally sized vertical panels on a plain warm ivory background. Each shows the COMPLETE single stag form standing at the same baseline, facing three-quarter left, consistent painterly rendering and enough clear space between panels. All antler tips, hooves, tails and mane extensions fully inside their panel with generous margins. Fit the largest form to the panel; never crop. Subtle thin muted-gold panel dividers only. Small exact bottom labels, respectively: \"STUFE 1\", \"STUFE 2\", \"STUFE 3\", \"STUFE 4\". No other text or title. Do not repeat the input images or add extra panels.\n\nSTUFE 1: closely match the existing unadorned silver-white Nebelhirsch from image 1, original soft fluffy chest, simple luminous silver/turquoise branching antlers and dark hooves. A lovable magical deer, no equipment.\nSTUFE 2: same deer becomes a young forest protector. A restrained fitted leaf-shaped antique-gold chest clasp and deep-teal short shoulder mantle, a few subtle teal natural markings along the legs, brighter antler tips with a small number of fresh translucent teal leaves. The full body remains readable and mostly white fur. Clear upgrade without clutter.\nSTUFE 3: majestic forest guardian. Fuller, swept teal-white neck mane, stronger upright noble stance, antlers with defined emerald-crystal branch facets, fitted silver-and-antique-gold leaf-shaped chest and shoulder protection, limited elegant luminous leaf/rune markings on the flank and shins. Substantially more developed than stage 2 but still compact, contained and grounded. Four legs and natural deer hooves, no humanoid equipment.\nSTUFE 4: a transformative, awe-inspiring ANCIENT MIST-FOREST SPIRIT, visibly different from stage 3 even at thumbnail size, NOT merely additional armor. The same deer now has a taller elegant neck and a spectacular broad crown of living pale-gold antler branches with luminous turquoise leaf clusters, naturally growing from the head. A long flowing pearl-and-turquoise mist mane streams organically from neck and upper back; the fluffy tail becomes a graceful long silvery-teal plume. Beautiful luminous branching patterns follow the pearlescent fur, with a single integrated warm-gold leaf emblem at the chest and very little armor. The antler canopy, majestic body posture, flowing mane and tail create the legendary silhouette. Controlled soft light, distinct edges, readable white fur and anatomy; magical energy remains close to the character. No floating halo or orb, no wings, no extra limbs, no tree scenery, no ground mist hiding feet. Protective and wise, warm friendly eyes, no aggression.\n\nOverall: elegant, collectible premium game illustration, coherent light and proportions, silver-white/teal identity with progressively richer antique-gold accents, strong readable shapes at small size. No photographic realism, no toy/plastic 3D, no chibi, no horror, no dark background, no scenery, no watermark. Four complete deer, exactly one per panel."
+}

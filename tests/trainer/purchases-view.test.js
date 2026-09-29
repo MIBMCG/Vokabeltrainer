@@ -82,13 +82,13 @@ test('purchase profile model uses verified service accounts and keeps uncertain 
   assert.equal(purchaseProfileModel({view, profileId: 'p2', online: false}).forms[1].action, 'offline');
 });
 
-test('only approved dragon stages are visually available while base figure art stays usable', () => {
+test('approved dragon and Nebelhirsch stages are visually available while other base figure art stays usable', () => {
   const view = {
     mode: 'active', head: {id: 'head-1', sha256: 'a'.repeat(64)}, jobs: [], selection: [], control: null,
     accounts: {p1: {
       profileId: 'p1', earnedPoints: 4000, spentPoints: 0, availablePoints: 4000,
-      purchasedArticleIds: [], entitledFigureIds: ['dragon', 'explorer-girl'],
-      entitledEvolutionIds: ['evolution:dragon:1', 'evolution:explorer-girl:1'],
+      purchasedArticleIds: [], entitledFigureIds: ['dragon', 'deer-mist', 'explorer-girl'],
+      entitledEvolutionIds: ['evolution:dragon:1', 'evolution:deer-mist:1', 'evolution:explorer-girl:1'],
     }},
   };
 
@@ -97,6 +97,11 @@ test('only approved dragon stages are visually available while base figure art s
   assert.equal(model.forms.every(({artAvailable}) => artAvailable), true);
   assert.equal(model.shop.every(({baseArtAvailable}) => baseArtAvailable), true);
   assert.equal(model.shop.some(({action}) => action === 'buy'), true);
+
+  const deer = purchaseProfileModel({view, profileId: 'p1', figureId: 'deer-mist', online: true});
+  assert.equal(deer.forms.length, 4);
+  assert.equal(deer.forms.every(({artAvailable}) => artAvailable), true);
+  assert.equal(deer.forms[1].action, 'buy');
 
   view.selection = [{profileId: 'p1', figureId: 'explorer-girl', stage: 1}];
   const pendingArt = purchaseProfileModel({view, profileId: 'p1', online: true});

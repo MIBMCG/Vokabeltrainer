@@ -1,0 +1,20 @@
+{
+  "kind": "avatar-evolution-concept",
+  "createdOn": "2026-09-29",
+  "generator": "built-in image_gen",
+  "model": "not exposed by tool",
+  "width": 1942,
+  "height": 809,
+  "colorMode": "RGB",
+  "scope": "One four-panel comparison board, not production sprite sheet",
+  "version": 2,
+  "sourceFile": "deer-mist-stages-concept-v2.png",
+  "sha256": "19bc2c0f80dffb644b941a4040d60c3fea0a21d415690e1f6ec2d3226d7f0bb3",
+  "reference": "deer-mist-stages-concept-v1.png",
+  "referenceRole": "edit target; preserve design and correct framing",
+  "status": "user-approved visual direction; concept board, not production sprite sheet",
+  "personalApproval": true,
+  "approval": "User on 2026-09-29 approved production of four individual app images and gallery integration: Ja, genau so umsetzen",
+  "visualReview": "Complete antlers, tails and hooves visible with margin. Four progressively developed forms; final living antler crown and flowing mist mane distinguish stage 4. Generated designs are visually retained, not pixel-identical to v1.",
+  "prompt": "Edit this four-panel Nebelhirsch evolution concept board, keeping all four character designs, colors, anatomy, poses, panel layout, ivory background, gold borders and exact \"STUFE 1\" through \"STUFE 4\" labels unchanged. Fix only framing: all stag artwork must fit comfortably INSIDE each panel with at least 5% empty margin above the very highest antler or leaf and beside the tail. The stage 4 highest golden leaf currently touches the top canvas edge: reconstruct its complete pointed tip and proportionally reduce/reposition this fourth character as needed to leave clear ivory space above it. No antler, leaf, mane, hoof or tail may touch the canvas or panel edges. Keep the four foot baselines consistent above the labels. Preserve the first three deer designs exactly, and give their tail tips a little breathing room without changing the artwork. Retain the dramatic stage 4 broad living gold-and-teal antler crown and sweeping mist mane. No new objects, no new text, no new decorations. This is a polished design comparison board with four complete silhouettes, not production sprites."
+}

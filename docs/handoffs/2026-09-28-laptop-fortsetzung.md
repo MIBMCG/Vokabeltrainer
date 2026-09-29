@@ -2,7 +2,12 @@
 
 Stand: **28.09.2026**. Zweig: `codex/vokabeltrainer-v1`.
 
-**Aktuelle Steuerung: Pause nach Galerieabschluss.** Der Nutzer verlangt
+**Fortgesetzt am 29.09.2026.** Der Nutzer hat die Pause aufgehoben und
+anschließend die neue Nebelhirsch-Reihe für Einzelbilder und Galerie bestätigt.
+Maßgeblich ist jetzt die [Nebelhirsch-Fortsetzung](2026-09-29-nebelhirsch-fortsetzung.md).
+Die folgenden Abschnitte bewahren die Nachweise vom 28.09.
+
+**Historische Steuerung: Pause nach Galerieabschluss.** Der Nutzer verlangt
 ausdrücklich eine Pause nach dem laufenden sinnvollen Abschlussschritt.
 Bereitstellung und Browserkontrolle sind abgeschlossen; nach Dokumentation
 und GitHub-Sicherung ohne ausdrückliche Fortsetzung nicht weiterarbeiten.

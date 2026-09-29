@@ -11,10 +11,11 @@ const outputRoot = resolve(root, 'trainer/assets/avatar-evolution');
 const manifestPath = resolve(root, 'src/trainer/avatar/evolution-art-manifest.js');
 const widths = Object.freeze([256, 512, 768]);
 const sources = Object.freeze([
-  'dragon-stage-1-v3.png',
-  'dragon-stage-2-v3.png',
-  'dragon-stage-3-v1.png',
-  'dragon-stage-4-v2.png',
+  {figureId: 'dragon', stage: 1, sourceName: 'dragon-stage-1-v3.png'},
+  {figureId: 'dragon', stage: 2, sourceName: 'dragon-stage-2-v3.png'},
+  {figureId: 'dragon', stage: 3, sourceName: 'dragon-stage-3-v1.png'},
+  {figureId: 'dragon', stage: 4, sourceName: 'dragon-stage-4-v2.png'},
+  ...[1, 2, 3, 4].map((stage) => ({figureId: 'deer-mist', stage, sourceName: `deer-mist-stage-${stage}-v1.png`})),
 ]);
 
 function sha256(bytes) {
@@ -54,13 +55,12 @@ export async function buildEvolutionArt() {
   let allBytes = 0;
   await mkdir(outputRoot, {recursive: true});
 
-  for (let index = 0; index < sources.length; index += 1) {
-    const stage = index + 1;
-    const sourceName = sources[index];
+  for (const {figureId, stage, sourceName} of sources) {
     const source = await readFile(resolve(sourceRoot, sourceName));
     const provenance = JSON.parse(await readFile(resolve(sourceRoot, sourceName.replace(/\.png$/u, '.json')), 'utf8'));
     const hash = sha256(source);
-    if (provenance.status !== 'selected-production-source' || provenance.sha256 !== hash || provenance.source !== sourceName) {
+    if (provenance.status !== 'selected-production-source' || provenance.sha256 !== hash || provenance.source !== sourceName
+      || provenance.figureId !== figureId || provenance.stage !== stage) {
       throw new Error(`Source provenance mismatch: ${sourceName}`);
     }
     const metadata = await sharp(source).metadata();
@@ -68,7 +68,7 @@ export async function buildEvolutionArt() {
     if (metadata.format !== 'png' || metadata.channels !== 4 || !metadata.hasAlpha || !alpha || alpha.min !== 0 || alpha.max < 1) {
       throw new Error(`Selected source lacks transparent image content: ${sourceName}`);
     }
-    const key = `dragon-stage-${stage}`;
+    const key = `${figureId}-stage-${stage}`;
     const variants = [];
     for (const width of widths) {
       const height = Math.round(metadata.height * width / metadata.width);
@@ -96,7 +96,7 @@ export async function buildEvolutionArt() {
       width: metadata.width, height: metadata.height,
       variants, fallbackUrl: variants[0].url,
     };
-    sourceFacts.push({stage, sourceName, sourceBytes: source.length, sourceSha256: hash,
+    sourceFacts.push({figureId, stage, sourceName, sourceBytes: source.length, sourceSha256: hash,
       width: metadata.width, height: metadata.height});
     originalBytes += source.length;
   }
@@ -105,7 +105,8 @@ export async function buildEvolutionArt() {
     generator: 'scripts/build-evolution-art.mjs',
     sourceFacts,
     totals: {originalBytes, smallBytes, allBytes},
-    derivatives: Object.values(assets).flatMap(({variants}) => variants),
+    derivatives: sources.flatMap(({figureId, stage}) => assets[`${figureId}-stage-${stage}`].variants
+      .map((variant) => ({figureId, stage, ...variant}))),
   };
   await writeFile(manifestPath, manifestModule({assets}, smallUrls), 'utf8');
   await writeFile(resolve(outputRoot, 'build-report.json'), `${JSON.stringify(report, null, 2)}\n`, 'utf8');

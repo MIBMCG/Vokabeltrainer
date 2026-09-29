@@ -89,9 +89,10 @@ test('serves only named probe and trainer assets with correct MIME types', async
       ['/src/trainer/avatar/evolution.js', 'text/javascript; charset=utf-8'],
       ['/src/trainer/avatar/evolution-art.js', 'text/javascript; charset=utf-8'],
       ['/src/trainer/avatar/evolution-art-manifest.js', 'text/javascript; charset=utf-8'],
-      ...[1, 2, 3, 4].flatMap((stage) => [256, 512, 768].map((width) => [
-        `/trainer/assets/avatar-evolution/dragon-stage-${stage}-${width}.webp`, 'image/webp',
-      ])),
+      ...['dragon', 'deer-mist'].flatMap((figureId) => [1, 2, 3, 4].flatMap((stage) =>
+        [256, 512, 768].map((width) => [
+          `/trainer/assets/avatar-evolution/${figureId}-stage-${stage}-${width}.webp`, 'image/webp',
+        ]))),
       ['/src/trainer/backup/format.js', 'text/javascript; charset=utf-8'],
       ['/src/trainer/backup/restore.js', 'text/javascript; charset=utf-8'],
       ['/src/trainer/backup/transport.js', 'text/javascript; charset=utf-8'],

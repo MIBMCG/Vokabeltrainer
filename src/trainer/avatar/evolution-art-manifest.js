@@ -144,6 +144,142 @@ export const EVOLUTION_ART = deepFreeze({
         }
       ],
       "fallbackUrl": "../../../trainer/assets/avatar-evolution/dragon-stage-4-256.webp"
+    },
+    "deer-mist-stage-1": {
+      "key": "deer-mist-stage-1",
+      "sourceName": "deer-mist-stage-1-v1.png",
+      "sourceWidth": 1145,
+      "sourceHeight": 1374,
+      "sourceBytes": 1057104,
+      "sourceSha256": "1f7f605ab78fb8af4ec966c7086091c6844a017008afc676888f1b08f7d3f0c0",
+      "width": 1145,
+      "height": 1374,
+      "variants": [
+        {
+          "width": 256,
+          "height": 307,
+          "bytes": 24094,
+          "sha256": "80e085848ad34b2ae0dedfdb52947b26c5fee1957a2d884348d0924918da612e",
+          "url": "../../../trainer/assets/avatar-evolution/deer-mist-stage-1-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 614,
+          "bytes": 64908,
+          "sha256": "20ae44dc3b1cec76cf848c2a4d1df235fb421fe18148c1b0dc1c14917b3dc855",
+          "url": "../../../trainer/assets/avatar-evolution/deer-mist-stage-1-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 922,
+          "bytes": 123440,
+          "sha256": "1aa6864e0dc7d5869b5b868e38e578b376c668794c56d71e0029e2712f40b8fd",
+          "url": "../../../trainer/assets/avatar-evolution/deer-mist-stage-1-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/deer-mist-stage-1-256.webp"
+    },
+    "deer-mist-stage-2": {
+      "key": "deer-mist-stage-2",
+      "sourceName": "deer-mist-stage-2-v1.png",
+      "sourceWidth": 1145,
+      "sourceHeight": 1374,
+      "sourceBytes": 1416486,
+      "sourceSha256": "486150a58aab5d55952dbfdf816f37a2eb38c2f407f1517a929069bf45cc1163",
+      "width": 1145,
+      "height": 1374,
+      "variants": [
+        {
+          "width": 256,
+          "height": 307,
+          "bytes": 32758,
+          "sha256": "036078485bb78b8d0b0a9e37fcd3a41b0e1103eeb2b4f76fe52b345149131c9d",
+          "url": "../../../trainer/assets/avatar-evolution/deer-mist-stage-2-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 614,
+          "bytes": 92150,
+          "sha256": "b55b72c045b83b5c8958b1e52221e7f69c929daa2e73ddd2266755d0e4615ed3",
+          "url": "../../../trainer/assets/avatar-evolution/deer-mist-stage-2-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 922,
+          "bytes": 176308,
+          "sha256": "56f157a96935d919c87c7073c31bbe4e1693d2aca7aef73adf1a1604393c2493",
+          "url": "../../../trainer/assets/avatar-evolution/deer-mist-stage-2-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/deer-mist-stage-2-256.webp"
+    },
+    "deer-mist-stage-3": {
+      "key": "deer-mist-stage-3",
+      "sourceName": "deer-mist-stage-3-v1.png",
+      "sourceWidth": 1024,
+      "sourceHeight": 1536,
+      "sourceBytes": 2356165,
+      "sourceSha256": "a534b3a34a59c69aeb23aa37e8832a9d815b4350abd7f94ec555b39dc9e2a705",
+      "width": 1024,
+      "height": 1536,
+      "variants": [
+        {
+          "width": 256,
+          "height": 384,
+          "bytes": 44966,
+          "sha256": "a09350683e94248f8993b1fbc0b3361c8f47a31b18ede69a8f81f8421db89a8e",
+          "url": "../../../trainer/assets/avatar-evolution/deer-mist-stage-3-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 768,
+          "bytes": 128270,
+          "sha256": "64071d5fe52deedeaab114fce82d580a805151590ca0bbc24ce52c46b6996088",
+          "url": "../../../trainer/assets/avatar-evolution/deer-mist-stage-3-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 1152,
+          "bytes": 242838,
+          "sha256": "76cb443aa03af56ad8d82cb0cb978d17565568c950b5021f37f0b49bd88c4c80",
+          "url": "../../../trainer/assets/avatar-evolution/deer-mist-stage-3-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/deer-mist-stage-3-256.webp"
+    },
+    "deer-mist-stage-4": {
+      "key": "deer-mist-stage-4",
+      "sourceName": "deer-mist-stage-4-v1.png",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceBytes": 2155437,
+      "sourceSha256": "70b99b7b63689e9445b4041be89fcc8677e996044db699ba1de5113ca42a5c4d",
+      "width": 1254,
+      "height": 1254,
+      "variants": [
+        {
+          "width": 256,
+          "height": 256,
+          "bytes": 42036,
+          "sha256": "9608abd3133f53037acd766165d30a272595f61c81e02189d3fd4f8832ab4098",
+          "url": "../../../trainer/assets/avatar-evolution/deer-mist-stage-4-256.webp"
+        },
+        {
+          "width": 512,
+          "height": 512,
+          "bytes": 125910,
+          "sha256": "254ec7ece56fe56a214da32370470feb72de0ea1fd1ecaf7d417bc66c4948b85",
+          "url": "../../../trainer/assets/avatar-evolution/deer-mist-stage-4-512.webp"
+        },
+        {
+          "width": 768,
+          "height": 768,
+          "bytes": 243974,
+          "sha256": "2426979ae89c46e369b9dc92d39c544d5db4e58c0325d6feb12d038cb75b3c5b",
+          "url": "../../../trainer/assets/avatar-evolution/deer-mist-stage-4-768.webp"
+        }
+      ],
+      "fallbackUrl": "../../../trainer/assets/avatar-evolution/deer-mist-stage-4-256.webp"
     }
   }
 });
@@ -152,5 +288,9 @@ export const EVOLUTION_SMALL_URLS = Object.freeze([
   "../../../trainer/assets/avatar-evolution/dragon-stage-1-256.webp",
   "../../../trainer/assets/avatar-evolution/dragon-stage-2-256.webp",
   "../../../trainer/assets/avatar-evolution/dragon-stage-3-256.webp",
-  "../../../trainer/assets/avatar-evolution/dragon-stage-4-256.webp"
+  "../../../trainer/assets/avatar-evolution/dragon-stage-4-256.webp",
+  "../../../trainer/assets/avatar-evolution/deer-mist-stage-1-256.webp",
+  "../../../trainer/assets/avatar-evolution/deer-mist-stage-2-256.webp",
+  "../../../trainer/assets/avatar-evolution/deer-mist-stage-3-256.webp",
+  "../../../trainer/assets/avatar-evolution/deer-mist-stage-4-256.webp"
 ]);

@@ -8,7 +8,11 @@ import {evolutionArt, evolutionPicture} from '../../src/trainer/avatar/evolution
 
 const sourceRoot = new URL('../../docs/design/avatar-evolution-sources/', import.meta.url);
 const outputRoot = new URL('../../trainer/assets/avatar-evolution/', import.meta.url);
-const selectedSources = ['dragon-stage-1-v3.png', 'dragon-stage-2-v3.png', 'dragon-stage-3-v1.png', 'dragon-stage-4-v2.png'];
+const selectedSources = [
+  ...['dragon-stage-1-v3.png', 'dragon-stage-2-v3.png', 'dragon-stage-3-v1.png', 'dragon-stage-4-v2.png']
+    .map((sourceName, index) => ({figureId: 'dragon', stage: index + 1, sourceName})),
+  ...[1, 2, 3, 4].map((stage) => ({figureId: 'deer-mist', stage, sourceName: `deer-mist-stage-${stage}-v1.png`})),
+];
 
 function pngDimensions(bytes) {
   assert.equal(bytes.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
@@ -31,17 +35,25 @@ function webpDimensions(bytes) {
   };
 }
 
-test('manifest describes only the four approved dragon sources and real transparent WebP derivatives', async () => {
-  assert.deepEqual(Object.keys(EVOLUTION_ART.assets).sort(), [1, 2, 3, 4].map((stage) => `dragon-stage-${stage}`));
-  assert.equal(EVOLUTION_SMALL_URLS.length, 4);
-  for (let stage = 1; stage <= 4; stage += 1) {
-    const key = `dragon-stage-${stage}`;
+test('manifest describes both approved four-stage figures and verified transparent WebP derivatives', async () => {
+  assert.deepEqual(Object.keys(EVOLUTION_ART.assets).sort(), selectedSources.map(({figureId, stage}) => `${figureId}-stage-${stage}`).sort());
+  assert.equal(EVOLUTION_SMALL_URLS.length, 8);
+  for (const {figureId, stage, sourceName} of selectedSources) {
+    const key = `${figureId}-stage-${stage}`;
     const asset = EVOLUTION_ART.assets[key];
-    const source = await readFile(new URL(selectedSources[stage - 1], sourceRoot));
-    const original = await readFile(new URL(`${key}.png`, outputRoot));
+    const source = await readFile(new URL(sourceName, sourceRoot));
+    const provenance = JSON.parse(await readFile(new URL(sourceName.replace(/\.png$/u, '.json'), sourceRoot), 'utf8'));
     const dimensions = pngDimensions(source);
-    assert.equal(sha256(original), sha256(source), 'existing PNG is the selected source, unchanged');
-    assert.equal(asset.sourceName, selectedSources[stage - 1]);
+    assert.equal(provenance.figureId, figureId);
+    assert.equal(provenance.stage, stage);
+    assert.equal(provenance.source, sourceName);
+    assert.equal(provenance.status, 'selected-production-source');
+    assert.equal(provenance.sha256, sha256(source));
+    if (figureId === 'dragon') {
+      const original = await readFile(new URL(`${key}.png`, outputRoot));
+      assert.equal(sha256(original), sha256(source), 'existing PNG is the selected source, unchanged');
+    }
+    assert.equal(asset.sourceName, sourceName);
     assert.equal(asset.sourceBytes, source.length);
     assert.equal(asset.sourceSha256, sha256(source));
     assert.equal(asset.sourceWidth, dimensions.width);
@@ -64,18 +76,24 @@ test('manifest describes only the four approved dragon sources and real transpar
 test('build report totals match the selected sources and all generated derivatives', async () => {
   const report = JSON.parse(await readFile(new URL('build-report.json', outputRoot), 'utf8'));
   const assets = Object.values(EVOLUTION_ART.assets);
+  assert.deepEqual(report.sourceFacts.map(({figureId, stage, sourceName}) => ({figureId, stage, sourceName})), selectedSources);
+  assert.deepEqual(report.derivatives.map(({figureId, stage, width}) => ({figureId, stage, width})),
+    selectedSources.flatMap(({figureId, stage}) => [256, 512, 768].map((width) => ({figureId, stage, width}))));
   assert.equal(report.totals.originalBytes, assets.reduce((sum, asset) => sum + asset.sourceBytes, 0));
   assert.equal(report.totals.smallBytes, assets.reduce((sum, asset) => sum + asset.variants[0].bytes, 0));
   assert.equal(report.totals.allBytes, assets.reduce((sum, asset) => sum + asset.variants.reduce((part, variant) => part + variant.bytes, 0), 0));
 });
 
-test('missing forms have no image; each dragon stage selects its own fallback', () => {
-  for (let stage = 1; stage <= 4; stage += 1) {
-    assert.match(evolutionArt('dragon', stage), new RegExp(`dragon-stage-${stage}-256\\.webp$`));
+test('missing forms have no image; both figures select their own stage fallback', () => {
+  for (const figureId of ['dragon', 'deer-mist']) {
+    for (let stage = 1; stage <= 4; stage += 1) {
+      assert.match(evolutionArt(figureId, stage), new RegExp(`${figureId}-stage-${stage}-256\\.webp$`));
+    }
   }
   assert.equal(evolutionArt('explorer-girl', 1), null);
   assert.equal(evolutionArt('unknown', 1), null);
   assert.equal(evolutionArt('dragon', 5), null);
+  assert.equal(evolutionArt('deer-mist', 5), null);
   assert.equal(evolutionPicture('unknown', 1), null);
 });
 

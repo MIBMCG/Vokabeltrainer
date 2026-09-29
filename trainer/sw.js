@@ -1,6 +1,6 @@
 const SCOPE = self.registration.scope;
 const CACHE_OWNER = `vokabeltrainer-product:${encodeURIComponent(new URL(SCOPE).pathname)}:`;
-const CACHE_NAME = `${CACHE_OWNER}v33`;
+const CACHE_NAME = `${CACHE_OWNER}v34`;
 const APP_ASSETS = [
   './',
   './index.html',
@@ -45,6 +45,7 @@ const APP_ASSETS = [
   './assets/avatar-shop/figure-pegasus-star-base-256.webp',
   './assets/avatar-shop/figure-phoenix-base-256.webp',
   ...[1, 2, 3, 4].map((stage) => `./assets/avatar-evolution/dragon-stage-${stage}-256.webp`),
+  ...[1, 2, 3, 4].map((stage) => `./assets/avatar-evolution/deer-mist-stage-${stage}-256.webp`),
   '../src/drive/auth.js',
   '../src/drive/client.js',
   '../src/drive/server-auth.js',
@@ -114,6 +115,7 @@ const APP_ASSETS = [
 ];
 const ON_DEMAND_ART = [
   ...[1, 2, 3, 4].flatMap((stage) => [512, 768].map((width) => `./assets/avatar-evolution/dragon-stage-${stage}-${width}.webp`)),
+  ...[1, 2, 3, 4].flatMap((stage) => [512, 768].map((width) => `./assets/avatar-evolution/deer-mist-stage-${stage}-${width}.webp`)),
   './assets/art/island-beach-960.webp', './assets/art/island-beach-1440.webp',
   './assets/art/island-journey-960.webp', './assets/art/island-journey-1086.webp',
   ...['skin-0', 'skin-1', 'skin-2', 'skin-3', 'clothing-0', 'clothing-1', 'clothing-2', 'clothing-3', 'clothing-4', 'clothing-5', 'head-cap', 'head-sunhat', 'head-mountainhat', 'back-backpack', 'hand-binoculars', 'hand-compass']

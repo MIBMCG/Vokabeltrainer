@@ -1,6 +1,11 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Pause nach Abschluss:** Der Nutzer wünscht nach dem Galeriepaket eine Pause.
+**Fortsetzung am 29.09.2026:** Die Pause ist ausdrücklich aufgehoben.
+Der neue Nebelhirsch-Konzeptbogen v2 ist bestätigt; die vier Formen werden
+als Einzelbilder mit passenden Ladegrößen in die vorhandene Galerie eingebunden.
+Aktueller Einstieg und Nachweise: [Nebelhirsch-Fortsetzung](docs/handoffs/2026-09-29-nebelhirsch-fortsetzung.md).
+
+**Historische Pause nach Abschluss:** Der Nutzer wünscht nach dem Galeriepaket eine Pause.
 Nach Abschlussdokumentation und GitHub-Sicherung keine weitere Arbeit ohne
 ausdrückliche Fortsetzung. Die neue Galerie ist im bestehenden Testbrowser
 sichtbar; Punkte, Besitz und Auswahl sind erhalten.

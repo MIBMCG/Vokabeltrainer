@@ -1,0 +1,23 @@
+{
+  "figureId": "deer-mist",
+  "stage": 3,
+  "source": "deer-mist-stage-3-v1.png",
+  "references": [
+    {
+      "path": "../avatar-evolution/deer-mist-stages-concept-v2.png",
+      "role": "user-approved four-form design board; select stage 3"
+    },
+    {
+      "path": "../avatar-shop-sources/deer-mist.png",
+      "role": "original character identity"
+    }
+  ],
+  "generator": "Built-in image_gen; backend model not exposed",
+  "prompt": "Use case: identity-preserve.\nAsset type: ONE production avatar PNG cutout for a small-screen game for ages 10–13.\nInput image 1 is the user-approved four-form Nebelhirsch DESIGN REFERENCE. Input image 2 is the original CHARACTER IDENTITY reference. Generate only the specified single form from the board, never the board itself or its other stages.\nPreserve the exact chosen stage's silver-white stag identity, friendly blue eyes, soft painterly fur, teal/gold accents, beautiful coherent detail, deer face and ears, FOUR natural hooved legs, recognizable pose and proportions. No wings, humanoid body, extra legs or unrelated animal. The complete subject must remain inside the image with generous empty transparent margin (at least 8%) on ALL sides, especially every antler leaf tip, hooves, mane and tail. No clipping. Center the whole silhouette. Do not stretch the body.\nCRITICAL: genuine RGBA transparent background, exact alpha zero outside the actual figure. Lighting belongs to fur, antlers and ornament only, no surrounding glow/halo, no backdrop, no haze/mist cloud, no gradient, no floor, no shadow, no ground, no scenery, no border/frame, no letters or stage label, no watermark, no checkerboard. Fine anti-aliased silhouette edges. The source board's ivory background must be removed entirely and never painted onto the cutout. Any flowing mane consists of bounded hairlike strands attached to the animal, never diffuse background clouds. One whole deer only.\nRender ONLY STUFE 3, the THIRD stag in the first reference. The noble forest guardian: silver-white fur, fuller swept teal-white neck mane, branched antlers with defined turquoise emerald-crystal leaf tips and gold branches, fitted silver/antique-gold leaf-shaped chest and shoulder protection sweeping into light flank protection, central teal gem, elegant fitted leaf-shaped shin guard and a few luminous natural markings. Preserve this stage's moderate compact antler crown, substantial but controlled armor and ordinary curled fluffy tail. Do NOT use stage 4's enormous golden living canopy or long streaming mist mane. Tall portrait composition, one complete character.",
+  "status": "selected-production-source",
+  "created": "2026-09-29",
+  "sha256": "a534b3a34a59c69aeb23aa37e8832a9d815b4350abd7f94ec555b39dc9e2a705",
+  "approval": "User approved concept v2 and four app images with gallery integration on 2026-09-29: Ja, genau so umsetzen",
+  "visualReview": "Root inspected full source and small light/dark comparison. Complete antlers, four hooves and tail remain visible. Actual alpha composition is clear; raw RGB preview can show hidden background colors. Independent review recorded in handoff. This is not a separate personal acceptance of production cutouts.",
+  "selectionNote": "A background-removal retry was unnecessary: direct alpha inspection and compositing confirmed the first source is already transparent. The first source retains the approved design more closely and is selected."
+}

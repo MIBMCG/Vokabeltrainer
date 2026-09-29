@@ -1,6 +1,15 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-**Aktuelle Steuerung: Pause nach Galerieabschluss am 28.09.2026.** Der Nutzer
+**Aktuelle Fortsetzung am 29.09.2026: Nebelhirsch.** Der Nutzer hat die Pause
+ausdrücklich aufgehoben und bestätigt, dass zwischenzeitlich nicht weitergearbeitet
+wurde. Der vierstufige Nebelhirsch-Entwurf v2 ist mit „Ja, genau so umsetzen“
+für Einzelbilder und Einbindung in die bestehende Galerie bestätigt.
+Die vorhandene Grundform wird unverändert wiederverwendet; drei höhere Formen,
+responsive Varianten und Offline-Einbindung sind das begrenzte laufende Paket.
+Einstieg: [Nebelhirsch-Fortsetzung](docs/handoffs/2026-09-29-nebelhirsch-fortsetzung.md).
+Testbereich und Familienbestände erhalten, keine neue Einrichtung oder Importe.
+
+**Historische Steuerung: Pause nach Galerieabschluss am 28.09.2026.** Der Nutzer
 verlangt nach diesem sinnvollen Abschlussschritt eine Pause. Galeriepaket,
 private Bereitstellung, Browserkontrolle und GitHub-Übergabe abschließen;
 danach keine weitere Produktarbeit, Bereitstellung, Bilderzeugung oder Testsitzung

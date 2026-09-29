@@ -1,0 +1,14 @@
+{
+  "figureId": "deer-mist",
+  "stage": 1,
+  "source": "deer-mist-stage-1-v1.png",
+  "reference": "../avatar-shop-sources/deer-mist.png",
+  "referenceRole": "Exact existing approved base source, reused without pixel changes",
+  "generator": "Built-in image_gen, original generation 2026-09-19; no new generation for this copy",
+  "prompt": "No new generation. Reuse the complete original Nebelhirsch base. Original generation prompt is preserved in ../avatar-shop-sources/deer-mist.json.",
+  "status": "selected-production-source",
+  "created": "2026-09-29",
+  "sha256": "1f7f605ab78fb8af4ec966c7086091c6844a017008afc676888f1b08f7d3f0c0",
+  "approval": "User on 2026-09-29 approved concept v2 and the four app images with gallery integration: Ja, genau so umsetzen",
+  "visualReview": "Original complete antlers, four hooves and tail inspected. Small transparent variants and final integration reviewed separately."
+}
