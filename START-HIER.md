@@ -1,5 +1,11 @@
 # Hier mit der Weiterarbeit beginnen
 
+**Aktuelle Fortsetzung: Restwartezeiten untersucht (29.09.2026).** Die Diagnose
+von Kauf und Lernbereichsübernahme ist abgeschlossen; ein begrenzter Entwurf
+für mehr gleichzeitig übertragene Kaufdateien wartet auf Nutzerantwort.
+Produkt `ee7e174` und Cache v39 unverändert.
+[Aktuelle Übergabe](docs/handoffs/2026-09-29-restwartezeiten.md).
+
 **Aktueller Abschluss: Tabellenkorrekturen (29.09.2026).** Feldwechsel erhalten
 den Cursor; korrigierte Pflichtwerte werden automatisch freigegeben. Auch neu
 erkannte Dopplungen nach Lektionswechsel bleiben sichtbar. Produktcommit

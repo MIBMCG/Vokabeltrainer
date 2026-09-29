@@ -1,5 +1,15 @@
 # Arbeitsstand
 
+**Fortsetzung: Restwartezeiten untersucht (29.09.2026).** Zwei isolierte
+Messläufe grenzen die offenen Tempopunkte ein: fünf Kaufdateien warten in zwei
+Uploadgruppen aufeinander; die Übernahme eines aktivierten Lernbereichs liest
+denselben Bestand für Vorschau und Bestätigung zweimal vollständig.
+Kauf: 31 Anfragen. Übernahme: 79 + 79 + 38 Anfragen für Vorschau,
+Bestätigung und ersten Abgleich. Keine neue Produktänderung/Bereitstellung.
+Ein kurzer Entwurf für bis zu sechs gleichzeitige Kaufdateien liegt dem Nutzer
+zur Bestätigung vor; eine typische echte Wortliste wurde für den Praxistest
+angefragt. [Diagnose und nächste Schritte](docs/handoffs/2026-09-29-restwartezeiten.md).
+
 **Abgeschlossen: Tabellenkorrekturen (29.09.2026).** Der bestätigte Entwurf
 ist als Produktcommit `ee7e17454af04526715df58c4f3767259f47414e` integriert
 und exakt mit GitHub abgeglichen. Tab, Rückwärtstab und Klick erhalten den
