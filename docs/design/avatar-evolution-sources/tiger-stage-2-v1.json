@@ -1,0 +1,22 @@
+{
+  "figureId": "tiger",
+  "stage": 2,
+  "source": "tiger-stage-2-v1.png",
+  "references": [
+    {
+      "path": "../avatar-evolution/tiger-stages-concept-v1.png",
+      "role": "User-approved four-form design; stage 2 selected"
+    },
+    {
+      "path": "../avatar-shop-sources/tiger.png",
+      "role": "Original tiger identity"
+    }
+  ],
+  "generator": "Built-in image_gen; backend model not exposed",
+  "prompt": "Use case: identity-preserve.\nAsset type: ONE production avatar PNG cutout for a vocabulary-learning game, ages 10–13.\nInput image 1 is the user-approved FOUR-FORM TIGER DESIGN BOARD. Input image 2 is the existing TIGER IDENTITY. Render only the specified single stage from the board, never a board or multiple forms.\nKeep this recognizable friendly Bengal tiger: warm orange coat, dark black stripes, white chest/cheeks/muzzle, amber eyes, rounded ears, FOUR natural tiger paws, ONE striped tail. Premium softly painted game/storybook detail matching the references, coherent anatomy, three-quarter standing facing slightly left and calmly looking toward viewer. Friendly closed mouth, no aggression. Full creature complete, no cropped ears, paws, tail or flowing fur. Fit the ENTIRE silhouette comfortably centered within a nearly square canvas at approximately 80–85% of canvas width/height, leaving real empty transparent margin on every side.\nCRITICAL: genuine RGBA transparent PNG. Every pixel outside the figure including gaps between limbs, tail and body must be alpha zero. Retain only a narrow antialiased boundary. No broad semitransparent halo, no backdrop, no colored light cloud, no floor/contact shadow, no ground, no smoke, no surrounding particles, no scenery, no panel/frame, no text or stage label, no checkerboard or watermark. Light may illuminate the actual fur/material surfaces only.\nRender ONLY STUFE 2: the SECOND TIGER from the design board. Preserve the relatively simple jungle explorer design: fitted forest-green and warm-brown leather travel harness with antique-gold leaf clasp across the upper chest, modest shoulder straps and small map satchel with visible rolled cream map on the flank, matching restrained green/brown/gold cuffs on both forelegs. Gear follows the body; no loose strap passes through a limb. Most striped fur remains uncovered, and the normal curled striped tail is fully visible. No stage3 plate armor, sunstone, brow crown, or stage4 flowing gold-white solar fur. One complete equipped tiger, exactly this stage.",
+  "status": "selected-production-source",
+  "created": "2026-09-29",
+  "sha256": "10d4b96944cc0d71d0d41024ed6a4ca1170d42438ab8d7e65db1a1c494551c33",
+  "approval": "User approved the four-form concept on 2026-09-29: \"Ja, genau so umsetzen\".",
+  "visualReview": "Full source and small light/dark alpha composition inspected. Complete figure, paws, ears and tail are visible. Production cutout inspection is technical/visual review, not a separate personal acceptance by the user."
+}

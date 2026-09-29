@@ -16,6 +16,7 @@ const sources = Object.freeze([
   {figureId: 'dragon', stage: 3, sourceName: 'dragon-stage-3-v1.png'},
   {figureId: 'dragon', stage: 4, sourceName: 'dragon-stage-4-v2.png'},
   ...[1, 2, 3, 4].map((stage) => ({figureId: 'deer-mist', stage, sourceName: `deer-mist-stage-${stage}-v1.png`})),
+  ...[1, 2, 3, 4].map((stage) => ({figureId: 'tiger', stage, sourceName: `tiger-stage-${stage}-v1.png`})),
 ]);
 
 function sha256(bytes) {

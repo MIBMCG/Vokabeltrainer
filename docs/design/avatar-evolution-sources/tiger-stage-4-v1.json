@@ -1,0 +1,22 @@
+{
+  "figureId": "tiger",
+  "stage": 4,
+  "source": "tiger-stage-4-v1.png",
+  "references": [
+    {
+      "path": "../avatar-evolution/tiger-stages-concept-v1.png",
+      "role": "User-approved four-form design; stage 4 selected"
+    },
+    {
+      "path": "../avatar-shop-sources/tiger.png",
+      "role": "Original tiger identity"
+    }
+  ],
+  "generator": "Built-in image_gen; backend model not exposed",
+  "prompt": "Use case: identity-preserve.\nAsset type: ONE production avatar PNG cutout for a vocabulary-learning game, ages 10–13.\nInput image 1 is the user-approved FOUR-FORM TIGER DESIGN BOARD. Input image 2 is the existing TIGER IDENTITY. Render only the specified single stage from the board, never a board or multiple forms.\nKeep this recognizable friendly Bengal tiger: warm orange coat, dark black stripes, white chest/cheeks/muzzle, amber eyes, rounded ears, FOUR natural tiger paws, ONE striped tail. Premium softly painted game/storybook detail matching the references, coherent anatomy, three-quarter standing facing slightly left and calmly looking toward viewer. Friendly closed mouth, no aggression. Full creature complete, no cropped ears, paws, tail or flowing fur. Fit the ENTIRE silhouette comfortably centered within a nearly square canvas at approximately 80–85% of canvas width/height, leaving real empty transparent margin on every side.\nCRITICAL: genuine RGBA transparent PNG. Every pixel outside the figure including gaps between limbs, tail and body must be alpha zero. Retain only a narrow antialiased boundary. No broad semitransparent halo, no backdrop, no colored light cloud, no floor/contact shadow, no ground, no smoke, no surrounding particles, no scenery, no panel/frame, no text or stage label, no checkerboard or watermark. Light may illuminate the actual fur/material surfaces only.\nRender ONLY STUFE 4: the FOURTH RIGHTMOST TIGER from the approved design board. The legendary SOLAR JUNGLE TIGER SPIRIT. Keep the approved tiger face and rounded ears, orange coat and recognizably DARK tiger stripes. Majestic taller stance; luminous warm-gold edges follow the existing dark stripes. Long flowing ivory-and-warm-gold cheek/neck/shoulder fur sweeps backward into graceful large sunray-shaped tufts and creates a much larger legendary silhouette than stage3. Preserve the full orange/black striped body; do not turn it into a lion or erase stripes. A single long curled striped tail ending in the spectacular large luminous gold-white featherlike plume shown in the board. All fur/solar wisps are bounded strands attached to the actual figure, NOT diffuse background glow/cloud. Golden flowing fur on the lower legs leaves all FOUR ordinary tiger paws clearly visible and anatomically distinct. Minimal chest adornment: the simple sun-shaped gold emblem with round warm amber center shown in the board; no broad jade plate armor, no map bag, no new horn/antler/wings, no floating sun/halo, no detached fire or particles. Protective and wise with warm amber eyes, closed mouth. Preserve this exact approved warm-gold final transformation; make details readable at small display sizes. One full tiger PNG with genuinely alpha-zero empty background and generous margin around flowing mane, ears, tail plume and paws.",
+  "status": "selected-production-source",
+  "created": "2026-09-29",
+  "sha256": "c130b937c9eb961868327aa3bfcd79573ae2299a6cc242f8009bb883b03050f8",
+  "approval": "User approved the four-form concept on 2026-09-29: \"Ja, genau so umsetzen\".",
+  "visualReview": "Full source and small light/dark alpha composition inspected. Complete figure, paws, ears and tail are visible. Production cutout inspection is technical/visual review, not a separate personal acceptance by the user."
+}

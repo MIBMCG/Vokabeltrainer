@@ -72,12 +72,48 @@
       "sourceSha256": "70b99b7b63689e9445b4041be89fcc8677e996044db699ba1de5113ca42a5c4d",
       "width": 1254,
       "height": 1254
+    },
+    {
+      "figureId": "tiger",
+      "stage": 1,
+      "sourceName": "tiger-stage-1-v1.png",
+      "sourceBytes": 1795176,
+      "sourceSha256": "888e90dd3f2a8d4c63222e34d9bb2be4984f6eb32fcebcc1a0a806f8239d334b",
+      "width": 1223,
+      "height": 1286
+    },
+    {
+      "figureId": "tiger",
+      "stage": 2,
+      "sourceName": "tiger-stage-2-v1.png",
+      "sourceBytes": 1775422,
+      "sourceSha256": "10d4b96944cc0d71d0d41024ed6a4ca1170d42438ab8d7e65db1a1c494551c33",
+      "width": 1254,
+      "height": 1254
+    },
+    {
+      "figureId": "tiger",
+      "stage": 3,
+      "sourceName": "tiger-stage-3-v1.png",
+      "sourceBytes": 1814998,
+      "sourceSha256": "10996315058fbcc448bb619efee12f216669b8164f7680f5312b4a8f7c3eee76",
+      "width": 1254,
+      "height": 1254
+    },
+    {
+      "figureId": "tiger",
+      "stage": 4,
+      "sourceName": "tiger-stage-4-v1.png",
+      "sourceBytes": 2088922,
+      "sourceSha256": "c130b937c9eb961868327aa3bfcd79573ae2299a6cc242f8009bb883b03050f8",
+      "width": 1254,
+      "height": 1254
     }
   ],
   "totals": {
-    "originalBytes": 13883590,
-    "smallBytes": 283274,
-    "allBytes": 2621672
+    "originalBytes": 21358108,
+    "smallBytes": 398534,
+    "allBytes": 3699220
   },
   "derivatives": [
     {
@@ -295,6 +331,114 @@
       "bytes": 243974,
       "sha256": "2426979ae89c46e369b9dc92d39c544d5db4e58c0325d6feb12d038cb75b3c5b",
       "url": "../../../trainer/assets/avatar-evolution/deer-mist-stage-4-768.webp"
+    },
+    {
+      "figureId": "tiger",
+      "stage": 1,
+      "width": 256,
+      "height": 269,
+      "bytes": 28380,
+      "sha256": "01058aaa54d69500f88f2b095e82abff448972793eaf96202297066f8c696e05",
+      "url": "../../../trainer/assets/avatar-evolution/tiger-stage-1-256.webp"
+    },
+    {
+      "figureId": "tiger",
+      "stage": 1,
+      "width": 512,
+      "height": 538,
+      "bytes": 82266,
+      "sha256": "ef7fe658ab4447cd9e2841f4757d37e910ea658d9ac38c72d53528fdb70540ce",
+      "url": "../../../trainer/assets/avatar-evolution/tiger-stage-1-512.webp"
+    },
+    {
+      "figureId": "tiger",
+      "stage": 1,
+      "width": 768,
+      "height": 808,
+      "bytes": 158464,
+      "sha256": "d0a0a58fada95dfa274bb76751efd5254d70a1038c6493c615c5fc8280b7656d",
+      "url": "../../../trainer/assets/avatar-evolution/tiger-stage-1-768.webp"
+    },
+    {
+      "figureId": "tiger",
+      "stage": 2,
+      "width": 256,
+      "height": 256,
+      "bytes": 26028,
+      "sha256": "8eb802db8b42798daf4d9f40203cc996620578e273a1add7612fe9f235c1073e",
+      "url": "../../../trainer/assets/avatar-evolution/tiger-stage-2-256.webp"
+    },
+    {
+      "figureId": "tiger",
+      "stage": 2,
+      "width": 512,
+      "height": 512,
+      "bytes": 73806,
+      "sha256": "57abfa39db3fa1f31e070117ea5a5ae722e053c8b96353347e9ae6d910af918e",
+      "url": "../../../trainer/assets/avatar-evolution/tiger-stage-2-512.webp"
+    },
+    {
+      "figureId": "tiger",
+      "stage": 2,
+      "width": 768,
+      "height": 768,
+      "bytes": 137928,
+      "sha256": "2d627bfc512dcf68e2e384c8dc1f04dbb944a7b1655e6a57ad1cd90d058f4ae9",
+      "url": "../../../trainer/assets/avatar-evolution/tiger-stage-2-768.webp"
+    },
+    {
+      "figureId": "tiger",
+      "stage": 3,
+      "width": 256,
+      "height": 256,
+      "bytes": 26706,
+      "sha256": "509436235f76ffd8bef38803637ea1132392d7901c72c59ea32292ca1ffe179b",
+      "url": "../../../trainer/assets/avatar-evolution/tiger-stage-3-256.webp"
+    },
+    {
+      "figureId": "tiger",
+      "stage": 3,
+      "width": 512,
+      "height": 512,
+      "bytes": 77846,
+      "sha256": "7c2a0fe411acf3765778d26e0e4a0969fe135711b6fc4d8ad4dae0b3aea5ebbe",
+      "url": "../../../trainer/assets/avatar-evolution/tiger-stage-3-512.webp"
+    },
+    {
+      "figureId": "tiger",
+      "stage": 3,
+      "width": 768,
+      "height": 768,
+      "bytes": 147910,
+      "sha256": "e258292b0120851dbdd02fa591b8e1024742a589f4dcff33d57443e9c4341aab",
+      "url": "../../../trainer/assets/avatar-evolution/tiger-stage-3-768.webp"
+    },
+    {
+      "figureId": "tiger",
+      "stage": 4,
+      "width": 256,
+      "height": 256,
+      "bytes": 34146,
+      "sha256": "6d9aa72c842cc8fdd7fc6e66c41b3b0edf69c53c623a8707ff6393a337754659",
+      "url": "../../../trainer/assets/avatar-evolution/tiger-stage-4-256.webp"
+    },
+    {
+      "figureId": "tiger",
+      "stage": 4,
+      "width": 512,
+      "height": 512,
+      "bytes": 98530,
+      "sha256": "3aa736001b21a25199eea37392fa5a4d7080050976ff25aafd68801402dc9235",
+      "url": "../../../trainer/assets/avatar-evolution/tiger-stage-4-512.webp"
+    },
+    {
+      "figureId": "tiger",
+      "stage": 4,
+      "width": 768,
+      "height": 768,
+      "bytes": 185538,
+      "sha256": "f4834ac858781a6368f174a92fef6e3496032b8e0bcad7e8feaeef0cdea85f13",
+      "url": "../../../trainer/assets/avatar-evolution/tiger-stage-4-768.webp"
     }
   ]
 }

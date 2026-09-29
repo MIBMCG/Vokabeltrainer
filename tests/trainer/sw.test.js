@@ -101,6 +101,10 @@ test('worker installs the complete scoped trainer app without Google or personal
     'https://example.test/repo/src/drive/auth.js',
   ]) assert.ok(installed.includes(expected), expected);
   assert.equal(installed.filter((url) => url.includes('/assets/art/')).length, 18);
+  for (const stage of [1, 2, 3, 4]) {
+    assert.ok(installed.includes(`${scope}assets/avatar-evolution/tiger-stage-${stage}-256.webp`));
+    assert.equal(installed.includes(`${scope}assets/avatar-evolution/tiger-stage-${stage}-768.webp`), false);
+  }
   assert.equal(installed.some((url) => /\/assets\/art\/.*-(?:512|768|960|1086|1440)\.webp$/u.test(url)), false);
   assert.equal(installed.some((url) => /accounts\.google|googleapis|\.json(?:$|\?)/u.test(url)), false);
 });
@@ -168,6 +172,15 @@ test('fetch caches a successful higher art rendition only when requested', async
   });
   assert.equal(await (await response).text(), `network:${highUrl}`);
   assert.equal([...worker.stores.values()].some((store) => store.has(highUrl)), true);
+
+  const tigerUrl = `${scope}assets/avatar-evolution/tiger-stage-4-768.webp`;
+  assert.equal([...worker.stores.values()].some((store) => store.has(tigerUrl)), false);
+  worker.listeners.get('fetch')({
+    request: new Request(tigerUrl),
+    respondWith(value) { response = Promise.resolve(value); },
+  });
+  assert.equal(await (await response).text(), `network:${tigerUrl}`);
+  assert.equal([...worker.stores.values()].some((store) => store.has(tigerUrl)), true);
 });
 
 test('active worker relays activation only for the current controlled scoped client', async () => {

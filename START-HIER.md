@@ -1,8 +1,11 @@
 # Hier mit der Weiterarbeit beginnen
 
 **Nächste Reihe: Tiger.** Der Nutzer hat die weitere Arbeit beauftragt.
-Eine konkrete Viereransicht liegt zur Bildprüfung vor; ihre persönliche
-Bestätigung steht noch aus. [Tiger-Fortsetzung](docs/handoffs/2026-09-29-tiger-fortsetzung.md).
+Die konkrete Viereransicht ist für Einzelbilder und Galerieeinbindung mit
+„Ja, genau so umsetzen“ bestätigt. Die Integration ist geprüft: 646 gesamte
+Node-Tests, 25 gezielte Node-Tests, sechs Browserfälle und unabhängige Prüfungen
+PASS. Private Bereitstellung und Kontrolle im bestehenden Testbrowser folgen.
+[Tiger-Fortsetzung](docs/handoffs/2026-09-29-tiger-fortsetzung.md).
 Die private App läuft weiterhin mit der abgeschlossenen Nebelhirsch-Reihe.
 
 **Fortsetzung am 29.09.2026:** Die Pause ist ausdrücklich aufgehoben.

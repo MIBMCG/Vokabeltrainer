@@ -12,7 +12,7 @@ test('update notice follows actual waiting version and disappears after another 
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
     assert.equal(await page.locator('#update-notice').count(), 0, 'first installation is not an available update');
 
-    harness.setServiceWorkerVersion('v35');
+    harness.setServiceWorkerVersion('v36');
     await page.evaluate(async () => {
       await (await navigator.serviceWorker.getRegistration('./')).update();
     });

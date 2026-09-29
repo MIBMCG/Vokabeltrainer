@@ -143,6 +143,10 @@ const ASSETS = new Map([
     `/trainer/assets/avatar-evolution/deer-mist-stage-${stage}-${width}.webp`,
     [`trainer/assets/avatar-evolution/deer-mist-stage-${stage}-${width}.webp`, 'image/webp'],
   ])),
+  ...[1, 2, 3, 4].flatMap((stage) => [256, 512, 768].map((width) => [
+    `/trainer/assets/avatar-evolution/tiger-stage-${stage}-${width}.webp`,
+    [`trainer/assets/avatar-evolution/tiger-stage-${stage}-${width}.webp`, 'image/webp'],
+  ])),
 ]);
 
 export function publicAssetFiles() {

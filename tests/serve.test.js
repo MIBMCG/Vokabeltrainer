@@ -89,7 +89,7 @@ test('serves only named probe and trainer assets with correct MIME types', async
       ['/src/trainer/avatar/evolution.js', 'text/javascript; charset=utf-8'],
       ['/src/trainer/avatar/evolution-art.js', 'text/javascript; charset=utf-8'],
       ['/src/trainer/avatar/evolution-art-manifest.js', 'text/javascript; charset=utf-8'],
-      ...['dragon', 'deer-mist'].flatMap((figureId) => [1, 2, 3, 4].flatMap((stage) =>
+      ...['dragon', 'deer-mist', 'tiger'].flatMap((figureId) => [1, 2, 3, 4].flatMap((stage) =>
         [256, 512, 768].map((width) => [
           `/trainer/assets/avatar-evolution/${figureId}-stage-${stage}-${width}.webp`, 'image/webp',
         ]))),

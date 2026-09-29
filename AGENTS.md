@@ -1,13 +1,18 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-**Aktuelle Fortsetzung am 29.09.2026: Tiger-Vorschau.** Nach Abschluss der
+**Aktuelle Fortsetzung am 29.09.2026: bestätigte Tiger-Reihe.** Nach Abschluss der
 Nebelhirsch-Reihe beauftragt der Nutzer die Weiterarbeit. Eine konkrete
 vierstufige Tiger-Vorschau ist erzeugt und zur persönlichen Bildprüfung
-vorgelegt. Diese neue Tiger-Bildrichtung ist noch nicht bestätigt; vorhandene
-Preise, Kaufabläufe und die allgemeine Stilrichtung bleiben bestätigt.
+vorgelegt. Der Nutzer hat sie mit „Ja, genau so umsetzen“ für Einzelbilder
+und Galerieeinbindung bestätigt. Vorhandene Preise, Kaufabläufe und die
+allgemeine Stilrichtung bleiben bestätigt.
 Einstieg: [Tiger-Fortsetzung](docs/handoffs/2026-09-29-tiger-fortsetzung.md).
-Bis zur Bildentscheidung nur den Entwurf sichern und unabhängige Vorarbeiten
-abschließen; keine neuen Tiger-Produktionsbilder oder Produktintegration.
+Die Umsetzung umfasst die unverändert wiederverwendete Grundform, drei höhere
+Formen, responsive Bilder und Offline-/Updateintegration im vorhandenen System.
+Das Paket ist fertig integriert und geprüft: 646/646 gesamte Node-Tests,
+25/25 gezielte Node-Tests, 6/6 lokale Browserfälle und unabhängige Bild-/Codeprüfung
+PASS. Cache v35 ist vorbereitet; private Bereitstellung und bestehender
+Testbrowser werden als abschließender Schritt geprüft.
 
 **Abgeschlossen am 29.09.2026: Nebelhirsch.** Der Nutzer hat die Pause
 ausdrücklich aufgehoben und bestätigt, dass zwischenzeitlich nicht weitergearbeitet

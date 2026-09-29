@@ -5,8 +5,12 @@ Weiterarbeit. Der bestehende Tiger wird als nächste begrenzte Reihe vorbereitet
 Ein [Konzeptbogen](docs/design/avatar-evolution/tiger-stages-concept-v1.png)
 zeigt Grundform, Entdecker, Tempelwächter und eine mythische Sonnenform.
 Die Beschreibungen sind Arbeitsbegriffe, keine neuen Produktnamen.
-Die konkrete Bildentscheidung steht noch aus; es wurden noch keine
-Tiger-Produktionsbilder erstellt oder ausgeliefert.
+Die konkrete Bildrichtung und Galerieeinbindung sind mit „Ja, genau so
+umsetzen“ bestätigt. Einzelbilder und Integration sind erstellt und geprüft:
+646/646 gesamte Node-Tests, 25/25 gezielte Node-Tests, 6/6 Browserfälle und
+unabhängige Bild-/Codeprüfung PASS. Vier kleine Tigerbilder brauchen zusammen
+115.260 Bytes. Cache v35 ist vorbereitet; eine neue Bereitstellung ist noch
+nicht erfolgt.
 [Aktuelle Übergabe](docs/handoffs/2026-09-29-tiger-fortsetzung.md).
 
 **Aktuelle Fortsetzung am 29.09.2026:** Der Nutzer hebt die Pause auf; seit

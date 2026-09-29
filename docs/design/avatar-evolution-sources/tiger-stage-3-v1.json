@@ -1,0 +1,22 @@
+{
+  "figureId": "tiger",
+  "stage": 3,
+  "source": "tiger-stage-3-v1.png",
+  "references": [
+    {
+      "path": "../avatar-evolution/tiger-stages-concept-v1.png",
+      "role": "User-approved four-form design; stage 3 selected"
+    },
+    {
+      "path": "../avatar-shop-sources/tiger.png",
+      "role": "Original tiger identity"
+    }
+  ],
+  "generator": "Built-in image_gen; backend model not exposed",
+  "prompt": "Use case: identity-preserve.\nAsset type: ONE production avatar PNG cutout for a vocabulary-learning game, ages 10–13.\nInput image 1 is the user-approved FOUR-FORM TIGER DESIGN BOARD. Input image 2 is the existing TIGER IDENTITY. Render only the specified single stage from the board, never a board or multiple forms.\nKeep this recognizable friendly Bengal tiger: warm orange coat, dark black stripes, white chest/cheeks/muzzle, amber eyes, rounded ears, FOUR natural tiger paws, ONE striped tail. Premium softly painted game/storybook detail matching the references, coherent anatomy, three-quarter standing facing slightly left and calmly looking toward viewer. Friendly closed mouth, no aggression. Full creature complete, no cropped ears, paws, tail or flowing fur. Fit the ENTIRE silhouette comfortably centered within a nearly square canvas at approximately 80–85% of canvas width/height, leaving real empty transparent margin on every side.\nCRITICAL: genuine RGBA transparent PNG. Every pixel outside the figure including gaps between limbs, tail and body must be alpha zero. Retain only a narrow antialiased boundary. No broad semitransparent halo, no backdrop, no colored light cloud, no floor/contact shadow, no ground, no smoke, no surrounding particles, no scenery, no panel/frame, no text or stage label, no checkerboard or watermark. Light may illuminate the actual fur/material surfaces only.\nRender ONLY STUFE 3: the THIRD TIGER from the approved design board. The ancient jungle temple guardian: orange/black tiger with slightly fuller white cheek/chest ruff, proud muscular stance, sculpted deep forest/jade green plate shoulders and fitted chest armor with broad antique-gold leaf/sun reliefs, a single round warm amber sunstone at center chest, matching fitted gold/green foreleg guards, and the modest integrated gold brow ornament above its eyes. Both rounded tiger ears remain clearly visible. Preserve open striped flanks and ordinary curled striped tail; armor follows torso without colliding with legs. No explorer satchel or rolled map. Do NOT use stage4 golden glowing stripes, oversized flowing solar fur or plume tail. No horns, antlers, wings or floating crown. One complete tiger only, clean transparent cutout, full tail and all four paws.",
+  "status": "selected-production-source",
+  "created": "2026-09-29",
+  "sha256": "10996315058fbcc448bb619efee12f216669b8164f7680f5312b4a8f7c3eee76",
+  "approval": "User approved the four-form concept on 2026-09-29: \"Ja, genau so umsetzen\".",
+  "visualReview": "Full source and small light/dark alpha composition inspected. Complete figure, paws, ears and tail are visible. Production cutout inspection is technical/visual review, not a separate personal acceptance by the user."
+}

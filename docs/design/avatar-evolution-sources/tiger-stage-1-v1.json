@@ -1,0 +1,14 @@
+{
+  "figureId": "tiger",
+  "stage": 1,
+  "source": "tiger-stage-1-v1.png",
+  "reference": "../avatar-shop-sources/tiger.png",
+  "referenceRole": "Exact existing base source, reused without pixel changes",
+  "generator": "Built-in image_gen, original generation 2026-09-19; no new generation for this copy",
+  "prompt": "No new generation. Reuse original tiger.png exactly; original prompt preserved in ../avatar-shop-sources/tiger.json.",
+  "status": "selected-production-source",
+  "created": "2026-09-29",
+  "sha256": "888e90dd3f2a8d4c63222e34d9bb2be4984f6eb32fcebcc1a0a806f8239d334b",
+  "approval": "User on 2026-09-29 approved Tiger concept v1 and individual app images with gallery integration: Ja, genau so umsetzen",
+  "visualReview": "Full base tiger inspected. Small transparent variants and final integration reviewed separately."
+}
