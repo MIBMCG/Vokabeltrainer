@@ -1,5 +1,13 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
+**Aktuelle Fortsetzung: Übernahmevorschau am 29.09.2026.** Der Nutzer setzt
+die Arbeit fort. Der begrenzte Vorschlag, den geprüften entfernten
+Vorschauzustand für die erneut geprüfte Bestätigung wiederzuverwenden,
+ist vorgelegt; die konkrete Antwort steht noch aus. Nur Codeherleitung und
+vorhandene Messdaten ausgewertet, keine Produktänderung oder Bereitstellung.
+Produkt `31fcf02`, Cache v40 bleiben aktuell. Einstieg:
+[Übernahmevorschau-Übergabe](docs/handoffs/2026-09-29-lernbereich-vorschau.md).
+
 **Aktueller Abschluss: Kauf-Uploadgruppen am 29.09.2026.** Der Nutzer hat
 den begrenzten Entwurf bestätigt. Produktcommit `31fcf02` überträgt bis zu
 sechs statt drei Kaufdateien gleichzeitig; alle Prüfungen bleiben erhalten.

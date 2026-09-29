@@ -1,5 +1,14 @@
 # Arbeitsstand
 
+**Fortsetzung: Übernahmevorschau untersucht (29.09.2026).** Als nächster
+begrenzter Eingriff ist die Wiederverwendung des geprüften Vorschauzustands
+vorgeschlagen. Der bestehende Abgleich prüft weiterhin aktuelle Änderungen;
+bekannte Kaufbelege müssten nicht erneut geladen werden. Code und vorhandene
+Messdaten lassen etwa 30 weniger Anfragen bei der unveränderten Bestätigung
+erwarten, noch ohne neue Zeitmessung. Der konkrete Entwurf wartet auf Antwort.
+Keine Produktänderung oder Bereitstellung; `31fcf02` und Cache v40 bleiben
+aktuell. [Untersuchung und Fortsetzung](docs/handoffs/2026-09-29-lernbereich-vorschau.md).
+
 **Abgeschlossen: größere Kauf-Uploadgruppen (29.09.2026).** Der Nutzer
 bestätigt den Entwurf; Produkt `31fcf02229eee8e866d607b9d23cdaa601677680`
 überträgt bis sechs statt drei Kaufdateien gleichzeitig und erhält sämtliche

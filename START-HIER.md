@@ -1,5 +1,11 @@
 # Hier mit der Weiterarbeit beginnen
 
+**Aktuelle Fortsetzung: schnellere Lernbereichsübernahme (29.09.2026).**
+Ein konkreter begrenzter Vorschlag ist vorgelegt: geprüfte Vorschau im
+Speicher behalten und bei der Bestätigung mit dem bestehenden Abgleich
+erneut prüfen. Antwort noch offen; Produkt und Cache v40 unverändert.
+[Aktuelle Übergabe](docs/handoffs/2026-09-29-lernbereich-vorschau.md).
+
 **Aktueller Abschluss: größere Kauf-Uploadgruppen (29.09.2026).** Der
 bestätigte Entwurf ist als `31fcf02` umgesetzt: bis sechs Kaufdateien zugleich,
 alle Prüfungen erhalten. Synthetisch 8,782 statt 10,907 Sekunden, 659 Node-
