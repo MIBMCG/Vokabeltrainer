@@ -1,5 +1,19 @@
 # Arbeitsstand
 
+**Abgeschlossen: Tabellenkorrekturen (29.09.2026).** Der bestätigte Entwurf
+ist als Produktcommit `ee7e17454af04526715df58c4f3767259f47414e` integriert
+und exakt mit GitHub abgeglichen. Tab, Rückwärtstab und Klick erhalten den
+Fokus; korrigierte Pflichtfelder benötigen keinen zusätzlichen Klick.
+Unklare Tabellenstrukturen bleiben ausdrücklich zu bestätigen. Eine durch
+Lektionswechsel neu entstandene Dopplung öffnet die betreffende Zeile.
+655/655 finale Node-Tests, 22 Browserfälle und vier gezielte Nachprüfungen
+PASS; unabhängige Task- und Gesamtprüfung ohne offene Befunde. Cache v39 ist
+privat aktiv; zehn ausgelieferte Dateien entsprechen exakt dem geprüften Paket.
+Das kontrollierte Update im vorhandenen Testbrowser erhält 40 verfügbare
+Punkte, 2.040 Lernpunkte, Level 11 und Drachenstufe 4. Keine neue Pause.
+[Bericht](docs/reports/2026-09-29-importkorrekturen.md) und
+[aktuelle Übergabe](docs/handoffs/2026-09-29-importkorrekturen.md).
+
 **Abgeschlossen: sofortiger Google-Abgleich nach Vokabelspeicherung (29.09.2026).**
 Der Nutzer bestätigt den Wegfall der bisherigen Zehn-Sekunden-Wartezeit.
 Neue Wort-/Lektionsrevisionen stoßen den vorhandenen Abgleich sofort an;
@@ -47,14 +61,10 @@ Produktarbeit oder Testsitzung ohne ausdrückliche Fortsetzung.
 
 ## Aktuelle offene Arbeitspunkte (29.09.2026)
 
-- Bestätigte Bedienfehler bei Importkorrekturen gezielt beheben: Nach Ergänzen
-  einer leeren Zelle verliert Tab den Fokus; ein veralteter Pflichtfeldhinweis
-  verlangt noch einen zusätzlichen Bestätigungsklick. In isoliertem Edge bei
-  390 px reproduziert, noch nicht korrigiert. Vor Umsetzung kurzen Entwurf
-  abstimmen; echte Strukturmehrdeutigkeiten weiter ausdrücklich prüfen.
-- Den vereinfachten Tabellenweg nach neuer Fortsetzung mit einer typischen
+- Den vereinfachten Tabellenweg mit einer typischen
   echten Wortliste praktisch beurteilen; lokale Speicherung und anschließenden
-  Google-Abgleich getrennt messen. Umsetzung und synthetische Prüfung sind fertig.
+  Google-Abgleich getrennt messen. Die Korrekturprobleme sind seit `ee7e174`
+  behoben; umgesetzt und synthetisch geprüft ist der gesamte vereinfachte Weg.
 - Die verbleibenden 64 Entwicklungsbilder produzieren und integrieren.
 - Kaufgeschwindigkeit weiter verbessern: rund 17,1 Sekunden sind für einen
   echten Durchgang belegt; das Wunschziel unter zehn Sekunden und die langsame

@@ -51,6 +51,11 @@ Abgleich ersetzt keine offenen Eingaben in anderen Bereichen.
    Die gewählte Lektion bleibt erhalten.
 
 Änderungen am eingefügten Text oder an der Ziellektion aktualisieren die Prüfung.
+Fehlende Wörter oder Übersetzungen können direkt in der geöffneten Zeile ergänzt
+werden. Der Pflichtfeldhinweis verschwindet nach einer gültigen Korrektur
+automatisch; die Zeile bleibt zum Weiterbearbeiten sichtbar. Bei unklaren
+Spalten oder Anführungszeichen bleibt **Struktur nach Prüfung bestätigen**
+erforderlich, nachdem die Zuordnung bewusst geprüft wurde.
 Bei einem lokalen Speicherfehler bleiben die Eingaben zum erneuten Versuch
 stehen; eine neue Lektion und ihre Wörter werden gemeinsam übernommen.
 

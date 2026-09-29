@@ -29,6 +29,12 @@ und die tatsächliche Übertragungsdauer bleiben getrennt. Umgesetzt als
 `0c3720a`, privat mit Cache v38:
 [Sofortiger Vokabelabgleich](reports/2026-09-29-sofortiger-vokabelabgleich.md).
 
+Der Nutzer bestätigt anschließend den begrenzten Entwurf für Korrekturen in der
+Importvorschau: Beim Feldwechsel bleiben Cursor und geöffnete Zeile erhalten.
+Ergänzte Pflichtfelder werden automatisch freigegeben; mehrdeutige Spalten und
+Anführungszeichen brauchen weiterhin eine bewusste Bestätigung. Prüfstand:
+[Importkorrekturen](reports/2026-09-29-importkorrekturen.md).
+
 Die zusätzliche Frage nach einfacher Handynutzung betrifft den aktuellen
 Bedien- und Prüfstand: Die App besitzt eine responsive Oberfläche und eine
 Home-Bildschirm-Konfiguration. Schmale Browseransichten sind geprüft;

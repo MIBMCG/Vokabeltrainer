@@ -1,6 +1,19 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-**Aktueller Abschluss: sofortiger Vokabelabgleich am 29.09.2026.** Der Nutzer
+**Aktueller Abschluss: Importkorrekturen am 29.09.2026.** Der Nutzer hat den
+kurzen Entwurf ausdrücklich bestätigt. Produktcommit `ee7e174` erhält bei
+Tab/Klick die Eingabefelder und die sichtbare Zeile; ergänzte Pflichtwerte
+brauchen keinen zusätzlichen Bestätigungsklick. Strukturmehrdeutigkeiten
+bleiben bewusst zu prüfen. Neu auftretende Duplikate nach Lektionswechsel
+werden sichtbar. 655/655 finale Node-Tests, 22 Browserfälle plus vier gezielte
+Nachprüfungen und unabhängige Task-/Abschlussreviews PASS. Cache v39 ist privat
+aktiv; zehn ausgelieferte Dateien sind bytegleich geprüft. Produktcommit ist
+exakt mit GitHub abgeglichen. Keine neue Pause angeordnet. Aktueller Einstieg:
+[Importkorrektur-Übergabe](docs/handoffs/2026-09-29-importkorrekturen.md).
+Nächster Schritt ist eine typische echte Wortliste mit gewünschter Lektions-/
+Kinderzuordnung; keine synthetischen Wörter in den Familienbestand schreiben.
+
+**Vorheriger Abschluss: sofortiger Vokabelabgleich am 29.09.2026.** Der Nutzer
 hat die Fortsetzung und den Wegfall der Zehn-Sekunden-Startwartezeit nach
 Wort-/Lektionsspeicherung ausdrücklich bestätigt. Produktcommit `0c3720a`
 ist integriert, exakt mit GitHub abgeglichen und privat als Cache v38 aktiv.

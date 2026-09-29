@@ -1,6 +1,13 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Aktueller Abschluss: Vokabelabgleich startet sofort (29.09.2026).** Nach
+**Aktueller Abschluss: Tabellenkorrekturen (29.09.2026).** Feldwechsel erhalten
+den Cursor; korrigierte Pflichtwerte werden automatisch freigegeben. Auch neu
+erkannte Dopplungen nach Lektionswechsel bleiben sichtbar. Produktcommit
+`ee7e174`, Cache v39, finale Tests und unabhängige Reviews PASS; privat
+bereitgestellt und auf GitHub gesichert. Keine neue Pause angeordnet.
+[Aktuelle Übergabe](docs/handoffs/2026-09-29-importkorrekturen.md).
+
+**Vorheriger Abschluss: Vokabelabgleich startet sofort (29.09.2026).** Nach
 bestätigter Fortsetzung entfällt die feste Wartezeit nach Wort-/Lektionsspeicherung.
 Produktcommit `0c3720a`, Cache v38, 655 Node-Tests und 20 Browserfälle PASS;
 unabhängig geprüft, auf GitHub gesichert und privat bereitgestellt.
