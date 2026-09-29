@@ -187,10 +187,10 @@ test('new local changes schedule ten seconds and a local completed round syncs i
   scheduler.start();
   await Promise.resolve();
   await Promise.resolve();
-  observe({outboxEventIds: ['word-1'], ledger: {events: [{id: 'word-1', type: 'word.created'}]}});
+  observe({outboxEventIds: ['answer-1'], ledger: {events: [{id: 'answer-1', type: 'answer.recorded'}]}});
   assert.deepEqual([...clock.pending.values()].map(({delay}) => delay), [10_000]);
-  observe({outboxEventIds: ['word-1', 'round-1'], ledger: {events: [
-    {id: 'word-1', type: 'word.created'}, {id: 'round-1', type: 'round.completed'},
+  observe({outboxEventIds: ['answer-1', 'round-1'], ledger: {events: [
+    {id: 'answer-1', type: 'answer.recorded'}, {id: 'round-1', type: 'round.completed'},
   ]}});
   await Promise.resolve();
   await Promise.resolve();
@@ -220,5 +220,129 @@ test('a local change during an active sync still causes a follow-up sync', async
   await Promise.resolve();
   assert.equal(calls, 2);
   release();
+  scheduler.stop();
+});
+
+test('new word and lesson revisions start one immediate sync for their batch', async () => {
+  const clock = timers();
+  let calls = 0;
+  const scheduler = createSyncScheduler({
+    sync: async () => { calls += 1; }, hasChanges: () => false,
+    setTimer: clock.setTimer, clearTimer: clock.clearTimer, now: () => 0,
+  });
+  const observe = syncScheduling.createLocalChangeNotifier({
+    scheduler, initialState: {outboxEventIds: [], ledger: {events: []}},
+  });
+  scheduler.start();
+  await Promise.resolve();
+  await Promise.resolve();
+  const events = [
+    {id: 'lesson-1', type: 'entity.revised', payload: {entityType: 'lesson'}},
+    ...Array.from({length: 100}, (_, index) => ({
+      id: `word-${index}`, type: 'entity.revised', payload: {entityType: 'word'},
+    })),
+  ];
+  observe({outboxEventIds: events.map(({id}) => id), ledger: {events}});
+  await Promise.resolve();
+  await Promise.resolve();
+  assert.equal(calls, 2);
+  assert.deepEqual([...clock.pending.values()].map(({delay}) => delay), [60_000]);
+  scheduler.stop();
+});
+
+test('a lesson revision alone starts sync immediately', async () => {
+  const clock = timers();
+  let calls = 0;
+  const scheduler = createSyncScheduler({
+    sync: async () => { calls += 1; }, hasChanges: () => false,
+    setTimer: clock.setTimer, clearTimer: clock.clearTimer, now: () => 0,
+  });
+  const observe = syncScheduling.createLocalChangeNotifier({
+    scheduler, initialState: {outboxEventIds: [], ledger: {events: []}},
+  });
+  scheduler.start();
+  await Promise.resolve();
+  await Promise.resolve();
+  observe({outboxEventIds: ['lesson-1'], ledger: {events: [
+    {id: 'lesson-1', type: 'entity.revised', payload: {entityType: 'lesson'}},
+  ]}});
+  await Promise.resolve();
+  await Promise.resolve();
+  assert.equal(calls, 2);
+  scheduler.stop();
+});
+
+test('unchanged, removed and sync-internal outbox revisions never restart sync', async () => {
+  const clock = timers();
+  let calls = 0;
+  const scheduler = createSyncScheduler({
+    sync: async () => { calls += 1; }, hasChanges: () => false,
+    setTimer: clock.setTimer, clearTimer: clock.clearTimer, now: () => 0,
+  });
+  const initialState = {outboxEventIds: ['word-1'], ledger: {events: [
+    {id: 'word-1', type: 'entity.revised', payload: {entityType: 'word'}},
+  ]}};
+  const observe = syncScheduling.createLocalChangeNotifier({scheduler, initialState});
+  scheduler.start();
+  await Promise.resolve();
+  await Promise.resolve();
+  observe(initialState);
+  observe({...initialState, ledger: {events: [...initialState.ledger.events,
+    {id: 'remote-word', type: 'entity.revised', payload: {entityType: 'word'}},
+  ]}});
+  observe({outboxEventIds: [], ledger: initialState.ledger});
+  assert.equal(calls, 1);
+  assert.deepEqual([...clock.pending.values()].map(({delay}) => delay), [60_000]);
+  scheduler.stop();
+});
+
+test('a new word revision during sync causes one joined follow-up without a timer', async () => {
+  const clock = timers();
+  let calls = 0;
+  let release;
+  const scheduler = createSyncScheduler({
+    sync: () => new Promise((resolve) => { calls += 1; release = resolve; }),
+    hasChanges: () => false, setTimer: clock.setTimer, clearTimer: clock.clearTimer, now: () => 0,
+  });
+  const observe = syncScheduling.createLocalChangeNotifier({
+    scheduler, initialState: {outboxEventIds: [], ledger: {events: []}},
+  });
+  scheduler.start();
+  const events = [{id: 'word-1', type: 'entity.revised', payload: {entityType: 'word'}}];
+  observe({outboxEventIds: ['word-1'], ledger: {events}});
+  observe({outboxEventIds: ['word-1'], ledger: {events}});
+  assert.equal(calls, 1);
+  assert.equal(clock.pending.size, 0);
+  release();
+  await Promise.resolve();
+  await Promise.resolve();
+  assert.equal(calls, 2);
+  release();
+  scheduler.stop();
+});
+
+test('offline word revision waits for foreground recovery', async () => {
+  const clock = timers();
+  let calls = 0;
+  const scheduler = createSyncScheduler({
+    sync: async () => { calls += 1; }, hasChanges: () => false,
+    setTimer: clock.setTimer, clearTimer: clock.clearTimer, now: () => 0,
+  });
+  const observe = syncScheduling.createLocalChangeNotifier({
+    scheduler, initialState: {outboxEventIds: [], ledger: {events: []}},
+  });
+  scheduler.start();
+  await Promise.resolve();
+  await Promise.resolve();
+  scheduler.visibility(false);
+  observe({outboxEventIds: ['word-1'], ledger: {events: [
+    {id: 'word-1', type: 'entity.revised', payload: {entityType: 'word'}},
+  ]}});
+  assert.equal(calls, 1);
+  assert.equal(clock.pending.size, 0);
+  scheduler.visibility(true);
+  await Promise.resolve();
+  await Promise.resolve();
+  assert.equal(calls, 2);
   scheduler.stop();
 });

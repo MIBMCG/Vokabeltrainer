@@ -9,10 +9,12 @@ export function createLocalChangeNotifier({scheduler, initialState}) {
     const added = new Set([...outbox].filter((eventId) => !previousOutbox.has(eventId)));
     previousOutbox = outbox;
     if (added.size === 0) return;
-    if (state.ledger.events.some(({id, type}) => added.has(id) && type === 'round.completed')) {
+    const addedEvents = state.ledger.events.filter(({id}) => added.has(id));
+    if (addedEvents.some(({type}) => type === 'round.completed')) {
       scheduler.roundCompleted();
     } else {
-      scheduler.changed();
+      scheduler.changed({immediate: addedEvents.some(({type, payload}) => type === 'entity.revised'
+        && (payload?.entityType === 'word' || payload?.entityType === 'lesson'))});
     }
   };
 }
@@ -99,10 +101,11 @@ export function createSyncScheduler({
       started = true;
       trigger();
     },
-    changed() {
+    changed({immediate = false} = {}) {
       if (!started || !visible || !onlineState) return;
       retryIndex = 0;
-      schedule(10_000, 'change');
+      if (immediate) trigger();
+      else schedule(10_000, 'change');
     },
     roundCompleted() {
       retryIndex = 0;

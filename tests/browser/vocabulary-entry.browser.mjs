@@ -56,6 +56,60 @@ async function holdNextDigest(page) {
   });
 }
 
+test('import starts its bound Google sync before the old ten-second delay and drains the batch', {timeout: 60_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page, controls} = await harness.newDevice();
+  try {
+    await setup(page, harness.baseUrl);
+    await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
+    await page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
+    await page.getByText('Google-Verbindung ist aktiv.', {exact: true}).waitFor();
+    await page.getByRole('button', {name: 'Neuen Lernbereich anlegen', exact: true}).click();
+    await page.locator('[data-sync-status]').filter({hasText: 'Abgeglichen'}).waitFor({timeout: 15_000});
+    await page.getByRole('button', {name: 'Vokabeln', exact: true}).click();
+    await page.getByRole('button', {name: 'Mehrere Wörter einfügen', exact: true}).click();
+    await page.locator('#import-text').fill('Boot\tboat\nWelle\twave');
+    const before = await storedState(page);
+    controls.holdNextFilesRead = true;
+    const syncStarted = controls.waitForHeldFilesRead();
+    await page.locator('#import-apply').click();
+    await page.getByText('2 Wörter wurden auf diesem Gerät gespeichert.', {exact: true}).waitFor();
+    const afterSave = await storedState(page);
+    const imported = afterSave.ledger.events.slice(before.ledger.events.length)
+      .filter(({type, payload}) => type === 'entity.revised' && payload.entityType === 'word');
+    assert.equal(imported.length, 2);
+    let startTimeout;
+    try {
+      await Promise.race([
+        syncStarted,
+        new Promise((_, reject) => {
+          startTimeout = setTimeout(() => reject(new Error('Google sync did not start within 5 seconds of import')), 5_000);
+        }),
+      ]);
+    } finally {
+      clearTimeout(startTimeout);
+    }
+    controls.releaseHeldFilesRead();
+    let afterSync;
+    const deadline = Date.now() + 15_000;
+    do {
+      afterSync = await storedState(page);
+      if (afterSync.outboxEventIds.length === 0 && afterSync.pendingPackets.length === 0) break;
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    } while (Date.now() < deadline);
+    assert.deepEqual(afterSync.outboxEventIds, []);
+    assert.deepEqual(afterSync.pendingPackets, []);
+    for (const {id} of imported) {
+      assert.equal([...harness.google.files.values()].flatMap(({value}) => value?.kind === 'packet' ? value.events : [])
+        .filter((event) => event.id === id).length, 1);
+    }
+    assert.deepEqual(harness.google.unexpected, []);
+  } finally {
+    controls.releaseHeldFilesRead();
+    await harness.close();
+  }
+});
+
 test('pasted table previews compactly without a separate click and saves in one action', {timeout: 90_000}, async () => {
   const harness = await createTrainerHarness();
   const {page} = await harness.newDevice({viewport: {width: 320, height: 700}});
