@@ -1,16 +1,15 @@
 # Arbeitsstand
 
-**Neuer Vorrang: alle übrigen Avatar-Entwicklungen (29.09.2026).** Der
-Nutzer möchte die fehlenden Bildreihen vor der weiteren Optimierung abschließen.
-Drachen, Nebelhirsch und Tiger sind bereits vollständig; 64 Motive für zehn
-weitere Reihen fehlen. Drei Entwurfsbögen zeigen sämtliche vier Stufen; die
-menschlichen Reihen zunächst exemplarisch in einem der vier Hauttöne.
-Sturmgreif und Phönix erhalten nach konkreter Kritik imposantere Endformen
-mit umgebenden Blitz-/Flammeneffekten. Alle zehn Reihen einschließlich dieser
-v3-Endformen sind mit „Ja, so umsetzen“ persönlich bestätigt; Produktion und
-Integration laufen. Der Vorschlag zur Lernbereichsübernahme ist zurückgestellt,
-nicht freigegeben. `31fcf02` und Cache v40 bleiben produktiv unverändert.
-[Entwürfe, Umfang und Fortsetzung](docs/handoffs/2026-09-29-avatar-restpaket.md).
+**Pause nach Zwischenstandssicherung: Avatar-Restpaket (29.09.2026).** Der
+Nutzer wählt eine Pause nach Sicherung in etwa 5–10 Minuten. Alle zehn
+bestätigten Reihen liegen als 64 fertige, visuell geprüfte Einzelquellen vor;
+der Einbau bleibt als unfertiger Arbeitsstand auf `codex/purchase-batch-checks`.
+Vor Produktintegration fehlen vollständige Tests, Browserprüfung und unabhängige
+Reviews. Keine neue Bereitstellung: `31fcf02` und Cache v40 bleiben produktiv.
+Nach Sicherung erst auf ausdrückliche Fortsetzung weiterarbeiten. Dann dieses
+Galeriepaket abschließen, bevor weitere Optimierungen beginnen. Die vorgeschlagene
+Lernbereichsübernahme bleibt zurückgestellt und nicht freigegeben.
+[Pausenübergabe, Prüfungen und nächste Schritte](docs/handoffs/2026-09-29-avatar-restpaket.md).
 
 **Bestätigter Folgeumfang:** Nach Entwicklungsstufen und den übrigen
 Optimierungen sollen alle fünf vorgeschlagenen Belohnungserweiterungen folgen:

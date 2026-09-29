@@ -3,13 +3,46 @@
 Stand: 29.09.2026. Entwicklungszweig: `codex/vokabeltrainer-v1`.
 Ausgangsstand: `c1ecf2a58ed9951aa3a568eeda0f551f3a5f9974`.
 
+## Aktuelle Pause nach gesichertem Zwischenstand
+
+Der Nutzer wählt am 29.09.2026 ausdrücklich „In etwa 5–10 Minuten nach
+Sicherung des Zwischenstands“. Nach dieser Sicherung pausieren; keine weitere
+Produktarbeit, Bilderzeugung, Testsitzung oder Bereitstellung ohne erneute
+ausdrückliche Fortsetzung. Die unten beschriebene Bildrichtung bleibt bestätigt.
+
+Alle 64 fehlenden Produktionsquellen sind fertig: 16 vorhandene Grundformen
+unverändert übernommen, zwei bestätigte Endformen direkt übernommen und
+46 weitere Motive erzeugt. Alle zehn Reihen auf hellem und dunklem Hintergrund
+gesichtet; Einhorn/Pegasus Stufe 2 zur klaren Staffelung vereinfacht und sechs
+höhere Menschenformen im dunkelsten Hautton an ihre Grundform angeglichen.
+Die Korrekturen wurden erneut einzeln geprüft. PNG-Transparenz, Quellhashes
+und 124 portable Referenzhashes sind geprüft. Acht verworfene Bearbeitungseingaben
+bleiben mit Herkunftsnachweis erhalten; sie werden nicht ausgeliefert.
+
+Der vorbereitete Einbau liegt ausschließlich auf `codex/purchase-batch-checks`.
+Lokaler Sicherungscommit: `3036ec9e5bf29f183ddb246f54a78ef428aac503`.
+Alle 228 WebPs sind gebaut, 42 gezielte Node-Tests bestanden und die 36
+bisherigen WebPs bytegleich. GitHub-Upload noch nicht bestätigt: Die automatische
+Freigabe verlangt eine ausdrückliche Bestätigung des konkreten Repository-Ziels.
+Dies ist ein Sicherungsstand, keine geprüfte Produktfreigabe. Die laufende App
+und der Hauptentwicklungszweig behalten Produkt `31fcf02`, Cache v40. Vollsuite,
+Browserabnahme, unabhängige Reviews, Produktintegration und App-Update stehen
+noch aus. Der [Zwischenstandsbericht](../reports/2026-09-29-avatar-restpaket-zwischenstand.md)
+hält Bildbau, gezielte Prüfungen und den exakt gesicherten Commit fest.
+
+Bei Fortsetzung die vorhandenen Quellen und Änderungen auf diesem Zweig
+verwenden; nichts neu erzeugen, keine Profile importieren oder neu einrichten.
+Nach Abschluss der Galerie folgen die anderen Optimierungen, danach die fünf
+bestätigten Belohnungserweiterungen am Ende dieser Übergabe.
+
 ## Aktueller Auftrag
 
 Der Nutzer möchte zuerst alle fehlenden Avatar-Entwicklungen fertigstellen,
 um sich danach auf die Optimierung zu konzentrieren. Die vorgeschlagene
 [schnellere Lernbereichsübernahme](2026-09-29-lernbereich-vorschau.md) ist
 damit zurückgestellt; ihre Umsetzung wurde nicht bestätigt.
-Keine Pause angeordnet. Bestehende Familien- und Testbestände erhalten.
+Dieser Produktionsauftrag gilt bei der nächsten ausdrücklichen Fortsetzung;
+die oben dokumentierte Pause hat jetzt Vorrang. Familien- und Testbestände erhalten.
 
 Drei vollständige Reihen mit zwölf Motiven sind bereits ausgeliefert:
 Einfacher Drache, Nebelhirsch und Tiger. Diese werden nicht neu erzeugt.
@@ -106,14 +139,16 @@ zu prüfen. Eine Desktopsimulation ersetzt keine physische Geräteabnahme.
 
 ## Nachweisgrenzen und nächster Schritt
 
-Dieser Schritt liefert Bildentwürfe, keine bereits eingebauten 64 App-Motive.
-Produktcommit `31fcf02`, Cache v40 und bestehende Bereitstellung bleiben unverändert.
-Keine neue Produkt- oder Browserprüfung ist für die Entwurfsdateien erforderlich.
+Die 64 Produktionsquellen und der vorbereitete Einbau sind inzwischen vorhanden;
+die abschließende Produktabnahme fehlt noch. Produktcommit `31fcf02`, Cache v40
+und bestehende Bereitstellung bleiben unverändert. Die genauen bereits gelaufenen
+und noch offenen Prüfungen stehen im Zwischenstandsbericht.
 Natürliche Token-Erneuerung, echte Kaufzeit unter zehn Sekunden und physische
 Geräteabnahmen bleiben eigenständige offene Nachweise.
 
-Als Nächstes die bestätigten Einzelquellen erstellen, prüfen, integrieren und
-das vollständige Bildpaket privat bereitstellen. Die Bildrichtungen sind freigegeben.
+Als Nächstes nach ausdrücklicher Fortsetzung den gesicherten Einbau fertig prüfen,
+unabhängig reviewen, integrieren und privat bereitstellen. Die Quellen sind fertig
+und die Bildrichtungen freigegeben; keine erneute Bilderzeugung oder Freigabe.
 
 Die sieben Entwurfsdateien und ihre Referenzhashes sind am 29.09.2026 um
 19:47:22 UTC technisch geprüft. Alle vier Einzelentwürfe besitzen echte

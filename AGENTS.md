@@ -1,15 +1,21 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-**Aktueller Vorrang: alle fehlenden Avatar-Entwicklungen (29.09.2026).** Der
-Nutzer zieht die restlichen Bilder ausdrücklich vor; die vorgeschlagene
-Lernbereichsoptimierung ist zurückgestellt und nicht freigegeben. Zehn Reihen
-mit 64 noch nicht ausgelieferten Motiven fehlen. Drei konkrete Entwurfsbögen
-liegen vor; imposantere Endformen für Sturmgreif und Phönix mit Blitz- bzw.
-Flammeneffekten in ihrer Umgebung sind als v3 persönlich bestätigt. Der
-Nutzer bestätigt alle zehn Reihen mit „Ja, so umsetzen“. Produktion und
-Integration laufen. Bislang keine Produktänderung oder neue
-Bereitstellung; `31fcf02`, Cache v40 bleiben aktuell. Keine Pause angeordnet.
-Einstieg: [Avatar-Restpaket](docs/handoffs/2026-09-29-avatar-restpaket.md).
+**Aktuelle Steuerung: Pause nach Zwischenstandssicherung (29.09.2026).** Der
+Nutzer wählt ausdrücklich „In etwa 5–10 Minuten nach Sicherung des Zwischenstands“.
+Alle 64 noch fehlenden Avatarquellen sind erstellt und visuell geprüft;
+Einbau und App-Bildvarianten werden als unfertiger Arbeitsstand im separaten
+Zweig `codex/purchase-batch-checks` gesichert. Kein fertiges Produkt daraus
+ableiten. Nach GitHub-Sicherung und Übergabe keine weitere Produktarbeit,
+Bilderzeugung, Testsitzung oder Bereitstellung ohne ausdrückliche Fortsetzung.
+Die laufende App bleibt auf `31fcf02`, Cache v40. Einstieg und genaue
+offene Schritte: [Avatar-Restpaket](docs/handoffs/2026-09-29-avatar-restpaket.md).
+
+**Bestätigter Vorrang bei Fortsetzung:** zuerst die vollständige
+Entwicklungsgalerie abschließen. Alle zehn Reihen einschließlich der stärkeren
+Endformen von Sturmgreif und Phönix mit Blitzen bzw. Flammen in der Umgebung
+sind persönlich bestätigt. Keine Bilder neu erzeugen oder Freigabe wiederholen.
+Die vorgeschlagene Lernbereichsoptimierung bleibt zurückgestellt und nicht
+freigegeben. Bestehende Familien-/Testbestände, Besitz, Punkte und Anmeldungen erhalten.
 
 **Bestätigter Folgeumfang:** Nach vollständigen Entwicklungsstufen und den
 übrigen Optimierungen alle fünf Belohnungsideen umsetzen: Verwandlung,

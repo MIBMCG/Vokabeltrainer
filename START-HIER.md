@@ -1,12 +1,13 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Aktueller Vorrang: fehlende Avatar-Entwicklungen (29.09.2026).** Zuerst
-die zehn übrigen Reihen mit 64 Motiven fertigstellen, danach weiter optimieren.
-Drei Entwurfsbögen und die stärkeren Endformen von Sturmgreif und Phönix mit
-umgebenden Blitz-/Flammeneffekten sind persönlich bestätigt. Einzelbilder
-und Integration werden jetzt umgesetzt.
-Produkt und Cache v40 unverändert, keine Pause.
-[Aktuelle Übergabe](docs/handoffs/2026-09-29-avatar-restpaket.md).
+**Aktuelle Pause nach Zwischenstandssicherung (29.09.2026).** Alle 64
+fehlenden Avatarquellen sind fertig und visuell geprüft. Der vorbereitete
+Einbau wird auf `codex/purchase-batch-checks` als unfertiger Arbeitsstand
+gesichert. Vollständige Abschlussprüfung und Bereitstellung stehen noch aus;
+die App bleibt auf `31fcf02`, Cache v40. Erst nach ausdrücklicher Fortsetzung
+weiterarbeiten. Dann dieses Galeriepaket abschließen, anschließend die übrigen
+Optimierungen und danach die fünf bestätigten Belohnungserweiterungen.
+[Pausenübergabe und gesicherter Stand](docs/handoffs/2026-09-29-avatar-restpaket.md).
 
 **Aktuelle Fortsetzung: schnellere Lernbereichsübernahme (29.09.2026).**
 Ein konkreter begrenzter Vorschlag ist vorgelegt: geprüfte Vorschau im
