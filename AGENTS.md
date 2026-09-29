@@ -1,18 +1,22 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-**Aktuelle Fortsetzung am 29.09.2026: bestätigte Tiger-Reihe.** Nach Abschluss der
-Nebelhirsch-Reihe beauftragt der Nutzer die Weiterarbeit. Eine konkrete
-vierstufige Tiger-Vorschau ist erzeugt und zur persönlichen Bildprüfung
-vorgelegt. Der Nutzer hat sie mit „Ja, genau so umsetzen“ für Einzelbilder
-und Galerieeinbindung bestätigt. Vorhandene Preise, Kaufabläufe und die
-allgemeine Stilrichtung bleiben bestätigt.
-Einstieg: [Tiger-Fortsetzung](docs/handoffs/2026-09-29-tiger-fortsetzung.md).
-Die Umsetzung umfasst die unverändert wiederverwendete Grundform, drei höhere
-Formen, responsive Bilder und Offline-/Updateintegration im vorhandenen System.
-Das Paket ist fertig integriert und geprüft: 646/646 gesamte Node-Tests,
+**Abgeschlossen am 29.09.2026: bestätigte Tiger-Reihe.** Nach ausdrücklicher
+Fortsetzung bestätigt der Nutzer die vierstufige Tiger-Vorschau mit
+„Ja, genau so umsetzen“ für Einzelbilder und Galerieeinbindung.
+Produktcommit `05d21b9` ist integriert, exakt mit GitHub abgeglichen und privat
+als Cache v35 bereitgestellt: bytegleiche Grundform, drei höhere Formen,
+zwölf responsive WebPs und Offline-Einbindung. 646/646 gesamte Node-Tests,
 25/25 gezielte Node-Tests, 6/6 lokale Browserfälle und unabhängige Bild-/Codeprüfung
-PASS. Cache v35 ist vorbereitet; private Bereitstellung und bestehender
-Testbrowser werden als abschließender Schritt geprüft.
+sind PASS. 44 ausgelieferte Dateien sind bytegleich geprüft.
+Alle vier Formen sind im bestehenden Testbrowser sichtbar; 40 verfügbare
+Punkte, 2.040 Lernpunkte, Level 11 und die gewählte Drachenstufe 4 bleiben erhalten.
+Zwölf von 76 Motiven sind ausgeliefert, 64 bleiben offen.
+**Offener Anmeldebefund:** Bereits vor dem Wechsel von v34 auf v35 erscheint
+im getrennten Testbrowser „Google erneut verbinden“ für neue Käufe; nach dem
+Update ebenso. Ursache und automatische Erneuerung sind nicht geklärt.
+Keine neue Einrichtung, Importe oder Bestandsänderungen dafür vornehmen.
+Die Fortsetzung bleibt erlaubt; physische Geräteabnahmen bleiben offen.
+Einstieg: [Tiger-Fortsetzung](docs/handoffs/2026-09-29-tiger-fortsetzung.md).
 
 **Abgeschlossen am 29.09.2026: Nebelhirsch.** Der Nutzer hat die Pause
 ausdrücklich aufgehoben und bestätigt, dass zwischenzeitlich nicht weitergearbeitet

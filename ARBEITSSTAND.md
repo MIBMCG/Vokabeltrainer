@@ -1,16 +1,21 @@
 # Arbeitsstand
 
-**Fortsetzung nach dem Nebelhirsch-Abschluss:** Der Nutzer beauftragt die
-Weiterarbeit. Der bestehende Tiger wird als nächste begrenzte Reihe vorbereitet.
-Ein [Konzeptbogen](docs/design/avatar-evolution/tiger-stages-concept-v1.png)
-zeigt Grundform, Entdecker, Tempelwächter und eine mythische Sonnenform.
-Die Beschreibungen sind Arbeitsbegriffe, keine neuen Produktnamen.
-Die konkrete Bildrichtung und Galerieeinbindung sind mit „Ja, genau so
-umsetzen“ bestätigt. Einzelbilder und Integration sind erstellt und geprüft:
+**Abgeschlossen am 29.09.2026: Tiger.** Der Nutzer bestätigt den
+[Konzeptbogen](docs/design/avatar-evolution/tiger-stages-concept-v1.png) und
+die Galerieeinbindung mit „Ja, genau so umsetzen“. Produktcommit
+`05d21b9f155cebb09e6ba7be8754331c575ed8d5` ist exakt mit GitHub abgeglichen
+und privat als Cache v35 bereitgestellt. Vier Formen, zwölf WebPs und
+Offline-Einbindung sind integriert; die 24 bisherigen Bildvarianten unverändert.
 646/646 gesamte Node-Tests, 25/25 gezielte Node-Tests, 6/6 Browserfälle und
 unabhängige Bild-/Codeprüfung PASS. Vier kleine Tigerbilder brauchen zusammen
-115.260 Bytes. Cache v35 ist vorbereitet; eine neue Bereitstellung ist noch
-nicht erfolgt.
+115.260 Bytes. Aktive Worker-Version: `7647cf4d-ca75-4917-9cf1-13b8fe99afc3`.
+44 ausgelieferte Dateien sind bytegleich geprüft. Im vorhandenen Testbrowser
+ist das Update übernommen und die vollständige Tiger-Reihe sichtbar;
+40 verfügbare Punkte, 2.040 Lernpunkte, Level 11 und Drachenstufe 4 als
+Auswahl bleiben erhalten. Zwölf von 76 Motiven sind ausgeliefert; 64 offen.
+Bereits vor dem Update erschien „Google erneut verbinden“ für neue Käufe,
+nach dem Update ebenso. Die Ursache ist offen; dies ist kein Nachweis
+erfolgreicher automatischer Token-Erneuerung. Bestehende Konten und Daten erhalten.
 [Aktuelle Übergabe](docs/handoffs/2026-09-29-tiger-fortsetzung.md).
 
 **Aktuelle Fortsetzung am 29.09.2026:** Der Nutzer hebt die Pause auf; seit

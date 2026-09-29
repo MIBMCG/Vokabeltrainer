@@ -1,12 +1,14 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Nächste Reihe: Tiger.** Der Nutzer hat die weitere Arbeit beauftragt.
-Die konkrete Viereransicht ist für Einzelbilder und Galerieeinbindung mit
-„Ja, genau so umsetzen“ bestätigt. Die Integration ist geprüft: 646 gesamte
-Node-Tests, 25 gezielte Node-Tests, sechs Browserfälle und unabhängige Prüfungen
-PASS. Private Bereitstellung und Kontrolle im bestehenden Testbrowser folgen.
+**Aktueller Abschluss: Tiger.** Die persönlich bestätigten vier Formen sind
+als Produktcommit `05d21b9` auf GitHub gesichert und privat mit Cache v35
+verfügbar. 646 gesamte Node-Tests, 25 gezielte Node-Tests, sechs Browserfälle
+und unabhängige Prüfungen PASS. Die vorhandene Test-App zeigt alle Formen;
+Punkte, Level und gewählte Drachenstufe 4 sind erhalten. Zwölf Motive sind
+ausgeliefert, 64 weitere offen. Vor und nach dem Update verlangt der
+Testbrowser für neue Käufe erneut eine Google-Verbindung; dieser Befund ist
+noch zu klären. Einstieg und vollständige Nachweise:
 [Tiger-Fortsetzung](docs/handoffs/2026-09-29-tiger-fortsetzung.md).
-Die private App läuft weiterhin mit der abgeschlossenen Nebelhirsch-Reihe.
 
 **Fortsetzung am 29.09.2026:** Die Pause ist ausdrücklich aufgehoben.
 Der bestätigte Nebelhirsch ist mit allen vier Formen und passenden Ladegrößen

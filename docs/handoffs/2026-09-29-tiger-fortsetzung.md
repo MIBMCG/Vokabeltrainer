@@ -2,17 +2,22 @@
 
 Stand: 29.09.2026. Entwicklungszweig: `codex/vokabeltrainer-v1`.
 
+**Abgeschlossen:** Produktcommit `05d21b9f155cebb09e6ba7be8754331c575ed8d5`
+ist integriert und exakt mit GitHub abgeglichen. Cache v35 ist privat
+bereitgestellt und die vier Tigerformen sind im bestehenden Testbrowser
+beobachtet. Diese Abschlussdokumentation wird separat gesichert.
+
 ## Auftrag und Ausgangspunkt
 
 Nach Abschluss der Nebelhirsch-Reihe beauftragt der Nutzer mit
 „Dann mache nun weiter“ die Fortsetzung. Hauptzweig und wiederverwendeter
 isolierter Arbeitszweig standen beim Einstieg sauber auf
 `910ebcda644151cfdd2f0728071488afa3af3229`.
-Die private App läuft weiterhin mit Cache v34 und Produktcommit `6d3ee83`.
+Beim Einstieg lief die private App mit Cache v34 und Produktcommit `6d3ee83`.
 Der [Nebelhirsch-Abschluss](2026-09-29-nebelhirsch-fortsetzung.md)
 enthält dessen Prüfungen, Bereitstellung und tatsächliche Browserbeobachtung.
 
-Als nächstes begrenztes Bildpaket wird die Tiger-Reihe umgesetzt.
+Das bestätigte begrenzte Bildpaket ergänzt die Tiger-Reihe.
 Die Grundfigur `tiger` ist ab Level 5 verfügbar und gehört bereits zum
 bestehenden getrennten Testprofil. Ihre vorhandene Quelle
 [tiger.png](../design/avatar-shop-sources/tiger.png) hat 1223 × 1286 Pixel
@@ -56,17 +61,21 @@ Der Kaufkern und die Anmeldelogik benötigen für diese Bildreihe keine Änderun
 
 Konzept und Vorprüfung wurden zunächst als Dokumentationscommit
 `89730de575bebf273bc166cdff75575c13e59b19` gesichert und exakt mit GitHub
-abgeglichen. Nach persönlicher Bestätigung folgen Einzelbilder und Integration.
+abgeglichen. Nach persönlicher Bestätigung wurden Einzelbilder und Integration
+als Produktcommit `05d21b9` abgeschlossen.
 Kein Kauf, keine Guthabenänderung, kein Import und keine neue
-Google-/Drive-Einrichtung sind dafür vorgesehen. Acht von 76 Motiven sind
-bislang produktiv ausgeliefert; die 68 übrigen Motive bleiben bis zur
-tatsächlichen Bereitstellung der neuen Reihe noch offen.
+Google-/Drive-Einrichtung wurden vorgenommen. Nach Bereitstellung der neuen
+Reihe sind zwölf von 76 Motiven produktiv ausgeliefert; 64 bleiben offen.
 Die bisherigen Token-/Geräteabnahmen bleiben eigenständige offene Nachweise.
 
 ## Nächster Schritt
 
-Das integrierte Paket abschließend prüfen, privat bereitstellen und im
-bestehenden Testbrowser kontrollieren. Testbereich und Familienbestände erhalten.
+Der nächste konkrete technische Punkt ist die Diagnose des erneut sichtbaren
+Google-Verbindungshinweises im getrennten Testbrowser, ohne erneuten Import
+oder Einrichtungsreset. Den vorhandenen Testbereich und Familienbestände
+erhalten. Weitere Figuren brauchen jeweils einen konkreten Bildentwurf und
+persönliche Bestätigung vor ihrer Produktion. Für das Tigerpaket bleibt kein
+weiterer Umsetzungsschritt offen.
 
 ## Gewählte Produktionsquellen
 
@@ -95,7 +104,7 @@ vollständig transparenter Pixel.
 Die unabhängige Bildprüfung bewertet diese Quellen mit **PASS**: Identität,
 Fortschritt der Formen, Anatomie, Alphakanal und sämtliche Quellen-/Referenzhashes
 sind geprüft. Bei Stufe 4 liegt der Schweif dicht am rechten Quellrand, ohne
-sichtbare Beschneidung; der Innenabstand wird zusätzlich in der Galerie geprüft.
+sichtbare Beschneidung; der Innenabstand wurde zusätzlich in der Galerie geprüft.
 
 ## Umsetzung und Bildgrößen
 
@@ -159,3 +168,55 @@ Ein kleiner Hinweis zur Fehlermeldung in der Testhilfe ist geschlossen:
 Sie nennt wieder zutreffend die tatsächlich erlaubte Mindestversion v34;
 das Prüfverhalten bleibt unverändert, Syntaxprüfung Exit 0.
 Eine lokale Browserprüfung ist kein Nachweis auf einem physischen iPhone/iPad.
+
+## Private Bereitstellung und tatsächliche Browserbeobachtung
+
+Das geprüfte Paket wurde ohne Inhaltsänderung per Fast-Forward in
+`codex/vokabeltrainer-v1` übernommen. Der Vergleich beider Git-Bäume war leer.
+Die bestehende Cloudflare-Vorbereitung erzeugte 199 ausdrücklich freigegebene
+öffentliche Dateien. Der Upload ersetzte/ergänzte 14 Dateien, 185 waren
+bereits vorhanden. Private Entwurfs-/Quell- und Zugangsdaten wurden nicht
+in dieses öffentliche Paket aufgenommen.
+
+- Cachekennung: v35.
+- Aktive Worker-Version: `7647cf4d-ca75-4917-9cf1-13b8fe99afc3`.
+- Version erstellt: 29.09.2026, 09:21:20.237 UTC.
+- Bereitstellung seit 09:21:21.425 UTC zu 100 Prozent aktiv, beim Anbieter gelesen.
+- Um 09:21:45.316 UTC sind 44 HTTP-Antworten mit dem geprüften Paket bytegleich
+  verglichen: acht App-/Kauf-/Bildmodule und alle 36 Bildvarianten der drei Reihen.
+
+Im vorhandenen Codex-Testbrowser wurde der kontrollierte Hinweis „Jetzt
+aktualisieren“ übernommen. Die vorhandene Avataransicht blieb erreichbar.
+„Meine Figur“ zeigt Drachenstufe 4 weiterhin als gewählte Figur. Anschließend
+wurde beim bereits besessenen Tiger nur „Entwicklung ansehen“ geöffnet:
+
+- Stufe 1 gehört dem Testprofil; Stufen 2–4 bleiben gesperrt.
+- Nächste Form: Stufe 2 für 200 Punkte; verfügbar 40, fehlend 160 Punkte.
+- 2.040 Lernpunkte und Level 11 bleiben erhalten.
+- Alle vier Tigerformen und das Fortschrittsbild sind sichtbar und tatsächlich
+  geladen (`complete`, positive Bildbreite, erwartete 256px-WebP-Adresse).
+- Die vollständige Galerie einschließlich Schweif der Sonnenform wurde im
+  echten Appfenster visuell geprüft. Kein Kauf oder Auswahlwechsel vorgenommen.
+
+**Offener Google-Befund:** Nach dem vorbereitenden Neuladen, noch mit v34 und
+sichtbarem Updateangebot, erschien „Für neue Käufe muss Google erneut verbunden
+werden. Freigeschaltete Figuren bleiben verfügbar.“ Nach Übernahme von v35
+erschien derselbe Hinweis. Eine neue Anmeldung wurde für diese Bildprüfung
+nicht gestartet. Der zeitliche Befund belegt keinen Zusammenhang mit den
+Tigerbildern und keine bestimmte Ursache; eine erfolgreiche automatische
+Token-Erneuerung ist damit weiterhin nicht nachgewiesen. Der Familien-Chrome
+blieb unangetastet. Vor einer weiteren Kaufsitzung ist dieser Befund zu klären.
+
+## Git-Sicherung und Grenzen
+
+Produktcommit `05d21b9f155cebb09e6ba7be8754331c575ed8d5` wurde auf
+`origin/codex/vokabeltrainer-v1` gepusht. `git rev-parse HEAD` und
+`git ls-remote --heads origin refs/heads/codex/vokabeltrainer-v1` lieferten
+danach exakt denselben Hash. Dieser Nachtrag enthält nur Dokumentation,
+ändert das bereitgestellte Produkt nicht und wird ebenfalls auf demselben
+Zweig gesichert; sein Commit ist über die Git-Historie nachvollziehbar.
+
+Die Browserprüfungen sind keine neue reale Kaufzeitmessung und keine
+Zweitgeräte-/Apple-Abnahme. Das Wunschziel unter zehn Sekunden beim Kauf,
+natürliche Token-Erneuerung, physisches iPhone/iPad, Safari und Home-Bildschirm-App
+bleiben separat offen. 64 weitere Motive sind Folgeumfang.
