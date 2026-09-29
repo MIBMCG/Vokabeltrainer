@@ -45,8 +45,10 @@ Abgleich ersetzt keine offenen Eingaben in anderen Bereichen.
    überspringen** überspringt genau passende vorhandene Einträge gesammelt.
    Andere Bedeutungen bleiben einzeln prüfbar und können getrennt übernommen werden.
 5. **Geprüfte Zeilen übernehmen** speichert die ganze Auswahl gemeinsam auf
-   diesem Gerät. Der Google-Abgleich folgt anschließend entsprechend der
-   Verbindungsanzeige. Die gewählte Lektion bleibt erhalten.
+   diesem Gerät. Bei aktiver Google-Verbindung wird der Abgleich sofort
+   angestoßen; die Verbindungsanzeige zeigt, wann er bestätigt ist. Ohne
+   Verbindung bleiben die Wörter für den späteren Abgleich gespeichert.
+   Die gewählte Lektion bleibt erhalten.
 
 Änderungen am eingefügten Text oder an der Ziellektion aktualisieren die Prüfung.
 Bei einem lokalen Speicherfehler bleiben die Eingaben zum erneuten Versuch

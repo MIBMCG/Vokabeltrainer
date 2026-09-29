@@ -1,5 +1,19 @@
 # Arbeitsstand
 
+**Abgeschlossen: sofortiger Google-Abgleich nach Vokabelspeicherung (29.09.2026).**
+Der Nutzer bestätigt den Wegfall der bisherigen Zehn-Sekunden-Wartezeit.
+Neue Wort-/Lektionsrevisionen stoßen den vorhandenen Abgleich sofort an;
+Stapel, laufende Abgleiche, Offline-Wiederaufnahme und Lernantwort-Bündelung
+bleiben korrekt zusammengeführt. Produktcommit `0c3720a` ist integriert und
+exakt mit GitHub abgeglichen. Cache v38 ist privat aktiv; zehn ausgelieferte
+Dateien sind bytegleich. 655/655 gesamte Node-Tests, 20/20 Browserfälle und
+unabhängige Prüfungen PASS. Kontrolliertes Update im Testbrowser übernommen;
+40 verfügbare Punkte, 2.040 Lernpunkte, Level 11 und Drachenstufe 4 erhalten.
+Die Änderung spart eine vorgeschaltete Wartezeit, garantiert keine reale
+Google-Gesamtdauer. Keine neue Pause angeordnet.
+[Bericht](docs/reports/2026-09-29-sofortiger-vokabelabgleich.md) und
+[aktuelle Übergabe](docs/handoffs/2026-09-29-sofortiger-vokabelabgleich.md).
+
 **Fortsetzung und Unterbrechungsprüfung (29.09.2026).** Der Nutzer hebt die
 Pause auf und lässt mögliche Folgen eines Verbindungsabbruchs in Codex prüfen.
 Beide lokalen Checkouts sind sauber und auf `0fbeb19`; der tatsächliche
@@ -33,6 +47,11 @@ Produktarbeit oder Testsitzung ohne ausdrückliche Fortsetzung.
 
 ## Aktuelle offene Arbeitspunkte (29.09.2026)
 
+- Bestätigte Bedienfehler bei Importkorrekturen gezielt beheben: Nach Ergänzen
+  einer leeren Zelle verliert Tab den Fokus; ein veralteter Pflichtfeldhinweis
+  verlangt noch einen zusätzlichen Bestätigungsklick. In isoliertem Edge bei
+  390 px reproduziert, noch nicht korrigiert. Vor Umsetzung kurzen Entwurf
+  abstimmen; echte Strukturmehrdeutigkeiten weiter ausdrücklich prüfen.
 - Den vereinfachten Tabellenweg nach neuer Fortsetzung mit einer typischen
   echten Wortliste praktisch beurteilen; lokale Speicherung und anschließenden
   Google-Abgleich getrennt messen. Umsetzung und synthetische Prüfung sind fertig.

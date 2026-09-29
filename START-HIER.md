@@ -1,5 +1,12 @@
 # Hier mit der Weiterarbeit beginnen
 
+**Aktueller Abschluss: Vokabelabgleich startet sofort (29.09.2026).** Nach
+bestätigter Fortsetzung entfällt die feste Wartezeit nach Wort-/Lektionsspeicherung.
+Produktcommit `0c3720a`, Cache v38, 655 Node-Tests und 20 Browserfälle PASS;
+unabhängig geprüft, auf GitHub gesichert und privat bereitgestellt.
+[Aktuelle Übergabe](docs/handoffs/2026-09-29-sofortiger-vokabelabgleich.md).
+Nächster Schritt: die beiden bestätigten Bedienfehler bei Importkorrekturen.
+
 **Aktuelle Fortsetzung: Verbindungsabbruch geprüft (29.09.2026).** Die Pause
 ist durch den Nutzer aufgehoben. Projektdateien, GitHub und bereitgestellte App
 sind vollständig; im bestehenden Testbrowser bleiben Lernstand, Punkte und

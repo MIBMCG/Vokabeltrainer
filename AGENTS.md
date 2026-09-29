@@ -1,6 +1,19 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-**Aktuelle Fortsetzung: Prüfung nach Verbindungsabbruch am 29.09.2026.**
+**Aktueller Abschluss: sofortiger Vokabelabgleich am 29.09.2026.** Der Nutzer
+hat die Fortsetzung und den Wegfall der Zehn-Sekunden-Startwartezeit nach
+Wort-/Lektionsspeicherung ausdrücklich bestätigt. Produktcommit `0c3720a`
+ist integriert, exakt mit GitHub abgeglichen und privat als Cache v38 aktiv.
+655/655 Node-Tests, 20/20 ausgewählte Browserfälle sowie unabhängige Task- und
+Abschlussprüfung PASS. Zehn ausgelieferte Dateien sind bytegleich; das Update
+im vorhandenen Testbrowser erhält Punkte, Level und Figur ohne neue Anmeldung.
+Keine neue Pause angeordnet. Nächster begrenzter Schritt sind die reproduzierten
+Import-Korrekturprobleme: Fokusverlust und ein veralteter Pflichtfeldhinweis.
+Einstieg: [aktuelle Übergabe](docs/handoffs/2026-09-29-sofortiger-vokabelabgleich.md).
+Bestehenden Testbereich und Familienbestand erhalten; natürliche Token-Erneuerung
+und physische Geräteabnahmen bleiben offen.
+
+**Vorheriger Abschluss: Prüfung nach Verbindungsabbruch am 29.09.2026.**
 Der Nutzer hat die Pause ausdrücklich aufgehoben und eine Prüfung auf mögliche
 Folgen des Abbruchs in Codex beauftragt. Lokale Git-Integrität, GitHub-Abgleich,
 Bereitstellung und Wiederaufnahme im bestehenden Testbrowser sind unauffällig.

@@ -22,6 +22,13 @@ Ein direkter Excel-Dateiimport oder eine zusätzliche Erkennungsmethode ist
 weiterhin nicht festgelegt. Nachweise und Grenzen:
 [Vokabeleingabe](reports/2026-09-29-vokabeleingabe.md).
 
+Zusätzlich bestätigt der Nutzer am 29.09.2026 den sofortigen Google-Abgleich
+nach dem Speichern von Wörtern oder Lektionen. Die bisherige feste
+Zehn-Sekunden-Wartezeit entfällt; lokale Speicherung, bestätigter Cloudstand
+und die tatsächliche Übertragungsdauer bleiben getrennt. Umgesetzt als
+`0c3720a`, privat mit Cache v38:
+[Sofortiger Vokabelabgleich](reports/2026-09-29-sofortiger-vokabelabgleich.md).
+
 Die zusätzliche Frage nach einfacher Handynutzung betrifft den aktuellen
 Bedien- und Prüfstand: Die App besitzt eine responsive Oberfläche und eine
 Home-Bildschirm-Konfiguration. Schmale Browseransichten sind geprüft;
