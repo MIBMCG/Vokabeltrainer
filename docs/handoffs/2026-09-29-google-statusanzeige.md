@@ -125,8 +125,12 @@ Nach der Übersicht über verbleibende Arbeiten ergänzt der Nutzer ausdrücklic
 das Ziel **„Hinzufügen neuer Vokabeln vereinfachen“**. Es steht jetzt in den
 [Anforderungen](../ANFORDERUNGEN.md#neuer-folgepunkt-vokabeln-einfacher-hinzufügen-29092026)
 und der aktuellen offenen Liste im [Arbeitsstand](../../ARBEITSSTAND.md).
-Der gewünschte Schwerpunkt der Vereinfachung ist noch zu klären. Diese
-Dokumentation legt keine neue Eingabemethode fest und ändert das Produkt nicht.
+Der Nutzer präzisiert anschließend: Alle genannten Bereiche (Einzeleingabe,
+Sammelübernahme, Lektions-/Kinderzuordnung) sollen einfacher werden. Vorrang
+hat die Übernahme vieler Wörter; deren Quelle ist Excel oder eine andere
+Tabelle. Der bisherige Ablauf ist ihm zu lang. Der konkrete neue Bedienablauf
+ist noch abzustimmen. Diese Dokumentation legt keinen direkten Dateiimport
+fest und ändert das Produkt nicht.
 Die gleichzeitig erfragte Handynutzung ist in der Oberfläche vorbereitet;
 ihre praktische Abnahme auf echten Zielgeräten bleibt offen.
 

@@ -3,8 +3,10 @@
 ## Aktuelle offene Arbeitspunkte (29.09.2026)
 
 - **Neu aufgenommen: Vokabeln einfacher hinzufügen.** Der Nutzer wünscht eine
-  Vereinfachung der bestehenden Eingabe. Der konkrete Ablauf wird noch geklärt;
-  bisher ist dies ein bestätigtes Verbesserungsziel, keine fertige Änderung.
+  Vereinfachung von Einzeleingabe, Sammelübernahme und Lektions-/Kinderzuordnung.
+  Vorrang haben viele Wörter auf einmal aus Excel oder einer anderen Tabelle;
+  der bisherige Ablauf dauert ihm zu lange. Der konkrete neue Ablauf wird noch
+  abgestimmt; bisher ist dies ein bestätigtes Ziel, keine fertige Änderung.
   [Anforderung und Abgrenzung](docs/ANFORDERUNGEN.md#neuer-folgepunkt-vokabeln-einfacher-hinzufügen-29092026).
 - Die verbleibenden 64 Entwicklungsbilder produzieren und integrieren.
 - Kaufgeschwindigkeit weiter verbessern: rund 17,1 Sekunden sind für einen
