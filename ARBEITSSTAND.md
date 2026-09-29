@@ -1,12 +1,16 @@
 # Arbeitsstand
 
-**Aktuelle Fortsetzung: Google-Statusanzeige.** Nach dem Tiger-Abschluss hat
-der Nutzer die Weiterarbeit ausdrücklich beauftragt. Im bestehenden Testbrowser
-verschwindet der Verbindungshinweis ohne neue Anmeldung beim Galeriewechsel.
-Der Client aktualisiert den Kaufbereich bei wiederhergestellter Verbindung
-bisher nicht zuverlässig. Die begrenzte Anzeigekorrektur ist reproduziert
-und geprüft: 646/646 Node-Tests, 14/14 Browserfälle, unabhängige Spec-/Codeprüfung
-PASS. Cache v36 ist vorbereitet; der Serverpfad bleibt unverändert.
+**Abgeschlossen: Google-Statusanzeige.** Nach ausdrücklicher Fortsetzung ist
+der falsche Verbindungshinweis nach erfolgreicher Sitzungswiederaufnahme
+reproduziert und als Produktcommit `67de463e752221894e9e59cb81d1a978397db77a`
+behoben. 646/646 Node-Tests, 14/14 Browserfälle und unabhängige Spec-/Codeprüfung
+PASS. Privat läuft Cache v36, Worker `aa32fd3e-c346-4615-b171-10f17b5b5913`;
+47 ausgelieferte Dateien sind bytegleich geprüft. Der Produktcommit ist exakt
+mit GitHub abgeglichen. Im bestehenden Testbrowser verschwindet der Hinweis
+nach dem Update ohne Google-Anmeldung oder Galeriewechsel; 40 verfügbare
+Punkte, 2.040 Lernpunkte, Level 11 und gewählte Drachenstufe 4 bleiben erhalten.
+Serveranmeldung und Kaufkern sind unverändert. Natürlicher Tokenablauf und
+physische Geräteabnahmen sind dadurch nicht neu belegt.
 [Aktuelle Übergabe](docs/handoffs/2026-09-29-google-statusanzeige.md).
 
 **Abgeschlossen am 29.09.2026: Tiger.** Der Nutzer bestätigt den

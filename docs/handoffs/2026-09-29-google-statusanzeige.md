@@ -2,6 +2,11 @@
 
 Stand: 29.09.2026. Zweig: `codex/vokabeltrainer-v1`.
 
+**Abgeschlossen:** Produktcommit `67de463e752221894e9e59cb81d1a978397db77a`
+ist auf GitHub exakt abgeglichen und privat als Cache v36 bereitgestellt.
+Die vorhandene Test-App zeigt nach Übernahme des Updates ohne Anmeldung
+oder Galeriewechsel keinen falschen Verbindungshinweis mehr.
+
 ## Auftrag und Ausgangspunkt
 
 Der Nutzer setzt die Arbeit nach dem Tiger-Abschluss mit „dann Arbeite nun
@@ -62,7 +67,7 @@ Serveranmeldung, Kaufkern, Guthaben- und Lernregeln sind unverändert.
 
 Cache v36 ist für die geänderten Produktdateien vorbereitet; die synthetischen
 Updatefälle verwenden v37. Es kommt kein neues Laufzeitmodul hinzu.
-Eine neue Bereitstellung ist noch nicht erfolgt.
+Die tatsächliche Bereitstellung und Browserbeobachtung sind unten dokumentiert.
 
 ## Prüfergebnisse
 
@@ -109,4 +114,47 @@ Der vorhandene Testbereich und Familienbestände werden nicht neu eingerichtet,
 importiert oder ersetzt. Ein kurzer Hinweis während einer noch laufenden
 Sitzungsprüfung ist bestehendes Verhalten; dieses Paket korrigiert den
 anhaltenden falschen Hinweis nach bereits erfolgreicher Wiederaufnahme.
-Nächster Schritt ist der Abschluss der Tests und die private Bereitstellung.
+Der Anzeigefehler ist abgeschlossen. Der nächste gesonderte Anmeldenachweis
+ist eine kontrollierte Beobachtung über den natürlichen Tokenablauf hinweg
+in einer vorhandenen Sitzung, ohne neue Anmeldung oder Einrichtungsreset.
+Die 64 weiteren Bildmotive bleiben Folgeumfang nach persönlicher Konzeptfreigabe.
+
+## Bereitstellung und tatsächliche Browserkontrolle
+
+Nach erfolgreichem Abschluss aller Prüfungen wurde Produktcommit
+`67de463e752221894e9e59cb81d1a978397db77a` per Fast-Forward in den
+Entwicklungszweig übernommen. Der Vergleich zum geprüften Arbeitszweig war leer.
+Die unveränderte öffentliche Auslieferungsliste enthält 199 Dateien.
+Hochgeladen wurden drei geänderte Dateien: `trainer/sw.js`,
+`src/trainer/ui/shell.js` und `src/trainer/ui/purchases.js`; 196 bestanden bereits.
+
+- Cache v36, Worker-Version `aa32fd3e-c346-4615-b171-10f17b5b5913`.
+- Version erstellt am 29.09.2026 um 09:57:34.508 UTC.
+- Seit 09:57:36.044 UTC zu 100 Prozent aktiv; schreibgeschützt beim Anbieter geprüft.
+- 47 öffentliche Dateien am 29.09.2026 um 09:58:01.105 UTC bytegleich mit dem
+  geprüften Uploadpaket verglichen. Enthalten sind elf App-/Anmelde-/Galeriedateien
+  und sämtliche 36 Bildvarianten der vorhandenen drei Reihen.
+
+Der vorhandene Codex-Testbrowser zeigte nach vorbereitendem Neuladen noch
+unter v35 den alten Hinweis und das Updateangebot. Über „Jetzt aktualisieren“
+wurde v36 übernommen. Danach zeigte dieselbe wiederhergestellte Ansicht
+„Meine Figur“ keinen Hinweis „Google erneut verbinden“ mehr. Zwischen
+Update und Beobachtung erfolgten kein Galeriewechsel, keine neue Google-Anmeldung
+und keine weitere Eingabe in der App. Damit ist der behobene Anzeigepfad auch
+an der privat bereitgestellten App beobachtet.
+
+40 verfügbare Punkte, 2.040 Lernpunkte, Level 11 und „Einfacher Drache – Stufe 4“
+als ausgewählte Figur bleiben im DOM bestätigt. Die Ansicht wurde zusätzlich
+per Bildschirmbild kontrolliert. Kein Kauf, Auswahlwechsel, Import oder
+Einrichtungsreset; der Familien-Chrome blieb unangetastet. Der genaue
+Google-Tokenablauf wurde dabei nicht instrumentiert oder verändert.
+
+## Git-Sicherung
+
+Der Produktcommit wurde auf `origin/codex/vokabeltrainer-v1` gepusht.
+Lokaler Hash aus `git rev-parse HEAD` und Remote-Hash aus
+`git ls-remote --heads origin refs/heads/codex/vokabeltrainer-v1` stimmen
+exakt auf `67de463e752221894e9e59cb81d1a978397db77a` überein.
+Diese Abschlussdokumentation wird separat auf demselben Zweig gesichert;
+ihr Commit bleibt über die Git-Historie nachvollziehbar. Sie ändert das
+bereitgestellte Produkt nicht.

@@ -1,12 +1,14 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Aktuell: Google-Hinweis in der Galerie.** Die beauftragte Fortsetzung
-untersucht die veraltete Anzeige nach automatischer Wiederaufnahme der Sitzung.
-Die begrenzte Korrektur ist geprüft: 646 Node-Tests, 14 Browserfälle und
-unabhängige Prüfung PASS. Private Bereitstellung folgt.
+**Aktueller Abschluss: Google-Hinweis in der Galerie.** Die veraltete Anzeige
+nach automatischer Wiederaufnahme ist als Produktcommit `67de463` behoben,
+auf GitHub abgeglichen und privat mit Cache v36 bereitgestellt.
+646 Node-Tests, 14 Browserfälle und unabhängige Prüfung PASS. Der bestehende
+Testbrowser zeigt nach dem Update ohne Anmeldung oder Galeriewechsel keinen
+falschen Verbindungshinweis mehr; Guthaben, Lernstand und Auswahl bleiben erhalten.
 [Aktuelle Diagnose und Übergabe](docs/handoffs/2026-09-29-google-statusanzeige.md).
 
-**Aktueller Abschluss: Tiger.** Die persönlich bestätigten vier Formen sind
+**Vorheriger Abschluss: Tiger.** Die persönlich bestätigten vier Formen sind
 als Produktcommit `05d21b9` auf GitHub gesichert und privat mit Cache v35
 verfügbar. 646 gesamte Node-Tests, 25 gezielte Node-Tests, sechs Browserfälle
 und unabhängige Prüfungen PASS. Die vorhandene Test-App zeigt alle Formen;
