@@ -379,12 +379,20 @@ function renderImport({root, container, ui, projection, state, commands, onRefre
   ));
   const summary = el('p', {attrs: {id: 'import-summary', class: 'import-summary', role: 'status'}});
   const previewArea = el('div', {attrs: {class: 'import-preview'}});
+  const issueBlock = el('div');
+  const problemRows = el('div', {attrs: {class: 'import-problem-rows'}});
+  const allRows = el('details', {attrs: {class: 'import-all-rows', open: editor.showAllRows}}, [el('summary')]);
+  allRows.addEventListener('toggle', () => {
+    if (allRows.isConnected) editor.showAllRows = allRows.open;
+  });
+  const rowControls = new Map();
+  previewArea.append(issueBlock, problemRows, allRows);
   let apply;
   let skipExact;
   const renderPreview = () => {
     const activeWords = activeWordsFor(target.select.value).map(({value}) => value);
     const validated = validateRows(ui.importRows, activeWords);
-    const issues = [...ui.importIssues, ...validated.issues];
+    const issues = [...ui.importIssues.filter(({code}) => code !== 'required'), ...validated.issues];
     const problemIds = new Set(issues.map(({rowId}) => rowId));
     const skipped = validated.rows.filter(({decision}) => decision === 'skip').length;
     const ready = validated.rows.filter(({rowId, decision}) => decision !== 'skip' && !problemIds.has(rowId)).length;
@@ -393,73 +401,86 @@ function renderImport({root, container, ui, projection, state, commands, onRefre
       : (lessons.find(({id}) => id === target.select.value)?.value.name || 'Keine Lektion');
     summary.textContent = ready + ' bereit · ' + skipped + ' übersprungen · '
       + problemIds.size + ' zu prüfen · Lektion: ' + lessonName;
-    previewArea.replaceChildren();
+    issueBlock.replaceChildren();
     if (issues.length) {
-      previewArea.append(message('Bitte klären Sie die markierten Zeilen.', 'error'),
+      issueBlock.append(message('Bitte klären Sie die markierten Zeilen.', 'error'),
         el('ul', {attrs: {class: 'issues'}},
           issues.map((issue) => el('li', {text: issue.rowId + ': ' + issue.message}))));
     }
-    const allRows = el('details', {attrs: {class: 'import-all-rows', open: editor.showAllRows}}, [
-      el('summary', {text: 'Alle ' + validated.rows.length + ' Tabellenzeilen ansehen und bearbeiten'}),
-    ]);
-    allRows.addEventListener('toggle', () => {
-      if (allRows.isConnected) editor.showAllRows = allRows.open;
-    });
+    issueBlock.hidden = issues.length === 0;
+    allRows.querySelector('summary').textContent = 'Alle ' + validated.rows.length + ' Tabellenzeilen ansehen und bearbeiten';
     const exactRows = new Set(validated.rows.filter((row) => row.decision !== 'skip'
       && activeWords.some((word) => JSON.stringify(semanticWord(row)) === JSON.stringify(semanticWord(word))))
       .map(({rowId}) => rowId));
+    let revealAllRows = false;
     for (const row of validated.rows) {
       const problem = problemIds.has(row.rowId);
-      const german = input('german', {value: row.german, maxlength: 200});
-      const answerInput = input('answers', {value: row.answers.join(' | '), maxlength: MAX_ANSWERS_TEXT_LENGTH});
-      const hint = input('hint', {value: row.hint, maxlength: 300, required: false});
-      const decision = el('select', {attrs: {'aria-label': 'Entscheidung'}}, [
-        el('option', {text: 'Übernehmen', attrs: {value: 'include'}}),
-        el('option', {text: 'Überspringen', attrs: {value: 'skip'}}),
-        el('option', {text: 'Als eigene Bedeutung übernehmen', attrs: {value: 'separate'}}),
-      ]);
+      let controls = rowControls.get(row.rowId);
+      if (!controls) {
+        const german = input('german', {value: row.german, maxlength: 200});
+        const answerInput = input('answers', {value: row.answers.join(' | '), maxlength: MAX_ANSWERS_TEXT_LENGTH});
+        const hint = input('hint', {value: row.hint, maxlength: 300, required: false});
+        const decision = el('select', {attrs: {'aria-label': 'Entscheidung'}}, [
+          el('option', {text: 'Übernehmen', attrs: {value: 'include'}}),
+          el('option', {text: 'Überspringen', attrs: {value: 'skip'}}),
+          el('option', {text: 'Als eigene Bedeutung übernehmen', attrs: {value: 'separate'}}),
+        ]);
+        const replace = (changes, resolveStructure = false) => {
+          if (editor.saving) return;
+          editor.openRowIds.add(row.rowId);
+          ui.importRows = ui.importRows.map((entry) => entry.rowId === row.rowId ? {...entry, ...changes} : entry);
+          if (resolveStructure) ui.importIssues = ui.importIssues.filter((issue) => issue.rowId !== row.rowId);
+          editor.importRequest = null;
+          renderPreview();
+        };
+        german.addEventListener('change', () => replace({german: german.value}));
+        answerInput.addEventListener('change', () => replace({answers: answers(answerInput.value)}));
+        hint.addEventListener('change', () => replace({hint: hint.value}));
+        decision.addEventListener('change', () => replace({decision: decision.value}, decision.value === 'skip'));
+        const detail = el('details', {attrs: {
+          class: 'import-row' + (problem ? ' import-row-problem' : ''),
+          'data-import-row': row.rowId,
+          open: problem || editor.openRowIds.has(row.rowId),
+        }});
+        detail.addEventListener('toggle', () => {
+          if (!detail.isConnected) return;
+          if (detail.open) editor.openRowIds.add(row.rowId);
+          else editor.openRowIds.delete(row.rowId);
+        });
+        detail.append(el('summary'), el('div', {attrs: {class: 'import-row-fields'}}, [
+          field('Deutsch', german), field('Englisch', answerInput),
+          field('Hinweis', hint), field('Entscheidung', decision),
+        ]));
+        controls = {detail, decision};
+        rowControls.set(row.rowId, controls);
+        if (problem) problemRows.append(detail);
+        else allRows.append(detail);
+      }
+      const {detail, decision} = controls;
+      detail.classList.toggle('import-row-problem', problem);
+      if (problem && !detail.open) detail.open = true;
+      if (problem && detail.parentElement === allRows) revealAllRows = true;
       decision.value = row.decision;
-      const replace = (changes, resolveStructure = false) => {
-        if (editor.saving) return;
-        editor.openRowIds.add(row.rowId);
-        ui.importRows = ui.importRows.map((entry) => entry.rowId === row.rowId ? {...entry, ...changes} : entry);
-        if (resolveStructure) ui.importIssues = ui.importIssues.filter((issue) => issue.rowId !== row.rowId);
-        editor.importRequest = null;
-        renderPreview();
-      };
-      german.addEventListener('change', () => replace({german: german.value}));
-      answerInput.addEventListener('change', () => replace({answers: answers(answerInput.value)}));
-      hint.addEventListener('change', () => replace({hint: hint.value}));
-      decision.addEventListener('change', () => replace({decision: decision.value}, decision.value === 'skip'));
-      const detail = el('details', {attrs: {
-        class: 'import-row' + (problem ? ' import-row-problem' : ''),
-        'data-import-row': row.rowId,
-        open: problem || editor.openRowIds.has(row.rowId),
-      }});
-      detail.addEventListener('toggle', () => {
-        if (detail.open) editor.openRowIds.add(row.rowId);
-        else editor.openRowIds.delete(row.rowId);
-      });
       const status = row.decision === 'skip' ? 'übersprungen' : problem ? 'bitte prüfen' : 'bereit';
-      detail.append(el('summary', {text: row.rowId + ' · ' + (row.german || 'Ohne deutsches Wort')
-        + ' — ' + row.answers.join(' | ') + ' · ' + status}));
-      const fields = el('div', {attrs: {class: 'import-row-fields'}}, [
-        field('Deutsch', german), field('Englisch', answerInput),
-        field('Hinweis', hint), field('Entscheidung', decision),
-      ]);
-      detail.append(fields);
-      if (ui.importIssues.some((issue) => issue.rowId === row.rowId)) {
-        detail.append(button('Struktur nach Prüfung bestätigen', () => {
+      detail.querySelector('summary').textContent = row.rowId + ' · ' + (row.german || 'Ohne deutsches Wort')
+        + ' — ' + row.answers.join(' | ') + ' · ' + status;
+      const structuralIssue = ui.importIssues.some((issue) => issue.rowId === row.rowId && issue.code !== 'required');
+      let confirm = detail.querySelector('[data-confirm-structure]');
+      if (structuralIssue && !confirm) {
+        confirm = button('Struktur nach Prüfung bestätigen', () => {
           if (editor.saving) return;
           ui.importIssues = ui.importIssues.filter((issue) => issue.rowId !== row.rowId);
           editor.importRequest = null;
           renderPreview();
-        }, {class: 'secondary'}));
+        }, {class: 'secondary'});
+        confirm.dataset.confirmStructure = '';
+        detail.append(confirm);
       }
-      if (problem) previewArea.append(detail);
-      else allRows.append(detail);
+      if (!structuralIssue) confirm?.remove();
     }
-    if (validated.rows.length) previewArea.append(allRows);
+    if (revealAllRows) allRows.open = true;
+    problemRows.hidden = problemRows.childElementCount === 0;
+    allRows.hidden = validated.rows.length === 0;
     const validLesson = target.select.value !== NEW_LESSON || target.newLesson.value.trim().length > 0;
     if (apply) apply.disabled = Boolean(editor.saving) || !validLesson || ready === 0 || issues.length > 0;
     if (skipExact) skipExact.disabled = Boolean(editor.saving) || exactRows.size === 0;
@@ -476,6 +497,9 @@ function renderImport({root, container, ui, projection, state, commands, onRefre
     ui.importIssues = parsed.issues;
     editor.parsedText = text.value;
     editor.openRowIds.clear();
+    rowControls.clear();
+    problemRows.replaceChildren();
+    allRows.replaceChildren(allRows.querySelector('summary'));
     editor.importRequest = null;
     panel.querySelector('[data-form-error]')?.remove();
     renderPreview();

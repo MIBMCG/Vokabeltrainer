@@ -144,6 +144,110 @@ test('pasted table previews compactly without a separate click and saves in one 
   }
 });
 
+test('correcting an incomplete import row keeps keyboard and click focus on stable fields', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page} = await harness.newDevice({viewport: {width: 390, height: 844}});
+  try {
+    await setup(page, harness.baseUrl);
+    await page.getByRole('button', {name: 'Mehrere Wörter einfügen', exact: true}).click();
+    await page.locator('#import-text').fill('Boot\t\nWelle\twave');
+    const first = page.locator('[data-import-row="row-1"]');
+    const english = first.locator('input[name="answers"]');
+    await english.fill('boat');
+    await english.press('Tab');
+    assert.equal(await first.locator('input[name="hint"]').evaluate((node) => document.activeElement === node), true);
+    assert.equal(await first.getAttribute('open') !== null, true);
+    await first.locator('input[name="german"]').click();
+    assert.equal(await first.locator('input[name="german"]').evaluate((node) => document.activeElement === node), true);
+    await first.locator('input[name="german"]').press('Shift+Tab');
+    assert.equal(await first.locator('input[name="german"]').evaluate((node) => document.activeElement !== node), true);
+  } finally {
+    await harness.close();
+  }
+});
+
+test('corrected required import fields revalidate without an extra confirmation and save once', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page} = await harness.newDevice({viewport: {width: 390, height: 844}});
+  try {
+    await setup(page, harness.baseUrl);
+    await page.getByRole('button', {name: 'Mehrere Wörter einfügen', exact: true}).click();
+    await page.locator('#import-text').fill('Boot\t\nWelle\twave');
+    const first = page.locator('[data-import-row="row-1"]');
+    const english = first.locator('input[name="answers"]');
+    assert.equal(await page.locator('#import-apply').isDisabled(), true);
+    await english.fill('boat');
+    await english.press('Tab');
+    assert.match(await page.locator('#import-summary').textContent(), /2 bereit.*0 zu prüfen/);
+    assert.equal(await page.locator('#import-apply').isEnabled(), true);
+    assert.equal(await first.getAttribute('open') !== null, true);
+    await english.fill('');
+    await english.press('Tab');
+    assert.equal(await page.locator('#import-apply').isDisabled(), true);
+    await english.fill('boat');
+    await english.press('Tab');
+    assert.equal(await page.locator('#import-apply').isEnabled(), true);
+    await page.locator('#import-apply').click();
+    await page.getByText('2 Wörter wurden auf diesem Gerät gespeichert.', {exact: true}).waitFor();
+    const state = await storedState(page);
+    const words = state.ledger.events.filter(({type, payload}) => type === 'entity.revised'
+      && payload.entityType === 'word' && ['Boot', 'Welle'].includes(payload.value.german));
+    assert.deepEqual(words.map(({payload}) => [payload.value.german, payload.value.answers]),
+      [['Boot', ['boat']], ['Welle', ['wave']]]);
+  } finally {
+    await harness.close();
+  }
+});
+
+test('editing a valid row in All rows preserves raw input, visibility, and keyboard navigation', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page} = await harness.newDevice({viewport: {width: 390, height: 844}});
+  try {
+    await setup(page, harness.baseUrl);
+    await page.getByRole('button', {name: 'Mehrere Wörter einfügen', exact: true}).click();
+    await page.locator('#import-text').fill('Boot\tboat\nWelle\twave');
+    await page.locator('.import-all-rows > summary').click();
+    const first = page.locator('[data-import-row="row-1"]');
+    await first.locator('summary').click();
+    const german = first.locator('input[name="german"]');
+    await german.fill('  Boot  ');
+    await german.press('Tab');
+    assert.equal(await first.locator('input[name="answers"]').evaluate((node) => document.activeElement === node), true);
+    assert.equal(await first.getAttribute('open') !== null, true);
+    assert.equal(await german.inputValue(), '  Boot  ');
+    await first.locator('input[name="answers"]').press('Shift+Tab');
+    assert.equal(await german.evaluate((node) => document.activeElement === node), true);
+    const second = page.locator('[data-import-row="row-2"]');
+    await second.locator('summary').click();
+    await second.locator('input[name="german"]').click();
+    assert.equal(await second.locator('input[name="german"]').evaluate((node) => document.activeElement === node), true);
+  } finally {
+    await harness.close();
+  }
+});
+
+test('changing the target lesson reveals a newly conflicting row without moving its fields', {timeout: 90_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page} = await harness.newDevice({viewport: {width: 390, height: 844}});
+  try {
+    await setup(page, harness.baseUrl);
+    await page.getByRole('button', {name: 'Mehrere Wörter einfügen', exact: true}).click();
+    const lesson = page.locator('.lesson-target select[name="lessonId"]');
+    await lesson.selectOption('__new__');
+    await page.getByLabel('Neue Lektion', {exact: true}).fill('Neue Wörter');
+    await page.locator('#import-text').fill('Hund\tdog');
+    const allRows = page.locator('.import-all-rows');
+    assert.equal(await allRows.getAttribute('open'), null);
+    await lesson.selectOption({label: 'Inselwörter'});
+    assert.match(await page.locator('#import-summary').textContent(), /1 zu prüfen/);
+    assert.equal(await page.locator('#import-apply').isDisabled(), true);
+    assert.equal(await allRows.getAttribute('open') !== null, true);
+    assert.equal(await page.locator('[data-import-row="row-1"] input[name="answers"]').isVisible(), true);
+  } finally {
+    await harness.close();
+  }
+});
+
 test('save and next keeps the lesson, clears word fields and focuses German input', {timeout: 90_000}, async () => {
   const harness = await createTrainerHarness();
   const {page} = await harness.newDevice({viewport: {width: 390, height: 844}});
