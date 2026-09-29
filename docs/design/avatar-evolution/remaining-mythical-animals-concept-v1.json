@@ -1,0 +1,51 @@
+{
+  "kind": "avatar-evolution-concept",
+  "version": 1,
+  "figureIds": [
+    "wolf-aurora",
+    "panther-shadow",
+    "griffin-storm",
+    "phoenix"
+  ],
+  "createdOn": "2026-09-29",
+  "generator": "built-in image_gen",
+  "model": "not exposed by tool",
+  "sourceFile": "remaining-mythical-animals-concept-v1.png",
+  "sha256": "4765378d3b3ac4a8060b8504761b2b2568000fb83f50d0de43875358f2b2e564",
+  "width": 1254,
+  "height": 1254,
+  "colorMode": "RGB",
+  "references": [
+    {
+      "path": "dragon-stages-concept-v2.png",
+      "role": "approved rendering and evolution-strength reference",
+      "sha256": "2d2d088a8243ea18b61a657913ca2e8e8ea13d41b1260850383a87a270b224a8"
+    },
+    {
+      "path": "../avatar-shop-sources/wolf-aurora.png",
+      "role": "existing character identity",
+      "sha256": "e48470e38c54ff528e3720b532aa62c19ee29d40a776057b963aa5afcfb98280"
+    },
+    {
+      "path": "../avatar-shop-sources/panther-shadow.png",
+      "role": "existing character identity",
+      "sha256": "734386d788e4b0b0fb9c50cfb8bddbdebeed6b9374fd3dcc893d9a114a6927a4"
+    },
+    {
+      "path": "../avatar-shop-sources/griffin-storm.png",
+      "role": "existing character identity",
+      "sha256": "9824b0ed7141d278a057f48d22620a5c2239027855f3b980d2d4105ecad7fd63"
+    },
+    {
+      "path": "../avatar-shop-sources/phoenix.png",
+      "role": "existing character identity",
+      "sha256": "5bf95178a98bb9c8f0b79f2d1d9c98c1be186b0cdd9562fae40da13563055b3c"
+    }
+  ],
+  "status": "user-approved except griffin and phoenix stage 4, replaced by their approved v3 concepts",
+  "personalApproval": true,
+  "approval": "User on 2026-09-29 approved all ten rows with griffin/phoenix stage-4 v3 replacements: Ja, so umsetzen",
+  "scope": "Concept board only, not production sprites or deployed app assets",
+  "visualReview": "All sixteen figures visible. User explicitly finds griffin and phoenix final stages insufficiently imposing: replace those stage-4 designs with stronger transformations; do not select them for production.",
+  "prompt": "Use case: stylized-concept / identity-preserve.\nAsset type: ONE complete concept-review board of FOUR existing avatar families, each evolving through FOUR stages. It will be used to approve finished full-character game illustrations for children ages10–13.\nInputs: image1 is the approved dragon board for painterly game-art QUALITY and obvious final-transformation progression only; do NOT add that dragon. Images2–5 are the exact existing identities: POLARLICHTWOLF, SCHATTENPANTHER, STURMGREIF, PHÖNIX. Preserve species, faces and original palette.\nLayout: high-detail large square 4rows x4columns, exactly16 complete figures. Ivory board, subtle thin gold dividers, teal readable German labels, no busy scenery. Column headers ONLY \"STUFE 1\", \"STUFE 2\", \"STUFE 3\", \"STUFE 4\"; row names ONLY \"POLARLICHTWOLF\", \"SCHATTENPANTHER\", \"STURMGREIF\", \"PHÖNIX\". No extra captions. Fit all paws/tails/feathers/wings entirely in each cell with generous whitespace. Each stage is one finished character, not equipment layers. Same individual face per row. Friendly wise and protective, no snarls, no violence.\nROW1 POLARLICHTWOLF: silver-white arctic wolf with turquoise eyes, aqua/green aurora flowing through fur, pointed ears, four paws, one bushy tail. Stage1 existing unarmored wolf. Stage2 small fitted ice-crystal pendant and short aurora-blue shoulder cloak. Stage3 elegant ice/silver shoulder and chest armor, faceted frost crest, confident guardian stance. Stage4 MYTHIC NORTHERN-LIGHT WOLF: very long flowing white mane with attached aqua/green aurora ribbon-like fur, huge elegant sweeping one-tail silhouette, long ear tufts and bright crystalline crest continuous with fur; luminous runes on actual coat, minimal armor. Keep true wolf muzzle/paws. Do not add antlers, wings or extra tails; a major spirit transformation, not just thicker armor.\nROW2 SCHATTENPANTHER: glossy black/indigo large cat, violet eyes, rounded ears, sleek body, four paws and single curled tail with subtle violet star tracery. Stage1 plain source. Stage2 fitted obsidian pendant and understated violet leather shoulder harness. Stage3 articulated black/obsidian guardian armor with readable violet runes and eye-clear brow plate. Stage4 MYTHIC STELLAR SHADOW PANTHER: proud elongated sleek cat silhouette, longer graceful single tail with attached violet cometlike fur plume, flowing violet-black neck and shoulder wisps attached to body, constellation markings illuminating actual black coat, slim crystalline collar. Keep face/paws solid and readable, no sinister skulls, no horn, no wings; much less heavy armor than stage3.\nROW3 STURMGREIF: blue-gray feathered griffin with white eagle head, golden beak/eyes and eagle FRONT talons, gray feline REAR paws, lion tail, exactlytwo large blue feathered wings. Stage1 source griffin. Stage2 fitted gold storm amulet and discreet shoulder clasps. Stage3 gold/slate lightning guardian breastplate, swept feather crest, bold layered wings. Stage4 MYTHIC THUNDER GRIFFIN: greatly expanded layered white/steel-blue storm wings edged with attached luminous gold feather filaments, taller backward sweeping head feather crest, flowing long white neck feathers, bright lightning pattern integrated into actual wings and a dramatic feathered tailtip; minimal breastplate. Still exactly2eagle frontlegs+2feline hindlegs+2wings, no extra limbs, not a dragon.\nROW4 PHÖNIX: golden-orange-red phoenix, gold bird beak, amber eyes, exactlytwo wings/two bird feet, long flaming feather tail. Stage1 existing phoenix. Stage2 modest solar brow crest and gold chest sun pendant. Stage3 majestic crimson/gold guardian bird, fitted ruby/gold breast ornament, broader layered wings and longer flamefeather tail. Stage4 MYTHIC WHITE-GOLD SOLAR PHOENIX: body and expanded wings transformed into luminous ivory/white-gold feathers with vivid orange/crimson tips, a tall attached radiant feather crown and spectacular long layered red-gold comet-feather tail; visually much larger, brighter and more legendary than stage3 with less armor. Flames are bounded feather forms attached to bird, no floating sun disc or detached fireballs. Both feet readable.\nStage4 in EACH row must alter silhouette and magical anatomy details dramatically while preserving the creature's identity. Do not simply add jewelry. Every ornament is naturally fitted; no ring floats in front of a paw. High polish, clear small-card silhouettes, sophisticated softly painted storybook game style consistent with input1. Render entire complete board."
+}

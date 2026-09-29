@@ -1,0 +1,27 @@
+{
+  "kind": "avatar-evolution-concept",
+  "version": 3,
+  "figureId": "griffin-storm",
+  "stage": 4,
+  "createdOn": "2026-09-29",
+  "generator": "built-in image_gen",
+  "model": "not exposed by tool",
+  "sourceFile": "griffin-storm-stage-4-concept-v3.png",
+  "sha256": "eb59226b71c49219e878724d2db2ab7c0bc0eb21992231b7008f26213ef735f5",
+  "width": 1254,
+  "height": 1254,
+  "colorMode": "RGBA",
+  "references": [
+    {
+      "path": "griffin-storm-stage-4-concept-v2.png",
+      "role": "edit target; retain strengthened body, add effects in surrounding air",
+      "sha256": "053de2beee1f894ea04c44e53226934357fa0aafaeaf1a6a50423ccf6284a096"
+    }
+  ],
+  "status": "user-approved final-stage direction with surrounding elemental effects",
+  "personalApproval": true,
+  "approval": "User on 2026-09-29 approved all ten displayed rows with these corrected final forms: Ja, so umsetzen",
+  "scope": "Approved transparent candidate; production source framing and derivatives still require validation",
+  "visualReview": "Original imposing silhouette retained. Jagged blue-white discharges and sparks extend outside wing, crest and tail silhouette. Face and four legs remain clear. Check final compositing and edge spacing before deployment.",
+  "prompt": "EDIT the referenced isolated legendary storm griffin image. Preserve the exact griffin design, recognizable face, body, colors, armor, crest, enormous wings, four correct legs, single tail, pose, painterly quality and genuine transparency. The user approves this stronger body but requests a visible electrical effect in the nearby air. This is one targeted addition, NOT a redesign.\nAdd several crisp irregular JAGGED ELECTRIC LIGHTNING ARCS crackling through the empty transparent air very near its wing tips, crest, shoulders and tail, as though the griffin is charging and ionizing the surrounding air. Distinct bright blue-white bolt cores with saturated electric-blue and faint cyan glow; branching forked zigzags, a few tiny star-like sparks and short disconnected static discharges. Mix a few medium arcs bridging from wing feathers into nearby air with separated small crackling bolts outside the silhouette. Keep arcs sharp, powerful and readable at avatar size, irregular and energetic, not a circular halo, not cloud fog or a smooth decorative aura. Lightning should visibly extend BEYOND the feather edges into transparent air, not merely be painted onto the wings. Do not obscure face, beak, talons or chest gem. Not a solid surrounding ring and not a busy electrical cage.\nExpand the composition/canvas breathing room or proportionally reduce the unchanged original figure if necessary so ALL original feather tips and ALL new lightning tips have at least 5 percent genuinely empty transparent padding around the outermost effects. No cropping anywhere. One full-body character centered, complete original anatomical structure. True transparent alpha behind and between arcs, preserve partially transparent glows, no opaque black/white/gray background or checkerboard, no floor, shadow, scenery, text or extra objects. Square polished high-resolution game cutout."
+}

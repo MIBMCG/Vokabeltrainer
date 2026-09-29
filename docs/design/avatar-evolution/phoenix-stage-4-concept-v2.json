@@ -1,0 +1,32 @@
+{
+  "kind": "avatar-evolution-concept",
+  "version": 2,
+  "figureId": "phoenix",
+  "stage": 4,
+  "createdOn": "2026-09-29",
+  "generator": "built-in image_gen",
+  "model": "not exposed by tool",
+  "sourceFile": "phoenix-stage-4-concept-v2.png",
+  "sha256": "7c554e8755d7c026b816239c4e00e2e158de5bc715e421d04060dcc806402122",
+  "width": 1254,
+  "height": 1254,
+  "colorMode": "RGBA",
+  "references": [
+    {
+      "path": "remaining-mythical-animals-concept-v1.png",
+      "role": "edit target and earlier progression; replace only this figure's stage 4",
+      "sha256": "4765378d3b3ac4a8060b8504761b2b2568000fb83f50d0de43875358f2b2e564"
+    },
+    {
+      "path": "../avatar-shop-sources/phoenix.png",
+      "role": "original figure identity",
+      "sha256": "5bf95178a98bb9c8f0b79f2d1d9c98c1be186b0cdd9562fae40da13563055b3c"
+    }
+  ],
+  "status": "stronger body direction preferred; surrounding fire effects requested before approval",
+  "personalApproval": false,
+  "userFeedback": "ich finde beim Phönix und beim Greifen sind die letzten Formen nicht imposant genug",
+  "scope": "Single transparent candidate for the revised final-stage direction; not yet selected or deployed",
+  "visualReview": "Much wider two-wing fan, swept crown and long curling flame-feather tail; two complete visible feet. Full large silhouette; edge effects reach the bounds, so production framing/margins require a separate check.",
+  "prompt": "Create one revised, much more imposing STAGE 4 PHOENIX concept as an isolated full-body character on genuinely transparent background. Reference 1 is the previous evolution board: retain PHÖNIX's species identity and polished painterly family fantasy style but REPLACE its underwhelming final stage. Reference 2 is the original phoenix identity. The user says the final phoenix is not imposing enough. Design a spectacular unmistakable legendary solar rebirth: a major silhouette and color transformation beyond stage 3, not merely a brighter version of the same orange bird. Only ONE character, no board, no text, no frame.\nA regal celestial phoenix with proud raised head, elegant curved gold beak and focused amber eyes, an enormous swept-up crown of attached long white-gold and crimson flame-shaped feathers. Strong luminous white-gold chest, rich crimson and burnt-orange body accents, layered radiant gold shoulder feathers. EXACTLY TWO enormous dramatically unfurled wings extend upward and outward like an immense radiant sunburst fan, anatomically attached to two shoulders. Long ivory-white inner feathers transition to golden orange, deep scarlet and brilliant gold flame tips on the outer primaries, multiple coherent layers with bold graphic rhythm and spectacular spread. A VERY LONG opulent train of flowing flame-feather tail plumes extends from the single rump and curls below/around the bird, white-gold central plumes bordered in orange/crimson, producing a powerful majestic silhouette unlike previous stages. Exactly two visible elegant golden bird legs ending in taloned feet; coherent complete body and no extra wings. A small integrated solar ruby-gold chest ornament, minimal armor: the power is the transformed bird itself. Attached flame-like edge glow and luminous feather vein details, not smoke hiding anatomy. This is the spectacular top reward: grand, magical and overwhelmingly radiant, yet noble and child-friendly, not frightening.\nAll feather crown tips, both full wings, feet and long tail completely inside square frame with at least 6 percent transparent padding. Bold readable color blocks at 256 px, clear distinct head and silhouette, highly polished painterly rendering. Genuine transparent alpha around the bird, no ivory background, no checkerboard. No floating sun disk, halo ring, independent fireball, scenery, ground, rocks, pedestal or ground shadow. Flames are feather forms belonging to the silhouette rather than detached effects."
+}

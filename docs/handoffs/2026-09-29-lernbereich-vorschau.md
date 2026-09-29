@@ -1,5 +1,10 @@
 # Übergabe: Entwurf für schnellere Lernbereichsübernahme
 
+**Zurückgestellt:** Der Nutzer zieht am 29.09.2026 ausdrücklich die vollständigen
+Avatar-Entwicklungsbilder vor. Dieser Optimierungsvorschlag ist weiterhin
+nicht freigegeben. Aktueller Einstieg:
+[Avatar-Restpaket](2026-09-29-avatar-restpaket.md).
+
 Stand: 29.09.2026. Erneute Weiterarbeit beauftragt, keine Pause. Der nächste
 begrenzte Vorschlag betrifft das Wiederverwenden des geprüften entfernten
 Vorschauzustands bei der Bestätigung eines vorhandenen Lernbereichs.

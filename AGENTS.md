@@ -1,5 +1,21 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
+**Aktueller Vorrang: alle fehlenden Avatar-Entwicklungen (29.09.2026).** Der
+Nutzer zieht die restlichen Bilder ausdrücklich vor; die vorgeschlagene
+Lernbereichsoptimierung ist zurückgestellt und nicht freigegeben. Zehn Reihen
+mit 64 noch nicht ausgelieferten Motiven fehlen. Drei konkrete Entwurfsbögen
+liegen vor; imposantere Endformen für Sturmgreif und Phönix mit Blitz- bzw.
+Flammeneffekten in ihrer Umgebung sind als v3 persönlich bestätigt. Der
+Nutzer bestätigt alle zehn Reihen mit „Ja, so umsetzen“. Produktion und
+Integration laufen. Bislang keine Produktänderung oder neue
+Bereitstellung; `31fcf02`, Cache v40 bleiben aktuell. Keine Pause angeordnet.
+Einstieg: [Avatar-Restpaket](docs/handoffs/2026-09-29-avatar-restpaket.md).
+
+**Bestätigter Folgeumfang:** Nach vollständigen Entwicklungsstufen und den
+übrigen Optimierungen alle fünf Belohnungsideen umsetzen: Verwandlung,
+Figurenbewegung, Lernreaktionen, eigener Inselort und Steckbrief/Geschichte/Titel.
+Diese Reihenfolge ist ausdrücklich bestätigt; nicht in das jetzige Bildpaket ziehen.
+
 **Aktuelle Fortsetzung: Übernahmevorschau am 29.09.2026.** Der Nutzer setzt
 die Arbeit fort. Der begrenzte Vorschlag, den geprüften entfernten
 Vorschauzustand für die erneut geprüfte Bestätigung wiederzuverwenden,

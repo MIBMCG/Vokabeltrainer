@@ -1,0 +1,27 @@
+{
+  "kind": "avatar-evolution-concept",
+  "version": 3,
+  "figureId": "phoenix",
+  "stage": 4,
+  "createdOn": "2026-09-29",
+  "generator": "built-in image_gen",
+  "model": "not exposed by tool",
+  "sourceFile": "phoenix-stage-4-concept-v3.png",
+  "sha256": "26ff940101279756cd0b7c15e763daa66603286d2d4734794942145429c5a1b1",
+  "width": 1254,
+  "height": 1254,
+  "colorMode": "RGBA",
+  "references": [
+    {
+      "path": "phoenix-stage-4-concept-v2.png",
+      "role": "edit target; retain strengthened body, add effects in surrounding air",
+      "sha256": "7c554e8755d7c026b816239c4e00e2e158de5bc715e421d04060dcc806402122"
+    }
+  ],
+  "status": "user-approved final-stage direction with surrounding elemental effects",
+  "personalApproval": true,
+  "approval": "User on 2026-09-29 approved all ten displayed rows with these corrected final forms: Ja, so umsetzen",
+  "scope": "Approved transparent candidate; production source framing and derivatives still require validation",
+  "visualReview": "Original imposing bird retained. Distinct flame tongues and embers extend into surrounding air above wings and around tail. Face and two feet remain readable. Check final compositing and edge spacing before deployment.",
+  "prompt": "EDIT the referenced isolated legendary phoenix image. Preserve the exact phoenix character, recognizable face, colors, chest ornament, feather crown, enormous two wings, long curling tail feathers, two feet, pose and painterly quality. The user approves this more imposing body but requests a visible fire effect in the surrounding air. This is one targeted addition, NOT a redesign.\nAdd a controlled but spectacular scattering of SEPARATE CURLING TONGUES OF FIRE in the transparent air beside and above the wings, around the crest and near the tail, as though the phoenix is spontaneously igniting the air close to it. A few larger elegant twisting flame wisps with bright white-gold cores, molten golden orange body and crimson outer edges, plus smaller detached orange-red flamelets and glowing embers. Mix flames reaching outward from a few wing tips with clearly detached little fires floating nearby. They must be visibly distinct from the existing solid feathers and outside the original body silhouette, not simply more fiery feather coloring. Flowing upward convection and curling flame shapes convey heat and ignition, lively but controlled; no heavy smoke, no explosion or scenery. Keep the central face, beak, feet and chest ruby unobscured. No solid halo ring or huge background fireball, no surrounding wall of flames.\nExpand canvas breathing room or proportionally reduce the unchanged original figure if necessary so ALL original feather tips and ALL new flame/ember tips fit with at least 5 percent completely empty transparent padding around the full effect. No cropping. One complete full-body character, preserving the two-wing anatomy and coherent tail. Genuine transparent alpha behind and between all flames and partially transparent glows. No opaque black/white/gray background, no checkerboard, no floor or shadow, no text, no extra objects. Square polished high-resolution game cutout."
+}

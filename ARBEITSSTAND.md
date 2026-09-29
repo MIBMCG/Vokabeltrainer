@@ -1,5 +1,23 @@
 # Arbeitsstand
 
+**Neuer Vorrang: alle übrigen Avatar-Entwicklungen (29.09.2026).** Der
+Nutzer möchte die fehlenden Bildreihen vor der weiteren Optimierung abschließen.
+Drachen, Nebelhirsch und Tiger sind bereits vollständig; 64 Motive für zehn
+weitere Reihen fehlen. Drei Entwurfsbögen zeigen sämtliche vier Stufen; die
+menschlichen Reihen zunächst exemplarisch in einem der vier Hauttöne.
+Sturmgreif und Phönix erhalten nach konkreter Kritik imposantere Endformen
+mit umgebenden Blitz-/Flammeneffekten. Alle zehn Reihen einschließlich dieser
+v3-Endformen sind mit „Ja, so umsetzen“ persönlich bestätigt; Produktion und
+Integration laufen. Der Vorschlag zur Lernbereichsübernahme ist zurückgestellt,
+nicht freigegeben. `31fcf02` und Cache v40 bleiben produktiv unverändert.
+[Entwürfe, Umfang und Fortsetzung](docs/handoffs/2026-09-29-avatar-restpaket.md).
+
+**Bestätigter Folgeumfang:** Nach Entwicklungsstufen und den übrigen
+Optimierungen sollen alle fünf vorgeschlagenen Belohnungserweiterungen folgen:
+Verwandlung, Figurenbewegung, Lernreaktionen, eigener Inselort und
+Steckbrief/Geschichte/Titel. Im aktuellen Bildpaket noch nicht umsetzen;
+die konkrete spätere Gestaltung steht aus. Details in der aktuellen Übergabe.
+
 **Fortsetzung: Übernahmevorschau untersucht (29.09.2026).** Als nächster
 begrenzter Eingriff ist die Wiederverwendung des geprüften Vorschauzustands
 vorgeschlagen. Der bestehende Abgleich prüft weiterhin aktuelle Änderungen;

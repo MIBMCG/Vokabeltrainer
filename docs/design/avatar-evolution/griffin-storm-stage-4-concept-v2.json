@@ -1,0 +1,32 @@
+{
+  "kind": "avatar-evolution-concept",
+  "version": 2,
+  "figureId": "griffin-storm",
+  "stage": 4,
+  "createdOn": "2026-09-29",
+  "generator": "built-in image_gen",
+  "model": "not exposed by tool",
+  "sourceFile": "griffin-storm-stage-4-concept-v2.png",
+  "sha256": "053de2beee1f894ea04c44e53226934357fa0aafaeaf1a6a50423ccf6284a096",
+  "width": 1254,
+  "height": 1254,
+  "colorMode": "RGBA",
+  "references": [
+    {
+      "path": "remaining-mythical-animals-concept-v1.png",
+      "role": "edit target and earlier progression; replace only this figure's stage 4",
+      "sha256": "4765378d3b3ac4a8060b8504761b2b2568000fb83f50d0de43875358f2b2e564"
+    },
+    {
+      "path": "../avatar-shop-sources/griffin-storm.png",
+      "role": "original figure identity",
+      "sha256": "9824b0ed7141d278a057f48d22620a5c2239027855f3b980d2d4105ecad7fd63"
+    }
+  ],
+  "status": "stronger body direction preferred; surrounding lightning effects requested before approval",
+  "personalApproval": false,
+  "userFeedback": "ich finde beim Phönix und beim Greifen sind die letzten Formen nicht imposant genug",
+  "scope": "Single transparent candidate for the revised final-stage direction; not yet selected or deployed",
+  "visualReview": "Much larger two-wing silhouette, golden lightning veins and large swept-back crest; correct two front talons and two rear lion paws, one plumed tail. Edge glow reaches the image boundaries: production framing/margins require a separate check.",
+  "prompt": "Create one revised, much more imposing STAGE 4 STORM GRIFFIN concept as an isolated full-body character on genuinely transparent background. Built-in image edit/generation using references. Reference 1 is the previous progression board: retain STURMGREIF's identity and painterly polished family fantasy illustration style but REPLACE its underwhelming final form. Reference 2 is the original griffin identity. The user says the final griffin is not imposing enough. Make an unmistakable legendary final evolution, not just the same griffin with gold edging. Only ONE character, no board, no text, no frame.\nA majestic powerful eagle-lion griffin, proud upright three-quarter stance, thick muscular lion chest and haunches, four distinct correct legs: exactly two golden eagle talon front legs and two gray-blue lion rear paws, a single long leonine tail ending in a dramatic silver-blue feather plume. Noble white eagle face with sharp golden curved beak, amber-gold eyes, immense swept-back white and silver storm-feather crown and neck ruff framing the face. EXACTLY TWO immense open wings rise high and spread outward in a towering dramatic V, far larger relative to its body than the reference, with multiple coherent layers of long steel-blue, icy-white and deep indigo flight feathers. Strong wing silhouette, angular primary tips, brilliant gold lightning veins visibly running through the attached feathers and small blue-white electric edges attached to the wingtips. Broader shoulders and grander proportions than stage 3; a sculpted gold and dark sapphire chest crest with a luminous blue storm crystal, a few elegant gold bands, less bulky armor than stage 3. It must feel like a legendary master of thunderstorms, powerful and regal but not threatening or horror, suitable ages 10–13.\nClean readable central face and anatomical structure. All crown tips, wing tips, talons and tail fully inside frame with at least 6 percent transparent margin. Composition optimized to stay striking at 256 px, clean saturated blue/white/gold masses, no excessive tiny details. Natural pose, coherent attachments, no duplicate wings, no extra limbs, no detached lightning orb or background weather, no rocks or scenery, no pedestal or ground shadow. Genuine transparent alpha outside the figure, never a checkerboard. High quality painterly rendered cutout. Square canvas with full silhouette comfortably fitting."
+}

@@ -1,5 +1,13 @@
 # Hier mit der Weiterarbeit beginnen
 
+**Aktueller Vorrang: fehlende Avatar-Entwicklungen (29.09.2026).** Zuerst
+die zehn übrigen Reihen mit 64 Motiven fertigstellen, danach weiter optimieren.
+Drei Entwurfsbögen und die stärkeren Endformen von Sturmgreif und Phönix mit
+umgebenden Blitz-/Flammeneffekten sind persönlich bestätigt. Einzelbilder
+und Integration werden jetzt umgesetzt.
+Produkt und Cache v40 unverändert, keine Pause.
+[Aktuelle Übergabe](docs/handoffs/2026-09-29-avatar-restpaket.md).
+
 **Aktuelle Fortsetzung: schnellere Lernbereichsübernahme (29.09.2026).**
 Ein konkreter begrenzter Vorschlag ist vorgelegt: geprüfte Vorschau im
 Speicher behalten und bei der Bestätigung mit dem bestehenden Abgleich

@@ -1,0 +1,51 @@
+{
+  "kind": "avatar-evolution-concept",
+  "version": 1,
+  "figureIds": [
+    "horse",
+    "unicorn-moon",
+    "pegasus-star",
+    "dragon-crystal"
+  ],
+  "createdOn": "2026-09-29",
+  "generator": "built-in image_gen",
+  "model": "not exposed by tool",
+  "sourceFile": "remaining-equines-crystal-concept-v1.png",
+  "sha256": "1b1a0dc6f37d270bc851c16880569f41da0b034b1c6f8ca4b66cc62c3297fe5d",
+  "width": 1380,
+  "height": 1140,
+  "colorMode": "RGB",
+  "references": [
+    {
+      "path": "dragon-stages-concept-v2.png",
+      "role": "approved rendering and evolution-strength reference",
+      "sha256": "2d2d088a8243ea18b61a657913ca2e8e8ea13d41b1260850383a87a270b224a8"
+    },
+    {
+      "path": "../avatar-shop-sources/horse.png",
+      "role": "existing character identity",
+      "sha256": "81428abb9b7eea66ddcc1d7c32f8a47e95aa3c063f7a243f2a3198bd090c444c"
+    },
+    {
+      "path": "../avatar-shop-sources/unicorn-moon.png",
+      "role": "existing character identity",
+      "sha256": "27b8f185aae2488c7186a308b49239b1813dd1b77d81ec2c01237e1d231da480"
+    },
+    {
+      "path": "../avatar-shop-sources/pegasus-star.png",
+      "role": "existing character identity",
+      "sha256": "54280d22374ed89732e1dee1335f9cdcf71fbe0d64e73ba411f90b49a6ce73cb"
+    },
+    {
+      "path": "../avatar-shop-sources/dragon-crystal.png",
+      "role": "existing character identity",
+      "sha256": "21650fcf744d1b000d17d21036ce895f8aad610f69789719d48bb44821bfb862"
+    }
+  ],
+  "status": "user-approved visual direction; production and integration authorized",
+  "personalApproval": true,
+  "approval": "User on 2026-09-29 approved all ten rows with griffin/phoenix stage-4 v3 replacements: Ja, so umsetzen",
+  "scope": "Concept board only, not production sprites or deployed app assets",
+  "visualReview": "Four rows of four full-body figures. Recognizable base identities and distinct gear / mythic final forms. No wings or horn on horse, no wings on unicorn, no horn on pegasus. Production cutouts must preserve wider margins.",
+  "prompt": "Use case: stylized-concept / identity-preserve.\nAsset type: one polished CONCEPT REVIEW BOARD for an existing vocabulary-learning game's remaining avatar evolution families. This is a preview board, not a production sprite sheet.\nInput roles: image1 is the personally approved DRAGON EVOLUTION STYLE AND PROGRESSION reference, not a character to add. Images2,3,4,5 are the existing identities of HORSE, MOON UNICORN, STAR PEGASUS, CRYSTAL DRAGON. Preserve those friendly recognizable faces, coat colors, anatomy and painterly storybook-game finish.\nMake a large crisp square or slightly landscape 4 ROW x 4 COLUMN board, exactly16 full-body figures, one family per row and four chronological stages left to right. Pale warm ivory background, thin restrained gold dividers, dark teal highly legible German headings. Comfortable spacing, entire silhouettes visible, no cropped hooves/tails/wings/horns, no overlapping cells, no scenic background. Consistent scale within each family; stage4 can be taller but must fit. Art appealing to ages10–13: confident friendly companions, not babies, not aggressive.\nONLY text: column headers \"STUFE 1\", \"STUFE 2\", \"STUFE 3\", \"STUFE 4\"; row names \"PFERD\", \"MOND-EINHORN\", \"STERNEN-PEGASUS\", \"KRISTALLDRACHE\". No extra names or paragraph text.\nROW1 HORSE: retain chestnut coat, dark brown mane, white blaze, four hooves, no wings/horn. Stage1 plain existing horse. Stage2 fitted brown adventure tack, small saddle satchel and teal cloth. Stage3 elegant bronze-and-forest-green guardian barding fitted around neck/chest/flanks, legs and eyes clearly visible. Stage4 a legendary WIND HORSE, still recognizably chestnut with white blaze, much longer flowing cream-and-bronze mane and tail sculpted into attached wind-like ribbons, brighter engraved forest-green markings along actual coat, lifted proud elegant stance and minimal bronze chest emblem. Epic changed silhouette, not simply more armor. NO wings or unicorn horn at any stage.\nROW2 MOON UNICORN: retain white coat, silver mane, bright blue eyes and exactly ONE spiral horn. Stage1 plain existing identity. Stage2 delicate fitted silver crescent brow ornament and deep-blue short star cloth. Stage3 graceful lunar silver barding, sapphire chest moonstone and longer silver mane. Stage4 mythic LUNAR SPIRIT: dramatically long silver-white flowing mane and tail, larger single translucent crystalline spiral horn, fine luminous moon lines integrated into the body, broad flowing moonlit hair silhouette and little armor. Four normal equine legs, NO wings, no second horn, no detached moon halo.\nROW3 STAR PEGASUS: preserve midnight-blue star-speckled body, amber eyes, white-silver mane, two feathered wings, four legs, NO horn. Stage1 existing unarmored Pegasus. Stage2 tasteful silver constellation wing clasps and small cloud-blue saddle. Stage3 fitted celestial silver-and-blue breastplate, distinct gold-silver feather tips, powerful wings. Stage4 breathtaking COSMIC PEGASUS: very large layered luminous constellation wings in violet/blue/white, dramatically long attached comet-like tail and white flowing mane, galaxy-like coat and light integrated into feathers; less bulky armor, striking larger silhouette. Keep exactlytwo wings/four legs/one tail.\nROW4 CRYSTAL DRAGON: preserve cobalt blue/violet scales, pale segmented chest, violet horns, orange-gold eyes and two batlike wings from image5; distinguish it from green dragon reference. Stage1 existing young crystal dragon. Stage2 slim silver rune collar, small integrated amethyst shoulder crystals. Stage3 faceted azure/amethyst crystal guardian armor and increasingly crystalline wing edges. Stage4 PRISMATIC CRYSTAL SOVEREIGN: major silhouette transformation with a tall faceted crystal horn crown, spectacular jagged translucent prismatic crystal wings, crystalline dorsal ridge and crystal-tipped tail; blue/violet iridescent body, little conventional armor, no floating disconnected shards. Friendly wise expression.\nAcross ALL rows: stage2 adds modest exploration gear, stage3 is a clearly stronger guardian, stage4 MUST be a distinct mythical transformation, not only additional decoration. Same individual recognizable in all four stages. All equipment naturally fits and bends with its body, no full rings floating in front of legs, no disconnected jewelry. Detailed clean illustration suitable for later individual transparent cutouts. Render the complete review board."
+}

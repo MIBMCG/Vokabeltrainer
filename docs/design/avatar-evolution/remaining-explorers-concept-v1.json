@@ -1,0 +1,39 @@
+{
+  "kind": "avatar-evolution-concept",
+  "version": 1,
+  "figureIds": [
+    "explorer-girl",
+    "explorer-boy"
+  ],
+  "createdOn": "2026-09-29",
+  "generator": "built-in image_gen",
+  "model": "not exposed by tool",
+  "sourceFile": "remaining-explorers-concept-v1.png",
+  "sha256": "03d976920f7e777a7c54abcbf405988bac9a7491d3d1ae24edeae462c2a4d0ea",
+  "width": 1536,
+  "height": 1024,
+  "colorMode": "RGB",
+  "references": [
+    {
+      "path": "../avatar-shop-sources/explorer-girl-skin-0.png",
+      "role": "existing character identity",
+      "sha256": "3311c9e57beb8cdc549638c4c11a5b298018677c62a0f6e790a75a0ccc7cebee"
+    },
+    {
+      "path": "../avatar-shop-sources/explorer-boy-skin-0.png",
+      "role": "existing character identity",
+      "sha256": "e168a0142b21b92effb5984b475102637a12c1bbf74f54704ec646cf1f08b477"
+    },
+    {
+      "path": "dragon-stages-concept-v2.png",
+      "role": "approved rendering and evolution-strength reference",
+      "sha256": "2d2d088a8243ea18b61a657913ca2e8e8ea13d41b1260850383a87a270b224a8"
+    }
+  ],
+  "status": "user-approved visual direction; all four skin tones and integration authorized",
+  "personalApproval": true,
+  "approval": "User on 2026-09-29 approved all ten rows with griffin/phoenix stage-4 v3 replacements: Ja, so umsetzen",
+  "scope": "Concept board only, not production sprites or deployed app assets",
+  "visualReview": "Eight full-body children, recognizable girl/boy identity retained through four stages. Stage 4 has compass staff and broad flowing star/rune mantle. Only light skin shown as an example; production needs all four existing skin tones, with base clothing-color choice preserved.",
+  "prompt": "Use case: stylized-concept / identity-preserve.\nAsset type: ONE polished concept-review board for the two HUMAN avatar evolution families of an existing children's vocabulary-learning island adventure game.\nInput roles: image1=existing EXPLORER GIRL identity; image2=existing EXPLORER BOY identity; image3=personally approved dragon board, used only for the high-quality storybook/game style and the dramatic mythical final-transformation principle. Do not include dragon or any companion.\nCreate a large landscape 2 ROWS x4 COLUMNS review board, exactlyEIGHT full-body human characters. Toprow girl, bottomrow boy, each evolving left to right. Pale ivory backdrop, thin muted gold cell dividers, dark-teal readable German labels. Column headings \"STUFE 1\", \"STUFE 2\", \"STUFE 3\", \"STUFE 4\". Row labels \"ENTDECKERIN\" and \"ENTDECKER\". No other words. All heads, hands, boots, cape ends and equipment remain inside owncell. Generous empty margins.\nBoth characters are friendly adventurous CHILDREN around12, age-appropriate unsexualized practical clothing, retain the SAME recognizable face/hair/skin tone/body proportions throughout the four stages. Girl retains brown hair in a braid, boy short tousled brown hair; both brown eyes. No aging into adults, no stylized adult muscle, no makeup, no high heels, no skimpy costumes. TWOarms TWOlegs, natural hands and visible neck. Light skin shown is one reference variant only; later assets will exist in four skin tones with identical gear. Do not draw skin swatches or extra human portraits in this board.\nSTAGE1 for both: match original base identity in practical teal short-sleeve explorer shirt, cream undershirt, khaki shorts, socks, hikingboots. No equipment. Teal is the shown example of the existing freely chosen base shirt color, not a new restriction.\nGIRL STAGE2: recognizable explorer with practical teal jacket/vest, sturdy long travel trousers, small brown leather backpack and folded map secured at belt, small brass compass on short chest strap, hairbraid visible. No weapon.\nGIRL STAGE3: ISLAND GUARDIAN, functional teal and softly golden light armor over fully covering travel clothes/trousers, emerald compass emblem at chest, elegant short deep-teal cape connected at shoulders, solid boots and forearm guards. Face and braid clear, confident calm pose, no weapon.\nGIRL STAGE4: LEGENDARY STAR-NAVIGATOR, a genuinely magical transformation while remaining SAMECHILD: a very long divided mantle attached at shoulders that fans into large star-map/sail-shaped luminous fabric panels in teal, ivory and warmgold; glowing compass rose on actual chestplate, small slender radiant navigation diadem that leaves face/hair clear, bright constellation lines on sleeves and boots. A tall glowing crystal compass staff held naturally in one hand, recognizable open compass-ring head and one continuous shaft. Less heavy armor thanstage3, striking broad flowing mythical silhouette. Neither angel wings nor adult queen dress. Practical covered trousers, two boots visible, no oversized sword, no floating unrelated objects.\nBOY STAGE2: same level of capability and practical equipment as girl: teal travel vest/jacket, durable long trousers, brown leather backpack, rolled map in belt loop, small brass compass. No weapon.\nBOY STAGE3: ISLAND GUARDIAN with fitted teal/gold travel armor, green compass crest, short teal shoulder cape, practical trousers and boots/forearmguards. Face/hair visible.\nBOY STAGE4: LEGENDARY RUNE-NAVIGATOR, same child identity. Long attached wind-swept layered teal/ivory/gold mantle with readable large luminous map-like runes, a broad dramatic cloak silhouette and sculptural gold compass shoulder fittings, subtle slim rune diadem. One magical compass staff naturally gripped in hand with compassrose/crystal head, detailed continuous shaft. Luminous runes on actual suit and cuffs; covered practical trousers and boots remain clear. Much more magical and distinct thanstage3, not merely bigger armor. Match girl's epic visual importance and quality; neither aggressive nor militaristic.\nUse the approved dragon reference's premium soft painterly surfaces, material shading, crisp silhouette and compelling jump tostage4. Clothes/armor/cloth integrated as finished full-character paintings, not modular overlays. No floating detached accessories, magical circles behind heads, scenic landscape, frame cropping or watermark. Complete two-row board for coherent visual approval."
+}
