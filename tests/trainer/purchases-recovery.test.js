@@ -119,11 +119,11 @@ async function seedRemote(remote,ledger=earnedLedger()){
   return ref;
 }
 
-function ledgerWithSeveralUploadParts() {
+function ledgerWithSeveralUploadParts(rounds=10) {
   const ledger = earnedLedger();
   const fixture = createFixture();
   let clock = Math.max(...ledger.events.map(event => event.clock));
-  for (let round = 1; round <= 10; round += 1) {
+  for (let round = 1; round <= rounds; round += 1) {
     const roundId = `extra-round-${round}`;
     const nextClock = () => {
       clock += 1;
@@ -840,7 +840,7 @@ test('response loss is recovered from history after a later purchase without ano
   assert.equal(first.remote.putCalls.length,2);
 });
 
-test('purchase uploads at most three saved immutable files at once and waits before the pointer',async()=>{
+test('a normal five-file purchase uploads in one group and waits before the pointer',async()=>{
   const store=byteStore(productState(ledgerWithSeveralUploadParts()));
   const harness=await openHarness({store});
   const preview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
@@ -858,19 +858,19 @@ test('purchase uploads at most three saved immutable files at once and waits bef
   await waitForPurchase(()=>store.snapshot().commerce.jobs[0]?.attempts[0]?.phase==='reserved');
   await waitForPurchase(()=>held.length>=1);
   await new Promise(resolve=>setImmediate(resolve));
-  assert.equal(held.length,3);
+  assert.equal(held.length,5);
   const saved=store.snapshot().commerce.jobs[0].attempts[0];
   assert.equal(saved.uploads.length,5);
-  assert.deepEqual(held.map(entry=>entry.ref),saved.uploads.slice(0,3).map(entry=>entry.ref));
+  assert.deepEqual(held.map(entry=>entry.ref),saved.uploads.map(entry=>entry.ref));
   assert.equal(harness.remote.putCalls.length,0);
-  held.slice(0,3).forEach(entry=>entry.release());
-  await waitForPurchase(()=>held.length===5);
+  held.slice(0,4).forEach(entry=>entry.release());
+  await new Promise(resolve=>setImmediate(resolve));
   assert.equal(harness.remote.putCalls.length,0);
   assert.equal(store.snapshot().commerce.jobs[0].attempts[0].phase,'reserved');
-  held.slice(3).forEach(entry=>entry.release());
+  held[4].release();
   const result=await confirmation;
   assert.equal(result.status,'confirmed');
-  assert.equal(maximum,3);
+  assert.equal(maximum,5);
   assert.equal(harness.remote.putCalls.length,1);
 });
 
@@ -879,8 +879,43 @@ test('purchase service sends each saved group through the batch transport before
   const preview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
   await harness.service.confirm(preview);
   const saved=harness.store.snapshot().commerce.jobs[0].attempts[0];
-  assert.deepEqual(harness.remote.batchCalls.map(group=>group.length),[3,2]);
+  assert.deepEqual(harness.remote.batchCalls.map(group=>group.length),[5]);
   assert.deepEqual(harness.remote.batchCalls.flat(),saved.uploads.map(({ref})=>ref));
+  assert.equal(harness.remote.putCalls.length,1);
+});
+
+test('more than six saved files use a second group only after the first six finish verification',async()=>{
+  const store=byteStore(productState(ledgerWithSeveralUploadParts(30)));
+  const harness=await openHarness({store});
+  const preview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
+  const write=harness.remote.writeImmutable.bind(harness.remote);
+  const held=[];
+  let active=0,maximum=0;
+  harness.remote.writeImmutable=async request=>{
+    active+=1;maximum=Math.max(maximum,active);
+    let release;
+    held.push({ref:request.ref,release:()=>release()});
+    await new Promise(resolve=>{release=resolve;});
+    try{return await write(request);}finally{active-=1;}
+  };
+  const confirmation=harness.service.confirm(preview);
+  await waitForPurchase(()=>held.length===6);
+  const saved=store.snapshot().commerce.jobs[0].attempts[0];
+  assert.ok(saved.uploads.length>6);
+  assert.deepEqual(held.map(({ref})=>ref),saved.uploads.slice(0,6).map(({ref})=>ref));
+  held.slice(0,5).forEach(entry=>entry.release());
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(held.length,6);
+  assert.equal(harness.remote.putCalls.length,0);
+  assert.equal(store.snapshot().commerce.jobs[0].attempts[0].phase,'reserved');
+  held[5].release();
+  await waitForPurchase(()=>held.length===saved.uploads.length);
+  assert.deepEqual(harness.remote.batchCalls.map(group=>group.length),[6,saved.uploads.length-6]);
+  assert.equal(harness.remote.putCalls.length,0);
+  held.slice(6).forEach(entry=>entry.release());
+  const result=await confirmation;
+  assert.equal(result.status,'confirmed');
+  assert.equal(maximum,6);
   assert.equal(harness.remote.putCalls.length,1);
 });
 
@@ -955,18 +990,22 @@ test('fresh-process purchase recovery keeps every ambiguous network outcome read
     {name:'partial immutable closure',when:'before'},
     {name:'accepted immutable upload with lost response',when:'after'},
   ])await t.test(failure.name,async()=>{
-    const store=byteStore(productState(earnedLedger())),remote=new PurchaseRemote();
+    const store=byteStore(productState(ledgerWithSeveralUploadParts())),remote=new PurchaseRemote();
     const harness=await openHarness({store,remote,ids:sequenceIds(`purchase-upload-${failure.when}`)});
     const preview=await harness.service.preview({profileId:'p1',articleId:'evolution:explorer-girl:2'});
+    const before=await harness.service.getView();
     remote.writeFailure={attempt:2,when:failure.when};
     await assert.rejects(harness.service.confirm(preview),{code:'network'});
     const saved=store.snapshot().commerce.jobs[0],attempt=saved.attempts[0];
     assert.equal(attempt.phase,'reserved');assert.equal(remote.putCalls.length,0);
-    assert.ok(attempt.uploads.length>2);
-    assert.deepEqual(remote.writeRequests,attempt.uploads.slice(0,3));
+    assert.equal(attempt.uploads.length,5);
+    assert.deepEqual(remote.writeRequests,attempt.uploads);
     assert.equal(remote.files.has(attempt.uploads[0].ref.id),true);
     assert.equal(remote.files.has(attempt.uploads[1].ref.id),failure.when==='after');
-    assert.equal(remote.files.has(attempt.uploads[2].ref.id),true);
+    for(const upload of attempt.uploads.slice(2))assert.equal(remote.files.has(upload.ref.id),true);
+    const unresolved=await harness.service.getView();
+    assert.equal(unresolved.accounts.p1.spentPoints,before.accounts.p1.spentPoints);
+    assert.equal(unresolved.accounts.p1.availablePoints,before.accounts.p1.availablePoints);
     const beforeResume=remote.writeRequests.length;
 
     const fresh=await restartHarness(harness,{ids:sequenceIds(`purchase-upload-${failure.when}-fresh`)});
@@ -978,6 +1017,9 @@ test('fresh-process purchase recovery keeps every ambiguous network outcome read
     assert.deepEqual(confirmed.candidate,attempt.candidate);
     assert.deepEqual(confirmed.uploads,attempt.uploads);
     for(const upload of attempt.uploads)assert.deepEqual(remote.files.get(upload.ref.id),upload.value);
+    const completed=await fresh.service.getView();
+    assert.equal(completed.accounts.p1.spentPoints,before.accounts.p1.spentPoints+200);
+    assert.equal(completed.accounts.p1.availablePoints,before.accounts.p1.availablePoints-200);
   });
 
   await t.test('pointer request loss',async()=>{

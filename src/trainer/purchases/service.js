@@ -448,9 +448,9 @@ export function createPurchaseService({commands, transport, sync, now, id, onSta
 
   async function uploadPurchase(operationId,attempt,verifiedUploads=null,purchaseContext=null) {
     if(attempt.phase!=='reserved')return attempt;
-    for(let offset=0;offset<attempt.uploads.length;offset+=3) {
+    for(let offset=0;offset<attempt.uploads.length;offset+=6) {
       const commerce=current().commerce;
-      const group=attempt.uploads.slice(offset,offset+3);
+      const group=attempt.uploads.slice(offset,offset+6);
       const verified=await transport.writeImmutableBatch(group.map(upload=>({
           ref:upload.ref,value:upload.value,kind:'content',config:commerce.config,
           authorization:{kind:'attempt',commerce,operationId,attemptId:attempt.attemptId},

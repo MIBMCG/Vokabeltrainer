@@ -628,8 +628,8 @@ export function createPurchaseTransport({fetchImpl = globalThis.fetch, getToken,
 
   async function writeImmutableBatch(uploads,context=null) {
     try {
-      if (!Array.isArray(uploads) || uploads.length < 1 || uploads.length > 3) {
-        error('limit', 'Eine Kaufgruppe umfasst ein bis drei gespeicherte Dateien.');
+      if (!Array.isArray(uploads) || uploads.length < 1 || uploads.length > 6) {
+        error('limit', 'Eine Kaufgruppe umfasst ein bis sechs gespeicherte Dateien.');
       }
       const requests = copy(uploads);
       const token = await runtimeToken();

@@ -524,7 +524,7 @@ test('immutable reads enforce exact parent, app, dataset and full configured fol
   }
 });
 
-async function pointerCommerce(configRef, config, etag) {
+async function pointerCommerce(configRef, config, etag, partCount=1) {
   const previous = {id: 'previous-receipt', sha256: '1'.repeat(64)};
   const intent = {
     version: 1,
@@ -537,15 +537,17 @@ async function pointerCommerce(configRef, config, etag) {
     price: 200,
     confirmed: true,
   };
-  const part = {version: 1, kind: 'basis-part', index: 0, count: 1, content: '{}'};
-  const partRef = {id: 'basis-part-a', sha256: await digest(part)};
+  const parts = await Promise.all(Array.from({length: partCount}, async (_,index) => {
+    const value = {version: 1, kind: 'basis-part', index, count: partCount, content: '{}'};
+    return {ref: {id: index===0?'basis-part-a':`basis-part-${index}`, sha256: await digest(value)}, value};
+  }));
   const manifest = {
     version: 1,
     kind: 'basis',
     datasetId: binding.datasetId,
     byteLength: 2,
     ledgerHash: '2'.repeat(64),
-    parts: [partRef],
+    parts: parts.map(({ref}) => ref),
   };
   const basisRef = {id: 'basis-a', sha256: await digest(manifest)};
   const receipt = {
@@ -584,7 +586,7 @@ async function pointerCommerce(configRef, config, etag) {
     uploads: [
       {ref: candidate, value: receipt},
       {ref: basisRef, value: manifest},
-      {ref: partRef, value: part},
+      ...parts,
     ],
   };
   return {
@@ -722,7 +724,7 @@ test('control uploads and pointer require the exact persisted operation and conf
   assert.equal(fixture.files.get(confirmed.coordinatorId).properties.purchaseHeadId,commerce.control.candidate.id);
 });
 
-async function configuredPointerCase() {
+async function configuredPointerCase(partCount=1) {
   const ready = await setupFixture();
   const saved = recorder();
   const setup = await prepareBootstrap({
@@ -742,7 +744,7 @@ async function configuredPointerCase() {
     ...ready,
     confirmed,
     coordinator,
-    prepared: await pointerCommerce(confirmed.configRef, confirmed.config, coordinator.etag),
+    prepared: await pointerCommerce(confirmed.configRef, confirmed.config, coordinator.etag, partCount),
   };
 }
 
@@ -880,6 +882,27 @@ function savedPurchaseBatch(prepared) {
     ...upload, kind: 'content', config: prepared.commerce.config, authorization,
   }));
 }
+
+test('one saved six-file purchase group uploads and verifies every distinct authorized file', async () => {
+  const {fixture, transport, prepared} = await configuredPointerCase(4);
+  const requests = savedPurchaseBatch(prepared);
+  assert.equal(requests.length, 6);
+  assert.equal(new Set(requests.map(({ref}) => ref.id)).size, 6);
+  fixture.calls.length = 0;
+  const values = await transport.writeImmutableBatch(requests);
+  assert.deepEqual(values, requests.map(({value}) => value));
+  assert.equal(fixture.calls.filter(({method}) => method === 'POST').length, 6);
+  for (const {ref, value} of requests) assert.deepEqual(fixture.files.get(ref.id).value, value);
+});
+
+test('seven saved purchase files are rejected before any upload', async () => {
+  const {fixture, transport, prepared} = await configuredPointerCase(5);
+  const requests = savedPurchaseBatch(prepared);
+  assert.equal(requests.length, 7);
+  fixture.calls.length = 0;
+  await assert.rejects(() => transport.writeImmutableBatch(requests), {code: 'limit'});
+  assert.equal(fixture.calls.filter(({method}) => method === 'POST').length, 0);
+});
 
 test('a second batch and a new saved attempt recheck the installed anchor', async () => {
   const {fixture, transport, prepared} = await configuredPointerCase();
@@ -1101,6 +1124,39 @@ test('batch waits for an already started read after another upload fails', async
   assert.equal(failure.code, 'retryable');
   assert.equal(fixture.files.has('receipt-a'), true);
   assert.equal(fixture.files.has('basis-part-a'), true);
+});
+
+test('a later failed slot waits for another six-file upload readback before settling', async () => {
+  const {fixture, descriptorHash, prepared} = await configuredPointerCase(4);
+  let releaseRead;
+  const readGate = new Promise(resolve => { releaseRead = resolve; });
+  let signalRead;
+  const readStarted = new Promise(resolve => { signalRead = resolve; });
+  const transport = createPurchaseTransport({
+    binding, descriptorHash, getToken: async () => 'synthetic-token',
+    fetchImpl: async (url, init) => {
+      if (init?.method === 'POST' && init.body.includes('"id":"basis-part-2","name"')) {
+        return new Response('{}', {status: 500});
+      }
+      if (url.includes('/drive/v2/files/basis-part-3?alt=media')) {
+        signalRead();
+        await readGate;
+      }
+      return fixture.fetch(url, init);
+    },
+  });
+  let settled = false;
+  const result = transport.writeImmutableBatch(savedPurchaseBatch(prepared)).then(
+    () => { settled = true; return null; },
+    error => { settled = true; return error; },
+  );
+  assert.equal(await Promise.race([readStarted.then(() => 'read'), result.then(() => 'settled')]), 'read');
+  assert.equal(settled, false);
+  releaseRead();
+  const failure = await result;
+  assert.equal(failure.code, 'retryable');
+  assert.equal(fixture.files.has('basis-part-3'), true);
+  assert.equal(fixture.files.has('basis-part-2'), false);
 });
 
 test('purchase authority requires config body hash and the exact installed anchor ref', async () => {
