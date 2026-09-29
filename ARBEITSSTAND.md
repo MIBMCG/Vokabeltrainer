@@ -1,5 +1,20 @@
 # Arbeitsstand
 
+**Fortsetzung und Unterbrechungsprüfung (29.09.2026).** Der Nutzer hebt die
+Pause auf und lässt mögliche Folgen eines Verbindungsabbruchs in Codex prüfen.
+Beide lokalen Checkouts sind sauber und auf `0fbeb19`; der tatsächliche
+GitHub-Branchkopf stimmt exakt überein. Git-Integrität und abgeschlossene
+Testprotokolle sind unauffällig. Alle 199 vorbereiteten Dateien entsprechen
+dem Produktstand einschließlich der vorgesehenen Serverkonfiguration;
+neun frisch abgerufene App-Dateien sind bytegleich. Cache v37 und die
+bisherige Worker-Version bleiben aktiv. Nach Neuladen des vorhandenen
+Testbrowsers bleiben 40 verfügbare Punkte, 2.040 Lernpunkte, Level 11 und
+ausgewählte Drachenstufe 4 erhalten; der anfängliche Google-Hinweis verschwindet
+selbstständig. Kein Reparaturbedarf in den geprüften Bereichen, keine erneute
+Bereitstellung oder vollständige Testsuite. Natürlicher Tokenablauf und
+physische Geräteabnahmen bleiben offen.
+[Aktuelle Übergabe](docs/handoffs/2026-09-29-verbindungsabbruch.md).
+
 **Abgeschlossen, anschließend Pause: Vokabeleingabe (29.09.2026).** Nach
 ausdrücklicher Fortsetzung ist der priorisierte Tabellenweg überarbeitet:
 einfügen, automatische kompakte Prüfung, gemeinsame Übernahme. Lektions- und

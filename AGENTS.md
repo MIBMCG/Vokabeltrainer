@@ -1,6 +1,15 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-**Aktuelle Steuerung: Pause nach Vokabeleingabe am 29.09.2026.** Der Nutzer
+**Aktuelle Fortsetzung: Prüfung nach Verbindungsabbruch am 29.09.2026.**
+Der Nutzer hat die Pause ausdrücklich aufgehoben und eine Prüfung auf mögliche
+Folgen des Abbruchs in Codex beauftragt. Lokale Git-Integrität, GitHub-Abgleich,
+Bereitstellung und Wiederaufnahme im bestehenden Testbrowser sind unauffällig.
+Produktstand `c866bd7`, Cache v37 und vorhandene Bestände bleiben erhalten;
+es war keine Produktkorrektur oder neue Bereitstellung erforderlich.
+Aktueller Einstieg und Nachweisgrenzen:
+[Übergabe zur Unterbrechungsprüfung](docs/handoffs/2026-09-29-verbindungsabbruch.md).
+
+**Historisch: Pause nach Vokabeleingabe am 29.09.2026.** Der Nutzer
 verlangt nach diesem Abschlussschritt eine Pause. Das Paket ist als Produktcommit
 `c866bd76e98b9fcf4673a7d7a567674c282d04aa` integriert, exakt mit GitHub
 abgeglichen und privat als Cache v37 bereitgestellt. Automatische kompakte

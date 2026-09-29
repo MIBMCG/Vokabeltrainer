@@ -1,6 +1,12 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Aktueller Abschluss und Pause: vereinfachte Vokabeleingabe.** Das Paket ist
+**Aktuelle Fortsetzung: Verbindungsabbruch geprüft (29.09.2026).** Die Pause
+ist durch den Nutzer aufgehoben. Projektdateien, GitHub und bereitgestellte App
+sind vollständig; im bestehenden Testbrowser bleiben Lernstand, Punkte und
+Figur nach Neuladen erhalten. Keine Produktkorrektur erforderlich.
+[Aktuelle Übergabe und Prüfgrenzen](docs/handoffs/2026-09-29-verbindungsabbruch.md).
+
+**Vorheriger Abschluss mit anschließender Pause: vereinfachte Vokabeleingabe.** Das Paket ist
 als Produktcommit `c866bd7` auf GitHub gesichert und privat als Cache v37 aktiv.
 650 Node-Tests, 22 Browserfälle und unabhängige Prüfungen sind erfolgreich.
 Die Tabellenprüfung erscheint automatisch; die gesamte Auswahl wird gemeinsam
