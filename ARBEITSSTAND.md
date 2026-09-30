@@ -1,5 +1,22 @@
 # Arbeitsstand
 
+**Schmale Vokabeleingabe korrigiert (30.09.2026).** Bei 390 px und 200 Prozent
+Schrift war die Erwachsenenansicht 463 px breit. Produktcommit `b440b5e`
+behebt die Mindestbreiten und passt die Navigation an die Schriftgröße an.
+Importkorrektur, neue Lektion, Kinderzuordnung und Speicherung sind bei
+320/390 px mit großer Schrift sowie 320/1280 px normal geprüft. Finale
+7/7 betroffene Browserfälle und beide unabhängigen Reviews PASS. Die gesamte
+Node-Suite bestand mit 662/662 vor dem letzten CSS-Feinschliff; danach wurden
+die relevanten Browser- und Updatefälle erneut ausgeführt. Keine Änderung
+an Produkt-JavaScript, Abgleich, Kauf oder Datenformat. Cache v43 privat aktiv;
+Worker `8ec1b376-c0e7-4800-8a0e-24ea169d82a5` seit 20:16:19.914 UTC zu
+100 Prozent. Sieben ausgelieferte Dateien bytegleich. Das kontrollierte Update
+erhält 40 verfügbare Punkte, 2.040 Lernpunkte, Level 11 und Drachenstufe 4.
+Produktcommit auf beiden GitHub-Zweigen exakt bestätigt; dieser
+Dokumentationsnachtrag folgt separat. Echte Excel-Liste mit Zuordnung ist
+angefragt; Handy-/Safari-Abnahme bleibt offen. Keine neue Pause.
+[Aktuelle Übergabe](docs/handoffs/2026-09-30-mobile-vokabeleingabe.md).
+
 **Wortlisten-Abgleich beschleunigt (30.09.2026).** Der bestätigte Upload von bis
 zu drei gewöhnlichen Lernpaketen zugleich ist als Produktcommit `a530357`
 integriert, unabhängig geprüft und privat als Cache v42 bereitgestellt.

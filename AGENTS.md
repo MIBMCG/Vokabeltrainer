@@ -1,6 +1,18 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-**Aktueller Abschluss am 30.09.2026: schnellerer Wortlisten-Abgleich.** Der
+**Aktueller Abschluss am 30.09.2026: schmale Vokabeleingabe.** Produktcommit
+`b440b5e` behebt den seitlichen Überlauf im Erwachsenenbereich bei großer
+Schrift. Cache v43 ist privat aktiv; sieben ausgelieferte Dateien bytegleich.
+320/390 px mit 200 Prozent Schrift und normaler Handy-/Desktopansicht sind
+lokal geprüft. Finale 7/7 Browserfälle und beide unabhängigen Reviews PASS;
+662/662 Node-Tests vor dem letzten reinen CSS-Feinschliff bestanden, danach
+gezielte Browser-/Updateprüfung erneut grün. Kontrolliertes Update erhält
+Punkte, Level und Drachenstufe 4. Produktcommit auf beiden GitHub-Zweigen exakt
+bestätigt. Keine neue Pause. Echte Excel-Liste mit Lektions-/Kinderzuordnung
+ist angefragt; physische Geräteabnahme bleibt offen. Keine Bestände neu anlegen
+oder ersetzen. Einstieg: [Übergabe](docs/handoffs/2026-09-30-mobile-vokabeleingabe.md).
+
+**Vorheriger Abschluss am 30.09.2026: schnellerer Wortlisten-Abgleich.** Der
 bestätigte Dreier-Upload für gewöhnliche Lernpakete ist als `a530357` integriert,
 unabhängig geprüft und privat als Cache v42 aktiv. Alle Dateiprüfungen,
 dauerhaften IDs und Wiederaufnahme bleiben erhalten. 662/662 Node-Tests und

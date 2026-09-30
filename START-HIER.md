@@ -1,6 +1,14 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Aktueller Abschluss (30.09.2026):** Große Wortlisten werden mit bis zu drei
+**Aktueller Abschluss (30.09.2026):** Die Vokabeleingabe bleibt bei schmalem
+Bildschirm und großer Schrift innerhalb der Ansicht. Produkt `b440b5e`,
+Cache v43, ist privat aktiv und auf beiden GitHub-Zweigen exakt bestätigt.
+Sieben abschließende Browserfälle und unabhängige Reviews PASS; bestehende
+Punkte, Level und Figur bleiben nach Update erhalten. Echte Excel-Liste mit
+Zuordnung ist angefragt; physische Handy-/Safari-Abnahme bleibt offen.
+[Aktuelle Übergabe](docs/handoffs/2026-09-30-mobile-vokabeleingabe.md).
+
+**Vorheriger Abschluss (30.09.2026):** Große Wortlisten werden mit bis zu drei
 gleichzeitigen, weiterhin geprüften Lernpaketen abgeglichen. Produkt `a530357`,
 Cache v42, ist privat aktiv und auf beiden GitHub-Zweigen exakt bestätigt.
 662 Node-Tests, sechs Browserfälle und unabhängige Reviews PASS. Die kontrollierte
