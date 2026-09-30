@@ -6,6 +6,7 @@ import {fileURLToPath} from 'node:url';
 import {createTrainerHarness} from './trainer-harness.mjs';
 
 const screenshotDirectory = fileURLToPath(new URL('../../test-results/tiger-art/', import.meta.url));
+const avatarRestDirectory = fileURLToPath(new URL('../../test-results/avatar-rest/', import.meta.url));
 
 test('evolution pictures load responsive images and fall back to the cached small form offline', {timeout: 60_000}, async () => {
   const harness = await createTrainerHarness();
@@ -116,12 +117,13 @@ test('human stage 1 keeps free clothing colors while developed forms use the sel
 
 test('human gallery and selected card show the saved clothing and skin', {timeout: 60_000}, async () => {
   const harness = await createTrainerHarness();
-  const {page} = await harness.newDevice();
+  const {page} = await harness.newDevice({viewport: {width: 1280, height: 900}});
   try {
     await page.goto(harness.baseUrl);
     await page.locator('#dataset-name').waitFor();
     await page.evaluate(async () => {
       const {renderPurchases} = await import('/src/trainer/ui/purchases.js');
+      document.querySelector('#app').style.display = 'none';
       const root = document.createElement('section');
       root.id = 'human-gallery-check';
       document.body.append(root);
@@ -143,6 +145,20 @@ test('human gallery and selected card show the saved clothing and skin', {timeou
       .getAttribute('data-art-key'), 'figure-explorer-girl-clothing-5');
     assert.match(await gallery.locator('.evolution-card[data-stage="3"] picture img').getAttribute('src'),
       /explorer-girl-stage-3-skin-2-256\.webp$/u);
+    await gallery.locator('.evolution-card[data-stage] picture img').evaluateAll(async (images) => {
+      await Promise.all(images.map(async (image) => {
+        image.loading = 'eager';
+        await image.decode();
+      }));
+    });
+    assert.deepEqual(await gallery.locator('.evolution-card[data-stage]').evaluateAll((cards) =>
+      cards.map((card) => ({stage: card.dataset.stage,
+        loaded: [...card.querySelectorAll('picture img')].every((image) => image.naturalWidth > 0)}))),
+    [1, 2, 3, 4].map((stage) => ({stage: String(stage), loaded: true})));
+    await mkdir(avatarRestDirectory, {recursive: true});
+    await page.screenshot({path: join(avatarRestDirectory, 'human-girl-gallery-desktop.png'), fullPage: true});
+    await page.setViewportSize({width: 390, height: 844});
+    await page.screenshot({path: join(avatarRestDirectory, 'human-girl-gallery-mobile.png'), fullPage: true});
   } finally {
     await harness.close();
   }
@@ -197,31 +213,65 @@ test('all new small forms have a transparent four-percent edge', {timeout: 90_00
 
 test('developed human forms offer all four free skin choices without clothing controls', {timeout: 60_000}, async () => {
   const harness = await createTrainerHarness();
-  const {page} = await harness.newDevice();
+  const {page} = await harness.newDevice({viewport: {width: 1280, height: 900}});
   try {
     await page.goto(harness.baseUrl);
     await page.locator('#dataset-name').waitFor();
     await page.evaluate(async () => {
       const {renderAvatar} = await import('/src/trainer/ui/rewards.js');
+      document.querySelector('#app').style.display = 'none';
       const root = document.createElement('section');
       root.id = 'human-skin-choices';
       document.body.append(root);
       renderAvatar({root, profileId: 'p1', profile: {points: 500, avatar: {skin: 2, clothing: 5}},
         state: {commerce: {mode: 'active', selection: [{profileId: 'p1', figureId: 'explorer-boy', stage: 3}]}},
         commands: {setAvatar: async () => {}}, commerce: null});
+      const {renderPurchases} = await import('/src/trainer/ui/purchases.js');
+      const selected = document.createElement('section');
+      selected.id = 'human-boy-selected-check';
+      root.prepend(selected);
+      renderPurchases({root: selected, profileId: 'p1', online: true, appearance: {skin: 2, clothing: 5}, commerce: {
+        isConnected: () => true,
+        getView: async () => ({mode: 'active', jobs: [],
+          selection: [{profileId: 'p1', figureId: 'explorer-boy', stage: 3}],
+          accounts: {p1: {earnedPoints: 500, availablePoints: 500,
+            entitledFigureIds: ['explorer-boy'],
+            entitledEvolutionIds: ['evolution:explorer-boy:1', 'evolution:explorer-boy:2',
+              'evolution:explorer-boy:3']}}}),
+      }});
     });
     const choices = page.locator('#human-skin-choices .selected-human-appearance');
     assert.equal(await choices.getByRole('group', {name: 'Hautfarbe'}).getByRole('radio').count(), 4);
     assert.equal(await choices.getByRole('group', {name: 'Kleidungsfarbe'}).count(), 0);
     assert.equal(await choices.getByRole('radio', {name: 'Hautfarbe 3'}).isChecked(), true);
+    await page.locator('#human-boy-selected-check [data-selected-purchase-figure] img').waitFor();
+    await page.locator('#human-boy-selected-check [data-selected-purchase-figure] img')
+      .evaluate(async (image) => { await image.decode(); });
+    await page.locator('#human-skin-choices img').evaluateAll(async (images) => {
+      await Promise.all(images.map(async (image) => {
+        image.loading = 'eager';
+        await image.decode();
+      }));
+    });
+    await mkdir(avatarRestDirectory, {recursive: true});
+    await page.screenshot({path: join(avatarRestDirectory, 'human-boy-skin-choices.png'), fullPage: true});
   } finally {
     await harness.close();
   }
 });
 
 for (const {figureId, displayName} of [
+  {figureId: 'horse', displayName: 'Pferd'},
+  {figureId: 'dragon', displayName: 'Einfacher Drache'},
   {figureId: 'deer-mist', displayName: 'Nebelhirsch'},
   {figureId: 'tiger', displayName: 'Tiger'},
+  {figureId: 'wolf-aurora', displayName: 'Polarlichtwolf'},
+  {figureId: 'panther-shadow', displayName: 'Schattenpanther'},
+  {figureId: 'unicorn-moon', displayName: 'Mond-Einhorn'},
+  {figureId: 'griffin-storm', displayName: 'Sturmgreif'},
+  {figureId: 'dragon-crystal', displayName: 'Kristalldrache'},
+  {figureId: 'pegasus-star', displayName: 'Sternen-Pegasus'},
+  {figureId: 'phoenix', displayName: 'Phönix'},
 ]) test(`owned ${displayName} stage can be selected and all forms fit desktop and mobile gallery cards`, {timeout: 60_000}, async () => {
   const harness = await createTrainerHarness();
   const {page} = await harness.newDevice({viewport: {width: 1280, height: 900}});
@@ -281,9 +331,16 @@ for (const {figureId, displayName} of [
       await mkdir(screenshotDirectory, {recursive: true});
       await page.screenshot({path: join(screenshotDirectory, 'desktop.png'), fullPage: true});
     }
+    if (figureId === 'griffin-storm' || figureId === 'phoenix') {
+      await mkdir(avatarRestDirectory, {recursive: true});
+      await page.screenshot({path: join(avatarRestDirectory, `${figureId}-desktop.png`), fullPage: true});
+    }
     await page.setViewportSize({width: 390, height: 844});
     await assertVisibleArt();
     if (figureId === 'tiger') await page.screenshot({path: join(screenshotDirectory, 'mobile.png'), fullPage: true});
+    if (figureId === 'griffin-storm' || figureId === 'phoenix') {
+      await page.screenshot({path: join(avatarRestDirectory, `${figureId}-mobile.png`), fullPage: true});
+    }
   } finally {
     await harness.close();
   }
