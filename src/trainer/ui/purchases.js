@@ -199,8 +199,12 @@ function figureCard(figure, controls = []) {
   ]);
 }
 
+function evolutionSkin(figureId, appearance) {
+  return figureById(figureId)?.group === 'human' ? appearance?.skin ?? 0 : 0;
+}
+
 function formPicture(form, {sizes = '(max-width: 600px) 42vw, 180px', appearance = null} = {}) {
-  const skin = appearance?.skin ?? 0;
+  const skin = evolutionSkin(form.figureId, appearance);
   const preserveClothing = form.stage === 1 && figureById(form.figureId)?.group === 'human'
     && (appearance?.clothing ?? 0) !== 0;
   if (form.stage === 1 && (preserveClothing || evolutionArt(form.figureId, form.stage, skin) === null)) {
@@ -460,7 +464,8 @@ export function renderPurchases({
   if (ui.tab === 'mine') {
     if (model.selected) {
       const selectedFigure = FIGURES.find(({id}) => id === model.selected.figureId);
-      const selectedPicture = evolutionArt(model.selected.figureId, model.selected.stage, appearance?.skin ?? 0)
+      const selectedPicture = evolutionArt(model.selected.figureId, model.selected.stage,
+        evolutionSkin(model.selected.figureId, appearance))
         ? formPicture(model.selected, {sizes: '(max-width: 600px) 70vw, 320px', appearance})
         : figurePicture({
           figureId: model.selected.figureId,
@@ -491,7 +496,7 @@ export function renderPurchases({
       for (const form of EVOLUTION_FORMS.filter((candidate) =>
         candidate.figureId === figureId && ui.view.accounts[profileId].entitledEvolutionIds.includes(candidate.id))) {
         const selected = model.selected?.figureId === figureId && model.selected.stage === form.stage;
-        const picture = evolutionArt(figureId, form.stage, appearance?.skin ?? 0)
+        const picture = evolutionArt(figureId, form.stage, evolutionSkin(figureId, appearance))
           ? formPicture(form, {appearance})
           : form.stage === 1 ? figurePicture({figureId, skin: appearance?.skin, clothing: appearance?.clothing, equipment: {}},
             {sizes: '(max-width: 600px) 42vw, 180px'}) : formPicture(form);

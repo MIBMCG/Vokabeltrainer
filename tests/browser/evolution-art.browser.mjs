@@ -164,6 +164,57 @@ test('human gallery and selected card show the saved clothing and skin', {timeou
   }
 });
 
+for (const {figureId, skin} of [
+  {figureId: 'horse', skin: 1},
+  {figureId: 'griffin-storm', skin: 2},
+  {figureId: 'phoenix', skin: 3},
+]) test(`animal ${figureId} artwork ignores saved human skin ${skin} across purchase views`, {timeout: 60_000}, async () => {
+  const harness = await createTrainerHarness();
+  const {page} = await harness.newDevice();
+  try {
+    await page.goto(harness.baseUrl);
+    await page.evaluate(async ({figureId, skin}) => {
+      const {renderPurchases} = await import('/src/trainer/ui/purchases.js');
+      const root = document.createElement('section');
+      root.id = 'animal-skin-check';
+      document.body.append(root);
+      renderPurchases({root, profileId: 'p1', online: true, appearance: {skin, clothing: 5}, commerce: {
+        isConnected: () => true,
+        getView: async () => ({mode: 'active', jobs: [],
+          selection: [{profileId: 'p1', figureId, stage: 2}],
+          accounts: {p1: {earnedPoints: 600, availablePoints: 600,
+            entitledFigureIds: [figureId],
+            entitledEvolutionIds: [`evolution:${figureId}:1`, `evolution:${figureId}:2`]}}}),
+        preview: async () => ({price: 400, availablePoints: 600}),
+      }});
+    }, {figureId, skin});
+    const gallery = page.locator('#animal-skin-check');
+    await gallery.locator('[data-selected-purchase-figure]').waitFor();
+    assert.match(await gallery.locator('[data-selected-purchase-figure] picture img').getAttribute('src'),
+      new RegExp(`${figureId}-stage-2-256\\.webp$`, 'u'));
+    assert.match(await gallery.locator('[data-owned-stage="2"] picture img').getAttribute('src'),
+      new RegExp(`${figureId}-stage-2-256\\.webp$`, 'u'));
+    await gallery.getByRole('button', {name: 'Entwicklung', exact: true}).click();
+    assert.match(await gallery.locator('.evolution-next picture img').getAttribute('src'),
+      new RegExp(`${figureId}-stage-3-256\\.webp$`, 'u'));
+    for (const stage of [1, 2, 3, 4]) {
+      assert.match(await gallery.locator(`.evolution-card[data-stage="${stage}"] picture img`).getAttribute('src'),
+        new RegExp(`${figureId}-stage-${stage}-256\\.webp$`, 'u'));
+    }
+    await gallery.locator('.evolution-card[data-stage="3"]')
+      .getByRole('button', {name: 'Für 400 Punkte entwickeln'}).click();
+    const dialog = page.locator('.purchase-dialog');
+    await dialog.waitFor();
+    assert.match(await dialog.locator('picture img').getAttribute('src'),
+      new RegExp(`${figureId}-stage-3-256\\.webp$`, 'u'));
+    await dialog.locator('picture img').evaluate(async (image) => { await image.decode(); });
+    assert.equal(await dialog.getByRole('button', {name: 'Kauf verbindlich bestätigen'}).isEnabled(), true);
+    await dialog.getByRole('button', {name: 'Abbrechen'}).click();
+  } finally {
+    await harness.close();
+  }
+});
+
 test('all new small forms have a transparent four-percent edge', {timeout: 90_000}, async () => {
   const harness = await createTrainerHarness();
   const {page} = await harness.newDevice();
