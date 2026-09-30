@@ -1,6 +1,13 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Aktuelle Pause nach Zwischenstandssicherung (29.09.2026).** Alle 64
+**Aktuelle Fortsetzung (30.09.2026):** Der Nutzer hebt die Pause mit
+„arbeite nun weiter“ auf. Beim gesicherten Avatarpaket `3036ec9` ansetzen:
+Vollsuite, Browserprüfung und unabhängige Reviews abschließen, danach integrieren
+und privat bereitstellen. Keine Bilder erneut erzeugen. Die gezielte Freigabe
+für den zuvor blockierten GitHub-Upload steht weiterhin aus.
+[Aktuelle Übergabe](docs/handoffs/2026-09-29-avatar-restpaket.md).
+
+**Historische Pause nach Zwischenstandssicherung (29.09.2026).** Alle 64
 fehlenden Avatarquellen sind fertig und visuell geprüft. Der vorbereitete
 Einbau wird auf `codex/purchase-batch-checks` als unfertiger Arbeitsstand
 gesichert. Vollständige Abschlussprüfung und Bereitstellung stehen noch aus;

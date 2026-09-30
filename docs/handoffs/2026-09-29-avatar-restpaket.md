@@ -3,7 +3,15 @@
 Stand: 29.09.2026. Entwicklungszweig: `codex/vokabeltrainer-v1`.
 Ausgangsstand: `c1ecf2a58ed9951aa3a568eeda0f551f3a5f9974`.
 
-## Aktuelle Pause nach gesichertem Zwischenstand
+## Aktuelle Fortsetzung am 30.09.2026
+
+Der Nutzer setzt mit „arbeite nun weiter“ ausdrücklich fort; die Pause ist
+aufgehoben. Hauptzweig `0643d25` und Arbeitszweig `3036ec9` sind sauber erhalten.
+Die noch offenen Tests und Reviews werden nachgeholt. Es gibt keine neue
+Bildproduktion oder neue Entwurfsfreigabe. Vor dem GitHub-Upload bleibt die
+konkrete Zielbestätigung aus der automatischen Ablehnung zu klären.
+
+## Historische Pause nach gesichertem Zwischenstand
 
 Der Nutzer wählt am 29.09.2026 ausdrücklich „In etwa 5–10 Minuten nach
 Sicherung des Zwischenstands“. Nach dieser Sicherung pausieren; keine weitere
@@ -41,8 +49,8 @@ Der Nutzer möchte zuerst alle fehlenden Avatar-Entwicklungen fertigstellen,
 um sich danach auf die Optimierung zu konzentrieren. Die vorgeschlagene
 [schnellere Lernbereichsübernahme](2026-09-29-lernbereich-vorschau.md) ist
 damit zurückgestellt; ihre Umsetzung wurde nicht bestätigt.
-Dieser Produktionsauftrag gilt bei der nächsten ausdrücklichen Fortsetzung;
-die oben dokumentierte Pause hat jetzt Vorrang. Familien- und Testbestände erhalten.
+Dieser Produktionsauftrag ist seit der Fortsetzung am 30.09.2026 wieder aktiv.
+Familien- und Testbestände erhalten.
 
 Drei vollständige Reihen mit zwölf Motiven sind bereits ausgeliefert:
 Einfacher Drache, Nebelhirsch und Tiger. Diese werden nicht neu erzeugt.

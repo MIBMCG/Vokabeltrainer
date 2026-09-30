@@ -1,6 +1,14 @@
 # Arbeitsstand
 
-**Pause nach Zwischenstandssicherung: Avatar-Restpaket (29.09.2026).** Der
+**Fortsetzung des Avatar-Restpakets (30.09.2026).** Der Nutzer beauftragt
+ausdrücklich die Weiterarbeit. Beide lokalen Stände sind erhalten:
+Hauptzweig `0643d25`, isolierter Bild-/Einbaustand `3036ec9`. Vollständige
+Tests, Browserfälle und unabhängige Reviews werden jetzt nachgeholt.
+Die 64 fertigen Quellen und 192 neuen WebPs werden weiterverwendet.
+App-Update und GitHub-Sicherung sind noch nicht erfolgt; die konkrete
+Zielbestätigung für den zuvor abgelehnten Upload bleibt offen.
+
+**Historische Pause nach Zwischenstandssicherung: Avatar-Restpaket (29.09.2026).** Der
 Nutzer wählt eine Pause nach Sicherung in etwa 5–10 Minuten. Alle zehn
 bestätigten Reihen liegen als 64 fertige, visuell geprüfte Einzelquellen vor;
 der Einbau bleibt als unfertiger Arbeitsstand auf `codex/purchase-batch-checks`.

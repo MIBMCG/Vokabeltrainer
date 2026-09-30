@@ -1,6 +1,15 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-**Aktuelle Steuerung: Pause nach Zwischenstandssicherung (29.09.2026).** Der
+**Aktuelle Fortsetzung am 30.09.2026.** Mit „arbeite nun weiter“ hebt der
+Nutzer die Pause auf. Das vorhandene Avatarpaket auf `codex/purchase-batch-checks`
+ab `3036ec9` vollständig prüfen, unabhängig reviewen, integrieren und privat
+bereitstellen. Fertige Quellen und Ableitungen erhalten; nichts neu erzeugen.
+Der frühere GitHub-Upload wurde wegen fehlender ausdrücklicher Zielbestätigung
+automatisch abgelehnt; diese Bestätigung steht noch aus. Kein Upload ohne
+Klärung dieses konkreten Punkts. App weiterhin `31fcf02`, Cache v40, bis die
+neue Bereitstellung tatsächlich nachgewiesen ist.
+
+**Historische Pause nach Zwischenstandssicherung (29.09.2026).** Der
 Nutzer wählt ausdrücklich „In etwa 5–10 Minuten nach Sicherung des Zwischenstands“.
 Alle 64 noch fehlenden Avatarquellen sind erstellt und visuell geprüft;
 Einbau und App-Bildvarianten werden als unfertiger Arbeitsstand im separaten
