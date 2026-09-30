@@ -1,0 +1,44 @@
+{
+  "source": "explorer-boy-stage-2-skin-3-v1.png",
+  "figureId": "explorer-boy",
+  "stage": 2,
+  "skin": 3,
+  "status": "selected-production-source",
+  "createdOn": "2026-09-29",
+  "generator": "built-in image_gen",
+  "model": "not exposed by tool",
+  "generationKind": "skin-consistency-correction",
+  "sha256": "79eabbe3910478f2447b1943e519e56a1ffabbae36cdb5205fcae73073668284",
+  "width": 1254,
+  "height": 1254,
+  "colorMode": "RGBA",
+  "personalApproval": true,
+  "approval": "User approved all ten rows including griffin/phoenix stage-4 v3 on 2026-09-29: Ja, so umsetzen. This is design approval; individual image QA is recorded separately.",
+  "references": [
+    {
+      "path": "../avatar-evolution/production-inputs/explorer-boy-stage-2-skin-3-candidate-v1.png",
+      "role": "approved design or edit target",
+      "sha256": "3c1f9d6e883ebc058c50266b0697596c774ffaf595ea2e0b0005d52ace484006"
+    },
+    {
+      "path": "../avatar-shop-sources/explorer-boy-skin-3.png",
+      "role": "original character identity / skin reference",
+      "sha256": "809709e35a96f0664211f56fe4451fc138fef22a08e6108e9d4d623230056f06"
+    }
+  ],
+  "prompt": "Use case: identity-preserve. Edit image 1 (explorer-boy, evolution stage 2) ONLY to correct its skin tone. Image 2 is the exact existing darkest skin option for this same fictional child. The skin in image 1 is currently too light and orange. Match the rich DEEP DARK BROWN skin of image 2, clearly darker than medium tan or caramel. Match the forehead, cheeks, ears, neck, fingers and every visible hand/arm. Retain subtle natural highlights but do not brighten the whole face into medium tan. Preserve image 1's facial features, identity, brown eyes, brown hair and hairstyle, outfit, pose, clothing colors, all equipment, anatomy, proportions, silhouette, framing and all non-skin pixels as closely as possible. Do not borrow shorts, basic shirt or pose from image 2. Complete full body, no cropping, genuine transparent background and no new objects. This is a precise skin color consistency correction for an approved game-avatar design, not a new design.",
+  "visualReview": {
+    "reviewedOn": "2026-09-29T20:51:04.733Z",
+    "reviewer": "controller",
+    "method": "All ten source contact sheets inspected on light and dark backgrounds; targeted skin-3 corrections additionally inspected individually.",
+    "result": "PASS",
+    "checks": [
+      "approved identity and progression",
+      "complete figure and expected anatomy",
+      "real transparent background",
+      "consistent human skin options and fixed developed clothing",
+      "griffin lightning and phoenix surrounding flames"
+    ],
+    "derivativeRequirement": "4% transparent inset on every side for new 64 derivative sets; preserve raw source pixels."
+  }
+}

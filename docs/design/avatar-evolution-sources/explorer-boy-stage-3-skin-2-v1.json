@@ -1,0 +1,44 @@
+{
+  "source": "explorer-boy-stage-3-skin-2-v1.png",
+  "figureId": "explorer-boy",
+  "stage": 3,
+  "skin": 2,
+  "status": "selected-production-source",
+  "createdOn": "2026-09-29",
+  "generator": "built-in image_gen",
+  "model": "not exposed by tool",
+  "generationKind": "single-approved-form",
+  "sha256": "b16d1d98a92d0f29bb219bb70e0093547854e45d08dc7a7a8215e795ac2fc069",
+  "width": 1254,
+  "height": 1254,
+  "colorMode": "RGBA",
+  "personalApproval": true,
+  "approval": "User approved all ten rows including griffin/phoenix stage-4 v3 on 2026-09-29: Ja, so umsetzen. This is design approval; individual image QA is recorded separately.",
+  "references": [
+    {
+      "path": "explorer-boy-stage-3-skin-0-v1.png",
+      "role": "approved design or edit target",
+      "sha256": "64b97bb1d71b01272eb57f6e7f59e2c5c10312132a1a298254a00fea1b022ff3"
+    },
+    {
+      "path": "../avatar-shop-sources/explorer-boy-skin-2.png",
+      "role": "original character identity / skin reference",
+      "sha256": "62566227b97dbab7346bc9ab91729409e0c90acdf246f472fa0558b460300011"
+    }
+  ],
+  "prompt": "Edit reference image 1 into skin-tone variant 2 of exactly the SAME fictional child avatar. Reference 1 supplies the exact approved costume, pose, face, hairstyle, equipment, silhouette, proportions and transparent composition: preserve ALL of those. Reference 2 is ONLY the required skin-tone reference from this child's original app avatar. Match that skin color consistently on the face, ears, neck and every visible hand/forearm. Keep the brown eyes and brown hair exactly as in reference 1. Do NOT borrow the shorts, basic shirt, pose or equipment from reference 2, and do NOT change facial identity, age, hairstyle, costume details, background or colors of any non-skin area. Maintain the existing highlights/shadows adapted naturally to the required skin tone. This is explorer-boy, stage 3, skin option 2: one fully clothed age-appropriate adventure child, same two hands and feet, same gear as image 1. Full body with all extremities and accessories complete, with genuinely transparent margin. True transparent alpha background; no swatches, comparison panels, text, scenery or extra figures. One faithful production variant, not a new character design.",
+  "visualReview": {
+    "reviewedOn": "2026-09-29T20:51:04.741Z",
+    "reviewer": "controller",
+    "method": "All ten source contact sheets inspected on light and dark backgrounds; targeted skin-3 corrections additionally inspected individually.",
+    "result": "PASS",
+    "checks": [
+      "approved identity and progression",
+      "complete figure and expected anatomy",
+      "real transparent background",
+      "consistent human skin options and fixed developed clothing",
+      "griffin lightning and phoenix surrounding flames"
+    ],
+    "derivativeRequirement": "4% transparent inset on every side for new 64 derivative sets; preserve raw source pixels."
+  }
+}

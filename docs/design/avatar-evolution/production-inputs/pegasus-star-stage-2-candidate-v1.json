@@ -1,0 +1,20 @@
+{
+  "source": "pegasus-star-stage-2-candidate-v1.png",
+  "figureId": "pegasus-star",
+  "stage": 2,
+  "status": "superseded-production-edit-input",
+  "generator": "built-in image_gen",
+  "sha256": "9b5f3b266dad2bb9b8649e5f0bc9163dbd00499029b8b951fb3da3feb6f1022a",
+  "prompt": "Create ONE full-body transparent production avatar, matching the personally approved concept board exactly for row STERNEN-PEGASUS, column STUFE 2. Reference 1: approved board, use only the indicated cell. Reference 2: original character identity. Do not reproduce any grid, labels or other characters. Identity: midnight-blue horse, star-speckled coat, amber eyes, silver-white mane, exactly four horse legs, exactly two feathered wings and one tail, NO horn.\nStage-specific direction: Silver constellation clasps and a restrained blue cloud saddlecloth; normal midnight-blue/white feather wings.\nPolished premium painterly storybook fantasy game style for ages 10–13, loyal to the concept's gear, colors, face and evolution strength. Friendly noble expression, no horror, no plastic or baby/chibi style. Correct complete anatomy. Entire ears/crown/horns/wings/paws/feet/tail and all ornament tips fully included, at least 6 percent completely empty transparent margin on ALL sides. Bold readable masses at 256 pixels. Single centered figure, square high-resolution cutout. True transparent alpha including between limbs/wings, no scenery, background, floor, ground shadow, pedestal, text, watermark, separate objects or frame. The output is exactly pegasus-star stage 2.",
+  "references": [
+    {
+      "path": "../remaining-equines-crystal-concept-v1.png",
+      "sha256": "1b1a0dc6f37d270bc851c16880569f41da0b034b1c6f8ca4b66cc62c3297fe5d"
+    },
+    {
+      "path": "../../avatar-shop-sources/pegasus-star.png",
+      "sha256": "54280d22374ed89732e1dee1335f9cdcf71fbe0d64e73ba411f90b49a6ce73cb"
+    }
+  ],
+  "reason": "Stage 2 equipment too close to stage 3; simplified to match approved progression."
+}

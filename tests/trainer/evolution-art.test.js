@@ -13,7 +13,15 @@ const selectedSources = [
     .map((sourceName, index) => ({figureId: 'dragon', stage: index + 1, sourceName})),
   ...[1, 2, 3, 4].map((stage) => ({figureId: 'deer-mist', stage, sourceName: `deer-mist-stage-${stage}-v1.png`})),
   ...[1, 2, 3, 4].map((stage) => ({figureId: 'tiger', stage, sourceName: `tiger-stage-${stage}-v1.png`})),
+  ...['horse', 'unicorn-moon', 'pegasus-star', 'dragon-crystal', 'wolf-aurora', 'panther-shadow', 'griffin-storm', 'phoenix']
+    .flatMap((figureId) => [1, 2, 3, 4].map((stage) => ({figureId, stage, sourceName: `${figureId}-stage-${stage}-v1.png` }))),
+  ...['explorer-girl', 'explorer-boy'].flatMap((figureId) => [1, 2, 3, 4].flatMap((stage) =>
+    [0, 1, 2, 3].map((skin) => ({figureId, stage, skin, sourceName: `${figureId}-stage-${stage}-skin-${skin}-v1.png`})))),
 ];
+
+function expectedKey({figureId, stage, skin}) {
+  return `${figureId}-stage-${stage}${skin === undefined ? '' : `-skin-${skin}`}`;
+}
 
 function pngDimensions(bytes) {
   assert.equal(bytes.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
@@ -37,16 +45,17 @@ function webpDimensions(bytes) {
 }
 
 test('manifest describes approved four-stage figures and verified transparent WebP derivatives', async () => {
-  assert.deepEqual(Object.keys(EVOLUTION_ART.assets).sort(), selectedSources.map(({figureId, stage}) => `${figureId}-stage-${stage}`).sort());
-  assert.equal(EVOLUTION_SMALL_URLS.length, 12);
-  for (const {figureId, stage, sourceName} of selectedSources) {
-    const key = `${figureId}-stage-${stage}`;
+  assert.deepEqual(Object.keys(EVOLUTION_ART.assets).sort(), selectedSources.map(expectedKey).sort());
+  assert.equal(EVOLUTION_SMALL_URLS.length, 76);
+  for (const {figureId, stage, skin, sourceName} of selectedSources) {
+    const key = expectedKey({figureId, stage, skin});
     const asset = EVOLUTION_ART.assets[key];
     const source = await readFile(new URL(sourceName, sourceRoot));
     const provenance = JSON.parse(await readFile(new URL(sourceName.replace(/\.png$/u, '.json'), sourceRoot), 'utf8'));
     const dimensions = pngDimensions(source);
     assert.equal(provenance.figureId, figureId);
     assert.equal(provenance.stage, stage);
+    if (skin !== undefined) assert.equal(provenance.skin, skin);
     assert.equal(provenance.source, sourceName);
     assert.equal(provenance.status, 'selected-production-source');
     assert.equal(provenance.sha256, sha256(source));
@@ -69,6 +78,12 @@ test('manifest describes approved four-stage figures and verified transparent We
     for (const variant of asset.variants) {
       assert.ok(variant.width <= dimensions.width, 'no width upscaling');
       assert.ok(variant.height <= dimensions.height, 'no height upscaling');
+      if (!['dragon', 'deer-mist', 'tiger'].includes(figureId)) {
+        assert.deepEqual(variant.inset, {
+          left: Math.round(variant.width * 0.04), right: Math.round(variant.width * 0.04),
+          top: Math.round(variant.height * 0.04), bottom: Math.round(variant.height * 0.04),
+        });
+      }
       assert.equal(variant.url, `../../../trainer/assets/avatar-evolution/${key}-${variant.width}.webp`);
       const bytes = await readFile(new URL(`${key}-${variant.width}.webp`, outputRoot));
       assert.deepEqual(webpDimensions(bytes), {width: variant.width, height: variant.height});
@@ -81,21 +96,26 @@ test('manifest describes approved four-stage figures and verified transparent We
 test('build report totals match the selected sources and all generated derivatives', async () => {
   const report = JSON.parse(await readFile(new URL('build-report.json', outputRoot), 'utf8'));
   const assets = Object.values(EVOLUTION_ART.assets);
-  assert.deepEqual(report.sourceFacts.map(({figureId, stage, sourceName}) => ({figureId, stage, sourceName})), selectedSources);
-  assert.deepEqual(report.derivatives.map(({figureId, stage, width}) => ({figureId, stage, width})),
-    selectedSources.flatMap(({figureId, stage}) => [256, 512, 768].map((width) => ({figureId, stage, width}))));
+  assert.equal(report.newSourceInsetPercentPerSide, 4);
+  assert.deepEqual(report.sourceFacts.map(({figureId, stage, skin, sourceName}) =>
+    ({figureId, stage, ...(skin === undefined ? {} : {skin}), sourceName})), selectedSources);
+  assert.deepEqual(report.derivatives.map(({figureId, stage, skin, width}) =>
+    ({figureId, stage, ...(skin === undefined ? {} : {skin}), width})),
+    selectedSources.flatMap(({figureId, stage, skin}) => [256, 512, 768].map((width) =>
+      ({figureId, stage, ...(skin === undefined ? {} : {skin}), width}))));
   assert.equal(report.totals.originalBytes, assets.reduce((sum, asset) => sum + asset.sourceBytes, 0));
   assert.equal(report.totals.smallBytes, assets.reduce((sum, asset) => sum + asset.variants[0].bytes, 0));
   assert.equal(report.totals.allBytes, assets.reduce((sum, asset) => sum + asset.variants.reduce((part, variant) => part + variant.bytes, 0), 0));
 });
 
-test('missing forms have no image; approved figures select their own stage fallback', () => {
-  for (const figureId of ['dragon', 'deer-mist', 'tiger']) {
+test('all approved forms select their own stage and skin fallback', () => {
+  for (const figureId of ['dragon', 'deer-mist', 'tiger', 'horse', 'unicorn-moon', 'pegasus-star', 'dragon-crystal', 'wolf-aurora', 'panther-shadow', 'griffin-storm', 'phoenix']) {
     for (let stage = 1; stage <= 4; stage += 1) {
       assert.match(evolutionArt(figureId, stage), new RegExp(`${figureId}-stage-${stage}-256\\.webp$`));
     }
   }
-  assert.equal(evolutionArt('explorer-girl', 1), null);
+  assert.match(evolutionArt('explorer-girl', 4, 3), /explorer-girl-stage-4-skin-3-256\.webp$/u);
+  assert.match(evolutionArt('explorer-boy', 2, 1), /explorer-boy-stage-2-skin-1-256\.webp$/u);
   assert.equal(evolutionArt('unknown', 1), null);
   assert.equal(evolutionArt('dragon', 5), null);
   assert.equal(evolutionArt('deer-mist', 5), null);

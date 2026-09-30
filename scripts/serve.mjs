@@ -131,21 +131,15 @@ const ASSETS = new Map([
     `/trainer/assets/avatar-shop/${name}`,
     [`trainer/assets/avatar-shop/${name}`, 'image/webp'],
   ]),
-  ...[1, 2, 3, 4].map((stage) => [
-    `/trainer/assets/avatar-evolution/dragon-stage-${stage}.png`,
-    [`trainer/assets/avatar-evolution/dragon-stage-${stage}.png`, 'image/png'],
-  ]),
-  ...[1, 2, 3, 4].flatMap((stage) => [256, 512, 768].map((width) => [
-    `/trainer/assets/avatar-evolution/dragon-stage-${stage}-${width}.webp`,
-    [`trainer/assets/avatar-evolution/dragon-stage-${stage}-${width}.webp`, 'image/webp'],
-  ])),
-  ...[1, 2, 3, 4].flatMap((stage) => [256, 512, 768].map((width) => [
-    `/trainer/assets/avatar-evolution/deer-mist-stage-${stage}-${width}.webp`,
-    [`trainer/assets/avatar-evolution/deer-mist-stage-${stage}-${width}.webp`, 'image/webp'],
-  ])),
-  ...[1, 2, 3, 4].flatMap((stage) => [256, 512, 768].map((width) => [
-    `/trainer/assets/avatar-evolution/tiger-stage-${stage}-${width}.webp`,
-    [`trainer/assets/avatar-evolution/tiger-stage-${stage}-${width}.webp`, 'image/webp'],
+  ...[
+    ...['dragon', 'deer-mist', 'tiger', 'horse', 'unicorn-moon', 'pegasus-star', 'dragon-crystal',
+      'wolf-aurora', 'panther-shadow', 'griffin-storm', 'phoenix']
+      .flatMap((figureId) => [1, 2, 3, 4].map((stage) => `${figureId}-stage-${stage}`)),
+    ...['explorer-girl', 'explorer-boy'].flatMap((figureId) => [1, 2, 3, 4].flatMap((stage) =>
+      [0, 1, 2, 3].map((skin) => `${figureId}-stage-${stage}-skin-${skin}`))),
+  ].flatMap((key) => [256, 512, 768].map((width) => [
+    `/trainer/assets/avatar-evolution/${key}-${width}.webp`,
+    [`trainer/assets/avatar-evolution/${key}-${width}.webp`, 'image/webp'],
   ])),
 ]);
 

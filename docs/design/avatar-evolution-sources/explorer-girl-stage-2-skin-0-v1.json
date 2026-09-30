@@ -1,0 +1,44 @@
+{
+  "source": "explorer-girl-stage-2-skin-0-v1.png",
+  "figureId": "explorer-girl",
+  "stage": 2,
+  "skin": 0,
+  "status": "selected-production-source",
+  "createdOn": "2026-09-29",
+  "generator": "built-in image_gen",
+  "model": "not exposed by tool",
+  "generationKind": "single-approved-form",
+  "sha256": "d55b8008a22f4af26011963ea4585cdfebe83c016cf3721b00f1dbe7b67f3b8b",
+  "width": 1254,
+  "height": 1254,
+  "colorMode": "RGBA",
+  "personalApproval": true,
+  "approval": "User approved all ten rows including griffin/phoenix stage-4 v3 on 2026-09-29: Ja, so umsetzen. This is design approval; individual image QA is recorded separately.",
+  "references": [
+    {
+      "path": "../avatar-evolution/remaining-explorers-concept-v1.png",
+      "role": "approved design or edit target",
+      "sha256": "03d976920f7e777a7c54abcbf405988bac9a7491d3d1ae24edeae462c2a4d0ea"
+    },
+    {
+      "path": "../avatar-shop-sources/explorer-girl-skin-0.png",
+      "role": "original character identity / skin reference",
+      "sha256": "3311c9e57beb8cdc549638c4c11a5b298018677c62a0f6e790a75a0ccc7cebee"
+    }
+  ],
+  "prompt": "Create ONE complete transparent production avatar based on the approved reference board, row ENTDECKERIN, column STUFE 2. Reference 1 is the costume/progression design. Reference 2 is the existing exact child's identity and skin tone. Character: the same 12-year-old girl with brown eyes and a brown side braid, light skin tone matching the second reference. Keep the same age, face, hair style and brown eye color throughout. A friendly capable child, age-appropriate practical full clothing, no grown-up proportions.\nPractical teal explorer shirt/vest with rolled sleeves, long khaki trousers, leather belt and hiking boots. Brown leather backpack over both shoulders; one hand naturally holds a backpack strap, small rolled map and compass at belt. No armor, staff or magical cape. Match the approved stage-2 outfit.\nFull body from all hair/diadem tips to entire boot soles, all cape edges and staff tips included, with generous 6 percent completely transparent breathing room. Centered square high-resolution canvas, polished painterly storybook game illustration like the reference, details readable at small avatar sizes. Correct two arms and two legs, natural hands, no doubled staff or disconnected equipment. ONE character only; genuine transparent alpha background, no scenery, floor, ground shadow, labels, text, frame, swatches or additional heads. Preserve teal/ivory/antique-gold palette. Output exact stage 2, skin option 0.",
+  "visualReview": {
+    "reviewedOn": "2026-09-29T20:51:04.773Z",
+    "reviewer": "controller",
+    "method": "All ten source contact sheets inspected on light and dark backgrounds; targeted skin-3 corrections additionally inspected individually.",
+    "result": "PASS",
+    "checks": [
+      "approved identity and progression",
+      "complete figure and expected anatomy",
+      "real transparent background",
+      "consistent human skin options and fixed developed clothing",
+      "griffin lightning and phoenix surrounding flames"
+    ],
+    "derivativeRequirement": "4% transparent inset on every side for new 64 derivative sets; preserve raw source pixels."
+  }
+}

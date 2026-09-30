@@ -1,0 +1,39 @@
+{
+  "source": "phoenix-stage-1-v1.png",
+  "figureId": "phoenix",
+  "stage": 1,
+  "status": "selected-production-source",
+  "createdOn": "2026-09-29",
+  "generator": "byte-identical existing source reuse",
+  "model": null,
+  "generationKind": "existing-source-byte-copy",
+  "sha256": "5bf95178a98bb9c8f0b79f2d1d9c98c1be186b0cdd9562fae40da13563055b3c",
+  "width": 1024,
+  "height": 1536,
+  "colorMode": "RGBA",
+  "personalApproval": true,
+  "approval": "User approved all ten rows including griffin/phoenix stage-4 v3 on 2026-09-29: Ja, so umsetzen. This is design approval; individual image QA is recorded separately.",
+  "references": [
+    {
+      "path": "../avatar-shop-sources/phoenix.png",
+      "role": "unchanged existing source",
+      "sha256": "5bf95178a98bb9c8f0b79f2d1d9c98c1be186b0cdd9562fae40da13563055b3c"
+    }
+  ],
+  "prompt": null,
+  "provenanceSidecar": "../avatar-shop-sources/phoenix.json",
+  "visualReview": {
+    "reviewedOn": "2026-09-29T20:51:04.873Z",
+    "reviewer": "controller",
+    "method": "All ten source contact sheets inspected on light and dark backgrounds; targeted skin-3 corrections additionally inspected individually.",
+    "result": "PASS",
+    "checks": [
+      "approved identity and progression",
+      "complete figure and expected anatomy",
+      "real transparent background",
+      "consistent human skin options and fixed developed clothing",
+      "griffin lightning and phoenix surrounding flames"
+    ],
+    "derivativeRequirement": "4% transparent inset on every side for new 64 derivative sets; preserve raw source pixels."
+  }
+}

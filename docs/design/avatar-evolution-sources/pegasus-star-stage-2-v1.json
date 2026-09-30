@@ -1,0 +1,38 @@
+{
+  "source": "pegasus-star-stage-2-v1.png",
+  "figureId": "pegasus-star",
+  "stage": 2,
+  "status": "selected-production-source",
+  "createdOn": "2026-09-29",
+  "generator": "built-in image_gen",
+  "model": "not exposed by tool",
+  "generationKind": "approved-form-compliance-edit",
+  "sha256": "2e4fcdf9708b0c5c5507e03c0891d0796b9985d97f614759d73090d27ca55aae",
+  "width": 1254,
+  "height": 1254,
+  "colorMode": "RGBA",
+  "personalApproval": true,
+  "approval": "User approved all ten rows including griffin/phoenix stage-4 v3 on 2026-09-29: Ja, so umsetzen. This is design approval; individual image QA is recorded separately.",
+  "references": [
+    {
+      "path": "../avatar-evolution/production-inputs/pegasus-star-stage-2-candidate-v1.png",
+      "role": "approved design or edit target",
+      "sha256": "9b5f3b266dad2bb9b8649e5f0bc9163dbd00499029b8b951fb3da3feb6f1022a"
+    }
+  ],
+  "prompt": "Edit this single stage-2 midnight-blue star pegasus production candidate to make its equipment a clearly modest first upgrade. Preserve the exact dark blue starry horse, amber eyes, white/silver hair and tail, two existing feather wings, all four horse legs and hooves, face, pose, anatomy and painterly rendering. NO horn. Equipment-only correction: REMOVE all four armored shin guards and jeweled leg pieces so the lower legs are bare midnight-blue. Remove dangling jewel chains and elaborate saddle/barding. Use ONLY a short simple midnight-blue saddlecloth edged in plain silver with ONE small constellation motif, a narrow simple silver chest strap and two restrained star clasps. No large armored breastplate or ornate hanging jewels. This is simpler than the heavily armored gold/silver stage 3. Retain original stage-2 wing shape and star markings. Complete full body with all wing tips, hooves and tail fitting in a transparent canvas with breathing room. Genuine alpha background, no floor/shadow, text, frame, second character or unrelated objects.",
+  "visualReview": {
+    "reviewedOn": "2026-09-29T20:51:04.858Z",
+    "reviewer": "controller",
+    "method": "All ten source contact sheets inspected on light and dark backgrounds; targeted skin-3 corrections additionally inspected individually.",
+    "result": "PASS",
+    "checks": [
+      "approved identity and progression",
+      "complete figure and expected anatomy",
+      "real transparent background",
+      "consistent human skin options and fixed developed clothing",
+      "griffin lightning and phoenix surrounding flames"
+    ],
+    "derivativeRequirement": "4% transparent inset on every side for new 64 derivative sets; preserve raw source pixels."
+  }
+}

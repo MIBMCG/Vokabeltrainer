@@ -1,0 +1,39 @@
+{
+  "source": "phoenix-stage-4-v1.png",
+  "figureId": "phoenix",
+  "stage": 4,
+  "status": "selected-production-source",
+  "createdOn": "2026-09-29",
+  "generator": "built-in image_gen",
+  "model": "not exposed by tool",
+  "generationKind": "approved-single-concept-byte-copy",
+  "sha256": "26ff940101279756cd0b7c15e763daa66603286d2d4734794942145429c5a1b1",
+  "width": 1254,
+  "height": 1254,
+  "colorMode": "RGBA",
+  "personalApproval": true,
+  "approval": "User approved all ten rows including griffin/phoenix stage-4 v3 on 2026-09-29: Ja, so umsetzen. This is design approval; individual image QA is recorded separately.",
+  "references": [
+    {
+      "path": "../avatar-evolution/phoenix-stage-4-concept-v3.png",
+      "role": "approved design or edit target",
+      "sha256": "26ff940101279756cd0b7c15e763daa66603286d2d4734794942145429c5a1b1"
+    }
+  ],
+  "prompt": "EDIT the referenced isolated legendary phoenix image. Preserve the exact phoenix character, recognizable face, colors, chest ornament, feather crown, enormous two wings, long curling tail feathers, two feet, pose and painterly quality. The user approves this more imposing body but requests a visible fire effect in the surrounding air. This is one targeted addition, NOT a redesign.\nAdd a controlled but spectacular scattering of SEPARATE CURLING TONGUES OF FIRE in the transparent air beside and above the wings, around the crest and near the tail, as though the phoenix is spontaneously igniting the air close to it. A few larger elegant twisting flame wisps with bright white-gold cores, molten golden orange body and crimson outer edges, plus smaller detached orange-red flamelets and glowing embers. Mix flames reaching outward from a few wing tips with clearly detached little fires floating nearby. They must be visibly distinct from the existing solid feathers and outside the original body silhouette, not simply more fiery feather coloring. Flowing upward convection and curling flame shapes convey heat and ignition, lively but controlled; no heavy smoke, no explosion or scenery. Keep the central face, beak, feet and chest ruby unobscured. No solid halo ring or huge background fireball, no surrounding wall of flames.\nExpand canvas breathing room or proportionally reduce the unchanged original figure if necessary so ALL original feather tips and ALL new flame/ember tips fit with at least 5 percent completely empty transparent padding around the full effect. No cropping. One complete full-body character, preserving the two-wing anatomy and coherent tail. Genuine transparent alpha behind and between all flames and partially transparent glows. No opaque black/white/gray background, no checkerboard, no floor or shadow, no text, no extra objects. Square polished high-resolution game cutout.",
+  "provenanceSidecar": "../avatar-evolution/phoenix-stage-4-concept-v3.json",
+  "visualReview": {
+    "reviewedOn": "2026-09-29T20:51:04.889Z",
+    "reviewer": "controller",
+    "method": "All ten source contact sheets inspected on light and dark backgrounds; targeted skin-3 corrections additionally inspected individually.",
+    "result": "PASS",
+    "checks": [
+      "approved identity and progression",
+      "complete figure and expected anatomy",
+      "real transparent background",
+      "consistent human skin options and fixed developed clothing",
+      "griffin lightning and phoenix surrounding flames"
+    ],
+    "derivativeRequirement": "4% transparent inset on every side for new 64 derivative sets; preserve raw source pixels."
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "source": "explorer-girl-stage-1-skin-1-v1.png",
+  "figureId": "explorer-girl",
+  "stage": 1,
+  "skin": 1,
+  "status": "selected-production-source",
+  "createdOn": "2026-09-29",
+  "generator": "byte-identical existing source reuse",
+  "model": null,
+  "generationKind": "existing-source-byte-copy",
+  "sha256": "945690e6f3d9d540760854c0bbdd4b35594debc08b7597b467619e458c1cc362",
+  "width": 1086,
+  "height": 1448,
+  "colorMode": "RGBA",
+  "personalApproval": true,
+  "approval": "User approved all ten rows including griffin/phoenix stage-4 v3 on 2026-09-29: Ja, so umsetzen. This is design approval; individual image QA is recorded separately.",
+  "references": [
+    {
+      "path": "../avatar-shop-sources/explorer-girl-skin-1.png",
+      "role": "unchanged existing source",
+      "sha256": "945690e6f3d9d540760854c0bbdd4b35594debc08b7597b467619e458c1cc362"
+    }
+  ],
+  "prompt": null,
+  "provenanceSidecar": "../avatar-shop-sources/explorer-girl-skin-1.json",
+  "visualReview": {
+    "reviewedOn": "2026-09-29T20:51:04.765Z",
+    "reviewer": "controller",
+    "method": "All ten source contact sheets inspected on light and dark backgrounds; targeted skin-3 corrections additionally inspected individually.",
+    "result": "PASS",
+    "checks": [
+      "approved identity and progression",
+      "complete figure and expected anatomy",
+      "real transparent background",
+      "consistent human skin options and fixed developed clothing",
+      "griffin lightning and phoenix surrounding flames"
+    ],
+    "derivativeRequirement": "4% transparent inset on every side for new 64 derivative sets; preserve raw source pixels."
+  }
+}

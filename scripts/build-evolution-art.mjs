@@ -3,6 +3,7 @@ import {mkdir, readFile, writeFile} from 'node:fs/promises';
 import {createRequire} from 'node:module';
 import {dirname, resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {evolutionAssetKey} from '../src/trainer/avatar/evolution.js';
 
 const require = createRequire(import.meta.url);
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -17,6 +18,10 @@ const sources = Object.freeze([
   {figureId: 'dragon', stage: 4, sourceName: 'dragon-stage-4-v2.png'},
   ...[1, 2, 3, 4].map((stage) => ({figureId: 'deer-mist', stage, sourceName: `deer-mist-stage-${stage}-v1.png`})),
   ...[1, 2, 3, 4].map((stage) => ({figureId: 'tiger', stage, sourceName: `tiger-stage-${stage}-v1.png`})),
+  ...['horse', 'unicorn-moon', 'pegasus-star', 'dragon-crystal', 'wolf-aurora', 'panther-shadow', 'griffin-storm', 'phoenix']
+    .flatMap((figureId) => [1, 2, 3, 4].map((stage) => ({figureId, stage, sourceName: `${figureId}-stage-${stage}-v1.png`}))),
+  ...['explorer-girl', 'explorer-boy'].flatMap((figureId) => [1, 2, 3, 4].flatMap((stage) =>
+    [0, 1, 2, 3].map((skin) => ({figureId, stage, skin, sourceName: `${figureId}-stage-${stage}-skin-${skin}-v1.png`})))),
 ]);
 
 function sha256(bytes) {
@@ -51,17 +56,19 @@ export async function buildEvolutionArt() {
   const assets = {};
   const sourceFacts = [];
   const smallUrls = [];
+  const existingFigures = new Set(['dragon', 'deer-mist', 'tiger']);
   let originalBytes = 0;
   let smallBytes = 0;
   let allBytes = 0;
   await mkdir(outputRoot, {recursive: true});
 
-  for (const {figureId, stage, sourceName} of sources) {
+  for (const {figureId, stage, skin, sourceName} of sources) {
     const source = await readFile(resolve(sourceRoot, sourceName));
     const provenance = JSON.parse(await readFile(resolve(sourceRoot, sourceName.replace(/\.png$/u, '.json')), 'utf8'));
     const hash = sha256(source);
     if (provenance.status !== 'selected-production-source' || provenance.sha256 !== hash || provenance.source !== sourceName
-      || provenance.figureId !== figureId || provenance.stage !== stage) {
+      || provenance.figureId !== figureId || provenance.stage !== stage
+      || (skin !== undefined && provenance.skin !== skin)) {
       throw new Error(`Source provenance mismatch: ${sourceName}`);
     }
     const metadata = await sharp(source).metadata();
@@ -69,22 +76,31 @@ export async function buildEvolutionArt() {
     if (metadata.format !== 'png' || metadata.channels !== 4 || !metadata.hasAlpha || !alpha || alpha.min !== 0 || alpha.max < 1) {
       throw new Error(`Selected source lacks transparent image content: ${sourceName}`);
     }
-    const key = `${figureId}-stage-${stage}`;
+    const key = evolutionAssetKey(figureId, stage, skin);
     const variants = [];
     for (const width of widths) {
       const height = Math.round(metadata.height * width / metadata.width);
       if (width > metadata.width || height > metadata.height) throw new Error(`Upscaling refused: ${sourceName} at ${width}px`);
       const filename = `${key}-${width}.webp`;
-      const bytes = await sharp(source).resize({width, height, fit: 'fill', kernel: 'lanczos3'})
-        .webp({quality: 88, effort: 6, alphaQuality: 100}).toBuffer();
+      const inset = existingFigures.has(figureId) ? null : {
+        left: Math.round(width * 0.04), right: Math.round(width * 0.04),
+        top: Math.round(height * 0.04), bottom: Math.round(height * 0.04),
+      };
+      // Previously shipped renditions are verified below and kept byte-identical.
+      const bytes = existingFigures.has(figureId)
+        ? await readFile(resolve(outputRoot, filename))
+        : await sharp(source).resize({width: width - inset.left - inset.right,
+          height: height - inset.top - inset.bottom, fit: 'contain', background: '#00000000', kernel: 'lanczos3'})
+          .extend({...inset, background: '#00000000'})
+          .webp({quality: 88, effort: 6, alphaQuality: 100}).toBuffer();
       const result = await sharp(bytes).metadata();
       const resultAlpha = (await sharp(bytes).stats()).channels[3];
       if (result.format !== 'webp' || result.width !== width || result.height !== height || !result.hasAlpha || resultAlpha.min !== 0 || resultAlpha.max < 1) {
         throw new Error(`Invalid transparent derivative: ${filename}`);
       }
-      await writeFile(resolve(outputRoot, filename), bytes);
+      if (!existingFigures.has(figureId)) await writeFile(resolve(outputRoot, filename), bytes);
       const url = `../../../trainer/assets/avatar-evolution/${filename}`;
-      variants.push({width, height, bytes: bytes.length, sha256: sha256(bytes), url});
+      variants.push({width, height, ...(inset ? {inset} : {}), bytes: bytes.length, sha256: sha256(bytes), url});
       allBytes += bytes.length;
       if (width === 256) {
         smallBytes += bytes.length;
@@ -97,17 +113,18 @@ export async function buildEvolutionArt() {
       width: metadata.width, height: metadata.height,
       variants, fallbackUrl: variants[0].url,
     };
-    sourceFacts.push({figureId, stage, sourceName, sourceBytes: source.length, sourceSha256: hash,
+    sourceFacts.push({figureId, stage, ...(skin === undefined ? {} : {skin}), sourceName, sourceBytes: source.length, sourceSha256: hash,
       width: metadata.width, height: metadata.height});
     originalBytes += source.length;
   }
 
   const report = {
     generator: 'scripts/build-evolution-art.mjs',
+    newSourceInsetPercentPerSide: 4,
     sourceFacts,
     totals: {originalBytes, smallBytes, allBytes},
-    derivatives: sources.flatMap(({figureId, stage}) => assets[`${figureId}-stage-${stage}`].variants
-      .map((variant) => ({figureId, stage, ...variant}))),
+    derivatives: sources.flatMap(({figureId, stage, skin}) => assets[evolutionAssetKey(figureId, stage, skin)].variants
+      .map((variant) => ({figureId, stage, ...(skin === undefined ? {} : {skin}), ...variant}))),
   };
   await writeFile(manifestPath, manifestModule({assets}, smallUrls), 'utf8');
   await writeFile(resolve(outputRoot, 'build-report.json'), `${JSON.stringify(report, null, 2)}\n`, 'utf8');
