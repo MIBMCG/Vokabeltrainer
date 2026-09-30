@@ -1,12 +1,17 @@
 # Arbeitsstand
 
-**Fortsetzung des Avatar-Restpakets (30.09.2026).** Der Nutzer beauftragt
-ausdrücklich die Weiterarbeit. Beide lokalen Stände sind erhalten:
-Hauptzweig `0643d25`, isolierter Bild-/Einbaustand `3036ec9`. Vollständige
-Tests, Browserfälle und unabhängige Reviews werden jetzt nachgeholt.
-Die 64 fertigen Quellen und 192 neuen WebPs werden weiterverwendet.
-App-Update und GitHub-Sicherung sind noch nicht erfolgt; die konkrete
-Zielbestätigung für den zuvor abgelehnten Upload bleibt offen.
+**Galerie lokal abgeschlossen (30.09.2026).** Alle 13 Figuren mit je vier
+Formen und den vier menschlichen Hauttönen sind integriert: 76 Motive,
+228 WebPs. Produktcommit `d0fefdf` übernimmt den unabhängig geprüften Stand
+`40d7424`. Der Abschlussbefund zur Tierbildauswahl bei gespeichertem Hautton
+ist korrigiert. Frische finale 659/659 Node-Tests und 19/19 Galerie-Browserfälle
+PASS; fünf Offline-/Updatefälle zuvor bestanden. Die 36 bisherigen WebPs sind
+bytegleich. 387 öffentliche Dateien für Cache v41 sind vorbereitet.
+Noch offen: Ersatz des abgelaufenen Cloudflare-Upload-Schlüssels, App-Update
+mit Bestandskontrolle sowie konkrete Zielbestätigung und GitHub-Upload.
+Die laufende App bleibt vorerst auf `31fcf02`, Cache v40.
+[Bericht](docs/reports/2026-09-30-avatar-restpaket.md) und
+[aktuelle Übergabe](docs/handoffs/2026-09-30-avatar-abschluss.md).
 
 **Historische Pause nach Zwischenstandssicherung: Avatar-Restpaket (29.09.2026).** Der
 Nutzer wählt eine Pause nach Sicherung in etwa 5–10 Minuten. Alle zehn
@@ -108,13 +113,14 @@ Produktarbeit oder Testsitzung ohne ausdrückliche Fortsetzung.
 [Bericht](docs/reports/2026-09-29-vokabeleingabe.md) und
 [aktuelle Pausenübergabe](docs/handoffs/2026-09-29-vokabeleingabe.md).
 
-## Aktuelle offene Arbeitspunkte (29.09.2026)
+## Aktuelle offene Arbeitspunkte (30.09.2026)
 
 - Den vereinfachten Tabellenweg mit einer typischen
   echten Wortliste praktisch beurteilen; lokale Speicherung und anschließenden
   Google-Abgleich getrennt messen. Die Korrekturprobleme sind seit `ee7e174`
   behoben; umgesetzt und synthetisch geprüft ist der gesamte vereinfachte Weg.
-- Die verbleibenden 64 Entwicklungsbilder produzieren und integrieren.
+- Das fertig integrierte Galeriepaket nach Erneuerung des Upload-Zugangs
+  privat bereitstellen, im vorhandenen Testbrowser prüfen und auf GitHub sichern.
 - Kaufgeschwindigkeit weiter verbessern: rund 17,1 Sekunden sind für einen
   echten Durchgang belegt; das Wunschziel unter zehn Sekunden und die langsame
   Übernahme vorhandener Lernbereiche bleiben Optimierungspunkte.

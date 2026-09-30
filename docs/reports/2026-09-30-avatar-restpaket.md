@@ -58,7 +58,7 @@ Vor der Pause bestanden 42/42 gezielte Node-Tests zu Manifest, Anzeige,
 Galerie, Pflichtcache und öffentlicher Auslieferung. Die alten WebP-Dateien
 wurden mit ihren Git-Blob-Hashes verglichen: 36/36 bytegleich.
 
-Die vollständige Node-Suite lief am 30.09.2026 genau einmal mit `npm test`
+Die erste vollständige Node-Suite lief am 30.09.2026 einmal mit `npm test`
 über den vorhandenen Wachhaltehelfer: **658/659**, Dauer 83,8 Sekunden.
 Der einzige Fehler in `tests/server/staging.test.js:110` wurde durch vier
 veraltete, ignorierte Ausgabekopien von `dragon-stage-1..4.png` unter
@@ -71,11 +71,11 @@ Der gezielte Nachlauf bestand **1/1**:
 node --test --experimental-test-isolation=none --test-name-pattern="actual repository copy" tests/server/staging.test.js
 ```
 
-Es gab dafür keine Produktcodeänderung und keine zweite Vollsuite. Der
+Es gab für die Stagingbereinigung keine Produktcodeänderung oder zweite Vollsuite. Der
 ursprüngliche Lauf wird ausdrücklich als 658/659 ausgewiesen, zusammen mit
 dem erfolgreichen Nachlauf des einzigen zuvor fehlgeschlagenen Tests.
 
-**21 unterschiedliche Browserfälle bestanden:**
+Vor dem abschließenden Review bestanden **21 unterschiedliche Browserfälle:**
 
 - 16/16 in `tests/browser/evolution-art.browser.mjs`: vollständige Bildmatrix,
   Offlinebestand, responsive Auswahl und Ladefehler-Fallback, menschliche
@@ -112,9 +112,39 @@ Abschlussreview findet einen zusätzlichen Integrationsfehler: Ein gespeicherter
 menschlicher Hautton 1–3 wird auch an Tierbilder weitergegeben, deren Schlüssel
 ausschließlich Hautton 0 erlauben. Dadurch fehlen Entwicklungsbilder oder eine
 höhere ausgewählte Form fällt auf das Grundbild zurück. Drei neue Browserfälle
-haben den Fehler reproduziert. Die begrenzte Korrektur läuft; Integration und
-private Bereitstellung warten auf ihre Prüfung. Die laufende App bleibt bis
-dahin auf `31fcf02`, Cache v40.
+haben den Fehler reproduziert.
+
+**Korrektur `40d7424c5a6e37aecf9b753b3998f5af86234eee`:** Die Bildauswahl in
+`purchases.js` normalisiert den Hautton für Tiere auf 0, für Menschen auf den
+gespeicherten Wert. Die strenge Schlüsselvalidierung bleibt erhalten. Der
+Regressionstest prüft Pferd/Hautton 1, Sturmgreif/Hautton 2 und Phönix/Hautton 3
+in Auswahlkarte, Besitzkarte, vierstufiger Galerie, nächster Form und Kaufvorschau.
+Vor der Korrektur scheiterten alle drei Fälle am falschen Grundbild, danach
+bestanden **3/3**. Die 16 gezielten Node-Tests bestanden ebenfalls.
+
+Nach dieser Produktänderung wurden die gesamte Galerie-Browserdatei und die
+volle Node-Suite frisch ausgeführt: **19/19 Browserfälle** und **659/659
+Node-Tests**, Dauer der Node-Suite 83,9 Sekunden. Die Menschen-/Kleidungsfälle
+sind darin enthalten. Zusammen mit den fünf vorherigen Offline-/Updatefällen
+sind 24 unterschiedliche Browserfälle geprüft; die fünf wurden nach diesem
+begrenzten Bild-Lookup-Fix nicht wiederholt. Neue Logs:
+`animal-skin-red.log`, `animal-skin-green.log`, `animal-skin-ui-node.log`,
+`animal-skin-browser-full.log`, `animal-skin-final-node-awake.log`.
+Syntax- und Diffprüfung waren sauber. Die unabhängige Nachprüfung schließt den
+einzigen P1-Befund und bewertet das Gesamtpaket als integrationsbereit, ohne
+verbleibende Befunde. Bildwirkung und vorhandene Nutzerdaten wurden vom
+Code-Reviewer nicht als erneut geprüft ausgegeben; die unten genannten
+Geräte-/Google-Grenzen bleiben offen.
+
+Der lokale Integrationscommit ist
+`d0fefdf2c31a6e5d4a754b9acc130812bd0aec27` auf `codex/vokabeltrainer-v1`.
+Ein Git-Diff gegen den geprüften `40d7424` bestätigt unveränderte Inhalte
+unter `src/`, `scripts/`, `trainer/`, `tests/` und `docs/design/`.
+Vorhandene Dokumentationsänderungen sind erhalten. Auch im Hauptcheckout
+wurden die vier alten generierten PNG-Ausgabekopien nach Prüfung aller
+Zielpfade entfernt. `npm run prepare:cloudflare` hat anschließend erfolgreich
+**387 öffentliche Dateien** vorbereitet. Der App-Upload steht noch aus;
+die laufende App bleibt bis dahin auf `31fcf02`, Cache v40.
 
 Die lesende Cloudflare-Prüfung am 30.09.2026 meldet `Authentication error`
 (10000) und `Invalid access token` (9109). Das Dashboard bestätigt für den

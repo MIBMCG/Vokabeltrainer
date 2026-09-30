@@ -3,6 +3,11 @@
 Stand: 29.09.2026. Entwicklungszweig: `codex/vokabeltrainer-v1`.
 Ausgangsstand: `c1ecf2a58ed9951aa3a568eeda0f551f3a5f9974`.
 
+**Neuerer Stand:** Alle Motive sind inzwischen integriert und unabhängig
+geprüft. Für den aktuellen Produkt-/Auslieferungsstand ausschließlich die
+[Abschlussübergabe vom 30.09.2026](2026-09-30-avatar-abschluss.md) verwenden.
+Die folgenden Abschnitte dokumentieren Bildfreigaben und den damaligen Ablauf.
+
 ## Aktuelle Fortsetzung am 30.09.2026
 
 Der Nutzer setzt mit „arbeite nun weiter“ ausdrücklich fort; die Pause ist

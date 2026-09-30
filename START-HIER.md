@@ -1,11 +1,12 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Aktuelle Fortsetzung (30.09.2026):** Der Nutzer hebt die Pause mit
-„arbeite nun weiter“ auf. Beim gesicherten Avatarpaket `3036ec9` ansetzen:
-Vollsuite, Browserprüfung und unabhängige Reviews abschließen, danach integrieren
-und privat bereitstellen. Keine Bilder erneut erzeugen. Die gezielte Freigabe
-für den zuvor blockierten GitHub-Upload steht weiterhin aus.
-[Aktuelle Übergabe](docs/handoffs/2026-09-29-avatar-restpaket.md).
+**Aktueller Stand (30.09.2026):** Die vollständige Entwicklungsgalerie ist
+lokal integriert und unabhängig geprüft: 76 Motive, 228 WebPs, Produktcommit
+`d0fefdf`. Finale 659 Node-Tests und 19 Galerie-Browserfälle PASS; fünf
+Offline-/Updatefälle zuvor bestanden. App-Upload und GitHub-Sicherung warten
+noch auf den Ersatz für den abgelaufenen Cloudflare-Schlüssel beziehungsweise
+die konkrete GitHub-Zielbestätigung. Nichts neu erzeugen oder erneut entwickeln.
+[Aktuelle Abschlussübergabe](docs/handoffs/2026-09-30-avatar-abschluss.md).
 
 **Historische Pause nach Zwischenstandssicherung (29.09.2026).** Alle 64
 fehlenden Avatarquellen sind fertig und visuell geprüft. Der vorbereitete

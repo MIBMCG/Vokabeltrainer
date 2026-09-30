@@ -1,13 +1,18 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-**Aktuelle Fortsetzung am 30.09.2026.** Mit „arbeite nun weiter“ hebt der
-Nutzer die Pause auf. Das vorhandene Avatarpaket auf `codex/purchase-batch-checks`
-ab `3036ec9` vollständig prüfen, unabhängig reviewen, integrieren und privat
-bereitstellen. Fertige Quellen und Ableitungen erhalten; nichts neu erzeugen.
-Der frühere GitHub-Upload wurde wegen fehlender ausdrücklicher Zielbestätigung
-automatisch abgelehnt; diese Bestätigung steht noch aus. Kein Upload ohne
-Klärung dieses konkreten Punkts. App weiterhin `31fcf02`, Cache v40, bis die
-neue Bereitstellung tatsächlich nachgewiesen ist.
+**Aktueller Stand am 30.09.2026: Galerie lokal abgeschlossen.** Der Nutzer
+hat die Pause aufgehoben. Alle 76 Motive und 228 WebPs sind im Produktcommit
+`d0fefdf` integriert. Finale 659/659 Node-Tests, 19/19 Galerie-Browserfälle,
+fünf vorherige Offline-/Updatefälle und unabhängige Reviews PASS. Ein im
+Abschlussreview gefundener Fehler bei Tierbildern mit gespeichertem menschlichem
+Hautton ist in `40d7424` korrigiert und unabhängig nachgeprüft. 387 öffentliche
+Dateien für Cache v41 sind vorbereitet; noch nicht bereitgestellt. Cloudflare
+lehnt den abgelaufenen Schlüssel ab; ein gleich berechtigter Ersatz bis
+08.10.2026 ist zur manuellen Erstellung vorbereitet. Die konkrete Zustimmung
+zum zuvor automatisch abgelehnten GitHub-Upload ist ebenfalls noch offen.
+Keine Bilder neu erzeugen oder Tests ohne neuen Befund wiederholen. App bleibt
+`31fcf02`, Cache v40, bis die neue Bereitstellung tatsächlich nachgewiesen ist.
+Einstieg: [Abschlussübergabe](docs/handoffs/2026-09-30-avatar-abschluss.md).
 
 **Historische Pause nach Zwischenstandssicherung (29.09.2026).** Der
 Nutzer wählt ausdrücklich „In etwa 5–10 Minuten nach Sicherung des Zwischenstands“.

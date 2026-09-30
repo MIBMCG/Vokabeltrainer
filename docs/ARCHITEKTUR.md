@@ -57,10 +57,16 @@ wirtschaftliche Ansicht. Die bestätigte Restoreauswahl wird erst nach
 bestätigtem gemeinsamem Kopf und `authoritativeState` gegen dessen Konten
 geprüft und vollständig ersetzt; eine leere Auswahl leert den Zielstand.
 
-Der Service Worker verwendet für den beschleunigten Kaufpfad Cacheversion `v32`;
-die Pflichtliste enthält die neuen Laufzeitmodule, vier Drachenbilder und alle
-20 kleinen Haut-/Kleidungsbilder
-der menschlichen Grundfiguren, aber keine Google-Antworten oder Tokens.
+Der integrierte Stand der vollständigen Entwicklungsgalerie verwendet
+Cacheversion `v41`; ihr Bereitstellungsnachweis steht im
+[Galeriebericht](reports/2026-09-30-avatar-restpaket.md). Die Pflichtliste enthält
+die Laufzeitmodule, alle 76 kleinen Entwicklungsbilder und die vorhandenen
+20 kleinen Haut-/Kleidungsbilder der menschlichen Grundfiguren, aber keine
+Google-Antworten oder Tokens. Die 512-/768-Pixel-Varianten laden bei Bedarf.
+Die menschlichen Entwicklungsschlüssel enthalten den gespeicherten Hautton;
+für Tiere normalisiert die Oberfläche ihn vor der strikten Schlüsselprüfung
+auf 0. Die freie Grundform-Kleidungswahl verwendet bei abweichender Farbe
+weiterhin den vorhandenen Grundformrenderer; höhere Outfits sind fest.
 Ein gemeinsamer Darstellungsresolver verbindet die gespeicherte Figurenauswahl
 mit den vorhandenen Profilfarben für Avataransicht, Übungsstart und Inselreise.
 Der Kauf-Auswahlvertrag bleibt dabei unverändert.

@@ -68,14 +68,16 @@ Die fachlichen Entscheidungen bleiben unverändert: Lernpunkte entstehen mit 10
 Punkten pro richtiger Antwort und 20 pro abgeschlossener Runde; Käufe verändern
 weder Lernpunkte noch Level. Guthaben, Besitz und Auswahl sind je Profil
 getrennt. Neue Käufe sind nur online nach erfolgreichem Abgleich zulässig.
-Vier freigestellte Drachenquellen sind als erste kaufbare Entwicklungsreihe
-integriert; 72 weitere Motive, deren responsive Produktionsvarianten und die
-vollständige Galeriegestaltung mit weiter ausgebautem
-Klassisch-/Entwicklungswechsel und zusätzlicher Fortschrittsdarstellung bleiben
-Folgeumfang. Reale Produktprüfung mit Google
-Drive auf zwei physischen Geräten, iPhone/iPad, Safari, Home-Bildschirm-App und
-HTTPS bleibt eine getrennte Abnahme und blockiert die autorisierte Entwicklung
-nicht.
+Die vollständige Entwicklungsgalerie ist seit dem 30.09.2026 lokal integriert
+und unabhängig geprüft: 13 Figuren mit je vier Formen, einschließlich der vier
+menschlichen Hauttöne insgesamt 76 Motive und 228 responsive WebPs. Fortschritt
+zur nächsten Form, bewusste Auswahl und Klassisch-Wechsel sind umgesetzt.
+Menschliche Grundformen behalten freie Kleidungsfarben; höhere Formen feste
+Outfits und kostenlose Hauttöne. Bereitstellungsstand und genaue Prüfgrenzen:
+[Galerieabschluss](reports/2026-09-30-avatar-restpaket.md).
+Reale Produktprüfung mit Google Drive auf zwei physischen Geräten, iPhone/iPad,
+Safari und Home-Bildschirm-App bleibt eine getrennte Abnahme und blockiert die
+autorisierte Entwicklung nicht. Die private HTTPS-Nutzung ist bereits belegt.
 
 Neue Lernereignisse und Pakete behalten das Versionspaar `(2,2)`.
 `storageVersion:3` ist davon getrennt die lokale Zustandsversion. Nur aktivierte
