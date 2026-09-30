@@ -1,15 +1,19 @@
 # Arbeitsstand
 
-**Galerie lokal abgeschlossen (30.09.2026).** Alle 13 Figuren mit je vier
+**Galerie privat bereitgestellt (30.09.2026).** Alle 13 Figuren mit je vier
 Formen und den vier menschlichen Hauttönen sind integriert: 76 Motive,
 228 WebPs. Produktcommit `d0fefdf` übernimmt den unabhängig geprüften Stand
 `40d7424`. Der Abschlussbefund zur Tierbildauswahl bei gespeichertem Hautton
 ist korrigiert. Frische finale 659/659 Node-Tests und 19/19 Galerie-Browserfälle
 PASS; fünf Offline-/Updatefälle zuvor bestanden. Die 36 bisherigen WebPs sind
-bytegleich. 387 öffentliche Dateien für Cache v41 sind vorbereitet.
-Noch offen: Ersatz des abgelaufenen Cloudflare-Upload-Schlüssels, App-Update
-mit Bestandskontrolle sowie konkrete Zielbestätigung und GitHub-Upload.
-Die laufende App bleibt vorerst auf `31fcf02`, Cache v40.
+bytegleich. 387 öffentliche Dateien für Cache v41 sind ausgeliefert und
+bytegleich geprüft; Worker `8e9f7658-09aa-40a3-bd67-42ef4f2b92b6` ist seit
+30.09.2026, 18:43:53.932 UTC zu 100 Prozent aktiv. Der Upload-Zugang ist
+erneuert. Im vorhandenen Testbrowser sind nach kontrolliertem Update die
+40 verfügbaren Punkte, 2.040 Lernpunkte, Level 11 und gewählte Drachenstufe 4
+erhalten. Alle vier Entdeckerinnenbilder sind tatsächlich geladen.
+Noch offen: konkrete Zielbestätigung und GitHub-Upload nach dessen vorheriger
+automatischer Ablehnung.
 [Bericht](docs/reports/2026-09-30-avatar-restpaket.md) und
 [aktuelle Übergabe](docs/handoffs/2026-09-30-avatar-abschluss.md).
 

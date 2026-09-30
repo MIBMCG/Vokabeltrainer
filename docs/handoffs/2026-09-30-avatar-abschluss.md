@@ -25,20 +25,27 @@ Befehle, historischen Stagingfehler, finale Nachweise und ihre Grenzen.
 Quell-/Freigabehistorie und fünf spätere Belohnungsideen bleiben in der
 [vorherigen Übergabe](2026-09-29-avatar-restpaket.md) erhalten.
 
-## Noch offene Auslieferung
+## Private Bereitstellung abgeschlossen
 
-Die 387 öffentlichen Dateien für Cache v41 sind mit `npm run prepare:cloudflare`
-vorbereitet. Die laufende App bleibt bisher auf `31fcf02`, Cache v40.
-Am vorhandenen Codex-Testbrowser wurde vor dem Update bestätigt: Kauftest,
-40 verfügbare Punkte, 2.040 Lernpunkte, Level 11 und ausgewählte Drachenstufe 4.
-Diesen Bereich wiederverwenden, nicht neu einrichten oder importieren.
+Die 387 öffentlichen Dateien für Cache v41 sind bereitgestellt und am
+30.09.2026 um 18:44:32.684 UTC vollständig bytegleich geprüft. Worker-Version
+`8e9f7658-09aa-40a3-bd67-42ef4f2b92b6` ist seit 18:43:53.932 UTC zu
+100 Prozent aktiv. Beide geprüften Quell-PNG-Pfade antworten mit 404.
+Der vorhandene Codex-Testbrowser wurde über „Jetzt aktualisieren“ aktualisiert:
+40 verfügbare Punkte, 2.040 Lernpunkte, Level 11 und ausgewählte Drachenstufe 4
+sind erhalten. Alle vier Entdeckerinnenformen sowie die Vorschau sind geladen.
+Diesen Testbereich wiederverwenden, nicht neu einrichten oder importieren.
 
-Der bisherige Cloudflare-Upload-Schlüssel ist abgelaufen. Die vom Nutzer
-bestätigte Verlängerung blieb im Dashboard ungespeichert. In Chrome ist ein
-Ersatz vorbereitet: nur das bisherige Konto, Workers Scripts:Edit, D1:Read,
-Account Settings:Read, Ablauf 08.10.2026. Der Nutzer ist gebeten, ihn selbst
-zu erstellen und ausschließlich in den vorhandenen verdeckten lokalen
-Eingabehelfer einzutragen. Keine Schlüssel in Chat, Dokumentation oder Git.
+Der Ersatz für den abgelaufenen Cloudflare-Upload-Schlüssel wurde vom Nutzer
+erstellt und verdeckt eingegeben; lesende Zugangsprüfung und Upload sind
+erfolgreich. Der Eingabehelfer lädt nun das Sicherheitsmodul passend zur
+PowerShell-Version. Der anschließend gemeldete Zugriffsfehler auf den
+PSReadLine-Befehlsverlauf trat nach erfolgreicher Speicherung auf und hat
+diese nicht verhindert. Künftige Eingabefenster ohne `-NoExit` über den lokalen
+Wrapper starten; dieser hält die Abschlussmeldung per `Read-Host` offen.
+Keine weiteren Schlüssel anlegen oder Werte in Chat, Dokumentation oder Git.
+
+## Noch offene GitHub-Sicherung
 
 Der frühere GitHub-Push wurde automatisch wegen fehlender konkreter
 Zielbestätigung abgelehnt. Die ausdrückliche Frage zum Upload von Code,
@@ -51,14 +58,11 @@ Die aktuellen lokalen Commits sind noch nicht als auf GitHub gesichert auszugebe
 
 ## Konkreter nächster Schritt
 
-Nach bestätigter Schlüsseleingabe den bestehenden privaten Upload ausführen,
-aktive Worker-Version prüfen und die 387 ausgelieferten Dateien bytegleich
-vergleichen. Quellen-PNGs müssen unerreichbar bleiben. Im vorhandenen
-Testbrowser kontrolliert aktualisieren, neue Galerien und erhaltenen
-Punkte-/Auswahlstand prüfen. Nach konkreter GitHub-Zustimmung beide Zweige
-pushen und die Remote-SHAs exakt vergleichen. Übergabe anschließend mit den
-tatsächlichen Ergebnissen aktualisieren; keine Test- oder Deploymentbehauptung
-aus bloßer Vorbereitung ableiten.
+Nach konkreter GitHub-Zustimmung beide Zweige einschließlich dieser
+Auslieferungsdokumentation pushen und die Remote-SHAs exakt vergleichen.
+Der App-Upload und die Browserkontrolle sind abgeschlossen und ohne neuen
+Befund nicht zu wiederholen. Übergabe mit dem tatsächlichen GitHub-Ergebnis
+ergänzen.
 
 Danach zuerst übrige Optimierungen, erst anschließend die fünf bestätigten
 Belohnungserweiterungen. Die schnellere Lernbereichsübernahme wartet weiterhin

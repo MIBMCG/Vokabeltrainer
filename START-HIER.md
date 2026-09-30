@@ -1,11 +1,13 @@
 # Hier mit der Weiterarbeit beginnen
 
 **Aktueller Stand (30.09.2026):** Die vollständige Entwicklungsgalerie ist
-lokal integriert und unabhängig geprüft: 76 Motive, 228 WebPs, Produktcommit
+privat bereitgestellt und unabhängig geprüft: 76 Motive, 228 WebPs, Produktcommit
 `d0fefdf`. Finale 659 Node-Tests und 19 Galerie-Browserfälle PASS; fünf
-Offline-/Updatefälle zuvor bestanden. App-Upload und GitHub-Sicherung warten
-noch auf den Ersatz für den abgelaufenen Cloudflare-Schlüssel beziehungsweise
-die konkrete GitHub-Zielbestätigung. Nichts neu erzeugen oder erneut entwickeln.
+Offline-/Updatefälle zuvor bestanden. Cache v41 ist aktiv; alle 387 öffentlichen
+Dateien sind bytegleich geprüft. Das kontrollierte Update erhält Punkte, Level
+und gewählte Drachen-Endform. Nur die GitHub-Sicherung wartet noch auf die
+konkrete Zielbestätigung nach der automatischen Ablehnung. Nichts neu erzeugen
+oder erneut entwickeln.
 [Aktuelle Abschlussübergabe](docs/handoffs/2026-09-30-avatar-abschluss.md).
 
 **Historische Pause nach Zwischenstandssicherung (29.09.2026).** Alle 64

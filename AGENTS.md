@@ -1,17 +1,18 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-**Aktueller Stand am 30.09.2026: Galerie lokal abgeschlossen.** Der Nutzer
+**Aktueller Stand am 30.09.2026: Galerie privat bereitgestellt.** Der Nutzer
 hat die Pause aufgehoben. Alle 76 Motive und 228 WebPs sind im Produktcommit
 `d0fefdf` integriert. Finale 659/659 Node-Tests, 19/19 Galerie-Browserfälle,
 fünf vorherige Offline-/Updatefälle und unabhängige Reviews PASS. Ein im
 Abschlussreview gefundener Fehler bei Tierbildern mit gespeichertem menschlichem
 Hautton ist in `40d7424` korrigiert und unabhängig nachgeprüft. 387 öffentliche
-Dateien für Cache v41 sind vorbereitet; noch nicht bereitgestellt. Cloudflare
-lehnt den abgelaufenen Schlüssel ab; ein gleich berechtigter Ersatz bis
-08.10.2026 ist zur manuellen Erstellung vorbereitet. Die konkrete Zustimmung
-zum zuvor automatisch abgelehnten GitHub-Upload ist ebenfalls noch offen.
-Keine Bilder neu erzeugen oder Tests ohne neuen Befund wiederholen. App bleibt
-`31fcf02`, Cache v40, bis die neue Bereitstellung tatsächlich nachgewiesen ist.
+Dateien für Cache v41 sind ausgeliefert und bytegleich geprüft. Worker-Version
+`8e9f7658-09aa-40a3-bd67-42ef4f2b92b6` ist zu 100 Prozent aktiv. Der neue
+Upload-Schlüssel funktioniert; die lokalen PowerShell-Probleme haben keine
+erneute Erstellung erfordert. Kontrolliertes Update im bestehenden Testbrowser
+erhält 40 verfügbare Punkte, 2.040 Lernpunkte, Level 11 und Drachenstufe 4.
+Die konkrete Zustimmung zum zuvor automatisch abgelehnten GitHub-Upload ist
+noch offen. Keine Bilder neu erzeugen oder Tests ohne neuen Befund wiederholen.
 Einstieg: [Abschlussübergabe](docs/handoffs/2026-09-30-avatar-abschluss.md).
 
 **Historische Pause nach Zwischenstandssicherung (29.09.2026).** Der

@@ -143,16 +143,52 @@ unter `src/`, `scripts/`, `trainer/`, `tests/` und `docs/design/`.
 Vorhandene Dokumentationsänderungen sind erhalten. Auch im Hauptcheckout
 wurden die vier alten generierten PNG-Ausgabekopien nach Prüfung aller
 Zielpfade entfernt. `npm run prepare:cloudflare` hat anschließend erfolgreich
-**387 öffentliche Dateien** vorbereitet. Der App-Upload steht noch aus;
-die laufende App bleibt bis dahin auf `31fcf02`, Cache v40.
+**387 öffentliche Dateien** vorbereitet. Bis zur unten belegten Bereitstellung
+blieb die laufende App auf `31fcf02`, Cache v40.
 
 Die lesende Cloudflare-Prüfung am 30.09.2026 meldet `Authentication error`
 (10000) und `Invalid access token` (9109). Das Dashboard bestätigt für den
 bisherigen Upload-Schlüssel den Status `Expired`. Die vom Nutzer bestätigte
 Verlängerung wurde vom Dashboard nicht gespeichert; nach Neuladen blieb der
 alte Ablauf bestehen. Ein Ersatz mit denselben Konto-/Berechtigungsgrenzen und
-Ablauf am 08.10.2026 ist vorbereitet. Erstellung und verdeckte lokale Eingabe
-liegen beim Nutzer. Es wurde kein App-Upload versucht.
+Ablauf am 08.10.2026 wurde vorbereitet und anschließend vom Nutzer erstellt
+und verdeckt lokal eingegeben.
+
+Die erste Eingabe scheiterte am lokalen PowerShell-Modulimport. Der Fehler
+wurde mit `Start-Process` und synthetischen Daten reproduziert: Windows
+PowerShell lud über geerbte Modulpfade unpassende Typdaten. Der Helfer importiert
+das Sicherheitsmodul jetzt ausdrücklich aus dem eigenen `PSHOME`, bevor er
+nach einem Schlüssel fragt. Exakte Verschlüsselungs-/Entschlüsselungsproben
+bestanden sowohl unter Windows PowerShell 5.1 als auch unter PowerShell 7.6.5.
+Die spätere PSReadLine-Meldung betraf den Befehlsverlauf am normalen Prompt
+nach erfolgreicher Speicherung. Eine lesende Cloudflare-Abfrage bestätigte
+den funktionierenden Zugang; ein weiterer Schlüssel war nicht nötig.
+Für künftige Eingaben liegt ein lokaler Wrapper ohne `-NoExit` vor, der den
+Abschluss per `Read-Host` offen hält. Globale Einstellungen wurden nicht geändert.
+
+**Bereitstellung am 30.09.2026:** Der bestehende Helfer führte im Serverordner
+`npx --yes wrangler@4.142.0 deploy --config wrangler.local.jsonc --keep-vars`
+erfolgreich aus. 196 neue/geänderte Assets wurden hochgeladen, 191 vorhandene
+wiederverwendet. Die anschließende lesende Prüfung bestätigt Worker-Version
+`8e9f7658-09aa-40a3-bd67-42ef4f2b92b6` seit **18:43:53.932 UTC zu 100 Prozent**.
+Um 18:44:32.684 UTC wurden alle **387 öffentlichen Dateien bytegleich** mit
+dem vorbereiteten Paket verglichen; `trainer/sw.js` enthält Cache v41.
+Der konfigurierte Server-Anmeldemodus ist die vorgesehene Stagingtransformation
+von `src/trainer/config.js`; alle übrigen Dateien entsprechen direkt den Quellen.
+Die geprüften Pfade `trainer/assets/avatar-evolution/dragon-stage-1.png` und
+`docs/design/avatar-evolution-sources/phoenix-stage-4-v1.png` antworten mit 404.
+
+Im bestehenden Codex-Testbrowser wurde das Update über **„Jetzt aktualisieren“**
+übernommen. Unverändert beobachtet: **40 verfügbare Punkte, 2.040 Lernpunkte,
+Level 11 und ausgewählte Drachenstufe 4**. Die neuen Grundbilder für Entdecker,
+Entdeckerin und Pferd erscheinen; in der Entdeckerinnengalerie sind alle vier
+Stufen und das Vorschaubild mit erfolgreichem Bildladezustand geprüft und
+visuell festgehalten. Es gab keine neue Einrichtung, Anmeldung, Importe oder
+Käufe. Der kurz nach dem ersten Reload auf dem alten Cache sichtbare
+Google-Hinweis verschwand vor der Updateaktivierung selbstständig; daraus
+wird keine neue Abnahme des natürlichen Tokenablaufs abgeleitet.
+Bytevergleich und Galerieaufnahme liegen lokal unter
+`.superpowers/deployment-2026-09-30/`.
 
 Der zuvor automatisch abgelehnte GitHub-Upload ist noch nicht wiederholt.
 Die konkrete Zustimmung zum Upload von Code und Bildern in das bestehende
