@@ -1,5 +1,13 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
+**Aktuelle Fortsetzung am 30.09.2026: große Wortlisten geprüft.** Nach Abschluss
+der Galerie setzt der Nutzer die Optimierungen fort. Isolierte Mengenprüfung
+mit 100/500 Zeilen und simuliertem Google-Abgleich ist abgeschlossen. Der kurze
+Entwurf für bis zu drei gleichzeitige Lernpakete ist mit „Ja, so umsetzen“
+bestätigt; die Umsetzung beginnt. Ein `fill()`-Messartefakt ist vom Aufwand eines einzelnen
+simulierten Einfügeereignisses getrennt dokumentiert. Einstieg:
+[Mengenprüfung und nächster Schritt](docs/handoffs/2026-09-30-grosse-wortlisten.md).
+
 **Aktueller Stand am 30.09.2026: Galerie privat bereitgestellt.** Der Nutzer
 hat die Pause aufgehoben. Alle 76 Motive und 228 WebPs sind im Produktcommit
 `d0fefdf` integriert. Finale 659/659 Node-Tests, 19/19 Galerie-Browserfälle,

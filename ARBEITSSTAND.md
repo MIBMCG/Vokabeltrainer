@@ -1,5 +1,17 @@
 # Arbeitsstand
 
+**Nächste Optimierung untersucht (30.09.2026).** Die Mengenprüfung des
+vorhandenen Tabellenwegs ist mit isolierten synthetischen Daten abgeschlossen:
+500 Zeilen benötigen bei einem einzelnen simulierten Einfügeereignis 90 ms
+Vorschau und 253 ms lokale Speicherung; nach Reload ist die Wortanzahl erhalten.
+Kein horizontaler Überlauf bei 320/390/768 Pixel. Das ist keine physische
+Handy- oder echte Excel-Abnahme. Der simulierte Google-Abgleich benötigt bei
+500 ms Zusatzlatenz 22,4 Sekunden und 41 Anfragen; sechs Pakete werden seriell
+übertragen. Der kurze Vorschlag für bis zu drei gleichzeitige Lernpakete ist
+mit „Ja, so umsetzen“ bestätigt. Umsetzung und ihre Prüfung stehen noch aus;
+Produkt und Cache v41 bleiben unverändert.
+[Aktuelle Übergabe](docs/handoffs/2026-09-30-grosse-wortlisten.md).
+
 **Galerie privat bereitgestellt (30.09.2026).** Alle 13 Figuren mit je vier
 Formen und den vier menschlichen Hauttönen sind integriert: 76 Motive,
 228 WebPs. Produktcommit `d0fefdf` übernimmt den unabhängig geprüften Stand

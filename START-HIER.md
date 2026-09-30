@@ -1,5 +1,11 @@
 # Hier mit der Weiterarbeit beginnen
 
+**Aktuelle Fortsetzung (30.09.2026):** Große Wortlisten sind synthetisch geprüft;
+lokale Vorschau und Speicherung sind schnell, die serielle Paketübertragung
+bleibt ein Ansatz für den Google-Abgleich. Der konkrete Vorschlag für bis zu
+drei gleichzeitige Lernpakete ist mit „Ja, so umsetzen“ bestätigt. Produkt und Cache v41 bleiben
+unverändert. [Neue Übergabe](docs/handoffs/2026-09-30-grosse-wortlisten.md).
+
 **Aktueller Stand (30.09.2026):** Die vollständige Entwicklungsgalerie ist
 privat bereitgestellt und unabhängig geprüft: 76 Motive, 228 WebPs, Produktcommit
 `d0fefdf`. Finale 659 Node-Tests und 19 Galerie-Browserfälle PASS; fünf
