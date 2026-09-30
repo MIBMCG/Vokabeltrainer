@@ -1,5 +1,11 @@
 # Hier mit der Weiterarbeit beginnen
 
+**Pause seit 30.09.2026:** Der Nutzer möchte heute nicht weiterarbeiten.
+Erst nach ausdrücklicher Fortsetzung weiterarbeiten, nicht automatisch am
+Folgetag. Produkt `b440b5e`, Cache v43, bleibt unverändert. Nächster Schritt
+ist der Excel-Praxistest mit echter Wortliste und gewünschter Zuordnung.
+[Gesicherte Übergabe](docs/handoffs/2026-09-30-mobile-vokabeleingabe.md).
+
 **Aktueller Abschluss (30.09.2026):** Die Vokabeleingabe bleibt bei schmalem
 Bildschirm und großer Schrift innerhalb der Ansicht. Produkt `b440b5e`,
 Cache v43, ist privat aktiv und auf beiden GitHub-Zweigen exakt bestätigt.

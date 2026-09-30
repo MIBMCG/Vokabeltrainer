@@ -1,5 +1,13 @@
 # Arbeitsstand
 
+**Pause am 30.09.2026.** Nach Abschluss und GitHub-Sicherung auf beiden
+Zweigen (`0371106`) wünscht der Nutzer heute keine weitere Arbeit. Dieser
+Pausenvermerk wird separat gesichert; keine weitere Produktarbeit oder
+Testsitzung bis zur ausdrücklichen Fortsetzung. Produkt `b440b5e`, Cache v43,
+bleibt aktiv. Danach mit echter Excel-Liste und Lektions-/Kinderzuordnung
+fortsetzen; Eingaben und physische Geräteabnahme sind noch offen.
+[Übergabe](docs/handoffs/2026-09-30-mobile-vokabeleingabe.md).
+
 **Schmale Vokabeleingabe korrigiert (30.09.2026).** Bei 390 px und 200 Prozent
 Schrift war die Erwachsenenansicht 463 px breit. Produktcommit `b440b5e`
 behebt die Mindestbreiten und passt die Navigation an die Schriftgröße an.

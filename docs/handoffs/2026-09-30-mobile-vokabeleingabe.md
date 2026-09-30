@@ -1,5 +1,13 @@
 # Übergabe: Vokabeleingabe auf schmalen Bildschirmen
 
+**Pausennachtrag am 30.09.2026:** Nach Abschluss sagt der Nutzer „dann geht es
+weiter aber nicht mehr heute“. Produkt und Übergabe sind auf beiden
+GitHub-Zweigen mit Dokumentationscommit `037110650e83fd254fb969c068d0a3f2542908ed`
+gesichert. Nur diesen Nachtrag sichern, anschließend Pause bis zur ausdrücklichen
+Fortsetzung. Kein automatischer Neustart am Folgetag. Keine neue Testsitzung,
+Produktänderung oder Bereitstellung. Der unten genannte nächste Schritt bleibt
+die echte Excel-Liste mit Zuordnung; die offene Frage erfordert heute keine Antwort.
+
 Stand: 30.09.2026. Der Nutzer setzt die übrigen Optimierungen fort. Eine
 typische echte Excel-Liste mit Lektions-/Kinderzuordnung ist angefragt und
 weiterhin offen. Unabhängig davon wurde ein reproduzierter Layoutfehler bei
@@ -65,4 +73,5 @@ Reale Google-Laufzeit, natürlicher Tokenablauf und Zwei-Geräte-Abnahme bleiben
 offene Nachweise. Die Lernbereichsübernahme ist weiterhin zurückgestellt und
 nicht freigegeben. Alle Entwicklungsbilder sind fertig; nichts neu erzeugen.
 Die fünf bestätigten Belohnungserweiterungen folgen nach den übrigen Optimierungen.
-Keine neue Pause angeordnet. Arbeitsbaum und lokale Mess-/Reviewbelege erhalten.
+Die nachträglich angeordnete Pause steht am Anfang dieser Übergabe.
+Arbeitsbaum und lokale Mess-/Reviewbelege erhalten.

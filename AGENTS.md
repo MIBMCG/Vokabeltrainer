@@ -1,5 +1,13 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
+**Aktuelle Steuerung: Pause am 30.09.2026.** Der Nutzer sagt nach dem
+abgeschlossenen Handy-Layout-Paket: „dann geht es weiter aber nicht mehr heute“.
+Nur diesen Pausenvermerk sichern; danach keine Produktarbeit, Testsitzung oder
+Bereitstellung bis zur ausdrücklichen Fortsetzung. Kein automatischer Neustart
+am Folgetag. Produkt `b440b5e`, Cache v43, und alle Bestände bleiben erhalten.
+Nächster Schritt nach Fortsetzung: echte Excel-Wortliste mit Lektions-/
+Kinderzuordnung. Einstieg: [Übergabe](docs/handoffs/2026-09-30-mobile-vokabeleingabe.md).
+
 **Aktueller Abschluss am 30.09.2026: schmale Vokabeleingabe.** Produktcommit
 `b440b5e` behebt den seitlichen Überlauf im Erwachsenenbereich bei großer
 Schrift. Cache v43 ist privat aktiv; sieben ausgelieferte Dateien bytegleich.
