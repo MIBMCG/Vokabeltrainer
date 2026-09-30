@@ -1,15 +1,22 @@
 # Arbeitsstand
 
-**Nächste Optimierung untersucht (30.09.2026).** Die Mengenprüfung des
-vorhandenen Tabellenwegs ist mit isolierten synthetischen Daten abgeschlossen:
-500 Zeilen benötigen bei einem einzelnen simulierten Einfügeereignis 90 ms
-Vorschau und 253 ms lokale Speicherung; nach Reload ist die Wortanzahl erhalten.
-Kein horizontaler Überlauf bei 320/390/768 Pixel. Das ist keine physische
-Handy- oder echte Excel-Abnahme. Der simulierte Google-Abgleich benötigt bei
-500 ms Zusatzlatenz 22,4 Sekunden und 41 Anfragen; sechs Pakete werden seriell
-übertragen. Der kurze Vorschlag für bis zu drei gleichzeitige Lernpakete ist
-mit „Ja, so umsetzen“ bestätigt. Umsetzung und ihre Prüfung stehen noch aus;
-Produkt und Cache v41 bleiben unverändert.
+**Wortlisten-Abgleich beschleunigt (30.09.2026).** Der bestätigte Upload von bis
+zu drei gewöhnlichen Lernpaketen zugleich ist als Produktcommit `a530357`
+integriert, unabhängig geprüft und privat als Cache v42 bereitgestellt.
+Dateiprüfungen und vor Upload gespeicherte IDs bleiben erhalten; bei Teilfehlern
+werden alle begonnenen Vorgänge abgewartet und erfolgreiche Dateien einzeln
+bestätigt. 662/662 finale Node-Tests, 113 gezielte Tests und sechs Browserfälle
+PASS; beide unabhängigen Reviews ohne Befund. In zwei kontrollierten Läufen
+mit 500 Wörtern und 500 ms je Anfrage sinkt die mittlere Gesamtzeit von 22,372
+auf 13,890 Sekunden (37,9 %). Jeweils dieselben 41 Anfragen/sechs Pakete,
+alle Wortereignisse genau einmal in der Simulation und nach Reload erhalten.
+Neun ausgelieferte Dateien sind bytegleich. Worker
+`2b88c625-3eab-4607-a7ce-969c9c4cdd68` ist seit 30.09.2026, 19:40:28.622 UTC
+zu 100 Prozent aktiv. Kontrolliertes Update erhält 40 verfügbare Punkte,
+2.040 Lernpunkte, Level 11 und Drachenstufe 4. Produktcommit ist auf beiden
+GitHub-Zweigen exakt bestätigt; dieser Dokumentationsnachtrag folgt separat.
+Echte Excel-Liste mit Zuordnung, reale Google-Zeit und physische Geräteabnahme
+bleiben offen. Keine neue Pause angeordnet.
 [Aktuelle Übergabe](docs/handoffs/2026-09-30-grosse-wortlisten.md).
 
 **Galerie privat bereitgestellt (30.09.2026).** Alle 13 Figuren mit je vier

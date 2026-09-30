@@ -1,10 +1,12 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Aktuelle Fortsetzung (30.09.2026):** Große Wortlisten sind synthetisch geprüft;
-lokale Vorschau und Speicherung sind schnell, die serielle Paketübertragung
-bleibt ein Ansatz für den Google-Abgleich. Der konkrete Vorschlag für bis zu
-drei gleichzeitige Lernpakete ist mit „Ja, so umsetzen“ bestätigt. Produkt und Cache v41 bleiben
-unverändert. [Neue Übergabe](docs/handoffs/2026-09-30-grosse-wortlisten.md).
+**Aktueller Abschluss (30.09.2026):** Große Wortlisten werden mit bis zu drei
+gleichzeitigen, weiterhin geprüften Lernpaketen abgeglichen. Produkt `a530357`,
+Cache v42, ist privat aktiv und auf beiden GitHub-Zweigen exakt bestätigt.
+662 Node-Tests, sechs Browserfälle und unabhängige Reviews PASS. Die kontrollierte
+500-Wörter-Simulation sinkt von 22,372 auf 13,890 Sekunden; echte Google-/Handy-
+Abnahme bleibt offen. Bestehender Teststand ist nach Update erhalten.
+[Aktuelle Übergabe](docs/handoffs/2026-09-30-grosse-wortlisten.md).
 
 **Aktueller Stand (30.09.2026):** Die vollständige Entwicklungsgalerie ist
 privat bereitgestellt und unabhängig geprüft: 76 Motive, 228 WebPs, Produktcommit

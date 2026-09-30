@@ -1,12 +1,17 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-**Aktuelle Fortsetzung am 30.09.2026: große Wortlisten geprüft.** Nach Abschluss
-der Galerie setzt der Nutzer die Optimierungen fort. Isolierte Mengenprüfung
-mit 100/500 Zeilen und simuliertem Google-Abgleich ist abgeschlossen. Der kurze
-Entwurf für bis zu drei gleichzeitige Lernpakete ist mit „Ja, so umsetzen“
-bestätigt; die Umsetzung beginnt. Ein `fill()`-Messartefakt ist vom Aufwand eines einzelnen
-simulierten Einfügeereignisses getrennt dokumentiert. Einstieg:
-[Mengenprüfung und nächster Schritt](docs/handoffs/2026-09-30-grosse-wortlisten.md).
+**Aktueller Abschluss am 30.09.2026: schnellerer Wortlisten-Abgleich.** Der
+bestätigte Dreier-Upload für gewöhnliche Lernpakete ist als `a530357` integriert,
+unabhängig geprüft und privat als Cache v42 aktiv. Alle Dateiprüfungen,
+dauerhaften IDs und Wiederaufnahme bleiben erhalten. 662/662 Node-Tests und
+6/6 relevante Browserfälle PASS. Dieselbe synthetische 500-Wörter-Prüfung mit
+500 ms je Anfrage benötigt im Mittel 13,890 statt 22,372 Sekunden (37,9 % weniger);
+keine Zusage zur echten Google-Dauer. Neun ausgelieferte Dateien bytegleich,
+kontrolliertes Update erhält Punkte, Level und Drachenstufe 4. Produktcommit
+auf beiden GitHub-Zweigen exakt bestätigt. Keine neue Pause. Einstieg und
+offene Praxisnachweise: [Übergabe](docs/handoffs/2026-09-30-grosse-wortlisten.md).
+Typische echte Wortliste mit Lektions-/Kinderzuordnung fehlt weiterhin;
+keine synthetischen Wörter in bestehende Familien- oder Testbestände schreiben.
 
 **Aktueller Stand am 30.09.2026: Galerie privat bereitgestellt.** Der Nutzer
 hat die Pause aufgehoben. Alle 76 Motive und 228 WebPs sind im Produktcommit
