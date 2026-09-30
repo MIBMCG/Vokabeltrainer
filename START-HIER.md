@@ -5,9 +5,10 @@ privat bereitgestellt und unabhängig geprüft: 76 Motive, 228 WebPs, Produktcom
 `d0fefdf`. Finale 659 Node-Tests und 19 Galerie-Browserfälle PASS; fünf
 Offline-/Updatefälle zuvor bestanden. Cache v41 ist aktiv; alle 387 öffentlichen
 Dateien sind bytegleich geprüft. Das kontrollierte Update erhält Punkte, Level
-und gewählte Drachen-Endform. Nur die GitHub-Sicherung wartet noch auf die
-konkrete Zielbestätigung nach der automatischen Ablehnung. Nichts neu erzeugen
-oder erneut entwickeln.
+und gewählte Drachen-Endform. Beide Zweige sind nach ausdrücklicher Freigabe
+auf GitHub gesichert und exakt abgeglichen. Das Galeriepaket ist abgeschlossen;
+als Nächstes die übrigen Optimierungen, danach die fünf Belohnungserweiterungen.
+Nichts neu erzeugen oder erneut entwickeln.
 [Aktuelle Abschlussübergabe](docs/handoffs/2026-09-30-avatar-abschluss.md).
 
 **Historische Pause nach Zwischenstandssicherung (29.09.2026).** Alle 64

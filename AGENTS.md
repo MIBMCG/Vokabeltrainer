@@ -11,8 +11,9 @@ Dateien für Cache v41 sind ausgeliefert und bytegleich geprüft. Worker-Version
 Upload-Schlüssel funktioniert; die lokalen PowerShell-Probleme haben keine
 erneute Erstellung erfordert. Kontrolliertes Update im bestehenden Testbrowser
 erhält 40 verfügbare Punkte, 2.040 Lernpunkte, Level 11 und Drachenstufe 4.
-Die konkrete Zustimmung zum zuvor automatisch abgelehnten GitHub-Upload ist
-noch offen. Keine Bilder neu erzeugen oder Tests ohne neuen Befund wiederholen.
+Nach ausdrücklicher Ziel-/Dateifreigabe sind beide Zweige auf GitHub gesichert
+und ihre Commit-IDs exakt abgeglichen. Das Galeriepaket ist abgeschlossen.
+Keine Bilder neu erzeugen oder Tests ohne neuen Befund wiederholen.
 Einstieg: [Abschlussübergabe](docs/handoffs/2026-09-30-avatar-abschluss.md).
 
 **Historische Pause nach Zwischenstandssicherung (29.09.2026).** Der

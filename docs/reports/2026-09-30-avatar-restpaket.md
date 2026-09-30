@@ -190,9 +190,20 @@ wird keine neue Abnahme des natürlichen Tokenablaufs abgeleitet.
 Bytevergleich und Galerieaufnahme liegen lokal unter
 `.superpowers/deployment-2026-09-30/`.
 
-Der zuvor automatisch abgelehnte GitHub-Upload ist noch nicht wiederholt.
-Die konkrete Zustimmung zum Upload von Code und Bildern in das bestehende
-Repository `https://github.com/MIBMCG/Vokabeltrainer` steht noch aus.
+Die automatische Freigabeprüfung lehnte den GitHub-Upload zunächst ab, weil
+eine allgemeine Fortsetzung nicht als genaue Ziel-/Dateifreigabe ausreichte.
+Nach der ausdrücklichen Antwort „Ja, genau diese Dateien auf beide genannten
+GitHub-Zweige hochladen“ war der atomare Push nach
+`https://github.com/MIBMCG/Vokabeltrainer` erfolgreich. Der frische Vergleich
+mit `git ls-remote --heads` bestätigt Hauptzweig `codex/vokabeltrainer-v1`
+exakt auf `c8057ee3d0c3b16b0dc0846379ac27a58e82a73a` und Arbeitszweig
+`codex/purchase-batch-checks` exakt auf `40d7424c5a6e37aecf9b753b3998f5af86234eee`.
+Beide Checkouts waren sauber. Vor dem Push bestanden Dokumentationsprüfung
+(1.702 Dateien, 267 Markdown-Dateien, 1.105 lokale Links, keine Fehler),
+Diffprüfung und der Vergleich des geprüften Produktbaums. Keine privaten
+Deployment- oder Tresordateien gehörten zu den 360 ausgehenden Dateipfaden.
+Dieser abschließende Dokumentationsnachtrag folgt separat; es wurden keine
+Produktänderungen oder zusätzlichen App-Uploads vorgenommen.
 
 ## Nachweisgrenzen und Anschluss
 

@@ -45,24 +45,31 @@ diese nicht verhindert. Künftige Eingabefenster ohne `-NoExit` über den lokale
 Wrapper starten; dieser hält die Abschlussmeldung per `Read-Host` offen.
 Keine weiteren Schlüssel anlegen oder Werte in Chat, Dokumentation oder Git.
 
-## Noch offene GitHub-Sicherung
+## GitHub-Sicherung abgeschlossen
 
-Der frühere GitHub-Push wurde automatisch wegen fehlender konkreter
-Zielbestätigung abgelehnt. Die ausdrückliche Frage zum Upload von Code,
-Avatarbildern und Dokumentation nach `https://github.com/MIBMCG/Vokabeltrainer`
-auf beide genannten Zweige ist gestellt und noch unbeantwortet. Kein erneuter
-Push ohne diese Klärung. Letzter lesender Vergleich am 30.09.2026:
-Remote `codex/vokabeltrainer-v1` steht auf
-`42d693226f5edd933be17604d7725ae0e4992294`; der isolierte Zweig fehlt remote.
-Die aktuellen lokalen Commits sind noch nicht als auf GitHub gesichert auszugeben.
+Nach der automatischen Ablehnung hat der Nutzer ausdrücklich bestätigt:
+„Ja, genau diese Dateien auf beide genannten GitHub-Zweige hochladen“.
+Die zugehörige Frage nennt privaten Programmcode, Avatarbilder und Übergabe,
+das Ziel `https://github.com/MIBMCG/Vokabeltrainer` und beide Zweige.
+`git push --atomic -u origin codex/vokabeltrainer-v1 codex/purchase-batch-checks`
+war erfolgreich. Der anschließende frische `git ls-remote --heads`-Vergleich
+bestätigt am 30.09.2026 exakt gleiche lokale und entfernte Commit-IDs:
+
+- `codex/vokabeltrainer-v1`: `c8057ee3d0c3b16b0dc0846379ac27a58e82a73a`.
+- `codex/purchase-batch-checks`: `40d7424c5a6e37aecf9b753b3998f5af86234eee`.
+
+Beide Checkouts waren danach sauber. Der geprüfte Produktbaum bleibt identisch
+zum unabhängig freigegebenen Stand. Die 360 ausgehenden Dateipfade enthalten
+keine privaten Deployment-/Tresordateien. Der abschließende Dokumentationsnachtrag
+wird separat committed und nach seinem Push ebenfalls exakt abgeglichen;
+die oben genannten Hashes belegen den vorangegangenen Produkt-/Übergabestand.
 
 ## Konkreter nächster Schritt
 
-Nach konkreter GitHub-Zustimmung beide Zweige einschließlich dieser
-Auslieferungsdokumentation pushen und die Remote-SHAs exakt vergleichen.
-Der App-Upload und die Browserkontrolle sind abgeschlossen und ohne neuen
-Befund nicht zu wiederholen. Übergabe mit dem tatsächlichen GitHub-Ergebnis
-ergänzen.
+Das Galeriepaket ist abgeschlossen. App-Upload, Browserkontrolle und
+Produktsicherung auf GitHub sind ohne neuen Befund nicht zu wiederholen.
+Bei der nächsten Produktarbeit zuerst den bestätigten Optimierungsumfang
+gegen die unten offenen Eingaben abgrenzen; keine neue Bildgenerierung.
 
 Danach zuerst übrige Optimierungen, erst anschließend die fünf bestätigten
 Belohnungserweiterungen. Die schnellere Lernbereichsübernahme wartet weiterhin

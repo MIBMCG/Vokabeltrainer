@@ -12,8 +12,11 @@ bytegleich geprüft; Worker `8e9f7658-09aa-40a3-bd67-42ef4f2b92b6` ist seit
 erneuert. Im vorhandenen Testbrowser sind nach kontrolliertem Update die
 40 verfügbaren Punkte, 2.040 Lernpunkte, Level 11 und gewählte Drachenstufe 4
 erhalten. Alle vier Entdeckerinnenbilder sind tatsächlich geladen.
-Noch offen: konkrete Zielbestätigung und GitHub-Upload nach dessen vorheriger
-automatischer Ablehnung.
+Die konkrete GitHub-Freigabe liegt inzwischen vor. Beide Zweige wurden
+erfolgreich hochgeladen und ihre lokalen/entfernten Commit-IDs exakt verglichen:
+Hauptzweig `c8057ee`, Arbeitszweig `40d7424` vor diesem Dokumentationsnachtrag.
+Das Galeriepaket ist damit abgeschlossen; nächste Arbeit sind die übrigen
+Optimierungen mit den in der Übergabe genannten offenen Eingaben.
 [Bericht](docs/reports/2026-09-30-avatar-restpaket.md) und
 [aktuelle Übergabe](docs/handoffs/2026-09-30-avatar-abschluss.md).
 
