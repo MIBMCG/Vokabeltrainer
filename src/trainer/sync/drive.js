@@ -1055,52 +1055,56 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
     while (true) {
       const state = commands.getState();
       const blockedFileIds = new Set(state.quarantinedFiles.map(({fileId}) => fileId));
-      const pending = state.pendingPackets.find(({confirmed, driveFileId}) => (
+      const group = state.pendingPackets.filter(({confirmed, driveFileId}) => (
         !confirmed && (driveFileId === null || !blockedFileIds.has(driveFileId))
-      ));
-      if (!pending) return;
-      if (pending.packet.datasetId !== binding.datasetId) {
+      )).slice(0, 3);
+      if (group.length === 0) return;
+      if (group.some(({packet}) => packet.datasetId !== binding.datasetId)) {
         throw productError('binding', 'Ausstehende Änderungen gehören zu einem anderen Datensatz.');
       }
-      let fileId = pending.driveFileId;
-      if (fileId === null) {
-        fileId = await drive.generateId();
+      const results = await Promise.allSettled(group.map(async (pending) => {
+        let fileId = pending.driveFileId;
+        if (fileId === null) {
+          fileId = await drive.generateId();
+          await mutate((next) => {
+            const record = next.pendingPackets.find(({packet}) => packet.packetId === pending.packet.packetId);
+            if (!record) return false;
+            if (record.driveFileId !== null && record.driveFileId !== fileId) {
+              throw productError('collision', 'Ein ausstehendes Paket hat zwei Drive-Datei-IDs.');
+            }
+            record.driveFileId = fileId;
+          });
+        }
+        await drive.putJson({
+          id: fileId,
+          name: `packet-${pending.packet.packetId}.json`,
+          parentId: binding.folderId,
+          appProperties: {
+            app: APP,
+            kind: 'packet',
+            datasetId: pending.packet.datasetId,
+            epochId: pending.packet.epochId,
+            packetId: pending.packet.packetId,
+          },
+          value: pending.packet,
+        });
+        const hash = await contentHash(pending.packet);
         await mutate((next) => {
           const record = next.pendingPackets.find(({packet}) => packet.packetId === pending.packet.packetId);
           if (!record) return false;
-          if (record.driveFileId !== null && record.driveFileId !== fileId) {
-            throw productError('collision', 'Ein ausstehendes Paket hat zwei Drive-Datei-IDs.');
+          if (record.driveFileId !== fileId) {
+            throw productError('collision', 'Die bestätigte Drive-Datei-ID stimmt nicht mit dem Paket überein.');
           }
-          record.driveFileId = fileId;
+          next.pendingPackets = next.pendingPackets.filter(({packet}) => packet.packetId !== pending.packet.packetId);
+          next.knownFiles = upsertKnown(next.knownFiles, {fileId, contentHash: hash, kind: 'packet'});
+          next.packetIntegrity = upsertPacketIntegrity(next.packetIntegrity, {
+            packetId: pending.packet.packetId, contentHash: hash,
+          });
         });
-      }
-      await drive.putJson({
-        id: fileId,
-        name: `packet-${pending.packet.packetId}.json`,
-        parentId: binding.folderId,
-        appProperties: {
-          app: APP,
-          kind: 'packet',
-          datasetId: pending.packet.datasetId,
-          epochId: pending.packet.epochId,
-          packetId: pending.packet.packetId,
-        },
-        value: pending.packet,
-      });
-      const hash = await contentHash(pending.packet);
-      await mutate((next) => {
-        const record = next.pendingPackets.find(({packet}) => packet.packetId === pending.packet.packetId);
-        if (!record) return false;
-        if (record.driveFileId !== fileId) {
-          throw productError('collision', 'Die bestätigte Drive-Datei-ID stimmt nicht mit dem Paket überein.');
-        }
-        next.pendingPackets = next.pendingPackets.filter(({packet}) => packet.packetId !== pending.packet.packetId);
-        next.knownFiles = upsertKnown(next.knownFiles, {fileId, contentHash: hash, kind: 'packet'});
-        next.packetIntegrity = upsertPacketIntegrity(next.packetIntegrity, {
-          packetId: pending.packet.packetId, contentHash: hash,
-        });
-      });
-      lastConfirmedAt = now().toISOString();
+        lastConfirmedAt = now().toISOString();
+      }));
+      const failed = results.find(({status}) => status === 'rejected');
+      if (failed) throw failed.reason;
     }
   }
 

@@ -1245,3 +1245,166 @@ test('pending packets are never uploaded into a different binding', async () => 
   assert.equal(drive.calls.filter(([name]) => name === 'putJson').length, uploads);
   assert.equal(commands.getState().pendingPackets.length, 1);
 });
+
+function uploadGate() {
+  let resolve;
+  let reject;
+  const promise = new Promise((yes, no) => { resolve = yes; reject = no; });
+  return {promise, resolve, reject};
+}
+
+async function waitForUploadCount(uploads, count) {
+  const deadline = Date.now() + 5000;
+  while (uploads.length < count && Date.now() < deadline) {
+    await new Promise((resolve) => setTimeout(resolve, 5));
+  }
+  assert.equal(uploads.length, count, `expected ${count} started packet uploads`);
+}
+
+async function preparedPacketSync(count = 5) {
+  const {sync, drive, commands} = await setupSyntheticSync({outbox: []});
+  const before = commands.getState();
+  const next = structuredClone(before);
+  next.pendingPackets = before.ledger.events.slice(0, count).map((event, index) => ({
+    packet: buildPackets({events: [event], datasetId: before.binding.datasetId,
+      epochId: event.epochId, id: () => `concurrent-packet-${index}`})[0],
+    driveFileId: null, confirmed: false,
+  }));
+  await commands.commitExternal(next, await productStateHash(before));
+  return {sync, drive, commands};
+}
+
+test('ordinary packet uploads start three together and never exceed three in flight', async () => {
+  const {sync, drive, commands} = await preparedPacketSync();
+  const realGenerate = drive.generateId.bind(drive);
+  const realPut = drive.putJson.bind(drive);
+  const reservations = [];
+  const uploads = [];
+  let inFlight = 0;
+  let maximum = 0;
+  let reservationsReleased = false;
+  let released = false;
+  drive.generateId = async () => {
+    if (reservationsReleased) return realGenerate();
+    const gate = uploadGate();
+    reservations.push(gate);
+    await gate.promise;
+    return realGenerate();
+  };
+  drive.putJson = async (request) => {
+    if (request.appProperties.kind !== 'packet') return realPut(request);
+    if (released) return realPut(request);
+    const gate = uploadGate();
+    uploads.push({request, gate});
+    inFlight += 1;
+    maximum = Math.max(maximum, inFlight);
+    try { await gate.promise; return await realPut(request); }
+    finally { inFlight -= 1; }
+  };
+  const running = sync.sync();
+  try {
+    await waitForUploadCount(reservations, 3);
+    reservationsReleased = true;
+    reservations.forEach(({resolve}) => resolve());
+    await waitForUploadCount(uploads, 3);
+    assert.equal(maximum, 3);
+    assert.equal(commands.getState().pendingPackets.slice(0, 3).every(({driveFileId}) => driveFileId !== null), true);
+    uploads.slice(0, 3).forEach(({gate}) => gate.resolve());
+    await waitForUploadCount(uploads, 5);
+    uploads.slice(3).forEach(({gate}) => gate.resolve());
+    await running;
+    assert.equal(maximum, 3);
+    assert.equal(commands.getState().pendingPackets.length, 0);
+    assert.equal(drive.createdPacketIds.length, 5);
+  } finally {
+    reservationsReleased = true;
+    released = true;
+    reservations.forEach(({resolve}) => resolve());
+    uploads.forEach(({gate}) => gate.resolve());
+    await running.catch(() => {});
+  }
+});
+
+test('failed packet group settles started writes, retains successful confirmations and retries saved IDs', async () => {
+  const {sync, drive, commands} = await preparedPacketSync();
+  const realPut = drive.putJson.bind(drive);
+  const uploads = [];
+  let released = false;
+  drive.putJson = async (request) => {
+    if (request.appProperties.kind !== 'packet') return realPut(request);
+    if (released) return realPut(request);
+    const gate = uploadGate();
+    uploads.push({request, gate});
+    await gate.promise;
+    return realPut(request);
+  };
+  const running = sync.sync();
+  let settled = false;
+  running.then(() => { settled = true; }, () => { settled = true; });
+  try {
+    await waitForUploadCount(uploads, 3);
+    const reserved = commands.getState().pendingPackets.slice(0, 3).map(({driveFileId}) => driveFileId);
+    assert.equal(reserved.every(Boolean), true);
+    uploads[0].gate.resolve();
+    uploads[1].gate.reject(new DriveError('network', 'synthetic interruption'));
+    await new Promise((resolve) => setImmediate(resolve));
+    assert.equal(settled, false, 'sync must wait for the last started upload');
+    assert.equal(uploads.length, 3, 'failure must stop the next wave');
+    uploads[2].gate.resolve();
+    await assert.rejects(running, {code: 'network'});
+    assert.equal(commands.getState().pendingPackets.length, 3);
+    assert.equal(commands.getState().pendingPackets.find(({packet}) => packet.packetId === 'concurrent-packet-1').driveFileId, reserved[1]);
+    assert.equal(commands.getState().knownFiles.filter(({fileId}) => reserved.includes(fileId)).length, 2);
+    drive.putJson = realPut;
+    await sync.retry();
+    assert.equal(commands.getState().pendingPackets.length, 0);
+    assert.equal(drive.createdPacketIds.length, 5);
+    assert.equal(drive.calls.filter(([name, request]) => name === 'putJson' && request.appProperties.kind === 'packet' && [reserved[0], reserved[2]].includes(request.id)).length, 2);
+    const uploadedEventIds = drive.createdPacketIds.flatMap((fileId) => drive.files.get(fileId).value.events.map(({id}) => id));
+    assert.deepEqual(uploadedEventIds.sort(), commands.getState().ledger.events.map(({id}) => id).sort());
+  } finally {
+    released = true;
+    uploads.forEach(({gate}) => gate.resolve());
+    await running.catch(() => {});
+  }
+});
+
+test('later packet groups re-read quarantine and skip a newly blocked reserved ID', async () => {
+  const {sync, drive, commands} = await preparedPacketSync();
+  const before = commands.getState();
+  const next = structuredClone(before);
+  next.pendingPackets[3].driveFileId = 'blocked-packet-file';
+  await commands.commitExternal(next, await productStateHash(before));
+  const realPut = drive.putJson.bind(drive);
+  const uploads = [];
+  let released = false;
+  drive.putJson = async (request) => {
+    if (request.appProperties.kind !== 'packet' || released) return realPut(request);
+    const gate = uploadGate();
+    uploads.push({request, gate});
+    await gate.promise;
+    return realPut(request);
+  };
+  const running = sync.sync();
+  try {
+    await waitForUploadCount(uploads, 3);
+    const current = commands.getState();
+    const blocked = structuredClone(current);
+    blocked.quarantinedFiles.push({
+      fileId: 'blocked-packet-file', code: 'invalid', message: 'synthetic quarantine', value: null,
+    });
+    await commands.commitExternal(blocked, await productStateHash(current));
+    uploads.forEach(({gate}) => gate.resolve());
+    await waitForUploadCount(uploads, 4);
+    assert.equal(uploads[3].request.appProperties.packetId, 'concurrent-packet-4');
+    uploads[3].gate.resolve();
+    await assert.rejects(running, {code: 'invalid'});
+    assert.deepEqual(commands.getState().pendingPackets.map(({packet}) => packet.packetId), ['concurrent-packet-3']);
+    assert.equal(commands.getState().pendingPackets[0].driveFileId, 'blocked-packet-file');
+    assert.equal(drive.calls.some(([name, request]) => name === 'putJson' && request.id === 'blocked-packet-file'), false);
+  } finally {
+    released = true;
+    uploads.forEach(({gate}) => gate.resolve());
+    await running.catch(() => {});
+  }
+});
