@@ -97,7 +97,7 @@ h2 { margin-top: 0; font-size: 1.7rem; }
 
 .skip-link:focus { transform: none; clip-path: none; }
 
-.site-shell { width: min(1120px, 100%); margin: 0 auto; padding: 0 max(1rem, env(safe-area-inset-right)) calc(6rem + env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left)); }
+.site-shell { width: min(1120px, 100%); margin: 0 auto; padding: 0 max(1rem, env(safe-area-inset-right)) calc(8rem + env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left)); }
 
 .brand {
   display: flex;
@@ -293,8 +293,8 @@ h2 { margin-top: 0; font-size: 1.7rem; }
   right: 0;
   bottom: 0;
   left: 0;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-wrap: wrap;
   gap: 0.25rem;
   padding: 0.5rem max(0.75rem, env(safe-area-inset-right)) max(0.5rem, env(safe-area-inset-bottom)) max(0.75rem, env(safe-area-inset-left));
   border-top: 1px solid var(--line);
@@ -304,10 +304,11 @@ h2 { margin-top: 0; font-size: 1.7rem; }
 
 .bottom-nav button, .adult-nav button { border-color: transparent; background: transparent; }
 .bottom-nav button {
-  min-width: 0;
+  flex: 1 1 max-content;
+  min-width: max-content;
   padding-right: 0.25rem;
   padding-left: 0.25rem;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
   font-size: max(16px, 0.8rem);
 }
 .bottom-nav .active, .adult-nav .active { color: #fff; background: var(--teal); }
