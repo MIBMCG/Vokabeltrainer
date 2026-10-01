@@ -1,5 +1,20 @@
 # Roadmap zur ersten nutzbaren Version
 
+## Ergänzte offene Aufgabe: Programmname und Startadresse
+
+- [ ] **Adresse ohne persönlichen Namen einrichten** (Nutzerauftrag vom
+  01.10.2026). Die bisherige Startadresse enthält den Namen des Nutzers.
+  Künftig soll die Adresse zum vorgesehenen Programmnamen passen. Laut Nutzer
+  wurde bereits eine E-Mail-Adresse mit diesem Namen angelegt; der genaue
+  Programmname und die E-Mail-Adresse sind in den geprüften Projektunterlagen
+  noch nicht dokumentiert und vor der Umsetzung zu ermitteln.
+  Anschließend die passende Startadresse abstimmen, Google-Anmeldung und
+  App-Verknüpfungen anpassen sowie die Startanleitung aktualisieren.
+  Den Wechsel auf eine andere Adresse mit Erhalt vorhandener Lernbestände,
+  Punkte, Besitz und Geräteverbindungen vorbereiten und prüfen. Eine eigene
+  kostenpflichtige Domain ist damit noch nicht beauftragt. Die Aufgabe ist
+  vorgemerkt; eine Adressumstellung wurde noch nicht vorgenommen.
+
 Änderung der Prüfungsreihenfolge am 17.09.2026: Der Nutzer beauftragt ausdrücklich, zuerst die vollständige App gemäß bestätigtem Gesamtentwurf umzusetzen und erst danach beim Freund auf iPhone/iPad zu testen. Die bisherige Geräteprüfung vor umfangreicher Lernoberfläche ist damit als Entwicklungssperre aufgehoben. Reale Geräteabnahme bleibt offen und darf nicht als bestanden gelten. Bereits bestätigte manuelle Google-/Drive-Tests in zwei Browsern gelten weiter. Keine neue pauschale Startfreigabe verlangen; Hosting/Veröffentlichung und Kostenmodell werden dadurch nicht automatisch geändert.
 
 Stand: 18.09.2026. **Historische Arbeitsreihenfolge mit aktuellem Ergebnisstatus.** Die bestätigte Version 1 ist implementiert und automatisiert geprüft; die unabhängige Gesamtprüfung sowie reale Produkt-/Gerätenachweise bleiben offen.

@@ -1,5 +1,22 @@
 # Arbeitsstand
 
+**Levelanzeige verständlich (01.10.2026).** Produkt `1049550`, Cache v46,
+trennt Gesamt-Lernpunkte vom Fortschritt innerhalb des aktuellen Levels.
+Gesammelte und fehlende Punkte stehen am Balken; große Schrift nutzt bei
+wenig Platz die volle Kartenbreite. 662/662 Node-Tests, betroffene und finale
+Browser-/Updatefälle sowie unabhängige Nachprüfung PASS. Sieben ausgelieferte
+Dateien bytegleich; private Worker-Version `5667b42d-6cda-4ed8-9189-71a511a09d15`
+zu 100 Prozent aktiv. Kontrolliertes Update erhält den jetzt beobachteten
+Teststand mit 450 verfügbaren Punkten, 2.450 Lernpunkten, Level 13 und
+Drachenstufe 4. Keine Pause. [Aktuelle Übergabe](docs/handoffs/2026-10-01-levelanzeige.md).
+
+**Neue vorgemerkte Aufgabe (01.10.2026):** Die Startadresse soll den künftigen
+Programmnamen statt des persönlichen Namens enthalten. Laut Nutzer besteht
+bereits eine E-Mail-Adresse mit diesem Namen. Genauen Namen vor Umsetzung
+ermitteln; den Adresswechsel mit Erhalt bestehender Bestände und Anmeldungen
+vorbereiten. Details in der [To-do-Liste](docs/ROADMAP.md#ergänzte-offene-aufgabe-programmname-und-startadresse).
+Noch keine Änderung an der laufenden App oder ihrer Adresse.
+
 **Hauptnavigation lesbar (01.10.2026).** Die kurze Pause ist ausdrücklich
 aufgehoben. Produkt `fee42e9`, Cache v45, beseitigt die verbliebenen
 Wortfragmente der unteren Navigation. Die vorhandenen Knöpfe wechseln bei

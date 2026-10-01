@@ -1,5 +1,11 @@
 # Hier mit der Weiterarbeit beginnen
 
+**Aktueller Abschluss am 01.10.2026:** Gesamtpunkte und Fortschritt zum
+nächsten Level sind eindeutig beschriftet. Produkt `1049550`, Cache v46,
+privat aktiv; nach unabhängiger Prüfung und kontrolliertem Update bleiben
+Bestände und Figur erhalten. Die Karte ist auch mit großer Schrift lesbar.
+Keine Pause aktiv. [Aktuelle Übergabe](docs/handoffs/2026-10-01-levelanzeige.md).
+
 **Aktueller Abschluss am 01.10.2026:** Die untere Hauptnavigation ist auch
 bei schmaler Ansicht und großer Schrift vollständig lesbar. Produkt
 `fee42e9`, Cache v45, ist privat aktiv; sieben Dateien bytegleich und beide

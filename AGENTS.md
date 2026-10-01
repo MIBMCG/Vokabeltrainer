@@ -1,5 +1,17 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
+**Aktueller Abschluss am 01.10.2026: eindeutige Levelanzeige.** Produkt
+`1049550`, Cache v46, ist unabhängig geprüft und privat aktiv. Die Karte
+unterscheidet Gesamt-Lernpunkte und die 200-Punkte-Spanne bis zum nächsten
+Level; bei wenig Platz stehen die Texte unter der Figur in voller Breite.
+662/662 Node-Tests, betroffene und finale Browser-/Updatefälle PASS;
+ein im Review erkannter Wortumbruch ist korrigiert und nachgeprüft.
+Sieben ausgelieferte Dateien bytegleich. Nach kontrolliertem Update bleiben
+450 verfügbare Punkte, 2.450 Lernpunkte, Level 13 und Drachenstufe 4 erhalten.
+Keine Pause aktiv; bestehende Bestände erhalten. Neue Adresse mit künftigem
+Programmnamen ist vorgemerkt, genaue Namensangabe noch zu ermitteln.
+Einstieg: [Übergabe](docs/handoffs/2026-10-01-levelanzeige.md).
+
 **Aktueller Abschluss am 01.10.2026: lesbare Hauptnavigation.** Nach erneuter
 ausdrücklicher Fortsetzung ist Produkt `fee42e9`, Cache v45, integriert,
 unabhängig geprüft und privat aktiv. Die drei bisherigen Navigationsknöpfe
