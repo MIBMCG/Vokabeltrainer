@@ -97,6 +97,7 @@ export function levelCard(profile, state = stateFor(profile), display = {kind: '
     class: 'level-progress-track', role: 'progressbar',
     'aria-label': 'Fortschritt zum nächsten Level',
     'aria-valuemin': '0', 'aria-valuemax': '200', 'aria-valuenow': String(levelProgress),
+    'aria-valuetext': `${levelProgress} von 200 Punkten; noch ${200 - levelProgress} Punkte bis Level ${state.level + 1}`,
   }}, [el('span', {attrs: {class: 'level-progress-fill'}})]);
   progress.firstElementChild.style.width = `${levelProgress / 2}%`;
   return el('section', {attrs: {class: 'level-card', 'aria-label': 'Punkte und Level'}}, [
@@ -104,15 +105,17 @@ export function levelCard(profile, state = stateFor(profile), display = {kind: '
     el('div', {attrs: {class: 'level-card-copy'}}, [
       el('div', {attrs: {class: 'level-card-title'}}, [
         el('strong', {text: `Level ${state.level}`, attrs: {'data-level': ''}}),
-        el('span', {text: `${profile.points} Punkte`}),
+        el('span', {text: `${profile.points.toLocaleString('de-DE')} Lernpunkte insgesamt`}),
       ]),
+      el('p', {text: `Zum nächsten Level: ${levelProgress} von 200 Punkten`}),
       progress,
+      el('p', {text: `Noch ${200 - levelProgress} Punkte bis Level ${state.level + 1}`}),
       complete
         ? el('p', {}, [
           el('strong', {text: 'Reise geschafft!'}),
           ' Du kannst weiter Punkte und Level sammeln.',
         ])
-        : el('p', {text: `Noch ${200 - levelProgress} Punkte bis Level ${state.level + 1}`}),
+        : null,
     ]),
   ]);
 }
