@@ -1,5 +1,19 @@
 # Arbeitsstand
 
+**Firefox-Aktualisierung korrigiert (01.10.2026).** Die ausdrückliche
+Freigabe ist umgesetzt: Produkt `6b13780`, Cache v47, akzeptiert den nativen
+Firefox-Absender auch bei separatem JavaScript-Objekt. Speicherung,
+kontrollierte Weiterleitung und Eingabesicherheit bleiben erhalten.
+664/664 Node-Tests, 22 Edge- und zwei Firefox-Updatefälle einschließlich
+ursprünglichem v46 → v47 PASS; unabhängiges Review ohne offenen Befund.
+Worker `8fc4b574-141f-4203-bd80-d2c911385ffb` ist zu 100 Prozent aktiv,
+sieben ausgelieferte Dateien bytegleich. Der vorhandene Testbereich behält
+450 verfügbare Punkte, 2.450 Lernpunkte, Level 13 und Drachenstufe 4.
+Der Nutzer bestätigt das Update in Firefox 156.0.1 ohne Fehlermeldung;
+die Automatikprüfung verwendet Firefox 153. Der zusätzliche Offlinefehler
+tritt bereits auf dem unveränderten v46-Stand auf und bleibt separat offen.
+Keine Pause. [Aktuelle Übergabe](docs/handoffs/2026-10-01-firefox-update.md).
+
 **Levelanzeige verständlich (01.10.2026).** Produkt `1049550`, Cache v46,
 trennt Gesamt-Lernpunkte vom Fortschritt innerhalb des aktuellen Levels.
 Gesammelte und fehlende Punkte stehen am Balken; große Schrift nutzt bei

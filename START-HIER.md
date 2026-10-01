@@ -1,6 +1,14 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Aktueller Abschluss am 01.10.2026:** Gesamtpunkte und Fortschritt zum
+**Aktueller Abschluss am 01.10.2026:** Der Firefox-Updatefehler ist als
+Produkt `6b13780`, Cache v47, korrigiert und privat aktiv. 664/664 Node-Tests,
+22 Edge- und zwei Firefox-Updatefälle sowie unabhängiges Review PASS.
+Der Nutzer bestätigt die Übernahme auch in Firefox 156.0.1 ohne Fehlermeldung.
+Kontrolliertes Update erhält Punkte, Level, Figur und Wortbestand. Keine Pause.
+Der separate Firefox-Offlinenachweis bleibt offen.
+[Aktuelle Übergabe](docs/handoffs/2026-10-01-firefox-update.md).
+
+**Vorheriger Abschluss am 01.10.2026:** Gesamtpunkte und Fortschritt zum
 nächsten Level sind eindeutig beschriftet. Produkt `1049550`, Cache v46,
 privat aktiv; nach unabhängiger Prüfung und kontrolliertem Update bleiben
 Bestände und Figur erhalten. Die Karte ist auch mit großer Schrift lesbar.

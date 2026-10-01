@@ -1,6 +1,20 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-**Aktueller Abschluss am 01.10.2026: eindeutige Levelanzeige.** Produkt
+**Aktueller Abschluss am 01.10.2026: Firefox-Aktualisierung.** Die begrenzte
+Absenderkorrektur ist ausdrücklich freigegeben, als Produkt `6b13780`
+integriert, unabhängig geprüft und privat als Cache v47 aktiv. Firefox
+liefert separate native ServiceWorker-Objekte; Scriptadresse und aktiver
+Zustand werden zusätzlich zur bisherigen Identität geprüft. Speichern
+und Eingabesicherheit bleiben erhalten. 664/664 Node-Tests, 22 Edge- und
+zwei Firefox-Updatefälle PASS. Sieben ausgelieferte Dateien bytegleich;
+kontrolliertes Update erhält 450 verfügbare Punkte, 2.450 Lernpunkte,
+Level 13 und Drachenstufe 4. Automatisiert geprüft ist Firefox 153; der
+Nutzer bestätigt auch in Firefox 156.0.1 die Übernahme ohne Fehlermeldung. Ein zusätzlicher
+Firefox-Offlinetest scheitert bereits auf dem unveränderten Ausgangsstand
+und bleibt separat offen. Keine Pause. Bestehende Bestände erhalten.
+Einstieg: [Übergabe](docs/handoffs/2026-10-01-firefox-update.md).
+
+**Vorheriger Abschluss am 01.10.2026: eindeutige Levelanzeige.** Produkt
 `1049550`, Cache v46, ist unabhängig geprüft und privat aktiv. Die Karte
 unterscheidet Gesamt-Lernpunkte und die 200-Punkte-Spanne bis zum nächsten
 Level; bei wenig Platz stehen die Texte unter der Figur in voller Breite.
