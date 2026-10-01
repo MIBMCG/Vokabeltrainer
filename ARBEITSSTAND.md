@@ -1,5 +1,23 @@
 # Arbeitsstand
 
+**Hauptnavigation lesbar (01.10.2026).** Die kurze Pause ist ausdrücklich
+aufgehoben. Produkt `fee42e9`, Cache v45, beseitigt die verbliebenen
+Wortfragmente der unteren Navigation. Die vorhandenen Knöpfe wechseln bei
+Platzmangel in eine weitere Zeile; unveränderte Schrift und Touchflächen,
+kein Seitenüberlauf und erreichbares Inhaltsende sind bei 320/390 px mit
+200 Prozent Schrift, normalen Handyansichten, Querformat und Desktop
+geprüft. Finale Node-Suite 662/662 und 24/24 Browserfälle PASS, beide
+unabhängigen Reviewstufen ohne Befund. Worker
+`d86b43bd-6b39-4716-99af-1d3620580078` ist seit 01.10.2026, 16:18:46.988 UTC
+zu 100 Prozent aktiv; sieben ausgelieferte Dateien bytegleich bestätigt.
+Das kontrollierte Update im bestehenden Testbrowser erhält 40 verfügbare
+Punkte, 2.040 Lernpunkte, Level 11 und Drachenstufe 4; neue Navigation sichtbar
+aktiv und Google-Hinweis ohne Anmeldung verschwunden. Produktcommit auf
+beiden GitHub-Zweigen exakt bestätigt. Dokumentationsnachtrag folgt separat.
+Keine Pause aktiv. Physische Geräte-/Safari-Abnahme, Hardware-Randabstände,
+echte Google-Zeit und natürlicher Tokenablauf bleiben gesondert offen.
+[Aktuelle Übergabe](docs/handoffs/2026-10-01-hauptnavigation.md).
+
 **Kinderansichten und Kaufdialog korrigiert (01.10.2026).** Nach ausdrücklicher
 Fortsetzung sind Produkt `ef17de8` und Cache v44 integriert, unabhängig geprüft
 und privat aktiv. Begrenzte Raster und Textumbruch beheben fünf ursprüngliche

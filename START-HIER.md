@@ -1,6 +1,15 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Abschluss am 01.10.2026:** Kinderansichten, verbundene Entwicklung, Shop und
+**Aktueller Abschluss am 01.10.2026:** Die untere Hauptnavigation ist auch
+bei schmaler Ansicht und großer Schrift vollständig lesbar. Produkt
+`fee42e9`, Cache v45, ist privat aktiv; sieben Dateien bytegleich und beide
+GitHub-Zweige exakt bestätigt. Finale 662 Node- und 24 Browserfälle sowie
+unabhängige Reviews PASS. Punkte, Level und Figur sind nach kontrolliertem
+Update erhalten. Keine Pause aktiv; physische Geräte-/Safari-Abnahme und
+reale Google-Nachweise bleiben offen.
+[Aktuelle Übergabe](docs/handoffs/2026-10-01-hauptnavigation.md).
+
+**Vorheriger Abschluss am 01.10.2026:** Kinderansichten, verbundene Entwicklung, Shop und
 Kaufdialog passen nach Korrektur auch bei schmaler Ansicht und großer Schrift.
 Produkt `ef17de8`, Cache v44, ist privat aktiv; sieben Dateien bytegleich und
 Produktcommit auf beiden GitHub-Zweigen exakt bestätigt. Finale fünf Browser-

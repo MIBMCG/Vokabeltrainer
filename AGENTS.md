@@ -1,6 +1,20 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-**Aktueller Abschluss am 01.10.2026: Kinderansichten und Kaufdialog.** Die
+**Aktueller Abschluss am 01.10.2026: lesbare Hauptnavigation.** Nach erneuter
+ausdrücklicher Fortsetzung ist Produkt `fee42e9`, Cache v45, integriert,
+unabhängig geprüft und privat aktiv. Die drei bisherigen Navigationsknöpfe
+wechseln bei großer Schrift und wenig Platz in zwei Reihen, ohne Wörter zu
+zerlegen oder das Seitenende zu verdecken. Finale 662/662 Node- und 24/24
+Browserfälle sowie beide unabhängigen Reviewstufen PASS. Sieben ausgelieferte
+Dateien bytegleich; kontrolliertes Update erhält 40 verfügbare Punkte,
+2.040 Lernpunkte, Level 11 und Drachenstufe 4. Produktcommit auf beiden
+GitHub-Zweigen exakt bestätigt. Keine Pause aktiv. Physische Safari-/Geräte-
+Abnahme, echte Google-Zeiten und natürlicher Tokenablauf bleiben offen;
+keine abgeschlossenen Bild-/Layoutpakete wiederholen. Bestehende Bestände
+weiterverwenden. Einstieg:
+[Übergabe](docs/handoffs/2026-10-01-hauptnavigation.md).
+
+**Vorheriger Abschluss am 01.10.2026: Kinderansichten und Kaufdialog.** Die
 Pause ist ausdrücklich aufgehoben. Produkt `ef17de8`, Cache v44, korrigiert
 die Überläufe bei großer Schrift auf Übungsstart, Inselreise und Avatarseite
 sowie verbundener Entwicklung, Shop und Kaufvorschau. Finale fünf betroffene
