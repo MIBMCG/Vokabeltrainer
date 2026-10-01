@@ -4,16 +4,22 @@
 
 - [ ] **Adresse ohne persönlichen Namen einrichten** (Nutzerauftrag vom
   01.10.2026). Die bisherige Startadresse enthält den Namen des Nutzers.
-  Künftig soll die Adresse zum vorgesehenen Programmnamen passen. Laut Nutzer
-  wurde bereits eine E-Mail-Adresse mit diesem Namen angelegt; der genaue
-  Programmname und die E-Mail-Adresse sind in den geprüften Projektunterlagen
-  noch nicht dokumentiert und vor der Umsetzung zu ermitteln.
-  Anschließend die passende Startadresse abstimmen, Google-Anmeldung und
+  Künftig soll die Adresse zum vorgesehenen Programmnamen passen. Der Nutzer
+  nennt `lejeadventure@gmail.com`; Arbeitsname zunächst LejeAdventure.
+  Bestätigter Umfang: nur App-Betrieb umziehen, Lernbereich im bisherigen
+  Google-Konto lassen. Die Google-Inhabereinladung ist ausdrücklich bestätigt
+  und gespeichert, ihre Annahme steht aus. Neuer Cloudflare-Zugang und
+  `lejeadventure.workers.dev` sind geprüft, der Workername `app` ist verfügbar.
+  Konkrete Einrichtung bestätigt: Worker-Startvorlage, neue Google-Adressen
+  und getrennte D1-Sitzungsdatenbank angelegt; Upload-Probelauf und acht
+  Stagingtests PASS. Upload-Schlüssel und Google-App-Schlüssel sind noch
+  persönlich einzutragen. Anschließend echte Google-Anmeldung und
   App-Verknüpfungen anpassen sowie die Startanleitung aktualisieren.
   Den Wechsel auf eine andere Adresse mit Erhalt vorhandener Lernbestände,
   Punkte, Besitz und Geräteverbindungen vorbereiten und prüfen. Eine eigene
   kostenpflichtige Domain ist damit noch nicht beauftragt. Die Aufgabe ist
-  vorgemerkt; eine Adressumstellung wurde noch nicht vorgenommen.
+  in Vorbereitung; eine Adressumstellung wurde noch nicht vorgenommen.
+  Einstieg: [Einrichtungsübergabe](handoffs/2026-10-01-lejeadventure-einrichtung.md).
 
 Änderung der Prüfungsreihenfolge am 17.09.2026: Der Nutzer beauftragt ausdrücklich, zuerst die vollständige App gemäß bestätigtem Gesamtentwurf umzusetzen und erst danach beim Freund auf iPhone/iPad zu testen. Die bisherige Geräteprüfung vor umfangreicher Lernoberfläche ist damit als Entwicklungssperre aufgehoben. Reale Geräteabnahme bleibt offen und darf nicht als bestanden gelten. Bereits bestätigte manuelle Google-/Drive-Tests in zwei Browsern gelten weiter. Keine neue pauschale Startfreigabe verlangen; Hosting/Veröffentlichung und Kostenmodell werden dadurch nicht automatisch geändert.
 

@@ -1,5 +1,23 @@
 # Hier mit der Weiterarbeit beginnen
 
+**Abendlicher Zwischenstand (01.10.2026):** Für den Nutzer, der ins Bett möchte,
+wird jetzt nur gesichert. Danach erst bei erneuter Fortsetzung weiterarbeiten.
+Neue Adresse vorbereitet, Trainer noch nicht bereitgestellt; Cloudflare-
+Schlüsseleingabe ungültig, Betreiber-/Anmeldenachweise offen.
+[Gesicherter Einstieg](docs/handoffs/2026-10-01-lejeadventure-einrichtung.md).
+
+**Aktuelle Einrichtung (01.10.2026):** Neue Adresse und App-Betrieb für
+`lejeadventure@gmail.com` vorbereiten. Vorhandene Lernbereiche bleiben ausdrücklich
+im bisherigen Google-Konto. Zusätzliche Google-Inhabereinladung bestätigt und
+gespeichert, Annahme ausstehend. Neues Cloudflare-Konto und Subdomain
+`lejeadventure.workers.dev` geprüft; konkrete Einrichtung/OAuth-Erweiterung
+bestätigt. Worker-Startvorlage `app`, neue Google-Adressen und D1-Sitzungsschema
+angelegt; Upload-Probelauf und acht Stagingtests PASS. Schlüssel fehlen noch,
+noch keine Trainer-Bereitstellung.
+Produkt `6b13780`, Cache v47, und bisherige App erhalten. Für den Abend
+nach Sicherung unterbrechen.
+[Aktuelle Übergabe](docs/handoffs/2026-10-01-lejeadventure-einrichtung.md).
+
 **Aktueller Abschluss am 01.10.2026:** Der Firefox-Updatefehler ist als
 Produkt `6b13780`, Cache v47, korrigiert und privat aktiv. 664/664 Node-Tests,
 22 Edge- und zwei Firefox-Updatefälle sowie unabhängiges Review PASS.

@@ -1,5 +1,30 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
+**Abendlicher Zwischenstand am 01.10.2026:** Der Nutzer möchte ins Bett und
+bittet um zügigen Abschluss. Nur die Einrichtungssicherung abschließen; danach
+bis zur erneuten Fortsetzung keine Anbieter-, Schlüssel- oder Produktarbeit.
+Neue LejeAdventure-Adresse/OAuth-Erweiterung, Worker-Startvorlage und D1 sind
+vorbereitet; Trainer ist dort noch nicht bereitgestellt. Die persönliche
+Upload-Schlüsseleingabe wird von Cloudflare wegen ungültigem Format abgelehnt;
+Zugang ist nicht bestätigt. Bisheriges Produkt `6b13780`, Cache v47, erhalten.
+Einstieg: [Einrichtungsübergabe](docs/handoffs/2026-10-01-lejeadventure-einrichtung.md).
+
+**Aktuelle Einrichtung am 01.10.2026: LejeAdventure.** Der Nutzer beauftragt
+die neue Adresse und das Betreiberkonto `lejeadventure@gmail.com`. Ausdrücklich
+nur App-Betrieb umziehen; Lernbereiche im bisherigen Google-Konto lassen.
+Die zusätzliche Inhaberrolle im bestehenden Projekt `vokabeltrainer-508915`
+ist ausdrücklich bestätigt und gespeichert. Google meldet noch ausstehende
+Annahme der Einladung. Neues Cloudflare-Konto und Subdomain
+`lejeadventure.workers.dev` sind geprüft. Konkrete Einrichtung/OAuth-Erweiterung
+bestätigt; Worker-Startvorlage `app`, neue Google-Adressen und getrennte D1 samt
+Schema angelegt. Upload-Probelauf und acht Stagingtests PASS. Neue Schlüssel
+und eigentliche Trainer-Bereitstellung stehen aus.
+Die bisherige App bleibt auf Produkt `6b13780`, Cache v47, erhalten.
+Vorhandenen OAuth-Client und bestehende Lernkonten verwenden. Keine Lernbestände
+neu anlegen, ersetzen oder in das Betreiberkonto verschieben. Für den Abend
+nach Sicherung unterbrechen.
+Einstieg: [Einrichtungsübergabe](docs/handoffs/2026-10-01-lejeadventure-einrichtung.md).
+
 **Aktueller Abschluss am 01.10.2026: Firefox-Aktualisierung.** Die begrenzte
 Absenderkorrektur ist ausdrücklich freigegeben, als Produkt `6b13780`
 integriert, unabhängig geprüft und privat als Cache v47 aktiv. Firefox

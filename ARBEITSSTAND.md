@@ -1,5 +1,26 @@
 # Arbeitsstand
 
+**Abendlicher Zwischenstand (01.10.2026):** Der Nutzer möchte ins Bett und
+bittet um zügigen Abschluss. Nur noch Sicherung; danach Einrichtung bei erneuter
+Fortsetzung weiterführen. Der neue Cloudflare-Token ist persönlich erzeugt und
+verschlüsselt eingegeben, wird aber zweimal mit ungültigem Headerformat
+abgelehnt. Keine Kontozuordnung bestätigt und keine neue Trainer-Bereitstellung.
+[Wiederaufnahme](docs/handoffs/2026-10-01-lejeadventure-einrichtung.md).
+
+**Aktuelle Einrichtung (01.10.2026): LejeAdventure.** Der Nutzer beauftragt
+die neue Adresse und `lejeadventure@gmail.com` als Betreiberkonto. Nur der
+App-Betrieb zieht um; vorhandene Lernbereiche bleiben im bisherigen Google-Konto.
+Die zusätzliche Google-Inhaberrolle ist ausdrücklich bestätigt und gespeichert;
+Google meldet „Einladung gesendet. Annahme ausstehend“. Neuer Cloudflare-Zugang,
+Subdomain `lejeadventure.workers.dev` und verfügbarer Workername `app` sind
+geprüft; konkrete Einrichtung/OAuth-Erweiterung ausdrücklich bestätigt.
+Worker-Startvorlage, neue Google-Adressen und getrennte D1 samt Schema
+angelegt. Upload-Probelauf und acht Stagingtests PASS; Schlüssel und eigentliche
+Trainer-Bereitstellung stehen aus.
+Produkt `6b13780`, Cache v47, bleibt
+unverändert an der bisherigen Adresse aktiv. Keine Lernbestände verändert,
+keine neue Trainer-Bereitstellung. [Aktueller Einstieg](docs/handoffs/2026-10-01-lejeadventure-einrichtung.md).
+
 **Firefox-Aktualisierung korrigiert (01.10.2026).** Die ausdrückliche
 Freigabe ist umgesetzt: Produkt `6b13780`, Cache v47, akzeptiert den nativen
 Firefox-Absender auch bei separatem JavaScript-Objekt. Speicherung,
@@ -24,12 +45,13 @@ zu 100 Prozent aktiv. Kontrolliertes Update erhält den jetzt beobachteten
 Teststand mit 450 verfügbaren Punkten, 2.450 Lernpunkten, Level 13 und
 Drachenstufe 4. Keine Pause. [Aktuelle Übergabe](docs/handoffs/2026-10-01-levelanzeige.md).
 
-**Neue vorgemerkte Aufgabe (01.10.2026):** Die Startadresse soll den künftigen
-Programmnamen statt des persönlichen Namens enthalten. Laut Nutzer besteht
-bereits eine E-Mail-Adresse mit diesem Namen. Genauen Namen vor Umsetzung
-ermitteln; den Adresswechsel mit Erhalt bestehender Bestände und Anmeldungen
-vorbereiten. Details in der [To-do-Liste](docs/ROADMAP.md#ergänzte-offene-aufgabe-programmname-und-startadresse).
-Noch keine Änderung an der laufenden App oder ihrer Adresse.
+**Beauftragte Adressaufgabe (01.10.2026):** Die Startadresse soll den künftigen
+Programmnamen statt des persönlichen Namens enthalten. Das Betreiberkonto ist
+`lejeadventure@gmail.com`, Arbeitsname LejeAdventure. Lernbereiche bleiben im
+bisherigen Google-Konto. Der Einrichtungsstand steht oben; Details in der
+[To-do-Liste](docs/ROADMAP.md#ergänzte-offene-aufgabe-programmname-und-startadresse).
+Noch keine Änderung an der laufenden App oder ihrer Adresse. Für den Abend
+nach Sicherung unterbrechen.
 
 **Hauptnavigation lesbar (01.10.2026).** Die kurze Pause ist ausdrücklich
 aufgehoben. Produkt `fee42e9`, Cache v45, beseitigt die verbliebenen
