@@ -19,7 +19,7 @@ async function setup(page) {
   await page.locator('#profile-list').waitFor();
 }
 
-test('avatar colour forms share the pending save boundary and show errors beside the edited form', {timeout: 30_000}, async () => {
+test('selected human colours stay locked during save and show errors beside the edited form', {timeout: 30_000}, async () => {
   const harness = await createTrainerHarness();
   const {page} = await harness.newDevice();
   try {
@@ -36,16 +36,13 @@ test('avatar colour forms share the pending save boundary and show errors beside
       });
     });
     const fixture = page.locator('#avatar-save-fixture');
-    await fixture.locator('.classic-avatar > summary').click();
     const human = fixture.getByRole('form', {name: 'Entdeckerin gestalten', exact: true});
-    const classic = fixture.getByRole('form', {name: 'Klassischen Avatar gestalten', exact: true});
     await human.locator('input[name="clothing"][value="1"]').check();
-    assert.equal(await classic.locator('input[name="clothing"][value="2"]').isDisabled(), true,
-      'the other colour form must not accept an unsaved selection');
+    assert.equal(await human.locator('input[name="clothing"][value="2"]').isDisabled(), true,
+      'the colour form must not accept another choice during an unsaved selection');
     await page.evaluate(() => window.rejectAvatarSave(new Error('Synthetischer Speicherfehler')));
     await human.getByText('Synthetischer Speicherfehler', {exact: true}).waitFor();
-    assert.equal(await classic.getByText('Synthetischer Speicherfehler', {exact: true}).count(), 0);
-    assert.equal(await classic.locator('input[name="clothing"][value="2"]').isDisabled(), false);
+    assert.equal(await human.locator('input[name="clothing"][value="2"]').isDisabled(), false);
     assert.equal(await human.locator('input[name="clothing"][value="1"]').isDisabled(), false);
   } finally {
     await harness.close();
@@ -192,14 +189,17 @@ test('selected girl appearance is shared by avatar, practice and journey and sur
     await page.locator('input[name="clothing"][value="3"]:visible').check();
     await selected.locator('[data-art-key="figure-explorer-girl-clothing-3"]').waitFor();
 
-    // Editing the retained classic controls must not collapse them or move
-    // keyboard focus into the other, identically named colour form.
-    await page.locator('.classic-avatar > summary').click();
+    // Classic controls become available after deliberately selecting classic.
+    await page.getByRole('button', {name: 'Klassisch auswählen'}).click();
+    await page.locator('.classic-avatar > summary').waitFor();
     await page.locator('.classic-avatar input[name="clothing"][value="4"]').check();
-    await selected.locator('[data-art-key="figure-explorer-girl-clothing-4"]').waitFor();
     assert.equal(await page.locator('.classic-avatar').evaluate((node) => node.open), true);
+    assert.equal(await page.locator('.classic-avatar input[name="clothing"][value="4"]').isChecked(), true);
     assert.equal(await page.evaluate(() => document.activeElement?.closest('form')?.getAttribute('aria-label')),
       'Klassischen Avatar gestalten');
+    await girlCard.getByRole('button', {name: 'Grundform auswählen'}).click();
+    await girlCard.getByRole('button', {name: 'Ausgewählt'}).waitFor();
+    await selected.locator('[data-art-key="figure-explorer-girl-clothing-4"]').waitFor();
 
     await page.getByRole('button', {name: 'Üben'}).click();
     await assertLoadedFigure(page, 'explorer-girl');
