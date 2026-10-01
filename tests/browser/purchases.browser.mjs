@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdir} from 'node:fs/promises';
+import {mkdir, writeFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
 
 import {createTrainerHarness} from './trainer-harness.mjs';
@@ -174,6 +174,46 @@ test('purchase UI stays usable on desktop and narrow screens with keyboard focus
   await mkdir(resultsDirectory, {recursive: true});
   const harness = await createTrainerHarness();
   const {page} = await harness.newDevice({viewport: {width: 390, height: 844}});
+  const enlargedResults = [];
+  const layoutViolations = [];
+  const inspect = async (width, phase, selectors) => {
+    const geometry = await page.evaluate((selectors) => {
+      const viewport = document.documentElement.clientWidth;
+      return {
+        viewport,
+        scrollWidth: document.documentElement.scrollWidth,
+        textOverflow: [...document.querySelectorAll(selectors)]
+          .filter((node) => node.getClientRects().length && ['H3', 'BUTTON'].includes(node.tagName) && node.scrollWidth > node.clientWidth + 1)
+          .map((node) => ({tag: node.tagName, text: node.textContent?.trim().slice(0, 40),
+            client: node.clientWidth, scroll: node.scrollWidth})),
+        dialogOverflow: [...document.querySelectorAll('.purchase-dialog, .purchase-dialog .dialog-actions, .purchase-dialog button, .purchase-dialog .summary-list, .purchase-dialog dd')]
+          .filter((node) => node.getClientRects().length && node.scrollWidth > node.clientWidth + 1)
+          .map((node) => ({tag: node.tagName, className: node.className,
+            text: node.textContent?.trim().slice(0, 40), client: node.clientWidth, scroll: node.scrollWidth})),
+        dialogOutside: (() => {
+          const dialog = document.querySelector('.purchase-dialog');
+          if (!dialog?.getClientRects().length) return [];
+          const bounds = dialog.getBoundingClientRect();
+          return [...dialog.querySelectorAll('button')]
+            .filter((node) => node.getClientRects().length)
+            .map((node) => ({node, rect: node.getBoundingClientRect()}))
+            .filter(({rect}) => rect.left < bounds.left - 1 || rect.right > bounds.right + 1)
+            .map(({node, rect}) => ({text: node.textContent?.trim().slice(0, 40),
+              left: Math.round(rect.left), right: Math.round(rect.right)}));
+        })(),
+        outside: [...document.querySelectorAll(selectors)]
+          .filter((node) => node.getClientRects().length)
+          .map((node) => ({node, rect: node.getBoundingClientRect()}))
+          .filter(({rect}) => rect.width > 0 && (rect.left < -1 || rect.right > viewport + 1))
+          .map(({node, rect}) => ({tag: node.tagName, className: node.className,
+            text: node.textContent?.trim().slice(0, 40), left: Math.round(rect.left), right: Math.round(rect.right)})),
+      };
+    }, selectors);
+    const result = {width, phase, ...geometry};
+    enlargedResults.push(result);
+    console.log(`COMMERCE_LAYOUT ${JSON.stringify(result)}`);
+    if (geometry.scrollWidth !== width || geometry.outside.length || geometry.textOverflow.length || geometry.dialogOverflow.length || geometry.dialogOutside.length) layoutViolations.push(result);
+  };
   try {
     await page.goto(harness.baseUrl);
     await setup(page);
@@ -185,6 +225,76 @@ test('purchase UI stays usable on desktop and narrow screens with keyboard focus
     assert.equal(await tab.evaluate((node) => document.activeElement === node), true);
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
     await page.screenshot({path: resolve(resultsDirectory, 'mobile-inactive.png'), fullPage: true});
+
+    const earned = await earnedState(await productState(page));
+    await writeProductState(page, earned.state);
+    await page.reload();
+    await page.getByRole('button', {name: 'Profil wechseln', exact: true}).waitFor();
+    await openAdultSettings(page);
+    await page.getByRole('button', {name: 'Mit Google verbinden'}).click();
+    await page.getByRole('button', {name: 'Neuen Lernbereich anlegen'}).click();
+    while ((await productState(page)).binding === null) await page.waitForTimeout(50);
+    await waitForOutbox(page, 0);
+    await page.getByRole('button', {name: 'Einstellungen', exact: true}).click();
+    await page.locator('#settings-task-advanced > summary').click();
+    await page.getByRole('button', {name: 'Daten für Figuren und Käufe aktualisieren'}).click();
+    await page.getByRole('button', {name: 'Aktualisierung jetzt durchführen'}).click();
+    await page.getByText('Figuren und Käufe sind bereit.', {exact: true}).waitFor({timeout: 60_000});
+    await page.getByRole('button', {name: 'Zur Profilauswahl'}).click();
+    await page.getByRole('button', {name: /Ada/}).first().click();
+    await page.getByRole('button', {name: 'Mein Avatar'}).click();
+
+    for (const width of [320, 390]) {
+      await page.setViewportSize({width, height: width === 320 ? 568 : 844});
+      await page.evaluate(() => { document.documentElement.style.fontSize = '200%'; });
+      const evolutionTab = page.getByRole('button', {name: 'Entwicklung', exact: true});
+      await evolutionTab.focus();
+      assert.equal(await evolutionTab.evaluate((node) => document.activeElement === node), true);
+      await evolutionTab.click();
+      await page.locator('.evolution-card').first().waitFor();
+      await inspect(width, 'evolution', '.commerce-panel, .commerce-tabs, .commerce-tabs button, .commerce-balance, .evolution-summary, .evolution-next, .evolution-card, .evolution-card button');
+      await page.locator('.evolution-summary').scrollIntoViewIfNeeded();
+      await page.screenshot({path: resolve(resultsDirectory, `mobile-connected-${width}-200-evolution.png`)});
+      await page.getByRole('button', {name: 'Für 200 Punkte entwickeln'}).click();
+      const dialog = page.locator('.purchase-dialog');
+      await dialog.waitFor();
+      await dialog.locator('.summary-list').scrollIntoViewIfNeeded();
+      await page.screenshot({path: resolve(resultsDirectory, `mobile-connected-${width}-200-evolution-preview-summary.png`)});
+      await dialog.getByRole('button', {name: 'Kauf verbindlich bestätigen'}).focus();
+      assert.equal(await dialog.evaluate((node) => node.contains(document.activeElement)), true);
+      assert.match(await dialog.innerText(), /Preis.*200 Punkte.*Danach verfügbar/s);
+      await inspect(width, 'evolution-preview', '.purchase-dialog, .purchase-dialog button, .purchase-dialog dl, .purchase-dialog dd');
+      await page.screenshot({path: resolve(resultsDirectory, `mobile-connected-${width}-200-evolution-preview.png`)});
+      await dialog.getByRole('button', {name: 'Abbrechen'}).focus();
+      await page.screenshot({path: resolve(resultsDirectory, `mobile-connected-${width}-200-evolution-preview-actions.png`)});
+      await dialog.getByRole('button', {name: 'Abbrechen'}).click();
+      await dialog.waitFor({state: 'detached'});
+
+      const shopTab = page.getByRole('button', {name: 'Shop', exact: true});
+      await shopTab.focus();
+      assert.equal(await shopTab.evaluate((node) => document.activeElement === node), true);
+      await shopTab.click();
+      await page.locator('.commerce-card').first().waitFor();
+      await inspect(width, 'shop', '.commerce-panel, .commerce-tabs, .commerce-tabs button, .commerce-balance, .commerce-grid, .commerce-card, .commerce-card h3, .commerce-card button');
+      await page.locator('.commerce-card').first().scrollIntoViewIfNeeded();
+      await page.screenshot({path: resolve(resultsDirectory, `mobile-connected-${width}-200-shop.png`)});
+      await page.getByRole('button', {name: /Für \d+ Punkte freischalten/}).first().click();
+      await dialog.waitFor();
+      await dialog.locator('.summary-list').scrollIntoViewIfNeeded();
+      await page.screenshot({path: resolve(resultsDirectory, `mobile-connected-${width}-200-shop-preview-summary.png`)});
+      await dialog.getByRole('button', {name: 'Kauf verbindlich bestätigen'}).focus();
+      assert.equal(await dialog.evaluate((node) => node.contains(document.activeElement)), true);
+      await inspect(width, 'shop-preview', '.purchase-dialog, .purchase-dialog button, .purchase-dialog dl, .purchase-dialog dd');
+      await page.screenshot({path: resolve(resultsDirectory, `mobile-connected-${width}-200-shop-preview.png`)});
+      await dialog.getByRole('button', {name: 'Abbrechen'}).focus();
+      await page.screenshot({path: resolve(resultsDirectory, `mobile-connected-${width}-200-shop-preview-actions.png`)});
+      await dialog.getByRole('button', {name: 'Abbrechen'}).click();
+      await dialog.waitFor({state: 'detached'});
+      assert.equal((await productState(page)).commerce.jobs.length, 0, 'opening previews must not create a purchase');
+      assert.match(await page.locator('.commerce-balance').innerText(), /1600 Verfügbare Punkte/);
+    }
+    await writeFile(resolve(resultsDirectory, 'mobile-connected-200-layout.json'), JSON.stringify(enlargedResults, null, 2) + '\n');
+    assert.deepEqual(layoutViolations, [], JSON.stringify(layoutViolations));
   } finally {
     await harness.close();
   }
