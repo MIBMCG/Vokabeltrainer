@@ -1,6 +1,21 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-**Aktuelle Steuerung: Pause am 30.09.2026.** Der Nutzer sagt nach dem
+**Aktueller Abschluss am 01.10.2026: Kinderansichten und Kaufdialog.** Die
+Pause ist ausdrücklich aufgehoben. Produkt `ef17de8`, Cache v44, korrigiert
+die Überläufe bei großer Schrift auf Übungsstart, Inselreise und Avatarseite
+sowie verbundener Entwicklung, Shop und Kaufvorschau. Finale fünf betroffene
+Browser-/Updatefälle und beide unabhängigen Reviewstufen PASS; 662/662 Node-
+Tests vor dem letzten reinen CSS-Nachschliff bestanden. Sieben ausgelieferte
+Dateien bytegleich; kontrolliertes Update erhält 40 verfügbare Punkte,
+2.040 Lernpunkte, Level 11 und Drachenstufe 4. Produktcommit auf beiden
+GitHub-Zweigen exakt bestätigt. Der Nutzer hat keine Excel-Datei; eine
+synthetische Texttabelle besteht und die Anleitung enthält ein kopierbares
+Beispiel. Eine Datei ist keine Voraussetzung. Keine neue Pause angeordnet.
+Physische Geräte-/Safari-Abnahme und weitere reale Nachweise bleiben offen;
+vorhandene Bestände weiterverwenden. Einstieg:
+[Übergabe](docs/handoffs/2026-10-01-handyansichten.md).
+
+**Historische Steuerung: Pause am 30.09.2026.** Der Nutzer sagt nach dem
 abgeschlossenen Handy-Layout-Paket: „dann geht es weiter aber nicht mehr heute“.
 Nur diesen Pausenvermerk sichern; danach keine Produktarbeit, Testsitzung oder
 Bereitstellung bis zur ausdrücklichen Fortsetzung. Kein automatischer Neustart

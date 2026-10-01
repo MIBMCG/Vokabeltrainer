@@ -32,6 +32,18 @@ Abgleich ersetzt keine offenen Eingaben in anderen Bereichen.
 
 ## Wörter aus einer Tabelle übernehmen
 
+Eine Excel-Datei ist dafür nicht nötig. Auch kopierter Text mit einem Wortpaar
+pro Zeile funktioniert, wenn Deutsch und Englisch durch einen Tabulator
+getrennt sind. Diese Beispielzeilen lassen sich direkt ausprobieren:
+
+```text
+Tisch	table
+Stuhl	chair
+Fenster	window
+Tür	door
+Schüler	pupil|student
+```
+
 1. In Excel oder einer anderen Tabelle die Wortzeilen ohne Spaltenüberschriften
    markieren: Deutsch, Englisch und optional eine dritte Spalte mit Hinweis.
    Mehrere englische Lösungen innerhalb einer Zelle mit `|` trennen.

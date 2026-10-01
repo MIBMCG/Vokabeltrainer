@@ -1,6 +1,16 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Pause seit 30.09.2026:** Der Nutzer möchte heute nicht weiterarbeiten.
+**Abschluss am 01.10.2026:** Kinderansichten, verbundene Entwicklung, Shop und
+Kaufdialog passen nach Korrektur auch bei schmaler Ansicht und großer Schrift.
+Produkt `ef17de8`, Cache v44, ist privat aktiv; sieben Dateien bytegleich und
+Produktcommit auf beiden GitHub-Zweigen exakt bestätigt. Finale fünf Browser-
+und Updatefälle sowie unabhängige Reviews PASS. Punkte, Level und Figur bleiben
+nach kontrolliertem Update erhalten. Texttabellen funktionieren ohne Excel-Datei;
+die Anleitung enthält ein Beispiel. Keine neue Pause angeordnet. Physische
+Handy-/Safari-Abnahme bleibt offen.
+[Aktuelle Übergabe](docs/handoffs/2026-10-01-handyansichten.md).
+
+**Historische Pause seit 30.09.2026:** Der Nutzer möchte heute nicht weiterarbeiten.
 Erst nach ausdrücklicher Fortsetzung weiterarbeiten, nicht automatisch am
 Folgetag. Produkt `b440b5e`, Cache v43, bleibt unverändert. Nächster Schritt
 ist der Excel-Praxistest mit echter Wortliste und gewünschter Zuordnung.

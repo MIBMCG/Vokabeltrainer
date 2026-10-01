@@ -1,6 +1,24 @@
 # Arbeitsstand
 
-**Pause am 30.09.2026.** Nach Abschluss und GitHub-Sicherung auf beiden
+**Kinderansichten und Kaufdialog korrigiert (01.10.2026).** Nach ausdrücklicher
+Fortsetzung sind Produkt `ef17de8` und Cache v44 integriert, unabhängig geprüft
+und privat aktiv. Begrenzte Raster und Textumbruch beheben fünf ursprüngliche
+Überläufe bei großer Schrift; die verbundene Zusatzprüfung korrigiert auch
+Entwicklung, Shopüberschriften/-buttons und die Kaufvorschau. Finale fünf
+Browser-/Updatefälle und acht verbundene Zustände PASS. Zuvor elf Browserfälle
+und 662/662 Node-Tests; danach nur CSS nachgeschliffen und betroffene Browserfälle
+erneut geprüft. Aufgabenreview, Nachprüfung und Gesamtbranchreview PASS.
+Worker `c8223625-5a08-4718-9bf5-ae0952c8855c` ist seit 10:30:29.253 UTC zu
+100 Prozent aktiv. Sieben ausgelieferte Dateien bytegleich. Kontrolliertes
+Update erhält 40 verfügbare Punkte, 2.040 Lernpunkte, Level 11 und Drachenstufe 4;
+Google-Hinweis verschwindet ohne neue Anmeldung. Produktcommit auf beiden
+GitHub-Zweigen exakt bestätigt. Die synthetische Zehn-Zeilen-Texttabelle ist
+nach Speicherung/Reload samt Ada-Zuordnung erhalten; eine echte Excel-Datei
+ist nicht vorhanden und keine Voraussetzung. Keine neue Pause. Physische
+Geräte-/Safari-Abnahme und reale Laufzeitnachweise bleiben offen.
+[Aktuelle Übergabe](docs/handoffs/2026-10-01-handyansichten.md).
+
+**Historische Pause am 30.09.2026.** Nach Abschluss und GitHub-Sicherung auf beiden
 Zweigen (`0371106`) wünscht der Nutzer heute keine weitere Arbeit. Dieser
 Pausenvermerk wird separat gesichert; keine weitere Produktarbeit oder
 Testsitzung bis zur ausdrücklichen Fortsetzung. Produkt `b440b5e`, Cache v43,
