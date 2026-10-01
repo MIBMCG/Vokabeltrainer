@@ -1,6 +1,6 @@
 const SCOPE = self.registration.scope;
 const CACHE_OWNER = `vokabeltrainer-product:${encodeURIComponent(new URL(SCOPE).pathname)}:`;
-const CACHE_NAME = `${CACHE_OWNER}v46`;
+const CACHE_NAME = `${CACHE_OWNER}v47`;
 const EVOLUTION_KEYS = [
   ...['dragon', 'deer-mist', 'tiger', 'horse', 'unicorn-moon', 'pegasus-star', 'dragon-crystal',
     'wolf-aurora', 'panther-shadow', 'griffin-storm', 'phoenix']
@@ -163,7 +163,14 @@ self.addEventListener('message', (event) => {
   const requestId = event.data?.requestId;
   if (typeof requestId !== 'string' || !requestId) return;
   if (event.data.type === 'ACTIVATE_UPDATE') {
-    if (event.source !== self.registration.active) return;
+    const active = self.registration.active;
+    const source = event.source;
+    if (!active || !source) return;
+    // Firefox can expose separate native wrappers for the same active worker.
+    const activeWrapper = typeof ServiceWorker === 'function' && source instanceof ServiceWorker
+      && source.scriptURL === active.scriptURL && source.state === active.state
+      && ['activating', 'activated'].includes(source.state);
+    if (source !== active && !activeWrapper) return;
     event.waitUntil(self.skipWaiting());
     return;
   }

@@ -5,6 +5,13 @@ import vm from 'node:vm';
 
 const scope = 'https://example.test/repo/trainer/';
 
+class FakeServiceWorker {
+  constructor(scriptURL, state = 'activated') {
+    this.scriptURL = scriptURL;
+    this.state = state;
+  }
+}
+
 async function loadWorker({failInstall = false, currentCache = false, workerScope = scope, hasWaiting = true} = {}) {
   const listeners = new Map();
   const cacheOwner = `vokabeltrainer-product:${encodeURIComponent(new URL(workerScope).pathname)}:`;
@@ -25,7 +32,7 @@ async function loadWorker({failInstall = false, currentCache = false, workerScop
     url: `${workerScope}index.html`,
     postMessage(message) { calls.responses.push(message); },
   }];
-  const activeWorker = {state: 'activated'};
+  const activeWorker = new FakeServiceWorker(`${workerScope}sw.js`);
   const waitingWorker = {
     postMessage(message) {
       calls.relayed.push(message);
@@ -67,7 +74,7 @@ async function loadWorker({failInstall = false, currentCache = false, workerScop
     addEventListener(type, listener) { listeners.set(type, listener); },
   };
   const context = vm.createContext({
-    self, caches, URL, Request, Response, Promise, Set,
+    self, caches, URL, Request, Response, Promise, Set, ServiceWorker: FakeServiceWorker,
     fetch: async (request) => {
       calls.fetch.push(request.url);
       return new Response(`network:${request.url}`);
@@ -227,6 +234,33 @@ test('waiting worker accepts activation only from the registered active worker',
     source: worker.activeWorker,
   });
   assert.equal(worker.calls.skipWaiting, 1);
+});
+
+test('waiting worker accepts a Firefox wrapper for the active worker with the same script and state', async () => {
+  const worker = await loadWorker();
+  const source = new FakeServiceWorker(worker.activeWorker.scriptURL, worker.activeWorker.state);
+  assert.notEqual(source, worker.activeWorker);
+  await dispatchExtendable(worker.listeners.get('message'), {
+    data: {type: 'ACTIVATE_UPDATE', requestId: 'firefox-wrapper'}, source,
+  });
+  assert.equal(worker.calls.skipWaiting, 1);
+});
+
+test('activation rejects foreign worker scripts, stale states, and clients imitating worker fields', async () => {
+  const worker = await loadWorker();
+  for (const source of [
+    null,
+    new FakeServiceWorker('https://outside.test/trainer/sw.js'),
+    new FakeServiceWorker('https://example.test/other/sw.js'),
+    new FakeServiceWorker(worker.activeWorker.scriptURL, 'installed'),
+    new FakeServiceWorker(worker.activeWorker.scriptURL, 'redundant'),
+    {...worker.controlled[0], scriptURL: worker.activeWorker.scriptURL, state: 'activated'},
+  ]) {
+    await dispatchExtendable(worker.listeners.get('message'), {
+      data: {type: 'ACTIVATE_UPDATE', requestId: 'untrusted-source'}, source,
+    });
+    assert.equal(worker.calls.skipWaiting, 0);
+  }
 });
 
 test('active worker rejects the current controlled request when no update is waiting', async () => {

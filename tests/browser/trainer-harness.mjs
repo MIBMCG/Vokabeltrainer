@@ -7,6 +7,7 @@ import {createGoogleFixture} from './google-fixture.mjs';
 const playwrightPath = process.env.PLAYWRIGHT_MODULE
   ?? 'playwright';
 const executablePath = process.env.BROWSER_EXECUTABLE;
+const browserEngine = process.env.BROWSER_ENGINE ?? 'chromium';
 
 function moduleUrl() {
   if (playwrightPath.startsWith('.')) return new URL(playwrightPath, import.meta.url).href;
@@ -15,10 +16,11 @@ function moduleUrl() {
 }
 
 export async function createTrainerHarness({basePath = '', serverAuth = false} = {}) {
-  const {chromium} = await import(moduleUrl());
+  if (!['chromium', 'firefox'].includes(browserEngine)) throw new Error(`Unsupported test browser: ${browserEngine}`);
+  const browserType = (await import(moduleUrl()))[browserEngine];
   const server = createProbeServer({basePath});
   const productWorker = await readFile(new URL('../../trainer/sw.js', import.meta.url), 'utf8');
-  let workerVersion = 'v46';
+  let workerVersion = 'v47';
   let workerActivationDelayMs = 0;
   let blockLargeArt = false;
   let failPrecacheAssetPath = null;
@@ -84,9 +86,9 @@ export async function createTrainerHarness({basePath = '', serverAuth = false} =
       response.end('Synthetic large-art failure.');
       return;
     }
-    if (pathname === `${basePath}/trainer/sw.js` && workerVersion !== 'v46') {
+    if (pathname === `${basePath}/trainer/sw.js` && workerVersion !== 'v47') {
       let source = productWorker.replace(
-        'const CACHE_NAME = `${CACHE_OWNER}v46`;',
+        'const CACHE_NAME = `${CACHE_OWNER}v47`;',
         `const CACHE_NAME = \`\${CACHE_OWNER}${workerVersion}\`;`,
       );
       if (source === productWorker) throw new Error('Synthetic worker version marker was not replaced.');
@@ -117,10 +119,10 @@ export async function createTrainerHarness({basePath = '', serverAuth = false} =
   let serverStopped = false;
   let browser;
   try {
-    browser = await chromium.launch({
+    browser = await browserType.launch({
       headless: true,
       ...(executablePath ? {executablePath} : {}),
-      ignoreDefaultArgs: ['--disable-back-forward-cache'],
+      ...(browserEngine === 'chromium' ? {ignoreDefaultArgs: ['--disable-back-forward-cache']} : {}),
     });
   } catch (error) {
     await new Promise((resolve) => server.close(resolve));
@@ -152,12 +154,12 @@ export async function createTrainerHarness({basePath = '', serverAuth = false} =
       return {context, page, controls};
     },
     async newPersistentDevice({userDataDir, viewport = {width: 390, height: 844}, deviceScaleFactor = 1}) {
-      const context = await chromium.launchPersistentContext(userDataDir, {
+      const context = await browserType.launchPersistentContext(userDataDir, {
         headless: true,
         ...(executablePath ? {executablePath} : {}),
         viewport,
         deviceScaleFactor,
-        ignoreDefaultArgs: ['--disable-back-forward-cache'],
+        ...(browserEngine === 'chromium' ? {ignoreDefaultArgs: ['--disable-back-forward-cache']} : {}),
       });
       contexts.add(context);
       const controls = await google.attach(context);

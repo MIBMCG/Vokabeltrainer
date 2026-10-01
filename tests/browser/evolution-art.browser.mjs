@@ -16,7 +16,7 @@ test('evolution pictures load responsive images and fall back to the cached smal
     await page.locator('#dataset-name').waitFor();
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
     const cached = await page.evaluate(async () => {
-      const cache = await caches.open('vokabeltrainer-product:%2Ftrainer%2F:v46');
+      const cache = await caches.open('vokabeltrainer-product:%2Ftrainer%2F:v47');
       const animalKeys = ['dragon', 'deer-mist', 'tiger', 'horse', 'unicorn-moon', 'pegasus-star',
         'dragon-crystal', 'wolf-aurora', 'panther-shadow', 'griffin-storm', 'phoenix']
         .flatMap((figureId) => [1, 2, 3, 4].map((stage) => `${figureId}-stage-${stage}`));
@@ -73,7 +73,7 @@ test('evolution pictures load responsive images and fall back to the cached smal
     // An incomplete cache must give an honest placeholder instead of a broken
     // image if even the small fallback is unavailable.
     await page.evaluate(async () => {
-      const cache = await caches.open('vokabeltrainer-product:%2Ftrainer%2F:v46');
+      const cache = await caches.open('vokabeltrainer-product:%2Ftrainer%2F:v47');
       await cache.delete(new URL('assets/avatar-evolution/deer-mist-stage-3-256.webp', location.href));
       const {evolutionPicture} = await import('/src/trainer/avatar/evolution-art.js');
       document.body.replaceChildren(evolutionPicture('deer-mist', 3, {sizes: '700px', alt: 'Fehlender Nebelhirsch'}));
