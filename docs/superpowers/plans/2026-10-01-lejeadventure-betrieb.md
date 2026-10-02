@@ -4,7 +4,7 @@
 
 **Goal:** Die bestehende App unter einer Adresse mit LejeAdventure und dem neuen Betreiberkonto nutzbar machen; bestehende Lernkonten und Lernbestände erhalten.
 
-**Architecture:** Das vorhandene Google-Projekt und sein OAuth-Client bleiben bestehen. Eine parallele Cloudflare-Bereitstellung verwendet eigene Sitzungen und denselben geprüften Produktcode. Lerninhalte bleiben im bisherigen Google Drive.
+**Architecture:** Das vorhandene Google-Projekt und sein OAuth-Client bleiben bestehen. Die parallele Cloudflare-Bereitstellung verwendet eigene Sitzungen; Tasks 1–3 verwenden denselben geprüften Produktcode. Task 4 ergänzt die separat bestätigten öffentlichen Informationsseiten und UI-Links. Lerninhalte bleiben im bisherigen Google Drive.
 
 **Tech Stack:** Bestehende statische PWA, Cloudflare Workers/D1, Google OAuth, vorhandenes Wrangler und PowerShell; keine neue Produktabhängigkeit.
 
@@ -13,7 +13,7 @@
 ## Global Constraints
 
 - Nur App-Betrieb umziehen, Lernbereich im bisherigen Google-Konto lassen.
-- Produkt `6b13780`, Cache v47, unverändert bereitstellen.
+- Für die abgeschlossenen Tasks 1–3 Produkt `6b13780`, Cache v47, unverändert bereitstellen. Das am 02.10.2026 separat bestätigte Infopaket in Task 4 erlaubt ausschließlich die drei Infoseiten, gemeinsame CSS, öffentliche Aufnahme, Informationslinks und erforderliches Cacheupdate auf v48; Produkt `c39edd8` nur am neuen Worker bereitstellen.
 - Keine kostenpflichtige Domain bestellen.
 - Vorhandene OAuth-Adressen und bisherige Bereitstellung erhalten.
 - Keine Bestände neu anlegen, ersetzen, importieren oder in das Betreiberkonto verschieben.
@@ -68,17 +68,26 @@
 - [x] Sitzungsstatus ohne Anmeldung geprüft: HTTP 200, unangemeldet, no-store.
 - [x] Echte Google-Rückkehr mit dem bisherigen privaten Lernkonto geprüft: Rückkehr nach /trainer/ unter neuem Ursprung, aktive Verbindung und Drive-Zugriff belegt. Altadresse vollständig abgeglichen vom Nutzer bestätigt; anschließende bewusste Übernahme und vollständiger Abgleich belegt.
 - [x] Temporäre lokale Grundmaske mit PIN und Übernahme des vorhandenen Drive-Lernbereichs abgeschlossen. Hauptagent führte die bewusste Bestätigung nach Vorschau unter ausdrücklich genehmigter vorheriger Bereichsauswahl aus. Lokale Startdaten ersetzt; keine neue Drive-Root. Verbundener Lernbereich und Vollständig abgeglichen belegt.
-- [x] Vollständiger Abgleich, Reload und Wiederaufnahme geprüft. Beobachtete Level/Punkte/Besitz/Auswahl nach Reload gleich; Profil/Lektionen/aktive Wörter nach persönlichem PIN-Öffnen wieder sichtbar. Google-Verbindung und Vollständig abgeglichen ohne erneute Anmeldung.
+- [x] Vollständiger Abgleich, Reload und Wiederaufnahme beim Umstieg geprüft. Damals beobachtete Level/Punkte/Besitz/Auswahl nach Reload gleich; Profil/Lektionen/aktive Wörter nach persönlichem PIN-Öffnen wieder sichtbar. Google-Verbindung und Vollständig abgeglichen ohne erneute Anmeldung. Später geänderte Profilauswahl inzwischen durch bestätigte Nutzeränderungen erklärt; frühere Nachweise nicht als aktueller Bestand ausgegeben.
 - [ ] Vorher-/Nachherwerte gegenüber altem Bestand von Profilen, Wortbestand, Lernpunkten, Guthaben, Besitz und Auswahl persönlich bestätigen lassen; Nutzervergleich angefragt, Antwort offen.
 - [x] Alte Adresse erreichbar bestätigt: Trainer-HEAD HTTP 200. Geräte-/Safari- und Firefox-Offlinenachweise separat offen halten.
 - [x] Startanleitung und Übergabe mit tatsächlicher Adresse aktualisiert. Frische Dokumentenprüfung check:docs PASS: 1.153 Links, null Fehler.
 - [x] Ursache des begrenzten Freundeszugangs eingeordnet: App Test/Extern, Betreiberkonto kein Testnutzer. Nutzer wählt anschließend regulären Zugang ohne Testnutzerliste; keine einzelne Freundesadresse mehr erforderlich, keine Testnutzer hinzugefügt. Weiterarbeit in Task 4; physische iPad-Abnahme offen.
-- [ ] git diff --check und autorisierte Git-Sicherung der Dokumentation auf beiden bestehenden GitHub-Zweigen durchführen; lokale/entfernte Commit-IDs exakt vergleichen. Git-Sicherung noch ausstehend.
+- [x] Task-3-Dokumentation mit git diff --check geprüft und als Checkpoint `2933a45` auf beiden bestehenden GitHub-Zweigen gesichert; lokale/entfernte Commit-IDs exakt verglichen. Die anschließende Task-4-Sicherung bleibt separat offen.
 
 ### Task 4: Gewählter regulärer Google-Zugang
 
-**Ziel:** Regulärer Zugang ohne Testnutzerliste ist ausdrücklich gewählt. Noch keine Veröffentlichung.
+**Ziel:** Regulärer Zugang ohne Testnutzerliste ist ausdrücklich gewählt und tatsächlich aktiviert. Informationsseiten und Branding sind umgesetzt; echte Freundes-Erstanmeldung und Geräteabnahme bleiben offen.
 
-- [x] Branding gespeichert: Appname LejeAdventure, Supportadresse Leje-Betreiberkonto, Leje-Entwicklerkontakt ergänzt und bisherigen Kontakt erhalten. Google bestätigt Branding-Änderungen gespeichert.
-- [x] Begrenzter Designvorschlag am 02.10.2026 mit „Ja, so umsetzen“ bestätigt: drei öffentliche Seiten unter /trainer/info/ für Startseite, Datenschutz und Nutzungsbedingungen; Link bei Google-Verbindung, tatsächliche Datenverwendung, kostenlose Nutzung/fiktive Punkte und Leje-Kontakt. Seiten noch nicht erstellt.
-- [ ] Nach Bestätigung die fehlenden öffentlichen Seiten und Branding-Voraussetzungen konkret umsetzen und prüfen. Zielgruppenstatus aktuell Test; App veröffentlichen weiterhin deaktiviert. Keine vollständige Umsetzung oder reguläre Google-Freigabe behaupten.
+- [x] Begrenzter Designvorschlag am 02.10.2026 mit „Ja, so umsetzen“ bestätigt: drei öffentliche Seiten unter /trainer/info/ für Startseite, Datenschutz und Nutzungsbedingungen; Links bei Google-Verbindung, tatsächliche Datenverwendung, kostenlose Nutzung/fiktive Punkte und Leje-Kontakt.
+- [x] Drei statische HTML-Seiten und gemeinsame CSS erstellt; öffentliche Routen, Staging und expliziten Offlinecache ergänzt. Informationslinks öffnen vor und nach Verbindung einen separaten Tab; keine Anmelde-, Bestands- oder Secretänderung.
+- [x] Vor reinem CSS/H1-Nachschliff 666/666 Node-Tests und drei Update-/Sitzungsbrowserfälle PASS. Danach 28/28 gezielte Tests, sechs große und drei normale Layoutansichten sowie zwei Linkfälle frisch PASS. Beide unabhängigen Reviews und enge finale Nachprüfung PASS; keine juristische Vollständigkeit behauptet.
+- [x] Produkt `c39edd8ac0d49caea0761f885ff9bc7511d846a5` integriert und ausschließlich an neuem Worker `app` im Leje-Konto bereitgestellt. Cache v48; Version `16721aab-dc02-4959-9900-c204f3727e04` seit `2026-10-02T16:09:00.886Z` zu 100 Prozent aktiv. 391 öffentliche Dateien am `2026-10-02T16:09:40.106Z` bytegleich; drei Infoseiten HTTP 200 ohne Anmeldung, fünf interne Pfade HTTP 404, anonyme Sitzung HTTP 200/false/no-store. Alte App weiterhin v47.
+- [x] Branding frisch gespeichert: Appname LejeAdventure, Supportadresse Leje-Betreiberkonto, Startseite `https://app.lejeadventure.workers.dev/trainer/info/`, Datenschutz `https://app.lejeadventure.workers.dev/trainer/info/datenschutz.html`, Nutzung `https://app.lejeadventure.workers.dev/trainer/info/nutzung.html`. Leje-Entwicklerkontakt ergänzt; bisheriger Kontakt und Domains erhalten. Google bestätigt Branding-Änderungen gespeichert.
+- [x] Konkreten Google-Veröffentlichungsschritt nach ausdrücklicher Handlungspunktantwort „Ja, jetzt veröffentlichen“ ausgeführt: „App veröffentlichen“ und Dialog „Bestätigen“. Frische Google-Seite zeigt Veröffentlichungsstatus **In Produktion**, Nutzertyp **Extern** und „Zurück zum Test“. Regulärer Zugang ohne Testnutzerliste ist aktiviert; keine pauschale Zugangsgarantie oder unbegrenzte Nutzerzahl daraus ableiten.
+- [ ] Echte Erstanmeldung des Freundes und physische iPad-/Safari-Abnahme prüfen; bislang kein erfolgreicher Freundeszugang belegt.
+- [x] Geänderte Profilauswahl vor Updateklick eingeordnet: Nutzer bestätigt „Ja, ich habe Änderungen vorgenommen“. Zwei Profile mit Level 1/null Punkten statt früher einem Profil mit höherem Stand sind dadurch erklärt; kein Fehler-/Datenverlustbefund. Keine Bestandsänderung veranlasst.
+- [x] Tatsächlichen Zustand nach Übernahme im bestehenden Chrome geprüft: Nutzer bestätigt persönliches PIN-Öffnen; Einstellungen → Google-Verbindung zeigt Vollständig abgeglichen, Google-Verbindung aktiv und beide neuen Informationslinks zu den genauen Infoadressen. Ohne neue Google-Anmeldung; zwei Profile mit Level 1/null Punkten vor und nach dem verschwundenen Updateangebot gleich. Der Hauptagent konnte den ursprünglichen Klick nicht ausführen, weil das Angebot bereits verschwunden war; kein beobachteter „Jetzt aktualisieren“-Klick behauptet.
+- [ ] Autorisierte Sicherung von Produkt `c39edd8` und aktuellem Dokumentationsnachtrag auf beiden bestehenden GitHub-Zweigen abschließen und Commit-IDs exakt vergleichen.
+
+Persönlicher Altbestandsvergleich, physische iPad-/Safari-Abnahme und natürlicher Tokenablauf bleiben eigenständige offene Nachweise. Keine neue Pause.

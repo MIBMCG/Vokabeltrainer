@@ -7,18 +7,28 @@
   Künftig soll die Adresse zum vorgesehenen Programmnamen passen. Der Nutzer
   nennt `lejeadventure@gmail.com`; Arbeitsname zunächst LejeAdventure.
   Bestätigter Umfang: nur App-Betrieb umziehen, Lernbereich im bisherigen
-  Google-Konto lassen. Die Google-Inhabereinladung ist ausdrücklich bestätigt
-  und gespeichert, ihre Annahme steht aus. Neuer Cloudflare-Zugang und
-  `lejeadventure.workers.dev` sind geprüft, der Workername `app` ist verfügbar.
-  Konkrete Einrichtung bestätigt: Worker-Startvorlage, neue Google-Adressen
-  und getrennte D1-Sitzungsdatenbank angelegt; Upload-Probelauf und acht
-  Stagingtests PASS. Upload-Schlüssel und Google-App-Schlüssel sind noch
-  persönlich einzutragen. Anschließend echte Google-Anmeldung und
-  App-Verknüpfungen anpassen sowie die Startanleitung aktualisieren.
-  Den Wechsel auf eine andere Adresse mit Erhalt vorhandener Lernbestände,
-  Punkte, Besitz und Geräteverbindungen vorbereiten und prüfen. Eine eigene
-  kostenpflichtige Domain ist damit noch nicht beauftragt. Die Aufgabe ist
-  in Vorbereitung; eine Adressumstellung wurde noch nicht vorgenommen.
+  Google-Konto lassen. Am 02.10.2026 sind wirksamer Google-Inhaberzugang,
+  Upload-Zugang und die neue App-Adresse
+  `https://app.lejeadventure.workers.dev/trainer/` belegt. Der vorhandene
+  OAuth-Client bleibt bestehen; Cloudflare verwendet eine getrennte
+  Sitzungsdatenbank. Echte Google-Rückkehr, bewusste Übernahme des bisherigen
+  Lernbereichs, vollständiger Abgleich und Wiederaufnahme nach Reload sind
+  geprüft. Die Startanleitung nennt die neue Adresse; die alte App bleibt
+  erreichbar. Der persönliche Vergleich mit dem bisherigen Bestand sowie
+  physische iPad-/Safari-Nachweise bleiben offen.
+  Eine später geänderte Profilauswahl ist durch bestätigte Nutzeränderungen
+  erklärt. Nach persönlichem PIN-Öffnen sind neue Informationslinks, aktive
+  Google-Verbindung und vollständiger Abgleich im bestehenden Chrome geprüft;
+  kein beobachteter Aktualisierungsklick behauptet.
+  Der Nutzer hat regulären Google-Zugang ohne Testnutzerliste und drei
+  Informationsseiten samt Links bei Google-Verbindung bestätigt. Produkt
+  `c39edd8`, Cache v48, ist nur an der neuen Adresse aktiv; 391 öffentliche
+  Dateien bytegleich geprüft. Die drei Infoseiten sind ohne Anmeldung
+  erreichbar, ihre Adressen im Google-Branding gespeichert. Nach ausdrücklich
+  bestätigter Veröffentlichung zeigt Google **In Produktion**, Typ **Extern**;
+  regulärer Zugang ohne Testnutzerliste ist aktiviert. Echte Freundes-Erstanmeldung
+  und Geräteabnahme stehen aus. Die alte App bleibt auf v47. Eine eigene
+  kostenpflichtige Domain ist nicht beauftragt.
   Einstieg: [Einrichtungsübergabe](handoffs/2026-10-01-lejeadventure-einrichtung.md).
 
 Änderung der Prüfungsreihenfolge am 17.09.2026: Der Nutzer beauftragt ausdrücklich, zuerst die vollständige App gemäß bestätigtem Gesamtentwurf umzusetzen und erst danach beim Freund auf iPhone/iPad zu testen. Die bisherige Geräteprüfung vor umfangreicher Lernoberfläche ist damit als Entwicklungssperre aufgehoben. Reale Geräteabnahme bleibt offen und darf nicht als bestanden gelten. Bereits bestätigte manuelle Google-/Drive-Tests in zwei Browsern gelten weiter. Keine neue pauschale Startfreigabe verlangen; Hosting/Veröffentlichung und Kostenmodell werden dadurch nicht automatisch geändert.

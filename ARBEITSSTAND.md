@@ -1,17 +1,50 @@
 # Arbeitsstand
 
-**Aktuelle Fortsetzung am 02.10.2026:** Neue Trainer-Adresse tatsächlich bereitgestellt:
-`https://app.lejeadventure.workers.dev/trainer/`. Produkt `6b13780`, Cache v47, unverändert.
-Google-App-Secret gezielt aus validierter vorhandener JSON-Quelle korrigiert;
-Sitzungsschlüssel erhalten. Bereitstellung und Task 2 abgeschlossen.
-Worker-Version `6cb68583-879f-4211-93cc-9ec11d144feb` zu 100 Prozent aktiv.
-387 öffentliche Dateien bytegleich geprüft; interne Pfade gesperrt, alte App erreichbar.
-Task 3: Google-Rückkehr, bewusste Übernahme des vorhandenen Lernbereichs und
-vollständiger Abgleich belegt; keine neue Drive-Root. Lokale Startdaten ersetzt.
-Reload/Wiederaufnahme belegt; Altbestandsvergleich und physische iPad-Abnahme offen.
-Regulärer Google-Zugang gewählt; Branding gespeichert. Öffentliche Pflichtseiten
-noch nicht erstellt; begrenzter Designvorschlag zur Bestätigung offen. Keine neue Pause.
+**Aktuelle Fortsetzung am 02.10.2026:** Die bestätigten Informationsseiten und
+Google-Verbindungslinks sind als Produkt `c39edd8`, Cache v48, integriert und
+nur unter `https://app.lejeadventure.workers.dev/trainer/` bereitgestellt.
+Worker-Version `16721aab-dc02-4959-9900-c204f3727e04` ist zu 100 Prozent aktiv;
+391 öffentliche Dateien bytegleich geprüft, drei Infoseiten ohne Anmeldung
+erreichbar und fünf interne Pfade gesperrt. Alte App bleibt auf v47.
+Tasks 1–3 sind technisch abgeschlossen: Google-Rückkehr, bewusste Übernahme,
+vollständiger Abgleich und Wiederaufnahme waren belegt; keine neue Drive-Root.
+Der Nutzer bestätigt zwischenzeitliche Änderungen und erklärt damit die spätere
+Profilauswahl; kein Fehlerbefund. Nach persönlichem PIN-Öffnen sind neue UI-Links,
+aktive Google-Verbindung und vollständiger Abgleich im bestehenden Chrome belegt.
+Kein beobachteter Updateklick; persönliche Altvergleichsantwort historisch offen.
+Task 4: Regulärer Google-Zugang ohne Testnutzerliste und drei Infoseiten sind
+ausdrücklich bestätigt. Branding mit den echten Seitenadressen gespeichert.
+Nach „Ja, jetzt veröffentlichen“ ist Google-Zugang tatsächlich aktiviert:
+**In Produktion**, Typ **Extern**. Echte Freundes-Erstanmeldung bleibt offen.
+Bestände, Anmeldefunktion und Secrets durch das Infopaket unverändert.
+Physische iPad-/Safari-Abnahme und natürlicher Tokenablauf offen. Keine neue Pause.
 Details und nächster Schritt: [Einrichtungsübergabe](docs/handoffs/2026-10-01-lejeadventure-einrichtung.md).
+
+Prüfstand des Infopakets: 666/666 Node-Tests und drei Update-/Sitzungsfälle
+vor dem letzten reinen CSS/H1-Nachschliff bestanden. Danach frisch 28/28
+gezielte Tests, sechs große und drei normale Layoutansichten sowie zwei
+Linkfälle PASS; beide unabhängigen Reviews und enge finale Nachprüfung PASS.
+Die Seiten beschreiben die tatsächliche Datenverwendung; juristische
+Vollständigkeit wird damit nicht bestätigt. Produkt `c39edd8` ist lokal
+integriert; seine GitHub-Sicherung steht noch aus. Der vorherige Checkpoint
+`2933a45` ist auf beiden bestehenden Zweigen exakt gesichert.
+
+Aktueller UI-Befund: Der bisherige Chrome-Tab zeigte bereits vor einem
+Updateklick zwei Profile mit Level 1 und null Punkten statt des früheren einen
+Profils mit höherem Stand. Der Nutzer erklärt das mit **„Ja, ich habe Änderungen
+vorgenommen“**; daraus besteht kein Fehler- oder Datenverlustbefund. Das v48-
+Updateangebot erschien nach Navigation und verschwand während anderer Arbeit.
+Der anschließende Klick fand keinen Button und wurde nicht ausgeführt.
+Der Nutzer hat die Erwachsenenansicht anschließend persönlich mit PIN geöffnet.
+Unter Einstellungen → Google-Verbindung sind **Vollständig abgeglichen**,
+**Google-Verbindung aktiv** und beide neuen Informationslinks mit den genauen
+Seitenadressen sichtbar. Die UI-Ergänzung ist im bestehenden Chrome ohne neue
+Google-Anmeldung aktiv; zwei Profile mit Level 1/null Punkten vor und nach
+verschwundenem Updateangebot gleich. Der tatsächliche Zustand nach Übernahme
+ist geprüft; ein beobachteter **Jetzt aktualisieren**-Klick wird nicht behauptet.
+Frühere Task-3-Nachweise bleiben Beobachtungen des damaligen Stands; die damalige
+persönliche Altvergleichsfrage ist historisch unbeantwortet. Keine Bestandsänderung
+veranlasst.
 
 **Historischer abendlicher Zwischenstand (01.10.2026; Pause am 02.10. aufgehoben):** Der Nutzer möchte ins Bett und
 bittet um zügigen Abschluss. Nur noch Sicherung; danach Einrichtung bei erneuter
@@ -20,7 +53,7 @@ verschlüsselt eingegeben, wird aber zweimal mit ungültigem Headerformat
 abgelehnt. Keine Kontozuordnung bestätigt und keine neue Trainer-Bereitstellung.
 [Wiederaufnahme](docs/handoffs/2026-10-01-lejeadventure-einrichtung.md).
 
-**Aktuelle Einrichtung (01.10.2026): LejeAdventure.** Der Nutzer beauftragt
+**Historischer Einrichtungsstand (01.10.2026): LejeAdventure.** Der Nutzer beauftragt
 die neue Adresse und `lejeadventure@gmail.com` als Betreiberkonto. Nur der
 App-Betrieb zieht um; vorhandene Lernbereiche bleiben im bisherigen Google-Konto.
 Die zusätzliche Google-Inhaberrolle ist ausdrücklich bestätigt und gespeichert;
@@ -64,8 +97,9 @@ Programmnamen statt des persönlichen Namens enthalten. Das Betreiberkonto ist
 `lejeadventure@gmail.com`, Arbeitsname LejeAdventure. Lernbereiche bleiben im
 bisherigen Google-Konto. Der Einrichtungsstand steht oben; Details in der
 [To-do-Liste](docs/ROADMAP.md#ergänzte-offene-aufgabe-programmname-und-startadresse).
-Noch keine Änderung an der laufenden App oder ihrer Adresse. Die damalige
-Abendpause ist seit ausdrücklicher Fortsetzung am 02.10. aufgehoben.
+Der damalige Einrichtungsstand ist durch die aktuelle Bereitstellung oben
+überholt. Die damalige Abendpause ist seit ausdrücklicher Fortsetzung am 02.10.
+aufgehoben.
 
 **Hauptnavigation lesbar (01.10.2026).** Die kurze Pause ist ausdrücklich
 aufgehoben. Produkt `fee42e9`, Cache v45, beseitigt die verbliebenen

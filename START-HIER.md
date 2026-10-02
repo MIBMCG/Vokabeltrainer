@@ -1,16 +1,23 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Aktuelle Fortsetzung am 02.10.2026:** Neue Trainer-Adresse tatsächlich bereitgestellt:
-`https://app.lejeadventure.workers.dev/trainer/`. Produkt `6b13780`, Cache v47, unverändert.
-Google-App-Secret gezielt aus validierter vorhandener JSON-Quelle korrigiert;
-Sitzungsschlüssel erhalten. Bereitstellung und Task 2 abgeschlossen.
-Worker-Version `6cb68583-879f-4211-93cc-9ec11d144feb` zu 100 Prozent aktiv.
-387 öffentliche Dateien bytegleich geprüft; interne Pfade gesperrt, alte App erreichbar.
-Task 3: Google-Rückkehr, bewusste Übernahme des vorhandenen Lernbereichs und
-vollständiger Abgleich belegt; keine neue Drive-Root. Lokale Startdaten ersetzt.
-Reload/Wiederaufnahme belegt; Altbestandsvergleich und physische iPad-Abnahme offen.
-Regulärer Google-Zugang gewählt; Branding gespeichert. Öffentliche Pflichtseiten
-noch nicht erstellt; begrenzter Designvorschlag zur Bestätigung offen. Keine neue Pause.
+**Aktuelle Fortsetzung am 02.10.2026:** Die bestätigten Informationsseiten und
+Google-Verbindungslinks sind als Produkt `c39edd8`, Cache v48, integriert und
+nur unter `https://app.lejeadventure.workers.dev/trainer/` bereitgestellt.
+Worker-Version `16721aab-dc02-4959-9900-c204f3727e04` ist zu 100 Prozent aktiv;
+391 öffentliche Dateien bytegleich geprüft, drei Infoseiten ohne Anmeldung
+erreichbar und fünf interne Pfade gesperrt. Alte App bleibt auf v47.
+Tasks 1–3 sind technisch abgeschlossen: Google-Rückkehr, bewusste Übernahme,
+vollständiger Abgleich und Wiederaufnahme waren belegt; keine neue Drive-Root.
+Der Nutzer bestätigt zwischenzeitliche Änderungen und erklärt damit die spätere
+Profilauswahl; kein Fehlerbefund. Nach persönlichem PIN-Öffnen sind neue UI-Links,
+aktive Google-Verbindung und vollständiger Abgleich im bestehenden Chrome belegt.
+Kein beobachteter Updateklick; persönliche Altvergleichsantwort historisch offen.
+Task 4: Regulärer Google-Zugang ohne Testnutzerliste und drei Infoseiten sind
+ausdrücklich bestätigt. Branding mit den echten Seitenadressen gespeichert.
+Nach „Ja, jetzt veröffentlichen“ ist Google-Zugang tatsächlich aktiviert:
+**In Produktion**, Typ **Extern**. Echte Freundes-Erstanmeldung bleibt offen.
+Bestände, Anmeldefunktion und Secrets durch das Infopaket unverändert.
+Physische iPad-/Safari-Abnahme und natürlicher Tokenablauf offen. Keine neue Pause.
 Details und nächster Schritt: [Einrichtungsübergabe](docs/handoffs/2026-10-01-lejeadventure-einrichtung.md).
 
 **Historischer abendlicher Zwischenstand (01.10.2026; Pause am 02.10. aufgehoben):** Für den Nutzer, der ins Bett möchte,
@@ -19,7 +26,7 @@ Neue Adresse vorbereitet, Trainer noch nicht bereitgestellt; Cloudflare-
 Schlüsseleingabe ungültig, Betreiber-/Anmeldenachweise offen.
 [Gesicherter Einstieg](docs/handoffs/2026-10-01-lejeadventure-einrichtung.md).
 
-**Aktuelle Einrichtung (01.10.2026):** Neue Adresse und App-Betrieb für
+**Historischer Einrichtungsstand (01.10.2026):** Neue Adresse und App-Betrieb für
 `lejeadventure@gmail.com` vorbereiten. Vorhandene Lernbereiche bleiben ausdrücklich
 im bisherigen Google-Konto. Zusätzliche Google-Inhabereinladung bestätigt und
 gespeichert, Annahme ausstehend. Neues Cloudflare-Konto und Subdomain

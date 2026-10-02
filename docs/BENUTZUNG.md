@@ -6,10 +6,21 @@ die vereinfachte Tabellenübernahme, Google-Abgleich, Sicherungen sowie
 „Meine Figur“, „Entwicklung“ und „Shop“. Den aktuellen Prüfstand und offene
 Arbeiten dokumentiert der [Arbeitsstand](../ARBEITSSTAND.md).
 Neue Bereitstellung, Google-Anmeldung, Übernahme des vorhandenen Lernbereichs
-und vollständiger Abgleich sind geprüft. Nach Neuladen sind Profil, beide
-Lektionen, Wörter, Punkte, Besitz und Figurenauswahl erhalten; Google bleibt
-ohne erneute Anmeldung aktiv und vollständig abgeglichen. Der persönliche
-Vergleich mit den bisherigen Werten des Nutzers steht noch aus.
+und vollständiger Abgleich wurden beim Umstieg geprüft. Beim damaligen
+Neuladen waren Profil, beide Lektionen, Wörter, Punkte, Besitz und Figurenauswahl
+erhalten; Google blieb ohne erneute Anmeldung aktiv und vollständig abgeglichen.
+Eine später geänderte Profilauswahl erklärt der Nutzer durch zwischenzeitliche
+eigene Änderungen. Der damals angefragte persönliche Vergleich mit den bisherigen
+Werten bleibt historisch unbeantwortet. Nach persönlichem
+PIN-Öffnen sind die neuen Informationslinks, aktive Google-Verbindung und
+vollständiger Abgleich im bestehenden Chrome ohne neue Anmeldung geprüft.
+
+Die öffentlichen Seiten [Über LejeAdventure](https://app.lejeadventure.workers.dev/trainer/info/),
+[Datenschutz](https://app.lejeadventure.workers.dev/trainer/info/datenschutz.html)
+und [Nutzungsbedingungen](https://app.lejeadventure.workers.dev/trainer/info/nutzung.html)
+sind ohne Anmeldung erreichbar. Unter **Google-Verbindung** öffnen
+**Über LejeAdventure** und **Datenschutz** jeweils einen neuen Tab.
+
 Reale Produktprüfungen mit Google Drive auf zwei physischen Geräten sowie
 iPhone/iPad folgen getrennt.
 
@@ -282,12 +293,11 @@ Die Erwachsenenansicht sperrt beim Verlassen, Neuladen und Wechsel in den Hinter
 
 ## Google Drive und Offlinebetrieb
 
-Solange diese App im Google-Testmodus läuft, können sich nur die freigegebenen
-Testkonten mit Google verbinden. [Google: Testnutzer im Testmodus](https://support.google.com/cloud/answer/15549945?hl=en)
-Die Umstellung auf regulären Zugang ohne Testnutzerliste wird vorbereitet, ist
-aber noch nicht aktiv; ein nicht freigegebenes Konto kann bis dahin
-**403 access_denied** erhalten. Das Betreiberkonto nicht für fremde Lernbestände
-verwenden.
+Der reguläre Google-Zugang ohne Testnutzerliste ist seit 02.10.2026 aktiviert.
+Google zeigt **In Produktion** und **Extern**. Familien verwenden ihr eigenes
+von Erwachsenen eingerichtetes Google-Konto; das Betreiberkonto nicht für fremde
+Lernbestände verwenden. Die echte Erstanmeldung des Freundes und die physische
+iPad-/Safari-Abnahme sind noch offen.
 
 Für beide Geräte denselben von Erwachsenen eingerichteten Google-Zugang verwenden. Familien müssen im normalen Ablauf keine technische Client-ID eintragen:
 
@@ -325,4 +335,4 @@ Gleichzeitige Wiederherstellungen auf zwei Geräten erfordern eine bewusste Ausw
 
 ## Geräteprüfung
 
-Die [Geräte-Prüfliste](GERAETE-ABNAHME.md) führt durch die spätere Abnahme. Safari und eine zum Home-Bildschirm hinzugefügte App werden auf echtem iPhone und iPad getrennt geprüft. Bildschirmtastatur, Offline-Neustart, erneute Google-Anmeldung und Abgleich zwischen den Geräten gehören dazu. Automatisierte Browserprüfungen ersetzen diese Abnahme nicht. Die private [HTTPS-App](https://app.lejeadventure.workers.dev/trainer/) ist für die vereinbarte Nutzung im Freundeskreis bereitgestellt. Die bisherige Adresse bleibt während des Umstiegs erhalten. Übernahme, vollständiger Abgleich und Wiederaufnahme nach Neuladen ohne erneute Google-Anmeldung sind an der neuen Adresse geprüft; der persönliche Vergleich mit den bisherigen Werten des Nutzers steht noch aus.
+Die [Geräte-Prüfliste](GERAETE-ABNAHME.md) führt durch die spätere Abnahme. Safari und eine zum Home-Bildschirm hinzugefügte App werden auf echtem iPhone und iPad getrennt geprüft. Bildschirmtastatur, Offline-Neustart, erneute Google-Anmeldung und Abgleich zwischen den Geräten gehören dazu. Automatisierte Browserprüfungen ersetzen diese Abnahme nicht. Die private [HTTPS-App](https://app.lejeadventure.workers.dev/trainer/) ist für die vereinbarte Nutzung im Freundeskreis bereitgestellt. Die bisherige Adresse bleibt während des Umstiegs erhalten. Übernahme, vollständiger Abgleich und Wiederaufnahme nach Neuladen ohne erneute Google-Anmeldung waren beim Umstieg an der neuen Adresse geprüft. Die neuen Informationslinks und aktive Google-Verbindung mit vollständigem Abgleich sind jetzt im bestehenden Chrome geprüft. Die zwischenzeitlich geänderte Profilauswahl ist durch bestätigte Nutzeränderungen erklärt; der damals angefragte persönliche Altbestandsvergleich bleibt historisch unbeantwortet. Echte Freundes-Erstanmeldung und physische Geräteabnahme stehen aus.
