@@ -1,22 +1,15 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Aktuelle Fortsetzung am 02.10.2026:** Der Nutzer hat ausdrücklich fortgesetzt;
-die Abendpause vom 01.10. ist aufgehoben. Lokaler Stand und beide Remotezweige
-sind frisch auf `448182a7a135d249810161c2c0027eddded5b276` abgeglichen.
-Unabhängige synthetische Capture-Diagnose PASS: exakt 40 Zeichen durch DPAPI
-bis zur Prozessumgebung erhalten; keine belegte Kürzung. Tatsächliche Eingabequelle
-ungeklärt; bisheriger Zugriffsversuch weiterhin 6003/6111. Separater Erstbelegungshelfer
-unabhängig in Spec und Quality PASS; 30 synthetische Tests laut
-Implementierungsbericht/Review, keine reale Ausführung. Der existierende Token
-„LejeAdventure App-Upload“ ist laut heute geprüfter sicherer Cloudflare-Zusammenfassung
-aktiv, Last used `-`, mit ausschließlich D1 Read, Workers Scripts Edit und
-Account Settings Read für `lejeadventure@gmail.com`, Ende 01.01.2027.
-Persönliche äquivalente Erneuerung durchgeführt; eine weitere ist nötig, weil
-während der parallelen Bedienung eine versehentliche Aufnahme die neue
-Schlüsselanzeige erfasste. Lokale Aufnahme gelöscht; erneute Eingabe offen.
-Produkt `6b13780`, Cache v47, bleibt erhalten; keine Bereitstellung,
-Secretschreibung oder Datenänderung. Neue Zustimmung zur Google-Secret-Übermittlung
-steht vor Ausführung noch aus.
+**Aktuelle Fortsetzung am 02.10.2026:** Abendpause aufgehoben; keine neue Pause.
+Geprüfter Sicherungscommit `893b31791c8f3a6c398b39628d3c4db12c011835` auf beiden lokalen
+und Remotezweigen exakt bestätigt. Upload-Zugang nach persönlicher erneuter
+Rotation und geschützter Eingabe geprüft: `Whoami` PASS für das LejeAdventure-Konto.
+Der zuvor in einer Aufnahme sichtbare Zugang ist ersetzt; Aufnahme lokal gelöscht.
+Am neuen Worker `app` sind die Secret-Namen read-only geprüft: `[]` (leer).
+Keine neuen Worker-Secrets, kein Deploy; Produkt `6b13780`, Cache v47, erhalten.
+Konkrete Freigabe für persönliche Google-App-Schlüsseleingabe und neuen
+Sitzungsschlüssel ausschließlich am neuen Worker angefragt; Antwort ausstehend.
+Details und nächster Schritt: [Einrichtungsübergabe](docs/handoffs/2026-10-01-lejeadventure-einrichtung.md).
 
 **Historischer abendlicher Zwischenstand (01.10.2026; Pause am 02.10. aufgehoben):** Für den Nutzer, der ins Bett möchte,
 wird jetzt nur gesichert. Danach erst bei erneuter Fortsetzung weiterarbeiten.
@@ -31,7 +24,7 @@ gespeichert, Annahme ausstehend. Neues Cloudflare-Konto und Subdomain
 `lejeadventure.workers.dev` geprüft; konkrete Einrichtung/OAuth-Erweiterung
 bestätigt. Worker-Startvorlage `app`, neue Google-Adressen und D1-Sitzungsschema
 angelegt; Upload-Probelauf und acht Stagingtests PASS. Upload-Token persönlich
-erzeugt und zweimal geschützt eingegeben; Zugriff ungeklärt. Worker-Secrets
+erzeugt und zweimal geschützt eingegeben; Zugriff damals ungeklärt; aktueller Kontonachweis siehe oben. Worker-Secrets
 und Trainer-Bereitstellung stehen aus.
 Produkt `6b13780`, Cache v47, und bisherige App erhalten. Die damalige
 Abendpause ist seit ausdrücklicher Fortsetzung am 02.10. aufgehoben.
