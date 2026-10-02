@@ -1,14 +1,16 @@
 # Arbeitsstand
 
-**Aktuelle Fortsetzung am 02.10.2026:** Keine Pause; bisherige App v47 erhalten.
-Wirksamer Google-Inhaberzugang und Upload-Zugang zum neuen Konto sind belegt.
-Nach persönlicher Meldung „ClientID kopiert und im Terminal eingefügt“ zeigt
-Worker `app` jetzt `GOOGLE_CLIENT_SECRET` und `SESSION_ENCRYPTION_KEY` als `secret_text`.
-Werte wurden nicht gelesen oder validiert; eine Client-ID könnte als Secret
-angenommen worden sein. Terminal-Abschlussmeldung angefragt, Antwort offen.
-Task 2 bleibt offen. Erstbelegung nicht erneut ausführen; vorhandenen Sitzungsschlüssel
-behalten. Nach Klärung gegebenenfalls nur den Google-Secret-Wert gezielt korrigieren.
-Kein Deploy, keine Löschung/Überschreibung; Produkt und Lernbestände erhalten.
+**Aktuelle Fortsetzung am 02.10.2026:** Neue Trainer-Adresse tatsächlich bereitgestellt:
+`https://app.lejeadventure.workers.dev/trainer/`. Produkt `6b13780`, Cache v47, unverändert.
+Google-App-Secret gezielt aus validierter vorhandener JSON-Quelle korrigiert;
+Sitzungsschlüssel erhalten. Bereitstellung und Task 2 abgeschlossen.
+Worker-Version `6cb68583-879f-4211-93cc-9ec11d144feb` zu 100 Prozent aktiv.
+387 öffentliche Dateien bytegleich geprüft; interne Pfade gesperrt, alte App erreichbar.
+Task 3: Google-Rückkehr, bewusste Übernahme des vorhandenen Lernbereichs und
+vollständiger Abgleich belegt; keine neue Drive-Root. Lokale Startdaten ersetzt.
+Reload/Wiederaufnahme belegt; Altbestandsvergleich und physische iPad-Abnahme offen.
+Regulärer Google-Zugang gewählt; Branding gespeichert. Öffentliche Pflichtseiten
+noch nicht erstellt; begrenzter Designvorschlag zur Bestätigung offen. Keine neue Pause.
 Details und nächster Schritt: [Einrichtungsübergabe](docs/handoffs/2026-10-01-lejeadventure-einrichtung.md).
 
 **Historischer abendlicher Zwischenstand (01.10.2026; Pause am 02.10. aufgehoben):** Der Nutzer möchte ins Bett und

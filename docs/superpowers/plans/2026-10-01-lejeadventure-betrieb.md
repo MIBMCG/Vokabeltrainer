@@ -54,9 +54,9 @@
 - [x] Lokale Konfiguration mit neuer Konto-ID, tatsächlichem Ursprung, D1-Bindung, `preview_urls: false` und `observability.enabled: false` vorbereiten.
 - [x] Vorhandenen OAuth-Client behalten; neuen Ursprung und exakten Callback ergänzen. Bei nötiger Zugriffsfreigabe direkt vor dem Speichern die konkrete Bestätigung einholen.
 - [x] Neuen Cloudflare-Upload-Schlüssel mit Workers-Schreibrecht und D1-/Kontoleserecht ausschließlich für das neue Konto vorbereiten; Nutzer erstellt ihn selbst und gibt ihn geschützt ein. Der Helfer muss Zielkonto, Worker und Ursprung prüfen und den alten Helfer/Schlüssel erhalten. Persönliche erneute Rotation/Eingabe und Kontonachweis am 02.10.2026 bestätigt.
-- [ ] Vorhandenes OAuth-Secret und neuen 32-Byte-Sitzungsschlüssel ausschließlich geschützt am neuen Worker hinterlegen; Zielkonto vor der Übertragung prüfen. Am 02.10.2026 sind beide Secret-Namen vorhanden, ihre Werte jedoch nicht geprüft. Der Nutzer meldet eine Client-ID-Eingabe; Terminalabschluss noch zu klären. Erstbelegungshelfer nicht erneut ausführen. Eine nötige Korrektur nur von `GOOGLE_CLIENT_SECRET` nach Klärung und mit persönlich verfügbarem echtem Secret vorbereiten; `SESSION_ENCRYPTION_KEY` erhalten. Namensnachweis allein ist keine gültige Secret-Abnahme.
+- [x] Vorhandenes OAuth-Secret und neuen 32-Byte-Sitzungsschlüssel ausschließlich geschützt am neuen Worker hinterlegen; Zielkonto vor Übertragung geprüft. Am 02.10.2026 gezielte Korrektur aus validierter vorhandener JSON-Quelle Exitcode 0; nur GOOGLE_CLIENT_SECRET geschrieben, SESSION_ENCRYPTION_KEY erhalten. Unabhängige Spec/Quality-Nachprüfung PASS, 75+30 synthetische Tests, AST 0. Tatsächliche Google-OAuth-Akzeptanz bleibt Task 3.
 - [x] Aus `server/` mit vorhandenem Wrangler Dry-run durchführen.
-- [ ] Nur nach erfolgreichem Staging/Dry-run, geprüftem Konto und hinterlegten Secrets bereitstellen.
+- [x] Nach erfolgreichem Staging/Dry-run, geprüftem Konto und hinterlegten Secrets bereitgestellt. Deploy Exitcode 0; Worker-Version 6cb68583-879f-4211-93cc-9ec11d144feb zu 100 Prozent aktiv, Autor lejeadventure@gmail.com. Produkt 6b13780 / Cache v47 unverändert.
 
 ### Task 3: Neue Adresse abnehmen und Startanleitung umstellen
 
@@ -64,10 +64,21 @@
 
 **Interfaces:** Konsumiert den tatsächlich aktiven neuen Ursprung. Produziert verifizierte Startadresse, dokumentierte Grenzen und einen erhaltenen alten Zugang.
 
-- [ ] Öffentliche Dateien mit dem geprüften Paket bytegleich vergleichen; interne Repository-/Server-/Sicherungspfade müssen gesperrt bleiben.
-- [ ] Sitzungsstatus ohne Anmeldung prüfen, anschließend echte Google-Rückkehr mit dem bisherigen Lernkonto prüfen.
-- [ ] Nutzer richtet bei frischer Adresse die notwendige temporäre lokale Grundmaske mit PIN ein. Vor jeder Drive-Bindung bleibt dieser Stand lokal; danach den vorhandenen Drive-Lernbereich über Vorschau und ausdrückliche Bestätigung übernehmen. Der vorhandene Übernahmeweg ersetzt die lokalen Startdaten und leert ihre Uploadwarteschlange; keinen neuen Drive-Lernbereich anlegen. Codepfad am 02.10.2026 geprüft, reale Abnahme weiterhin offen.
-- [ ] Vorher-/Nachherwerte von Profilen, Wortbestand, Lernpunkten, Guthaben, Besitz und Auswahl vergleichen; vollständigen Abgleich und Reload prüfen.
-- [ ] Alte Adresse erreichbar bestätigen; Geräte-/Safari- und Firefox-Offlinenachweise separat offen halten.
-- [ ] Startanleitung und Übergabe mit tatsächlicher Adresse aktualisieren. `npm run check:docs` und `git diff --check` ausführen.
-- [ ] Autorisierte Dokumentation auf beiden bestehenden GitHub-Zweigen sichern und lokale/entfernte Commit-IDs exakt vergleichen.
+- [x] Öffentliche Dateien mit dem geprüften Paket bytegleich verglichen: 387/387 am 2026-10-02T14:53:21.821Z; interne Repository-/Server-/Sicherungspfade HTTP 404. Wiederholung mit node --use-system-ca PASS, keine Zertifikatsprüfung deaktiviert.
+- [x] Sitzungsstatus ohne Anmeldung geprüft: HTTP 200, unangemeldet, no-store.
+- [x] Echte Google-Rückkehr mit dem bisherigen privaten Lernkonto geprüft: Rückkehr nach /trainer/ unter neuem Ursprung, aktive Verbindung und Drive-Zugriff belegt. Altadresse vollständig abgeglichen vom Nutzer bestätigt; anschließende bewusste Übernahme und vollständiger Abgleich belegt.
+- [x] Temporäre lokale Grundmaske mit PIN und Übernahme des vorhandenen Drive-Lernbereichs abgeschlossen. Hauptagent führte die bewusste Bestätigung nach Vorschau unter ausdrücklich genehmigter vorheriger Bereichsauswahl aus. Lokale Startdaten ersetzt; keine neue Drive-Root. Verbundener Lernbereich und Vollständig abgeglichen belegt.
+- [x] Vollständiger Abgleich, Reload und Wiederaufnahme geprüft. Beobachtete Level/Punkte/Besitz/Auswahl nach Reload gleich; Profil/Lektionen/aktive Wörter nach persönlichem PIN-Öffnen wieder sichtbar. Google-Verbindung und Vollständig abgeglichen ohne erneute Anmeldung.
+- [ ] Vorher-/Nachherwerte gegenüber altem Bestand von Profilen, Wortbestand, Lernpunkten, Guthaben, Besitz und Auswahl persönlich bestätigen lassen; Nutzervergleich angefragt, Antwort offen.
+- [x] Alte Adresse erreichbar bestätigt: Trainer-HEAD HTTP 200. Geräte-/Safari- und Firefox-Offlinenachweise separat offen halten.
+- [x] Startanleitung und Übergabe mit tatsächlicher Adresse aktualisiert. Frische Dokumentenprüfung check:docs PASS: 1.153 Links, null Fehler.
+- [x] Ursache des begrenzten Freundeszugangs eingeordnet: App Test/Extern, Betreiberkonto kein Testnutzer. Nutzer wählt anschließend regulären Zugang ohne Testnutzerliste; keine einzelne Freundesadresse mehr erforderlich, keine Testnutzer hinzugefügt. Weiterarbeit in Task 4; physische iPad-Abnahme offen.
+- [ ] git diff --check und autorisierte Git-Sicherung der Dokumentation auf beiden bestehenden GitHub-Zweigen durchführen; lokale/entfernte Commit-IDs exakt vergleichen. Git-Sicherung noch ausstehend.
+
+### Task 4: Gewählter regulärer Google-Zugang
+
+**Ziel:** Regulärer Zugang ohne Testnutzerliste ist ausdrücklich gewählt. Noch keine Veröffentlichung.
+
+- [x] Branding gespeichert: Appname LejeAdventure, Supportadresse Leje-Betreiberkonto, Leje-Entwicklerkontakt ergänzt und bisherigen Kontakt erhalten. Google bestätigt Branding-Änderungen gespeichert.
+- [x] Begrenzter Designvorschlag am 02.10.2026 mit „Ja, so umsetzen“ bestätigt: drei öffentliche Seiten unter /trainer/info/ für Startseite, Datenschutz und Nutzungsbedingungen; Link bei Google-Verbindung, tatsächliche Datenverwendung, kostenlose Nutzung/fiktive Punkte und Leje-Kontakt. Seiten noch nicht erstellt.
+- [ ] Nach Bestätigung die fehlenden öffentlichen Seiten und Branding-Voraussetzungen konkret umsetzen und prüfen. Zielgruppenstatus aktuell Test; App veröffentlichen weiterhin deaktiviert. Keine vollständige Umsetzung oder reguläre Google-Freigabe behaupten.

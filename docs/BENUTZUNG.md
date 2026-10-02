@@ -1,11 +1,76 @@
 # Vokabeltrainer benutzen
 
-**Stand vom 29.09.2026:** Die Anleitung beschreibt Lernen, Verwaltung,
+**Stand vom 02.10.2026:** Die Anleitung beschreibt Start und Adresswechsel,
+Lernen, Verwaltung,
 die vereinfachte Tabellenübernahme, Google-Abgleich, Sicherungen sowie
 „Meine Figur“, „Entwicklung“ und „Shop“. Den aktuellen Prüfstand und offene
 Arbeiten dokumentiert der [Arbeitsstand](../ARBEITSSTAND.md).
+Neue Bereitstellung, Google-Anmeldung, Übernahme des vorhandenen Lernbereichs
+und vollständiger Abgleich sind geprüft. Nach Neuladen sind Profil, beide
+Lektionen, Wörter, Punkte, Besitz und Figurenauswahl erhalten; Google bleibt
+ohne erneute Anmeldung aktiv und vollständig abgeglichen. Der persönliche
+Vergleich mit den bisherigen Werten des Nutzers steht noch aus.
 Reale Produktprüfungen mit Google Drive auf zwei physischen Geräten sowie
 iPhone/iPad folgen getrennt.
+
+## Auf Handy oder Computer starten
+
+Die private App im Browser unter
+[https://app.lejeadventure.workers.dev/trainer/](https://app.lejeadventure.workers.dev/trainer/)
+öffnen. Die vollständige Adresse einschließlich `/trainer/` verwenden.
+Für einen vorhandenen Lernbereich zuerst den folgenden Umstiegsweg benutzen.
+Nur für einen ganz neuen Lernbestand gelten die Abschnitte **Einrichten** und
+**Google Drive und Offlinebetrieb** mit **Neuen Lernbereich anlegen**.
+
+Die neue Adresse hat eigene lokale Daten, PIN und Google-Anmeldung; diese werden
+von der bisherigen Adresse nicht automatisch übernommen. Der Lernbereich bleibt
+im bisherigen Google-Konto.
+
+Nach erfolgreichem Start und Bestandsprüfung kann die Seite optional über die
+vom Browser angebotene Funktion zum Home-Bildschirm hinzugefügt oder als App
+installiert werden. Menü und Bezeichnung hängen von Gerät und Browser ab.
+
+## Mit vorhandenem Lernbereich zur neuen Adresse wechseln
+
+1. An der
+   [bisherigen Adresse](https://vokabeltrainer.marco-civico.workers.dev/trainer/)
+   offene Änderungen auf den bisher verwendeten Geräten speichern. Unter
+   **Für Erwachsene → Einstellungen → Google-Verbindung** mit **Jetzt abgleichen**
+   vollständig abgleichen: **Abgeglichen** und **Vollständig abgeglichen.**
+   müssen erscheinen; offene Änderungen oder Konflikte vorher klären.
+   Für den Vergleich Profile, Wörter und Lektionen, Lernpunkte und Level,
+   Guthaben, Besitz und gewählte Figur notieren. Während des Umstiegs nicht üben,
+   kaufen oder den Lernbestand bearbeiten.
+2. Die neue Adresse öffnen. Nur wenn **Vokabeltrainer einrichten** erscheint,
+   ist zunächst eine vorübergehende lokale Einrichtung nötig: **Name des
+   Datensatzes**, **Name des Kindes**, **Name der ersten Lektion** sowie
+   **Vokabel 1** und **Vokabel 2** mit Deutsch und Englisch ausfüllen.
+   Dafür selbst neutrale Bezeichnungen und zwei Wortpaare wählen; keine
+   Familienangaben kopieren oder Familienpersonen erfinden. Unter
+   **Vierstellige PIN** und **PIN wiederholen** die gewünschte lokale PIN
+   eingeben und **Trainer einrichten** drücken. Diese Startdaten bleiben lokal
+   und sind noch mit keinem Drive-Lernbereich verbunden.
+3. **Für Erwachsene → Einstellungen → Google-Verbindung** öffnen und
+   **Mit Google verbinden** drücken. Das bisherige Google-Lernkonto auswählen.
+   Die Anmeldung allein lädt die ungebundenen Startdaten nicht hoch.
+4. **Vorhandenen Lernbereich verwenden** wählen und beim richtigen Eintrag
+   **Diesen Lernbereich prüfen** drücken. In der Vorschau Bereich und Hinweis
+   auf die geprüfte lokale Sicherheitskopie prüfen. Erst dann
+   **Lernbereich verwenden** bestätigen. Die Übernahme ersetzt die vorläufigen
+   lokalen Startdaten durch den vorhandenen Bereich; sie werden nicht mit dem
+   Familienbestand zusammengeführt. Die lokale PIN bleibt erhalten.
+5. Vollständigen Abgleich abwarten; bei Bedarf **Jetzt abgleichen** drücken.
+   Profile, Wörter und Lektionen, Lernpunkte und Level, Guthaben, Besitz und
+   Figur mit dem alten Stand vergleichen. Danach neu laden und die Werte sowie
+   die aktive Google-Verbindung erneut prüfen. Erst nach erfolgreicher Prüfung
+   Lesezeichen oder Home-Bildschirm-Verknüpfung umstellen.
+
+Beim Umstieg ausschließlich den vorhandenen Drive-Lernbereich verwenden:
+keinen neuen Bereich anlegen, keinen Familienbestand ersetzen, keine Sicherung
+oder Wortliste importieren und nichts in das Betreiberkonto verschieben. Die
+lokale Sicherheitskopie der vorläufigen Startdaten nicht wiederherstellen oder
+als Familienimport übernehmen. Fehlt der richtige Bereich oder weichen Werte
+ab, stoppen und die bisherige Adresse weiterverwenden; sie bleibt erhalten.
 
 ## Lokal starten
 
@@ -217,6 +282,13 @@ Die Erwachsenenansicht sperrt beim Verlassen, Neuladen und Wechsel in den Hinter
 
 ## Google Drive und Offlinebetrieb
 
+Solange diese App im Google-Testmodus läuft, können sich nur die freigegebenen
+Testkonten mit Google verbinden. [Google: Testnutzer im Testmodus](https://support.google.com/cloud/answer/15549945?hl=en)
+Die Umstellung auf regulären Zugang ohne Testnutzerliste wird vorbereitet, ist
+aber noch nicht aktiv; ein nicht freigegebenes Konto kann bis dahin
+**403 access_denied** erhalten. Das Betreiberkonto nicht für fremde Lernbestände
+verwenden.
+
 Für beide Geräte denselben von Erwachsenen eingerichteten Google-Zugang verwenden. Familien müssen im normalen Ablauf keine technische Client-ID eintragen:
 
 1. In der Erwachsenenansicht **Einstellungen → Google-Verbindung** öffnen und auf **Mit Google verbinden** klicken.
@@ -253,4 +325,4 @@ Gleichzeitige Wiederherstellungen auf zwei Geräten erfordern eine bewusste Ausw
 
 ## Geräteprüfung
 
-Die [Geräte-Prüfliste](GERAETE-ABNAHME.md) führt durch die spätere Abnahme. Safari und eine zum Home-Bildschirm hinzugefügte App werden auf echtem iPhone und iPad getrennt geprüft. Bildschirmtastatur, Offline-Neustart, erneute Google-Anmeldung und Abgleich zwischen den Geräten gehören dazu. Automatisierte Browserprüfungen ersetzen diese Abnahme nicht. Die private [HTTPS-App](https://vokabeltrainer.marco-civico.workers.dev/trainer/) ist bereits für die vereinbarte Nutzung im Freundeskreis bereitgestellt.
+Die [Geräte-Prüfliste](GERAETE-ABNAHME.md) führt durch die spätere Abnahme. Safari und eine zum Home-Bildschirm hinzugefügte App werden auf echtem iPhone und iPad getrennt geprüft. Bildschirmtastatur, Offline-Neustart, erneute Google-Anmeldung und Abgleich zwischen den Geräten gehören dazu. Automatisierte Browserprüfungen ersetzen diese Abnahme nicht. Die private [HTTPS-App](https://app.lejeadventure.workers.dev/trainer/) ist für die vereinbarte Nutzung im Freundeskreis bereitgestellt. Die bisherige Adresse bleibt während des Umstiegs erhalten. Übernahme, vollständiger Abgleich und Wiederaufnahme nach Neuladen ohne erneute Google-Anmeldung sind an der neuen Adresse geprüft; der persönliche Vergleich mit den bisherigen Werten des Nutzers steht noch aus.

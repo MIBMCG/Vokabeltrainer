@@ -1,6 +1,19 @@
 # Übergabe: LejeAdventure-Einrichtung
 
-**Aktuelle Fortsetzung am 02.10.2026:** Keine Pause; bisherige App v47 erhalten.
+**Aktuelle Fortsetzung am 02.10.2026:** Neue Trainer-Adresse tatsächlich bereitgestellt:
+`https://app.lejeadventure.workers.dev/trainer/`. Produkt `6b13780`, Cache v47, unverändert.
+Google-App-Secret gezielt aus validierter vorhandener JSON-Quelle korrigiert;
+Sitzungsschlüssel erhalten. Bereitstellung und Task 2 abgeschlossen.
+Worker-Version `6cb68583-879f-4211-93cc-9ec11d144feb` zu 100 Prozent aktiv.
+387 öffentliche Dateien bytegleich geprüft; interne Pfade gesperrt, alte App erreichbar.
+Task 3: Google-Rückkehr, bewusste Übernahme des vorhandenen Lernbereichs und
+vollständiger Abgleich belegt; keine neue Drive-Root. Lokale Startdaten ersetzt.
+Reload/Wiederaufnahme belegt; Altbestandsvergleich und physische iPad-Abnahme offen.
+Regulärer Google-Zugang gewählt; Branding gespeichert. Öffentliche Pflichtseiten
+noch nicht erstellt; begrenzter Designvorschlag zur Bestätigung offen. Keine neue Pause.
+Nachweise, Grenzen und nächster Schritt sind unten dokumentiert.
+
+**Historischer Zwischenstand am 02.10.2026 vor der gezielten Secret-Korrektur:** Keine Pause; bisherige App v47 erhalten.
 Wirksamer Google-Inhaberzugang und Upload-Zugang zum neuen Konto sind belegt.
 Nach persönlicher Meldung „ClientID kopiert und im Terminal eingefügt“ zeigt
 Worker `app` jetzt `GOOGLE_CLIENT_SECRET` und `SESSION_ENCRYPTION_KEY` als `secret_text`.
@@ -10,7 +23,7 @@ Task 2 bleibt offen. Erstbelegung nicht erneut ausführen; vorhandenen Sitzungss
 behalten. Nach Klärung gegebenenfalls nur den Google-Secret-Wert gezielt korrigieren.
 Kein Deploy, keine Löschung/Überschreibung; Produkt und Lernbestände erhalten.
 Nachweise, Grenzen und nächster Schritt sind unten dokumentiert.
-Aktuelle Prüfung: geprüfte Helfer- und Konfigurationshashes unverändert MATCH.
+Damals durchgeführte Prüfung: geprüfte Helfer- und Konfigurationshashes unverändert MATCH.
 Keine laufenden `setup-secrets`-/`deploy-token`-Prozesse gefunden; nur gefilterte
 Prozessmetadaten gelesen. Die echte lesende Secret-Namenprüfung über
 `deploy-token.ps1 -Action Secrets` bestätigt beide Namen am Worker `app` im Konto
@@ -232,49 +245,109 @@ trennen bestätigten Umfang, Vorbereitung und noch ausstehende Schritte.
   Produkt- oder Lernänderung. Dokumentationsbasis HEAD
   `32199454326441715f80eef99e71ec420d4dc57a`.
 
+- **Gezielte Secret-Korrektur und Bereitstellung am 02.10.2026:** Die persönliche
+  Korrekturausführung endete mit Exitcode 0. Ein vorheriger Pfadquotierungsversuch
+  endete mit Exitcode 1 und wurde durch die erfolgreiche Ausführung ersetzt.
+  Die vorhandene JSON-Quelle wurde auf `web.client_id` passend zum bestehenden
+  OAuth-Client und vorhandenes `web.client_secret` validiert. Ausschließlich
+  `GOOGLE_CLIENT_SECRET` am neuen Worker wurde geschrieben; vorhandener
+  `SESSION_ENCRYPTION_KEY` erhalten. Keine Secretwerte in Dokumentation.
+- Korrekturhelfer final SHA-256
+  `2BCB15ED8C4A1372B759B2F3E3669360E2E48AC0C7F1666BBE9F80AAB5B20A15`;
+  unabhängige Spec- und Quality-Nachprüfung PASS, 75 Korrekturtests plus 30
+  bisherige synthetische Tests und AST mit null Parsefehlern. Diese Prüfungen
+  belegen noch keine tatsächliche Google-OAuth-Akzeptanz.
+- Tatsächlicher Deploy an Worker `app`, Konto
+  `2531040d13ab47effa73e2124bd6e912`, Exitcode 0; Version
+  `6cb68583-879f-4211-93cc-9ec11d144feb`. Frische Deploymentliste bestätigt die
+  neueste Version zu 100 Prozent aktiv, Autor `lejeadventure@gmail.com`.
+- Öffentliche Prüfung am `2026-10-02T14:53:21.821Z`: alle 387 ausgelieferten
+  Dateien bytegleich zum unveränderten Staging von Produkt `6b13780`, Cache v47.
+  Anonymer `/api/auth/session` liefert HTTP 200, unangemeldeten Status und
+  `no-store`; fünf Kern-Dateien zusätzlich bytegleich. Wurzel-, Server-, Docs-
+  und Git-Pfade HTTP 404; zusätzliche HEAD-Prüfungen für `.superpowers`,
+  `.cloudflare` und `backups` HTTP 404. Alte Trainer-Adresse per HEAD HTTP 200.
+  Der erste Node-Aufruf scheiterte an der Standard-CA; erneute Prüfung mit
+  `node --use-system-ca` PASS. Zertifikatsprüfung wurde nicht deaktiviert.
+- **Historischer Zwischenstand vor der Google-Rückkehr und Übernahme:** Chrome zeigt die tatsächliche neue `/trainer/`-Adresse mit frischer Startmaske.
+  Ein neutrales temporäres, ungebundenes Startprofil mit zwei Wortpaaren ist
+  vorausgefüllt. Persönliche PIN-Eingabe und Google-Anmeldung mit dem bisherigen
+  privaten Lernkonto sind angefragt und laufen beim Nutzer. Vor Drive-Bindung
+  bleiben Startdaten lokal; kein neuer Drive-Lernbereich. Echte Google-Rückkehr,
+  bewusste Übernahme des bestehenden Lernbereichs sowie Punkte/Bestand nach
+  vollständigem Abgleich und Reload sind weiterhin offen (Task 3).
+
 ## Erhaltener Produktstand
 
-Das bestehende Produkt `6b13780`, Cache v47, bleibt unter
-`https://vokabeltrainer.marco-civico.workers.dev/trainer/` aktiv.
-Es gab in diesem Einrichtungsschritt keine Produktänderung, Bereitstellung
-oder Änderung von Lernbeständen. Der vorhandene Google-OAuth-Client bleibt
-maßgeblich; keinen neuen Client erzeugen.
+Produkt `6b13780`, Cache v47, ist unverändert an der bisherigen Adresse erhalten
+und jetzt zusätzlich unter `https://app.lejeadventure.workers.dev/trainer/`
+bereitgestellt. Kein Produktcode und kein vorhandener Lernbestand wurden durch
+die Bereitstellung geändert. Der bisherige Google-OAuth-Client und private
+Inhaber bleiben erhalten. Der reale Werteerhalt bei Übernahme des bestehenden
+Lernbereichs unter der neuen Adresse ist noch gesondert abzunehmen.
 
 ## Nächster konkreter Schritt
 
-Die gerade angefragte tatsächliche Terminal-Abschlussmeldung und die persönliche
-Eingabe klären; Antwort steht aus. Der Nutzer meldet eine eingefügte **Client-ID**,
-die nicht das benötigte **Client-Secret** ist. Beide Secret-Namen sind inzwischen
-vorhanden, ihre Werte und Gültigkeit aber nicht gelesen oder validiert. Task 2
-bleibt offen. Den Erstbelegungshelfer nicht erneut ausführen.
+Der Nutzer bestätigt die alte Adresse als vollständig abgeglichen. Nach lesender
+Vorschau führte der Hauptagent die bewusste Bestätigung „Lernbereich verwenden“
+im Rahmen der ausdrücklich genehmigten vorherigen Bereichsauswahl aus.
+Die tatsächliche Übernahme ist beendet: neue Adresse zeigt verbundenen Lernbereich,
+aktive Google-Verbindung und „Abgeglichen“ / „Vollständig abgeglichen“.
+Lokale Startdaten sind ersetzt; keine neue Drive-Root angelegt.
 
-Die passende gesicherte Quelle des bestehenden `GOOGLE_CLIENT_SECRET` für die
-persönliche Eingabe verfügbar machen; keine Schlüsseldatei in den Chat senden.
-Erst nach Klärung und mit dem echten bestehenden Client-Secret gegebenenfalls
-gezielt ausschließlich `GOOGLE_CLIENT_SECRET` am neuen Worker `app` korrigieren.
-Den vorhandenen `SESSION_ENCRYPTION_KEY` erhalten. Die genaue Secret-Zielfreigabe
-für diesen Worker gilt weiter. Bisher keine Schlüssellöschung oder Überschreibung
-vorgenommen; kein neues Projekt oder OAuth-Client und kein Deploy.
+Reload und Wiederaufnahme sind jetzt abgeschlossen. Level, Punkte, Besitz und
+Auswahl stimmen mit dem zuvor beobachteten Zustand an der neuen Adresse überein.
+Der Nutzer hat die PIN persönlich erneut geöffnet; Profil, Lektionen und aktive
+Wörter sind wieder sichtbar. Einstellungen zeigen weiterhin aktive Google-
+Verbindung und vollständigen Abgleich ohne erneute Google-Anmeldung.
 
-Die früheren leeren Secret-Namenprüfungen sind historische Belege. Namen
-allein belegen keine gültige Google-Konfiguration. Erst nach geklärter passender
-Google-Secret-Belegung das geprüfte Trainerpaket bereitstellen. Startadresse:
-`https://app.lejeadventure.workers.dev/trainer/`.
+Offen ist der angefragte Nutzervergleich mit dem alten Bestand; zusätzlich sind die Voraussetzungen des gewählten regulären Google-Zugangs zu erfüllen. Die
+beobachtete Stabilität nach Reload ersetzt diesen Vergleich nicht. Erst nach
+der Nutzerrückmeldung den vollständigen Altwerteerhalt bestätigen. Die gezielte
+Secret-Korrektur und Bereitstellung sind abgeschlossen; ohne neuen Befund nicht
+wiederholen. Ganze Umstellung bis zur persönlichen Altbestandsabnahme und Erfüllung der Voraussetzungen des regulären Google-Zugangs unvollständig.
 
-Die neue Adresse besitzt eigene lokale Browserdaten. Eine einmalige PIN-
-Einrichtung und Anmeldung mit dem bisherigen **Lernkonto** können nötig sein.
-Vor dem Gerätewechsel ungesendete Änderungen an der bisherigen Adresse
-abgleichen und anschließend den vorhandenen Lernbereich bewusst auswählen.
-Keine Lernbestände in das Betreiberkonto verschieben.
+### Historischer Befund: Google-Testzugang des Freundes
+
+Der Freund erhält am Apple-iPad Google `403 access_denied` mit dem Hinweis,
+dass nur genehmigte Tester zugelassen sind. Frisch im bestehenden Projekt unter
+Google Auth Platform / Zielgruppe geprüft: Status **Test**, Typ **Extern**,
+bislang genau ein Testnutzer (bestehendes privates Lernkonto). Das Leje-
+Betreiberkonto ist kein Testnutzer. Das vom Freund gemeldete Anmeldebild zeigt
+dieses Betreiberkonto; der Nutzer ist gefragt, welches persönliche Google-Konto
+der Freund verwenden möchte. Diese Kontoabfrage ist durch die inzwischen gewählte reguläre Freigabe ohne Testnutzerliste überholt. Keine privaten Testnutzeradressen
+oder Bestandsdaten in dieser Dokumentation.
+
+Keine Testnutzerfreigabe geändert, keine App veröffentlicht und kein neuer
+OAuth-Client angelegt. Der Befund belegt eine Google-Testzugangsbegrenzung;
+eine technische iPad-Ursache ist nicht nachgewiesen. Physische iPad-Abnahme
+bleibt offen. Aktuelle Startanleitung/Dokumentenprüfung PASS: `check:docs`,
+1.153 geprüfte Links, null Fehler. Git-Sicherung ist noch ausstehend.
+
+### Gewählter regulärer Google-Zugang (Task 4)
+
+Der Nutzer wählt ausdrücklich regulären Zugang ohne Testnutzerliste. Eine einzelne
+Freundesadresse ist dafür nicht mehr erforderlich; keine Testnutzer hinzugefügt.
+Google-Branding ist vorbereitet und gespeichert, frische Bestätigung „Branding-
+Änderungen gespeichert“: Appname **LejeAdventure**, Supportadresse des Leje-
+Betreiberkontos. Leje-Adresse als Entwicklerkontakt ergänzt; bisheriger Kontakt
+erhalten. Zielgruppenstatus bleibt **Test**. „App veröffentlichen“ ist weiterhin
+deaktiviert, bis die Branding-Voraussetzungen vollständig sind; kein regulärer
+Produktionszugang und keine Veröffentlichung daraus ableiten.
+
+Es fehlen echte öffentliche Start-, Datenschutz- und Nutzungsbedingungen-Seiten.
+Ein begrenzter Designvorschlag liegt vor: drei Seiten unter `/trainer/info/`,
+Link bei der Google-Verbindung, tatsächliche Datenverwendung, kostenlose Nutzung,
+fiktive Punkte und Leje-Kontakt. Die Designfrage steht vor Codeänderungen aus.
+Diese öffentlichen Seiten sind **noch nicht erstellt**. Erst den Entwurf bestätigen
+lassen, dann die Seiten und nötigen Branding-Angaben im beauftragten Umfang
+umsetzen. Keine vollständige Implementierungsplanung vorweggenommen.
 
 ## Nachweisgrenzen
 
-Wirksamer Google-Inhaberzugang, Projektzugriff und Upload-Zugang zum exakt
-bestätigten neuen Konto sind belegt. Cloudflare-Konto, Subdomain, Worker-
-Startvorlage, D1-Struktur und neue Google-Adressen sind geprüft. Beide neuen
-Worker-Secret-Namen sind jetzt vorhanden; Werte und Gültigkeit sind offen.
-Ein möglicher Client-ID-Wert unter `GOOGLE_CLIENT_SECRET` ist zu klären.
-Task 2, Trainer-Bereitstellung, Trainer-Anmeldung und Bestandserhalt unter der
-neuen Adresse sind nicht abgeschlossen. Aus den vorhandenen Namen darf keine
-abgeschlossene Umstellung abgeleitet werden. Physische Geräte-/Safari-Abnahme
-und separater Firefox-Offlinenachweis bleiben offen. Keine neue Pause.
+Task 1 und Task 2 sind abgeschlossen: wirksamer Betreiberzugang, gezielte
+Google-Secret-Korrektur, aktive getrennte Bereitstellung, öffentliche Bytegleichheit
+und gesperrte interne Pfade sind belegt. Task 3: echte Google-Rückkehr, aktive
+Verbindung, bewusste Übernahme des bestehenden Lernbereichs und vollständiger
+Abgleich sowie Reload/Wiederaufnahme sind belegt. Persönlicher Altwertevergleich und Voraussetzungen des gewählten regulären Google-Zugangs bleiben offen. Physische Geräte-/Safari-Abnahme und
+separater Firefox-Offlinenachweis bleiben offen. Keine neue Pause.
