@@ -1,14 +1,14 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Aktuelle Fortsetzung am 02.10.2026:** Abendpause aufgehoben; keine neue Pause.
-Geprüfter Sicherungscommit `893b31791c8f3a6c398b39628d3c4db12c011835` auf beiden lokalen
-und Remotezweigen exakt bestätigt. Upload-Zugang nach persönlicher erneuter
-Rotation und geschützter Eingabe geprüft: `Whoami` PASS für das LejeAdventure-Konto.
-Der zuvor in einer Aufnahme sichtbare Zugang ist ersetzt; Aufnahme lokal gelöscht.
-Am neuen Worker `app` sind die Secret-Namen read-only geprüft: `[]` (leer).
-Keine neuen Worker-Secrets, kein Deploy; Produkt `6b13780`, Cache v47, erhalten.
-Konkrete Freigabe für persönliche Google-App-Schlüsseleingabe und neuen
-Sitzungsschlüssel ausschließlich am neuen Worker angefragt; Antwort ausstehend.
+**Aktuelle Fortsetzung am 02.10.2026:** Keine Pause; bisherige App v47 erhalten.
+Sicherungscommit `7acaba5b73af0ad72ae4a1440e26b669a6f9b867` auf beiden lokalen
+und Remotezweigen exakt bestätigt. Upload-Zugang zum neuen Konto: `Whoami` PASS.
+Der Nutzer hat „freigabe“ für die persönliche Google-App-Schlüsseleingabe und
+neuen Sitzungsschlüssel ausschließlich am neuen Worker `app` erteilt.
+Das geschützte Eingabefenster ist geöffnet; eine echte Secret-Belegung und
+Bereitstellung sind noch nicht belegt. Der Nutzer besitzt eine gesicherte
+Google-Schlüsselquelle, die auf diesem Laptop derzeit nicht verfügbar ist.
+Google-Inhabereinladung noch offen; Anmeldung am neuen Konto persönlich angefragt.
 Details und nächster Schritt: [Einrichtungsübergabe](docs/handoffs/2026-10-01-lejeadventure-einrichtung.md).
 
 **Historischer abendlicher Zwischenstand (01.10.2026; Pause am 02.10. aufgehoben):** Für den Nutzer, der ins Bett möchte,

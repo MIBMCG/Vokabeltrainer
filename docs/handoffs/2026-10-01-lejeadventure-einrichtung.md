@@ -1,15 +1,15 @@
 # Übergabe: LejeAdventure-Einrichtung
 
-**Aktuelle Fortsetzung am 02.10.2026:** Abendpause aufgehoben; keine neue Pause.
-Geprüfter Sicherungscommit `893b31791c8f3a6c398b39628d3c4db12c011835` auf beiden lokalen
-und Remotezweigen exakt bestätigt. Upload-Zugang nach persönlicher erneuter
-Rotation und geschützter Eingabe geprüft: `Whoami` PASS für das LejeAdventure-Konto.
-Der zuvor in einer Aufnahme sichtbare Zugang ist ersetzt; Aufnahme lokal gelöscht.
-Am neuen Worker `app` sind die Secret-Namen read-only geprüft: `[]` (leer).
-Keine neuen Worker-Secrets, kein Deploy; Produkt `6b13780`, Cache v47, erhalten.
-Konkrete Freigabe für persönliche Google-App-Schlüsseleingabe und neuen
-Sitzungsschlüssel ausschließlich am neuen Worker angefragt; Antwort ausstehend.
-Kontonachweis, Chronologie und nächster Schritt sind unten dokumentiert.
+**Aktuelle Fortsetzung am 02.10.2026:** Keine Pause; bisherige App v47 erhalten.
+Sicherungscommit `7acaba5b73af0ad72ae4a1440e26b669a6f9b867` auf beiden lokalen
+und Remotezweigen exakt bestätigt. Upload-Zugang zum neuen Konto: `Whoami` PASS.
+Der Nutzer hat „freigabe“ für die persönliche Google-App-Schlüsseleingabe und
+neuen Sitzungsschlüssel ausschließlich am neuen Worker `app` erteilt.
+Das geschützte Eingabefenster ist geöffnet; eine echte Secret-Belegung und
+Bereitstellung sind noch nicht belegt. Der Nutzer besitzt eine gesicherte
+Google-Schlüsselquelle, die auf diesem Laptop derzeit nicht verfügbar ist.
+Google-Inhabereinladung noch offen; Anmeldung am neuen Konto persönlich angefragt.
+Nachweise, Grenzen und nächster Schritt sind unten dokumentiert.
 
 **Historischer Zwischenstand am 02.10.2026 vor der erneuten Rotation:** Der Nutzer hat ausdrücklich fortgesetzt;
 die Abendpause vom 01.10. ist aufgehoben. Lokaler Stand und beide Remotezweige
@@ -120,8 +120,9 @@ trennen bestätigten Umfang, Vorbereitung und noch ausstehende Schritte.
   Upload-Helfer bleibt unverändert. Implementer meldet 30 synthetische Prüfungen
   PASS und AST ohne Parsefehler, ohne echtes Vaultlesen oder Netzoperation.
   Unabhängiges Spec- und Quality-Review inzwischen PASS; 30 synthetische Tests
-  laut Implementierungsbericht/Review, keine reale Ausführung. Konkrete Zustimmung
-  zur Google-Schlüsselübermittlung steht vor Ausführung noch aus. Hash/Report liegen im planbezogenen
+  laut Implementierungsbericht/Review, damals keine reale Ausführung. Konkrete
+  Zustimmung stand zu diesem Zeitpunkt noch aus; inzwischen erteilt (siehe unten).
+  Hash/Report liegen im planbezogenen
   SDD-Arbeitsverzeichnis. Noch keine Worker-Secrets übertragen.
 
 - **Aktueller Kontonachweis am 02.10.2026:** Nach der versehentlichen Aufnahme
@@ -135,13 +136,56 @@ trennen bestätigten Umfang, Vorbereitung und noch ausstehende Schritte.
   lesend geprüft: `[]` (leer). Keine neuen Worker-Secrets und kein Deploy.
 - Sicherungscommit `893b31791c8f3a6c398b39628d3c4db12c011835` auf beiden lokalen
   und Remotezweigen exakt bestätigt.
-- Konkrete Übermittlungsfreigabe für die persönliche Eingabe von
+- Zunächst konkrete Übermittlungsfreigabe für die persönliche Eingabe von
   `GOOGLE_CLIENT_SECRET` des bestehenden Projekts sowie einen neuen
   `SESSION_ENCRYPTION_KEY` ausschließlich an den neuen Worker `app` angefragt;
-  Antwort steht aus. Noch keine reale Ausführung des Erstbelegungshelfers.
+  Antwort zu diesem Zeitpunkt noch ausstehend; inzwischen ausdrücklich erteilt.
+  Damals noch keine reale Ausführung des Erstbelegungshelfers.
 - Google-IAM am 02.10. erneut gelesen: Die neue Inhaberrolle zeigt weiterhin
   „Einladung gesendet. Annahme ausstehend.“ Der Cloudflare-Zugang bestätigt
   nicht die Annahme dieser getrennten Google-Einladung.
+
+- **Aktuelles Eingabehindernis am 02.10.2026:** Der Nutzer antwortet ausdrücklich
+  „freigabe“ auf die genaue persönliche Übermittlung von `GOOGLE_CLIENT_SECRET`
+  des bestehenden Projekts und eines neuen `SESSION_ENCRYPTION_KEY`
+  ausschließlich an den neuen Worker `app`. Diese Zielfreigabe gilt weiter;
+  sie muss nicht für denselben Umfang erneut eingeholt werden.
+- Geprüfter Setup-Helfer und Konfiguration wurden mit ihren exakten geprüften
+  Hashes abgeglichen. Das persönliche Eingabefenster mit PID 15428 wurde
+  geöffnet und wartete noch. Eine tatsächliche Secret-Belegung oder ein Deploy
+  ist nicht belegt; der Status dieses Fensters ist bei Fortsetzung neu zu prüfen.
+- Der private Inhaber öffnete denselben bestehenden Google-OAuth-Client.
+  Gelesen wurden nur Beschriftungen, Überschriften und die Anzahl sichtbarer
+  Schaltflächen, keine Schlüsselwerte. Der Nutzer kann den alten Schlüssel
+  nicht kopieren. Sichtbar sind zwei aktive „Secret deaktivieren“-Schaltflächen;
+  „Add Secret“ ist deaktiviert. Kein Secret wurde deaktiviert, gelöscht oder
+  ersetzt und kein neuer OAuth-Client angelegt.
+- Die am 02.10. geprüfte offizielle [Google-Supportquelle](https://support.google.com/cloud/answer/15549257?hl=en-GB)
+  bestätigt die Sichtbarkeit eines neuen Secrets nur bei Erstellung und die
+  Grenze von höchstens zwei Secrets. Das fehlende vorhandene Secret als
+  persönliche Eingabequelle ist damit das aktuelle Hindernis.
+- Der Nutzer wurde nach einer gesicherten `client_secret…json`-Datei oder einem
+  Eintrag in der Passwortverwaltung gefragt. Seine Antwort: „ja, aber hier leider
+  nicht vorhanden“. Die Quelle existiert, ist auf diesem Laptop aber nicht
+  verfügbar. Lokal wurden
+  ausschließlich passende Dateinamen in Downloads und Repository gesucht:
+  keine Treffer, keine Dateiinhalte gelesen.
+- Annahme der neuen Google-Inhabereinladung erneut live geprüft: weiterhin
+  „Einladung gesendet. Annahme ausstehend.“ Sicherungscommit
+  `7acaba5b73af0ad72ae4a1440e26b669a6f9b867` vor dieser Dokumentation auf beiden
+  lokalen und Remotezweigen exakt bestätigt.
+- Das eigene Google-Eingabefenster ist inzwischen geschlossen. Erneute reine
+  Namensprüfung am neuen Worker ergibt `[]`; keine Teilbelegung vorhanden.
+  Für den unabhängigen Betreiberzugang ist die IAM-Seite gezielt im neuen
+  Google-Konto geöffnet. Google verlangt „Verify it’s you“ für
+  `lejeadventure@gmail.com`; persönliche erneute Anmeldung ist angefragt.
+- Der Codepfad für die neue lokale Startmaske ist unabhängig untersucht:
+  Ohne Drive-Bindung bleiben Grunddaten lokal. Die bestätigte Übernahme eines
+  anderen vorhandenen Lernbereichs ersetzt den lokalen Ledger und leert seine
+  Uploadwarteschlange; Startdaten verbleiben lediglich in einer lokalen
+  Sicherheitskopie. Der Einrichtungsplan ist deshalb genauer formuliert.
+  Startanleitung nur als Entwurf vorbereitet; echter Wechsel und Werteerhalt
+  unter der neuen Adresse bleiben zu prüfen.
 
 ## Erhaltener Produktstand
 
@@ -153,27 +197,26 @@ maßgeblich; keinen neuen Client erzeugen.
 
 ## Nächster konkreter Schritt
 
-Die angefragte konkrete Übermittlungsfreigabe abwarten: persönliche Eingabe des
-`GOOGLE_CLIENT_SECRET` für den bestehenden OAuth-Client im Projekt
-`vokabeltrainer-508915` und Übertragung zusammen mit einem neuen
-`SESSION_ENCRYPTION_KEY` ausschließlich an den neuen Worker `app`.
-Die Annahme der Google-Inhabereinladung und die tatsächliche Verfügbarkeit
-des passenden bestehenden Google-App-Schlüssels prüfen. Der Upload-Zugang
-zum richtigen Konto ist inzwischen bestätigt; keine erneute Uploadtoken-
-Fehlerdiagnose als nächsten Schritt beginnen. Erst nach Freigabe die beiden
-Worker-Secrets geschützt hinterlegen, danach das geprüfte Trainerpaket
-bereitstellen. Bis dahin keine Secretschreibung oder Bereitstellung.
+Die persönliche Anmeldung am neuen Google-Betreiberkonto und die Annahme der
+gespeicherten Inhabereinladung abschließen. Für die spätere Secret-Belegung die
+bereits vorhandene gesicherte Quelle des `GOOGLE_CLIENT_SECRET` auf diesem
+Laptop persönlich verfügbar machen; keine Schlüsseldatei in den Chat senden.
+Die genaue Übermittlung an ausschließlich den neuen Worker `app` ist bereits
+freigegeben. Der Nutzer gibt den passenden vorhandenen Schlüssel selbst in das
+geschützte Fenster ein; dessen aktuellen Status vorher prüfen. Bis eine passende
+Quelle vorliegt, keine bestehende Google-Secret-Belegung blind deaktivieren,
+löschen oder ersetzen und keinen neuen OAuth-Client erzeugen. Eine Änderung
+bestehender Secrets ist durch die erteilte Übermittlungsfreigabe nicht beauftragt.
+Die fehlende persönliche Quelle erfordert keine erneute Freigabe desselben Ziels.
+
+Der frühere Versuch, die Google-Schlüsselübersicht auszulesen, war von der
+automatischen Freigabeprüfung abgelehnt worden. Inzwischen öffnete der private
+Inhaber den bestehenden Client; ausschließlich nicht geheime Beschriftungen
+und Schaltflächenanzahlen wurden gelesen. Schlüsselwerte wurden nicht ausgelesen.
+Erst nach persönlicher Eingabe der passenden Quelle und bestätigter Belegung
+der beiden neuen Worker-Secrets das geprüfte Trainerpaket bereitstellen.
 Startadresse für die später bereitgestellte Trainer-App ist
 `https://app.lejeadventure.workers.dev/trainer/`.
-
-Das Öffnen der Google-Schlüsselübersicht wurde von der automatischen
-Freigabeprüfung abgelehnt: Die Ansicht könnte private Client-Secrets anzeigen;
-für das Auslesen lag keine ausdrückliche Autorisierung vor. Kein anderer
-Ausleseweg wurde versucht. Der Schlüsselteil wird dem Nutzer zur persönlichen
-Eingabe übergeben; keine vorhandenen Google-Secrets löschen oder den OAuth-
-Client ersetzen. Der neue Cloudflare-Kontozugang ist inzwischen bestätigt;
-Google-Einladungsannahme und die tatsächliche Verfügbarkeit eines passenden
-Google-Client-Secrets bleiben noch zu prüfen.
 
 Die neue Adresse besitzt eigene lokale Browserdaten. Eine einmalige PIN-
 Einrichtung und Anmeldung mit dem bisherigen **Lernkonto** können nötig sein.
@@ -185,7 +228,9 @@ Keine Lernbestände in das Betreiberkonto verschieben.
 
 Die Einladung ist gespeichert; ihre Annahme ist offen. Cloudflare-Konto,
 Subdomain, Worker-Startvorlage, D1-Struktur und neue Google-Adressen sind geprüft.
-Upload-Zugang zum exakt bestätigten neuen Konto ist belegt; Secret-Liste leer.
+Upload-Zugang zum exakt bestätigten neuen Konto ist belegt; die letzte lesende
+Secret-Namenprüfung war leer. Übermittlung inzwischen ausdrücklich freigegeben;
+passende persönliche Quelle des bestehenden Google-App-Schlüssels fehlt.
 Worker-Secrets, Trainer-Bereitstellung, Anmeldung und Bestandserhalt unter
 der neuen Adresse sind noch nicht belegt.
 Eine abgeschlossene Umstellung darf aus diesem Dokument nicht abgeleitet

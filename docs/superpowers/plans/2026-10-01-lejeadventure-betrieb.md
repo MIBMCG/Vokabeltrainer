@@ -52,7 +52,7 @@
 - [x] Eigene D1-Datenbank anlegen und ausschließlich das bestehende Sitzungsschema anwenden.
 - [x] Lokale Konfiguration mit neuer Konto-ID, tatsächlichem Ursprung, D1-Bindung, `preview_urls: false` und `observability.enabled: false` vorbereiten.
 - [x] Vorhandenen OAuth-Client behalten; neuen Ursprung und exakten Callback ergänzen. Bei nötiger Zugriffsfreigabe direkt vor dem Speichern die konkrete Bestätigung einholen.
-- [ ] Neuen Cloudflare-Upload-Schlüssel mit Workers-Schreibrecht und D1-/Kontoleserecht ausschließlich für das neue Konto vorbereiten; Nutzer erstellt ihn selbst und gibt ihn geschützt ein. Der Helfer muss Zielkonto, Worker und Ursprung prüfen und den alten Helfer/Schlüssel erhalten.
+- [x] Neuen Cloudflare-Upload-Schlüssel mit Workers-Schreibrecht und D1-/Kontoleserecht ausschließlich für das neue Konto vorbereiten; Nutzer erstellt ihn selbst und gibt ihn geschützt ein. Der Helfer muss Zielkonto, Worker und Ursprung prüfen und den alten Helfer/Schlüssel erhalten. Persönliche erneute Rotation/Eingabe und Kontonachweis am 02.10.2026 bestätigt.
 - [ ] Vorhandenes OAuth-Secret und neuen 32-Byte-Sitzungsschlüssel ausschließlich geschützt am neuen Worker hinterlegen; Zielkonto vor der Übertragung prüfen.
 - [x] Aus `server/` mit vorhandenem Wrangler Dry-run durchführen.
 - [ ] Nur nach erfolgreichem Staging/Dry-run, geprüftem Konto und hinterlegten Secrets bereitstellen.
@@ -65,7 +65,7 @@
 
 - [ ] Öffentliche Dateien mit dem geprüften Paket bytegleich vergleichen; interne Repository-/Server-/Sicherungspfade müssen gesperrt bleiben.
 - [ ] Sitzungsstatus ohne Anmeldung prüfen, anschließend echte Google-Rückkehr mit dem bisherigen Lernkonto prüfen.
-- [ ] Nutzer richtet gegebenenfalls nur die lokale PIN ein; bestehenden Drive-Lernbereich bewusst auswählen, keinen neuen Bereich anlegen.
+- [ ] Nutzer richtet bei frischer Adresse die notwendige temporäre lokale Grundmaske mit PIN ein. Vor jeder Drive-Bindung bleibt dieser Stand lokal; danach den vorhandenen Drive-Lernbereich über Vorschau und ausdrückliche Bestätigung übernehmen. Der vorhandene Übernahmeweg ersetzt die lokalen Startdaten und leert ihre Uploadwarteschlange; keinen neuen Drive-Lernbereich anlegen. Codepfad am 02.10.2026 geprüft, reale Abnahme weiterhin offen.
 - [ ] Vorher-/Nachherwerte von Profilen, Wortbestand, Lernpunkten, Guthaben, Besitz und Auswahl vergleichen; vollständigen Abgleich und Reload prüfen.
 - [ ] Alte Adresse erreichbar bestätigen; Geräte-/Safari- und Firefox-Offlinenachweise separat offen halten.
 - [ ] Startanleitung und Übergabe mit tatsächlicher Adresse aktualisieren. `npm run check:docs` und `git diff --check` ausführen.
