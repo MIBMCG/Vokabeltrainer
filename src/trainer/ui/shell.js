@@ -104,7 +104,7 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, commer
     form.append(
       el('p', {text: initial
         ? 'Ein Erwachsener richtet den gemeinsamen Wortschatz und die lokale PIN ein.'
-        : 'Die Datensatzeinrichtung wurde begonnen. Legen Sie jetzt die lokale PIN fest und vervollständigen Sie fehlende Startdaten.'}),
+        : 'Die Datensatz\u00adeinrichtung wurde begonnen. Legen Sie jetzt die lokale PIN fest und ver\u00advoll\u00adständigen Sie fehlende Startdaten.'}),
     );
     if (initial) form.append(field(
       'Name des Datensatzes',
@@ -192,7 +192,10 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, commer
       }
     });
     root.replaceChildren(el('section', {attrs: {'aria-labelledby': 'setup-title'}}, [
-      el('h1', {text: initial ? 'Vokabeltrainer einrichten' : 'Einrichtung fortsetzen', attrs: {id: 'setup-title'}}),
+      el('h1', {
+        text: initial ? 'Voka\u00adbel\u00adtrainer ein\u00adrichten' : 'Ein\u00adrich\u00adtung fort\u00adsetzen',
+        attrs: {id: 'setup-title', 'aria-label': initial ? 'Vokabeltrainer einrichten' : 'Einrichtung fortsetzen'},
+      }),
       form,
     ]));
   }
@@ -262,7 +265,7 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, commer
     const pin = pinInput('adult-pin', 'pin');
     const unlock = el('button', {text: 'Öffnen', attrs: {id: 'adult-unlock', type: 'submit', class: 'primary'}});
     form.append(
-      el('h1', {text: 'Für Erwachsene'}),
+      el('h1', {text: 'Für Er\u00adwach\u00adsene', attrs: {'aria-label': 'Für Erwachsene'}}),
       field('PIN', pin),
       el('p', {attrs: {id: 'shell-message', class: 'message', role: 'status'}}),
       unlock,
