@@ -1,14 +1,14 @@
 # Hier mit der Weiterarbeit beginnen
 
 **Aktuelle Fortsetzung am 02.10.2026:** Keine Pause; bisherige App v47 erhalten.
-Sicherungscommit `7acaba5b73af0ad72ae4a1440e26b669a6f9b867` auf beiden lokalen
-und Remotezweigen exakt bestätigt. Upload-Zugang zum neuen Konto: `Whoami` PASS.
-Der Nutzer hat „freigabe“ für die persönliche Google-App-Schlüsseleingabe und
-neuen Sitzungsschlüssel ausschließlich am neuen Worker `app` erteilt.
-Das geschützte Eingabefenster ist geöffnet; eine echte Secret-Belegung und
-Bereitstellung sind noch nicht belegt. Der Nutzer besitzt eine gesicherte
-Google-Schlüsselquelle, die auf diesem Laptop derzeit nicht verfügbar ist.
-Google-Inhabereinladung noch offen; Anmeldung am neuen Konto persönlich angefragt.
+Dokumentationsbasis HEAD `5a3f87005b2aac7e862f6b1b49546dd5dc891fd7`.
+Google-Anmeldung abgeschlossen: Chrome zeigt `lejeadventure@gmail.com` (`authuser=1`).
+Das bestehende Projekt fehlt in der Liste; sein IAM-Aufruf verlangt zusätzliche Rechte.
+Annahme der bestehenden Inhabereinladung im eigenen Leje-Postfach persönlich angefragt.
+Upload-Zugang PASS; Google-Eingabefenster geschlossen, neue Worker-Secrets zuletzt `[]`.
+Gesicherte alte Schlüsselquelle vorhanden, auf diesem Laptop derzeit nicht verfügbar.
+Genaue Secret-Zielfreigabe für den neuen Worker `app` gilt weiter; kein Deploy.
+Kein neues Projekt oder OAuth-Client; bisherige App und Lernbestände unverändert.
 Details und nächster Schritt: [Einrichtungsübergabe](docs/handoffs/2026-10-01-lejeadventure-einrichtung.md).
 
 **Historischer abendlicher Zwischenstand (01.10.2026; Pause am 02.10. aufgehoben):** Für den Nutzer, der ins Bett möchte,

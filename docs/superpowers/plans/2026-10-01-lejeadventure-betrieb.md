@@ -37,6 +37,7 @@
 
 - [x] Projekt `vokabeltrainer-508915` und aktuellen Inhaber im Google-Dashboard prüfen.
 - [x] Ausdrückliche Zustimmung zur zusätzlichen Inhaberrolle einholen und Einladung speichern.
+- [x] Persönliche Anmeldung am neuen Google-Konto im gesteuerten Browser abschließen; am 02.10.2026 zeigt die Console `lejeadventure@gmail.com`. Der direkte Projektaufruf meldet noch fehlende Zugriffsrechte; Anmeldung allein ist keine Inhaberabnahme.
 - [ ] Annahme durch `lejeadventure@gmail.com` und wirksamen Projektzugang prüfen.
 - [x] Nutzer meldet sich bei Cloudflare mit dem neuen Konto an; gegebenenfalls Registrierung/Bedingungen selbst abschließen.
 - [x] Kontoname/-ID aus dem Dashboard dokumentieren; keine vorhandenen Schlüssel oder persönlichen Inhalte auslesen.

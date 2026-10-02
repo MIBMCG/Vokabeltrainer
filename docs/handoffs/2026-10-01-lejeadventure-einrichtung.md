@@ -1,14 +1,14 @@
 # Übergabe: LejeAdventure-Einrichtung
 
 **Aktuelle Fortsetzung am 02.10.2026:** Keine Pause; bisherige App v47 erhalten.
-Sicherungscommit `7acaba5b73af0ad72ae4a1440e26b669a6f9b867` auf beiden lokalen
-und Remotezweigen exakt bestätigt. Upload-Zugang zum neuen Konto: `Whoami` PASS.
-Der Nutzer hat „freigabe“ für die persönliche Google-App-Schlüsseleingabe und
-neuen Sitzungsschlüssel ausschließlich am neuen Worker `app` erteilt.
-Das geschützte Eingabefenster ist geöffnet; eine echte Secret-Belegung und
-Bereitstellung sind noch nicht belegt. Der Nutzer besitzt eine gesicherte
-Google-Schlüsselquelle, die auf diesem Laptop derzeit nicht verfügbar ist.
-Google-Inhabereinladung noch offen; Anmeldung am neuen Konto persönlich angefragt.
+Dokumentationsbasis HEAD `5a3f87005b2aac7e862f6b1b49546dd5dc891fd7`.
+Google-Anmeldung abgeschlossen: Chrome zeigt `lejeadventure@gmail.com` (`authuser=1`).
+Das bestehende Projekt fehlt in der Liste; sein IAM-Aufruf verlangt zusätzliche Rechte.
+Annahme der bestehenden Inhabereinladung im eigenen Leje-Postfach persönlich angefragt.
+Upload-Zugang PASS; Google-Eingabefenster geschlossen, neue Worker-Secrets zuletzt `[]`.
+Gesicherte alte Schlüsselquelle vorhanden, auf diesem Laptop derzeit nicht verfügbar.
+Genaue Secret-Zielfreigabe für den neuen Worker `app` gilt weiter; kein Deploy.
+Kein neues Projekt oder OAuth-Client; bisherige App und Lernbestände unverändert.
 Nachweise, Grenzen und nächster Schritt sind unten dokumentiert.
 
 **Historischer Zwischenstand am 02.10.2026 vor der erneuten Rotation:** Der Nutzer hat ausdrücklich fortgesetzt;
@@ -152,8 +152,8 @@ trennen bestätigten Umfang, Vorbereitung und noch ausstehende Schritte.
   sie muss nicht für denselben Umfang erneut eingeholt werden.
 - Geprüfter Setup-Helfer und Konfiguration wurden mit ihren exakten geprüften
   Hashes abgeglichen. Das persönliche Eingabefenster mit PID 15428 wurde
-  geöffnet und wartete noch. Eine tatsächliche Secret-Belegung oder ein Deploy
-  ist nicht belegt; der Status dieses Fensters ist bei Fortsetzung neu zu prüfen.
+  geöffnet und wartete zu diesem Zeitpunkt noch. Inzwischen ist das Fenster
+  geschlossen; eine tatsächliche Secret-Belegung oder ein Deploy ist nicht belegt.
 - Der private Inhaber öffnete denselben bestehenden Google-OAuth-Client.
   Gelesen wurden nur Beschriftungen, Überschriften und die Anzahl sichtbarer
   Schaltflächen, keine Schlüsselwerte. Der Nutzer kann den alten Schlüssel
@@ -177,8 +177,8 @@ trennen bestätigten Umfang, Vorbereitung und noch ausstehende Schritte.
 - Das eigene Google-Eingabefenster ist inzwischen geschlossen. Erneute reine
   Namensprüfung am neuen Worker ergibt `[]`; keine Teilbelegung vorhanden.
   Für den unabhängigen Betreiberzugang ist die IAM-Seite gezielt im neuen
-  Google-Konto geöffnet. Google verlangt „Verify it’s you“ für
-  `lejeadventure@gmail.com`; persönliche erneute Anmeldung ist angefragt.
+  Google-Konto geöffnet. Google verlangte damals „Verify it’s you“ für
+  `lejeadventure@gmail.com`; die damals angefragte persönliche Anmeldung ist inzwischen abgeschlossen.
 - Der Codepfad für die neue lokale Startmaske ist unabhängig untersucht:
   Ohne Drive-Bindung bleiben Grunddaten lokal. Die bestätigte Übernahme eines
   anderen vorhandenen Lernbereichs ersetzt den lokalen Ledger und leert seine
@@ -186,6 +186,22 @@ trennen bestätigten Umfang, Vorbereitung und noch ausstehende Schritte.
   Sicherheitskopie. Der Einrichtungsplan ist deshalb genauer formuliert.
   Startanleitung nur als Entwurf vorbereitet; echter Wechsel und Werteerhalt
   unter der neuen Adresse bleiben zu prüfen.
+
+- **Aktueller Google-Zugriffsbeleg am 02.10.2026:** Der Nutzer hat die Anmeldung
+  abgeschlossen. Der gesteuerte Chrome zeigt `lejeadventure@gmail.com` mit
+  `authuser=1`. Die Projektliste enthält das bestehende Projekt nicht. Der direkte
+  IAM-Aufruf für `vokabeltrainer-508915` im Leje-Konto meldet fehlende Berechtigungen
+  `resourcemanager.projects.get` und `resourcemanager.projects.getIamPolicy`
+  sowie erforderliche zusätzliche Zugriffsrechte. Die Anmeldung allein belegt
+  somit keine wirksame Inhaberrolle; eine angenommene Einladung ist weiterhin
+  nicht nachgewiesen. Der Nutzer ist gebeten, die bestehende Google-Inhaber-
+  Einladung in seinem eigenen Leje-Postfach persönlich anzunehmen.
+- Der Nutzer hat eine gesicherte alte Google-Schlüsselquelle, die derzeit auf
+  diesem Laptop nicht verfügbar ist. Das Google-Eingabefenster ist geschlossen;
+  neue Worker-Secrets zuletzt `[]`. Die konkrete Secret-Zielfreigabe gilt weiter.
+  Kein neues Projekt oder OAuth-Client, keine neuen Worker-Secrets, kein Deploy
+  und keine Produktänderung. Dokumentationsbasis HEAD
+  `5a3f87005b2aac7e862f6b1b49546dd5dc891fd7`.
 
 ## Erhaltener Produktstand
 
@@ -197,13 +213,16 @@ maßgeblich; keinen neuen Client erzeugen.
 
 ## Nächster konkreter Schritt
 
-Die persönliche Anmeldung am neuen Google-Betreiberkonto und die Annahme der
-gespeicherten Inhabereinladung abschließen. Für die spätere Secret-Belegung die
-bereits vorhandene gesicherte Quelle des `GOOGLE_CLIENT_SECRET` auf diesem
-Laptop persönlich verfügbar machen; keine Schlüsseldatei in den Chat senden.
+Die bestehende Google-Inhabereinladung im eigenen Leje-Postfach persönlich
+annehmen und anschließend den Zugriff auf `vokabeltrainer-508915` im bereits
+angemeldeten Leje-Konto prüfen. Kein neues Projekt oder OAuth-Client anlegen.
+Für die spätere Secret-Belegung die bereits vorhandene gesicherte Quelle
+des `GOOGLE_CLIENT_SECRET` persönlich auf diesem Laptop
+verfügbar machen; keine Schlüsseldatei in den Chat senden.
 Die genaue Übermittlung an ausschließlich den neuen Worker `app` ist bereits
-freigegeben. Der Nutzer gibt den passenden vorhandenen Schlüssel selbst in das
-geschützte Fenster ein; dessen aktuellen Status vorher prüfen. Bis eine passende
+freigegeben. Das frühere geschützte Eingabefenster ist geschlossen. Sobald die
+passende Quelle verfügbar ist, die persönliche geschützte Eingabe erneut
+vorbereiten; der Nutzer gibt den Schlüssel selbst ein. Bis eine passende
 Quelle vorliegt, keine bestehende Google-Secret-Belegung blind deaktivieren,
 löschen oder ersetzen und keinen neuen OAuth-Client erzeugen. Eine Änderung
 bestehender Secrets ist durch die erteilte Übermittlungsfreigabe nicht beauftragt.
@@ -230,9 +249,11 @@ Die Einladung ist gespeichert; ihre Annahme ist offen. Cloudflare-Konto,
 Subdomain, Worker-Startvorlage, D1-Struktur und neue Google-Adressen sind geprüft.
 Upload-Zugang zum exakt bestätigten neuen Konto ist belegt; die letzte lesende
 Secret-Namenprüfung war leer. Übermittlung inzwischen ausdrücklich freigegeben;
-passende persönliche Quelle des bestehenden Google-App-Schlüssels fehlt.
-Worker-Secrets, Trainer-Bereitstellung, Anmeldung und Bestandserhalt unter
-der neuen Adresse sind noch nicht belegt.
+passende persönliche Quelle des bestehenden Google-App-Schlüssels auf diesem
+Laptop fehlt, ist aber laut Nutzer gesichert vorhanden. Google-Anmeldung im
+Leje-Konto ist belegt; Projektzugriff und Einladungsannahme bleiben offen.
+Worker-Secrets, Trainer-Bereitstellung, Trainer-Anmeldung und Bestandserhalt
+unter der neuen Adresse sind noch nicht belegt.
 Eine abgeschlossene Umstellung darf aus diesem Dokument nicht abgeleitet
 werden. Bestehende physische Geräte-/Safari-Abnahme und der separate
 Firefox-Offlinenachweis bleiben offen. Die Abendpause vom 01.10. ist seit der
