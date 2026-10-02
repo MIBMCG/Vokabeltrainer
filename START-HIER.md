@@ -1,6 +1,24 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Abendlicher Zwischenstand (01.10.2026):** Für den Nutzer, der ins Bett möchte,
+**Aktuelle Fortsetzung am 02.10.2026:** Der Nutzer hat ausdrücklich fortgesetzt;
+die Abendpause vom 01.10. ist aufgehoben. Lokaler Stand und beide Remotezweige
+sind frisch auf `448182a7a135d249810161c2c0027eddded5b276` abgeglichen.
+Unabhängige synthetische Capture-Diagnose PASS: exakt 40 Zeichen durch DPAPI
+bis zur Prozessumgebung erhalten; keine belegte Kürzung. Tatsächliche Eingabequelle
+ungeklärt; bisheriger Zugriffsversuch weiterhin 6003/6111. Separater Erstbelegungshelfer
+unabhängig in Spec und Quality PASS; 30 synthetische Tests laut
+Implementierungsbericht/Review, keine reale Ausführung. Der existierende Token
+„LejeAdventure App-Upload“ ist laut heute geprüfter sicherer Cloudflare-Zusammenfassung
+aktiv, Last used `-`, mit ausschließlich D1 Read, Workers Scripts Edit und
+Account Settings Read für `lejeadventure@gmail.com`, Ende 01.01.2027.
+Persönliche äquivalente Erneuerung durchgeführt; eine weitere ist nötig, weil
+während der parallelen Bedienung eine versehentliche Aufnahme die neue
+Schlüsselanzeige erfasste. Lokale Aufnahme gelöscht; erneute Eingabe offen.
+Produkt `6b13780`, Cache v47, bleibt erhalten; keine Bereitstellung,
+Secretschreibung oder Datenänderung. Neue Zustimmung zur Google-Secret-Übermittlung
+steht vor Ausführung noch aus.
+
+**Historischer abendlicher Zwischenstand (01.10.2026; Pause am 02.10. aufgehoben):** Für den Nutzer, der ins Bett möchte,
 wird jetzt nur gesichert. Danach erst bei erneuter Fortsetzung weiterarbeiten.
 Neue Adresse vorbereitet, Trainer noch nicht bereitgestellt; Cloudflare-
 Schlüsseleingabe ungültig, Betreiber-/Anmeldenachweise offen.
@@ -12,10 +30,11 @@ im bisherigen Google-Konto. Zusätzliche Google-Inhabereinladung bestätigt und
 gespeichert, Annahme ausstehend. Neues Cloudflare-Konto und Subdomain
 `lejeadventure.workers.dev` geprüft; konkrete Einrichtung/OAuth-Erweiterung
 bestätigt. Worker-Startvorlage `app`, neue Google-Adressen und D1-Sitzungsschema
-angelegt; Upload-Probelauf und acht Stagingtests PASS. Schlüssel fehlen noch,
-noch keine Trainer-Bereitstellung.
-Produkt `6b13780`, Cache v47, und bisherige App erhalten. Für den Abend
-nach Sicherung unterbrechen.
+angelegt; Upload-Probelauf und acht Stagingtests PASS. Upload-Token persönlich
+erzeugt und zweimal geschützt eingegeben; Zugriff ungeklärt. Worker-Secrets
+und Trainer-Bereitstellung stehen aus.
+Produkt `6b13780`, Cache v47, und bisherige App erhalten. Die damalige
+Abendpause ist seit ausdrücklicher Fortsetzung am 02.10. aufgehoben.
 [Aktuelle Übergabe](docs/handoffs/2026-10-01-lejeadventure-einrichtung.md).
 
 **Aktueller Abschluss am 01.10.2026:** Der Firefox-Updatefehler ist als

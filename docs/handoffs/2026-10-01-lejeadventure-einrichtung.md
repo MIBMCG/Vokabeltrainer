@@ -1,6 +1,24 @@
 # Übergabe: LejeAdventure-Einrichtung
 
-**Unterbrechung für den Abend:** Der Nutzer möchte ins Bett und bittet um
+**Aktuelle Fortsetzung am 02.10.2026:** Der Nutzer hat ausdrücklich fortgesetzt;
+die Abendpause vom 01.10. ist aufgehoben. Lokaler Stand und beide Remotezweige
+sind frisch auf `448182a7a135d249810161c2c0027eddded5b276` abgeglichen.
+Unabhängige synthetische Capture-Diagnose PASS: exakt 40 Zeichen durch DPAPI
+bis zur Prozessumgebung erhalten; keine belegte Kürzung. Tatsächliche Eingabequelle
+ungeklärt; bisheriger Zugriffsversuch weiterhin 6003/6111. Separater Erstbelegungshelfer
+unabhängig in Spec und Quality PASS; 30 synthetische Tests laut
+Implementierungsbericht/Review, keine reale Ausführung. Der existierende Token
+„LejeAdventure App-Upload“ ist laut heute geprüfter sicherer Cloudflare-Zusammenfassung
+aktiv, Last used `-`, mit ausschließlich D1 Read, Workers Scripts Edit und
+Account Settings Read für `lejeadventure@gmail.com`, Ende 01.01.2027.
+Persönliche äquivalente Erneuerung durchgeführt; eine weitere ist nötig, weil
+während der parallelen Bedienung eine versehentliche Aufnahme die neue
+Schlüsselanzeige erfasste. Lokale Aufnahme gelöscht; erneute Eingabe offen.
+Produkt `6b13780`, Cache v47, bleibt erhalten; keine Bereitstellung,
+Secretschreibung oder Datenänderung. Neue Zustimmung zur Google-Secret-Übermittlung
+steht vor Ausführung noch aus.
+
+**Historische Unterbrechung für den Abend am 01.10. (am 02.10. aufgehoben):** Der Nutzer möchte ins Bett und bittet um
 Beschleunigung. Nur den Zwischenstand sichern; Einrichtung erst bei erneuter
 Fortsetzung weiterführen. Bisherige App und Lernbestände bleiben erhalten.
 
@@ -51,8 +69,10 @@ trennen bestätigten Umfang, Vorbereitung und noch ausstehende Schritte.
   Build-Hook erstellt 387 öffentliche Dateien, richtige ASSETS-/SESSIONS-
   Bindungen und neuer Ursprung. Lokaler Dateizähler bestätigt 387 Dateien.
   Acht gezielte Stagingtests PASS, keine Server-/Berichts-/Privatdateien im Paket.
-- Neuer API-Token **zur Erstellung durch den Nutzer vorbereitet**, noch nicht
-  erzeugt oder erfasst. Rechte nur im neuen Konto: Workers Scripts Edit,
+- **Historische Tokenvorbereitung am 01.10. vor der persönlichen Erstellung:**
+  Der API-Token war zunächst zur Erstellung durch den Nutzer vorbereitet.
+  Danach am selben Tag tatsächlich erzeugt und zweimal per DPAPI-Eingabe erfasst
+  (siehe den späteren Zugriffsversuch unten). Rechte nur im neuen Konto: Workers Scripts Edit,
   D1 Read, Account Settings Read. Zusammenfassung: Start 01.10.2026,
   Ende **01.01.2027**. Der Kalender wurde bis einschließlich 31.12. ausgewählt;
   maßgeblich ist die angezeigte Zusammenfassung mit dem Folgetag.
@@ -87,8 +107,9 @@ trennen bestätigten Umfang, Vorbereitung und noch ausstehende Schritte.
   `.superpowers/lejeadventure-umzug/setup-secrets.ps1` vorbereitet; der aktive
   Upload-Helfer bleibt unverändert. Implementer meldet 30 synthetische Prüfungen
   PASS und AST ohne Parsefehler, ohne echtes Vaultlesen oder Netzoperation.
-  Unabhängiges Review und konkrete Zustimmung zur Google-Schlüsselübermittlung
-  sind vor Ausführung noch erforderlich. Hash/Report liegen im planbezogenen
+  Unabhängiges Spec- und Quality-Review inzwischen PASS; 30 synthetische Tests
+  laut Implementierungsbericht/Review, keine reale Ausführung. Konkrete Zustimmung
+  zur Google-Schlüsselübermittlung steht vor Ausführung noch aus. Hash/Report liegen im planbezogenen
   SDD-Arbeitsverzeichnis. Noch keine Worker-Secrets übertragen.
 
 ## Erhaltener Produktstand
@@ -105,9 +126,17 @@ Die Annahme der Google-Inhabereinladung prüfen. Der neue Worker, beide
 Google-Adressen und D1 sind angelegt. Startadresse für die später bereitgestellte
 Trainer-App ist `https://app.lejeadventure.workers.dev/trainer/`.
 Zuerst die unvollständige bzw. ungültige Eingabe des neuen Upload-Schlüssels
-klären und seine Kontozuordnung prüfen. Den abendlichen Zwischenschritt nicht
-als bestätigten Zugang behandeln. Danach beide Worker-Secrets geschützt
-hinterlegen; erst anschließend das geprüfte Trainerpaket bereitstellen.
+klären und seine Kontozuordnung prüfen. Die persönliche äquivalente Erneuerung
+des heute in der sicheren Zusammenfassung geprüften aktiven Tokens erfolgte;
+nach versehentlicher Aufnahme der parallel geöffneten Schlüsselanzeige ist
+eine weitere Rotation und geschützte Eingabe angefragt. Die lokale Aufnahme
+ist gelöscht; noch keine Live-Prüfung mit diesem Zwischenzugang. Während
+der persönlichen Eingabe keine Browserbeobachtung. Die synthetische Diagnose belegt keine
+Kürzung durch den Helfer; die tatsächliche Eingabequelle bleibt offen. Den
+abendlichen Zwischenschritt nicht als bestätigten Zugang behandeln. Nach
+erfolgreichem Zugang und neuer ausdrücklicher Zustimmung zur Google-Secret-
+Übermittlung beide Worker-Secrets geschützt hinterlegen; erst anschließend
+das geprüfte Trainerpaket bereitstellen.
 
 Das Öffnen der Google-Schlüsselübersicht wurde von der automatischen
 Freigabeprüfung abgelehnt: Die Ansicht könnte private Client-Secrets anzeigen;
@@ -131,4 +160,5 @@ Upload-Schlüssel, Worker-Secrets, Trainer-Bereitstellung, Anmeldung und
 Bestandserhalt unter der neuen Adresse sind noch nicht belegt.
 Eine abgeschlossene Umstellung darf aus diesem Dokument nicht abgeleitet
 werden. Bestehende physische Geräte-/Safari-Abnahme und der separate
-Firefox-Offlinenachweis bleiben offen. Nach Sicherung heute unterbrechen.
+Firefox-Offlinenachweis bleiben offen. Die Abendpause vom 01.10. ist seit der
+ausdrücklichen Fortsetzung am 02.10. aufgehoben.
