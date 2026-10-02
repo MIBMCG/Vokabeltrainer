@@ -54,7 +54,7 @@
 - [x] Lokale Konfiguration mit neuer Konto-ID, tatsächlichem Ursprung, D1-Bindung, `preview_urls: false` und `observability.enabled: false` vorbereiten.
 - [x] Vorhandenen OAuth-Client behalten; neuen Ursprung und exakten Callback ergänzen. Bei nötiger Zugriffsfreigabe direkt vor dem Speichern die konkrete Bestätigung einholen.
 - [x] Neuen Cloudflare-Upload-Schlüssel mit Workers-Schreibrecht und D1-/Kontoleserecht ausschließlich für das neue Konto vorbereiten; Nutzer erstellt ihn selbst und gibt ihn geschützt ein. Der Helfer muss Zielkonto, Worker und Ursprung prüfen und den alten Helfer/Schlüssel erhalten. Persönliche erneute Rotation/Eingabe und Kontonachweis am 02.10.2026 bestätigt.
-- [ ] Vorhandenes OAuth-Secret und neuen 32-Byte-Sitzungsschlüssel ausschließlich geschützt am neuen Worker hinterlegen; Zielkonto vor der Übertragung prüfen.
+- [ ] Vorhandenes OAuth-Secret und neuen 32-Byte-Sitzungsschlüssel ausschließlich geschützt am neuen Worker hinterlegen; Zielkonto vor der Übertragung prüfen. Am 02.10.2026 sind beide Secret-Namen vorhanden, ihre Werte jedoch nicht geprüft. Der Nutzer meldet eine Client-ID-Eingabe; Terminalabschluss noch zu klären. Erstbelegungshelfer nicht erneut ausführen. Eine nötige Korrektur nur von `GOOGLE_CLIENT_SECRET` nach Klärung und mit persönlich verfügbarem echtem Secret vorbereiten; `SESSION_ENCRYPTION_KEY` erhalten. Namensnachweis allein ist keine gültige Secret-Abnahme.
 - [x] Aus `server/` mit vorhandenem Wrangler Dry-run durchführen.
 - [ ] Nur nach erfolgreichem Staging/Dry-run, geprüftem Konto und hinterlegten Secrets bereitstellen.
 

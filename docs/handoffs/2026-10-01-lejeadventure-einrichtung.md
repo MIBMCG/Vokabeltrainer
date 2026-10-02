@@ -1,15 +1,23 @@
 # Übergabe: LejeAdventure-Einrichtung
 
 **Aktuelle Fortsetzung am 02.10.2026:** Keine Pause; bisherige App v47 erhalten.
-Dokumentationsbasis HEAD `32199454326441715f80eef99e71ec420d4dc57a`.
-Google-Inhabereinladung ausdrücklich angenommen; frischer IAM-Aufruf im per
-Badge bestätigten Leje-Konto zeigt das bestehende Projekt und beide Inhaber.
-Wirksamer Google-Betreiberzugang damit belegt; private Inhaberrolle erhalten.
-Upload-Zugang PASS; Google-Eingabefenster geschlossen, neue Worker-Secrets zuletzt `[]`.
-Verfügbarkeit der gesicherten bestehenden Google-App-Schlüsselquelle erneut
-angefragt, Antwort offen. Genaue Secret-Zielfreigabe für Worker `app` gilt weiter.
-Kein neues Projekt oder OAuth-Client, kein Deploy; Produkt und Lernbestände erhalten.
+Wirksamer Google-Inhaberzugang und Upload-Zugang zum neuen Konto sind belegt.
+Nach persönlicher Meldung „ClientID kopiert und im Terminal eingefügt“ zeigt
+Worker `app` jetzt `GOOGLE_CLIENT_SECRET` und `SESSION_ENCRYPTION_KEY` als `secret_text`.
+Werte wurden nicht gelesen oder validiert; eine Client-ID könnte als Secret
+angenommen worden sein. Terminal-Abschlussmeldung angefragt, Antwort offen.
+Task 2 bleibt offen. Erstbelegung nicht erneut ausführen; vorhandenen Sitzungsschlüssel
+behalten. Nach Klärung gegebenenfalls nur den Google-Secret-Wert gezielt korrigieren.
+Kein Deploy, keine Löschung/Überschreibung; Produkt und Lernbestände erhalten.
 Nachweise, Grenzen und nächster Schritt sind unten dokumentiert.
+Aktuelle Prüfung: geprüfte Helfer- und Konfigurationshashes unverändert MATCH.
+Keine laufenden `setup-secrets`-/`deploy-token`-Prozesse gefunden; nur gefilterte
+Prozessmetadaten gelesen. Die echte lesende Secret-Namenprüfung über
+`deploy-token.ps1 -Action Secrets` bestätigt beide Namen am Worker `app` im Konto
+`2531040d13ab47effa73e2124bd6e912`, jeweils Typ `secret_text`. Keine Werte gelesen.
+Der Erstbelegungshelfer akzeptiert jede nicht leere Eingabe; ein unabhängiger
+Reviewer bestätigt, dass auch eine Client-ID als Secret angenommen würde.
+Dies belegt einen möglichen falschen Wert, keinen nachgewiesenen Inhalt.
 
 **Historischer Zwischenstand am 02.10.2026 vor der erneuten Rotation:** Der Nutzer hat ausdrücklich fortgesetzt;
 die Abendpause vom 01.10. ist aufgehoben. Lokaler Stand und beide Remotezweige
@@ -234,27 +242,23 @@ maßgeblich; keinen neuen Client erzeugen.
 
 ## Nächster konkreter Schritt
 
-Die erneut angefragte Verfügbarkeit der gesicherten bestehenden Quelle des
-`GOOGLE_CLIENT_SECRET` klären; Antwort steht aus. Der wirksame Google-Inhaberzugang
-zum bestehenden Projekt ist inzwischen belegt. Für die persönliche Eingabe die
-vorhandene passende Schlüsselquelle auf diesem Laptop verfügbar machen;
-keine Schlüsseldatei in den Chat senden. Kein neues Projekt oder OAuth-Client.
-Die genaue Übermittlung an ausschließlich den neuen Worker `app` ist bereits
-freigegeben. Das frühere geschützte Eingabefenster ist geschlossen. Sobald die
-passende Quelle verfügbar ist, die persönliche geschützte Eingabe erneut
-vorbereiten; der Nutzer gibt den Schlüssel selbst ein. Bis eine passende
-Quelle vorliegt, keine bestehende Google-Secret-Belegung blind deaktivieren,
-löschen oder ersetzen und keinen neuen OAuth-Client erzeugen. Eine Änderung
-bestehender Secrets ist durch die erteilte Übermittlungsfreigabe nicht beauftragt.
-Die fehlende persönliche Quelle erfordert keine erneute Freigabe desselben Ziels.
+Die gerade angefragte tatsächliche Terminal-Abschlussmeldung und die persönliche
+Eingabe klären; Antwort steht aus. Der Nutzer meldet eine eingefügte **Client-ID**,
+die nicht das benötigte **Client-Secret** ist. Beide Secret-Namen sind inzwischen
+vorhanden, ihre Werte und Gültigkeit aber nicht gelesen oder validiert. Task 2
+bleibt offen. Den Erstbelegungshelfer nicht erneut ausführen.
 
-Der frühere Versuch, die Google-Schlüsselübersicht auszulesen, war von der
-automatischen Freigabeprüfung abgelehnt worden. Inzwischen öffnete der private
-Inhaber den bestehenden Client; ausschließlich nicht geheime Beschriftungen
-und Schaltflächenanzahlen wurden gelesen. Schlüsselwerte wurden nicht ausgelesen.
-Erst nach persönlicher Eingabe der passenden Quelle und bestätigter Belegung
-der beiden neuen Worker-Secrets das geprüfte Trainerpaket bereitstellen.
-Startadresse für die später bereitgestellte Trainer-App ist
+Die passende gesicherte Quelle des bestehenden `GOOGLE_CLIENT_SECRET` für die
+persönliche Eingabe verfügbar machen; keine Schlüsseldatei in den Chat senden.
+Erst nach Klärung und mit dem echten bestehenden Client-Secret gegebenenfalls
+gezielt ausschließlich `GOOGLE_CLIENT_SECRET` am neuen Worker `app` korrigieren.
+Den vorhandenen `SESSION_ENCRYPTION_KEY` erhalten. Die genaue Secret-Zielfreigabe
+für diesen Worker gilt weiter. Bisher keine Schlüssellöschung oder Überschreibung
+vorgenommen; kein neues Projekt oder OAuth-Client und kein Deploy.
+
+Die früheren leeren Secret-Namenprüfungen sind historische Belege. Namen
+allein belegen keine gültige Google-Konfiguration. Erst nach geklärter passender
+Google-Secret-Belegung das geprüfte Trainerpaket bereitstellen. Startadresse:
 `https://app.lejeadventure.workers.dev/trainer/`.
 
 Die neue Adresse besitzt eigene lokale Browserdaten. Eine einmalige PIN-
@@ -265,16 +269,12 @@ Keine Lernbestände in das Betreiberkonto verschieben.
 
 ## Nachweisgrenzen
 
-Die Einladung ist angenommen; wirksamer Google-Inhaberzugang ist belegt. Cloudflare-Konto,
-Subdomain, Worker-Startvorlage, D1-Struktur und neue Google-Adressen sind geprüft.
-Upload-Zugang zum exakt bestätigten neuen Konto ist belegt; die letzte lesende
-Secret-Namenprüfung war leer. Übermittlung inzwischen ausdrücklich freigegeben;
-passende persönliche Quelle des bestehenden Google-App-Schlüssels auf diesem
-Laptop fehlt, ist aber laut Nutzer gesichert vorhanden. Google-Anmeldung im
-Leje-Konto, Projektzugriff und Einladungsannahme sind inzwischen belegt.
-Worker-Secrets, Trainer-Bereitstellung, Trainer-Anmeldung und Bestandserhalt
-unter der neuen Adresse sind noch nicht belegt.
-Eine abgeschlossene Umstellung darf aus diesem Dokument nicht abgeleitet
-werden. Bestehende physische Geräte-/Safari-Abnahme und der separate
-Firefox-Offlinenachweis bleiben offen. Die Abendpause vom 01.10. ist seit der
-ausdrücklichen Fortsetzung am 02.10. aufgehoben.
+Wirksamer Google-Inhaberzugang, Projektzugriff und Upload-Zugang zum exakt
+bestätigten neuen Konto sind belegt. Cloudflare-Konto, Subdomain, Worker-
+Startvorlage, D1-Struktur und neue Google-Adressen sind geprüft. Beide neuen
+Worker-Secret-Namen sind jetzt vorhanden; Werte und Gültigkeit sind offen.
+Ein möglicher Client-ID-Wert unter `GOOGLE_CLIENT_SECRET` ist zu klären.
+Task 2, Trainer-Bereitstellung, Trainer-Anmeldung und Bestandserhalt unter der
+neuen Adresse sind nicht abgeschlossen. Aus den vorhandenen Namen darf keine
+abgeschlossene Umstellung abgeleitet werden. Physische Geräte-/Safari-Abnahme
+und separater Firefox-Offlinenachweis bleiben offen. Keine neue Pause.

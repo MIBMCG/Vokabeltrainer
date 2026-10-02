@@ -1,14 +1,14 @@
 # Arbeitsstand
 
 **Aktuelle Fortsetzung am 02.10.2026:** Keine Pause; bisherige App v47 erhalten.
-Dokumentationsbasis HEAD `32199454326441715f80eef99e71ec420d4dc57a`.
-Google-Inhabereinladung ausdrücklich angenommen; frischer IAM-Aufruf im per
-Badge bestätigten Leje-Konto zeigt das bestehende Projekt und beide Inhaber.
-Wirksamer Google-Betreiberzugang damit belegt; private Inhaberrolle erhalten.
-Upload-Zugang PASS; Google-Eingabefenster geschlossen, neue Worker-Secrets zuletzt `[]`.
-Verfügbarkeit der gesicherten bestehenden Google-App-Schlüsselquelle erneut
-angefragt, Antwort offen. Genaue Secret-Zielfreigabe für Worker `app` gilt weiter.
-Kein neues Projekt oder OAuth-Client, kein Deploy; Produkt und Lernbestände erhalten.
+Wirksamer Google-Inhaberzugang und Upload-Zugang zum neuen Konto sind belegt.
+Nach persönlicher Meldung „ClientID kopiert und im Terminal eingefügt“ zeigt
+Worker `app` jetzt `GOOGLE_CLIENT_SECRET` und `SESSION_ENCRYPTION_KEY` als `secret_text`.
+Werte wurden nicht gelesen oder validiert; eine Client-ID könnte als Secret
+angenommen worden sein. Terminal-Abschlussmeldung angefragt, Antwort offen.
+Task 2 bleibt offen. Erstbelegung nicht erneut ausführen; vorhandenen Sitzungsschlüssel
+behalten. Nach Klärung gegebenenfalls nur den Google-Secret-Wert gezielt korrigieren.
+Kein Deploy, keine Löschung/Überschreibung; Produkt und Lernbestände erhalten.
 Details und nächster Schritt: [Einrichtungsübergabe](docs/handoffs/2026-10-01-lejeadventure-einrichtung.md).
 
 **Historischer abendlicher Zwischenstand (01.10.2026; Pause am 02.10. aufgehoben):** Der Nutzer möchte ins Bett und
