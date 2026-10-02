@@ -209,3 +209,20 @@ test('returns a bounded client error for a malformed URL', async () => {
     assert.doesNotMatch(response.body.toString(), /stack|G:\\/i);
   });
 });
+
+
+test('serves public information routes and keeps internal trainer paths unavailable', async () => {
+  await withServer(async (port) => {
+    for (const path of ['/trainer/info/', '/trainer/info/index.html', '/trainer/info/datenschutz.html', '/trainer/info/nutzung.html']) {
+      const response = await request(port, path);
+      assert.equal(response.status, 200, path);
+      assert.equal(response.headers['content-type'], 'text/html; charset=utf-8', path);
+      assert.match(response.body.toString(), /<html lang="de">/);
+      assert.match(response.body.toString(), /<main/);
+      assert.equal((await request(port, path, 'HEAD')).body.length, 0, path);
+    }
+    for (const path of ['/trainer/info/private.json', '/server/worker.js', '/.cloudflare/public/trainer/index.html', '/docs/BENUTZUNG.md', '/trainer/private-backup.json']) {
+      assert.equal((await request(port, path)).status, 404, path);
+    }
+  });
+});

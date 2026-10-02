@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Informationen zur lokalen Speicherung, Google Drive und den Sitzungsdaten des LejeAdventure-Anmeldedienstes.">
+  <title>Datenschutzinformationen · LejeAdventure</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#inhalt">Zum Inhalt</a>
+  <header class="site-header">
+    <div class="page-width">
+      <a class="brand" href="./">LejeAdventure</a>
+      <nav aria-label="Informationen zur App">
+        <a href="./">Über die App</a>
+        <a href="datenschutz.html" aria-current="page">Datenschutz</a>
+        <a href="nutzung.html">Nutzung</a>
+      </nav>
+    </div>
+  </header>
+  <main id="inhalt" class="page-width" tabindex="-1">
+    <h1>Datenschutz<wbr>informationen</h1>
+    <p class="intro">Hier wird beschrieben, welche Daten LejeAdventure für das Lernen und die freiwillige Google-Verbindung verwendet.</p>
+    <p>Stand: 2. Oktober 2026. Kontakt für Fragen zur App und ihrer Datenverarbeitung: <a href="mailto:lejeadventure@gmail.com">lejeadventure@gmail.com</a>.</p>
+    <section aria-labelledby="lokal">
+      <h2 id="lokal">Daten auf diesem Gerät</h2>
+      <p>Die App speichert Lernprofile und deren Namen, Lektionen, Vokabeln, Lernhistorie und laufende Übungen im Browser. Dazu gehören Lernstände, Punkte, Figuren, Besitz und Auswahl sowie noch nicht abgeglichene Änderungen und lokale Sicherheitskopien.</p>
+      <p>Auch eine zufällige Gerätekennung, die gewählte Drive-Verbindung und der Prüfwert der lokalen PIN werden lokal gespeichert. Programmdateien und Bilder werden für den Offlinebetrieb im Browser zwischengespeichert.</p>
+      <p>Die PIN ist eine lokale Bedienhürde gegen versehentliche Änderungen. Sie ist kein Google-Passwort und verschlüsselt die Lerndaten nicht. Für Lernprofile sind vollständige Namen oder Geburtstage nicht nötig; selbst eingegebene Namen und Wortlisten können personenbezogene Angaben enthalten.</p>
+    </section>
+    <section aria-labelledby="google">
+      <h2 id="google">Freiwilliger Abgleich über Google Drive</h2>
+      <p>Wenn Google verbunden und ein Lernbereich bewusst ausgewählt oder angelegt wird, überträgt die App seine Inhalte und Lernhistorie als JSON-Dateien in das eigene Google Drive. Das dient der Suche, Übernahme, Speicherung und dem Abgleich der App-Lernbereiche und ihrer Sicherungen.</p>
+      <p>Die einzige angeforderte Google-Berechtigung ist <code>https://www.googleapis.com/auth/drive.file</code>. Sie erlaubt Zugriff auf Dateien, die die App erstellt hat oder die ausdrücklich mit ihr geöffnet wurden. Sie erteilt keinen pauschalen Vollzugriff auf das gesamte Google Drive.</p>
+      <p>Die Drive-Lerndateien sind lesbare JSON-Dateien. Die App verschlüsselt diese Lernbestände nicht Ende zu Ende. Für denselben Lernbereich auf mehreren Geräten wird dasselbe Google-Konto verwendet.</p>
+    </section>
+    <section aria-labelledby="anmeldung">
+      <h2 id="anmeldung">Cloudflare und die Google-Anmeldung</h2>
+      <p>Die Web-App und ihr Anmeldedienst werden bei Cloudflare betrieben. Die Anmeldung erfolgt bei Google. Der Cloudflare-Dienst vermittelt die Drive-Anfragen einschließlich der Dateiinhalte zwischen der App und Google Drive.</p>
+      <p>Zur Wiederaufnahme der Google-Verbindung speichert der Anmeldedienst in Cloudflare D1 Sitzungsdaten, die Google-Drive-Kontokennung und Ablaufzeiten sowie verschlüsselte Google-Zugriffs- und Erneuerungstokens. D1 speichert keinen eigenen Wortschatz, Lernbestand, Lernstand, Punkte- oder Figurenbestand.</p>
+      <p>Im Browser wird ein technisch notwendiges Sitzungs-Cookie verwendet. Die App-Sitzung ist ab ihrer Anlage 30 Tage gültig. Für den Anmeldevorgang gibt es außerdem ein kurzlebiges Cookie mit zehn Minuten Gültigkeit.</p>
+      <p>Die Gültigkeitsdauer ist keine allgemeine Löschfrist: Abgelaufene Sitzungen werden bei einem späteren Zugriff gelöscht. Unbenutzte abgelaufene Sitzungen und nicht abgeschlossene Anmeldevorgänge können länger in D1 verbleiben, da kein regelmäßiger globaler Löschlauf eingerichtet ist.</p>
+    </section>
+    <section aria-labelledby="trennen">
+      <h2 id="trennen">Verbindung trennen und eigene Daten entfernen</h2>
+      <p>„Google-Verbindung trennen“ löscht die aktuelle App-Anmeldesitzung im Anmeldedienst. Lokale Lernstände und Dateien im eigenen Google Drive bleiben erhalten; andere Gerätesitzungen bleiben bestehen. Lokal kann weiter geübt werden.</p>
+      <p>Das Trennen widerruft die Google-Berechtigung nicht. Ein Widerruf wird separat im eigenen Google-Konto vorgenommen.</p>
+      <p>Um einen eigenen Lernbestand vollständig zu entfernen, müssen die zugehörigen Browserdaten und Dateien im eigenen Google Drive auf allen verwendeten Geräten beziehungsweise im verwendeten Konto entfernt werden. Sichere vorher Daten, die du behalten möchtest.</p>
+    </section>
+    <section aria-labelledby="dienste">
+      <h2 id="dienste">Weitere Dienste</h2>
+      <p>Diese Informationsseiten laden keine externen Skripte, Webfonts, Werbung oder Statistikwerkzeuge. Die App verwendet Google für Anmeldung und Drive-Zugriff; im direkten Browsermodus wird zusätzlich Google Identity Services geladen.</p>
+      <p>Über die Verarbeitung technischer Verbindungsdaten und ihre Aufbewahrung informieren Cloudflare und Google in ihren eigenen Datenschutzinformationen. Diese Seite enthält keine Zusicherung über deren sämtliche Betriebslogs oder Aufbewahrungszeiten.</p>
+    </section>
+  </main>
+  <footer class="page-width">
+    <p><a href="../">Zum Vokabeltrainer</a></p>
+    <p>Kontakt zu LejeAdventure: <a href="mailto:lejeadventure@gmail.com">lejeadventure@gmail.com</a></p>
+  </footer>
+</body>
+</html>

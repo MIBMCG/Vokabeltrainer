@@ -116,6 +116,10 @@ test('actual repository copy contains public assets but no private, server, or r
     const output = join(sourceRoot, '.cloudflare', 'public');
     assert.match(await readFile(join(output, 'trainer', 'index.html'), 'utf8'), /<html/);
     assert.match(await readFile(join(output, 'src', 'trainer', 'config.js'), 'utf8'), /authMode: 'server'/);
+    for (const file of ['index.html', 'datenschutz.html', 'nutzung.html', 'styles.css']) {
+      const source = await readFile(join(sourceRoot, 'trainer', 'info', file));
+      assert.deepEqual(await readFile(join(output, 'trainer', 'info', file)), source, file);
+    }
     assert.deepEqual(await readdir(output), ['src', 'trainer']);
     await assert.rejects(readFile(join(output, 'server', 'worker.js')));
     await assert.rejects(readFile(join(output, 'docs', 'ANFORDERUNGEN.md')));

@@ -97,6 +97,8 @@ test('worker installs the complete scoped trainer app without Google or personal
   const installed = worker.calls.addAll[0];
   for (const expected of [
     `${scope}index.html`, `${scope}styles.css`, `${scope}manifest.webmanifest`, `${scope}sw.js`,
+    `${scope}info/`, `${scope}info/index.html`, `${scope}info/datenschutz.html`,
+    `${scope}info/nutzung.html`, `${scope}info/styles.css`,
     `${scope}assets/app-icon.svg`, 'https://example.test/repo/src/trainer/main.js',
     `${scope}assets/art/island-beach-480.webp`, `${scope}assets/art/avatar-skin-0-256.webp`,
     'https://example.test/repo/src/trainer/ui/art.js',

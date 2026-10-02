@@ -97,6 +97,15 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
   if (status.lateCount > 0) section.append(message(`${status.lateCount} alte Änderung${status.lateCount === 1 ? ' bleibt' : 'en bleiben'} getrennt erhalten.`));
   if (ui.notice) section.append(message(ui.notice, ui.tone));
 
+  const information = el('p', {attrs: {class: 'hint'}}, [
+    el('a', {text: 'Über LejeAdventure (neuer Tab)', attrs: {
+      href: './info/', target: '_blank', rel: 'noopener noreferrer',
+    }}),
+    ' · ',
+    el('a', {text: 'Datenschutz (neuer Tab)', attrs: {
+      href: './info/datenschutz.html', target: '_blank', rel: 'noopener noreferrer',
+    }}),
+  ]);
   const markConnected = () => {
     ui.connected = true;
     ui.manualClientId = auth.clientId?.() ?? ui.manualClientId;
@@ -113,6 +122,7 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
         : state.binding
           ? 'Google-Verbindung erneuern. Ihr Lernbereich bleibt verbunden; ausstehende Änderungen werden danach automatisch abgeglichen.'
         : 'Verbinden Sie das gemeinsame Google-Konto der Familie. Danach wählen Sie bewusst einen neuen oder vorhandenen Lernbereich.'}),
+      information,
       el('button', {text: 'Mit Google verbinden', attrs: {
         type: 'submit', class: 'primary', disabled: ui.busy || configuration.source === 'missing',
       }}),
@@ -169,6 +179,7 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
     controls.append(
       el('h3', {text: state.binding ? 'Verbundener Lernbereich' : 'Lernbereich auswählen'}),
       el('p', {text: 'Google-Verbindung ist aktiv.'}),
+      information,
       button('Jetzt abgleichen', () => run(() => sync.retry()), {
         class: 'secondary', disabled: ui.busy || !state.binding,
       }),
