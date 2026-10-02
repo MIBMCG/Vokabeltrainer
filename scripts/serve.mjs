@@ -61,6 +61,9 @@ const ASSETS = new Map([
   ['/trainer/manifest.webmanifest', ['trainer/manifest.webmanifest', 'application/manifest+json; charset=utf-8']],
   ['/trainer/sw.js', ['trainer/sw.js', 'text/javascript; charset=utf-8']],
   ['/trainer/assets/app-icon.svg', ['trainer/assets/app-icon.svg', 'image/svg+xml; charset=utf-8']],
+  ...[32, 64, 180, 192, 512].map((size) => [
+    `/trainer/assets/lejeadventure-${size}.png`, [`trainer/assets/lejeadventure-${size}.png`, 'image/png'],
+  ]),
   ['/trainer/assets/islands.svg', ['trainer/assets/islands.svg', 'image/svg+xml; charset=utf-8']],
   ['/trainer/assets/avatar.svg', ['trainer/assets/avatar.svg', 'image/svg+xml; charset=utf-8']],
   ['/trainer/assets/badges.svg', ['trainer/assets/badges.svg', 'image/svg+xml; charset=utf-8']],

@@ -58,7 +58,7 @@ test('serves only named probe and trainer assets with correct MIME types', async
       ['/trainer/styles.css', 'text/css; charset=utf-8'],
       ['/trainer/manifest.webmanifest', 'application/manifest+json; charset=utf-8'],
       ['/trainer/sw.js', 'text/javascript; charset=utf-8'],
-      ['/trainer/assets/app-icon.svg', 'image/svg+xml; charset=utf-8'],
+      ...[32, 64, 180, 192, 512].map((size) => [`/trainer/assets/lejeadventure-${size}.png`, 'image/png']),
       ['/trainer/assets/art/island-beach-480.webp', 'image/webp'],
       ['/trainer/assets/art/avatar-skin-0-256.webp', 'image/webp'],
       ['/src/trainer/main.js', 'text/javascript; charset=utf-8'],
@@ -126,6 +126,12 @@ test('serves only named probe and trainer assets with correct MIME types', async
       assert.equal(response.status, 200, path);
       assert.equal(response.headers['content-type'], contentType, path);
       assert.ok(response.body.length > 0, path);
+      const iconSize = path.match(/\/lejeadventure-(\d+)\.png$/u)?.[1];
+      if (iconSize) {
+        assert.equal(response.body.subarray(0, 8).toString('hex'), '89504e470d0a1a0a', path);
+        assert.equal(response.body.readUInt32BE(16), Number(iconSize), path);
+        assert.equal(response.body.readUInt32BE(20), Number(iconSize), path);
+      }
     }
     const coherentTransport=(await request(port,'/src/shop-probe/v2-coherent-transport.js')).body.toString();
     assert.match(coherentTransport,/export function createV2CoherentProbeTransport/);
@@ -136,6 +142,7 @@ test('serves the same bounded trainer below a repository path prefix', async () 
   await withServer(async (port) => {
     for (const path of [
       '/repo/trainer/', '/repo/trainer/sw.js', '/repo/trainer/manifest.webmanifest',
+      '/repo/trainer/assets/lejeadventure-180.png',
       '/repo/src/trainer/main.js', '/repo/src/trainer/ui/preview.js', '/repo/src/drive/auth.js',
       '/repo/src/shop-probe/immutable-value.js', '/repo/src/shop-probe/purchase-coordinator.js', '/repo/src/shop-probe/purchase-scenarios.js',
     ]) assert.equal((await request(port, path)).status, 200, path);
@@ -194,6 +201,7 @@ test('blocks non-read methods, traversal, private trees, dotfiles, and missing f
       ['/trainer/%2e%2e/%2e%2e/.git/config', 'GET', 404],
       ['/trainer/assets/avatar-evolution/dragon-stage-4.png', 'GET', 404],
       ['/docs/design/avatar-evolution/phoenix-stage-4-concept-v3.png', 'GET', 404],
+      ['/docs/design/lejeadventure-logo-source.png', 'GET', 404],
       ['/missing.js', 'GET', 404],
     ];
     for (const [path, method, status] of cases) {

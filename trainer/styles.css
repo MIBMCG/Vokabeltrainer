@@ -104,10 +104,12 @@ h2 { margin-top: 0; font-size: 1.7rem; }
   align-items: center;
   gap: 0.6rem;
   min-height: 64px;
+  padding-block: 0.25rem;
   color: #123b4b;
   font-size: 1.15rem;
 }
-.brand strong { min-width: 0; overflow-wrap: anywhere; }
+.brand-logo { flex: none; width: 48px; height: 48px; }
+.brand strong { min-width: 0; }
 
 .panel, .home, .management-card, .subpanel, .lesson-detail {
   border: 1px solid rgb(200 217 211 / 80%);

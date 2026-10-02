@@ -1,6 +1,6 @@
 const SCOPE = self.registration.scope;
 const CACHE_OWNER = `vokabeltrainer-product:${encodeURIComponent(new URL(SCOPE).pathname)}:`;
-const CACHE_NAME = `${CACHE_OWNER}v48`;
+const CACHE_NAME = `${CACHE_OWNER}v49`;
 const EVOLUTION_KEYS = [
   ...['dragon', 'deer-mist', 'tiger', 'horse', 'unicorn-moon', 'pegasus-star', 'dragon-crystal',
     'wolf-aurora', 'panther-shadow', 'griffin-storm', 'phoenix']
@@ -19,7 +19,11 @@ const APP_ASSETS = [
   './info/styles.css',
   './manifest.webmanifest',
   './sw.js',
-  './assets/app-icon.svg',
+  './assets/lejeadventure-32.png',
+  './assets/lejeadventure-64.png',
+  './assets/lejeadventure-180.png',
+  './assets/lejeadventure-192.png',
+  './assets/lejeadventure-512.png',
   './assets/islands.svg',
   './assets/avatar.svg',
   './assets/badges.svg',

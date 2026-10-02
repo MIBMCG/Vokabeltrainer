@@ -120,9 +120,15 @@ test('actual repository copy contains public assets but no private, server, or r
       const source = await readFile(join(sourceRoot, 'trainer', 'info', file));
       assert.deepEqual(await readFile(join(output, 'trainer', 'info', file)), source, file);
     }
+    for (const size of [32, 64, 180, 192, 512]) {
+      const file = `lejeadventure-${size}.png`;
+      assert.deepEqual(await readFile(join(output, 'trainer', 'assets', file)),
+        await readFile(join(sourceRoot, 'trainer', 'assets', file)), file);
+    }
     assert.deepEqual(await readdir(output), ['src', 'trainer']);
     await assert.rejects(readFile(join(output, 'server', 'worker.js')));
     await assert.rejects(readFile(join(output, 'docs', 'ANFORDERUNGEN.md')));
+    await assert.rejects(readFile(join(output, 'docs', 'design', 'lejeadventure-logo-source.png')));
     await assert.rejects(readFile(join(output, 'private-staging-canary.txt')));
   } finally {
     await unlink(canary);
