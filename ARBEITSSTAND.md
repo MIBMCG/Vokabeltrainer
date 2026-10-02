@@ -1,6 +1,50 @@
 # Arbeitsstand
 
-**Aktuelle Fortsetzung am 02.10.2026:** Die bestätigten Informationsseiten und
+**Aktueller Abschluss am 02.10.2026: LejeAdventure-Logo.** Die persönliche
+Freigabe „Das logo ist gut so und kann verwendet werden“ ist als Produkt
+`cd8d5168279cbc11c760b250283caa4e0112baa2`, Cache v49, umgesetzt. Gewählt ist
+Milchtüte A mit gedruckter Litschi, Milchspritzer C, Blatt und goldenem Stern
+auf der Front. Titel, Header und Manifest heißen LejeAdventure. Fünf deckende
+PNGs mit 32/64/180/192/512px brauchen zusammen 171377 Bytes; die unveränderte
+1254px-Quelle bleibt intern. Daten-, Anmelde-, Drive- und Kaufcode sowie
+Anbieterbranding haben keinen Produktdiff.
+
+Implementer: 666/666 Node-Tests, 39/39 gezielte Nodefälle, fünf Edge-Update-/
+Sitzungsfälle, 24 Navigations- und fünf Headeransichten PASS. Unabhängiges
+Spec-/Qualitätsreview PASS mit frischen 31 Nodefällen, fünf Headeransichten,
+einem kontrollierten Edge-Updatefall sowie bytegleichen PNG-/Stagingprüfungen.
+Der synthetische Erhaltfall v49 → v50 prüft den vollständigen Ledger, commerce,
+PIN-Prüfwert und Bindung unverändert; konkret 10 Lernpunkte, Level 1 und
+inaktive Käufe. Daraus folgt kein realer Besitz-/Drive-Nachweis.
+
+Bereitstellung nur unter `https://app.lejeadventure.workers.dev/trainer/`:
+Worker `b8bfa45c-2b69-4c8d-88e8-6975cbbab01d` zu 100 Prozent aktiv, Deployment
+02.10.2026 um 17:17:34.717 UTC. Öffentliche Prüfung um 17:19:09.351 UTC:
+396/396 Dateien bytegleich, drei Infoseiten HTTP 200, sechs interne Pfade
+einschließlich Logoquelle HTTP 404, anonyme Sitzung false mit no-store.
+Die erste unmittelbare PNG-Probe war 404; gezielte Folgeprobe und vollständige
+Prüfung bestanden ohne Produkt-/Anbieteränderung. Ursache und Dauer ungeklärt.
+Die alte App bleibt auf Cache v47.
+
+Im bestehenden Chrome war vor dem Update bereits der vom Nutzer geänderte
+Stand mit zwei Profilen auf Level 1/null Punkten und v48-Inselheader sichtbar.
+Nach Neuladen wurde das echte Updateangebot per „Jetzt aktualisieren“ angeklickt.
+Danach neues LejeAdventure-Logo, Banner und Titel sowie dieselben zwei Profile
+sichtbar, keine erneute Google-Anmeldung. Die PIN wurde dabei nicht geöffnet;
+Google-Aktivstatus nach dem Update nicht erneut direkt geprüft. Die allgemeine
+Rückmeldung „alles funktioniert“ ersetzt keine Apple-/Token-/Zweitgeräteabnahme.
+
+Produkt ist im Hauptcheckout integriert; neue Produkt-/Dokumentsicherung steht
+noch aus. Vorheriger Checkpoint `ea33d55aa5aada53701b84d6f0c36e1c02bc6e68`
+auf beiden bestehenden GitHub-Zweigen exakt bestätigt. Keine neue Pause.
+Firefox-Offlinediagnose läuft separat und hat hier noch kein Ergebnis.
+Der vorhandene Ersteinrichtungsüberlauf bei 320px/200 Prozent ist auf alter
+und neuer Basis gleich (scrollWidth 525); kein Logo-Regressionsbefund, kein Fix.
+Danach folgen dieser Überlauf und Praxisnachweise; die fünf bestätigten
+Belohnungsideen bleiben späterer Folgeumfang.
+[Aktuelle Logoübergabe](docs/handoffs/2026-10-02-lejeadventure-logo.md).
+
+**Vorheriger Abschluss am 02.10.2026: Informationsseiten und Google-Zugang.** Die bestätigten Informationsseiten und
 Google-Verbindungslinks sind als Produkt `c39edd8`, Cache v48, integriert und
 nur unter `https://app.lejeadventure.workers.dev/trainer/` bereitgestellt.
 Worker-Version `16721aab-dc02-4959-9900-c204f3727e04` ist zu 100 Prozent aktiv;
@@ -25,11 +69,10 @@ vor dem letzten reinen CSS/H1-Nachschliff bestanden. Danach frisch 28/28
 gezielte Tests, sechs große und drei normale Layoutansichten sowie zwei
 Linkfälle PASS; beide unabhängigen Reviews und enge finale Nachprüfung PASS.
 Die Seiten beschreiben die tatsächliche Datenverwendung; juristische
-Vollständigkeit wird damit nicht bestätigt. Produkt `c39edd8` ist lokal
-integriert; seine GitHub-Sicherung steht noch aus. Der vorherige Checkpoint
-`2933a45` ist auf beiden bestehenden Zweigen exakt gesichert.
+Vollständigkeit wird damit nicht bestätigt. Das Infopaket ist im späteren
+Checkpoint `ea33d55` auf beiden bestehenden GitHub-Zweigen exakt gesichert.
 
-Aktueller UI-Befund: Der bisherige Chrome-Tab zeigte bereits vor einem
+UI-Befund des vorherigen Infopakets: Der bisherige Chrome-Tab zeigte bereits vor einem
 Updateklick zwei Profile mit Level 1 und null Punkten statt des früheren einen
 Profils mit höherem Stand. Der Nutzer erklärt das mit **„Ja, ich habe Änderungen
 vorgenommen“**; daraus besteht kein Fehler- oder Datenverlustbefund. Das v48-

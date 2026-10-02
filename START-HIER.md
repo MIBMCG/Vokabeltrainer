@@ -1,6 +1,24 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Aktuelle Fortsetzung am 02.10.2026:** Die bestätigten Informationsseiten und
+**Aktueller Abschluss am 02.10.2026: LejeAdventure-Logo.** Die bestätigte
+Milchtüte mit Litschi-/Milchspritzer-Frontmotiv ist als Produkt `cd8d516`,
+Cache v49, integriert und an der LejeAdventure-Adresse aktiv. Titel, Header
+und Manifest heißen LejeAdventure; die unveränderte Bildquelle bleibt intern.
+396 öffentliche Dateien bytegleich, drei Infoseiten erreichbar, sechs interne
+Pfade gesperrt; Worker `b8bfa45c-2b69-4c8d-88e8-6975cbbab01d` zu 100 Prozent
+aktiv. 666 Node-Tests, gezielte Browser-/Layoutfälle und unabhängiges Review PASS.
+Das echte Chrome-Update wurde per „Jetzt aktualisieren“ übernommen; neues Logo
+und Name sowie dieselben zwei Profile mit Level 1/null Punkten sichtbar,
+keine neue Google-Anmeldung. PIN und Google-Aktivstatus nach diesem Update
+nicht erneut direkt geprüft. Bestehende Daten-, Drive-, Kauf- und Anmeldewege
+unverändert. Der vorherige Checkpoint `ea33d55` ist auf beiden GitHub-Zweigen
+exakt gesichert; neue Produkt-/Dokumentsicherung steht noch aus. Keine Pause.
+Firefox-Offlinediagnose läuft separat. Danach den vorhandenen Überlauf bei
+Ersteinrichtung mit 320px/200 Prozent und offene Praxisnachweise bearbeiten;
+die fünf bestätigten Belohnungsideen bleiben späterer Folgeumfang.
+[Aktuelle Logoübergabe](docs/handoffs/2026-10-02-lejeadventure-logo.md).
+
+**Vorheriger Abschluss am 02.10.2026: Informationsseiten und Google-Zugang.** Die bestätigten Informationsseiten und
 Google-Verbindungslinks sind als Produkt `c39edd8`, Cache v48, integriert und
 nur unter `https://app.lejeadventure.workers.dev/trainer/` bereitgestellt.
 Worker-Version `16721aab-dc02-4959-9900-c204f3727e04` ist zu 100 Prozent aktiv;

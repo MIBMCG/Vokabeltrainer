@@ -1,6 +1,28 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-**Aktuelle Fortsetzung am 02.10.2026:** Die bestätigten Informationsseiten und
+**Aktueller Abschluss am 02.10.2026: LejeAdventure-Logo.** Der Nutzer bestätigt
+„Das logo ist gut so und kann verwendet werden“. Die gewählte Milchtüte A mit
+aufgedruckter Litschi, Milchspritzer C, Blatt und goldenem Stern auf der Front
+ist als Produkt `cd8d516`, Cache v49, integriert und nur an der LejeAdventure-
+Adresse aktiv. Titel, Header und Manifest heißen LejeAdventure; fünf PNG-Größen
+ersetzen die bisher verwendete Appgrafik. Die unveränderte Quelle bleibt intern.
+666/666 Node-Tests, 39 gezielte Fälle, fünf Edge-Update-/Sitzungsfälle, 24
+Navigations- und fünf Headeransichten PASS; unabhängiges Spec-/Qualitätsreview
+PASS. Worker `b8bfa45c-2b69-4c8d-88e8-6975cbbab01d` ist zu 100 Prozent aktiv,
+396 öffentliche Dateien bytegleich geprüft, drei Infoseiten erreichbar und
+sechs interne Pfade einschließlich Logoquelle gesperrt. Alte App bleibt v47.
+Im bestehenden Chrome ist der Klick auf „Jetzt aktualisieren“ beobachtet:
+neues Logo und Name geladen, dieselben zwei Profile mit Level 1/null Punkten,
+keine erneute Google-Anmeldung. PIN und Google-Aktivstatus nach diesem Update
+nicht nochmals direkt geprüft; daraus keinen vollständigen Bestands- oder
+Gerätenachweis ableiten. Daten-/Anmelde-/Drive-/Kaufcode und Anbieterbranding
+unverändert. Vorheriger Checkpoint `ea33d55` auf beiden GitHub-Zweigen exakt;
+Produkt und diese Abschlussdokumentation sind noch zu sichern. Keine neue Pause.
+Firefox-Offlinediagnose läuft separat; vorhandener Ersteinrichtungsüberlauf
+bei 320px/200 Prozent ist kein Logo-Regressionsbefund und noch nicht korrigiert.
+Nächste Schritte und Grenzen: [Logoübergabe](docs/handoffs/2026-10-02-lejeadventure-logo.md).
+
+**Vorheriger Abschluss am 02.10.2026: Informationsseiten und Google-Zugang.** Die bestätigten Informationsseiten und
 Google-Verbindungslinks sind als Produkt `c39edd8`, Cache v48, integriert und
 nur unter `https://app.lejeadventure.workers.dev/trainer/` bereitgestellt.
 Worker-Version `16721aab-dc02-4959-9900-c204f3727e04` ist zu 100 Prozent aktiv;
