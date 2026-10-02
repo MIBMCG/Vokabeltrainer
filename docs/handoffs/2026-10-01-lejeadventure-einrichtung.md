@@ -1,14 +1,14 @@
 # Übergabe: LejeAdventure-Einrichtung
 
 **Aktuelle Fortsetzung am 02.10.2026:** Keine Pause; bisherige App v47 erhalten.
-Dokumentationsbasis HEAD `5a3f87005b2aac7e862f6b1b49546dd5dc891fd7`.
-Google-Anmeldung abgeschlossen: Chrome zeigt `lejeadventure@gmail.com` (`authuser=1`).
-Das bestehende Projekt fehlt in der Liste; sein IAM-Aufruf verlangt zusätzliche Rechte.
-Annahme der bestehenden Inhabereinladung im eigenen Leje-Postfach persönlich angefragt.
+Dokumentationsbasis HEAD `32199454326441715f80eef99e71ec420d4dc57a`.
+Google-Inhabereinladung ausdrücklich angenommen; frischer IAM-Aufruf im per
+Badge bestätigten Leje-Konto zeigt das bestehende Projekt und beide Inhaber.
+Wirksamer Google-Betreiberzugang damit belegt; private Inhaberrolle erhalten.
 Upload-Zugang PASS; Google-Eingabefenster geschlossen, neue Worker-Secrets zuletzt `[]`.
-Gesicherte alte Schlüsselquelle vorhanden, auf diesem Laptop derzeit nicht verfügbar.
-Genaue Secret-Zielfreigabe für den neuen Worker `app` gilt weiter; kein Deploy.
-Kein neues Projekt oder OAuth-Client; bisherige App und Lernbestände unverändert.
+Verfügbarkeit der gesicherten bestehenden Google-App-Schlüsselquelle erneut
+angefragt, Antwort offen. Genaue Secret-Zielfreigabe für Worker `app` gilt weiter.
+Kein neues Projekt oder OAuth-Client, kein Deploy; Produkt und Lernbestände erhalten.
 Nachweise, Grenzen und nächster Schritt sind unten dokumentiert.
 
 **Historischer Zwischenstand am 02.10.2026 vor der erneuten Rotation:** Der Nutzer hat ausdrücklich fortgesetzt;
@@ -187,7 +187,7 @@ trennen bestätigten Umfang, Vorbereitung und noch ausstehende Schritte.
   Startanleitung nur als Entwurf vorbereitet; echter Wechsel und Werteerhalt
   unter der neuen Adresse bleiben zu prüfen.
 
-- **Aktueller Google-Zugriffsbeleg am 02.10.2026:** Der Nutzer hat die Anmeldung
+- **Historischer Google-Zugriffsbeleg am 02.10.2026 vor der Einladungsannahme:** Der Nutzer hat die Anmeldung
   abgeschlossen. Der gesteuerte Chrome zeigt `lejeadventure@gmail.com` mit
   `authuser=1`. Die Projektliste enthält das bestehende Projekt nicht. Der direkte
   IAM-Aufruf für `vokabeltrainer-508915` im Leje-Konto meldet fehlende Berechtigungen
@@ -203,6 +203,27 @@ trennen bestätigten Umfang, Vorbereitung und noch ausstehende Schritte.
   und keine Produktänderung. Dokumentationsbasis HEAD
   `5a3f87005b2aac7e862f6b1b49546dd5dc891fd7`.
 
+- **Wirksamer Google-Betreiberzugang am 02.10.2026 belegt (Task 1):** Die erste
+  persönliche Rückmeldung „angenommen“ war zunächst ohne Bestätigung; beide
+  beobachteten Ansichten zeigten die Einladung weiterhin als ausstehend.
+  Am konkreten Handlungspunkt erlaubt der Nutzer anschließend ausdrücklich:
+  „Ja, Einladung jetzt annehmen“. Nach Klick auf „Einladung annehmen“ auf der
+  beobachteten Google-Seite öffnet Google das Projektdashboard.
+- Ein anschließender frischer IAM-Aufruf mit `authuser=1` und tatsächlich per
+  Kontobadge bestätigtem `lejeadventure@gmail.com` erreicht das bestehende Projekt
+  **Vokabeltrainer / `vokabeltrainer-508915`**. Der bisherige private Inhaber und
+  das neue Betreiberkonto sind beide als **Inhaber** aufgeführt; keine Warnung
+  und kein Hinweis auf eine ausstehende Annahme. Kein neues Projekt oder
+  OAuth-Client erzeugt; die private Inhaberrolle bleibt erhalten.
+- Ein Beleg ausschließlich mit sicheren IAM-Metadaten liegt im ignorierten
+  SDD-Arbeitsbereich. Er wird weder in Git verlinkt noch übertragen.
+- Verbleibendes Eingabehindernis ist die Verfügbarkeit der gesicherten bestehenden
+  Google-App-Schlüsselquelle für die persönliche Eingabe. Sie wurde erneut
+  angefragt; Antwort steht aus. Die genaue Secret-Zielfreigabe gilt weiter.
+  Upload-Zugang PASS; neue Worker-Secrets zuletzt `[]`, keine Trainerbereitstellung,
+  Produkt- oder Lernänderung. Dokumentationsbasis HEAD
+  `32199454326441715f80eef99e71ec420d4dc57a`.
+
 ## Erhaltener Produktstand
 
 Das bestehende Produkt `6b13780`, Cache v47, bleibt unter
@@ -213,12 +234,11 @@ maßgeblich; keinen neuen Client erzeugen.
 
 ## Nächster konkreter Schritt
 
-Die bestehende Google-Inhabereinladung im eigenen Leje-Postfach persönlich
-annehmen und anschließend den Zugriff auf `vokabeltrainer-508915` im bereits
-angemeldeten Leje-Konto prüfen. Kein neues Projekt oder OAuth-Client anlegen.
-Für die spätere Secret-Belegung die bereits vorhandene gesicherte Quelle
-des `GOOGLE_CLIENT_SECRET` persönlich auf diesem Laptop
-verfügbar machen; keine Schlüsseldatei in den Chat senden.
+Die erneut angefragte Verfügbarkeit der gesicherten bestehenden Quelle des
+`GOOGLE_CLIENT_SECRET` klären; Antwort steht aus. Der wirksame Google-Inhaberzugang
+zum bestehenden Projekt ist inzwischen belegt. Für die persönliche Eingabe die
+vorhandene passende Schlüsselquelle auf diesem Laptop verfügbar machen;
+keine Schlüsseldatei in den Chat senden. Kein neues Projekt oder OAuth-Client.
 Die genaue Übermittlung an ausschließlich den neuen Worker `app` ist bereits
 freigegeben. Das frühere geschützte Eingabefenster ist geschlossen. Sobald die
 passende Quelle verfügbar ist, die persönliche geschützte Eingabe erneut
@@ -245,13 +265,13 @@ Keine Lernbestände in das Betreiberkonto verschieben.
 
 ## Nachweisgrenzen
 
-Die Einladung ist gespeichert; ihre Annahme ist offen. Cloudflare-Konto,
+Die Einladung ist angenommen; wirksamer Google-Inhaberzugang ist belegt. Cloudflare-Konto,
 Subdomain, Worker-Startvorlage, D1-Struktur und neue Google-Adressen sind geprüft.
 Upload-Zugang zum exakt bestätigten neuen Konto ist belegt; die letzte lesende
 Secret-Namenprüfung war leer. Übermittlung inzwischen ausdrücklich freigegeben;
 passende persönliche Quelle des bestehenden Google-App-Schlüssels auf diesem
 Laptop fehlt, ist aber laut Nutzer gesichert vorhanden. Google-Anmeldung im
-Leje-Konto ist belegt; Projektzugriff und Einladungsannahme bleiben offen.
+Leje-Konto, Projektzugriff und Einladungsannahme sind inzwischen belegt.
 Worker-Secrets, Trainer-Bereitstellung, Trainer-Anmeldung und Bestandserhalt
 unter der neuen Adresse sind noch nicht belegt.
 Eine abgeschlossene Umstellung darf aus diesem Dokument nicht abgeleitet

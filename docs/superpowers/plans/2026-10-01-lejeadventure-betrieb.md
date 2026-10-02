@@ -21,7 +21,7 @@
 
 ## Review Focus
 
-- Einladung gespeichert, aber noch nicht angenommen: neues Konto noch nicht als wirksamen Betreiber melden.
+- Eine gespeicherte Einladung allein belegt keinen Betreiberzugang; tatsächliche Annahme und Zugriff im richtigen Konto prüfen.
 - Falsches Cloudflare-Konto oder Worker-Ziel: alten Worker und seine Sitzungen nicht überschreiben.
 - OAuth-Ursprung oder Rückkehradresse falsch: tatsächliche HTTPS-Adresse und exakten Callback vergleichen.
 - Neues Betreiberkonto im Trainer ausgewählt: bestehendes Lernkonto und dessen vorhandenen Bereich verwenden.
@@ -37,8 +37,8 @@
 
 - [x] Projekt `vokabeltrainer-508915` und aktuellen Inhaber im Google-Dashboard prüfen.
 - [x] Ausdrückliche Zustimmung zur zusätzlichen Inhaberrolle einholen und Einladung speichern.
-- [x] Persönliche Anmeldung am neuen Google-Konto im gesteuerten Browser abschließen; am 02.10.2026 zeigt die Console `lejeadventure@gmail.com`. Der direkte Projektaufruf meldet noch fehlende Zugriffsrechte; Anmeldung allein ist keine Inhaberabnahme.
-- [ ] Annahme durch `lejeadventure@gmail.com` und wirksamen Projektzugang prüfen.
+- [x] Persönliche Anmeldung am neuen Google-Konto im gesteuerten Browser abschließen; am 02.10.2026 zeigt die Console `lejeadventure@gmail.com`. Der direkte Projektaufruf meldete zunächst fehlende Zugriffsrechte; Anmeldung allein ist keine Inhaberabnahme.
+- [x] Annahme durch `lejeadventure@gmail.com` und wirksamen Projektzugang prüfen. Am 02.10.2026 nach konkreter Bestätigung am Handlungspunkt angenommen; das neue Konto öffnet das bestehende Projekt, IAM zeigt Inhaber ohne Einladungswarnung. Bisheriger Inhaber und vorhandener OAuth-Client bleiben erhalten.
 - [x] Nutzer meldet sich bei Cloudflare mit dem neuen Konto an; gegebenenfalls Registrierung/Bedingungen selbst abschließen.
 - [x] Kontoname/-ID aus dem Dashboard dokumentieren; keine vorhandenen Schlüssel oder persönlichen Inhalte auslesen.
 

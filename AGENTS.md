@@ -1,14 +1,14 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
 **Aktuelle Fortsetzung am 02.10.2026:** Keine Pause; bisherige App v47 erhalten.
-Dokumentationsbasis HEAD `5a3f87005b2aac7e862f6b1b49546dd5dc891fd7`.
-Google-Anmeldung abgeschlossen: Chrome zeigt `lejeadventure@gmail.com` (`authuser=1`).
-Das bestehende Projekt fehlt in der Liste; sein IAM-Aufruf verlangt zusätzliche Rechte.
-Annahme der bestehenden Inhabereinladung im eigenen Leje-Postfach persönlich angefragt.
+Dokumentationsbasis HEAD `32199454326441715f80eef99e71ec420d4dc57a`.
+Google-Inhabereinladung ausdrücklich angenommen; frischer IAM-Aufruf im per
+Badge bestätigten Leje-Konto zeigt das bestehende Projekt und beide Inhaber.
+Wirksamer Google-Betreiberzugang damit belegt; private Inhaberrolle erhalten.
 Upload-Zugang PASS; Google-Eingabefenster geschlossen, neue Worker-Secrets zuletzt `[]`.
-Gesicherte alte Schlüsselquelle vorhanden, auf diesem Laptop derzeit nicht verfügbar.
-Genaue Secret-Zielfreigabe für den neuen Worker `app` gilt weiter; kein Deploy.
-Kein neues Projekt oder OAuth-Client; bisherige App und Lernbestände unverändert.
+Verfügbarkeit der gesicherten bestehenden Google-App-Schlüsselquelle erneut
+angefragt, Antwort offen. Genaue Secret-Zielfreigabe für Worker `app` gilt weiter.
+Kein neues Projekt oder OAuth-Client, kein Deploy; Produkt und Lernbestände erhalten.
 Details und nächster Schritt: [Einrichtungsübergabe](docs/handoffs/2026-10-01-lejeadventure-einrichtung.md).
 
 **Historischer abendlicher Zwischenstand am 01.10.2026 (Pause am 02.10. aufgehoben):** Der Nutzer möchte ins Bett und
