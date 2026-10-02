@@ -102,22 +102,28 @@ Zweitgeräteabgleich.
 
 ## Git-Sicherung und nächste Schritte
 
-Das Hauptcheckout ist auf den Produktcommit vorgezogen. Vorheriger Checkpoint
-`ea33d55aa5aada53701b84d6f0c36e1c02bc6e68` ist auf beiden bestehenden
-GitHub-Zweigen exakt bestätigt. Die Sicherung des neuen Produktcommits und
-dieser Abschlussdokumentation steht zum Dokumentationszeitpunkt noch aus.
-Keine Secrets, privaten Browserbilder oder ignorierten Helfer mit aufnehmen.
+Logo-Produkt `cd8d516` und diese Abschlussdokumentation
+`622861f1bc350c05b4656d65e09d16baaed967c4` sind anschließend auf beiden
+bestehenden GitHub-Zweigen `codex/vokabeltrainer-v1` und
+`codex/purchase-batch-checks` gesichert und exakt mit den Remotes abgeglichen.
+Der zum ursprünglichen Dokumentationszeitpunkt offene Sicherungsschritt ist
+damit abgeschlossen. Private Browserbilder und ignorierte Helfer bleiben intern.
 
-1. Laufende separate Firefox-Offlinediagnose abschließen und ihren eigenen
-   Befund dokumentieren. Hier liegt noch kein Ergebnis und kein Firefox-Fix vor.
-2. Vorhandenen Überlauf bei der ersten Einrichtung mit 320px und 200 Prozent
-   Schrift gesondert bearbeiten: scrollWidth 525 auf unveränderter Basis
-   `ea33d55` und mit Logo gleichermaßen; der Header liegt innerhalb 320px.
-   Kein Logo-Regressionsbefund und keine Korrektur im abgeschlossenen Paket.
-3. Offene Praxisnachweise gezielt ergänzen: echte Freundes-Erstanmeldung,
+Die separate Firefox-Offlinediagnose ist abgeschlossen. C2 bleibt unter
+`setOffline(true)` in Firefox 153 FAIL; bei gestopptem lokalem Server sind
+Starts und synthetischer Zustandserhalt getrennt belegt. Kein Produktfix aus
+dieser Diagnose. [Bericht und Grenzen](../reports/2026-10-02-firefox-offline-diagnose.md).
+
+Der damals vorhandene Ersteinrichtungsüberlauf mit 320px/200 Prozent war auf
+alter und Logo-Basis gleich (scrollWidth 525), kein Logo-Regressionsbefund.
+Er ist anschließend im getrennten Produkt `893d7af`, Cache v50, zusammen mit
+zwei weiteren belegten Textüberläufen korrigiert. Das erweitert nicht rückwirkend
+den Logo-Prüfumfang. [Folgeübergabe](2026-10-02-ersteinrichtung-umbruch.md).
+
+1. Offene Praxisnachweise gezielt ergänzen: echte Freundes-Erstanmeldung,
    physisches iPad/Safari/Home-Bildschirm, natürlicher Tokenablauf und
    Zweitgeräteabgleich. Bestehende Lernbereiche und Bestände weiterverwenden.
-4. Danach die fünf bestätigten Belohnungsideen: Verwandlung, Figurenbewegung,
+2. Danach die fünf bestätigten Belohnungsideen: Verwandlung, Figurenbewegung,
    Lernreaktionen, eigener Inselort und Steckbrief/Geschichte/Titel.
 
 Keine abgeschlossenen Galerie-/Layoutpakete wiederholen und keine Lernbestände

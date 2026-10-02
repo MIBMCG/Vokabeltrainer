@@ -1,6 +1,46 @@
 # Arbeitsstand
 
-**Aktueller Abschluss am 02.10.2026: LejeAdventure-Logo.** Die persönliche
+**Aktueller Abschluss am 02.10.2026: Ersteinrichtung und PIN-Umbruch.** Produkt
+`893d7affbf2f5fa63e96f9fc23860c0106243dff`, Cache v50, korrigiert nur belegte
+Textüberläufe: drei feste H1-Texte und zwei lange Wörter im Fortsetzungsabsatz
+erhalten natürliche weiche Trennstellen, exakte zugängliche Namen bleiben.
+Bei 320px/200 Prozent: Einrichtung 525 → 320, PIN-Tor 457 → 320 und
+Fortsetzung 357 → 320px Dokumentbreite. Keine CSS-, Sicherheits-, PIN-,
+Anmelde-, Drive-, Punkte- oder Kaufänderung.
+
+Implementer: 43/43 gezielte Nodefälle, 20/20 Edge-Layoutansichten und ein
+kontrollierter Updatefall v50 → v51 PASS. Der synthetische Fall erhält
+vollständigen Ledger, commerce, Bindung und PIN-Prüfwert; 10 Lernpunkte,
+Level 1, klassischer Avatar, inaktive Käufe. Unabhängiges Spec-/Qualitätsreview
+PASS mit eigenen 32/32 Nodefällen und Sichtprüfung finaler Bilder/Logs.
+Eigene Review-Browserläufe vor Ausführung durch Freigabetimeout/EPERM blockiert;
+kein eigener Browser-PASS. Keine neue 666er-Gesamtsuite.
+
+Worker `3baa31f3-f374-46b8-aba0-37830c883d21` zu 100 Prozent aktiv, Deployment
+02.10.2026 um 19:18:06.823 UTC; öffentliche Prüfung um 19:18:54.687 UTC:
+396/396 Dateien bytegleich, drei Infoseiten HTTP 200, sechs interne Pfade
+HTTP 404, anonyme Sitzung false/no-store. Zwei neue Assets, 394 schon vorhanden;
+alte App weiter v47. Reguläre Windows-CA-Prüfung mit `--use-system-ca` aktiv.
+Im bestehenden Chrome echtes Updateangebot angeklickt und danach zurückgezogen;
+unmittelbar davor/danach dieselben zwei sichtbaren Stände Level 2/290 Punkte
+und Level 4/720 Punkte, Titel LejeAdventure und Header-PNG geladen.
+Keine PIN-Öffnung/Google-Anmeldung, Google-Aktivstatus nicht erneut direkt geprüft.
+Unterschiede zum früheren Logo-Stand sind kein Datenfehlerbefund.
+
+Logo-Produkt/Dokumentation `622861f` und aktuelles Produkt `893d7af` auf beiden
+bestehenden GitHub-Zweigen exakt gesichert. Diese Abschlussdokumentation
+ergänzt den gesicherten Stand; keine neue Pause. Firefoxdiagnose abgeschlossen auf v49:
+mit `setOffline(true)` weiterhin 1 C2 FAIL, bei gestopptem lokalem Server
+Reload/neues Tab/kalter Start mit identischem synthetischem Zustand belegt.
+Keine Produkt-/Teständerung daraus; physische Netztrennung bleibt offen.
+Offen sind reale Freundes-Erstanmeldung, iPad/Safari/Home-Bildschirm,
+natürlicher Tokenablauf und Zweitgeräteabgleich. Reales Kaufziel unter zehn
+Sekunden unbelegt; keine blinde weitere Kaufoptimierung. Fünf bestätigte
+Belohnungsideen folgen nach den Optimierungen.
+[Aktuelle Übergabe](docs/handoffs/2026-10-02-ersteinrichtung-umbruch.md) und
+[Firefox-Diagnose](docs/reports/2026-10-02-firefox-offline-diagnose.md).
+
+**Vorheriger Abschluss am 02.10.2026: LejeAdventure-Logo.** Die persönliche
 Freigabe „Das logo ist gut so und kann verwendet werden“ ist als Produkt
 `cd8d5168279cbc11c760b250283caa4e0112baa2`, Cache v49, umgesetzt. Gewählt ist
 Milchtüte A mit gedruckter Litschi, Milchspritzer C, Blatt und goldenem Stern
@@ -34,14 +74,12 @@ sichtbar, keine erneute Google-Anmeldung. Die PIN wurde dabei nicht geöffnet;
 Google-Aktivstatus nach dem Update nicht erneut direkt geprüft. Die allgemeine
 Rückmeldung „alles funktioniert“ ersetzt keine Apple-/Token-/Zweitgeräteabnahme.
 
-Produkt ist im Hauptcheckout integriert; neue Produkt-/Dokumentsicherung steht
-noch aus. Vorheriger Checkpoint `ea33d55aa5aada53701b84d6f0c36e1c02bc6e68`
-auf beiden bestehenden GitHub-Zweigen exakt bestätigt. Keine neue Pause.
-Firefox-Offlinediagnose läuft separat und hat hier noch kein Ergebnis.
-Der vorhandene Ersteinrichtungsüberlauf bei 320px/200 Prozent ist auf alter
-und neuer Basis gleich (scrollWidth 525); kein Logo-Regressionsbefund, kein Fix.
-Danach folgen dieser Überlauf und Praxisnachweise; die fünf bestätigten
-Belohnungsideen bleiben späterer Folgeumfang.
+Logo-Produkt und Abschlussdokumentation
+`622861f1bc350c05b4656d65e09d16baaed967c4` sind anschließend auf beiden
+bestehenden GitHub-Zweigen exakt gesichert. Der damalige Einrichtungsüberlauf
+bei 320px/200 Prozent war auf alter und neuer Basis gleich (scrollWidth 525),
+kein Logo-Regressionsbefund. Firefoxdiagnose und spätere Umbruchkorrektur
+sind im aktuellen Abschnitt oben getrennt dokumentiert.
 [Aktuelle Logoübergabe](docs/handoffs/2026-10-02-lejeadventure-logo.md).
 
 **Vorheriger Abschluss am 02.10.2026: Informationsseiten und Google-Zugang.** Die bestätigten Informationsseiten und

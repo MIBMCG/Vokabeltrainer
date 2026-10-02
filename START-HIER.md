@@ -1,6 +1,22 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Aktueller Abschluss am 02.10.2026: LejeAdventure-Logo.** Die bestätigte
+**Aktueller Abschluss am 02.10.2026: Ersteinrichtung und PIN-Umbruch.** Produkt
+`893d7af`, Cache v50, hält die belegten festen Texte auch bei 320px/200 Prozent
+innerhalb der Ansicht. 43 gezielte Nodefälle, 20 Layoutansichten und ein
+synthetischer Edge-Updatefall PASS; unabhängiges Review PASS mit 32 eigenen
+Nodefällen und geprüften Bildern/Logs. Eigener Review-Browserstart blockiert,
+keine neue Gesamtsuite. Worker `3baa31f3-f374-46b8-aba0-37830c883d21` aktiv,
+396 öffentliche Dateien bytegleich. Echter Chrome-Updateklick beobachtet;
+unmittelbar davor/danach Level 2/290 Punkte und Level 4/720 Punkte gleich,
+keine Google-Anmeldung. PIN/Google-Aktivstatus nicht erneut geprüft.
+Produkt auf beiden GitHub-Zweigen exakt gesichert; diese Übergabe ergänzt den Stand.
+Firefoxdiagnose abgeschlossen: C2 mit Offlineflag weiterhin FAIL, Starts mit
+gestopptem lokalem Server und synthetischer Zustandserhalt getrennt belegt.
+Keine neue Pause. Nächste Schritte sind offene Praxisnachweise; reale Kaufzeit
+unter zehn Sekunden bleibt unbelegt, fünf Belohnungsideen nach Optimierungen.
+[Aktuelle Übergabe](docs/handoffs/2026-10-02-ersteinrichtung-umbruch.md).
+
+**Vorheriger Abschluss am 02.10.2026: LejeAdventure-Logo.** Die bestätigte
 Milchtüte mit Litschi-/Milchspritzer-Frontmotiv ist als Produkt `cd8d516`,
 Cache v49, integriert und an der LejeAdventure-Adresse aktiv. Titel, Header
 und Manifest heißen LejeAdventure; die unveränderte Bildquelle bleibt intern.
@@ -11,11 +27,9 @@ Das echte Chrome-Update wurde per „Jetzt aktualisieren“ übernommen; neues L
 und Name sowie dieselben zwei Profile mit Level 1/null Punkten sichtbar,
 keine neue Google-Anmeldung. PIN und Google-Aktivstatus nach diesem Update
 nicht erneut direkt geprüft. Bestehende Daten-, Drive-, Kauf- und Anmeldewege
-unverändert. Der vorherige Checkpoint `ea33d55` ist auf beiden GitHub-Zweigen
-exakt gesichert; neue Produkt-/Dokumentsicherung steht noch aus. Keine Pause.
-Firefox-Offlinediagnose läuft separat. Danach den vorhandenen Überlauf bei
-Ersteinrichtung mit 320px/200 Prozent und offene Praxisnachweise bearbeiten;
-die fünf bestätigten Belohnungsideen bleiben späterer Folgeumfang.
+unverändert. Logo-Produkt und Abschlussdokumentation `622861f` anschließend
+auf beiden GitHub-Zweigen exakt gesichert. Firefoxdiagnose und damaliger
+Einrichtungsüberlauf sind im aktuellen Folgeschritt oben dokumentiert.
 [Aktuelle Logoübergabe](docs/handoffs/2026-10-02-lejeadventure-logo.md).
 
 **Vorheriger Abschluss am 02.10.2026: Informationsseiten und Google-Zugang.** Die bestätigten Informationsseiten und

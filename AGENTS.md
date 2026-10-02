@@ -1,6 +1,29 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-**Aktueller Abschluss am 02.10.2026: LejeAdventure-Logo.** Der Nutzer bestätigt
+**Aktueller Abschluss am 02.10.2026: Ersteinrichtung und PIN-Umbruch.** Produkt
+`893d7af`, Cache v50, behebt die belegten Textüberläufe mit natürlichen weichen
+Trennstellen in drei festen Überschriften und zwei Absatzwörtern. Zugängliche
+Namen erhalten, kein CSS-/Daten-/PIN-/Anmelde-/Drive-/Kauf-/Punktelogikdiff.
+43 gezielte Nodefälle, 20 Edge-Layoutansichten und ein synthetischer Erhaltfall
+PASS; unabhängiges Spec-/Qualitätsreview PASS mit eigenen 32 Nodefällen und
+Sichtprüfung der finalen Belege. Eigene Review-Browserläufe waren vor Ausführung
+blockiert, kein unabhängiger Browser-PASS und keine neue 666er-Gesamtsuite.
+Worker `3baa31f3-f374-46b8-aba0-37830c883d21` zu 100 Prozent aktiv;
+396 Dateien bytegleich, drei Infoseiten erreichbar, sechs interne Pfade gesperrt.
+Im bestehenden Chrome echter Updateklick beobachtet: unmittelbar davor/danach
+dieselben zwei Stände Level 2/290 Punkte und Level 4/720 Punkte; Logo und Titel
+geladen, keine neue Google-Anmeldung. PIN/Google-Aktivstatus nicht erneut geprüft.
+Produkt auf beiden GitHub-Zweigen exakt gesichert; diese Übergabe ergänzt den Stand.
+Firefox-Offlinediagnose abgeschlossen: `setOffline(true)` in Firefox 153 liefert
+weiter C2 FAIL, bei gestopptem lokalem Server sind Starts und synthetischer
+Zustandserhalt belegt; kein ServiceWorker-Produktfix. Keine neue Pause.
+Physische iPad-/Safari-/Home-Bildschirm-, Token- und Zweitgeräteabnahme offen.
+Keine fertigen Galerien wiederholen oder Käufe ohne Diagnose weiter optimieren;
+reales Wunschziel unter zehn Sekunden unbelegt, fünf Belohnungsideen danach.
+[Aktuelle Übergabe](docs/handoffs/2026-10-02-ersteinrichtung-umbruch.md) und
+[Firefox-Diagnose](docs/reports/2026-10-02-firefox-offline-diagnose.md).
+
+**Vorheriger Abschluss am 02.10.2026: LejeAdventure-Logo.** Der Nutzer bestätigt
 „Das logo ist gut so und kann verwendet werden“. Die gewählte Milchtüte A mit
 aufgedruckter Litschi, Milchspritzer C, Blatt und goldenem Stern auf der Front
 ist als Produkt `cd8d516`, Cache v49, integriert und nur an der LejeAdventure-
@@ -16,10 +39,9 @@ neues Logo und Name geladen, dieselben zwei Profile mit Level 1/null Punkten,
 keine erneute Google-Anmeldung. PIN und Google-Aktivstatus nach diesem Update
 nicht nochmals direkt geprüft; daraus keinen vollständigen Bestands- oder
 Gerätenachweis ableiten. Daten-/Anmelde-/Drive-/Kaufcode und Anbieterbranding
-unverändert. Vorheriger Checkpoint `ea33d55` auf beiden GitHub-Zweigen exakt;
-Produkt und diese Abschlussdokumentation sind noch zu sichern. Keine neue Pause.
-Firefox-Offlinediagnose läuft separat; vorhandener Ersteinrichtungsüberlauf
-bei 320px/200 Prozent ist kein Logo-Regressionsbefund und noch nicht korrigiert.
+unverändert. Logo-Produkt und Abschlussdokumentation `622861f` anschließend
+auf beiden GitHub-Zweigen exakt gesichert. Der damals offene Ersteinrichtungs-
+überlauf war kein Logo-Regressionsbefund; aktueller Folgestand siehe oben.
 Nächste Schritte und Grenzen: [Logoübergabe](docs/handoffs/2026-10-02-lejeadventure-logo.md).
 
 **Vorheriger Abschluss am 02.10.2026: Informationsseiten und Google-Zugang.** Die bestätigten Informationsseiten und
