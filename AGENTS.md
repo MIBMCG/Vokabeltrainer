@@ -1,5 +1,16 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
+**Aktuelle Pause am 02.10.2026 nach Android-Rückmeldung und Tempodiagnose.**
+Der Nutzer sagt ausdrücklich „lege bitte eine pause ein“. Nur den Zwischenstand
+sichern; danach keine Produktarbeit, Testsitzung oder Bereitstellung bis zur
+erneuten ausdrücklichen Fortsetzung. Produkt `893d7af`, Cache v50, bleibt erhalten.
+Android läuft laut Nutzer gut; Gerät, Browser und Version sind nicht genannt.
+Weitere Geräte-/Praxistests sind verschoben. Vorrang nach Fortsetzung hat die
+langsame Lernstandsübernahme bei der Ersteinrichtung: fehlender unmittelbarer
+Abgleichstart und doppelte Vorschau-/Bestätigungsdownloads sind diagnostiziert,
+aber noch nicht korrigiert. Keine neue Produktänderung oder Bereitstellung.
+[Pausenübergabe und nächster Schritt](docs/handoffs/2026-10-02-android-tempo-pause.md).
+
 **Aktueller Abschluss am 02.10.2026: Ersteinrichtung und PIN-Umbruch.** Produkt
 `893d7af`, Cache v50, behebt die belegten Textüberläufe mit natürlichen weichen
 Trennstellen in drei festen Überschriften und zwei Absatzwörtern. Zugängliche

@@ -1,5 +1,25 @@
 # Arbeitsstand
 
+**Aktuelle Pause am 02.10.2026: Android-Rückmeldung und Lernstandsübernahme.**
+Der Nutzer berichtet, dass die App auf Android gut läuft, und verschiebt weitere
+Geräte-/Praxistests. Gerät, Android-Version, Browser und Installationsmodus sind
+nicht bekannt; keine Apple-/Safari- oder vollständige Geräteabnahme ableiten.
+Die anfängliche Lernstandsübernahme soll schneller werden. Die danach ausdrücklich
+verlangte Pause gilt jetzt: nur Zwischenstand sichern, danach keine weitere
+Produktarbeit, Testsitzung oder Bereitstellung bis zur erneuten Fortsetzung.
+
+Codeprüfung und unabhängiger Leseaudit zeigen zwei Ansatzpunkte: nach erfolgreicher
+Übernahme fehlt der unmittelbare Abgleichstart (mögliches Warten auf den
+60-Sekunden-Zyklus); bei einem nicht leeren fremden lokalen Stand wird die
+entfernte Vorschau zur Bestätigung erneut vollständig geladen. Eine frische,
+rein synthetische Ausgangsmessung mit 100 ms je Übernahmeanfrage zählt 79/79/38
+Anfragen für Vorschau/Bestätigung/anschließenden Abgleich, zusammen 18,470 s.
+Das misst weder Android noch die mögliche zusätzliche Scheduler-Wartezeit.
+Keine Korrektur, neue Testsuite oder Bereitstellung erfolgt. Produkt `893d7af`,
+Cache v50, und vorhandene Bestände bleiben unverändert. Die fünf bestätigten
+Belohnungsideen folgen weiterhin nach den Optimierungen.
+[Pausenübergabe mit Wiederaufnahmehinweisen](docs/handoffs/2026-10-02-android-tempo-pause.md).
+
 **Aktueller Abschluss am 02.10.2026: Ersteinrichtung und PIN-Umbruch.** Produkt
 `893d7affbf2f5fa63e96f9fc23860c0106243dff`, Cache v50, korrigiert nur belegte
 Textüberläufe: drei feste H1-Texte und zwei lange Wörter im Fortsetzungsabsatz

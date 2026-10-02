@@ -1,5 +1,14 @@
 # Hier mit der Weiterarbeit beginnen
 
+**Aktuell pausiert am 02.10.2026.** Der Nutzer verlangt nach der Android-
+Rückmeldung ausdrücklich eine Pause. Zwischenstand sichern, dann keine weitere
+Entwicklung, Testsitzung oder Bereitstellung ohne ausdrückliche Fortsetzung.
+Android läuft laut Nutzer gut; weitere Geräte-/Praxistests sind verschoben.
+Nächster Entwicklungsschritt ist die Beschleunigung der anfänglichen
+Lernstandsübernahme. Zwei Ursachen sind diagnostiziert, noch keine korrigiert.
+Produkt `893d7af`, Cache v50, bleibt unverändert.
+[Maßgebliche Pausenübergabe](docs/handoffs/2026-10-02-android-tempo-pause.md).
+
 **Aktueller Abschluss am 02.10.2026: Ersteinrichtung und PIN-Umbruch.** Produkt
 `893d7af`, Cache v50, hält die belegten festen Texte auch bei 320px/200 Prozent
 innerhalb der Ansicht. 43 gezielte Nodefälle, 20 Layoutansichten und ein
