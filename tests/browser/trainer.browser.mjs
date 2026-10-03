@@ -941,9 +941,10 @@ test('trainer practice is resumable, single-submit safe and completes an exhaust
     const expectedAnswers = exhaustedRound.answeredIds.length;
     await page.getByRole('button', {name: 'Runde beenden', exact: true}).click();
     await page.getByRole('heading', {name: 'Runde geschafft!'}).waitFor();
-    assert.match(await page.locator('.round-summary').innerText(), new RegExp(`Antworten\\s*${expectedAnswers}`));
-    assert.match(await page.locator('.round-summary').innerText(), new RegExp(`Antwortpunkte\\s*${(expectedAnswers - 1) * 10}`));
-    assert.match(await page.locator('.round-summary').innerText(), /Rundenbonus\s*20/);
+    const roundSummaryText = (await page.locator('.round-summary').innerText()).replaceAll('\u00ad', '');
+    assert.match(roundSummaryText, new RegExp(`Antworten\\s*${expectedAnswers}`));
+    assert.match(roundSummaryText, new RegExp(`Antwortpunkte\\s*${(expectedAnswers - 1) * 10}`));
+    assert.match(roundSummaryText, /Rundenbonus\s*20/);
 
     await page.setViewportSize({width: 390, height: 844});
     await page.screenshot({path: resolve(resultsDirectory, 'trainer-summary-mobile.png'), fullPage: true});

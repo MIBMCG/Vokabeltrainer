@@ -510,6 +510,7 @@ test('earned points buy through the real service and survive reopen, offline use
     await page.getByText('Der Kauf ist bestätigt.', {exact: true}).waitFor({timeout: 30_000});
     await page.getByRole('heading', {name: 'Freigeschaltet'}).waitFor();
     assert.equal(await page.getByRole('button', {name: 'Jetzt auswählen'}).count(), 1);
+    await page.screenshot({path: resolve(resultsDirectory, 'real-confirmed-purchase.png'), fullPage: true});
     assert.equal((await productState(page)).commerce.selection.length, 0);
     await page.keyboard.press('Escape');
     await page.locator('.purchase-dialog').waitFor({state: 'detached'});
@@ -581,6 +582,12 @@ test('earned points buy through the real service and survive reopen, offline use
     await reopened.getByText(/Ausgang ist noch unbekannt/).waitFor({timeout: 30_000});
     await reopened.getByRole('button', {name: 'Kauf fortsetzen'}).click();
     await reopened.getByText('Der Kauf wurde erneut geprüft.', {exact: true}).waitFor({timeout: 30_000});
+    await reopened.getByRole('heading', {name: 'Freigeschaltet', exact: true}).waitFor();
+    assert.equal(await reopened.locator('dialog .companion-moment[data-kind="purchase"]').count(), 1);
+    assert.equal((await productState(reopened)).commerce.selection.length, 0);
+    await reopened.screenshot({path: resolve(resultsDirectory, 'real-resumed-purchase.png'), fullPage: true});
+    await reopened.getByRole('button', {name: 'Später auswählen', exact: true}).click();
+    await reopened.locator('.purchase-dialog').waitFor({state: 'detached'});
     assert.match(await reopened.locator('.commerce-balance').innerText(), /1000 Verfügbare Punkte/);
     await reopened.locator('[data-stage="3"]').getByRole('button', {name: 'Diese Form auswählen'}).click();
     await reopened.locator('[data-stage="3"]').getByRole('button', {name: 'Ausgewählt'}).waitFor({timeout: 5_000});

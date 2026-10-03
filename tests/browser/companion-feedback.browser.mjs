@@ -28,7 +28,7 @@ async function setup(page, url) {
     window.feedbackCommerce = {getView: async () => {window.feedbackCalls.push('getView'); return structuredClone(window.feedbackView);}, isConnected: () => true,
       preview: async ({profileId, articleId}) => {window.feedbackCalls.push('preview'); return {profileId, articleId, price: 200, availablePoints: 800};},
       confirm: async () => {window.feedbackCalls.push('confirm'); if (window.feedbackMode === 'deferred') return new Promise(resolve => {window.finishFeedbackPurchase = () => {window.feedbackMode = 'confirmed'; resolve(result());};}); return result();},
-      resume: async () => {window.feedbackCalls.push('resume'); return result();},
+      resume: async () => {window.feedbackCalls.push('resume'); if (window.feedbackMode === 'deferred') return new Promise(resolve => {window.finishFeedbackPurchase = () => {window.feedbackMode = 'confirmed'; resolve(result());};}); return result();},
       select: async selection => {window.feedbackCalls.push('select'); window.feedbackView.selection = [selection];},
     };
     window.drawFeedbackPurchase = () => renderPurchases({root, profileId: window.feedbackProfile, commerce: window.feedbackCommerce, animations: window.feedbackMotion, online: true});
@@ -163,4 +163,37 @@ test('unavailable preview artwork still blocks unconfirmed purchase without comm
   assert.equal(await page.evaluate(() => window.feedbackCalls.includes('confirm')), false);
   await page.getByRole('button', {name: 'Abbrechen', exact: true}).click();
   await page.locator('dialog').waitFor({state: 'detached'});
+}));
+
+async function replacePurchaseHost(page, context = 'same') {
+  await page.evaluate(async context => {
+    const {renderPurchases} = await import('/src/trainer/ui/purchases.js');
+    window.feedbackOriginalHost = document.querySelector('#feedback-fixture');
+    const owner = document.querySelector('#app'); owner.replaceChildren();
+    if (context !== 'route-left') {
+      const host = document.createElement('section'); host.id = 'feedback-fixture';
+      if (context === 'different-owner') document.body.append(host); else owner.append(host);
+      renderPurchases({root: host, profileId: 'p1', commerce: context === 'different-session' ? {...window.feedbackCommerce} : window.feedbackCommerce, animations: true, online: true});
+    } else owner.textContent = 'Synthetische andere Ansicht';
+    window.finishFeedbackPurchase();
+  }, context);
+}
+for (const mode of ['confirm', 'resume']) test('confirmed ' + mode + ' accepts current same-context replacement host', {timeout: 60000}, async () => withFixture(async ({page}) => {
+  if (mode === 'resume') {await resumedFixture(page, 'deferred'); await page.getByRole('button', {name: 'Kauf fortsetzen', exact: true}).click();}
+  else {await page.evaluate(() => {window.feedbackMode = 'deferred';}); await purchase(page);}
+  const before = await page.evaluate(() => window.feedbackCalls.filter(call => call === 'getView').length);
+  await replacePurchaseHost(page); await page.waitForFunction(before => window.feedbackCalls.filter(call => call === 'getView').length === before + 1, before);
+  assert.equal(await page.evaluate(() => window.feedbackOriginalHost.isConnected), false);
+  assert.equal(await page.getByRole('heading', {name: 'Freigeschaltet', exact: true}).count(), 1, 'valid persisted success survives same-context host replacement');
+  assert.equal(await page.getByRole('button', {name: 'Jetzt auswählen', exact: true}).isEnabled(), true);
+  assert.equal(await page.evaluate(() => window.feedbackView.selection[0].stage), 1);
+  await shot(page, 'final-fix-' + mode + '-replacement');
+  await page.keyboard.press('Escape'); await page.locator('dialog').waitFor({state: 'detached'});
+}));
+for (const context of ['route-left', 'different-session', 'different-owner']) test('confirmed result is rejected after ' + context, {timeout: 60000}, async () => withFixture(async ({page}) => {
+  await page.evaluate(() => {window.feedbackMode = 'deferred';}); await purchase(page);
+  await replacePurchaseHost(page, context); await page.waitForFunction(() => window.feedbackCalls.filter(call => call === 'getView').length >= 2);
+  assert.equal(await page.getByRole('heading', {name: 'Freigeschaltet', exact: true}).count(), 0);
+  assert.equal(await page.locator('dialog .companion-moment').count(), 0);
+  assert.doesNotMatch(await page.locator('body').innerText(), /Der Kauf ist bestätigt|gehört jetzt dir/);
 }));

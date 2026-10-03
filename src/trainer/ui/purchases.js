@@ -456,10 +456,17 @@ export function renderPurchases({
   };
   const buy = async (entry, trigger) => {
     if (ui.busy || ui.dialogOpen) return;
-    const acceptUnlock = (result, view) => ui.profileId === profileId && root.isConnected
+    const owner = root.closest?.('#app') ?? root;
+    const currentContext = () => {
+      const target = ui.purchaseRender;
+      return ui.profileId === profileId && target?.profileId === profileId
+        && target.commerce === commerce && target.root.isConnected
+        && (target.root.closest?.('#app') ?? target.root) === owner;
+    };
+    const acceptUnlock = (result, view) => currentContext()
       ? confirmedCompanionUnlock({result, view, profileId, articleId: entry.id}) : null;
     const successOptions = {
-      entry, appearance, trigger, owner: root.closest?.('#app') ?? root, profileId, animations,
+      entry, appearance, trigger, owner, profileId, animations,
       onComplete: () => {ui.dialogOpen = false; rerender({focus: true});},
       onSelect: () => ui.profileId === profileId && run(
         () => commerce.select({profileId, figureId: entry.figureId ?? entry.id, stage: entry.stage ?? 1}),
