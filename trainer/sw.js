@@ -1,6 +1,6 @@
 const SCOPE = self.registration.scope;
 const CACHE_OWNER = `vokabeltrainer-product:${encodeURIComponent(new URL(SCOPE).pathname)}:`;
-const CACHE_NAME = `${CACHE_OWNER}v50`;
+const CACHE_NAME = `${CACHE_OWNER}v51`;
 const EVOLUTION_KEYS = [
   ...['dragon', 'deer-mist', 'tiger', 'horse', 'unicorn-moon', 'pegasus-star', 'dragon-crystal',
     'wolf-aurora', 'panther-shadow', 'griffin-storm', 'phoenix']

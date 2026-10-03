@@ -232,7 +232,7 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
       el('p', {text: `${preview.localEventCount} lokale und ${preview.remoteBootstrapEventCount} geladene Ereignisse.`}),
       button('Lernbereich verwenden', () => run(() => sync.joinDataset({
         ...dataset, previewId: preview.previewId, safetyCopyId: preview.safetyCopyId,
-      }, 'confirm'), {after: () => { ui.joinPreview = null; }}), {class: 'primary', disabled: ui.busy}),
+      }, 'confirm'), {after: () => { ui.joinPreview = null; onConnected?.(); }}), {class: 'primary', disabled: ui.busy}),
       button('Abbrechen', () => { ui.joinPreview = null; rerender(); }, {class: 'secondary'}),
     ]);
     section.append(join);

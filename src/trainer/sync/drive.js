@@ -23,6 +23,17 @@ function inactiveEpoch(epoch) {
   return {id, datasetId, parents: structuredClone(parents), deviceId, clock, occurredAt};
 }
 
+function joinedLedgerHash(ledger) {
+  // These collections contain ID-addressed facts. A fresh purchase basis may
+  // change their merge order without changing a single fact; nested arrays keep
+  // their original semantics and every complete entry remains part of the hash.
+  const ordered={...ledger};
+  for(const key of ['events','epochs','snapshots','historicalEpochs']) {
+    ordered[key]=[...ledger[key]].sort((left,right)=>left.id<right.id?-1:left.id>right.id?1:0);
+  }
+  return digest(ordered);
+}
+
 function assertId(value, label) {
   if (typeof value !== 'string' || !ID_PATTERN.test(value)) {
     throw productError('invalid', `${label} ist ungültig.`);
@@ -620,7 +631,23 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
       };
       let expectedLocalHash=null,remoteState=null;
       if(!sameDataset && nonempty) {
-        remoteState=await inspectJoinedDataset(current,binding,descriptorRead.descriptor,root.epoch);
+        let approved=null;
+        if(decision==='confirm') {
+          if(!selection.previewId || !selection.safetyCopyId)throw productError('not-ready','Bitte die Sicherheitskopie und Datensatzauswahl ausdrücklich bestätigen.');
+          approved=joinPreviews.get(selection.previewId);
+          if(!approved || approved.safetyCopyId!==selection.safetyCopyId
+            || await digest(approved.binding)!==await digest(binding)
+            || approved.expectedLocalHash!==await productStateHash(commands.getState())) {
+            throw productError('stale','Die Datensatzauswahl wurde geändert. Bitte eine neue Vorschau öffnen.');
+          }
+          const safety=commands.getState().safetyCopies.find(c=>c.id===approved.safetyCopyId);
+          if(!safety?.verified || await digest(safety.backup)!==safety.hash)throw productError('storage','Die Sicherheitskopie ist nicht mehr vollständig.');
+          expectedLocalHash=approved.expectedLocalHash;
+        }
+        remoteState=await inspectJoinedDataset(current,binding,descriptorRead.descriptor,root.epoch,approved?.remoteState);
+        if(approved && approved.remoteHash!==await joinedLedgerHash(remoteState.ledger)) {
+          throw productError('stale','Die Datensatzauswahl wurde geändert. Bitte eine neue Vorschau öffnen.');
+        }
         preview.remoteBootstrapEventCount=remoteState.ledger.events.length;
       }
       if (decision === 'preview') {
@@ -632,21 +659,13 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
           }
           expectedLocalHash=await productStateHash(commands.getState());
           const previewId=await digest({binding,local:expectedLocalHash,remote:remoteState.ledger,safetyCopyId:safety.id});
-          joinPreviews.set(previewId,{expectedLocalHash,remoteHash:await digest(remoteState.ledger),binding,safetyCopyId:safety.id});
+          // Only the latest approved selection is retained, privately in this session.
+          joinPreviews.clear();
+          joinPreviews.set(previewId,{expectedLocalHash,remoteHash:await joinedLedgerHash(remoteState.ledger),binding,
+            safetyCopyId:safety.id,remoteState:structuredClone(remoteState)});
           return {...preview,previewId,safetyCopyId:safety.id};
         }
         return {...preview,previewId:null,safetyCopyId:null};
-      }
-      if (!sameDataset && nonempty) {
-        if(!selection.previewId || !selection.safetyCopyId)throw productError('not-ready','Bitte die Sicherheitskopie und Datensatzauswahl ausdrücklich bestätigen.');
-        const approved=joinPreviews.get(selection.previewId);
-        if(!approved || approved.safetyCopyId!==selection.safetyCopyId
-          || await digest(approved.binding)!==await digest(binding)
-          || approved.expectedLocalHash!==await productStateHash(commands.getState())
-          || approved.remoteHash!==await digest(remoteState.ledger))throw productError('stale','Die Datensatzauswahl wurde geändert. Bitte eine neue Vorschau öffnen.');
-        const safety=commands.getState().safetyCopies.find(c=>c.id===approved.safetyCopyId);
-        if(!safety?.verified || await digest(safety.backup)!==safety.hash)throw productError('storage','Die Sicherheitskopie ist nicht mehr vollständig.');
-        expectedLocalHash=approved.expectedLocalHash;
       }
       const descriptorHash = descriptorRead.hash;
       const epochHash = root.hash;
@@ -706,10 +725,14 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
     }
   }
 
-  async function inspectJoinedDataset(current,binding,descriptor,root) {
-    let value={...structuredClone(current),ledger:{descriptor,events:[],epochs:[root],snapshots:[],historicalEpochs:[]},
+  async function inspectJoinedDataset(current,binding,descriptor,root,approvedState=null) {
+    // Each confirmation gets a disposable clone and a new sync instance with empty
+    // sessionVersions. Learning files are read and hashed again; only verified
+    // immutable commerce history can be reused by its existing content cache.
+    let value=approvedState===null ? {...structuredClone(current),ledger:{descriptor,events:[],epochs:[root],snapshots:[],historicalEpochs:[]},
       binding,clock:Math.max(current.clock,root.clock),rounds:{},outboxEventIds:[],pendingPackets:[],datasetSetup:null,
-      packetIntegrity:[],knownFiles:[],quarantinedFiles:[],safetyCopies:[],restoreJobs:[],snapshotManifests:[]};
+      packetIntegrity:[],knownFiles:[],quarantinedFiles:[],safetyCopies:[],restoreJobs:[],snapshotManifests:[]}
+      : structuredClone(approvedState);
     const scratch={async load(){return structuredClone(value);},async save(next){value=structuredClone(next);}};
     // Read-only staging has no local command hooks: discovering a remote milestone
     // must not generate/upload a new claim before the user confirms the join.
@@ -1182,6 +1205,7 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
 
   function destroy() {
     unsubscribe();
+    joinPreviews.clear();
   }
 
   return {discover, createDataset, joinDataset, sync, syncLearning:sync, retry, getStatus, destroy};
