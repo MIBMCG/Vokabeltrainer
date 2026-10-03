@@ -44,6 +44,9 @@ test('one purchase stays visibly in progress through slow preview and confirmati
             view.accounts.p1.spentPoints = 600;
             view.accounts.p1.purchasedArticleIds.push('deer-mist');
             view.accounts.p1.entitledFigureIds.push('deer-mist');
+            view.accounts.p1.entitledEvolutionIds.push('evolution:deer-mist:1');
+            view.jobs = [{status: 'confirmed', intent: {operationId: 'progress-proof', profileId: 'p1', articleId: 'deer-mist'}}];
+            return {status: 'confirmed', operationId: 'progress-proof'};
           },
         },
       };

@@ -1,8 +1,12 @@
-import {project} from '../learning/progress.js';
+import {project, effectiveCompletedRounds} from '../learning/progress.js';
+import {resolveEpochs} from '../model/epochs.js';
+import {uniqueAnswers, compareEvents} from '../learning/facts.js';
+import {claimCompanionMoment} from '../avatar/companion.js';
+import {companionMoment} from './companion.js';
 import {resolveAvatarDisplay} from '../avatar/display.js';
 import {picture} from './art.js';
 import {el, button, message} from './dom.js';
-import {levelCard} from './rewards.js';
+import {levelCard, avatarDisplayPicture} from './rewards.js';
 
 const uiByRoot = new WeakMap();
 
@@ -94,6 +98,57 @@ export function roundSummary(round, events) {
     answerPoints: correct * 10,
     bonusPoints: completion === undefined ? 0 : 20,
   };
+}
+
+// Read only saved, effective evidence. Raw summary events are not eligibility proof.
+export function practiceReaction({ledger, round, profileId}) {
+  if (!round || round.profileId !== profileId) return null;
+  const resolved = resolveEpochs(ledger);
+  if (resolved.epochConflict || !resolved.activeEpochId || round.epochId !== resolved.activeEpochId) return null;
+  const profile = project(ledger).entities.profiles[profileId];
+  if (!profile?.value || profile.value.archived) return null;
+  const events = resolved.effectiveEvents;
+  if (events.some(event => event.type === 'round.abandoned'
+    && event.payload.roundId === round.id && event.payload.profileId === profileId)) return null;
+  if (round.status === 'completed') {
+    const completion = effectiveCompletedRounds(ledger).find(event => event.payload.roundId === round.id
+      && event.payload.profileId === profileId);
+    const savedIds = new Set(round.answeredIds);
+    if (!completion || completion.payload.answerIds.length !== savedIds.size
+      || !completion.payload.answerIds.every(id => savedIds.has(id))) return null;
+    return {kind: 'completed', key: round.id};
+  }
+  if (round.status !== 'feedback' || !round.feedback?.correct || !round.current) return null;
+  const answers = uniqueAnswers(events);
+  const answer = answers.find(event => event.id === round.feedback.answerId);
+  if (!answer || !round.answeredIds.includes(answer.id) || !answer.payload.correct
+    || answer.payload.profileId !== profileId || answer.payload.roundId !== round.id
+    || !['wordId', 'revisionId', 'learningId', 'ordinal'].every(key => answer.payload[key] === round.current[key])) return null;
+  const recovered = events.some(event => {
+    if (event.type !== 'word.milestone' || event.payload.milestone !== 'recovered'
+      || event.payload.profileId !== profileId || event.payload.wordId !== answer.payload.wordId) return false;
+    const evidence = event.payload.evidenceAnswerIds;
+    if (evidence?.length !== 2 || evidence[1] !== answer.id) return false;
+    const wrong = answers.find(candidate => candidate.id === evidence[0]);
+    return wrong && !wrong.payload.correct && wrong.payload.profileId === profileId
+      && wrong.payload.wordId === answer.payload.wordId && compareEvents(wrong, answer) < 0
+      && compareEvents(answer, event) < 0;
+  });
+  return recovered ? {kind: 'recovered', key: answer.id} : null;
+}
+
+function learningMoment({root, state, round, profileId, projection}) {
+  const reaction = practiceReaction({ledger: state.ledger, round, profileId});
+  if (!reaction) return null;
+  const profile = projection.profiles[profileId];
+  const display = resolveAvatarDisplay({productState: state, profileId, profile});
+  const fresh = claimCompanionMoment(root.closest?.('#app') ?? root, profileId, (reaction.kind === 'recovered' ? 'answer:' : 'round:') + reaction.key);
+  return companionMoment(avatarDisplayPicture(display, {sizes: '160px'}), {
+    figureId: display.figureId, stage: display.stage, animations: profile.animations === true && fresh,
+    kind: reaction.kind, text: reaction.kind === 'recovered'
+      ? 'Dran\u00adge\u00adblie\u00adben! Dieses Fehler\u00adwort hast du jetzt richtig be\u00adant\u00adwor\u00adtet.'
+      : 'Runde geschafft! Deine Figur freut sich mit dir.',
+  });
 }
 
 function focusSoon(node) {
@@ -292,7 +347,7 @@ function renderLanding({root, state, commands, profileId, onNavigate, projection
   updateSummary();
 }
 
-function renderFeedback({root, round, word, profile, points, commands, onNavigate, ui}) {
+function renderFeedback({root, state, round, profileId, projection, word, profile, points, commands, onNavigate, ui}) {
   const feedback = round.feedback;
   const input = el('input', {attrs: {
     id: 'answer', lang: 'en', autocomplete: 'off', autocapitalize: 'none', autocorrect: 'off',
@@ -324,6 +379,7 @@ function renderFeedback({root, round, word, profile, points, commands, onNavigat
   ]);
   const section = practiceFrame({round, word, profile, points, onNavigate}, [
     el('label', {text: 'Englische Übersetzung'}, [input]), status, next,
+    learningMoment({root, state, round, profileId, projection}),
   ]);
   root.replaceChildren(section);
   focusSoon(next);
@@ -433,7 +489,7 @@ function renderExhausted({root, round, profile, points, commands, onNavigate, ui
   root.replaceChildren(section);
 }
 
-function renderCompleted({root, state, round, profile, points, projection, onNavigate}) {
+function renderCompleted({root, state, round, profileId, profile, points, projection, onNavigate}) {
   const summary = roundSummary(round, state.ledger.events);
   const wrong = summary.wrongWordIds.map((wordId) => (
     projection.entities.words[wordId]?.value?.german ?? 'Nicht mehr verfügbare Vokabel'
@@ -441,13 +497,14 @@ function renderCompleted({root, state, round, profile, points, projection, onNav
   root.replaceChildren(el('section', {attrs: {class: 'panel practice-finish'}}, [
     profileHeader(profile.value.name, points, onNavigate),
     el('p', {text: 'Etappe beendet', attrs: {class: 'eyebrow'}}),
-    el('h1', {text: 'Runde geschafft!'}),
+    el('h1', {text: 'Runde ge\u00adschafft!', attrs: {'aria-label': 'Runde geschafft!'}}),
+    learningMoment({root, state, round, profileId, projection}),
     el('dl', {attrs: {class: 'round-summary'}}, [
       el('dt', {text: 'Antworten'}), el('dd', {text: summary.answers}),
       el('dt', {text: 'Richtig'}), el('dd', {text: summary.correct}),
-      el('dt', {text: 'Fehlerwörter'}), el('dd', {text: wrong.length ? wrong.join(', ') : 'Keine'}),
-      el('dt', {text: 'Antwortpunkte'}), el('dd', {text: summary.answerPoints}),
-      el('dt', {text: 'Rundenbonus'}), el('dd', {text: summary.bonusPoints}),
+      el('dt', {text: 'Fehler\u00adwörter', attrs: {'aria-label': 'Fehlerwörter'}}), el('dd', {text: wrong.length ? wrong.join(', ') : 'Keine'}),
+      el('dt', {text: 'Antwort\u00adpunkte', attrs: {'aria-label': 'Antwortpunkte'}}), el('dd', {text: summary.answerPoints}),
+      el('dt', {text: 'Runden\u00adbonus', attrs: {'aria-label': 'Rundenbonus'}}), el('dd', {text: summary.bonusPoints}),
     ]),
     button('Neue Runde', () => onNavigate('practice-landing'), {class: 'primary'}),
   ]));
@@ -471,7 +528,7 @@ function renderPracticeView({root, state, commands, profileId, onNavigate}, acti
   }
   const points = projection.profiles[profileId]?.points ?? 0;
   if (round.status === 'completed') {
-    renderCompleted({root, state, round, profile, points, projection, onNavigate});
+    renderCompleted({root, state, round, profileId, profile, points, projection, onNavigate});
     return;
   }
   if (round.status === 'exhausted') {
@@ -502,7 +559,7 @@ function renderPracticeView({root, state, commands, profileId, onNavigate}, acti
   }
   ui.invalidating = null;
   if (round.status === 'feedback') {
-    renderFeedback({root, round, word, profile, points, commands, onNavigate, ui});
+    renderFeedback({root, state, round, profileId, projection, word, profile, points, commands, onNavigate, ui});
   } else {
     renderAsking({root, round, word, profile, points, commands, onNavigate, ui});
   }

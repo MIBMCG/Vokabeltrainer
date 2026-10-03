@@ -187,6 +187,12 @@ function validCompletedRounds(effectiveEvents, supportEvents) {
   return [...claims.values()];
 }
 
+// Presentation consumers reuse the exact completion validation used by projection.
+export function effectiveCompletedRounds(ledger) {
+  const resolved = resolveEpochs(ledger);
+  return validCompletedRounds(resolved.effectiveEvents, resolved.supportEvents);
+}
+
 function wordOutput(facts, wordId, currentLearningId) {
   const totals = facts.totals.get(wordId) ?? defaultTotals();
   const current = currentLearningId === null

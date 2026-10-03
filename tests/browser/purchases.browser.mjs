@@ -644,7 +644,11 @@ test('failed selection after confirmed purchase stays visible in the dialog', {t
         isConnected: () => true,
         getView: async () => view,
         preview: async () => ({price: 200, availablePoints: 200}),
-        confirm: async () => { view.accounts.p1.entitledEvolutionIds.push('evolution:dragon:2'); },
+        confirm: async () => {
+          view.accounts.p1.entitledEvolutionIds.push('evolution:dragon:2');
+          view.jobs = [{status: 'confirmed', intent: {operationId: 'selection-proof', profileId: 'p1', articleId: 'evolution:dragon:2'}}];
+          return {status: 'confirmed', operationId: 'selection-proof'};
+        },
         select: async () => { throw new Error('Auswahlprobe fehlgeschlagen'); },
       };
       renderPurchases({root, profileId: 'p1', commerce, online: true});

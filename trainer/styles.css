@@ -754,3 +754,20 @@ th:first-child { position: sticky; left: 0; background: #fff; }
 .companion-collection article > .avatar-evolution-display, .companion-collection article > .figure-art { width: min(100%, 140px); margin-inline: auto; }
 .companion-collection h3 { margin-block: .4rem; }
 .companion-collection p { margin-block: .35rem; }
+
+.companion-moment { min-width: 0; padding: .7rem; margin-block: .8rem; border-radius: 1rem; background: #f3f7e9; text-align: center; overflow-wrap: anywhere; }
+.companion-moment .companion-figure { width: min(100%, 160px); }
+.companion-moment[data-kind="purchase"] .companion-figure { width: min(100%, 256px); }
+.companion-moment[data-kind="purchase"] .companion-figure[data-animate="true"] > :first-child { animation: companion-transform 1200ms ease-out both; }
+.companion-skip { max-width: 100%; white-space: normal; }
+@keyframes companion-transform { 0% { opacity: .35; transform: scale(.86) translateY(5px); } 65% { opacity: 1; transform: scale(1.03) translateY(-3px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+
+.practice-screen:has(.companion-moment) { grid-template-columns: minmax(0, 1fr); }
+
+@media (max-width: 600px) {
+  .practice-finish:has(.companion-moment) .round-summary { grid-template-columns: minmax(0, 1fr); gap: .2rem; }
+  .practice-finish:has(.companion-moment) .round-summary dd { text-align: left; margin-bottom: .6rem; }
+}
+
+.companion-moment > p, .companion-skip { overflow-wrap: normal; }
+.companion-skip { width: 100%; padding-inline: .35rem; }

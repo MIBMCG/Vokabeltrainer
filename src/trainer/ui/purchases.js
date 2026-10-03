@@ -3,7 +3,7 @@ import {EVOLUTION_FORMS, evolutionOffer} from '../avatar/evolution.js';
 import {evolutionArt, evolutionPicture as artPicture} from '../avatar/evolution-art.js';
 import {figurePicture} from '../avatar/art.js';
 import {companionInfo, ownedCompanions, claimCompanionMoment} from '../avatar/companion.js';
-import {companionFigure, companionBiography} from './companion.js';
+import {companionFigure, companionBiography, companionMoment} from './companion.js';
 import {project} from '../learning/progress.js';
 import {readHistory, replayHistory} from '../purchases/history.js';
 import {rebuildAccounts} from '../purchases/projection.js';
@@ -232,15 +232,28 @@ function purchaseActionLabel(entry) {
   return entry.stage ? `Für ${entry.price} Punkte entwickeln` : `Für ${entry.price} Punkte freischalten`;
 }
 
-function purchaseDialog({preview, entry, appearance, onConfirm, onSelect, trigger, onComplete}) {
+export function confirmedCompanionUnlock({result, view, profileId, articleId}) {
+  if (result?.status !== 'confirmed' || typeof result.operationId !== 'string' || !result.operationId
+    || view?.mode !== 'active') return null;
+  const job = view.jobs?.find(entry => entry.intent.operationId === result.operationId);
+  if (job?.status !== 'confirmed' || job.intent.profileId !== profileId || job.intent.articleId !== articleId) return null;
+  const form = EVOLUTION_FORMS.find(entry => entry.id === articleId);
+  const figure = form ? figureById(form.figureId) : figureById(articleId);
+  const stage = form?.stage ?? 1;
+  const owned = ownedCompanions(view, profileId).find(entry => entry.figureId === figure?.id);
+  return owned?.ownedStages.includes(stage) ? {figureId: figure.id, stage, key: result.operationId} : null;
+}
+
+function purchaseDialog({preview, entry, appearance, onConfirm, onSelect, trigger, onComplete, owner, profileId, animations, resumedUnlock = null}) {
+  const art = entry.figureId && entry.stage ? formPicture(entry, {sizes: '(max-width: 600px) 70vw, 256px', appearance})
+    : entry.unlock ? figurePicture({figureId: entry.id, equipment: {}}, {sizes: '256px'}) : null;
   const dialog = el('dialog', {attrs: {class: 'purchase-dialog', 'aria-labelledby': 'purchase-dialog-title'}}, [
     el('h2', {text: 'Kauf prüfen', attrs: {id: 'purchase-dialog-title'}}),
-    entry.figureId && entry.stage ? formPicture(entry, {sizes: '(max-width: 600px) 70vw, 256px', appearance})
-      : entry.unlock ? figurePicture({figureId: entry.id, equipment: {}}, {sizes: '256px'}) : null,
+    art,
     el('p', {text: entry.name}),
     el('dl', {attrs: {class: 'summary-list'}}, [
-      el('dt', {text: 'Preis'}), el('dd', {text: `${preview.price} Punkte`}),
-      el('dt', {text: 'Danach verfügbar'}), el('dd', {text: `${preview.availablePoints - preview.price} Punkte`}),
+      el('dt', {text: 'Preis'}), el('dd', {text: `${preview?.price ?? entry.price ?? 0} Punkte`}),
+      el('dt', {text: 'Danach verfügbar'}), el('dd', {text: `${(preview?.availablePoints ?? 0) - (preview?.price ?? 0)} Punkte`}),
     ]),
     el('p', {text: 'Ausgeben verändert dein Level nicht.'}),
   ]);
@@ -263,6 +276,33 @@ function purchaseDialog({preview, entry, appearance, onConfirm, onSelect, trigge
     if (confirming) return;
     dialog.close(); finish();
   }, {class: 'secondary'});
+  const showSuccess = unlock => {
+    confirming = false;
+    const fresh = claimCompanionMoment(owner, profileId, 'purchase:' + unlock.key);
+    dialog.replaceChildren(
+      el('h2', {text: 'Freige\u00adschaltet', attrs: {id: 'purchase-dialog-title', 'aria-label': 'Freigeschaltet'}}),
+      el('p', {text: entry.name + ' gehört jetzt dir.'}),
+      companionMoment(art, {...unlock, kind: 'purchase', animations: animations === true && fresh}),
+    );
+    const select = button('Jetzt auswählen', async () => {
+      if (selecting) return;
+      selecting = true; select.disabled = true;
+      try {
+        if (await onSelect()) { dialog.close(); finish(); }
+        else {
+          dialog.append(message('Die Auswahl konnte noch nicht gespeichert werden. Bitte versuche es erneut oder wähle die Form später aus.', 'error'));
+          select.disabled = false;
+        }
+      } finally { selecting = false; }
+    }, {class: 'primary'});
+    dialog.append(el('div', {attrs: {class: 'dialog-actions'}}, [
+      select, button('Später auswählen', () => { dialog.close(); finish(); }, {class: 'secondary'}),
+    ]));
+    select.focus();
+  };
+  if (resumedUnlock) {
+    document.body.append(dialog); dialog.showModal(); showSuccess(resumedUnlock); return;
+  }
   const confirm = button('Kauf verbindlich bestätigen', async () => {
     if (confirming) return;
     confirming = true;
@@ -274,27 +314,7 @@ function purchaseDialog({preview, entry, appearance, onConfirm, onSelect, trigge
     try {
       const confirmed = await onConfirm();
       if (!confirmed) { dialog.close(); finish(); return; }
-      confirming = false;
-      dialog.replaceChildren(
-        el('h2', {text: 'Freigeschaltet', attrs: {id: 'purchase-dialog-title'}}),
-        el('p', {text: `${entry.name} gehört jetzt dir.`}),
-      );
-      const select = button('Jetzt auswählen', async () => {
-        if (selecting) return;
-        selecting = true;
-        select.disabled = true;
-        try {
-          if (await onSelect()) { dialog.close(); finish(); }
-          else {
-            dialog.append(message('Die Auswahl konnte noch nicht gespeichert werden. Bitte versuche es erneut oder wähle die Form später aus.', 'error'));
-            select.disabled = false;
-          }
-        } finally { selecting = false; }
-      }, {class: 'primary'});
-      dialog.append(el('div', {attrs: {class: 'dialog-actions'}}, [
-        select, button('Später auswählen', () => { dialog.close(); finish(); }, {class: 'secondary'}),
-      ]));
-      select.focus();
+      showSuccess(confirmed);
     }
     catch (error) {
       confirming = false;
@@ -403,17 +423,21 @@ export function renderPurchases({
   }
   if (model.pending) section.append(message('Kauf wird geprüft. Sobald der Kauf bestätigt ist, gehört die Figur dir.'));
 
-  const run = async (action, success = '', {rethrowCodes = [], progress = 'Änderung wird verarbeitet …', refreshShell = false} = {}) => {
+  const run = async (action, success = '', {rethrowCodes = [], progress = 'Änderung wird verarbeitet …', refreshShell = false, acceptResult = null} = {}) => {
     if (ui.busy) return false;
     ui.busy = true;
     ui.progress = progress;
     rerender();
     try {
-      await action();
+      const result = await action();
       ui.view = await commerce.getView();
+      const accepted = acceptResult ? acceptResult(result, ui.view) : true;
+      if (!accepted) {
+        ui.notice = 'Der Kauf ist noch nicht passend bestätigt. Sein aktueller Status wird angezeigt.'; ui.tone = 'info'; return false;
+      }
       ui.notice = success; ui.tone = 'info';
       if (refreshShell) onRefresh?.();
-      return true;
+      return accepted;
     } catch (error) {
       try { ui.view = await commerce.getView(); } catch {}
       if (rethrowCodes.includes(error?.code)) throw error;
@@ -429,9 +453,20 @@ export function renderPurchases({
   };
   const buy = async (entry, trigger) => {
     if (ui.busy || ui.dialogOpen) return;
+    const acceptUnlock = (result, view) => ui.profileId === profileId && root.isConnected
+      ? confirmedCompanionUnlock({result, view, profileId, articleId: entry.id}) : null;
+    const successOptions = {
+      entry, appearance, trigger, owner: root.closest?.('#app') ?? root, profileId, animations,
+      onComplete: () => {ui.dialogOpen = false; rerender({focus: true});},
+      onSelect: () => ui.profileId === profileId && run(
+        () => commerce.select({profileId, figureId: entry.figureId ?? entry.id, stage: entry.stage ?? 1}),
+        entry.name + ' wurde ausgewählt.', {refreshShell: true},
+      ),
+    };
     if (entry.action === 'resume') {
-      await run(() => commerce.resume(model.pending.operationId), 'Der Kauf wurde erneut geprüft.',
-        {progress: 'Kauf wird erneut geprüft …'});
+      const unlock = await run(() => commerce.resume(model.pending.operationId), 'Der Kauf wurde erneut geprüft.',
+        {progress: 'Kauf wird erneut geprüft …', acceptResult: acceptUnlock});
+      if (unlock) {ui.dialogOpen = true; purchaseDialog({...successOptions, resumedUnlock: unlock});}
       return;
     }
     ui.busy = true;
@@ -440,15 +475,9 @@ export function renderPurchases({
     try {
       const preview = await commerce.preview({profileId, articleId: entry.id});
       ui.dialogOpen = true;
-      purchaseDialog({preview, entry, appearance, trigger, onComplete: () => {
-        ui.dialogOpen = false;
-        rerender({focus: true});
-      }, onSelect: () => run(
-        () => commerce.select({profileId, figureId: entry.figureId ?? entry.id, stage: entry.stage ?? 1}),
-        `${entry.name} wurde ausgewählt.`, {refreshShell: true},
-      ), onConfirm: () => run(
+      purchaseDialog({...successOptions, preview, onConfirm: () => run(
         () => commerce.confirm(preview), 'Der Kauf ist bestätigt.',
-        {rethrowCodes: ['stale'], progress: 'Kauf wird bestätigt …'},
+        {rethrowCodes: ['stale'], progress: 'Kauf wird bestätigt …', acceptResult: acceptUnlock},
       )});
     } catch (error) {
       if (error?.code === 'auth') requireAuth();
