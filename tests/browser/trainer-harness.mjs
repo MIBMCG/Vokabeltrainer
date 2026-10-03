@@ -20,7 +20,7 @@ export async function createTrainerHarness({basePath = '', serverAuth = false} =
   const browserType = (await import(moduleUrl()))[browserEngine];
   const server = createProbeServer({basePath});
   const productWorker = await readFile(new URL('../../trainer/sw.js', import.meta.url), 'utf8');
-  let workerVersion = 'v51';
+  let workerVersion = 'v52';
   let workerActivationDelayMs = 0;
   let blockLargeArt = false;
   let failPrecacheAssetPath = null;
@@ -86,9 +86,9 @@ export async function createTrainerHarness({basePath = '', serverAuth = false} =
       response.end('Synthetic large-art failure.');
       return;
     }
-    if (pathname === `${basePath}/trainer/sw.js` && workerVersion !== 'v51') {
+    if (pathname === `${basePath}/trainer/sw.js` && workerVersion !== 'v52') {
       let source = productWorker.replace(
-        'const CACHE_NAME = `${CACHE_OWNER}v51`;',
+        'const CACHE_NAME = `${CACHE_OWNER}v52`;',
         `const CACHE_NAME = \`\${CACHE_OWNER}${workerVersion}\`;`,
       );
       if (source === productWorker) throw new Error('Synthetic worker version marker was not replaced.');
