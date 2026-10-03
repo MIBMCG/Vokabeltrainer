@@ -1,5 +1,10 @@
 # Pause nach Android-Rückmeldung und Diagnose der Lernstandsübernahme
 
+**Fortsetzung am 03.10.2026 ausdrücklich beauftragt:** „wir können nun weiter
+arbeiten“. Die folgende Pause ist damit aufgehoben. Die Diagnose bleibt
+Ausgangspunkt; Geräte-/Praxistests sind weiterhin verschoben. Die Korrektur ist
+in der [aktuellen Tempoübergabe](2026-10-03-lernbereich-tempo.md) dokumentiert.
+
 Stand: 02.10.2026. Der Nutzer verlangt ausdrücklich: „lege bitte eine pause ein“.
 Nur diese Zwischenstandssicherung abschließen; danach keine Produktarbeit,
 Testsitzung, Browser-/Anbieteraktion oder Bereitstellung bis zur ausdrücklichen

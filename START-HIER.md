@@ -1,6 +1,23 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Aktuell pausiert am 02.10.2026.** Der Nutzer verlangt nach der Android-
+**Abschluss am 03.10.2026: Lernstandsübernahme beschleunigt.** Produkt `62635de`,
+Cache v51, ist unabhängig geprüft und bei LejeAdventure aktiv. Der Abgleich
+startet nach Bestätigung sofort; die Bestätigung lädt weniger Kaufhistorie
+erneut. Synthetisch 17,8 Prozent kürzerer Gesamtvorgang, ohne Aussage über
+reale Android-/Google-Zeit. 396 öffentliche Dateien bytegleich geprüft;
+automatische Regressionen und beide unabhängigen Reviews bestanden.
+Weitere Geräte-/Praxistests bleiben verschoben; keine Pause. Als nächstes die
+fünf bestätigten Belohnungsideen konkretisieren, ohne fertige Bilder erneut
+zu erzeugen oder ungeprüfte weitere Kaufabkürzungen einzubauen.
+[Aktuelle Übergabe und Nachweisgrenzen](docs/handoffs/2026-10-03-lernbereich-tempo.md).
+
+**Aktuelle Fortsetzung am 03.10.2026.** Der Nutzer hebt die Pause ausdrücklich
+auf. Zuerst die diagnostizierte Wartezeit bei der anfänglichen Lernstandsübernahme
+beheben: unmittelbarer Abgleichstart und geprüfte Vorschauwiederverwendung.
+Geräte-/Praxistests bleiben verschoben, Android läuft laut Nutzer gut.
+[Ausgangsdiagnose und Grenzen](docs/handoffs/2026-10-02-android-tempo-pause.md).
+
+**Historische Pause am 02.10.2026, am 03.10. aufgehoben.** Der Nutzer verlangt nach der Android-
 Rückmeldung ausdrücklich eine Pause. Zwischenstand sichern, dann keine weitere
 Entwicklung, Testsitzung oder Bereitstellung ohne ausdrückliche Fortsetzung.
 Android läuft laut Nutzer gut; weitere Geräte-/Praxistests sind verschoben.

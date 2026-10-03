@@ -1,6 +1,43 @@
 # Arbeitsstand
 
-**Aktuelle Pause am 02.10.2026: Android-Rückmeldung und Lernstandsübernahme.**
+**Aktueller Abschluss am 03.10.2026: schnellere anfängliche Lernstandsübernahme.**
+Produkt `62635de092ca36ef1ca529197b08455a77a1fd87`, Cache v51, ist nach unabhängigen
+Task-/Abschlussreviews ohne Befund integriert und nur bei LejeAdventure aktiv.
+Nach bestätigter Übernahme startet der bestehende Abgleich sofort. Die erneut
+geprüfte Bestätigung verwendet eine getrennte Kopie der Vorschau und deren
+verifizierte unveränderliche Kaufhistorie; lokale Kopie, aktuelle Datenprüfung,
+Sperrprüfung und abschließende atomare Übernahme bleiben erhalten.
+
+Frischer Vergleich bei 100 ms künstlicher Anfragelatenz: Vorschau 79/7,557 s
+unverändert, Bestätigung 79/7,594 → 49/4,301 s, erster Abgleich 38/3,305 →
+38/3,316 s; insgesamt 196/18,456 → 166/15,174 s (17,8 Prozent weniger Zeit).
+Mögliche vorherige Wartezeit bis zum 60-Sekunden-Abgleich nicht eingerechnet.
+Keine Aussage zur realen Google-/Android-Dauer. Automatisches Laden ist für
+leeren und nicht leeren Erststand im isolierten Browser belegt.
+
+679 Nodefälle im Gesamtlauf: 675 PASS, vier nur durch Sandboxrechte blockiert;
+alle vier im gezielten 23/23-Nachlauf PASS. Zusätzlich 264/264 gezielte Nodefälle,
+3/3 Übernahme-/Auth-/Restore-Browserfälle und 1/1 kontrollierter synthetischer
+Updatefall v51→v52 PASS. Kein einzelner 679/679-Lauf und kein eigener
+Reviewer-Browserlauf behauptet. Beide Reviews prüfen Code und vorhandene Belege.
+
+Worker `8cc1917f-194e-4e92-a51b-916ce2915e31` seit 03.10.2026 09:43:04.324 UTC
+zu 100 Prozent aktiv. Nachprüfung 09:43:40.683 UTC: 396/396 Dateien bytegleich,
+drei Infoseiten erreichbar, sechs interne Pfade gesperrt, anonyme Sitzung
+false/no-store; alte App weiter v47. Kein Nutzerbrowser-Update oder persönlicher
+Bestandszugriff durchgeführt: Geräte-/Praxistests bleiben verschoben. Android-
+Nutzerbericht erhalten, keine neue Pause. Die fünf bestätigten Belohnungsideen
+sind der nächste Entwicklungsschritt; reale Zeit-/Gerätenachweise bleiben offen.
+[Aktuelle Übergabe](docs/handoffs/2026-10-03-lernbereich-tempo.md).
+
+**Aktuelle Fortsetzung am 03.10.2026.** Der Nutzer sagt „wir können nun weiter
+arbeiten“. Die Pause ist aufgehoben; Geräte-/Praxistests bleiben verschoben.
+Beide sauberen Arbeitszweige und GitHub wurden frisch auf
+`c9a21ba6190841f5bca58e41b114c7f05a3b8ad1` abgeglichen. Die begrenzte Korrektur
+der anfänglichen Lernstandsübernahme ist in Arbeit. Keine reale Android-Dauer
+behaupten; der positive Nutzerbericht und seine unbekannten Gerätedetails bleiben.
+
+**Historische Pause am 02.10.2026, am 03.10. aufgehoben.**
 Der Nutzer berichtet, dass die App auf Android gut läuft, und verschiebt weitere
 Geräte-/Praxistests. Gerät, Android-Version, Browser und Installationsmodus sind
 nicht bekannt; keine Apple-/Safari- oder vollständige Geräteabnahme ableiten.

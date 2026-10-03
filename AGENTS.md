@@ -1,6 +1,30 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-**Aktuelle Pause am 02.10.2026 nach Android-Rückmeldung und Tempodiagnose.**
+**Aktueller Abschluss am 03.10.2026: schnellere Lernstandsübernahme.** Produkt
+`62635de`, Cache v51, ist integriert, unabhängig geprüft und an der LejeAdventure-
+Adresse aktiv. Bestätigte Übernahme startet den Abgleich unmittelbar; die frische
+Bestätigungsprüfung verwendet bereits geprüfte unveränderliche Kaufhistorie.
+Lokale Sicherheitskopie, neue Probe, frische Dateiprüfungen und atomare Übernahme
+bleiben erhalten. Synthetisch 196 → 166 Anfragen und 18,456 → 15,174 Sekunden
+bei 100 ms künstlicher Latenz (17,8 Prozent weniger); keine reale Android-Zeit.
+679 Nodefälle: 675 im Gesamtlauf PASS, vier Sandbox-blockierte Fälle im gezielten
+23/23-Nachlauf PASS; 264 gezielte Nodefälle, drei Übernahme-Browserfälle und ein
+Updatefall PASS. Task- und Abschlussreview ohne Befund. Worker
+`8cc1917f-194e-4e92-a51b-916ce2915e31` zu 100 Prozent aktiv; 396 Dateien bytegleich.
+Geräte-/Praxistests und echtes Nutzerbrowser-Update bleiben ausdrücklich verschoben.
+Android läuft laut Nutzer gut; keine neue Pause. Fünf Belohnungsideen folgen
+nach den Optimierungen. [Aktuelle Übergabe](docs/handoffs/2026-10-03-lernbereich-tempo.md).
+
+**Fortsetzung am 03.10.2026 ausdrücklich beauftragt.** Der Nutzer sagt
+„wir können nun weiter arbeiten“ und hebt damit die Pause auf. Vorrang hat die
+Beschleunigung der anfänglichen Lernstandsübernahme: unmittelbarer Abgleichstart
+und geprüfte Wiederverwendung der Vorschau. Geräte-/Praxistests bleiben
+verschoben; den positiven Android-Nutzerbericht mit seinen Grenzen erhalten.
+Bestehende Konten, Lernbereiche, Besitz und Punkte erhalten. Die fünf bestätigten
+Belohnungsideen folgen nach den Optimierungen. Ausgangspunkt ist die
+[gesicherte Diagnose](docs/handoffs/2026-10-02-android-tempo-pause.md).
+
+**Historische Pause am 02.10.2026, am 03.10. ausdrücklich aufgehoben.**
 Der Nutzer sagt ausdrücklich „lege bitte eine pause ein“. Nur den Zwischenstand
 sichern; danach keine Produktarbeit, Testsitzung oder Bereitstellung bis zur
 erneuten ausdrücklichen Fortsetzung. Produkt `893d7af`, Cache v50, bleibt erhalten.
