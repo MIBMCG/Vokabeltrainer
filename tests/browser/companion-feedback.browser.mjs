@@ -142,8 +142,25 @@ test('purchase success stays usable at320/390px 200% and missing art never delay
     await shot(page, 'task2-purchase-' + width + '-200');
   }
   await page.evaluate(() => document.querySelectorAll('dialog img').forEach(img => {img.dispatchEvent(new Event('error')); img.dispatchEvent(new Event('error'));}));
+  assert.equal(await page.getByRole('heading', {name: 'Freigeschaltet', exact: true}).count(), 1);
+  assert.match(await page.locator('dialog').innerText(), /gehört jetzt dir/);
+  assert.doesNotMatch(await page.locator('dialog').innerText(), /Dieser Kauf kann noch nicht bestätigt werden/);
+  assert.equal(await page.locator('dialog .evolution-art-unavailable').count(), 1);
+  await shot(page, 'task2-confirmed-missing-art-fixed');
   assert.equal(await page.getByRole('button', {name: 'Jetzt auswählen', exact: true}).isEnabled(), true);
   await page.getByRole('button', {name: 'Jetzt auswählen', exact: true}).click();
   await page.locator('dialog').waitFor({state: 'detached'});
   assert.equal(await page.evaluate(() => window.feedbackView.selection[0].stage), 2);
+}));
+
+test('unavailable preview artwork still blocks unconfirmed purchase without commerce confirmation', {timeout: 60000}, async () => withFixture(async ({page}) => {
+  await page.getByRole('button', {name: 'Für 200 Punkte entwickeln', exact: true}).click();
+  await page.waitForFunction(() => {const image = document.querySelector('dialog img'); return image?.complete && image.naturalWidth > 0;});
+  await page.locator('dialog img').evaluate(img => {img.dataset.fallback = 'true'; img.dispatchEvent(new Event('error'));});
+  assert.equal(await page.getByRole('button', {name: 'Kauf verbindlich bestätigen', exact: true}).isDisabled(), true);
+  assert.match(await page.locator('dialog').innerText(), /Dieser Kauf kann noch nicht bestätigt werden/);
+  assert.equal(await page.getByRole('heading', {name: 'Freigeschaltet', exact: true}).count(), 0);
+  assert.equal(await page.evaluate(() => window.feedbackCalls.includes('confirm')), false);
+  await page.getByRole('button', {name: 'Abbrechen', exact: true}).click();
+  await page.locator('dialog').waitFor({state: 'detached'});
 }));

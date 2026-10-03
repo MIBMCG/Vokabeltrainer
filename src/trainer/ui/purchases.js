@@ -258,6 +258,7 @@ function purchaseDialog({preview, entry, appearance, onConfirm, onSelect, trigge
     el('p', {text: 'Ausgeben verändert dein Level nicht.'}),
   ]);
   let confirming = false;
+  let successShown = false;
   let selecting = false;
   let finished = false;
   let feedback = null;
@@ -277,6 +278,7 @@ function purchaseDialog({preview, entry, appearance, onConfirm, onSelect, trigge
     dialog.close(); finish();
   }, {class: 'secondary'});
   const showSuccess = unlock => {
+    successShown = true;
     confirming = false;
     const fresh = claimCompanionMoment(owner, profileId, 'purchase:' + unlock.key);
     dialog.replaceChildren(
@@ -329,12 +331,13 @@ function purchaseDialog({preview, entry, appearance, onConfirm, onSelect, trigge
   if (previewImage) {
     confirm.disabled = !(previewImage.complete && previewImage.naturalWidth > 0);
     previewImage.addEventListener('load', () => {
-      if (!confirming && previewImage.naturalWidth > 0) {
+      if (!successShown && !confirming && previewImage.naturalWidth > 0) {
         confirm.disabled = false;
         if (document.activeElement === cancel) confirm.focus();
       }
     });
     dialog.addEventListener('evolution-art-unavailable', () => {
+      if (successShown) return;
       confirm.disabled = true;
       dialog.append(message('Bild gerade nicht verfügbar. Dieser Kauf kann noch nicht bestätigt werden.', 'error'));
     });
