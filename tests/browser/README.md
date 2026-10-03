@@ -1,5 +1,12 @@
 # Browserprüfungen mit synthetischem Google-Zugriff
 
+Die neuen Belohnungsfälle stehen in `companion.browser.mjs` und
+`companion-feedback.browser.mjs`. Sie prüfen bestätigten Besitz, Figurenplatz,
+Titel, Bewegungseinstellung, echte Lernbelege und unmittelbare Kaufaktionen.
+Der vorhandene tatsächliche Servicefall in `purchases.browser.mjs` prüft zusätzlich
+die Shell-Neuzeichnung beim Speichern. Ergebnisse und genaue Grenzen des Pakets:
+[Belohnungsmomente](../../docs/reports/2026-10-03-belohnungsmomente.md).
+
 Die Browserprüfungen bedienen die echte Oberfläche, IndexedDB und Service Worker. Nur Google Identity Services und die Drive-HTTP-Antworten werden ersetzt. Getrennte Browserkontexte simulieren Geräte, sind aber kein Nachweis für echtes Google, Safari, iPhone oder iPad.
 
 `npm test` benötigt keine Zusatzpakete. Für die Browserprüfungen wird Playwright 1.62.1 als Entwicklungswerkzeug verwendet. Es bleibt außerhalb der Produktionsabhängigkeiten:

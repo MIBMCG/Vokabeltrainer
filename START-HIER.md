@@ -1,6 +1,17 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Abschluss am 03.10.2026: Lernstandsübernahme beschleunigt.** Produkt `62635de`,
+**Aktueller Abschluss am 03.10.2026: fünf Belohnungsideen umgesetzt.** Produkt
+`4778440`, Cache v52, ist unabhängig geprüft und bei LejeAdventure aktiv.
+Verwandlung, Bewegung, Lernreaktionen, Figurenplatz/Sammlung sowie Steckbrief und
+Titel sind abgeschlossen. Keine neuen Bilder, Preise, Punkte oder Datenformate.
+721/721 Nodefälle vor letzten UI-/Testkorrekturen, final 42/42 gezielte Nodefälle
+und 46/46 Browserfälle; Reviews PASS. Alle 398 öffentlichen Dateien bytegleich.
+Geräte-/Praxistests und persönliches Browserupdate bleiben verschoben; keine Pause.
+Als nächstes die enge Beschriftung der bestehenden Inselkarte bei 320px/200 Prozent
+begrenzt diagnostizieren. Fertige Belohnungs- und Optimierungspakete nicht wiederholen.
+[Aktuelle Übergabe und Grenzen](docs/handoffs/2026-10-03-belohnungsmomente.md).
+
+**Vorheriger Abschluss am 03.10.2026: Lernstandsübernahme beschleunigt.** Produkt `62635de`,
 Cache v51, ist unabhängig geprüft und bei LejeAdventure aktiv. Der Abgleich
 startet nach Bestätigung sofort; die Bestätigung lädt weniger Kaufhistorie
 erneut. Synthetisch 17,8 Prozent kürzerer Gesamtvorgang, ohne Aussage über

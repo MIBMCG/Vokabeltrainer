@@ -1,6 +1,31 @@
 # Arbeitsstand
 
-**Aktueller Abschluss am 03.10.2026: schnellere anfängliche Lernstandsübernahme.**
+**Aktueller Abschluss am 03.10.2026: Belohnungsmomente.** Produkt
+`4778440d7ea24eff873bbb1fd0948ba2d672f242`, Cache v52, umfasst alle fünf bestätigten
+Ideen. Die Darstellung reagiert nur auf passenden bestätigten Kauf und wirksame
+gespeicherte Lernbelege; Besitz/Titel bleiben profilgetrennt. Effekte sind endlich,
+überspringbar und abschaltbar. Bestehende Bilder, Wirtschaft und Datenformate
+bleiben erhalten; neue Module ausdrücklich geroutet und offline eingebunden.
+
+Gesamtlauf 721/721 Nodefälle vor letzten reinen UI-/Testkorrekturen. Auf finalem
+Produkt 42/42 gezielte Nodefälle, 42/42 Kauf-/Belohnungs- und 4/4 Übungs-/Reise-/
+Updatefälle PASS. Der echte Service an synthetischer Google-Grenze besteht mit
+Wiederaufnahme, bewusster Auswahl, Neuladen und Offlinebesitz. Im kontrollierten
+Update bleiben Ledger, Commerce, Bindung und PIN-Prüfwert erhalten. Unabhängige
+Reviews PASS nach Behebung alter Bildfehlerhinweise nach Erfolg und des
+veralteten DOM-Host-Schutzes bei normalen Service-Speicherungen. Die anfänglich
+roten Browserläufe sind im Bericht nachvollziehbar und anschließend grün.
+
+Worker `c76e6d12-57fd-460c-88df-e2fcbb750202` seit 03.10.2026, 10:43:26.830 UTC
+zu 100 Prozent aktiv; Prüfung um 10:44:09.839 UTC: 398 Dateien bytegleich,
+drei Infoseiten HTTP 200, sechs interne Pfade HTTP 404, Sitzung anonym false/
+no-store, alte App v47. Produkt auf beiden GitHub-Zweigen exakt bestätigt.
+Keine neue Pause; persönliche Geräte-/Praxistests und Browserupdate verschoben.
+Nächster unabhängiger Diagnosefall ist die bestehende Kartenbeschriftung bei
+320px/200 Prozent Schrift. [Übergabe](docs/handoffs/2026-10-03-belohnungsmomente.md)
+und [Prüfbericht](docs/reports/2026-10-03-belohnungsmomente.md).
+
+**Vorheriger Abschluss am 03.10.2026: schnellere anfängliche Lernstandsübernahme.**
 Produkt `62635de092ca36ef1ca529197b08455a77a1fd87`, Cache v51, ist nach unabhängigen
 Task-/Abschlussreviews ohne Befund integriert und nur bei LejeAdventure aktiv.
 Nach bestätigter Übernahme startet der bestehende Abgleich sofort. Die erneut

@@ -1,6 +1,22 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-**Aktueller Abschluss am 03.10.2026: schnellere Lernstandsübernahme.** Produkt
+**Aktueller Abschluss am 03.10.2026: alle fünf Belohnungsideen.** Produkt
+`4778440`, Cache v52, ist integriert, unabhängig geprüft und bei LejeAdventure
+aktiv: bestätigte überspringbare Verwandlung, endliche abschaltbare Bewegung,
+belegte Lernreaktionen, eigener Figurenplatz/Sammlung und Steckbrief/Geschichte/
+besessene Titel. Vorhandene Kunst, Preise, Punkte, Lernregeln und Speicherformat
+erhalten. 721/721 Nodefälle vor letzten UI-/Testkorrekturen; final 42/42 gezielte
+Node- und 42/42 plus 4/4 Browserfälle PASS. Task- und Abschlussreviews nach
+gezielten Korrekturen PASS. Worker `c76e6d12-57fd-460c-88df-e2fcbb750202` zu
+100 Prozent aktiv; 398 öffentliche Dateien bytegleich, drei Infoseiten erreichbar,
+sechs interne Pfade gesperrt. Produkt auf beiden GitHub-Zweigen exakt bestätigt.
+Geräte-/Praxistests und persönliches Browserupdate bleiben verschoben; keine neue
+Pause. Keine fertigen Belohnungen/Bilder oder Übernahmeoptimierungen wiederholen.
+Nächster begrenzter Diagnosefall: enge Inselkartenbeschriftung bei 320px/200 Prozent
+Schrift, Ausgangsvergleich vor eigenem Fix. Reale Geräte-/Google-Zeiten bleiben
+offen. [Aktuelle Übergabe](docs/handoffs/2026-10-03-belohnungsmomente.md).
+
+**Vorheriger Abschluss am 03.10.2026: schnellere Lernstandsübernahme.** Produkt
 `62635de`, Cache v51, ist integriert, unabhängig geprüft und an der LejeAdventure-
 Adresse aktiv. Bestätigte Übernahme startet den Abgleich unmittelbar; die frische
 Bestätigungsprüfung verwendet bereits geprüfte unveränderliche Kaufhistorie.

@@ -181,8 +181,9 @@ Alle zweihundert Punkte steigt das Level. Die Reise führt über fünfzehn Etapp
 
 Der bisherige Avatar bleibt vollständig erhalten. Unter den neuen Registern
 öffnet **Klassischen Avatar gestalten** den aufklappbaren Bereich mit vier
-Hauttönen, sechs Kleidungsfarben, freigeschalteter Ausrüstung und der
-Einstellung für kurze Bewegungen. Käufe verändern diese Auswahl nicht und
+Hauttönen, sechs Kleidungsfarben und freigeschalteter Ausrüstung. Der Schalter
+**Kurze Bewegungen anzeigen** steht darüber und gilt auch für Entwicklungsfiguren.
+Käufe verändern diese Auswahl nicht und
 ziehen keine Lernpunkte oder Level ab.
 
 ### Figuren und Käufe einmalig vorbereiten
@@ -235,6 +236,25 @@ Bei der Grundform **Entdeckerin** oder **Entdecker** stehen die Haut- und
 Kleidungsfarben direkt unter der Figurenauswahl. Änderungen werden automatisch
 gespeichert. Dieselbe gewählte Figur erscheint auch beim Übungsstart und auf
 der Inselreise. Entwicklungsformen behalten ihre fertigen Outfits.
+
+### Dein Begleiter und seine Entwicklung
+
+Unter **Meine Figur** stehen beim ausgewählten Begleiter sein Steckbrief, eine
+kurze Geschichte und die Titel seiner tatsächlich freigeschalteten Stufen.
+Auf **Deine Inselreise** hat er außerdem einen eigenen benannten Platz. Die
+Figurensammlung darunter zeigt die Figuren und Formen dieses Lernprofils;
+**Figuren auswählen** führt zurück zum Avatarbereich.
+
+Nach einem bestätigten Kauf zeigt eine kurze Verwandlung die freigeschaltete Form.
+**Überspringen**, **Jetzt auswählen** und **Später auswählen** sind sofort
+bedienbar. Kaufen wählt die neue Figur weiterhin nicht automatisch aus.
+Der Begleiter ermutigt dich außerdem nach einer gespeicherten abgeschlossenen
+Runde und wenn ein zuvor falsch beantwortetes Wort erfolgreich überwunden wurde.
+
+Mit **Kurze Bewegungen anzeigen** lassen sich die Bewegungen ausschalten.
+Auch eine Einstellung für reduzierte Bewegung auf dem Gerät wird berücksichtigt.
+Texte, Titel und Sammlung bleiben sichtbar; die neuen Effekte geben keine
+zusätzlichen Punkte und verändern weder Preise noch Level.
 
 Bei **Google erneut verbinden** ist das Guthaben weiterhin vorhanden, aber
 die Anmeldung muss erneuert werden. Der Knopf führt über die Erwachsenen-PIN

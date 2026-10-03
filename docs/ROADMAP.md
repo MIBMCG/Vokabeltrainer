@@ -1,8 +1,21 @@
 # Roadmap zur ersten nutzbaren Version
 
-## Ergänzte offene Aufgabe: Programmname und Startadresse
+## Aktueller Folgeumfang nach dem 03.10.2026
 
-- [ ] **Adresse ohne persönlichen Namen einrichten** (Nutzerauftrag vom
+- [x] Alle fünf Belohnungsideen umgesetzt und als Cache v52 bereitgestellt:
+  Verwandlung, Bewegung, Lernreaktionen, eigener Figurenplatz/Sammlung und
+  Steckbrief/Geschichte/Titel. [Abschluss und Grenzen](handoffs/2026-10-03-belohnungsmomente.md).
+- [x] Anfängliche Lernstandsübernahme mit sofortigem Abgleich und geprüfter
+  Vorschauwiederverwendung beschleunigt, Cache v51.
+- [ ] Bestehende Inselkartenbeschriftung bei 320px/200 Prozent Schrift begrenzt
+  diagnostizieren; Ausgangsvergleich vor Änderung sichern.
+- [ ] Reale Geräte-/Praxistests, natürliche Tokenerneuerung, Zweitgerät und echte
+  Zeiten bleiben ausdrücklich verschoben. Android-Rückmeldung ist positiv,
+  Gerät/Browser/Version unbekannt. Daraus keine Apple-Abnahme ableiten.
+
+## Abgeschlossene Einrichtung: Programmname und Startadresse
+
+- [x] **Adresse ohne persönlichen Namen einrichten** (Nutzerauftrag vom
   01.10.2026). Die bisherige Startadresse enthält den Namen des Nutzers.
   Künftig soll die Adresse zum vorgesehenen Programmnamen passen. Der Nutzer
   nennt `lejeadventure@gmail.com`; Arbeitsname zunächst LejeAdventure.
