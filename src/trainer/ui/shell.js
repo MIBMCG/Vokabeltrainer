@@ -364,7 +364,7 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, commer
       } else {
         const profile = projection.profiles[activeProfileId];
         if (currentView === 'journey') renderJourney({
-          root, productState: state, profile, profileId: activeProfileId,
+          root, productState: state, profile, profileId: activeProfileId, commerce, onNavigate: show,
         });
         else renderAvatar({
           root, state, profile, profileId: activeProfileId, commands, commerce,

@@ -1,10 +1,12 @@
 import {rewardState} from '../learning/rewards.js';
 import {figureById} from '../avatar/catalog.js';
+import {companionInfo, ownedCompanions, claimCompanionMoment} from '../avatar/companion.js';
+import {companionFigure} from './companion.js';
 import {avatarParts, resolveAvatarDisplay} from '../avatar/display.js';
 import {figurePicture} from '../avatar/art.js';
 import {evolutionPicture} from '../avatar/evolution-art.js';
 import {avatarPicture, picture} from './art.js';
-import {el} from './dom.js';
+import {el, button} from './dom.js';
 import {renderPurchases} from './purchases.js';
 
 export {avatarParts};
@@ -224,7 +226,70 @@ function equipmentChoices(parts, state) {
   return groups;
 }
 
-export function renderJourney({root, productState, profile, profileId}) {
+const companionPlaceLabels = Object.freeze({
+  Entdeckerbucht: 'Ent\u00adde\u00adcker\u00adbucht', Wiesenweide: 'Wie\u00adsen\u00adwei\u00adde',
+  Tigerlichtung: 'Ti\u00adger\u00adlich\u00adtung', Drachenfelsen: 'Dra\u00adchen\u00adfel\u00adsen',
+  Nebelhain: 'Ne\u00adbel\u00adhain', Polarlichtufer: 'Po\u00adlar\u00adlicht\u00adufer',
+  Schattenhain: 'Schat\u00adten\u00adhain', Mondwiese: 'Mond\u00adwie\u00adse', Sturmhorst: 'Sturm\u00adhorst',
+  Kristallgrotte: 'Kris\u00adtall\u00adgrot\u00adte', Sternenwarte: 'Ster\u00adnen\u00adwar\u00adte', Glutnest: 'Glut\u00adnest',
+});
+const journeyUiByRoot = new WeakMap();
+
+function journeyCompanions({root, host, token, profile, profileId, productState, commerce, onNavigate}) {
+  const current = () => host.isConnected && root.contains(host) && journeyUiByRoot.get(root) === token;
+  const classic = (copy) => host.replaceChildren(
+    el('h2', {text: 'Dein Figurenplatz'}),
+    avatarDisplayPicture({kind: 'classic', parts: avatarParts(profile)}, {sizes: '180px', animations: false}),
+    el('p', {text: copy}),
+  );
+  classic(commerce ? 'Deine Sammlung wird geladen …' : 'Dein klassischer Avatar hat hier seinen Platz.');
+  if (!commerce) return;
+  void (async () => {
+    try {
+      const view = await commerce.getView();
+      if (!current()) return;
+      const owned = ownedCompanions(view, profileId);
+      const selected = view.mode === 'active' ? view.selection?.find(entry => entry.profileId === profileId) : null;
+      const selectedOwned = owned.find(entry => entry.figureId === selected?.figureId && entry.ownedStages.includes(selected.stage));
+      if (selectedOwned) {
+        const info = companionInfo(selected.figureId, selected.stage);
+        const display = resolveAvatarDisplay({productState: {...productState, commerce: {mode: 'active', selection: [selected]}}, profileId, profile});
+        const animate = profile.animations !== false && claimCompanionMoment(root.closest('#app') ?? root, profileId, `journey:${selected.figureId}:${selected.stage}`);
+        host.replaceChildren(
+          el('h2', {text: companionPlaceLabels[info.place] ?? info.place, attrs: {'aria-label': info.place}}),
+          companionFigure(avatarDisplayPicture(display, {sizes: '(max-width: 600px) 65vw, 220px', animations: false}), {figureId: selected.figureId, stage: selected.stage, animations: animate}),
+          el('h3', {text: `${info.name} – Stufe ${info.stage}`}),
+          el('p', {text: info.title}), el('p', {text: info.trait}),
+        );
+      } else classic('Dein klassischer Avatar hat hier seinen Platz.');
+      const collection = el('section', {attrs: {class: 'companion-collection', 'aria-label': 'Deine Figurensammlung'}}, [
+        el('h2', {text: 'Deine Fi\u00adgu\u00adren\u00adsamm\u00adlung', attrs: {'aria-label': 'Deine Figurensammlung'}}),
+        el('p', {text: owned.length ? 'Diese Figuren und Formen gehören dir.' : 'Hier erscheinen deine bestätigten Figuren und Formen.'}),
+      ]);
+      const grid = el('div', {attrs: {class: 'companion-collection-grid'}});
+      for (const entry of owned) {
+        const figure = figureById(entry.figureId);
+        const parts = avatarParts(profile);
+        const display = {kind: 'figure', figureId: entry.figureId, stage: entry.stage, skin: figure.group === 'human' ? parts.skin : 0, clothing: figure.group === 'human' && entry.stage === 1 ? parts.clothing : 0, equipment: {}};
+        grid.append(el('article', {attrs: {'data-figure-id': entry.figureId}}, [
+          avatarDisplayPicture(display, {sizes: '(max-width: 600px) 38vw, 140px', animations: false}),
+          el('h3', {text: entry.info.name}),
+          el('p', {text: `Deine Stufen: ${entry.ownedStages.join(', ')}`}),
+          el('p', {text: entry.info.title}),
+        ]));
+      }
+      collection.append(grid);
+      if (typeof onNavigate === 'function') collection.append(button('Figuren auswählen', () => onNavigate('avatar'), {class: 'secondary'}));
+      host.append(collection);
+    } catch {
+      if (current()) classic('Deine Sammlung konnte gerade nicht gelesen werden. Dein klassischer Avatar bleibt verfügbar.');
+    }
+  })();
+}
+
+export function renderJourney({root, productState, profile, profileId, commerce, onNavigate}) {
+  const token = {}; journeyUiByRoot.set(root, token);
+  const companionHome = el('section', {attrs: {class: 'companion-home', 'aria-label': 'Dein Figurenplatz'}});
   const state = stateFor(profile);
   const display = resolveAvatarDisplay({productState, profileId, profile});
   const zones = el('div', {attrs: {class: 'journey-zones'}});
@@ -252,8 +317,10 @@ export function renderJourney({root, productState, profile, profileId}) {
     levelCard(profile, state, display),
     el('p', {text: '🔒 Gesperrt: Zahl = benötigtes Level', attrs: {class: 'journey-lock-key'}}),
     el('div', {attrs: {class: 'journey-map-scroll', tabindex: '0', 'aria-label': 'Illustrierte Inselkarte – horizontal verschiebbar'}}, [map]),
+    companionHome,
     badgeShelf(profile),
   ]));
+  journeyCompanions({root, host: companionHome, token, profile, profileId, productState, commerce, onNavigate});
 }
 
 export function renderAvatar({root, state: productState, profile, profileId, commands, commerce, onRefresh, onReconnect}) {
@@ -319,15 +386,17 @@ export function renderAvatar({root, state: productState, profile, profileId, com
     el('span', {text: 'Kurze Bewegungen anzeigen'}),
   ]);
   motion.querySelector('input').addEventListener('change', async (event) => {
+    const input = event.target; const previous = !input.checked;
+    input.disabled = true; notice.hidden = true;
     try {
       await commands.setAnimations({profileId, animations: event.target.checked});
       root.querySelector('[role="switch"]')?.focus();
     } catch (error) {
-      event.target.checked = !event.target.checked;
+      input.checked = previous;
       notice.hidden = false;
       notice.dataset.tone = 'error';
       notice.textContent = error?.message || 'Die Bewegungseinstellung konnte nicht gespeichert werden.';
-    }
+    } finally { input.disabled = false; }
   });
 
   const commerceHost = el('section', {attrs: {class: 'avatar-commerce', 'aria-label': 'Meine Figur, Entwicklung und Shop'}});
@@ -346,6 +415,7 @@ export function renderAvatar({root, state: productState, profile, profileId, com
       el('h1', {text: 'Mein Avatar'}),
       el('p', {text: 'Wähle deine Figur, entdecke Entwicklungsformen oder gestalte deinen klassischen Avatar.'}),
     ]),
+    el('section', {attrs: {class: 'companion-settings', 'aria-label': 'Bewegungseinstellung'}}, [motion, notice]),
     commerceHost,
     selectedAppearance,
     display.kind === 'classic' ? el('details', {attrs: {class: 'classic-avatar', open: ui.classicOpen ?? true}}, [
@@ -357,11 +427,10 @@ export function renderAvatar({root, state: productState, profile, profileId, com
       ]),
       el('div', {attrs: {class: 'avatar-layout'}}, [
       el('section', {attrs: {class: 'avatar-preview', 'aria-label': 'Vorschau des Avatars'}}, [
-        avatarPicture(parts, {sizes: '(max-width: 700px) 86vw, 360px', animations: profile.animations}),
+        avatarPicture(parts, {sizes: '(max-width: 700px) 86vw, 360px', animations: profile.animations !== false && claimCompanionMoment(root.closest('#app') ?? root, profileId, 'avatar:classic')}),
         el('p', {text: `Entdecker auf Level ${rewards.level}`}),
-        motion,
       ]),
-      el('section', {attrs: {class: 'avatar-customizer'}}, [notice, classicForm]),
+      el('section', {attrs: {class: 'avatar-customizer'}}, [classicForm]),
       ]),
     ]) : null,
   ]));
@@ -374,6 +443,6 @@ export function renderAvatar({root, state: productState, profile, profileId, com
     }
   });
   if (commerce) renderPurchases({
-    root: commerceHost, profileId, commerce, appearance: parts, onRefresh, onReconnect, online: navigator.onLine,
+    root: commerceHost, profileId, commerce, appearance: parts, animations: profile.animations !== false, onRefresh, onReconnect, online: navigator.onLine,
   });
 }

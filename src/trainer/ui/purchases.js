@@ -2,6 +2,8 @@ import {FIGURES, figureById} from '../avatar/catalog.js';
 import {EVOLUTION_FORMS, evolutionOffer} from '../avatar/evolution.js';
 import {evolutionArt, evolutionPicture as artPicture} from '../avatar/evolution-art.js';
 import {figurePicture} from '../avatar/art.js';
+import {companionInfo, ownedCompanions, claimCompanionMoment} from '../avatar/companion.js';
+import {companionFigure, companionBiography} from './companion.js';
 import {project} from '../learning/progress.js';
 import {readHistory, replayHistory} from '../purchases/history.js';
 import {rebuildAccounts} from '../purchases/projection.js';
@@ -323,10 +325,10 @@ function purchaseDialog({preview, entry, appearance, onConfirm, onSelect, trigge
 }
 
 export function renderPurchases({
-  root, profileId, commerce, appearance, onRefresh, onReconnect, online = navigator.onLine,
+  root, profileId, commerce, appearance, onRefresh, onReconnect, animations = false, online = navigator.onLine,
 }) {
   const ui = uiState(root);
-  ui.purchaseRender = {root, profileId, commerce, appearance, onRefresh, onReconnect};
+  ui.purchaseRender = {root, profileId, commerce, appearance, onRefresh, onReconnect, animations};
   if (ui.purchaseRoot !== root) {
     ui.purchaseRoot = root;
     ui.view = null;
@@ -462,7 +464,8 @@ export function renderPurchases({
 
   const grid = el('div', {attrs: {class: 'commerce-grid'}});
   if (ui.tab === 'mine') {
-    if (model.selected) {
+    const selectedOwned = ownedCompanions(ui.view, profileId).find(entry => entry.figureId === model.selected?.figureId && entry.ownedStages.includes(model.selected.stage));
+    if (model.selected && selectedOwned) {
       const selectedFigure = FIGURES.find(({id}) => id === model.selected.figureId);
       const selectedPicture = evolutionArt(model.selected.figureId, model.selected.stage,
         evolutionSkin(model.selected.figureId, appearance))
@@ -474,11 +477,12 @@ export function renderPurchases({
           equipment: {},
         }, {sizes: '(max-width: 600px) 70vw, 320px'});
       grid.append(el('article', {attrs: {class: 'commerce-card selected-purchase-figure', 'data-selected-purchase-figure': ''}}, [
-        selectedPicture,
+        companionFigure(selectedPicture, {figureId: model.selected.figureId, stage: model.selected.stage, animations: animations && claimCompanionMoment(root.closest('#app') ?? root, profileId, `avatar:${model.selected.figureId}:${model.selected.stage}`)}),
         el('h3', {text: model.selected.stage === 1
           ? selectedFigure?.name ?? 'Ausgewählte Figur'
           : `${selectedFigure?.name ?? 'Figur'} – Stufe ${model.selected.stage}`}),
         el('p', {text: 'Deine ausgewählte Figur'}),
+        companionBiography(companionInfo(model.selected.figureId, model.selected.stage), selectedOwned.ownedStages),
       ]));
     }
     const classicSelected = model.selected === null;

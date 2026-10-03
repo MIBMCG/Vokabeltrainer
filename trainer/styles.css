@@ -729,3 +729,28 @@ th:first-child { position: sticky; left: 0; background: #fff; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
 }
+
+/* Shared, finite companion presentation. Ownership remains in the local account view. */
+.companion-settings { margin: 1rem 0; padding: .8rem 1rem; border: 1px solid #c8d9d3; border-radius: 1rem; background: #fffaf0; }
+.companion-figure { position: relative; isolation: isolate; display: grid; place-items: center; width: min(100%, 320px); margin-inline: auto; }
+.companion-figure > :first-child { width: 100%; min-width: 0; position: relative; z-index: 1; }
+.companion-figure .evolution-art img { width: 100%; height: auto; max-height: 340px; object-fit: contain; }
+.companion-figure > .companion-aura { position: absolute; z-index: 0; inset: 18% 10%; border-radius: 50%; background: radial-gradient(ellipse, #ffe4a2, transparent 70%); opacity: 0; pointer-events: none; }
+.companion-figure[data-effect="mist"] > .companion-aura { background: radial-gradient(ellipse, #c7e5e2, transparent 70%); }
+.companion-figure[data-effect="spark"] > .companion-aura { background: radial-gradient(ellipse, #cfdcff, transparent 70%); }
+.companion-figure[data-animate="true"] > :first-child { animation: companion-greeting 900ms ease-in-out both; }
+.companion-figure[data-animate="true"] > .companion-aura { animation: companion-glimmer 1000ms ease-out both; }
+@keyframes companion-greeting { 0%, 100% { transform: translateY(0) rotate(0deg); } 40% { transform: translateY(-4px) rotate(-1deg); } 70% { transform: translateY(-2px) rotate(1deg); } }
+@keyframes companion-glimmer { 0%, 100% { opacity: 0; transform: scale(.95); } 45% { opacity: .65; transform: scale(1.03); } }
+.companion-biography { width: 100%; min-width: 0; text-align: left; border-top: 1px solid #c8d9d3; padding-top: .8rem; overflow-wrap: anywhere; }
+.companion-biography h4 { margin: 0 0 .4rem; color: var(--teal-dark); }
+.companion-biography p { margin: .4rem 0; }
+.companion-titles { padding-left: 1.3rem; margin-block: .4rem; }
+.companion-home { margin: 1rem 0; padding: 1rem; border: 1px solid #c8d9d3; border-radius: 1.4rem; background: linear-gradient(150deg, #fffaf0, #e7f1d5); text-align: center; min-width: 0; overflow-wrap: anywhere; }
+.companion-home > .avatar-art, .companion-home > .avatar-evolution-display, .companion-home > .figure-art { max-width: 220px; margin-inline: auto; }
+.companion-collection { margin-top: 1.5rem; padding-top: .8rem; border-top: 1px solid #c8d9d3; }
+.companion-collection-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); gap: .8rem; margin-bottom: 1rem; }
+.companion-collection article { min-width: 0; padding: .6rem; border: 1px solid #c8d9d3; border-radius: 1rem; background: #fffdf8; }
+.companion-collection article > .avatar-evolution-display, .companion-collection article > .figure-art { width: min(100%, 140px); margin-inline: auto; }
+.companion-collection h3 { margin-block: .4rem; }
+.companion-collection p { margin-block: .35rem; }
