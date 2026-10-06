@@ -344,10 +344,10 @@ function countedTotal(round) {
   return Object.values(round.wordCounts).reduce((sum, value) => sum + value, 0);
 }
 
-export function applyAnswer({round, answer, typed, solutions, projection, schedule = null}) {
+export function applyAnswer({round, answer, typed, solutions, projection, schedule = null, answerSettings = {}}) {
   validateAnswer(round, answer);
   if (!Array.isArray(solutions)) invalid('Answer solutions must be an array');
-  const assessment = assess(typed, {answers: solutions});
+  const assessment = assess(typed, {answers: solutions}, answerSettings);
   if (assessment.empty || assessment.correct !== answer.payload.correct) {
     invalid('Recorded answer does not match assessment');
   }

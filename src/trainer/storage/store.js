@@ -4,6 +4,30 @@ const DATABASE_NAME = 'vokabeltrainer-product-v1';
 const STORE_NAME = 'product-state';
 const STATE_KEY = 'current';
 const LOCK_NAME = 'vokabeltrainer-product-v1-writer';
+const ANSWER_PUNCTUATION_KEY = 'vokabeltrainer-answer-punctuation';
+
+// Device preference stays separate from learning data, backups and Drive packets.
+export function createAnswerSettings(localStorage) {
+  return {
+    get() {
+      try {
+        return localStorage.getItem(ANSWER_PUNCTUATION_KEY) !== 'false';
+      } catch {
+        throw storage('Die lokale Einstellung für Satzzeichen konnte nicht gelesen werden.');
+      }
+    },
+    set(requirePunctuation) {
+      if (typeof requirePunctuation !== 'boolean') {
+        throw new ProductError('invalid', 'Die Einstellung für Satzzeichen ist ungültig.');
+      }
+      try {
+        localStorage.setItem(ANSWER_PUNCTUATION_KEY, String(requirePunctuation));
+      } catch {
+        throw storage('Die Einstellung für Satzzeichen konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.');
+      }
+    },
+  };
+}
 
 function storage(message) {
   return new ProductError('storage', message);

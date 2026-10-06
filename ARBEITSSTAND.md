@@ -1,5 +1,17 @@
 # Arbeitsstand
 
+**Lokale Erweiterung am 06.10.2026: Satzzeichenprüfung einstellbar.** Der bestätigte
+Schalter steht unter Einstellungen → Antwortprüfung. Standardmäßig an; ausgehend
+von der nächsten Antwort können alle Kinder auf diesem Gerät ohne Satzzeichen
+üben. Buchstabenfehler bleiben falsch, richtige Lösungen bleiben vollständig.
+Dauerhaft gerätelokal, außerhalb von Ledger, Google-Abgleich und Sicherungsformat.
+Keine Neubewertung früherer Antworten. Lokale Cachekennung v53, noch keine neue
+Bereitstellung oder GitHub-Sicherung. Die aktive LejeAdventure-App bleibt v52.
+Finale 731/731 Nodefälle, 77/77 gezielte Nodefälle und sechs ausgewählte
+Edge-Browserfälle PASS; unabhängiges Review ohne Befund. Dokumentationsprüfung
+mit drei vorhandenen Altdokumentationsbefunden, siehe Übergabe.
+[Aktuelle lokale Übergabe und Prüfgrenzen](docs/handoffs/2026-10-06-satzzeichen.md).
+
 **Aktueller Abschluss am 03.10.2026: Belohnungsmomente.** Produkt
 `4778440d7ea24eff873bbb1fd0948ba2d672f242`, Cache v52, umfasst alle fünf bestätigten
 Ideen. Die Darstellung reagiert nur auf passenden bestätigten Kauf und wirksame

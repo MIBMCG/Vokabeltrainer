@@ -183,6 +183,34 @@ function renderPinSettings(container, pinGate, onRefresh, ui) {
   container.append(section);
 }
 
+function renderAnswerSettings(container, commands, onRefresh, ui) {
+  const requirePunctuation = commands.getAnswerSettings().requirePunctuation;
+  const checkbox = el('input', {attrs: {
+    type: 'checkbox', checked: requirePunctuation, 'aria-describedby': 'answer-settings-help',
+    'aria-label': 'Satzzeichen müssen stimmen',
+  }});
+  const label = el('label', {}, [checkbox, 'Satz\u00adzeichen müssen stimmen']);
+  const section = el('section', {}, [
+    label,
+    el('p', {text: 'Ausgeschaltet werden Punkt, Komma, Fragezeichen und andere Satzzeichen einschließlich Apostroph und Bindestrich ignoriert. Buchstaben und Leerzeichen zwischen Wörtern müssen weiterhin stimmen.', attrs: {id: 'answer-settings-help'}}),
+    el('p', {text: 'Für alle Kinder auf diesem Gerät, ab der nächsten Antwort. Bleibt nach dem Schließen gespeichert und wird nicht über Google übertragen.'}),
+    el('p', {text: 'Die richtige Schreibweise bleibt vollständig sichtbar.'}),
+  ]);
+  checkbox.addEventListener('change', () => {
+    try {
+      commands.setAnswerSettings({requirePunctuation: checkbox.checked});
+      report(ui, checkbox.checked
+        ? 'Satzzeichen müssen bei der Antwortprüfung stimmen.'
+        : 'Satzzeichen werden bei der Antwortprüfung ignoriert.');
+    } catch (error) {
+      checkbox.checked = requirePunctuation;
+      report(ui, error.message, 'error');
+    }
+    onRefresh();
+  });
+  container.append(section);
+}
+
 export function renderSettings({
   root, state, commands, pinGate, sync, restore, auth, commerce, onRefresh, onConnected, onDownload,
   ui = {},
@@ -198,6 +226,11 @@ export function renderSettings({
     id: 'children', title: 'Kinder verwalten', description: 'Hinzufügen, umbenennen oder archivieren',
   });
   renderChildren(childrenHost, projection, commands, onRefresh, ui);
+
+  const answersHost = settingsTask(container, ui, {
+    id: 'answers', title: 'Antwort\u00adprüfung', description: 'Satzzeichen berücksichtigen oder ignorieren',
+  });
+  renderAnswerSettings(answersHost, commands, onRefresh, ui);
 
   const syncHost = settingsTask(container, ui, {
     id: 'connection', title: 'Google-Verbindung',

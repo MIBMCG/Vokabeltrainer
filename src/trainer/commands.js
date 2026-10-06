@@ -458,7 +458,7 @@ function learningProfile(state, profileId) {
   return projection;
 }
 
-export async function createCommands({store, now, id, deviceId, onChange}) {
+export async function createCommands({store, now, id, deviceId, onChange, answerSettings = null}) {
   if (!store || typeof store.load !== 'function' || typeof store.save !== 'function') {
     invalid('Der lokale Speicher ist nicht verfügbar.');
   }
@@ -557,6 +557,15 @@ export async function createCommands({store, now, id, deviceId, onChange}) {
   return {
     getState() {
       return state === null ? null : structuredClone(state);
+    },
+
+    getAnswerSettings() {
+      return {requirePunctuation: answerSettings?.get() ?? true};
+    },
+
+    setAnswerSettings({requirePunctuation}) {
+      if (!answerSettings) fail('storage', 'Der lokale Einstellungsspeicher ist nicht verfügbar.');
+      answerSettings.set(requirePunctuation);
     },
 
     subscribe(listener) {
@@ -861,7 +870,8 @@ export async function createCommands({store, now, id, deviceId, onChange}) {
           invalid('Die angezeigte Aufgabe ist nicht mehr zulässig.');
         }
         const word = projectionBefore.entities.words[found.round.current.wordId];
-        const checked = assess(typed, word.value);
+        const assessmentSettings = {requirePunctuation: answerSettings?.get() ?? true};
+        const checked = assess(typed, word.value, assessmentSettings);
         if (checked.empty) return {empty: true, feedback: null};
 
         const next = newWorkingState();
@@ -883,6 +893,7 @@ export async function createCommands({store, now, id, deviceId, onChange}) {
           answer,
           typed,
           solutions: checked.solutions,
+          answerSettings: assessmentSettings,
           projection: projectionAfter,
           schedule: scheduleForRound(next, nextFound.round, day),
         });

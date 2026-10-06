@@ -59,7 +59,7 @@ function makeMemoryStore(initial) {
   };
 }
 
-async function harness({ledger, state, ids = sequenceIds(), onChange = () => {}} = {}) {
+async function harness({ledger, state, ids = sequenceIds(), onChange = () => {}, answerSettings} = {}) {
   const store = makeMemoryStore(state ?? validProductState(ledger));
   const commands = await createCommands({
     store,
@@ -67,9 +67,38 @@ async function harness({ledger, state, ids = sequenceIds(), onChange = () => {}}
     id: ids,
     deviceId: 'dev1',
     onChange,
+    answerSettings,
   });
   return {store, commands};
 }
+
+test('device punctuation setting controls the saved answer and round feedback together', async () => {
+  let requirePunctuation = false;
+  const answerSettings = {get: () => requirePunctuation, set: value => { requirePunctuation = value; }};
+  const fixture = createFixture({words: [['w1', 'Hallo', ['Hello, world!']]]});
+  const {commands} = await harness({ledger: fixture.base, answerSettings});
+  await commands.start({profileId: 'p1', mode: 'all', size: 10});
+  const roundId = commands.getState().rounds.p1.id;
+  const first = await commands.submit({roundId, typed: 'Hello world'});
+  assert.equal(first.feedback.correct, true);
+  assert.deepEqual(first.feedback.solutions, ['Hello, world!']);
+  assert.equal(commands.getState().ledger.events.filter(e => e.type === 'answer.recorded').at(-1).payload.correct, true);
+  assert.equal(project(commands.getState().ledger).profiles.p1.points, 10);
+  await commands.next({roundId});
+  requirePunctuation = true;
+  const second = await commands.submit({roundId, typed: 'Hello world'});
+  assert.equal(second.feedback.correct, false);
+  assert.equal(project(commands.getState().ledger).profiles.p1.points, 10);
+  assert.equal(commands.getState().ledger.events.filter(e => e.type === 'answer.recorded').length, 2);
+});
+
+test('punctuation-only submission in optional mode leaves learning data untouched', async () => {
+  const {commands} = await harness({answerSettings: {get: () => false}});
+  await commands.start({profileId: 'p1', mode: 'all', size: 10});
+  const before = commands.getState();
+  assert.deepEqual(await commands.submit({roundId: before.rounds.p1.id, typed: '.,!?'}), {empty: true, feedback: null});
+  assert.deepEqual(commands.getState(), before);
+});
 
 test('practiceChoices previews without mutating state or consuming IDs', async () => {
   const ids = sequenceIds('choice');

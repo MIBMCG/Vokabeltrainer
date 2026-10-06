@@ -98,6 +98,7 @@ Unter **Für Erwachsene** stehen vier Bereiche bereit: **Vokabeln**, **Lernstand
 Unter **Einstellungen** die gewünschte Aufgabe aufklappen:
 
 - **Kinder verwalten:** hinzufügen, umbenennen oder archivieren.
+- **Antwortprüfung:** „Satzzeichen müssen stimmen“ ein- oder ausschalten. Standardmäßig ist der Schalter an. Ausgeschaltet werden Punkt, Komma, Fragezeichen und weitere Satzzeichen einschließlich Apostroph und Bindestrich bei Eingabe und Lösung ignoriert. Buchstabenfehler bleiben falsch; die vollständige richtige Schreibweise bleibt sichtbar. Gilt ab der nächsten Antwort für alle Kinder auf diesem Gerät und bleibt nach dem Schließen gespeichert. Auf anderen Geräten separat einstellen; diese Option wird nicht mit Google oder einer Lerndatensicherung übertragen. Frühere Bewertungen und Punkte bleiben erhalten.
 - **Google-Verbindung:** anmelden und abgleichen; der aktuelle Status bleibt auch zugeklappt sichtbar.
 - **Sicherung:** Daten herunterladen oder wiederherstellen.
 - **PIN ändern:** die PIN dieses Geräts ändern oder zurücksetzen.

@@ -4,7 +4,7 @@ import {createRestoreService} from './backup/restore.js';
 import {createTokenSession, DriveError, withFreshAuth} from '../drive/auth.js';
 import {createServerAuth} from '../drive/server-auth.js';
 import {createDriveClient} from '../drive/client.js';
-import {openProductStore} from './storage/store.js';
+import {openProductStore, createAnswerSettings} from './storage/store.js';
 import {createProductSync} from './sync/drive.js';
 import {createPurchaseTransport} from './purchases/transport.js';
 import {createPurchaseService, purchasePreviewStateHash} from './purchases/service.js';
@@ -251,6 +251,7 @@ async function start() {
     now: () => new Date(),
     id: () => crypto.randomUUID(),
     deviceId: deviceId(),
+    answerSettings: createAnswerSettings(localStorage),
     onChange: () => shell?.stateChanged(),
   });
   const pinGate = createPinGate({

@@ -1,5 +1,14 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
+**Lokale Erweiterung am 06.10.2026: Satzzeichenprüfung.** Der Nutzer bestätigt
+die Option „Satzzeichen müssen stimmen“ unter Einstellungen → Antwortprüfung:
+standardmäßig an; ausgeschaltet Satzzeichen einschließlich Apostroph und
+Bindestrich bei Eingabe und Lösung ignorieren. Dauerhaft auf diesem Gerät für
+alle Kinder, ab der nächsten Antwort; keine Google-Übertragung, keine Änderung
+historischer Bewertungen oder Datenformate. Lokale Cachekennung v53, bisher
+keine Bereitstellung oder GitHub-Sicherung. Aktive App weiterhin v52.
+[Aktuelle lokale Übergabe](docs/handoffs/2026-10-06-satzzeichen.md).
+
 **Aktueller Abschluss am 03.10.2026: alle fünf Belohnungsideen.** Produkt
 `4778440`, Cache v52, ist integriert, unabhängig geprüft und bei LejeAdventure
 aktiv: bestätigte überspringbare Verwandlung, endliche abschaltbare Bewegung,
