@@ -1,16 +1,24 @@
 # Arbeitsstand
 
-**Lokale Erweiterung am 06.10.2026: Satzzeichenprüfung einstellbar.** Der bestätigte
+**Aktueller Abschluss am 06.10.2026: Satzzeichenprüfung veröffentlicht.** Der bestätigte
 Schalter steht unter Einstellungen → Antwortprüfung. Standardmäßig an; ausgehend
 von der nächsten Antwort können alle Kinder auf diesem Gerät ohne Satzzeichen
 üben. Buchstabenfehler bleiben falsch, richtige Lösungen bleiben vollständig.
 Dauerhaft gerätelokal, außerhalb von Ledger, Google-Abgleich und Sicherungsformat.
-Keine Neubewertung früherer Antworten. Lokale Cachekennung v53, noch keine neue
-Bereitstellung oder GitHub-Sicherung. Die aktive LejeAdventure-App bleibt v52.
+Keine Neubewertung früherer Antworten. Produkt
+`b77712adf4aab83c5ec134ff5de9144ff542f087`, Cache v53, ist nach ausdrücklichem
+Veröffentlichungsauftrag bei LejeAdventure aktiv. Worker
+`f29660cd-937b-4de8-84fb-ea61745a2eb9` zu 100 Prozent aktiv; 398 öffentliche Dateien
+bytegleich, drei Infoseiten erreichbar, sechs interne Pfade gesperrt.
 Finale 731/731 Nodefälle, 77/77 gezielte Nodefälle und sechs ausgewählte
-Edge-Browserfälle PASS; unabhängiges Review ohne Befund. Dokumentationsprüfung
+Edge-Browserfälle PASS; unabhängiges Review ohne Befund. Nach Veröffentlichung
+kontrollierter v52-v53-Updatefall mit bytegetreuem Ausgangscode und tatsächlich
+ausgelieferter neuer Version PASS: vollständiger synthetischer Zustand erhalten,
+Option dauerhaft gespeichert, Offlinebewertung korrekt. Produkt auf dem bisherigen
+GitHub-Entwicklungszweig exakt gesichert; Vergleichsarbeitsbaum unverändert.
+Kein persönliches Browserupdate und keine neue Geräte-/Google-Abnahme. Dokumentationsprüfung
 mit drei vorhandenen Altdokumentationsbefunden, siehe Übergabe.
-[Aktuelle lokale Übergabe und Prüfgrenzen](docs/handoffs/2026-10-06-satzzeichen.md).
+[Aktuelle Übergabe und Prüfgrenzen](docs/handoffs/2026-10-06-satzzeichen.md).
 
 **Aktueller Abschluss am 03.10.2026: Belohnungsmomente.** Produkt
 `4778440d7ea24eff873bbb1fd0948ba2d672f242`, Cache v52, umfasst alle fünf bestätigten

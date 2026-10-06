@@ -1,12 +1,14 @@
 # Übergabe: einstellbare Satzzeichenprüfung
 
 Stand 06.10.2026. Der Nutzer hat die neue Option und den konkreten lokalen
-Umfang ausdrücklich bestätigt. Lokale Produktänderung auf
+Umfang ausdrücklich bestätigt und anschließend „dann bitte veröffentlichen“
+beauftragt. Produktänderung auf
 `codex/vokabeltrainer-v1`, Ausgangscommit
 `e6f34221e5843fd840a2d906842aa9f742e3ea8b`. Vor Beginn frisch mit GitHub
-abgeglichen, `0 0`, keine vorhandenen Änderungen. Kein Push, keine neue
-Bereitstellung und kein persönliches Browserupdate in diesem Auftrag.
-Die zuletzt bereitgestellte App bleibt Produkt `4778440`, Cache v52.
+abgeglichen, `0 0`, keine vorhandenen Änderungen. Produktcommit
+`b77712adf4aab83c5ec134ff5de9144ff542f087`, Cache v53, ist bei
+[LejeAdventure](https://app.lejeadventure.workers.dev/trainer/) aktiv und auf
+`origin/codex/vokabeltrainer-v1` exakt bestätigt. Kein persönliches Browserupdate.
 
 ## Verhalten
 
@@ -27,7 +29,7 @@ Antworten und Punkte werden nicht neu berechnet.
 
 Die Befehlsprüfung und die Rundenübernahme verwenden dieselbe einmal gelesene
 Option. Keine Änderungen an Lernregeln, Vokabelrevisionen, Datenformaten,
-Kaufpfaden oder Anmeldungen. Lokale Cachekennung v53; keine neuen Laufzeitmodule.
+Kaufpfaden oder Anmeldungen. Cachekennung v53; keine neuen Laufzeitmodule.
 Die versionierten Browser-Testmarker sind entsprechend angepasst.
 
 ## Verifikation
@@ -86,14 +88,60 @@ Lokale Rohbelege unter `.superpowers/`: `answer-settings-node-final.log`,
 `answer-settings-targeted.log`, `answer-settings-browser.log`,
 `answer-settings-regression-browser.log`, `answer-settings-docs.log`;
 Screenshot `test-results/answer-settings/320px-200percent.png`.
-Ignorierte Belege werden nicht durch Git übertragen. Änderungen bleiben
-uncommitted; lokales HEAD weiterhin der oben genannte Ausgangscommit.
+Ignorierte Belege werden nicht durch Git übertragen. Das geprüfte Paket ist im
+oben genannten Produktcommit gesichert; dieser Veröffentlichungsnachtrag folgt
+auf demselben Entwicklungszweig.
+
+## Veröffentlichung am 06.10.2026
+
+Vor Veröffentlichung GitHub erneut abgerufen: Ausgangs-HEAD weiterhin exakt,
+keine parallelen Änderungen. Frische 77/77 gezielte Nodefälle und Wrangler-
+Probelauf PASS. Der vorhandene geschützte LejeAdventure-Schlüssel und dieselbe
+Worker-/D1-/OAuth-Konfiguration verwendet; keine Schlüssel oder Konten ersetzt.
+
+Worker `f29660cd-937b-4de8-84fb-ea61745a2eb9` zu 100 Prozent aktiv.
+Deployment am 06.10.2026, 16:55:56 Uhr Berlin (14:55:56.858 UTC).
+Sieben geänderte Produktdateien hochgeladen, 398 öffentliche Dateien insgesamt.
+Öffentliche Prüfung um 16:56:18 Uhr Berlin bestätigt alle 398 bytegleich mit dem
+geprüften Stagingpaket, drei Informationsseiten HTTP 200, sechs interne Pfade
+HTTP 404 und anonyme Sitzung false/no-store. Reguläre Zertifikatsprüfung mit
+`--use-system-ca`. Alte App-Adresse weiterhin Cache v47.
+
+Zusätzlicher kontrollierter öffentlicher Edge-Updatefall PASS um 17:00:28 Uhr
+Berlin. Der v52-Ausgangscode der sieben geänderten Dateien stammt bytegleich
+aus `e6f3422` und wurde im echten v52-Browsercache geprüft; übrige unveränderte
+Dateien regulär vom öffentlichen Dienst. Danach keine Ausgangscode-Ersetzungen
+mehr: v53 tatsächlich von der veröffentlichten Adresse geladen und kontrolliert
+aktiviert. Vollständiger synthetischer IndexedDB-Zustand einschließlich Ledger,
+Commerce, Bindung, PIN-Prüfwert und früherer Antwort bleibt exakt erhalten.
+Standardmäßig strikte Prüfung, Umschalten ohne Ledgeränderung, gespeicherte
+Option nach Offline-Neuladen und richtige Antwort ohne Satzzeichen bestätigt.
+Zwei richtige Antworten, 20 Punkte am Ende. Keine Google-Anmeldung erforderlich.
+
+Eine erste vor Veröffentlichung vorbereitete flüchtige Sitzung konnte wegen
+geschlossenem Steuerungskanal nicht fortgesetzt werden; deren Profilkopie hatte
+keinen Offlinezustand. Diese Versuche werden nicht als Update-PASS gezählt.
+Auch ein falscher Profilauswahl-Wartepunkt im neuen Kontrollskript wurde
+korrigiert. Maßgeblich ist nur der abschließend bestandene kontrollierte Fall.
+Das ist keine persönliche Bestands-, Safari- oder Geräteabnahme.
+
+Produktcommit per normalem Push auf `codex/vokabeltrainer-v1` gesichert;
+`git ls-remote` und lokales HEAD bestätigen dieselbe vollständige Produkt-ID.
+Der vorhandene Vergleichsarbeitsbaum `codex/purchase-batch-checks` bleibt sauber
+auf `e6f3422` und wurde nicht verändert. Kein Merge nach main, kein neues Release.
+Dieser Nachtrag wird separat auf dem bestehenden Entwicklungszweig gesichert.
+
+Lokale Veröffentlichungsbelege unter `.superpowers/answer-settings-public/`:
+`deploy.log`, `deployments-before.log`, `deployments-after.log`,
+`public-verification.json`, `live-update-verification.json`, `live-update.log`
+und `live-settings.png`. Browserbelege verwenden ausschließlich synthetische
+Lerndaten; Deploymentlogs dokumentieren den tatsächlichen Anbieterstatus.
 
 ## Nächster Schritt und Grenzen
 
-Nach abgeschlossenem lokalen Prüfpaket kann die geprüfte Änderung bei Auftrag
-an der bestehenden LejeAdventure-Adresse bereitgestellt und auf GitHub gesichert
-werden. Dafür vorhandene Konten, Lernbereiche und Anmeldungen erhalten.
+Veröffentlichung abgeschlossen. Bei nächstem persönlichen App-Aufruf gegebenenfalls
+„Jetzt aktualisieren“ wählen; Einstellungen → Antwortprüfung öffnen. Option auf
+jedem Gerät separat einstellen. Vorhandene Konten, Lernbereiche und Anmeldungen erhalten.
 Keine persönliche Geräte-, Safari-, Google- oder Zweitgeräteabnahme behauptet.
 Die frühere begrenzte Inselkarten-Diagnose bei 320px/200 Prozent bleibt offen
 und wurde für den neuen ausdrücklichen Auftrag nicht begonnen.

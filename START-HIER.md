@@ -1,11 +1,14 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Lokale Erweiterung am 06.10.2026: einstellbare Satzzeichenprüfung.** Unter
+**Aktueller Abschluss am 06.10.2026: Satzzeichenprüfung veröffentlicht.** Unter
 Einstellungen → Antwortprüfung steht der bestätigte gerätelokale Schalter für
 alle Kinder. Standardmäßig an, ab der nächsten Antwort umschaltbar; historische
-Bewertungen bleiben erhalten. Lokale Cachekennung v53, noch nicht bereitgestellt
-oder auf GitHub gesichert. Aktive App weiterhin v52.
-[Aktuelle lokale Übergabe](docs/handoffs/2026-10-06-satzzeichen.md).
+Bewertungen bleiben erhalten. Produkt `b77712a`, Cache v53, ist bei LejeAdventure
+aktiv: 398 Dateien bytegleich, 731/731 Nodefälle, sechs lokale Browserfälle und
+kontrolliertes öffentliches Update mit bytegetreuem v52-Ausgangscode PASS.
+Produkt auf dem bisherigen GitHub-Entwicklungszweig exakt gesichert.
+Persönliches Browserupdate und Geräteabnahme bleiben verschoben.
+[Aktuelle Übergabe](docs/handoffs/2026-10-06-satzzeichen.md).
 
 **Aktueller Abschluss am 03.10.2026: fünf Belohnungsideen umgesetzt.** Produkt
 `4778440`, Cache v52, ist unabhängig geprüft und bei LejeAdventure aktiv.
