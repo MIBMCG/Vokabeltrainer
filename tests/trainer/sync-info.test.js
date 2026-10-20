@@ -10,11 +10,22 @@ class TestNode {
   attributes = new Map();
   listeners = new Map();
   isConnected = true;
+  classList = {
+    add: (...names) => {
+      const classes = new Set((this.attributes.get('class') ?? '').split(/\s+/).filter(Boolean));
+      names.forEach((name) => classes.add(name));
+      this.attributes.set('class', [...classes].join(' '));
+    },
+  };
   constructor(tagName) { this.tagName = tagName; }
   setAttribute(name, value) { this.attributes.set(name, value); }
   addEventListener(name, handler) { this.listeners.set(name, handler); }
-  append(...children) { this.children.push(...children); }
-  replaceChildren(...children) { this.children = children; }
+  append(...children) {
+    this.children.push(...children.map((child) => child instanceof TestNode ? child
+      : Object.assign(new TestNode('#text'), {textContent: String(child)})));
+  }
+  replaceChildren(...children) { this.children = []; this.append(...children); }
+  contains(node) { return node === this || this.children.some((child) => child.contains(node)); }
 }
 
 function descendants(node) {
@@ -60,9 +71,16 @@ test('Google connection offers public app and privacy information before and aft
   }
 });
 
-test('adoption starts the connected hook only after an unlocked successful confirmation', async () => {
+test('adoption retries sync immediately only after an unlocked successful confirmation without a duplicate connected hook', async () => {
   const previousDocument = Object.getOwnPropertyDescriptor(globalThis, 'document');
   const previousNode = Object.getOwnPropertyDescriptor(globalThis, 'Node');
+  const previousStorage = Object.getOwnPropertyDescriptor(globalThis, 'sessionStorage');
+  const sessionValues = new Map([['vokabeltrainer-existing-area', '1']]);
+  Object.defineProperty(globalThis, 'sessionStorage', {configurable: true, value: {
+    getItem: (key) => sessionValues.get(key) ?? null,
+    setItem: (key, value) => sessionValues.set(key, String(value)),
+    removeItem: (key) => sessionValues.delete(key),
+  }});
   Object.defineProperty(globalThis, 'Node', {configurable: true, value: TestNode});
   Object.defineProperty(globalThis, 'document', {configurable: true, value: {
     createElement: tag => new TestNode(tag),
@@ -71,7 +89,7 @@ test('adoption starts the connected hook only after an unlocked successful confi
   try {
     for (const outcome of ['success', 'failure', 'locked before', 'locked during']) {
       const root = new TestNode('div'), state = productState(createFixture().base);
-      let unlocked = true, notifications = 0, confirmations = 0;
+      let unlocked = true, notifications = 0, retries = 0, confirmations = 0;
       const dataset = {folderId: 'folder', descriptorFileId: 'descriptor', descriptor: state.ledger.descriptor};
       renderSync({root, state, commands: {getState: () => state}, restore: {},
         auth: {getToken: () => 'synthetic', configuration: () => ({source: 'server', requiresDecision: false})},
@@ -79,6 +97,7 @@ test('adoption starts the connected hook only after an unlocked successful confi
         sync: {
           getStatus: () => ({phase: 'local', pendingCount: 0, lateCount: 0}),
           discover: async () => [dataset],
+          retry: async () => { retries += 1; },
           joinDataset: async (_, decision) => {
             if (decision === 'preview') return {name: 'Synthetic', requiresSafetyCopy: false,
               previewId: null, safetyCopyId: null, localEventCount: 0, remoteBootstrapEventCount: 0};
@@ -97,16 +116,19 @@ test('adoption starts the connected hook only after an unlocked successful confi
       await click('Vorhandenen Lernbereich verwenden');
       await click('Diesen Lernbereich prüfen');
       assert.equal(notifications, 0, 'discovery and preview never start adoption');
+      assert.equal(retries, 0, 'discovery and preview never start a retry');
       await click('Abbrechen');
       assert.equal(notifications, 0, 'cancelling never starts adoption');
+      assert.equal(retries, 0, 'cancelling never starts a retry');
       await click('Diesen Lernbereich prüfen');
       if (outcome === 'locked before') unlocked = false;
       await click('Lernbereich verwenden');
-      assert.equal(notifications, outcome === 'success' ? 1 : 0, outcome);
+      assert.equal(retries, outcome === 'success' ? 1 : 0, outcome);
+      assert.equal(notifications, 0, 'the explicit retry must not also schedule a connected hook');
       assert.equal(confirmations, outcome === 'locked before' ? 0 : 1, outcome);
     }
   } finally {
-    for (const [name, descriptor] of [['document', previousDocument], ['Node', previousNode]]) {
+    for (const [name, descriptor] of [['document', previousDocument], ['Node', previousNode], ['sessionStorage', previousStorage]]) {
       if (descriptor) Object.defineProperty(globalThis, name, descriptor);
       else delete globalThis[name];
     }

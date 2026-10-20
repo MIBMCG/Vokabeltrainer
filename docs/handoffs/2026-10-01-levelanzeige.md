@@ -25,7 +25,7 @@ weiterverwenden; keine neue Einrichtung oder synthetischen Bestandsimporte.
 Weiter offen sind die echten Handy-/Safari-Prüfungen, der natürliche
 Google-Tokenablauf, physischer Geräteabgleich und reale Wartezeiten.
 Die neue Startadresse mit künftigem Programmnamen ist in der
-[To-do-Liste](../ROADMAP.md#ergänzte-offene-aufgabe-programmname-und-startadresse)
+[To-do-Liste](../ROADMAP.md#abgeschlossene-einrichtung-programmname-und-startadresse)
 vorgemerkt; der genaue Name aus der angelegten E-Mail fehlt noch in den
 Projektunterlagen. Danach folgen gemäß bestätigter Reihenfolge die fünf
 Belohnungsideen. Keine abgeschlossenen Avatar- oder Layoutpakete wiederholen.

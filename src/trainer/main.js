@@ -149,7 +149,7 @@ function createProductAuth() {
 function invalidateOnAuth(service, authSession) {
   const wrapped = {...service};
   for (const [name, method] of Object.entries(service)) {
-    if (typeof method !== 'function' || ['getStatus', 'destroy'].includes(name)) continue;
+    if (typeof method !== 'function' || ['getStatus', 'getDatasetName', 'destroy'].includes(name)) continue;
     wrapped[name] = (...args) => withFreshAuth(authSession, () => method(...args));
   }
   return wrapped;

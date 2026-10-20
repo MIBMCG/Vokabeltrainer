@@ -435,6 +435,12 @@ h2 { margin-top: 0; font-size: 1.7rem; }
 .management-list { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
 .management-card { padding: 1rem; overflow-wrap: anywhere; }
 .management-card h3, .management-card h4 { margin-top: 0; }
+.learning-area-list { padding: 0; background: transparent; box-shadow: none; }
+.learning-area-list .management-card { padding: 0.5rem; }
+@media (max-width: 560px) {
+  .settings-task-body.sync-management-host { padding-inline: 0.35rem; }
+  .learning-area-list .management-card button { padding-inline: 0.35rem; }
+}
 details { margin: 0.65rem 0; }
 summary { min-height: 44px; padding: 0.6rem 0; cursor: pointer; font-weight: 750; }
 .lesson-picker { display: flex; gap: 0.5rem; overflow-x: auto; padding: 0.5rem 0 1rem; }

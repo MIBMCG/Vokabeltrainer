@@ -25,6 +25,10 @@ function uiState(root, auth) {
       notice: '',
       tone: 'info',
       busy: false,
+      searched: false,
+      sessionToken: null,
+      nameDrafts: new Map(),
+      trashSelection: null,
     });
   }
   return stateByRoot.get(owner);
@@ -37,7 +41,9 @@ export function refreshSyncConnection(root, status) {
   const summary = owner.querySelector?.('[data-settings-sync-summary]');
   const connected = hasActiveGoogleSession(view.auth, view.ui.connected);
   if (summary) summary.textContent = `Status: ${syncStatusLabel(status, connected)}`;
-  if (connected === view.ui.connected) return;
+  let token = null;
+  try { token = view.auth.getToken(); } catch { /* Disconnected. */ }
+  if (connected === view.ui.connected && token === view.ui.sessionToken) return;
   view.ui.connected = connected;
   view.rerender();
 }
@@ -50,18 +56,40 @@ function ensureUnlocked(isUnlocked) {
   }
 }
 
-export function renderSync({root, state, sync, restore, auth, commands, isUnlocked = () => true, onRefresh = null, onConnected}) {
+export function renderSync({root, state, sync, restore, auth, commands, isUnlocked = () => true, onRefresh = null, onConnected, onBusyChange}) {
+  root.classList.add('sync-management-host');
   const ui = uiState(root, auth);
-  const projection = project(state.ledger);
-  const resolved = resolveEpochs(state.ledger);
+  onBusyChange?.(ui.busy);
+  const focused = root.contains(document.activeElement) ? document.activeElement : null;
+  const focus = focused?.id ? {id: focused.id, start: focused.selectionStart, end: focused.selectionEnd} : null;
+  const replace = (section) => {
+    root.replaceChildren(section);
+    const target = focus && document.getElementById(focus.id);
+    if (target && root.contains(target) && !target.disabled) {
+      target.focus();
+      if (typeof focus.start === 'number') target.setSelectionRange(focus.start, focus.end);
+    }
+  };
+  const projection = state ? project(state.ledger) : null;
+  const resolved = state ? resolveEpochs(state.ledger) : null;
   const status = sync.getStatus();
   ui.connected = hasActiveGoogleSession(auth, ui.connected);
-  const configuration = auth.configuration?.(Boolean(state.binding)) ?? {
+  let sessionToken = null;
+  try { sessionToken = auth.getToken(); } catch { /* Disconnected. */ }
+  if (sessionToken !== ui.sessionToken) {
+    ui.sessionToken = sessionToken;
+    ui.datasets = [];
+    ui.joinPreview = null;
+    ui.trashSelection = null;
+    ui.nameDrafts.clear();
+    ui.searched = false;
+  }
+  const configuration = auth.configuration?.(Boolean(state?.binding)) ?? {
     clientId: auth.clientId?.() ?? '', source: 'browser', requiresDecision: false,
   };
-  const rerender = () => renderSync({
-    root, state: commands.getState(), sync, restore, auth, commands, isUnlocked, onRefresh, onConnected,
-  });
+  const rerender = () => { if (!root.isConnected || !isUnlocked()) return; renderSync({
+    root, state: commands.getState(), sync, restore, auth, commands, isUnlocked, onRefresh, onConnected, onBusyChange,
+  }); };
   connectionViewByRoot.set(stateOwner(root), {root, auth, ui, rerender});
 
   async function run(action, {after} = {}) {
@@ -80,6 +108,7 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
       ui.tone = 'error';
     } finally {
       ui.busy = false;
+      onBusyChange?.(false);
       if (isUnlocked()) {
         if (root.isConnected) rerender();
         else onRefresh?.();
@@ -87,7 +116,17 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
     }
   }
 
-  const section = el('section', {attrs: {'aria-labelledby': 'sync-title', class: 'stack'}});
+  const discover = () => run(() => sync.discover(), {after: (datasets) => {
+    ui.datasets = datasets;
+    ui.notice = datasets.length ? '' : 'In diesem Google-Konto wurde kein passender Lernbereich gefunden.';
+    ui.tone = 'info';
+  }});
+  const mutationAllowed = () => {
+    try { return root.isConnected && isUnlocked() && auth.getToken() === sessionToken; }
+    catch { return false; }
+  };
+
+  const section = el('section', {attrs: {'aria-labelledby': 'sync-title', class: 'stack', 'aria-busy': String(ui.busy)}});
   section.append(
     el('h2', {text: 'Abgleich', attrs: {id: 'sync-title'}}),
     el('p', {text: syncStatusLabel(status, ui.connected), attrs: {class: 'sync-status', 'data-sync-status': '', 'data-phase': status.phase}}),
@@ -119,7 +158,7 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
         ? 'Der Google-Zugang ist noch nicht vorbereitet. Lokal üben und speichern ist weiterhin möglich.'
         : configuration.source === 'server'
           ? 'Die Google-Verbindung ist noch nicht aktiv. Lokal üben und speichern ist weiterhin möglich.'
-        : state.binding
+        : state?.binding
           ? 'Google-Verbindung erneuern. Ihr Lernbereich bleibt verbunden; ausstehende Änderungen werden danach automatisch abgeglichen.'
         : 'Verbinden Sie das gemeinsame Google-Konto der Familie. Danach wählen Sie bewusst einen neuen oder vorhandenen Lernbereich.'}),
       information,
@@ -129,6 +168,7 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
     );
     connection.addEventListener('submit', (event) => {
       event.preventDefault();
+      if (state === null) sessionStorage.setItem('vokabeltrainer-existing-area', '1');
       void run(() => auth.connect(), {after: markConnected});
     });
     section.append(connection);
@@ -140,16 +180,16 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
       el('p', {text: 'Diese Angaben sind nur für Projektverantwortliche. Familien benötigen normalerweise keine eigene Client-ID.'}),
     ]);
     if (configuration.requiresDecision) {
-      advanced.append(message(state.binding
+      advanced.append(message(state?.binding
         ? 'In diesem Browser ist eine andere Client-ID gespeichert. Der bestehende Lernbereich behält seine bisherige Verbindung; ein schneller Wechsel wird deshalb nicht angeboten.'
         : 'In diesem Browser ist eine andere Client-ID gespeichert. Sie bleibt aktiv, bis Sie bewusst den vorbereiteten Zugang wählen.'));
-      if (!state.binding) {
+      if (!state?.binding) {
         advanced.append(button('Vorbereiteten Zugang verwenden und verbinden', () => run(
           () => auth.connect(auth.preparedClientId()), {after: markConnected},
         ), {class: 'secondary', disabled: ui.busy}));
       }
     }
-    if (state.binding) {
+    if (state?.binding) {
       advanced.append(el('p', {text: 'Für einen bereits verbundenen Lernbereich kann die Client-ID hier nicht gewechselt werden.'}));
     } else {
       const manual = el('form', {attrs: {class: 'stack compact'}});
@@ -177,11 +217,12 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
     const folderName = el('input', {attrs: {id: 'drive-folder-name', value: ui.folderName, maxlength: 80}});
     folderName.addEventListener('input', () => { ui.folderName = folderName.value; });
     controls.append(
-      el('h3', {text: state.binding ? 'Verbundener Lernbereich' : 'Lernbereich auswählen'}),
+      el('h3', {text: state?.binding ? 'Verbundener Lernbereich' : 'Lernbereich auswählen'}),
+      ...(state?.binding ? [el('p', {text: sync.getDatasetName?.() ?? state.ledger.descriptor.name})] : []),
       el('p', {text: 'Google-Verbindung ist aktiv.'}),
       information,
       button('Jetzt abgleichen', () => run(() => sync.retry()), {
-        class: 'secondary', disabled: ui.busy || !state.binding,
+        class: 'secondary', disabled: ui.busy || !state?.binding,
       }),
       button('Google-Verbindung trennen', () => run(() => auth.disconnect(), {after: () => {
         ui.connected = false;
@@ -189,37 +230,78 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
         ui.tone = 'info';
       }}), {class: 'secondary', disabled: ui.busy}),
     );
-    if (!state.binding) {
+    if (state && !state.binding) {
       controls.append(
         field('Name des Lernbereichs', folderName),
         button('Neuen Lernbereich anlegen', () => run(() => sync.createDataset(ui.folderName), {after: () => {
           ui.notice = 'Der Lernbereich wurde angelegt.';
           ui.tone = 'info';
         }}), {class: 'primary', disabled: ui.busy}),
-        button('Vorhandenen Lernbereich verwenden', () => run(() => sync.discover(), {after: (datasets) => {
-          ui.datasets = datasets;
-          ui.notice = datasets.length ? '' : 'In diesem Google-Konto wurde kein passender Lernbereich gefunden.';
-          ui.tone = 'info';
-        }}), {class: 'secondary', disabled: ui.busy}),
+        button('Vorhandenen Lernbereich verwenden', discover, {class: 'secondary', disabled: ui.busy}),
       );
     }
+    controls.append(button('Lernbereiche erneut suchen', discover, {class: 'secondary', disabled: ui.busy}));
     section.append(controls);
   }
 
-  if (ui.datasets.length > 0 && !state.binding) {
-    const datasets = el('section', {attrs: {class: 'subpanel', 'aria-labelledby': 'datasets-title'}}, [
+  if (ui.datasets.length > 0 && ui.connected) {
+    const datasets = el('section', {attrs: {class: 'subpanel learning-area-list', 'aria-labelledby': 'datasets-title'}}, [
       el('h3', {text: 'Gefundene Lernbereiche', attrs: {id: 'datasets-title'}}),
     ]);
     for (const dataset of ui.datasets) {
-      datasets.append(el('article', {attrs: {class: 'management-card'}}, [
-        el('h4', {text: dataset.descriptor.name}),
-        button('Diesen Lernbereich prüfen', () => run(
+      const active = state?.binding?.folderId === dataset.folderId;
+      const name = dataset.displayName ?? dataset.descriptor.name;
+      const card = el('article', {attrs: {class: 'management-card', 'data-learning-area': dataset.folderId}}, [
+        el('h4', {text: name}),
+        active ? el('p', {text: 'Auf diesem Gerät aktiv', attrs: {class: 'status-chip'}}) : null,
+        ...(!state?.binding ? [button('Diesen Lernbereich prüfen', () => run(
           () => sync.joinDataset(dataset, 'preview'),
           {after: (preview) => { ui.joinPreview = {dataset, preview}; }},
-        ), {class: 'secondary', disabled: ui.busy}),
-      ]));
+        ), {class: 'secondary', disabled: ui.busy})] : []),
+      ]);
+      if (state) {
+        const rename = el('form', {attrs: {class: 'stack compact'}});
+        const input = el('input', {attrs: {id: `area-name-${dataset.folderId}`, maxlength: 80, required: true,
+          value: ui.nameDrafts.get(dataset.folderId) ?? name, disabled: ui.busy}});
+        input.addEventListener('input', () => ui.nameDrafts.set(dataset.folderId, input.value));
+        rename.append(field('Neuer Name', input), el('button', {text: 'Um\u00adbe\u00adnen\u00adnen', attrs: {
+          type: 'submit', class: 'secondary', disabled: ui.busy, 'aria-label': 'Umbenennen',
+        }}));
+        rename.addEventListener('submit', (event) => {
+          event.preventDefault();
+          void run(() => sync.renameDataset(dataset, input.value.trim(), {isAllowed: mutationAllowed}), {after: (updated) => {
+            ui.datasets = ui.datasets.map((item) => item.folderId === updated.folderId ? updated : item);
+            ui.nameDrafts.delete(dataset.folderId);
+            ui.notice = 'Der Name des gemeinsamen Lernbereichs wurde gespeichert.';
+            ui.tone = 'info';
+          }});
+        });
+        card.append(rename, button('In Papierkorb verschieben', () => {
+          ensureUnlocked(isUnlocked);
+          ui.trashSelection = dataset;
+          rerender();
+        }, {class: 'secondary', disabled: ui.busy || active}));
+      }
+      datasets.append(card);
     }
     section.append(datasets);
+  }
+
+  if (ui.trashSelection && ui.connected) {
+    const selected = ui.trashSelection;
+    section.append(el('section', {attrs: {class: 'subpanel', 'aria-labelledby': 'area-trash-title'}}, [
+      el('h3', {text: 'Gemeinsamen Lernbereich entfernen?', attrs: {id: 'area-trash-title'}}),
+      el('p', {text: `„${selected.displayName ?? selected.descriptor.name}“ wird für alle verbundenen Geräte in den Google-Drive-Papierkorb verschoben. Das betrifft den gesamten gemeinsamen Bereich mit Profilen, Lernständen und Käufen. Er wird nicht endgültig gelöscht.`}),
+      button('Diesen gemeinsamen Bereich in Papierkorb verschieben', () => run(
+        () => sync.trashDataset(selected, {isAllowed: mutationAllowed}), {after: () => {
+          ui.datasets = ui.datasets.filter((item) => item.folderId !== selected.folderId);
+          ui.trashSelection = null;
+          ui.notice = 'Der gemeinsame Lernbereich liegt im Google-Drive-Papierkorb.';
+          ui.tone = 'info';
+        }},
+      ), {class: 'primary', disabled: ui.busy}),
+      button('Abbrechen', () => { ui.trashSelection = null; rerender(); }, {class: 'secondary', disabled: ui.busy}),
+    ]));
   }
 
   if (ui.joinPreview) {
@@ -232,10 +314,25 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
       el('p', {text: `${preview.localEventCount} lokale und ${preview.remoteBootstrapEventCount} geladene Ereignisse.`}),
       button('Lernbereich verwenden', () => run(() => sync.joinDataset({
         ...dataset, previewId: preview.previewId, safetyCopyId: preview.safetyCopyId,
-      }, 'confirm'), {after: () => { ui.joinPreview = null; onConnected?.(); }}), {class: 'primary', disabled: ui.busy}),
-      button('Abbrechen', () => { ui.joinPreview = null; rerender(); }, {class: 'secondary'}),
+      }, 'confirm'), {after: async () => {
+        ui.joinPreview = null;
+        sessionStorage.removeItem('vokabeltrainer-existing-area');
+        await sync.retry();
+        onRefresh?.();
+      }}), {class: 'primary', disabled: ui.busy}),
+      button('Abbrechen', () => { ui.joinPreview = null; rerender(); }, {class: 'secondary', disabled: ui.busy}),
     ]);
     section.append(join);
+  }
+
+  if (ui.busy) section.append(message(ui.joinPreview ? 'Der Lernbereich wird geprüft und geladen …' : 'Die Google-Drive-Anfrage läuft …'));
+  if (ui.connected && !ui.searched && !ui.busy && typeof sync.discover === 'function') {
+    ui.searched = true;
+    queueMicrotask(() => { if (root.isConnected && isUnlocked()) void discover(); });
+  }
+  if (state === null) {
+    replace(section);
+    return;
   }
 
   if (state.quarantinedFiles.length > 0) {
@@ -330,5 +427,5 @@ export function renderSync({root, state, sync, restore, auth, commands, isUnlock
     ]));
   }
 
-  root.replaceChildren(section);
+  replace(section);
 }

@@ -1,5 +1,16 @@
 # Hier mit der Weiterarbeit beginnen
 
+**Lokal abgeschlossen am 20.10.2026:** direkter Bestandsbeitritt vor lokaler
+Einrichtung, automatische Bereichsliste, Umbenennen/Papierkorb und schnellere
+Bereichssuche. Der Ablauf ist bestätigt; keine erneute Entwurfsfreigabe nötig.
+Produktarbeitskopie auf `codex/vokabeltrainer-v1`, Ausgangspunkt `4e47c37`.
+797/797 Node-, 20/20 Browser- und 4/4 Offline-/Updatefälle PASS; unabhängige
+Nachprüfungen ohne offene Befunde. Arbeitsdiff noch uncommittet und ungepusht.
+[Aktuelle Übergabe](docs/handoffs/2026-10-20-lernbereiche.md) und
+[Prüfbericht](docs/reports/2026-10-20-lernbereiche.md) zuerst lesen.
+Lokale neue Cachekennung v54 ist von der noch ausstehenden Bereitstellung
+an der laufenden LejeAdventure-App zu unterscheiden.
+
 **Aktueller Abschluss am 06.10.2026: Satzzeichenprüfung veröffentlicht.** Unter
 Einstellungen → Antwortprüfung steht der bestätigte gerätelokale Schalter für
 alle Kinder. Standardmäßig an, ab der nächsten Antwort umschaltbar; historische

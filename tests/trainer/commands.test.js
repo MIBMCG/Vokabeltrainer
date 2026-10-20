@@ -17,6 +17,38 @@ function sequenceIds(prefix = 'local') {
   return () => `${prefix}-${++value}`;
 }
 
+test('initial remote installation is atomic, uses the real device and cannot replace concurrent setup', async () => {
+  const store = makeMemoryStore(null);
+  const changes = [];
+  const commands = await createCommands({store, now: () => new Date('2026-10-20T10:00:00Z'),
+    id: sequenceIds('initial'), deviceId: 'real-device', onChange: state => changes.push(state)});
+  const ledger = createFixture().base;
+  const binding = {accountId: 'account-a', folderId: 'remote-folder', descriptorFileId: 'descriptor', datasetId: ledger.descriptor.datasetId};
+  const staged = commands.prepareInitialJoin({ledger, binding});
+  assert.equal(staged.deviceId, 'real-device');
+  assert.equal(staged.pinVerifier, null);
+  assert.equal(store.snapshot(), null);
+  assert.equal(commands.getState(), null);
+  store.failNextSave = true;
+  await assert.rejects(commands.installInitialJoin(staged), {code: 'storage'});
+  assert.equal(commands.getState(), null);
+  assert.equal(store.snapshot(), null);
+  assert.equal(changes.length, 0);
+  await commands.installInitialJoin(staged);
+  assert.deepEqual(commands.getState().ledger, ledger);
+  assert.equal(store.saves.length, 1);
+  assert.equal(changes.length, 1);
+  await assert.rejects(commands.installInitialJoin(staged), {code: 'stale'});
+
+  const otherStore = makeMemoryStore(null);
+  const other = await createCommands({store: otherStore, now: () => new Date(), id: sequenceIds('other'), deviceId: 'real-device', onChange() {}});
+  const competing = other.prepareInitialJoin({ledger, binding});
+  await other.setup({name: 'Lokal', timeZone: 'Europe/Berlin'});
+  const before = other.getState();
+  await assert.rejects(other.installInitialJoin(competing), {code: 'stale'});
+  assert.deepEqual(other.getState(), before);
+});
+
 function validProductState(ledger = createFixture().base) {
   return {
     storageVersion: 1,

@@ -1,5 +1,18 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
+**Aktueller Auftrag am 20.10.2026:** Der Nutzer beauftragt direkten Erstbeitritt
+zu vorhandenen Lernbereichen, deren Umbenennen/Papierkorb in der Elternansicht
+und schnellere Suche/Übernahme. Der konkrete Ablauf ist ausdrücklich bestätigt.
+Die lokale Umsetzung auf `codex/vokabeltrainer-v1` ist abgeschlossen: 797/797
+Node-, 20/20 Browser- und 4/4 Offline-/Updatefälle PASS, unabhängige Reviews
+einschließlich Schlusskorrekturen ohne offene Befunde. Arbeitsdiff uncommittet;
+noch kein Push oder Deployment. Dieser Stand hat Vorrang vor älteren
+Folgeaufträgen. Einstieg: [aktuelle Übergabe](docs/handoffs/2026-10-20-lernbereiche.md),
+[Entwurf](docs/superpowers/specs/2026-10-20-lernbereiche-design.md) und
+[Prüfbericht](docs/reports/2026-10-20-lernbereiche.md). Keine erneute pauschale
+Startfreigabe. Die neue lokale Version mit Cache v54 wird getrennt von einer
+später beauftragten laufenden Bereitstellung geprüft und übergeben.
+
 **Aktueller Abschluss am 06.10.2026: Satzzeichenprüfung veröffentlicht.** Der Nutzer bestätigt
 die Option „Satzzeichen müssen stimmen“ unter Einstellungen → Antwortprüfung:
 standardmäßig an; ausgeschaltet Satzzeichen einschließlich Apostroph und

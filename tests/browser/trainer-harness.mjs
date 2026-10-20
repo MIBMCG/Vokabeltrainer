@@ -15,12 +15,12 @@ function moduleUrl() {
   return playwrightPath;
 }
 
-export async function createTrainerHarness({basePath = '', serverAuth = false} = {}) {
+export async function createTrainerHarness({basePath = '', serverAuth = false, serverDriveFixture = false} = {}) {
   if (!['chromium', 'firefox'].includes(browserEngine)) throw new Error(`Unsupported test browser: ${browserEngine}`);
   const browserType = (await import(moduleUrl()))[browserEngine];
   const server = createProbeServer({basePath});
   const productWorker = await readFile(new URL('../../trainer/sw.js', import.meta.url), 'utf8');
-  let workerVersion = 'v53';
+  let workerVersion = 'v54';
   let workerActivationDelayMs = 0;
   let blockLargeArt = false;
   let failPrecacheAssetPath = null;
@@ -86,9 +86,9 @@ export async function createTrainerHarness({basePath = '', serverAuth = false} =
       response.end('Synthetic large-art failure.');
       return;
     }
-    if (pathname === `${basePath}/trainer/sw.js` && workerVersion !== 'v53') {
+    if (pathname === `${basePath}/trainer/sw.js` && workerVersion !== 'v54') {
       let source = productWorker.replace(
-        'const CACHE_NAME = `${CACHE_OWNER}v53`;',
+        'const CACHE_NAME = `${CACHE_OWNER}v54`;',
         `const CACHE_NAME = \`\${CACHE_OWNER}${workerVersion}\`;`,
       );
       if (source === productWorker) throw new Error('Synthetic worker version marker was not replaced.');
@@ -149,7 +149,7 @@ export async function createTrainerHarness({basePath = '', serverAuth = false} =
     async newDevice({viewport = {width: 390, height: 844}, deviceScaleFactor = 1} = {}) {
       const context = await browser.newContext({viewport, deviceScaleFactor});
       contexts.add(context);
-      const controls = await google.attach(context);
+      const controls = await google.attach(context, {serverDriveFixture});
       const page = await context.newPage();
       return {context, page, controls};
     },
@@ -162,7 +162,7 @@ export async function createTrainerHarness({basePath = '', serverAuth = false} =
         ...(browserEngine === 'chromium' ? {ignoreDefaultArgs: ['--disable-back-forward-cache']} : {}),
       });
       contexts.add(context);
-      const controls = await google.attach(context);
+      const controls = await google.attach(context, {serverDriveFixture});
       const pages = context.pages();
       const page = pages[0] ?? await context.newPage();
       return {context, page, controls};

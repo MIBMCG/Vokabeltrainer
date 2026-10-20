@@ -4,7 +4,7 @@ import {adultStateChanged, openAdultSettings, pinResetForm, renderAdult} from '.
 import {practiceRenderKey, practiceUpdateBlocker, renderPractice, renderPracticeLanding} from './practice.js';
 import {renderAvatar, renderJourney} from './rewards.js';
 import {refreshPurchaseConnection} from './purchases.js';
-import {refreshSyncConnection} from './sync.js';
+import {refreshSyncConnection, renderSync} from './sync.js';
 import {hasActiveGoogleSession, syncStatusLabel, syncStatusMessage} from './status.js';
 
 const MAX_ANSWERS_TEXT_LENGTH = 4_200;
@@ -61,6 +61,9 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, commer
   let focusGoogleConnection = false;
   let destroyed = false;
   let setupBusy = false;
+  let initialConnectionBusy = false;
+  let existingArea = sessionStorage.getItem('vokabeltrainer-existing-area') === '1';
+  let localSetupChosen = false;
   let updateLocked = false;
   let updateRelease = null;
   let conflictAnswer = null;
@@ -97,27 +100,61 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, commer
   }
 
   function renderSetup(state) {
+    const pinOnly = state !== null && state.binding !== null;
+    const setupPending = setupBusy || (pinOnly && initialConnectionBusy);
+    if (state === null && !localSetupChosen && hasActiveGoogleSession(auth)) existingArea = true;
+    if (state === null && existingArea) {
+      const connection = el('div');
+      const newSetup = button('Neu einrichten', () => {
+        if (newSetup.disabled) return;
+        existingArea = false;
+        localSetupChosen = true;
+        sessionStorage.removeItem('vokabeltrainer-existing-area');
+        render();
+      }, {class: 'secondary'});
+      root.replaceChildren(el('section', {attrs: {class: 'stack'}}, [
+        el('h1', {text: 'Be\u00adste\u00adhen\u00adden Lern\u00adbereich ver\u00adbinden', attrs: {'aria-label': 'Bestehenden Lernbereich verbinden'}}),
+        el('p', {text: 'Melden Sie sich mit dem gemeinsamen Google-Konto an und wählen Sie Ihren Lernbereich. Danach richten Sie nur die lokale PIN ein.'}),
+        connection,
+        newSetup,
+      ]));
+      renderSync({root: connection, state, commands, sync, restore, auth, onConnected,
+        isUnlocked: () => !destroyed && commands.getState()?.pinVerifier == null,
+        onRefresh: render, onBusyChange: (busy) => {
+          initialConnectionBusy = busy;
+          newSetup.disabled = busy;
+          const current = commands.getState();
+          if (current?.binding && current.pinVerifier === null) render();
+        }});
+      return;
+    }
     const form = el('form', {attrs: {
-      class: 'panel setup-panel', id: 'setup-form', 'aria-busy': setupBusy ? 'true' : 'false',
+      class: 'panel setup-panel', id: 'setup-form', 'aria-busy': setupPending ? 'true' : 'false',
     }});
     const initial = state === null;
     form.append(
       el('p', {text: initial
         ? 'Ein Erwachsener richtet den gemeinsamen Wortschatz und die lokale PIN ein.'
+        : pinOnly ? 'Der gemeinsame Lernbereich wurde geladen. Legen Sie jetzt ausschließlich die lokale PIN für dieses Gerät fest.'
         : 'Die Datensatz\u00adeinrichtung wurde begonnen. Legen Sie jetzt die lokale PIN fest und ver\u00advoll\u00adständigen Sie fehlende Startdaten.'}),
     );
     if (initial) form.append(field(
       'Name des Datensatzes',
       textInput('dataset-name', 'dataset-name', 80, setupDraft['dataset-name']),
     ));
-    else form.append(el('p', {text: `Datensatz: ${state.ledger.descriptor.name}`, attrs: {class: 'summary'}}));
+    else form.append(el('p', {text: `Datensatz: ${sync.getDatasetName?.() ?? state.ledger.descriptor.name}`, attrs: {class: 'summary'}}));
     form.append(
       field('Vierstellige PIN', pinInput('setup-pin', 'pin', setupDraft.pin)),
       field('PIN wiederholen', pinInput('setup-pin-repeat', 'pin-repeat', setupDraft['pin-repeat'])),
+    );
+    if (!pinOnly) form.append(
       field('Name des Kindes', textInput('setup-profile', 'profile', 80, setupDraft.profile)),
       field('Name der ersten Lektion', textInput('setup-lesson', 'lesson', 80, setupDraft.lesson)),
       wordFields(1, setupDraft),
       wordFields(2, setupDraft),
+    );
+    form.append(
+      ...(pinOnly && initialConnectionBusy ? [message('Der Lernbereich wird noch abgeglichen. Danach können Sie die lokale PIN einrichten.')] : []),
       el('p', {text: 'Die PIN bleibt nur auf diesem Gerät. Sie ist eine Bedienhürde und kein Kontoschutz.', attrs: {class: 'hint'}}),
       el('p', {attrs: {id: 'shell-message', class: 'message', role: 'status'}}),
     );
@@ -125,14 +162,17 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, commer
     form.append(submit);
     form.addEventListener('input', (event) => {
       const name = event.target?.name;
-      if (Object.hasOwn(setupDraft, name)) setupDraft[name] = event.target.value;
+      if (Object.hasOwn(setupDraft, name)) {
+        setupDraft[name] = event.target.value;
+        if (initial) localSetupChosen = true;
+      }
     });
-    if (setupBusy) {
+    if (setupPending) {
       for (const control of form.querySelectorAll('input, button')) control.disabled = true;
     }
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
-      if (setupBusy) return;
+      if (setupPending) return;
       const data = structuredClone(setupDraft);
       setupBusy = true;
       submit.disabled = true;
@@ -144,41 +184,43 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, commer
             timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/Berlin',
           });
         }
-        let projection = project(commands.getState().ledger);
-        let profile = Object.values(projection.entities.profiles)
-          .find((entity) => entity.value && !entity.value.archived);
-        if (!profile) {
-          const profileId = crypto.randomUUID();
-          await commands.revise({
-            entityType: 'profile', entityId: profileId, expectedHeads: [],
-            value: {name: data.profile.trim(), archived: false},
-          });
-          projection = project(commands.getState().ledger);
-          profile = projection.entities.profiles[profileId];
-        }
-        let lesson = Object.values(projection.entities.lessons)
-          .find((entity) => entity.value && !entity.value.archived);
-        if (!lesson) {
-          const lessonId = crypto.randomUUID();
-          await commands.revise({
-            entityType: 'lesson', entityId: lessonId, expectedHeads: [],
-            value: {name: data.lesson.trim(), archived: false, profileIds: [profile.id]},
-          });
-          projection = project(commands.getState().ledger);
-          lesson = projection.entities.lessons[lessonId];
-        }
-        const existingWords = Object.values(projection.entities.words)
-          .filter((entity) => entity.value && entity.value.lessonId === lesson.id);
-        for (let index = existingWords.length + 1; index <= 2; index += 1) {
-          const answers = data[`word-${index}-answers`].split('|').map((value) => value.trim()).filter(Boolean);
-          await commands.revise({
-            entityType: 'word', entityId: crypto.randomUUID(), expectedHeads: [],
-            value: {
-              lessonId: lesson.id,
-              german: data[`word-${index}-german`].trim(),
-              hint: '', answers, archived: false,
-            },
-          });
+        if (!pinOnly) {
+          let projection = project(commands.getState().ledger);
+          let profile = Object.values(projection.entities.profiles)
+            .find((entity) => entity.value && !entity.value.archived);
+          if (!profile) {
+            const profileId = crypto.randomUUID();
+            await commands.revise({
+              entityType: 'profile', entityId: profileId, expectedHeads: [],
+              value: {name: data.profile.trim(), archived: false},
+            });
+            projection = project(commands.getState().ledger);
+            profile = projection.entities.profiles[profileId];
+          }
+          let lesson = Object.values(projection.entities.lessons)
+            .find((entity) => entity.value && !entity.value.archived);
+          if (!lesson) {
+            const lessonId = crypto.randomUUID();
+            await commands.revise({
+              entityType: 'lesson', entityId: lessonId, expectedHeads: [],
+              value: {name: data.lesson.trim(), archived: false, profileIds: [profile.id]},
+            });
+            projection = project(commands.getState().ledger);
+            lesson = projection.entities.lessons[lessonId];
+          }
+          const existingWords = Object.values(projection.entities.words)
+            .filter((entity) => entity.value && entity.value.lessonId === lesson.id);
+          for (let index = existingWords.length + 1; index <= 2; index += 1) {
+            const answers = data[`word-${index}-answers`].split('|').map((value) => value.trim()).filter(Boolean);
+            await commands.revise({
+              entityType: 'word', entityId: crypto.randomUUID(), expectedHeads: [],
+              value: {
+                lessonId: lesson.id,
+                german: data[`word-${index}-german`].trim(),
+                hint: '', answers, archived: false,
+              },
+            });
+          }
         }
         await pinGate.setup(data.pin, data['pin-repeat']);
         setupBusy = false;
@@ -196,6 +238,19 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, commer
         text: initial ? 'Voka\u00adbel\u00adtrainer ein\u00adrichten' : 'Ein\u00adrich\u00adtung fort\u00adsetzen',
         attrs: {id: 'setup-title', 'aria-label': initial ? 'Vokabeltrainer einrichten' : 'Einrichtung fortsetzen'},
       }),
+      initial ? el('div', {attrs: {class: 'stack compact'}}, [
+        button('Bestehenden Lernbereich verbinden', () => {
+          if (setupBusy) return;
+          existingArea = true;
+          localSetupChosen = false;
+          sessionStorage.setItem('vokabeltrainer-existing-area', '1');
+          render();
+        }, {class: 'primary'}),
+        button('Neu einrichten', () => {
+          localSetupChosen = true;
+          form.querySelector('input')?.focus();
+        }, {class: 'secondary'}),
+      ]) : null,
       form,
     ]));
   }
@@ -450,6 +505,8 @@ export function mountShell({root, commands, pinGate, sync, restore, auth, commer
     },
     syncStatusChanged(status) {
       if (destroyed) return;
+      if (commands.getState() === null && !existingArea && !localSetupChosen && hasActiveGoogleSession(auth)
+        && !root.querySelector('[data-sync-status]')) render();
       refreshPurchaseConnection(root);
       const node = root.querySelector('[data-sync-status]');
       if (!node) return;

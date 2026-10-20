@@ -1,5 +1,9 @@
 # Vokabeltrainer benutzen
 
+**Erweiterung vom 20.10.2026:** Der folgende direkte Geräteeinstieg und die
+Bereichsverwaltung gehören zur neuen lokalen Version mit Cache v54. Die
+Bereitstellung dieser Änderungen an der laufenden App steht noch aus.
+
 **Stand vom 02.10.2026:** Die Anleitung beschreibt Start und Adresswechsel,
 Lernen, Verwaltung,
 die vereinfachte Tabellenübernahme, Google-Abgleich, Sicherungen sowie
@@ -52,36 +56,45 @@ installiert werden. Menü und Bezeichnung hängen von Gerät und Browser ab.
    Für den Vergleich Profile, Wörter und Lektionen, Lernpunkte und Level,
    Guthaben, Besitz und gewählte Figur notieren. Während des Umstiegs nicht üben,
    kaufen oder den Lernbestand bearbeiten.
-2. Die neue Adresse öffnen. Nur wenn **Vokabeltrainer einrichten** erscheint,
-   ist zunächst eine vorübergehende lokale Einrichtung nötig: **Name des
-   Datensatzes**, **Name des Kindes**, **Name der ersten Lektion** sowie
-   **Vokabel 1** und **Vokabel 2** mit Deutsch und Englisch ausfüllen.
-   Dafür selbst neutrale Bezeichnungen und zwei Wortpaare wählen; keine
-   Familienangaben kopieren oder Familienpersonen erfinden. Unter
-   **Vierstellige PIN** und **PIN wiederholen** die gewünschte lokale PIN
-   eingeben und **Trainer einrichten** drücken. Diese Startdaten bleiben lokal
-   und sind noch mit keinem Drive-Lernbereich verbunden.
-3. **Für Erwachsene → Einstellungen → Google-Verbindung** öffnen und
-   **Mit Google verbinden** drücken. Das bisherige Google-Lernkonto auswählen.
-   Die Anmeldung allein lädt die ungebundenen Startdaten nicht hoch.
-4. **Vorhandenen Lernbereich verwenden** wählen und beim richtigen Eintrag
-   **Diesen Lernbereich prüfen** drücken. In der Vorschau Bereich und Hinweis
-   auf die geprüfte lokale Sicherheitskopie prüfen. Erst dann
-   **Lernbereich verwenden** bestätigen. Die Übernahme ersetzt die vorläufigen
-   lokalen Startdaten durch den vorhandenen Bereich; sie werden nicht mit dem
-   Familienbestand zusammengeführt. Die lokale PIN bleibt erhalten.
+2. Auf dem neuen Gerät **Bestehenden Lernbereich verbinden** wählen. Keine
+   vorläufigen Kinder, Lektionen oder Vokabeln anlegen.
+3. Falls nötig **Mit Google verbinden** drücken und das bisherige gemeinsame
+   Google-Lernkonto auswählen. Eine bereits aktive Sitzung wird weiterverwendet.
+   Die vorhandenen Lernbereiche erscheinen automatisch. Bei einem vorübergehenden
+   Fehler **Lernbereiche erneut suchen** verwenden.
+4. Beim richtigen Eintrag **Diesen Lernbereich prüfen** und anschließend
+   **Lernbereich verwenden** drücken. Der Bestand wird unmittelbar geladen und
+   geprüft. Danach unter **Vierstellige PIN** und **PIN wiederholen** nur die
+   lokale PIN dieses Geräts einrichten und **Trainer einrichten** drücken.
+   Gibt es bereits eigene lokale Startdaten, erfolgt die Übernahme weiterhin
+   über die Elternansicht mit Vorschau und geprüfter Sicherheitskopie; die
+   vorhandene lokale PIN bleibt erhalten.
 5. Vollständigen Abgleich abwarten; bei Bedarf **Jetzt abgleichen** drücken.
    Profile, Wörter und Lektionen, Lernpunkte und Level, Guthaben, Besitz und
    Figur mit dem alten Stand vergleichen. Danach neu laden und die Werte sowie
    die aktive Google-Verbindung erneut prüfen. Erst nach erfolgreicher Prüfung
    Lesezeichen oder Home-Bildschirm-Verknüpfung umstellen.
 
-Beim Umstieg ausschließlich den vorhandenen Drive-Lernbereich verwenden:
-keinen neuen Bereich anlegen, keinen Familienbestand ersetzen, keine Sicherung
-oder Wortliste importieren und nichts in das Betreiberkonto verschieben. Die
-lokale Sicherheitskopie der vorläufigen Startdaten nicht wiederherstellen oder
-als Familienimport übernehmen. Fehlt der richtige Bereich oder weichen Werte
-ab, stoppen und die bisherige Adresse weiterverwenden; sie bleibt erhalten.
+Beim Umstieg den vorhandenen Drive-Lernbereich verwenden. Fehlt der richtige
+Bereich oder weichen Werte ab, zunächst den bestehenden Stand weiterverwenden
+und Konto sowie Auswahl prüfen. Lokale Browserdaten bleiben erhalten.
+
+## Lernbereiche umbenennen und alte Bereiche entfernen
+
+Unter **Für Erwachsene → Einstellungen → Google-Verbindung** zeigt die aktive
+Anmeldung automatisch die vorhandenen Lernbereiche. **Lernbereiche erneut
+suchen** aktualisiert die Liste. Unter **Neuer Name** einen Namen mit höchstens
+80 Zeichen eintragen und **Umbenennen** drücken. Die Bezeichnung ändert sich
+für den gemeinsamen Bereich; Profile, Lernstände und Käufe bleiben erhalten.
+
+Bei einem alten, hier nicht verwendeten Bereich **In Papierkorb verschieben**
+drücken. Der folgende Hinweis nennt den Bereich und erklärt, dass alle darin
+enthaltenen Profile, Lernstände und Käufe betroffen sind. Erst **Diesen
+gemeinsamen Bereich in Papierkorb verschieben** führt die Aktion aus.
+**Abbrechen** erhält den Bereich. Er liegt anschließend im Google-Drive-
+Papierkorb; die App löscht ihn nicht endgültig. Der mit **Auf diesem Gerät aktiv**
+gekennzeichnete Bereich ist vor dieser Aktion geschützt. Andere Geräte mit einem
+entfernten Bereich behalten ihre lokalen Daten und zeigen den fehlenden Abgleich.
 
 ## Lokal starten
 

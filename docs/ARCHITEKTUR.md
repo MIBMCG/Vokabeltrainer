@@ -1,5 +1,22 @@
 # Architektur
 
+## Erweiterung: direkter Erstbeitritt und Bereichsnamen (20.10.2026)
+
+Der [bestätigte neue Ablauf](superpowers/specs/2026-10-20-lernbereiche-design.md)
+ergänzt den vorhandenen Erstbeitritt: Ein leerer Browser kann die Anmeldung und
+Bereichssuche vor jeder lokalen Datensatzanlage aufrufen. Vollständige Remote-
+Prüfung und Kaufautorität werden in einem getrennten Arbeitszustand ermittelt;
+erst danach installiert Commands den Bestand atomar mit lokaler Gerätekennung
+und noch fehlendem PIN-Prüfwert. Ein konkurrierend angelegter lokaler Stand wird
+nicht ersetzt. Die anschließende PIN-Einrichtung erzeugt keine Lerninhalte.
+
+Der veränderliche Anzeigename verwendet den gekennzeichneten Rootordner.
+Descriptor und dessen Hash bleiben unverändert. Umbenennung und Papierkorb
+prüfen Konto, Ordner-/Datensatzidentität und Aktualität der Auswahl und lesen
+das Ergebnis nach. Der aktuell gebundene Root kann nicht in den Papierkorb
+verschoben werden. Die Bereichssuche prüft höchstens vier unabhängige Bereiche
+parallel; keine Änderung des Kaufprotokolls oder pauschale Cachefreigabe.
+
 ## Aktueller Produktstand
 
 Version 1 und die Überarbeitung A1–C2 bleiben die Produktbasis. Das bestätigte

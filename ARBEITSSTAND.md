@@ -1,5 +1,15 @@
 # Arbeitsstand
 
+**Lokal abgeschlossen am 20.10.2026:** direkter Geräteeinstieg in vorhandene
+Lernbereiche, Umbenennen/Papierkorb in der Elternansicht und schnellere Suche
+und Übernahme. Der bestätigte Ablauf ist auf `codex/vokabeltrainer-v1`
+implementiert: 797/797 Nodefälle, 20/20 Browserfälle und 4/4 Offline-/Updatefälle
+PASS, unabhängige Nachprüfungen ohne offene Befunde. Ausgangspunkt nach frischem
+GitHub-Abgleich `4e47c37`, neue Cachekennung v54. 398 öffentliche Dateien lokal
+vorbereitet. Änderungen uncommittet; kein Push, keine neue Bereitstellung oder
+echte Lernbereichsänderung. [Aktuelle Übergabe](docs/handoffs/2026-10-20-lernbereiche.md)
+und [Prüfbericht](docs/reports/2026-10-20-lernbereiche.md).
+
 **Aktueller Abschluss am 06.10.2026: Satzzeichenprüfung veröffentlicht.** Der bestätigte
 Schalter steht unter Einstellungen → Antwortprüfung. Standardmäßig an; ausgehend
 von der nächsten Antwort können alle Kinder auf diesem Gerät ohne Satzzeichen
@@ -279,7 +289,7 @@ Drachenstufe 4. Keine Pause. [Aktuelle Übergabe](docs/handoffs/2026-10-01-level
 Programmnamen statt des persönlichen Namens enthalten. Das Betreiberkonto ist
 `lejeadventure@gmail.com`, Arbeitsname LejeAdventure. Lernbereiche bleiben im
 bisherigen Google-Konto. Der Einrichtungsstand steht oben; Details in der
-[To-do-Liste](docs/ROADMAP.md#ergänzte-offene-aufgabe-programmname-und-startadresse).
+[To-do-Liste](docs/ROADMAP.md#abgeschlossene-einrichtung-programmname-und-startadresse).
 Der damalige Einrichtungsstand ist durch die aktuelle Bereitstellung oben
 überholt. Die damalige Abendpause ist seit ausdrücklicher Fortsetzung am 02.10.
 aufgehoben.

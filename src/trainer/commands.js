@@ -559,6 +559,33 @@ export async function createCommands({store, now, id, deviceId, onChange, answer
       return state === null ? null : structuredClone(state);
     },
 
+    prepareInitialJoin({ledger, binding}) {
+      if (state !== null) fail('stale', 'Dieses Gerät wurde inzwischen eingerichtet.');
+      // A detached working state, never persisted before the complete remote read.
+      return assertProductState({
+        storageVersion: 3, deviceId,
+        clock: Math.max(0, ...ledger.events.map(entry => entry.clock),
+          ...ledger.epochs.map(entry => entry.clock), ...ledger.historicalEpochs.map(entry => entry.clock)),
+        ledger: structuredClone(ledger), binding: structuredClone(binding),
+        rounds: {}, outboxEventIds: [], pendingPackets: [], datasetSetup: null,
+        packetIntegrity: [], knownFiles: [], quarantinedFiles: [], safetyCopies: [],
+        restoreJobs: [], snapshotManifests: [], pinVerifier: null, commerce: emptyCommerce(),
+      }, deviceId);
+    },
+
+    installInitialJoin(nextState, {beforeInstall = () => {}} = {}) {
+      const candidate = structuredClone(nextState);
+      return enqueue(async () => {
+        if (state !== null) fail('stale', 'Dieses Gerät wurde inzwischen eingerichtet.');
+        if (typeof beforeInstall !== 'function') invalid('Die Erstbeitrittsprüfung fehlt.');
+        await beforeInstall();
+        if (state !== null) fail('stale', 'Dieses Gerät wurde inzwischen eingerichtet.');
+        const next = assertProductState(candidate, deviceId);
+        if (next.binding === null || next.pinVerifier !== null) invalid('Der Erstbeitritt ist nicht vollständig vorbereitet.');
+        await commit(next);
+      });
+    },
+
     getAnswerSettings() {
       return {requirePunctuation: answerSettings?.get() ?? true};
     },

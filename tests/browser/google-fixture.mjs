@@ -10,7 +10,7 @@ export function createGoogleFixture() {
   const unexpected = [];
   const writes = [];
 
-  async function attach(context) {
+  async function attach(context, {serverDriveFixture = false} = {}) {
     let heldFilesRead = null;
     let observedHeldFilesRead = null;
     const controls = {
@@ -22,6 +22,8 @@ export function createGoogleFixture() {
       cancelNextOauth: false,
       oauthClientIds: [],
       holdNextFilesRead: false,
+      shouldHoldFilesRead: null,
+      holdNextMetadataRead: false,
       heldFilesReads: 0,
       waitForHeldFilesRead() {
         if (controls.heldFilesReads > 0) return Promise.resolve(controls.heldFilesReads);
@@ -79,10 +81,12 @@ export function createGoogleFixture() {
       `});
     });
 
-    await context.route('https://www.googleapis.com/**', async (route) => {
+    const handleDrive = async (route) => {
       if (controls.offline) return route.abort('internetdisconnected');
       const request = route.request();
       const url = new URL(request.url());
+      const serverProxy = url.pathname.startsWith('/api/drive/');
+      if (serverProxy) url.pathname = url.pathname.slice('/api/drive'.length);
       const method = request.method();
       const headers = {'access-control-allow-origin': '*',
         'access-control-allow-headers': 'authorization,content-type,if-match',
@@ -90,7 +94,8 @@ export function createGoogleFixture() {
       const respond = (value, status = 200) => route.fulfill({status, headers,
         contentType: 'application/json', body: JSON.stringify(value)});
       if (method === 'OPTIONS') return respond({});
-      assert.match(request.headers().authorization, /^Bearer synthetic-browser-token-\d+$/);
+      if (!serverProxy) assert.match(request.headers().authorization, /^Bearer synthetic-browser-token-\d+$/);
+      else assert.equal(request.headers()['x-vokabeltrainer-account'], controls.account);
       if (url.pathname === '/drive/v3/about') {
         if (controls.rejectNextAbout401) {
           controls.rejectNextAbout401 = false;
@@ -103,8 +108,9 @@ export function createGoogleFixture() {
         return respond({ids:Array.from({length:count},()=>`file-${++sequence}`)});
       }
       if (url.pathname === '/drive/v3/files' && method === 'GET') {
-        if (controls.holdNextFilesRead) {
+        if (controls.holdNextFilesRead || await controls.shouldHoldFilesRead?.()) {
           controls.holdNextFilesRead = false;
+          controls.shouldHoldFilesRead = null;
           controls.heldFilesReads += 1;
           observedHeldFilesRead?.(controls.heldFilesReads);
           observedHeldFilesRead = null;
@@ -160,6 +166,13 @@ export function createGoogleFixture() {
       }
       const v2FileId = url.pathname.match(/^\/drive\/v2\/files\/([A-Za-z0-9_-]+)$/)?.[1];
       if (v2FileId && method === 'GET') {
+        if (controls.holdNextMetadataRead) {
+          controls.holdNextMetadataRead = false;
+          controls.heldFilesReads += 1;
+          observedHeldFilesRead?.(controls.heldFilesReads);
+          observedHeldFilesRead = null;
+          await new Promise((release) => { heldFilesRead = release; });
+        }
         const file = files.get(v2FileId);
         if (!file) return respond({error: {code: 404}}, 404);
         if (url.searchParams.get('alt') === 'media') return respond(file.value);
@@ -180,14 +193,21 @@ export function createGoogleFixture() {
         if (!file) return respond({error: {code: 404}}, 404);
         if (request.headers()['if-match'] !== file.metadata.etag) return respond({error: {code: 412}}, 412);
         const body = request.postDataJSON();
-        assert.ok(Array.isArray(body.properties));
-        file.metadata.appProperties = Object.fromEntries(body.properties.map(({key, value, visibility}) => {
+        const folderUpdate = Object.hasOwn(body, 'title') || Object.hasOwn(body, 'labels');
+        if (folderUpdate) {
+          assert.equal(file.metadata.mimeType, folderMime);
+          if (Object.hasOwn(body, 'title')) file.metadata.name = body.title;
+          if (Object.hasOwn(body, 'labels')) file.metadata.trashed = body.labels.trashed;
+        } else {
+          assert.ok(Array.isArray(body.properties));
+          file.metadata.appProperties = Object.fromEntries(body.properties.map(({key, value, visibility}) => {
           assert.equal(visibility, 'PRIVATE');
           return [key, value];
-        }));
+          }));
+        }
         file.metadata.version = String(Number(file.metadata.version) + 1);
         file.metadata.etag = `"${v2FileId}-v${file.metadata.version}"`;
-        writes.push({id: v2FileId, duplicate: false, kind: 'pointer', name: file.metadata.name, packetId: null, pointer: true});
+        writes.push({id: v2FileId, duplicate: false, kind: folderUpdate ? 'folder-update' : 'pointer', name: file.metadata.name, packetId: null, pointer: !folderUpdate});
         const updated = {id: v2FileId, version: file.metadata.version, etag: file.metadata.etag,
           properties: body.properties};
         if (controls.loseNextPointerResponse) {
@@ -198,7 +218,9 @@ export function createGoogleFixture() {
       }
       unexpected.push(`${method} ${url.pathname}`);
       return respond({error: {code: 400}}, 400);
-    });
+    };
+    await context.route('https://www.googleapis.com/**', handleDrive);
+    if (serverDriveFixture) await context.route('**/api/drive/**', handleDrive);
     return controls;
   }
   return {attach, files, writes, unexpected};

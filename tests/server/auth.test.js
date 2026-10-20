@@ -385,3 +385,43 @@ test('Drive proxy rejects an oversized streamed write before contacting Google',
   assert.equal(response.status, 413);
   assert.equal(writes, 0);
 });
+
+test('dataset metadata updates use the existing conditional route while hard delete and broader APIs remain blocked', async () => {
+  const calls = [];
+  const service = serviceFor(memoryStore(), async (url, init) => {
+    if (new URL(url).pathname === '/drive/v2/files/dataset-folder') {
+      calls.push({url: new URL(url), init});
+      return Response.json({id: 'dataset-folder'}, {headers: {ETag: '"new-etag"'}});
+    }
+    return fakeGoogle()(url, init);
+  });
+  const {callback} = await login(service);
+  const headers = {Origin: origin, 'X-Vokabeltrainer': '1', 'X-Vokabeltrainer-Account': 'account-1',
+    Cookie: `__Host-vt_session=${cookie(callback, '__Host-vt_session')}`,
+    'If-Match': '"old-etag"', 'Content-Type': 'application/json'};
+  for (const body of [{title: 'Renamed area'}, {labels: {trashed: true}}]) {
+    const response = await service.fetch(new Request(origin + '/api/drive/drive/v2/files/dataset-folder?fields=id,title,etag', {
+      method: 'PUT', headers, body: JSON.stringify(body),
+    }));
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get('etag'), '"new-etag"');
+    assert.equal(response.headers.get('cache-control'), 'no-store');
+  }
+  assert.equal(calls.length, 2);
+  assert.deepEqual(JSON.parse(new TextDecoder().decode(calls[0].init.body)), {title: 'Renamed area'});
+  assert.deepEqual(JSON.parse(new TextDecoder().decode(calls[1].init.body)), {labels: {trashed: true}});
+  assert.equal(calls.every(({init}) => init.headers.get('if-match') === '"old-etag"'), true);
+  for (const [path, method] of [['/drive/v2/files/dataset-folder', 'DELETE'],
+    ['/drive/v2/files/dataset-folder/trash', 'POST'], ['/drive/v3/files/dataset-folder', 'PATCH'],
+    ['/drive/v2/files/dataset-folder/permissions', 'POST']]) {
+    const response = await service.fetch(new Request(origin + '/api/drive' + path, {method, headers, body: '{}'}));
+    assert.equal(response.status, 400);
+  }
+  for (const changed of [{Origin: 'https://foreign.example'}, {'X-Vokabeltrainer-Account': 'account-2'}, {Cookie: ''}]) {
+    const response = await service.fetch(new Request(origin + '/api/drive/drive/v2/files/dataset-folder', {
+      method: 'PUT', headers: {...headers, ...changed}, body: '{"title":"Renamed area"}',
+    }));
+    assert.equal(response.status, changed.Origin ? 403 : changed.Cookie === '' ? 401 : 409);
+  }
+  assert.equal(calls.length, 2);
+});

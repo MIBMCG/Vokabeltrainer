@@ -114,6 +114,7 @@ function classifyHttpError(status) {
   if (status === 403) return new DriveError('permission', 'Google Drive hat den Zugriff abgelehnt.', status);
   if (status === 404) return new DriveError('missing', 'Die Drive-Datei wurde nicht gefunden.', status);
   if (status === 409) return new DriveError('conflict', 'Die Drive-Datei ist bereits vorhanden.', status);
+  if (status === 412) return new DriveError('stale', 'Der Drive-Stand wurde gleichzeitig geändert.', status);
   if (status === 408 || status === 429 || status >= 500) {
     return new DriveError('retryable', 'Google Drive ist vorübergehend nicht erreichbar.', status);
   }
@@ -160,7 +161,7 @@ export function createDriveClient({getToken, getAccountId = null, fetchImpl = gl
     throw invalid('Drive-Client ist nicht vollständig konfiguriert.');
   }
 
-  async function request(url, init = {}, acceptedStatuses = []) {
+  async function request(url, init = {}, acceptedStatuses = [], expectedToken = null, beforeDispatch = null) {
     let token;
     try {
       token = await getToken();
@@ -171,7 +172,13 @@ export function createDriveClient({getToken, getAccountId = null, fetchImpl = gl
     if (typeof token !== 'string' || token.trim() === '') {
       throw new DriveError('auth', 'Google-Zugriff ist nicht verfügbar.');
     }
+    if (expectedToken !== null && token !== expectedToken) {
+      throw new DriveError('auth', 'Google-Zugriff hat sich während der Änderung geändert.');
+    }
 
+    // The synchronous authority check belongs after the last credential await.
+    // Keep it outside the network catch so a locked view retains its error.
+    if (beforeDispatch !== null) beforeDispatch();
     let response;
     try {
       response = await fetchImpl(url, {
@@ -264,6 +271,106 @@ export function createDriveClient({getToken, getAccountId = null, fetchImpl = gl
     return value;
   }
 
+  async function updateDatasetFolder({id, datasetId, expectedVersion, name, trashed, beforeWrite = null} = {}) {
+    assertId(id);
+    assertId(datasetId, 'Lernbereich-ID');
+    if (typeof expectedVersion !== 'string' || !/^(?:0|[1-9][0-9]*)$/.test(expectedVersion)
+      || (name === undefined) === (trashed === undefined)
+      || (trashed !== undefined && trashed !== true)
+      || (beforeWrite !== null && typeof beforeWrite !== 'function')) {
+      throw invalid('Die Ordneränderung ist ungültig.');
+    }
+    if (name !== undefined) {
+      assertNonemptyString(name, 'Ordnername');
+      if (name.length > 80) throw invalid('Der Ordnername darf höchstens 80 Zeichen lang sein.');
+    }
+
+    // Keep the whole mutation on one credential/account. A refresh or account
+    // switch requires a fresh selection; a write is never replayed automatically.
+    let token;
+    try { token = await getToken(); }
+    catch { throw new DriveError('auth', 'Google-Zugriff ist nicht verfügbar.'); }
+    if (typeof token !== 'string' || token.trim() === '') {
+      throw new DriveError('auth', 'Google-Zugriff ist nicht verfügbar.');
+    }
+    let capturedAccount;
+    async function checkAccount() {
+      let actual;
+      try {
+        if (await getToken() !== token) throw new Error();
+        if (getAccountId !== null) actual = await getAccountId(token);
+        else if (capturedAccount === undefined) {
+          const about = buildUrl(DRIVE_API_ROOT, 'about', {fields: 'user(permissionId)'});
+          actual = (await parseJsonResponse(await request(about, {cache: 'no-store'}, [], token)))?.user?.permissionId;
+        } else actual = capturedAccount;
+        if (await getToken() !== token) throw new Error();
+      } catch (error) {
+        if (error instanceof DriveError) throw error;
+        throw new DriveError('auth', 'Google-Zugriff hat sich während der Änderung geändert.');
+      }
+      if (typeof actual !== 'string' || !/^[A-Za-z0-9_-]{1,128}$/u.test(actual)) {
+        throw invalid('Google-Kontokennung fehlt.');
+      }
+      if (capturedAccount !== undefined && actual !== capturedAccount) {
+        throw new DriveError('auth', 'Das verbundene Google-Konto hat sich geändert.');
+      }
+      capturedAccount = actual;
+    }
+    async function boundRequest(url, init = {}) {
+      await checkAccount();
+      const response = await request(url, {...init, cache: 'no-store'}, [], token,
+        init.method === 'PUT' ? beforeWrite : null);
+      await checkAccount();
+      return response;
+    }
+
+    // v2 exposes the strong metadata ETag used by the existing purchase CAS.
+    // Only title or the trash label is sent; immutable app properties stay put.
+    const url = buildUrl(`${DRIVE_API_ORIGIN}/drive/v2`, `files/${encodeURIComponent(id)}`, {
+      fields: 'id,title,mimeType,parents,properties,labels,version,etag',
+    });
+    const raw = await parseJsonResponse(await boundRequest(url));
+    if (!isPlainObject(raw) || !Array.isArray(raw.properties)
+      || !Array.isArray(raw.parents) || !raw.parents.every(parent => isPlainObject(parent))
+      || typeof raw.etag !== 'string' || !/^"[^"\r\n]+"$/.test(raw.etag)) {
+      throw invalid('Drive-Ordner ist nicht vollständig gebunden.');
+    }
+    const properties = Object.create(null);
+    for (const property of raw.properties) {
+      if (!isPlainObject(property) || typeof property.key !== 'string' || property.key === ''
+        || typeof property.value !== 'string' || property.visibility !== 'PRIVATE'
+        || Object.hasOwn(properties, property.key)) {
+        throw invalid('Private Drive-Dateieigenschaften sind ungültig.');
+      }
+      properties[property.key] = property.value;
+    }
+    const before = validateMetadata({id: raw.id, name: raw.title, mimeType: raw.mimeType,
+      parents: raw.parents.map(parent => parent.id), appProperties: properties,
+      trashed: raw.labels?.trashed, version: raw.version});
+    if (before.id !== id || before.mimeType !== FOLDER_MIME_TYPE || before.trashed
+      || properties.app !== 'vokabeltrainer-product' || properties.kind !== 'dataset-folder'
+      || properties.datasetId !== datasetId) {
+      throw new DriveError('binding', 'Der Ordner gehört nicht zum ausgewählten Lernbereich.');
+    }
+    if (before.version !== expectedVersion) {
+      throw new DriveError('stale', 'Der ausgewählte Lernbereich wurde inzwischen geändert.');
+    }
+    await boundRequest(url, {method: 'PUT',
+      headers: {'Content-Type': 'application/json; charset=UTF-8', 'If-Match': raw.etag},
+      body: JSON.stringify(name !== undefined ? {title: name} : {labels: {trashed: true}}),
+    });
+    const readbackUrl = buildUrl(DRIVE_API_ROOT, `files/${encodeURIComponent(id)}`, {fields: METADATA_FIELDS});
+    const after = validateMetadata(await parseJsonResponse(await boundRequest(readbackUrl)));
+    await checkAccount();
+    if (after.id !== id || after.mimeType !== FOLDER_MIME_TYPE
+      || after.name !== (name ?? before.name) || after.trashed !== (trashed ?? false)
+      || after.version === undefined || BigInt(after.version) < BigInt(expectedVersion)
+      || !sameJson(after.parents, before.parents) || !sameJson(after.appProperties, before.appProperties)) {
+      throw new DriveError('conflict', 'Die Ordneränderung konnte nicht eindeutig bestätigt werden.');
+    }
+    return after;
+  }
+
   async function createFolder({id, name, appProperties} = {}) {
     assertId(id);
     assertNonemptyString(name, 'Ordnername');
@@ -320,5 +427,5 @@ export function createDriveClient({getToken, getAccountId = null, fetchImpl = gl
     return verified;
   }
 
-  return {accountId, generateId, listFiles, metadata, readJson, createFolder, putJson};
+  return {accountId, generateId, listFiles, metadata, readJson, createFolder, putJson, updateDatasetFolder};
 }

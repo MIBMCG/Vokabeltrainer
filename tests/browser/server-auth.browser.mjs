@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import {createTrainerHarness} from './trainer-harness.mjs';
 
 async function setup(page) {
+  await page.getByRole('button', {name: 'Neu einrichten', exact: true}).click();
   await page.locator('#dataset-name').fill('Übungsinsel');
   await page.locator('#setup-pin').fill('1234');
   await page.locator('#setup-pin-repeat').fill('1234');
@@ -99,15 +100,18 @@ test('a delayed server resume starts sync for a bound dataset while the adult PI
         transaction.oncomplete = () => { database.close(); resolve(); };
       };
     }));
+    const proxyRequestsBeforeReload = harness.serverProxyRequests();
+    const sessionRequestsBeforeReload = harness.serverSessionRequests();
     harness.delayNextServerSession(1800);
     await page.reload();
     await page.locator('#profile-list').waitFor();
     const deadline = Date.now() + 6_000;
-    while (harness.serverProxyRequests() === 0 && Date.now() < deadline) {
+    while ((harness.serverProxyRequests() <= proxyRequestsBeforeReload
+      || harness.serverSessionRequests() <= sessionRequestsBeforeReload) && Date.now() < deadline) {
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
-    assert.ok(harness.serverSessionRequests() >= 2);
-    assert.ok(harness.serverProxyRequests() > 0, 'Automatic sync must contact the proxy after delayed resume.');
+    assert.ok(harness.serverSessionRequests() > sessionRequestsBeforeReload);
+    assert.ok(harness.serverProxyRequests() > proxyRequestsBeforeReload, 'Automatic sync must contact the proxy after delayed resume.');
     await page.locator('#adult-entry').click();
     assert.equal(await page.locator('#adult-pin').count(), 1);
   } finally { await harness.close(); }

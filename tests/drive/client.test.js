@@ -465,3 +465,251 @@ test('does not retry indefinitely after a retryable response or network failure'
   });
   assert.equal(networkCalls, 1);
 });
+
+const datasetFolder = (overrides = {}) => ({
+  id: 'dataset-folder', name: 'Existing area', mimeType: 'application/vnd.google-apps.folder',
+  parents: ['drive-root'], appProperties: {
+    app: 'vokabeltrainer-product', kind: 'dataset-folder', datasetId: 'dataset-a',
+    purchaseApp: 'vokabeltrainer-purchases', purchaseConfigId: 'config-a', purchaseConfigSha256: 'hash-a',
+  }, trashed: false, version: '7', ...overrides,
+});
+
+function folderV2(value, etag = '"folder-etag-7"') {
+  return {id: value.id, title: value.name, mimeType: value.mimeType,
+    parents: value.parents.map(id => ({id})),
+    properties: Object.entries(value.appProperties).map(([key, value]) => ({key, value, visibility: 'PRIVATE'})),
+    labels: {trashed: value.trashed}, version: value.version, etag};
+}
+
+function folderClient({before = datasetFolder(), after = datasetFolder({name: 'New area', version: '8'}),
+  writeResponse = () => Response.json({id: 'unverified'}), token = () => 'token-a',
+  account = () => 'account-a', onRead = () => {}, rawBefore = null} = {}) {
+  const requests = [];
+  let reads = 0;
+  const client = createDriveClient({getToken: token, getAccountId: account,
+    fetchImpl: async (url, init) => {
+      requests.push({url: new URL(url), init});
+      if (init.method === 'PUT') return writeResponse();
+      reads++;
+      onRead(reads);
+      if (new URL(url).pathname.includes('/v2/')) return Response.json(rawBefore ?? folderV2(before));
+      return Response.json(after);
+    },
+  });
+  return {client, requests};
+}
+
+const renameFolder = {id: 'dataset-folder', datasetId: 'dataset-a', expectedVersion: '7', name: 'New area'};
+
+test('renames only a marked dataset root with a conditional metadata update and verified v3 readback', async () => {
+  const {client, requests} = folderClient();
+  assert.deepEqual(await client.updateDatasetFolder(renameFolder), datasetFolder({name: 'New area', version: '8'}));
+  assert.equal(requests.length, 3);
+  assert.equal(requests[0].url.pathname, '/drive/v2/files/dataset-folder');
+  assert.match(requests[0].url.searchParams.get('fields'), /etag/);
+  assert.equal(requests[1].init.method, 'PUT');
+  assert.equal(requests[1].init.headers['If-Match'], '"folder-etag-7"');
+  assert.deepEqual(JSON.parse(requests[1].init.body), {title: 'New area'});
+  assert.equal(requests[2].url.pathname, '/drive/v3/files/dataset-folder');
+  assert.equal(requests.every(({init}) => init.cache === 'no-store'), true);
+});
+
+test('moves the dataset root to trash without deleting or rewriting properties', async () => {
+  const after = datasetFolder({trashed: true, version: '8'});
+  const {client, requests} = folderClient({after});
+  assert.deepEqual(await client.updateDatasetFolder({id: 'dataset-folder', datasetId: 'dataset-a', expectedVersion: '7', trashed: true}), after);
+  assert.deepEqual(JSON.parse(requests[1].init.body), {labels: {trashed: true}});
+  assert.equal(requests.some(({init}) => init.method === 'DELETE'), false);
+});
+
+test('rejects invalid folder mutations before contacting Google', async (t) => {
+  for (const change of [{name: ''}, {name: '  '}, {trashed: false}, {name: undefined}, {name: 'new', trashed: true},
+    {expectedVersion: undefined}, {expectedVersion: '1.2'}, {id: '../folder'}, {datasetId: ''}]) {
+    await t.test(JSON.stringify(change), async () => {
+      const {client, requests} = folderClient();
+      await assert.rejects(client.updateDatasetFolder({...renameFolder, ...change}), expectDriveError('invalid'));
+      assert.equal(requests.length, 0);
+    });
+  }
+});
+
+test('rejects foreign folder markers and nonfolder or trashed targets before writing', async (t) => {
+  for (const change of [{id: 'other-folder'}, {mimeType: 'application/json'}, {trashed: true},
+    {appProperties: {app: 'foreign', kind: 'dataset-folder', datasetId: 'dataset-a'}},
+    {appProperties: {app: 'vokabeltrainer-product', kind: 'coordinator', datasetId: 'dataset-a'}},
+    {appProperties: {app: 'vokabeltrainer-product', kind: 'dataset-folder', datasetId: 'dataset-b'}}]) {
+    await t.test(JSON.stringify(change), async () => {
+      const {client, requests} = folderClient({before: datasetFolder(change)});
+      await assert.rejects(client.updateDatasetFolder(renameFolder), expectDriveError('binding'));
+      assert.equal(requests.some(({init}) => init.method === 'PUT'), false);
+    });
+  }
+});
+
+test('rejects stale discovery and 412 without replaying writes', async () => {
+  const stale = folderClient({before: datasetFolder({version: '8'})});
+  await assert.rejects(stale.client.updateDatasetFolder(renameFolder), expectDriveError('stale'));
+  assert.equal(stale.requests.length, 1);
+  const precondition = folderClient({writeResponse: () => new Response(null, {status: 412})});
+  await assert.rejects(precondition.client.updateDatasetFolder(renameFolder), expectDriveError('stale', 412));
+  assert.equal(precondition.requests.length, 2);
+});
+
+test('rejects missing or weak ETags and ambiguous private markers before writing', async (t) => {
+  for (const change of [{etag: undefined}, {etag: 'W/"weak"'}, {etag: 'invalid'},
+    {properties: [{key: 'app', value: 'vokabeltrainer-product', visibility: 'PUBLIC'}]},
+    {properties: [...folderV2(datasetFolder()).properties, {key: 'app', value: 'foreign', visibility: 'PRIVATE'}]}]) {
+    await t.test(JSON.stringify(change), async () => {
+      const {client, requests} = folderClient({rawBefore: {...folderV2(datasetFolder()), ...change}});
+      await assert.rejects(client.updateDatasetFolder(renameFolder), expectDriveError('invalid'));
+      assert.equal(requests.length, 1);
+    });
+  }
+});
+
+test('rejects token or account changes before mutating a folder', async (t) => {
+  for (const kind of ['token', 'account']) {
+    await t.test(kind, async () => {
+      let changed = false;
+      const {client, requests} = folderClient({onRead: () => {changed = true;},
+        token: () => changed && kind === 'token' ? 'token-b' : 'token-a',
+        account: () => changed && kind === 'account' ? 'account-b' : 'account-a'});
+      await assert.rejects(client.updateDatasetFolder(renameFolder), expectDriveError('auth'));
+      assert.equal(requests.some(({init}) => init.method === 'PUT'), false);
+    });
+  }
+});
+
+test('captures direct OAuth account and never writes after a token switch during account lookup', async () => {
+  let token = 'token-a';
+  const requests = [];
+  const client = createDriveClient({getToken: () => token, fetchImpl: async (url, init) => {
+    requests.push({url: new URL(url), init});
+    token = 'token-b';
+    return Response.json({user: {permissionId: 'account-a'}});
+  }});
+  await assert.rejects(client.updateDatasetFolder(renameFolder), expectDriveError('auth'));
+  assert.equal(requests.length, 1);
+  assert.equal(requests[0].url.pathname, '/drive/v3/about');
+});
+
+test('does not report ambiguous write failures as success or retry a write', async (t) => {
+  for (const fail of [() => {throw new TypeError('private network details');}, () => new Response(null, {status: 503})]) {
+    await t.test(String(fail), async () => {
+      const {client, requests} = folderClient({writeResponse: fail});
+      await assert.rejects(client.updateDatasetFolder(renameFolder), error => ['network', 'retryable'].includes(error.code));
+      assert.equal(requests.filter(({init}) => init.method === 'PUT').length, 1);
+      assert.equal(requests.length, 2);
+    });
+  }
+});
+
+test('requires stored mutation and unchanged identity, parents and properties on readback', async (t) => {
+  for (const change of [{name: 'Existing area'}, {trashed: true}, {id: 'other'}, {version: undefined}, {version: '6'},
+    {parents: ['other-root']}, {appProperties: {...datasetFolder().appProperties, purchaseConfigId: 'other'}}]) {
+    await t.test(JSON.stringify(change), async () => {
+      const {client, requests} = folderClient({after: datasetFolder({name: 'New area', version: '8', ...change})});
+      await assert.rejects(client.updateDatasetFolder(renameFolder), expectDriveError('conflict'));
+      assert.equal(requests.filter(({init}) => init.method === 'PUT').length, 1);
+    });
+  }
+});
+
+test('does not report success when credentials change after the write or while reading its result', async (t) => {
+  for (const stage of ['write', 'body']) {
+    await t.test(stage, async () => {
+      let token = 'token-a';
+      let writes = 0;
+      const client = createDriveClient({getToken: () => token, getAccountId: () => 'account-a',
+        fetchImpl: async (url, init) => {
+          if (init.method === 'PUT') {
+            writes++;
+            if (stage === 'write') token = 'token-b';
+            return Response.json({id: 'unverified'});
+          }
+          if (new URL(url).pathname.includes('/v2/')) return Response.json(folderV2(datasetFolder()));
+          return {status: 200, ok: true, async json() {
+            token = 'token-b';
+            return datasetFolder({name: 'New area', version: '8'});
+          }};
+        }});
+      await assert.rejects(client.updateDatasetFolder(renameFolder), expectDriveError('auth'));
+      assert.equal(writes, 1);
+    });
+  }
+});
+
+test('rejects dataset folder names longer than 80 characters before contacting Google', async () => {
+  const {client, requests} = folderClient();
+  await assert.rejects(client.updateDatasetFolder({...renameFolder, name: 'x'.repeat(81)}), expectDriveError('invalid'));
+  assert.equal(requests.length, 0);
+});
+
+test('validates the optional folder write guard before contacting Google', async () => {
+  const {client, requests} = folderClient();
+  await assert.rejects(client.updateDatasetFolder({...renameFolder, beforeWrite: true}), expectDriveError('invalid'));
+  assert.equal(requests.length, 0);
+});
+
+test('runs the synchronous guard once at the folder write boundary', async () => {
+  let checks = 0;
+  const {client, requests} = folderClient({writeResponse() {
+    assert.equal(checks, 1);
+    return Response.json({id: 'unverified'});
+  }});
+  const after = await client.updateDatasetFolder({...renameFolder, beforeWrite() {
+    checks++;
+    assert.equal(requests.length, 1);
+    queueMicrotask(() => { checks += 10; });
+  }});
+  assert.equal(after.name, 'New area');
+  assert.equal(checks, 11);
+  assert.equal(requests.filter(({init}) => init.method === 'PUT').length, 1);
+});
+
+test('a lock during the account or final token preflight prevents folder PUT and preserves its error', async (t) => {
+  for (const stage of ['account', 'finalToken']) {
+    await t.test(stage, async () => {
+      let allowed = true;
+      let accountChecks = 0;
+      let finalTokenChecks = 0;
+      let unblock;
+      let notify;
+      const blocked = new Promise(resolve => { notify = resolve; });
+      const gate = new Promise(resolve => { unblock = resolve; });
+      const requests = [];
+      const locked = Object.assign(new Error('Adults view locked'), {code: 'locked'});
+      const client = createDriveClient({
+        getToken: async () => {
+          if (stage === 'finalToken' && accountChecks === 3 && ++finalTokenChecks === 2) {
+            notify();
+            await gate;
+          }
+          return 'token-a';
+        },
+        getAccountId: async () => {
+          accountChecks++;
+          if (stage === 'account' && accountChecks === 3) {
+            notify();
+            await gate;
+          }
+          return 'account-a';
+        },
+        fetchImpl: async (url, init) => {
+          requests.push({url: new URL(url), init});
+          if (init.method === 'PUT') return Response.json({id: 'unverified'});
+          return Response.json(new URL(url).pathname.includes('/v2/')
+            ? folderV2(datasetFolder()) : datasetFolder({name: 'New area', version: '8'}));
+        },
+      });
+      const operation = client.updateDatasetFolder({...renameFolder, beforeWrite() {
+        if (!allowed) throw locked;
+      }});
+      await blocked;
+      allowed = false;
+      unblock();
+      await assert.rejects(operation, error => error === locked);
+      assert.equal(requests.some(({init}) => init.method === 'PUT'), false);
+    });
+  }
+});

@@ -189,6 +189,21 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
   let activeDatasetSetup = null;
   const sessionVersions = new Map();
   const joinPreviews = new Map();
+  const datasetNames = new Map();
+  const joiningFolders = new Set();
+  const trashingFolders = new Set();
+  const settingUpFolders = new Set();
+
+  function rememberFolder(folder, accountId) {
+    datasetNames.set(`${accountId}:${folder.id}`, folder.name);
+  }
+
+  function getDatasetName() {
+    const state = commands.getState();
+    const binding = state?.binding;
+    return (binding && datasetNames.get(`${binding.accountId}:${binding.folderId}`))
+      || state?.ledger.descriptor.name || null;
+  }
 
   function publish(phase, message) {
     status = statusFromState(commands.getState(), phase, message, lastConfirmedAt);
@@ -355,6 +370,7 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
       datasetId: binding.datasetId,
       mimeType: FOLDER_MIME_TYPE,
     });
+    rememberFolder(meta, binding.accountId);
     return meta;
   }
 
@@ -404,13 +420,14 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
 
   async function discover() {
     try {
-      await drive.accountId();
+      const accountId = await drive.accountId();
       const folders = await drive.listFiles(folderQuery());
       const results = [];
-      for (const rawFolder of folders) {
+      const inspectFolder = async (rawFolder) => {
         const folder = assertMetadata(rawFolder, {kind: 'dataset-folder', mimeType: FOLDER_MIME_TYPE});
         const datasetId = assertId(folder.appProperties.datasetId, 'Die Datensatz-ID');
         const descriptors = await drive.listFiles(childQuery(folder.id, datasetId, 'dataset'));
+        const entries = [];
         for (const rawDescriptor of descriptors) {
           const descriptorMeta = assertMetadata(rawDescriptor, {
             parentId: folder.id, kind: 'dataset', datasetId, mimeType: JSON_MIME_TYPE,
@@ -420,13 +437,106 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
           if (descriptor.datasetId !== datasetId) {
             throw productError('binding', 'Eine Datensatzbeschreibung hat eine widersprüchliche Kennung.');
           }
-          results.push({folderId: folder.id, descriptorFileId: descriptorMeta.id, descriptor});
+          entries.push({folderId: folder.id, descriptorFileId: descriptorMeta.id, descriptor,
+            displayName: folder.name || descriptor.name, accountId, folderVersion: folder.version});
         }
+        return entries;
+      };
+      for (let offset = 0; offset < folders.length; offset += READ_CONCURRENCY) {
+        // Drain every started check before reporting the first failure in listing order.
+        const batch = await Promise.allSettled(folders.slice(offset, offset + READ_CONCURRENCY).map(inspectFolder));
+        const failed = batch.find(entry => entry.status === 'rejected');
+        if (failed) throw failed.reason;
+        for (const entry of batch) results.push(...entry.value);
       }
-      return results.sort((left, right) => left.descriptor.datasetId.localeCompare(right.descriptor.datasetId, 'en'));
+      await verifyAccount({accountId});
+      for (const entry of results) rememberFolder({id: entry.folderId, name: entry.displayName}, accountId);
+      return results.sort((left, right) => left.descriptor.datasetId.localeCompare(right.descriptor.datasetId, 'en')
+        || left.folderId.localeCompare(right.folderId, 'en') || left.descriptorFileId.localeCompare(right.descriptorFileId, 'en'));
     } catch (error) {
       return handleError(error);
     }
+  }
+
+  async function checkedSelection(selection) {
+    if (!selection || typeof selection !== 'object') throw productError('invalid', 'Die Datensatzauswahl fehlt.');
+    const folderId = assertId(selection.folderId, 'Die Drive-Ordner-ID');
+    const descriptorFileId = assertId(selection.descriptorFileId, 'Die Beschreibungsdatei-ID');
+    const descriptor = assertDescriptor(selection.descriptor);
+    if (typeof selection.accountId !== 'string' || !selection.accountId
+      || typeof selection.folderVersion !== 'string' || !selection.folderVersion) {
+      throw productError('stale', 'Bitte die Lernbereiche erneut suchen.');
+    }
+    await verifyAccount({accountId: selection.accountId});
+    const binding = {accountId: selection.accountId, folderId, descriptorFileId, datasetId: descriptor.datasetId};
+    const folder = await verifyFolder(binding);
+    if (folder.version !== selection.folderVersion) throw productError('stale', 'Der Lernbereich wurde inzwischen geändert. Bitte erneut suchen.');
+    const read = await readDescriptor(binding);
+    if (await digest(descriptor) !== read.hash) throw productError('stale', 'Die Datensatzauswahl wurde inzwischen geändert.');
+    await verifyAccount(binding);
+    return {binding, folder};
+  }
+
+  function managementGuard(isAllowed) {
+    if (typeof isAllowed !== 'function') throw productError('invalid', 'Die Freigabeprüfung fehlt.');
+    return () => {
+      if (!isAllowed()) throw productError('locked', 'Bitte den Erwachsenenbereich erneut öffnen.');
+    };
+  }
+
+  function assertSetupComplete(folderId) {
+    if (commands.getState()?.datasetSetup?.folderId === folderId || settingUpFolders.has(folderId)) {
+      throw productError('binding', 'Dieser Lernbereich wird noch eingerichtet. Bitte die Einrichtung zuerst abschließen.');
+    }
+  }
+
+  async function renameDataset(selection, name, {isAllowed = () => true} = {}) {
+    try {
+      const assertAllowed = managementGuard(isAllowed);
+      assertAllowed();
+      if (typeof name !== 'string' || !name.trim() || name.trim().length > 80) throw productError('invalid', 'Bitte einen Namen mit höchstens 80 Zeichen eingeben.');
+      const {binding, folder} = await checkedSelection(selection);
+      const beforeWrite = () => { assertAllowed(); assertSetupComplete(folder.id); };
+      beforeWrite();
+      const updated = await drive.updateDatasetFolder({id: folder.id, datasetId: binding.datasetId,
+        expectedVersion: selection.folderVersion, name: name.trim(), beforeWrite});
+      await verifyAccount(binding);
+      assertAllowed();
+      assertMetadata(updated, {id: folder.id, kind: 'dataset-folder', datasetId: binding.datasetId, mimeType: FOLDER_MIME_TYPE});
+      if (updated.name !== name.trim()) throw productError('stale', 'Die Umbenennung ist noch nicht bestätigt.');
+      rememberFolder(updated, binding.accountId);
+      return {...structuredClone(selection), displayName: updated.name, folderVersion: updated.version};
+    } catch (error) { return handleError(error); }
+  }
+
+  async function trashDataset(selection, {isAllowed = () => true} = {}) {
+    let folderId = null, ownsLock = false;
+    try {
+      const assertAllowed = managementGuard(isAllowed);
+      assertAllowed();
+      const checked = await checkedSelection(selection);
+      folderId = checked.folder.id;
+      const beforeWrite = () => {
+        assertAllowed();
+        assertSetupComplete(folderId);
+        const current = commands.getState();
+        if (current?.binding?.folderId === folderId || joiningFolders.has(folderId)) {
+          throw productError('binding', 'Der aktuell verbundene Lernbereich kann nicht in den Papierkorb verschoben werden.');
+        }
+      };
+      beforeWrite();
+      if (trashingFolders.has(folderId)) throw productError('stale', 'Dieser Lernbereich wird bereits entfernt.');
+      trashingFolders.add(folderId);
+      ownsLock = true;
+      const updated = await drive.updateDatasetFolder({id: folderId, datasetId: checked.binding.datasetId,
+        expectedVersion: selection.folderVersion, trashed: true, beforeWrite});
+      await verifyAccount(checked.binding);
+      assertAllowed();
+      if (updated?.id !== folderId || updated.trashed !== true) throw productError('stale', 'Der Papierkorb ist noch nicht bestätigt.');
+      datasetNames.delete(`${checked.binding.accountId}:${folderId}`);
+      return {folderId, trashed: true};
+    } catch (error) { return handleError(error); }
+    finally { if (ownsLock) trashingFolders.delete(folderId); }
   }
 
   async function prepareDatasetSetup(name) {
@@ -480,6 +590,15 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
   async function performDatasetSetup() {
     const setup = commands.getState()?.datasetSetup;
     if (setup === null || setup === undefined) return false;
+    if (trashingFolders.has(setup.folderId) || settingUpFolders.has(setup.folderId)) {
+      throw productError('stale', 'Der Lernbereich wird bereits geändert.');
+    }
+    settingUpFolders.add(setup.folderId);
+    try { return await publishDatasetSetup(setup); }
+    finally { settingUpFolders.delete(setup.folderId); }
+  }
+
+  async function publishDatasetSetup(setup) {
     const accountId = await drive.accountId();
     if (accountId !== setup.accountId) {
       throw productError('binding', 'Die Drive-Einrichtung gehört zu einem anderen Google-Konto.');
@@ -595,15 +714,27 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
   }
 
   async function joinDataset(selection, decision) {
+    let joiningFolderId = null;
     try {
+      const startingState = commands.getState();
       if (!['preview', 'confirm'].includes(decision)) {
         throw productError('invalid', 'Die Auswahlentscheidung ist ungültig.');
       }
       if (!selection || typeof selection !== 'object') throw productError('invalid', 'Die Datensatzauswahl fehlt.');
+      // Only null-state previews have an approval ID without a safety copy.
+      // A completed local setup invalidates that approval before any new read.
+      if (startingState !== null && decision === 'confirm' && selection.previewId && !selection.safetyCopyId) {
+        throw productError('stale', 'Dieses Gerät wurde inzwischen eingerichtet. Bitte die Auswahl erneut prüfen.');
+      }
       const folderId = assertId(selection.folderId, 'Die Drive-Ordner-ID');
+      if (trashingFolders.has(folderId)) throw productError('stale', 'Dieser Lernbereich wird gerade entfernt.');
+      if (joiningFolders.has(folderId)) throw productError('stale', 'Dieser Lernbereich wird bereits geladen.');
+      joiningFolderId = folderId;
+      joiningFolders.add(folderId);
       const descriptorFileId = assertId(selection.descriptorFileId, 'Die Beschreibungsdatei-ID');
       const selectedDescriptor = assertDescriptor(selection.descriptor);
       const accountId = await drive.accountId();
+      if (selection.accountId !== undefined && selection.accountId !== accountId) throw productError('binding', 'Die Auswahl gehört zu einem anderen Google-Konto.');
       const folder = assertMetadata(await drive.metadata(folderId), {
         id: folderId, kind: 'dataset-folder', datasetId: selectedDescriptor.datasetId, mimeType: FOLDER_MIME_TYPE,
       });
@@ -615,16 +746,59 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
       }
       const root = await rootEpochFor(folderId, descriptorRead.descriptor);
       const current = commands.getState();
-      if (current === null) throw productError('not-ready', 'Der Vokabeltrainer ist noch nicht eingerichtet.');
-      if(current.binding!==null)throw productError('binding','Dieser Browser ist bereits verbunden.');
+      if (startingState === null && current !== null) throw productError('stale', 'Dieses Gerät wurde inzwischen eingerichtet.');
       const binding={accountId,folderId,descriptorFileId,datasetId:selectedDescriptor.datasetId};
+      if (current === null) {
+        const seed = commands.prepareInitialJoin({binding, ledger: {
+          descriptor: descriptorRead.descriptor, events: [], epochs: [root.epoch], snapshots: [], historicalEpochs: [],
+        }});
+        let approved = null;
+        if (decision === 'confirm' && selection.previewId) {
+          approved = joinPreviews.get(selection.previewId);
+          if (!approved?.initial || approved.descriptorHash !== descriptorRead.hash
+            || approved.folderVersion !== folder.version || approved.selectionVersion !== selection.folderVersion
+            || await digest(approved.binding) !== await digest(binding)) {
+            throw productError('stale', 'Die Datensatzauswahl wurde geändert. Bitte eine neue Vorschau öffnen.');
+          }
+        }
+        const remoteState = await inspectJoinedDataset(seed, binding, descriptorRead.descriptor, root.epoch, approved?.remoteState);
+        const remoteHash = await joinedLedgerHash(remoteState.ledger);
+        if (approved && approved.remoteHash !== remoteHash) {
+          throw productError('stale', 'Die Datensatzauswahl wurde geändert. Bitte eine neue Vorschau öffnen.');
+        }
+        remoteState.knownFiles = upsertKnown(remoteState.knownFiles, {fileId: descriptorFileId, contentHash: descriptorRead.hash, kind: 'dataset'});
+        remoteState.knownFiles = upsertKnown(remoteState.knownFiles, {fileId: root.fileId, contentHash: root.hash, kind: 'epoch'});
+        const previewId = decision === 'preview'
+          ? await digest({binding, descriptorHash: descriptorRead.hash, folderVersion: folder.version, remoteHash, local: null})
+          : selection.previewId ?? null;
+        const freshFolder = await verifyFolder(binding);
+        await verifyAccount(binding);
+        if (freshFolder.version !== folder.version) throw productError('stale', 'Der Lernbereich wurde während des Ladens geändert.');
+        if (commands.getState() !== null) throw productError('stale', 'Dieses Gerät wurde inzwischen eingerichtet.');
+        const preview = {kind: 'preview', datasetId: binding.datasetId, name: freshFolder.name || descriptorRead.descriptor.name,
+          localEventCount: 0, remoteBootstrapEventCount: remoteState.ledger.events.length,
+          requiresSafetyCopy: false, previewId, safetyCopyId: null};
+        if (decision === 'preview') {
+          joinPreviews.clear();
+          joinPreviews.set(previewId, {initial: true, binding, descriptorHash: descriptorRead.hash,
+            folderVersion: freshFolder.version, selectionVersion: selection.folderVersion,
+            remoteHash, remoteState: structuredClone(remoteState)});
+        }
+        if (decision === 'confirm') {
+          await commands.installInitialJoin(remoteState, {beforeInstall: () => verifyAccount(binding)});
+          joinPreviews.clear();
+          publish('pending', 'Der Lernbereich ist verbunden; der Abgleich wird fortgesetzt.');
+        }
+        return preview;
+      }
+      if(current.binding!==null)throw productError('binding','Dieser Browser ist bereits verbunden.');
       const sameDataset = current.ledger.descriptor.datasetId === descriptorRead.descriptor.datasetId;
       const nonempty = current.ledger.events.length > 0 || current.outboxEventIds.length > 0
         || current.pendingPackets.length > 0 || Object.keys(current.rounds).length > 0;
       const preview = {
         kind: 'preview',
         datasetId: descriptorRead.descriptor.datasetId,
-        name: descriptorRead.descriptor.name,
+        name: folder.name || descriptorRead.descriptor.name,
         localEventCount: current.ledger.events.length,
         remoteBootstrapEventCount: 0,
         requiresSafetyCopy: !sameDataset && nonempty,
@@ -718,10 +892,13 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
         next.knownFiles = upsertKnown(next.knownFiles, {fileId: root.fileId, contentHash: epochHash, kind: 'epoch'});
       });
       if(selection.previewId)joinPreviews.delete(selection.previewId);
+      rememberFolder(folder, accountId);
       publish('pending', 'Der Datensatz ist verbunden und wird geladen.');
       return preview;
     } catch (error) {
       return handleError(error);
+    } finally {
+      if (joiningFolderId !== null) joiningFolders.delete(joiningFolderId);
     }
   }
 
@@ -1201,12 +1378,18 @@ export function createProductSync({drive, store, commands, now, id, onStatus, co
     return structuredClone(reconcileStatus());
   }
 
-  const unsubscribe = commands.subscribe(() => reconcileStatus(true));
+  const unsubscribe = commands.subscribe(() => {
+    if (commands.getState() !== null) {
+      for (const [previewId, preview] of joinPreviews) if (preview.initial) joinPreviews.delete(previewId);
+    }
+    reconcileStatus(true);
+  });
 
   function destroy() {
     unsubscribe();
     joinPreviews.clear();
   }
 
-  return {discover, createDataset, joinDataset, sync, syncLearning:sync, retry, getStatus, destroy};
+  return {discover, createDataset, joinDataset, renameDataset, trashDataset, getDatasetName,
+    sync, syncLearning:sync, retry, getStatus, destroy};
 }

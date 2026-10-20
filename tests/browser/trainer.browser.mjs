@@ -55,7 +55,7 @@ test('C2 rejected required precache install keeps the active offline app and for
     assert.equal(await page.evaluate(() => devicePixelRatio), 2);
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null, null, {timeout: 10_000});
     await page.evaluate(async () => { await caches.open('synthetic-foreign-cache'); });
-    harness.setServiceWorkerVersion('v54');
+    harness.setServiceWorkerVersion('v55');
     harness.failNextPrecacheAsset('styles.css');
     await page.evaluate(async () => {
       const registration = await navigator.serviceWorker.getRegistration('./');
@@ -67,7 +67,7 @@ test('C2 rejected required precache install keeps the active offline app and for
     });
     const cacheNames = await page.evaluate(async () => (await caches.keys()).sort());
     assert.equal(cacheNames.includes('synthetic-foreign-cache'), true, JSON.stringify(cacheNames));
-    assert.equal(cacheNames.includes('vokabeltrainer-product:%2Ftrainer%2F:v53'), true, JSON.stringify(cacheNames));
+    assert.equal(cacheNames.includes('vokabeltrainer-product:%2Ftrainer%2F:v54'), true, JSON.stringify(cacheNames));
     await context.setOffline(true);
     await page.reload({waitUntil: 'domcontentloaded'});
     await page.locator('#profile-list').waitFor();
@@ -1834,13 +1834,14 @@ test('trainer unbound discovery, create and join require an explicit reconnect a
     await joining.page.goto(harness.baseUrl);
     await setupPractice(joining.page, {profile: 'Bea'});
     await openSync(joining);
-    await reconnect(joining);
     joining.controls.rejectNextAbout401 = true;
-    await joining.page.getByRole('button', {name: 'Vorhandenen Lernbereich verwenden', exact: true}).click();
+    // Connecting now starts discovery automatically. Observe that request's
+    // auth failure before trying another user action against its old view.
+    await joining.page.getByRole('button', {name: 'Mit Google verbinden', exact: true}).click();
     await joining.page.locator('[data-sync-status]').filter({hasText: 'Mit Google verbinden'}).waitFor();
     await reconnect(joining);
-    await joining.page.getByRole('button', {name: 'Vorhandenen Lernbereich verwenden', exact: true}).click();
     await joining.page.getByRole('button', {name: 'Diesen Lernbereich prüfen', exact: true}).waitFor();
+    await joining.page.locator('[aria-labelledby="sync-title"][aria-busy="false"]').waitFor();
 
     joining.controls.rejectNextAbout401 = true;
     await joining.page.getByRole('button', {name: 'Diesen Lernbereich prüfen', exact: true}).click();
@@ -1853,6 +1854,7 @@ test('trainer unbound discovery, create and join require an explicit reconnect a
     await setupPractice(creating.page, {profile: 'Cem'});
     await openSync(creating);
     await reconnect(creating);
+    await creating.page.locator('[aria-labelledby="sync-title"][aria-busy="false"]').waitFor();
     creating.controls.rejectNextAbout401 = true;
     await creating.page.getByRole('button', {name: 'Neuen Lernbereich anlegen', exact: true}).click();
     await creating.page.locator('[data-sync-status]').filter({hasText: 'Mit Google verbinden'}).waitFor();
@@ -2297,7 +2299,7 @@ test('trainer offline update UI blocks typing and pending answers before control
   try {
     await page.goto(harness.baseUrl);
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null, null, {timeout: 10_000});
-    harness.setServiceWorkerVersion('v54', {activationDelayMs: 750});
+    harness.setServiceWorkerVersion('v55', {activationDelayMs: 750});
     await page.evaluate(async () => {
       const registration = await navigator.serviceWorker.getRegistration('./');
       await registration.update();
@@ -2355,8 +2357,8 @@ test('trainer offline update UI blocks typing and pending answers before control
     const beforeReload = await productState(page);
     assert.equal(beforeReload.ledger.events.some(({type}) => type === 'round.completed' || type === 'round.abandoned'), false);
     assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product:')).sort()), [
-      'vokabeltrainer-product:%2Ftrainer%2F:v53',
       'vokabeltrainer-product:%2Ftrainer%2F:v54',
+      'vokabeltrainer-product:%2Ftrainer%2F:v55',
     ]);
     const navigation = page.waitForNavigation();
     await updateButton.click();
@@ -2379,7 +2381,7 @@ test('trainer offline update UI blocks typing and pending answers before control
       .map(({points, level, avatar}) => ({points, level, avatar}));
     console.log(`controlled update retained profiles: ${JSON.stringify(retainedProfiles)}`);
     assert.deepEqual(await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('vokabeltrainer-product:')).sort()), [
-      'vokabeltrainer-product:%2Ftrainer%2F:v54',
+      'vokabeltrainer-product:%2Ftrainer%2F:v55',
     ]);
   } finally {
     await context.close();

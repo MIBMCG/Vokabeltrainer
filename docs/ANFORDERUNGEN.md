@@ -1,5 +1,33 @@
 # Anforderungen und Entscheidungen
 
+## Direkter Einstieg und Lernbereichsverwaltung (20.10.2026)
+
+Der Nutzer beauftragt und bestätigt den folgenden Ablauf ausdrücklich:
+
+- Beim ersten Start vorhandenen Lernbereich direkt verbinden oder einen neuen
+  einrichten. Der Bestandsweg benötigt keine vorläufigen Kinder, Lektionen oder Wörter.
+- Nach Google-Anmeldung vorhandene Bereiche automatisch zur Auswahl anzeigen,
+  den gewählten Bestand unmittelbar laden und danach nur die lokale Eltern-PIN
+  einrichten. Vorhandene Serversitzungen weiterverwenden.
+- In der Elternansicht vorhandene Lernbereiche umbenennen und nach konkreter
+  Bestätigung in den Google-Drive-Papierkorb verschieben. Der gerade verwendete
+  Bereich bleibt vor dem Löschen geschützt; keine endgültige Löschung.
+- Suche und Übernahme beschleunigen, bereits geprüfte unveränderte Daten nur
+  innerhalb der bisherigen Bindungs- und Versionsgrenzen wiederverwenden.
+
+Die bestätigte Bedeutung von „Lernbereich“ ist der gemeinsame Drive-Datensatz
+einschließlich Profilen, Lernständen und Käufen. Lektionen bleiben dessen
+untergeordnete Vokabelsammlungen. Der Anzeigename wird getrennt vom
+unveränderlichen Descriptor geführt. Bestehende Konten, Datenformate,
+Kaufautorität, Punkte, Sicherungen und lokale Änderungen bleiben erhalten.
+[Bestätigter Entwurf](superpowers/specs/2026-10-20-lernbereiche-design.md) und
+[Umsetzungsplan](superpowers/plans/2026-10-20-lernbereiche.md).
+
+Der Auftrag betrifft zunächst die lokale Umsetzung mit Prüfungen. Eine neue
+Bereitstellung der laufenden LejeAdventure-App wird separat übergeben.
+Die lokale Implementierung und ihre endgültigen Prüfungen sind abgeschlossen;
+[Nachweise und Grenzen](reports/2026-10-20-lernbereiche.md).
+
 ## Neuer Folgepunkt: Vokabeln einfacher hinzufügen (29.09.2026)
 
 Der Nutzer möchte das Hinzufügen neuer Vokabeln vereinfachen und ausdrücklich

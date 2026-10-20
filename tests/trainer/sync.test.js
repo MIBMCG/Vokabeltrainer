@@ -77,6 +77,17 @@ class SyntheticDrive {
   }
 
   async accountId() { this.calls.push(['accountId']); return this.account; }
+
+  async updateDatasetFolder({id, datasetId, expectedVersion, name, trashed, beforeWrite = () => {}}) {
+    const meta = this.files.get(id)?.meta;
+    this.calls.push(['updateDatasetFolder', {id, datasetId, expectedVersion, name, trashed}]);
+    if (!meta || meta.version !== expectedVersion) throw new DriveError('stale', 'synthetic changed');
+    beforeWrite();
+    if (name !== undefined) meta.name = name;
+    if (trashed !== undefined) meta.trashed = trashed;
+    meta.version = String(Number(meta.version) + 1);
+    return structuredClone(meta);
+  }
   async generateId() { const value = `drive-${++this.sequence}`; this.calls.push(['generateId', value]); return value; }
 
   async listFiles(query) {
@@ -202,6 +213,314 @@ function listManifestBeforePart(drive, uploads) {
   drive.files.set(manifestId, manifest);
   drive.files.set(partId, part);
 }
+
+async function emptyJoining(drive, commerce = null) {
+  const store = memoryStore(null);
+  const commands = await createCommands({store, now: () => new Date('2026-10-20T10:00:00Z'),
+    id: sequenceIds('empty-command'), deviceId: 'actual-empty-device', onChange() {}});
+  const sync = createProductSync({drive, store, commands, commerce, now: () => new Date('2026-10-20T10:00:00Z'),
+    id: sequenceIds('empty-sync'), onStatus() {}});
+  return {store, commands, sync};
+}
+
+test('null-state join stages the complete remote collection and installs once with no fake entities', async () => {
+  const remote = await setupSyntheticSync();
+  const joining = await emptyJoining(remote.drive);
+  const [selection] = await joining.sync.discover();
+  const preview = await joining.sync.joinDataset(selection, 'preview');
+  assert.equal(preview.requiresSafetyCopy, false);
+  assert.equal(preview.remoteBootstrapEventCount, remote.commands.getState().ledger.events.length);
+  assert.equal(joining.commands.getState(), null);
+  assert.equal(joining.store.snapshot(), null);
+  await joining.sync.joinDataset(selection, 'confirm');
+  const joined = joining.commands.getState();
+  assert.equal(joined.deviceId, 'actual-empty-device');
+  assert.equal(joined.pinVerifier, null);
+  assert.deepEqual(joined.ledger, remote.commands.getState().ledger);
+  assert.equal(joined.outboxEventIds.length, 0);
+});
+
+test('null-state join leaves no installation after remote failure or concurrent setup', async () => {
+  const remote = await setupSyntheticSync();
+  const joining = await emptyJoining(remote.drive);
+  const [selection] = await joining.sync.discover();
+  const packet = [...remote.drive.files.values()].find(file => file.meta.appProperties.kind === 'packet');
+  remote.drive.onRead = async fileId => { if (fileId === packet.meta.id) throw new DriveError('network', 'synthetic failed packet'); };
+  await assert.rejects(joining.sync.joinDataset(selection, 'confirm'), {code: 'network'});
+  assert.equal(joining.store.snapshot(), null);
+  assert.equal(joining.commands.getState(), null);
+  remote.drive.onRead = async fileId => {
+    if (fileId !== packet.meta.id) return;
+    remote.drive.onRead = null;
+    await joining.commands.setup({name: 'Parallel lokal', timeZone: 'Europe/Berlin'});
+  };
+  await assert.rejects(joining.sync.joinDataset(selection, 'confirm'), {code: 'stale'});
+  assert.equal(joining.commands.getState().ledger.descriptor.name, 'Parallel lokal');
+  assert.equal(joining.commands.getState().binding, null);
+});
+
+test('null-state join rejects an account switch in the final root read and at queued installation', async () => {
+  for (const boundary of ['folder', 'install']) {
+    const remote = await setupSyntheticSync();
+    const joining = await emptyJoining(remote.drive);
+    const [selection] = await joining.sync.discover();
+    if (boundary === 'folder') {
+      let folderChecks = 0;
+      remote.drive.onMetadata = async fileId => {
+        if (fileId === selection.folderId && ++folderChecks === 3) remote.drive.account = 'account-b';
+      };
+    } else {
+      const install = joining.commands.installInitialJoin.bind(joining.commands);
+      joining.commands.installInitialJoin = (state, options) => {
+        remote.drive.account = 'account-b';
+        return install(state, options);
+      };
+    }
+    await assert.rejects(joining.sync.joinDataset(selection, 'confirm'), {code: 'binding'});
+    assert.equal(joining.commands.getState(), null);
+    assert.equal(joining.store.snapshot(), null);
+  }
+});
+
+test('a cached null preview cannot replace setup completed before confirmation', async () => {
+  const remote = await setupSyntheticSync();
+  const joining = await emptyJoining(remote.drive);
+  const [selection] = await joining.sync.discover();
+  const preview = await joining.sync.joinDataset(selection, 'preview');
+  await joining.commands.setup({name: 'Einrichtung bleibt', timeZone: 'Europe/Berlin'});
+  const before = joining.commands.getState();
+  await assert.rejects(joining.sync.joinDataset({...selection, previewId: preview.previewId}, 'confirm'), {code: 'stale'});
+  assert.deepEqual(joining.commands.getState(), before);
+});
+
+test('cached null previews stay bound to account, descriptor, folder version and freshly read learning', async () => {
+  for (const change of ['account', 'descriptor', 'folder-version', 'learning']) {
+    const remote = await setupSyntheticSync();
+    const joining = await emptyJoining(remote.drive);
+    const [selection] = await joining.sync.discover();
+    const preview = await joining.sync.joinDataset(selection, 'preview');
+    const selected = {...structuredClone(selection), previewId: preview.previewId};
+    if (change === 'account') remote.drive.account = 'another-account';
+    if (change === 'descriptor') selected.descriptor.name = 'Andere Beschreibung';
+    if (change === 'folder-version') remote.drive.files.get(selection.folderId).meta.version = '2';
+    if (change === 'learning') {
+      await remote.commands.revise({entityType: 'profile', entityId: 'new-after-preview', expectedHeads: [],
+        value: {name: 'Neu auf dem anderen Gerät', archived: false}});
+      await remote.sync.sync();
+    }
+    await assert.rejects(joining.sync.joinDataset(selected, 'confirm'), {code: change === 'account' ? 'binding' : 'stale'});
+    assert.equal(joining.commands.getState(), null);
+    assert.equal(joining.store.snapshot(), null);
+  }
+});
+
+test('dataset creation and pending resume protect their published root before binding exists', async () => {
+  for (const interrupted of [false, true]) {
+    const drive = new SyntheticDrive();
+    const commands = await makeCommands(productState(createFixture().base));
+    const sync = createProductSync({drive, store: {}, commands, now: () => new Date('2026-10-20T10:00:00Z'),
+      id: sequenceIds('protected-setup'), onStatus() {}});
+    let signal, release;
+    const started = new Promise(resolve => { signal = resolve; });
+    const gate = new Promise(resolve => { release = resolve; });
+    const put = drive.putJson.bind(drive);
+    drive.putJson = async input => {
+      const result = await put(input);
+      if (input.appProperties.kind === 'dataset') {
+        if (interrupted) throw new DriveError('network', 'synthetic publication interrupted');
+        signal(); await gate;
+      }
+      return result;
+    };
+    const creation = sync.createDataset('Geschützte Einrichtung');
+    const settled = creation.then(value => ({value}), error => ({error}));
+    if (interrupted) await assert.rejects(creation, {code: 'network'});
+    else await started;
+    try {
+      assert.equal(commands.getState().binding, null);
+      const [selection] = await sync.discover();
+      assert.equal(selection.folderId, commands.getState().datasetSetup.folderId);
+      await assert.rejects(sync.trashDataset(selection), {code: 'binding'});
+      assert.equal(drive.files.get(selection.folderId).meta.trashed, false);
+      assert.equal(commands.getState().datasetSetup.folderId, selection.folderId);
+    } finally { release(); }
+    if (interrupted) {
+      drive.putJson = put;
+      await sync.retry();
+    } else {
+      const result = await settled;
+      assert.equal(result.error, undefined);
+    }
+    assert.ok(commands.getState().binding);
+    assert.equal(commands.getState().datasetSetup, null);
+  }
+});
+
+test('renaming an interrupted setup is rejected without changing the persisted publication name', async () => {
+  const drive = new SyntheticDrive();
+  const commands = await makeCommands(productState(createFixture().base));
+  const sync = createProductSync({drive, store: {}, commands, now: () => new Date('2026-10-20T10:00:00Z'),
+    id: sequenceIds('protected-rename'), onStatus() {}});
+  drive.loseUploadKind = 'dataset';
+  await assert.rejects(sync.createDataset('Name für Wiederaufnahme'), {code: 'network'});
+  const before = commands.getState();
+  const [selection] = await sync.discover();
+  await assert.rejects(sync.renameDataset(selection, 'Nicht während Einrichtung'), {code: 'binding'});
+  assert.deepEqual(commands.getState(), before);
+  assert.equal(drive.files.get(selection.folderId).meta.name, before.datasetSetup.name);
+  await sync.retry();
+  assert.equal(commands.getState().binding.folderId, selection.folderId);
+  assert.equal(commands.getState().datasetSetup, null);
+  const [completed] = await sync.discover();
+  await sync.renameDataset(completed, 'Nach Einrichtung erlaubt');
+  assert.equal(sync.getDatasetName(), 'Nach Einrichtung erlaubt');
+});
+
+test('dataset display rename preserves descriptor and stale, foreign, active trash selections are rejected', async () => {
+  const remote = await setupSyntheticSync();
+  const original = remote.commands.getState();
+  const [selection] = await remote.sync.discover();
+  assert.equal(selection.displayName, 'Familienwortschatz');
+  assert.equal(selection.accountId, 'account-a');
+  assert.equal(selection.folderVersion, '1');
+  const renamed = await remote.sync.renameDataset(selection, '  Neue Insel  ');
+  assert.equal(renamed.displayName, 'Neue Insel');
+  assert.equal(remote.sync.getDatasetName(), 'Neue Insel');
+  assert.deepEqual(remote.commands.getState(), original);
+  await assert.rejects(remote.sync.renameDataset(selection, 'Veraltet'), {code: 'stale'});
+  await assert.rejects(remote.sync.trashDataset(renamed), {code: 'binding'});
+  assert.equal(remote.drive.files.get(selection.folderId).meta.trashed, false);
+  const unbound = await emptyJoining(remote.drive);
+  const [fresh] = await unbound.sync.discover();
+  remote.drive.account = 'account-b';
+  await assert.rejects(unbound.sync.trashDataset(fresh), {code: 'binding'});
+  remote.drive.account = 'account-a';
+  remote.drive.files.get(fresh.folderId).meta.appProperties.app = 'foreign-app';
+  await assert.rejects(unbound.sync.trashDataset(fresh), {code: 'binding'});
+  remote.drive.files.get(fresh.folderId).meta.appProperties.app = 'vokabeltrainer-product';
+  await unbound.sync.trashDataset(fresh);
+  assert.equal(remote.drive.files.get(fresh.folderId).meta.trashed, true);
+  assert.deepEqual(await unbound.sync.discover(), []);
+  await assert.rejects(remote.sync.retry(), {code: 'missing'});
+  assert.deepEqual(remote.commands.getState(), original);
+});
+
+test('dataset management validates name bounds and account freshness before issuing a folder write', async () => {
+  const remote = await setupSyntheticSync();
+  const joining = await emptyJoining(remote.drive);
+  const [selection] = await joining.sync.discover();
+  for (const name of ['', ' ', 'a'.repeat(81)]) {
+    await assert.rejects(joining.sync.renameDataset(selection, name), {code: 'invalid'});
+  }
+  remote.drive.onRead = async fileId => {
+    if (fileId === selection.descriptorFileId) remote.drive.account = 'another-account';
+  };
+  await assert.rejects(joining.sync.renameDataset(selection, 'Neuer Name'), {code: 'binding'});
+  assert.equal(remote.drive.calls.filter(([method]) => method === 'updateDatasetFolder').length, 0);
+  assert.equal(joining.store.snapshot(), null);
+});
+
+test('management checks the current unlock guard after preflight and at the remote write boundary', async () => {
+  for (const boundary of ['preflight', 'write']) {
+    for (const action of ['rename', 'trash']) {
+      const remote = await setupSyntheticSync();
+      const joining = await emptyJoining(remote.drive);
+      const [selection] = await joining.sync.discover();
+      let allowed = true;
+      if (boundary === 'preflight') {
+        remote.drive.onRead = async fileId => {
+          if (fileId === selection.descriptorFileId) allowed = false;
+        };
+      } else {
+        const update = remote.drive.updateDatasetFolder.bind(remote.drive);
+        remote.drive.updateDatasetFolder = async input => { allowed = false; return update(input); };
+      }
+      const options = {isAllowed: () => allowed};
+      await assert.rejects(action === 'rename'
+        ? joining.sync.renameDataset(selection, 'Gesperrt', options)
+        : joining.sync.trashDataset(selection, options), {code: 'locked'});
+      assert.equal(remote.drive.files.get(selection.folderId).meta.name, selection.displayName);
+      assert.equal(remote.drive.files.get(selection.folderId).meta.trashed, false);
+      assert.equal(joining.commands.getState(), null);
+    }
+  }
+});
+
+test('a remote trashed root preserves pending local learning and its binding', async () => {
+  const remote = await setupSyntheticSync();
+  await remote.commands.revise({entityType: 'profile', entityId: 'offline-profile', expectedHeads: [],
+    value: {name: 'Noch lokal', archived: false}});
+  const before = remote.commands.getState();
+  remote.drive.files.get(before.binding.folderId).meta.trashed = true;
+  await assert.rejects(remote.sync.retry(), {code: 'missing'});
+  assert.deepEqual(remote.commands.getState(), before);
+  assert.ok(before.outboxEventIds.length > 0);
+});
+
+test('concurrent first joins install one complete winner without a partial or replacement save', async () => {
+  const remote = await setupSyntheticSync();
+  const joining = await emptyJoining(remote.drive);
+  const otherSync = createProductSync({drive: remote.drive, store: joining.store, commands: joining.commands,
+    now: () => new Date('2026-10-20T10:00:00Z'), id: sequenceIds('second-join'), onStatus() {}});
+  const [selection] = await joining.sync.discover();
+  const results = await Promise.allSettled([
+    joining.sync.joinDataset(selection, 'confirm'), otherSync.joinDataset(selection, 'confirm'),
+  ]);
+  assert.equal(results.filter(result => result.status === 'fulfilled').length, 1);
+  assert.equal(results.find(result => result.status === 'rejected').reason.code, 'stale');
+  assert.deepEqual(joining.commands.getState().ledger, remote.commands.getState().ledger);
+  assert.equal(joining.commands.getState().deviceId, 'actual-empty-device');
+});
+
+test('a rejected duplicate trash keeps the first operation lock until its network request settles', async () => {
+  const remote = await setupSyntheticSync();
+  const joining = await emptyJoining(remote.drive);
+  const [selection] = await joining.sync.discover();
+  let release, signal;
+  const gate = new Promise(resolve => { release = resolve; });
+  const started = new Promise(resolve => { signal = resolve; });
+  const update = remote.drive.updateDatasetFolder.bind(remote.drive);
+  remote.drive.updateDatasetFolder = async input => { signal(); await gate; return update(input); };
+  const trashing = joining.sync.trashDataset(selection);
+  await started;
+  try {
+    await assert.rejects(joining.sync.trashDataset(selection), {code: 'stale'});
+    await assert.rejects(joining.sync.joinDataset(selection, 'confirm'), {code: 'stale'});
+    assert.equal(joining.commands.getState(), null);
+  } finally { release(); await trashing; }
+});
+
+test('discovery overlaps at most four folder checks and drains started work before a deterministic failure', async () => {
+  const drive = new SyntheticDrive();
+  const ledger = createFixture().base;
+  for (let n = 7; n >= 0; n -= 1) {
+    const datasetId = `parallel-${n}`;
+    const folderId = `folder-${n}`;
+    await drive.createFolder({id: folderId, name: `Bereich ${n}`, appProperties: {app: 'vokabeltrainer-product', kind: 'dataset-folder', datasetId}});
+    drive.addJson({id: `descriptor-${n}`, parentId: folderId, appProperties: {app: 'vokabeltrainer-product', kind: 'dataset', datasetId}, value: {...ledger.descriptor, datasetId}});
+  }
+  const joining = await emptyJoining(drive);
+  let running = 0, peak = 0, finished = 0;
+  drive.onRead = async () => {
+    running += 1; peak = Math.max(peak, running);
+    await new Promise(resolve => setTimeout(resolve, 5));
+    running -= 1; finished += 1;
+  };
+  const selections = await joining.sync.discover();
+  assert.equal(peak, 4);
+  assert.equal(finished, 8);
+  assert.deepEqual(selections.map(s => s.descriptor.datasetId), Array.from({length: 8}, (_, n) => `parallel-${n}`));
+  running = 0; finished = 0;
+  drive.onRead = async fileId => {
+    running += 1;
+    await new Promise(resolve => setTimeout(resolve, fileId === 'descriptor-7' ? 0 : 10));
+    running -= 1; finished += 1;
+    if (fileId === 'descriptor-7') throw new DriveError('network', 'first failure');
+  };
+  await assert.rejects(joining.sync.discover(), {code: 'network'});
+  assert.equal(running, 0);
+  assert.equal(finished, 4);
+});
 
 test('one download reads each freshly checked snapshot file only once', async () => {
   const ledger = createFixture().base;
@@ -503,6 +822,8 @@ test('join staging transfers the commerce anchor before a late legacy epoch can 
     [configRef.id, config],
     ...activation.uploads.map(({ref, value}) => [ref.id, value]),
   ]);
+  let joinHead = null, joinOffline = false;
+  const commerceReads = [];
   const commerce = createCommerceIntegration({
     transportFor: async () => ({
       binding, descriptorHash,
@@ -511,9 +832,12 @@ test('join staging transfers the commerce anchor before a late legacy epoch can 
           purchaseApp: 'vokabeltrainer-purchases', purchaseConfigId: configRef.id,
           purchaseConfigSha256: configRef.sha256,
         }};
-        return {properties: {}};
+        if (joinOffline) throw new DriveError('network', 'synthetic coordinator offline');
+        return {properties: joinHead === null ? {} : {
+          purchaseHeadId: joinHead.id, purchaseHeadSha256: joinHead.sha256,
+        }};
       },
-      async readImmutable(ref) { return structuredClone(values.get(ref.id)); },
+      async readImmutable(ref) { commerceReads.push(ref.id); return structuredClone(values.get(ref.id)); },
     }),
     now: () => new Date('2026-09-26T12:00:00.000Z'), id: sequenceIds('join-discover'),
   });
@@ -556,6 +880,44 @@ test('join staging transfers the commerce anchor before a late legacy epoch can 
   const afterLate = localCommands.getState();
   assert.equal(resolveEpochs(afterLate.ledger).activeEpochId, afterLate.ledger.descriptor.rootEpochId);
   assert.equal(afterLate.ledger.historicalEpochs.some(({id}) => id === late.id), true);
+  // The same authority boundary must hold before there is any local state at all.
+  joinHead = activation.candidate;
+  const firstJoin = await emptyJoining(drive, commerce);
+  const [firstSelection] = await firstJoin.sync.discover();
+  joinOffline = true;
+  await assert.rejects(firstJoin.sync.joinDataset(firstSelection, 'confirm'), {code: 'network'});
+  assert.equal(firstJoin.commands.getState(), null);
+  assert.equal(firstJoin.store.snapshot(), null);
+  joinOffline = false;
+  const beforeRead = drive.calls.length;
+  commerceReads.length = 0;
+  const initialPreview = await firstJoin.sync.joinDataset(firstSelection, 'preview');
+  const historyIds = new Set(activation.uploads.map(upload => upload.ref.id));
+  const previewHistoryReads = commerceReads.filter(fileId => historyIds.has(fileId)).length;
+  assert.ok(previewHistoryReads > 0);
+  assert.equal(firstJoin.commands.getState(), null);
+  joinHead = null;
+  await assert.rejects(firstJoin.sync.joinDataset({...firstSelection, previewId: initialPreview.previewId}, 'confirm'), {code: 'history'});
+  assert.equal(firstJoin.commands.getState(), null);
+  assert.equal(firstJoin.store.snapshot(), null);
+  joinHead = activation.candidate;
+  commerceReads.length = 0;
+  const confirmationStart = drive.calls.length;
+  await firstJoin.sync.joinDataset({...firstSelection, previewId: initialPreview.previewId}, 'confirm');
+  assert.ok(commerceReads.filter(fileId => historyIds.has(fileId)).length < previewHistoryReads,
+    'null confirmation must reuse verified immutable history from its preview');
+  const installed = firstJoin.commands.getState();
+  for (const known of installed.knownFiles) assert.ok(drive.calls.slice(confirmationStart)
+    .some(([method, fileId]) => method === 'readJson' && fileId === known.fileId),
+  `learning file ${known.fileId} must be freshly read after a cached null preview`);
+  assert.equal(installed.commerce.mode, 'active');
+  assert.deepEqual(installed.commerce.head, activation.candidate);
+  assert.deepEqual(installed.commerce.configRef, configRef);
+  assert.equal(resolveEpochs(installed.ledger).activeEpochId, activation.epochId);
+  assert.equal(project(installed.ledger).profiles.p1.points, project(remoteState.ledger).profiles.p1.points);
+  assert.equal(installed.ledger.historicalEpochs.some(({id}) => id === late.id), true);
+  assert.equal(drive.calls.slice(beforeRead).some(([method]) => ['putJson', 'createFolder'].includes(method)), false);
+  firstJoin.sync.destroy();
   joining.destroy();
   remote.sync.destroy();
 });

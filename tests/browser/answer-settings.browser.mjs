@@ -62,7 +62,7 @@ test('device punctuation option persists through reload, controlled update and o
     assert.equal(await (await openSettings(page)).isChecked(), false);
     await page.getByRole('button', {name: 'Zur Profilauswahl', exact: true}).click();
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
-    harness.setServiceWorkerVersion('v54');
+    harness.setServiceWorkerVersion('v55');
     await page.evaluate(async () => (await navigator.serviceWorker.getRegistration('./')).update());
     await page.waitForFunction(async () => (await navigator.serviceWorker.getRegistration('./'))?.waiting !== null);
     await page.reload();

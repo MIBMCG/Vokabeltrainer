@@ -1,5 +1,19 @@
 # Browserprüfungen mit synthetischem Google-Zugriff
 
+Die neuen Bereichsfälle unter `learning-areas.browser.mjs` prüfen den direkten
+Erstbeitritt ohne Probeeinträge, automatische Liste nach Anmeldung oder
+wiederaufgenommener Sitzung, PIN-only-Abschluss, bewusste lokale Neuanlage,
+Umbenennen, Papierkorbbestätigung, PIN-Sperre im Vorlauf und schmale Ansichten
+bei 200 Prozent Schrift. Sie verwenden dieselben isolierten Geräte und
+synthetischen Google-Grenzen wie die übrigen Produktfälle:
+
+```sh
+node --no-experimental-global-navigator --test --experimental-test-isolation=none tests/browser/learning-areas.browser.mjs
+```
+
+Ergebnisse und Nachweisgrenzen:
+[Bereichsverwaltung](../../docs/reports/2026-10-20-lernbereiche.md).
+
 Die neuen Belohnungsfälle stehen in `companion.browser.mjs` und
 `companion-feedback.browser.mjs`. Sie prüfen bestätigten Besitz, Figurenplatz,
 Titel, Bewegungseinstellung, echte Lernbelege und unmittelbare Kaufaktionen.
