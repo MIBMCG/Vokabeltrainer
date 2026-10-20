@@ -1,11 +1,22 @@
 # Hier mit der Weiterarbeit beginnen
 
-**Lokal abgeschlossen am 20.10.2026:** direkter Bestandsbeitritt vor lokaler
+**Veröffentlicht am 20.10.2026:** direkter Bestandsbeitritt, automatische
+Bereichsliste, Umbenennen/Papierkorb und schnellere Suche sind bei
+[LejeAdventure](https://app.lejeadventure.workers.dev/trainer/) aktiv.
+Produkt `9663aed`, Cache v54; Worker `5dcd7149-0a4c-4c9b-8c4e-d157ea5e64be`
+zu 100 Prozent. Alle 398 Dateien öffentlich bytegleich, kontrolliertes
+öffentliches v53-v54-Update und Offline-Neuladen mit synthetischem
+Zustandserhalt PASS. Produkt auf dem bisherigen GitHub-Zweig exakt gesichert.
+[Aktuelle Übergabe](docs/handoffs/2026-10-20-lernbereiche.md) und
+[Prüfbericht](docs/reports/2026-10-20-lernbereiche.md). Persönliches Browserupdate
+gegebenenfalls über „Jetzt aktualisieren“; echte Google-/Geräteabnahme offen.
+
+**Historischer lokaler Abschluss am 20.10.2026 vor Veröffentlichung:** direkter Bestandsbeitritt vor lokaler
 Einrichtung, automatische Bereichsliste, Umbenennen/Papierkorb und schnellere
 Bereichssuche. Der Ablauf ist bestätigt; keine erneute Entwurfsfreigabe nötig.
 Produktarbeitskopie auf `codex/vokabeltrainer-v1`, Ausgangspunkt `4e47c37`.
 797/797 Node-, 20/20 Browser- und 4/4 Offline-/Updatefälle PASS; unabhängige
-Nachprüfungen ohne offene Befunde. Arbeitsdiff noch uncommittet und ungepusht.
+Nachprüfungen ohne offene Befunde. Damals Arbeitsdiff noch uncommittet und ungepusht.
 [Aktuelle Übergabe](docs/handoffs/2026-10-20-lernbereiche.md) und
 [Prüfbericht](docs/reports/2026-10-20-lernbereiche.md) zuerst lesen.
 Lokale neue Cachekennung v54 ist von der noch ausstehenden Bereitstellung

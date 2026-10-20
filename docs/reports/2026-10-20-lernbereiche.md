@@ -155,8 +155,55 @@ Die unabhängige begrenzte Schlussnachprüfung mit GPT-6.1-sol / high bewertet
 beide Abschlusspunkte mit ADDRESSED und Spec/Qualität PASS, ohne neue Befunde.
 Die Veröffentlichungskopie wurde danach erneut mit 398 Dateien erstellt.
 Dokumentationsprüfung: 296 Markdown-Dateien und 1.215 lokale Verweise ohne
-Fehler; `git diff --check` ohne Befund. Produktänderungen liegen uncommittet
-in der bestehenden Produktarbeitskopie, kein Push oder Deployment.
+Fehler; `git diff --check` ohne Befund. Zu diesem lokalen Abschluss lagen die
+Produktänderungen noch uncommittet vor; die anschließende ausdrücklich
+beauftragte Veröffentlichung ist unten gesondert belegt.
+
+## Veröffentlichung und öffentliche Prüfung
+
+Produktcommit `9663aedbc481d06c5924dad1f954a3ff1c305c42` auf
+`codex/vokabeltrainer-v1` per normalem Push und exaktem Remotevergleich gesichert.
+Frische Paket-/Auslieferungsprüfung mit
+`node --no-experimental-global-navigator --test --experimental-test-isolation=none tests/server/staging.test.js tests/server/worker.test.js tests/serve.test.js`:
+**16/16 PASS**, keine Fehler/Skips. Wrangler-4.142.0-Dry-run PASS, 398 öffentliche
+Dateien. Separates verschlüsseltes LejeAdventure-OAuth-Profil nach persönlicher
+Browserfreigabe; bisheriges Profil erhalten. Öffentlich dokumentierte lokale
+Zielkonfiguration gegen bestehende Worker-Bindungen und Runtime geprüft.
+
+Deployment mit bestehendem Worker `app`, D1 und Google-Client, `--keep-vars` und
+regulärer Zertifikatsprüfung: acht geänderte Assets, 390 wiederverwendet.
+Worker `5dcd7149-0a4c-4c9b-8c4e-d157ea5e64be` seit 20.10.2026,
+12:10:18.470 UTC zu **100 Prozent** aktiv. Vor-/Nachprüfung der
+Bindungsbeschreibungen und Runtime identisch; keine Secretwerte gelesen,
+ersetzt oder migriert. Versionsmetadaten enthalten keinen eigenen Nachweis
+des separaten Observability-Status.
+
+Anonyme öffentliche Prüfung um 12:10:46 UTC: **398/398 Dateien bytegleich**,
+Cache v54, drei Infoseiten HTTP 200, sechs interne Pfade HTTP 404,
+Sitzung false/no-store, Altadresse weiter v47. Same-Origin-Kanonisierungen der
+HTML-Adressen sind einzeln protokolliert. Beleg: `staged-summary.json`.
+
+Öffentlicher isolierter Edge-Updatefall **PASS** um 12:11:06 UTC. Alle acht
+Ausgangsdateien aus dem festen Commit `4e47c37` im echten v53-Cache per SHA-256
+bestätigt. Danach alle Ausgangsrouten entfernt, native Updatefunktion
+wiederhergestellt und tatsächlich ausgelieferte v54-Dateien direkt geprüft.
+Aktivierung über den echten Updateknopf, neue Cachebytes exakt. Vollständiger
+synthetischer Produktzustand und LocalStorage unverändert, Offline-Neuladen
+und separater Erstgeräteeinstieg PASS. Zwei Profile, gespeicherte Antwort und
+Runde, aktives Commerce, Bindung, PIN-Prüfwert und Satzzeichenoption erhalten.
+Keine Seitenfehler oder unerlaubten Google-/Drive-Aufrufe. Kein zusätzlicher
+interaktiver Fortsetzungs- oder Realgeräte-/Google-Nachweis.
+
+Die lokale Skriptvorbereitung musste Chromiums vorzeitigen automatischen
+Worker-Updateabruf begrenzen; dieser umgeht Playwright-Ausgangsrouten. Nur die
+synthetische Baselinephase hält den Aufruf zurück, vor dem tatsächlichen
+öffentlichen Update ist die native Funktion wiederhergestellt. Frühe rote
+Kontrollskriptläufe werden nicht als Produkt- oder Veröffentlichungserfolg
+gezählt. Keine neuen Cachebytes wurden zur Fehlerkaschierung verändert.
+Details in `UPDATE-CHECK.md`, finale Belege `live-update-verification.json`
+und `live-update.log` unter dem ignorierten Ordner
+`.superpowers/lernbereiche-public/`. Unabhängige Veröffentlichungsprüfung mit
+GPT-6.1-sol / medium bestätigt die konkreten Belege ohne materiellen Blocker.
 
 ## Arbeitsteilung
 

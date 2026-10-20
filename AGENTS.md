@@ -1,12 +1,24 @@
 # Mitarbeit durch KI-Assistenten und Menschen
 
-**Aktueller Auftrag am 20.10.2026:** Der Nutzer beauftragt direkten Erstbeitritt
+**Veröffentlicht am 20.10.2026:** Lernbereichspaket als Produkt `9663aed`, Cache
+v54, an der bestehenden LejeAdventure-Adresse aktiv. Worker
+`5dcd7149-0a4c-4c9b-8c4e-d157ea5e64be` zu 100 Prozent; 398/398 öffentliche Dateien
+bytegleich. 797 Node-, 20 Browser-, vier Offline-/Updatefälle sowie frische
+16 Paketfälle PASS. Öffentlicher kontrollierter v53-v54-Updatefall mit
+vollständigem synthetischem Zustandserhalt und Offline-Neuladen PASS;
+unabhängige Veröffentlichungsprüfung ohne Blocker. Produkt auf dem bisherigen
+GitHub-Zweig exakt gesichert. Echte Google-/Geräteabnahmen bleiben offen.
+Ein separater verschlüsselter LejeAdventure-Anmeldezugang ist auf diesem
+Rechner eingerichtet; alte Cloudflare-Anmeldung und bestehende Worker-Bindungen
+erhalten. [Aktuelle Übergabe](docs/handoffs/2026-10-20-lernbereiche.md).
+
+**Historischer lokaler Abschluss am 20.10.2026 vor Veröffentlichung:** Der Nutzer beauftragt direkten Erstbeitritt
 zu vorhandenen Lernbereichen, deren Umbenennen/Papierkorb in der Elternansicht
 und schnellere Suche/Übernahme. Der konkrete Ablauf ist ausdrücklich bestätigt.
 Die lokale Umsetzung auf `codex/vokabeltrainer-v1` ist abgeschlossen: 797/797
 Node-, 20/20 Browser- und 4/4 Offline-/Updatefälle PASS, unabhängige Reviews
-einschließlich Schlusskorrekturen ohne offene Befunde. Arbeitsdiff uncommittet;
-noch kein Push oder Deployment. Dieser Stand hat Vorrang vor älteren
+einschließlich Schlusskorrekturen ohne offene Befunde. Damals Arbeitsdiff uncommittet,
+noch kein Push oder Deployment. Der veröffentlichte Stand oben hat Vorrang vor älteren
 Folgeaufträgen. Einstieg: [aktuelle Übergabe](docs/handoffs/2026-10-20-lernbereiche.md),
 [Entwurf](docs/superpowers/specs/2026-10-20-lernbereiche-design.md) und
 [Prüfbericht](docs/reports/2026-10-20-lernbereiche.md). Keine erneute pauschale

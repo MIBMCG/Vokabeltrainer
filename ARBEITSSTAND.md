@@ -1,12 +1,29 @@
 # Arbeitsstand
 
-**Lokal abgeschlossen am 20.10.2026:** direkter Geräteeinstieg in vorhandene
+**Veröffentlicht am 20.10.2026:** Das bestätigte Lernbereichspaket ist als
+Produkt `9663aedbc481d06c5924dad1f954a3ff1c305c42`, Cache v54, bei
+[LejeAdventure](https://app.lejeadventure.workers.dev/trainer/) aktiv.
+Worker `5dcd7149-0a4c-4c9b-8c4e-d157ea5e64be` seit 12:10:18 UTC zu 100 Prozent;
+398/398 Dateien öffentlich bytegleich, drei Infoseiten erreichbar, sechs
+interne Pfade gesperrt, anonyme Sitzung false/no-store, Altadresse weiter v47.
+797/797 Node-, 20/20 Browser-, 4/4 Offline-/Updatefälle und frische 16/16
+Paket-/Auslieferungsfälle PASS. Öffentlicher v53-v54-Updatefall mit echtem
+Ausgangscache und anschließend tatsächlich ausgeliefertem v54 PASS:
+vollständiger synthetischer Produktzustand und LocalStorage exakt erhalten,
+Offline-Neuladen und neuer Erstgeräteeinstieg geprüft. Unabhängiger
+Veröffentlichungsaudit ohne Blocker. Bestehende Bindungen und Runtime exakt
+erhalten; separater verschlüsselter OAuth-Zugang nach persönlicher Freigabe,
+keine Secret- oder Kontenneuanlage. Produkt auf bestehendem GitHub-Zweig exakt
+gesichert. [Aktuelle Übergabe](docs/handoffs/2026-10-20-lernbereiche.md).
+Persönliches Update und echte Google-/Safari-/Geräteabnahme bleiben offen.
+
+**Historischer lokaler Abschluss am 20.10.2026 vor Veröffentlichung:** direkter Geräteeinstieg in vorhandene
 Lernbereiche, Umbenennen/Papierkorb in der Elternansicht und schnellere Suche
 und Übernahme. Der bestätigte Ablauf ist auf `codex/vokabeltrainer-v1`
 implementiert: 797/797 Nodefälle, 20/20 Browserfälle und 4/4 Offline-/Updatefälle
 PASS, unabhängige Nachprüfungen ohne offene Befunde. Ausgangspunkt nach frischem
 GitHub-Abgleich `4e47c37`, neue Cachekennung v54. 398 öffentliche Dateien lokal
-vorbereitet. Änderungen uncommittet; kein Push, keine neue Bereitstellung oder
+vorbereitet. Damals Änderungen uncommittet; kein Push, keine neue Bereitstellung oder
 echte Lernbereichsänderung. [Aktuelle Übergabe](docs/handoffs/2026-10-20-lernbereiche.md)
 und [Prüfbericht](docs/reports/2026-10-20-lernbereiche.md).
 
